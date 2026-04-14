@@ -12,8 +12,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   Future<void> _onFetch(HomeEvent event, Emitter<HomeState> emit) async {
+    // ── DEV: show empty state for 15 s so UI can be reviewed ─────────────────
+    emit(const HomeLoaded(
+      totalContributed: 0,
+      myProjects: [],
+      joinedProjects: [],
+    ));
+    await Future.delayed(const Duration(seconds: 15));
+
+    // ── Loading shimmer ───────────────────────────────────────────────────────
     emit(const HomeLoading());
     await Future.delayed(const Duration(milliseconds: 800));
+
     // TODO: Replace with repository call
     emit(const HomeLoaded(
       totalContributed: 4223,
