@@ -1,0 +1,281 @@
+class AppStrings {
+  AppStrings._();
+
+  // App Meta
+  static const String appName = 'Vestie';
+  
+  // General
+  static const String errorGeneric = 'Something went wrong. Please try again.';
+  static const String noInternet = 'No internet connection detected.';
+
+  // Auth Flow
+  static const String loginTitle         = 'Welcome Back';
+  static const String loginSubtitle      = 'Sign in to continue where you left off.';
+  static const String registerTitle      = 'Create your account';
+  static const String registerSubtitle   = 'Set up your account to manage your money securely.';
+  static const String verifyTitle        = 'Verify your account';
+  static const String verifySubtitle     = 'Enter the code sent to your email.';
+
+  // Field Labels
+  static const String labelEmail           = 'Email';
+  static const String labelPassword        = 'Password';
+  static const String labelFullName        = 'Full name';
+  static const String labelConfirmPassword = 'Confirm Password';
+  static const String labelVerifyCode      = 'Verification code';
+
+  // Placeholders
+  static const String hintEmail           = 'you@example.com';
+  static const String hintPassword        = 'Enter password';
+  static const String hintCreatePassword  = 'Create a strong password';
+  static const String hintFullName        = 'As per your official ID';
+  static const String hintConfirmPassword = 're-enter your password';
+  static const String hintVerifyCode      = 'Enter 6-digit code';
+
+  // Buttons & Links
+  static const String btnContinue         = 'Continue';
+  static const String btnVerify           = 'Verify';
+  static const String btnGoogle           = 'Continue with Google';
+  static const String btnApple            = 'Continue with Apple';
+  static const String forgotPassword      = 'Forgot password?';
+  static const String noAccount           = "Don't have account? ";
+  static const String signupLink          = 'Signup';
+  static const String hasAccount          = 'Already have account? ';
+  static const String loginLink           = 'Login';
+  static const String didntReceive        = "Didn't receive it? ";
+  static const String resendCode          = 'Resend code';
+  static const String orDivider           = 'or';
+
+  // Validation hints
+  static const String passwordHint = '8+ characters with letters and numbers';
+
+  // Forgot Password
+  static const String forgotTitle          = 'Forgot your password?';
+  static const String forgotSubtitle       = 'Enter your email to receive a secure reset link.';
+  static const String labelEmailAddress    = 'Email address';
+  static const String hintRegisteredEmail  = 'Enter your registered email';
+  static const String btnSendResetEmail    = 'Send Reset Email';
+  static const String forgotSuccessMsg     = 'Reset link sent! Please check your email.';
+
+  // Reset Password
+  static const String resetPasswordTitle    = 'Set a new password';
+  static const String resetPasswordSubtitle = 'Choose a strong password for your account.';
+  static const String labelNewPassword      = 'New password';
+  static const String hintNewPassword       = 'Enter new password';
+  static const String labelConfirmNewPass   = 'Confirm new password';
+  static const String hintConfirmNewPass    = 'Re-enter new password';
+  static const String btnResetPassword      = 'Reset password';
+  static const String resetSuccessMsg       = 'Password reset successfully!';
+
+  // Agreement Screen
+  static const String agreementTitle     = 'Before You Continue';
+  static const String agreementSubtitle  = 'Using Vestie means you accept all of the following guidelines.';
+  static const String agreementCheckbox  = 'I have read and accept these guidelines';
+  static const List<String> agreementItems = [
+    'Users join pots and contribute entirely at their own risk',
+    'Vestie does not guarantee the safety or return of any funds',
+    'Only send money to people you personally know and trust',
+    'Repayment terms and penalties are set by group leaders, not Vestie',
+    'All contributions processed through Vestie are final and non-refundable',
+  ];
+
+  // State
+  static const String loading = 'Loading...';
+  static const String emptyData = 'No data available';
+
+  // ── Social Auth ────────────────────────────────────────────────────────────
+  static const String socialComingSoon = 'Social sign-in coming soon.';
+
+  // ── Validation Errors ──────────────────────────────────────────────────────
+  static const String errorEmailRequired    = 'Email is required.';
+  static const String errorEmailInvalid     = 'Enter a valid email address.';
+  static const String errorPasswordRequired = 'Password is required.';
+  static const String errorPasswordWeak     = 'Password must be 8+ characters with letters and numbers.';
+  static const String errorPasswordMismatch = 'Passwords do not match.';
+  static const String errorNameRequired     = 'Full name is required.';
+  static const String errorOtpInvalid       = 'Please enter a valid 6-digit code.';
+
+  // Onboarding Flow
+  static const String onboarding1Title = 'Track everything\nin one place';
+  static const String onboarding1Subtitle = 'See your total contributions, active pots, and progress toward shared goals—all in a single view.';
+  static const String onboarding2Title = 'Contribute in\nseconds';
+  static const String onboarding2Subtitle = 'Add money to your group pot easily. Stay consistent and move closer to your goal together.';
+  static const String onboarding3Title = 'Borrow with\napproval';
+  static const String onboarding3Subtitle = 'Request funds when needed. Your group reviews and votes, keeping everything fair and transparent.';
+  static const String onboardingContinue = 'Continue';
+  static const String onboardingGetStarted = 'Get Started';
+  static const String onboardingSkip = 'Skip';
+
+  // ── Bottom Navigation ────────────────────────────────────────────────────
+  static const String navHome    = 'Home';
+  static const String navSearch  = 'Search';
+  static const String navAdd     = 'Add';
+  static const String navWallet  = 'Wallet';
+  static const String navProfile = 'Profile';
+
+  // ── Home Screen ──────────────────────────────────────────────────────────
+  static const String totalContributed  = 'Total Contributed';
+  static const String myProjects        = 'My Projects';
+  static const String joinedProjects    = 'Joined Projects';
+  static const String homeEmptyTitle    = 'Start saving together';
+  static const String homeEmptySubtitle = 'Create a pot, invite your people,\nreach your goal.';
+  static const String btnCreateProject  = 'Create a project';
+  static const String btnView           = 'View';
+  static const String btnJoin           = 'Join';
+  static const String btnSendRequest    = 'Send Request';
+  static const String labelGoal         = 'Goal';
+  static const String labelRaised       = 'Raised';
+  static const String labelEndsIn       = 'Ends in';
+  static const String statusOnGoing     = 'On Going';
+  static const String statusCompleted   = 'Completed';
+
+  // ── Discover Screen ──────────────────────────────────────────────────────
+  static const String discoverTitle      = 'Discover';
+  static const String discoverSearchHint = 'Search projects, categories, members';
+  static const String filterAll          = 'All';
+  static const String filterVacations    = 'Vacations';
+  static const String filterEmergency    = 'Emergency';
+  static const String filterInvestments  = 'Investments';
+
+  // ── Profile Screen ───────────────────────────────────────────────────────
+  static const String profileTitle        = 'Profile';
+  static const String settingsLabel       = 'Settings';
+  static const String menuEditProfile     = 'Edit Profile';
+  static const String menuPaymentMethods  = 'Payment Methods';
+  static const String menuTransactionHistory = 'Transaction History';
+  static const String menuKeyGuidelines   = 'Key Guidelines';
+  static const String btnLogout           = 'Logout';
+
+  // ── Edit Profile ─────────────────────────────────────────────────────────
+  static const String editProfileTitle    = 'Edit Profile';
+  static const String labelFullName2      = 'Full Name';
+  static const String labelUsername       = 'Username';
+  static const String hintUsername        = '@username';
+  static const String btnSaveChanges      = 'Save Changes';
+
+  // ── Payment Methods ──────────────────────────────────────────────────────
+  static const String paymentMethodsTitle   = 'Payment Methods';
+  static const String emptyPaymentTitle     = 'Add Payment Method';
+  static const String emptyPaymentSubtitle  = 'No Payment Method Added. Add method to\ndeposit or contribute';
+  static const String btnAddCard            = 'Add Card';
+  static const String cardPrimary           = 'Primary';
+  static const String setPrimaryLabel       = 'Set as primary payment method';
+  static const String setPrimarySubtitle    = 'We will use this payment method for all transactions';
+  static const String removeCardLabel       = 'Remove card';
+  static const String removeCardSubtitle    = 'We will remove this card from your account';
+
+  // ── Add Card ─────────────────────────────────────────────────────────────
+  static const String addCardTitle          = 'Add Card';
+  static const String labelCardHolderName   = 'Card Holder Name';
+  static const String labelCardNumber       = 'Card Number';
+  static const String labelExpiryDate       = 'Expiry Date';
+  static const String labelCvv              = 'CVV';
+  static const String hintCardHolder        = 'Alex Johnson';
+  static const String hintCardNumber        = '0000 0000 0000 0000';
+  static const String hintExpiry            = 'MM/YY';
+  static const String hintCvv               = '000';
+  static const String btnSaveCard           = 'Save Card';
+
+  // ── Transaction History ───────────────────────────────────────────────────
+  static const String transactionHistoryTitle = 'Transaction History';
+  static const String filterAllTx            = 'All';
+  static const String filterDeposits         = 'Deposits';
+  static const String filterWithdrawals       = 'Withdrawals';
+  static const String filterContributions     = 'Contributions';
+
+  // ── Create Project Wizard ─────────────────────────────────────────────────
+  // Amount screen
+  static const String projectAmountTitle     = 'Project Amount';
+  static const String projectAmountSubtitle  = 'How much you want to save?';
+
+  // Step 1 – Details
+  static const String createDetailsTitle     = 'Project Details';
+  static const String labelProjectName       = 'Project Name';
+  static const String hintProjectName        = 'Family Vacations';
+  static const String labelProjectDesc       = 'Description';
+  static const String hintProjectDesc        = 'A shared goal for flights, hotels and activities.';
+  static const String labelCategory          = 'Category';
+  static const String labelDeadline          = 'Deadline';
+  static const String labelVisibility        = 'Visibility';
+  static const String visibilityPublic       = 'Public';
+  static const String visibilityPrivate      = 'Private';
+
+  // Category options
+  static const String catVacation            = 'Vacation';
+  static const String catEmergency           = 'Emergency';
+  static const String catInvestment          = 'Investment';
+  static const String catOther               = 'Other';
+
+  // Step 2 – Borrowing
+  static const String createBorrowingTitle   = 'Borrowing';
+  static const String labelRoi               = 'ROI (optional)';
+  static const String roiHint                = '5%';
+  static const String roiSubtitle            = 'Set this to incentivize contributors. Paid out on project close.';
+  static const String labelEnableBorrowing   = 'Enable borrowing for members?';
+  static const String labelBorrowLimit       = 'Default borrow limit per member';
+  static const String labelRepaymentWindow   = 'Repayment window (days)';
+  static const String labelPenalty           = 'Penalty (%)';
+  static const String btnNext                = 'Next';
+
+  // Step 3 – Review
+  static const String createReviewTitle      = 'Review';
+  static const String reviewSectionDetails   = 'Project Details';
+  static const String reviewSectionDescRules = 'Description & Rules';
+  static const String reviewSectionBorrowing = 'Borrowing';
+  static const String reviewSectionRoi       = 'ROI';
+  static const String btnEdit                = 'Edit';
+  static const String btnCreateProject2      = 'Create Project';
+  static const String reviewRoiNotSet        = 'Not set';
+
+  // Success
+  static const String projectCreatedTitle    = 'Project Created';
+  static const String shareViaWhatsapp       = 'Share via Whatsapp';
+  static const String btnGoToMyProject       = 'Go to my Project';
+  static const String linkCopied             = 'Link copied!';
+  static const String shareBaseDomain        = 'vestie.app/join';
+  static const String shareWhatsappPrefix    = 'Join my project: https://';
+
+  // ── Review screen row labels ──────────────────────────────────────────────
+  static const String reviewLabelName        = 'Name';
+  static const String reviewLabelGoal        = 'Goal';
+  static const String reviewLabelDeadline    = 'Deadline';
+  static const String reviewLabelCategory    = 'Category';
+  static const String reviewLabelDescription = 'Description';
+  static const String reviewLabelVisibility  = 'Visibility';
+  static const String reviewLabelType        = 'Type';
+  static const String reviewLabelLimit       = 'Limit';
+  static const String reviewLabelWindow      = 'Window';
+  static const String reviewLabelPenalty     = 'Penalty';
+  static const String reviewValuePublic      = 'Public';
+  static const String reviewValuePrivate     = 'Private';
+  static const String reviewValueEnabled     = 'Enabled';
+  static const String reviewValueDisabled    = 'Disabled';
+  static const String reviewValueDays        = 'days';
+
+  // ── Form placeholders & hints ─────────────────────────────────────────────
+  static const String deadlinePlaceholder    = 'MM/DD/YYYY';
+  static const String hintBorrowLimit        = '250';
+  static const String hintRepaymentWindow    = '30';
+  static const String hintPenalty            = '20';
+
+  // ── Validation errors — Create Project ───────────────────────────────────
+  static const String errProjectNameRequired = 'Project name is required';
+  static const String errProjectNameShort    = 'At least 3 characters required';
+  static const String errDescRequired        = 'Description is required';
+  static const String errDeadlineRequired    = 'Deadline is required';
+  static const String errBorrowLimitRequired = 'Borrow limit is required';
+  static const String errBorrowLimitInvalid  = 'Enter a valid amount';
+  static const String errWindowRequired      = 'Repayment window is required';
+  static const String errWindowInvalid       = 'Enter a valid number of days';
+  static const String errPenaltyRequired     = 'Penalty is required';
+  static const String errPenaltyInvalid      = 'Enter a value between 0–100';
+
+  // ── Profile ───────────────────────────────────────────────────────────────
+  static const String takePhoto             = 'Take Photo';
+  static const String chooseFromGallery     = 'Choose from Gallery';
+  static const String profileUpdatedSuccess = 'Profile updated successfully!';
+  static const String cardSavedSuccess      = 'Card saved successfully!';
+
+  // ── Router / placeholder stubs ────────────────────────────────────────────
+  static const String keyGuidelinesComingSoon = 'Key Guidelines — Coming Soon';
+  static const String routeNotFound           = 'Route Not Found';
+}
