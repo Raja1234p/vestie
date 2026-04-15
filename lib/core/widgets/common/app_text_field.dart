@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../theme/app_colors.dart';
@@ -16,7 +17,9 @@ class AppTextField extends StatelessWidget {
   final TextInputAction textInputAction;
   final String? errorText;
   final int? maxLength;
+  final List<TextInputFormatter>? inputFormatters;
   final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onSubmitted;
 
   const AppTextField({
     super.key,
@@ -29,7 +32,9 @@ class AppTextField extends StatelessWidget {
     this.textInputAction = TextInputAction.next,
     this.errorText,
     this.maxLength,
+    this.inputFormatters,
     this.onChanged,
+    this.onSubmitted,
   });
 
   @override
@@ -52,7 +57,9 @@ class AppTextField extends StatelessWidget {
           keyboardType: keyboardType,
           textInputAction: textInputAction,
           maxLength: maxLength,
+          inputFormatters: inputFormatters,
           onChanged: onChanged,
+          onSubmitted: onSubmitted,
           style: GoogleFonts.inter(
             fontSize: 14.sp,
             color: AppColors.authSocialText,

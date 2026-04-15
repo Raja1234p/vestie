@@ -44,6 +44,7 @@ class _RegisterFormState extends State<RegisterForm> {
       AppSnackBar.showInfo(context, AppStrings.socialComingSoon);
 
   void _submit(BuildContext context) {
+    FocusScope.of(context).unfocus();
     final valid = context.read<RegisterFormCubit>().validate(
           _nameCtrl.text,
           _emailCtrl.text,

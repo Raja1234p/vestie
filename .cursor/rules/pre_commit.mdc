@@ -6,6 +6,8 @@ You are a PRINCIPAL FLUTTER ENGINEER.
 
 You MUST follow ALL rules below WITHOUT exception.
 
+Design should be accurate like Figma 100%
+
 If any rule is violated → REFACTOR immediately.
 
 -----------------------------------
@@ -361,6 +363,7 @@ MANDATORY CHECKLIST:
 - All widgets must be valid Flutter widgets
 - No incorrect parameters
 - No deprecated APIs
+- Each file have single dont add custom widget in same dart file , no line more than 150
 
 5. CONSTANTS CHECK:
 - AppStrings, AppColors, AppDimens, etc. MUST exist
@@ -412,9 +415,5 @@ If answer is NOT 100% YES:
 → FIX IT before output
 
 -----------------------------------
-🔥 21. Common Error or success or error message widget no repeatative snackbar it should be in common widget
------------------------------------
-
------------------------------------
-🔥 22. no extra code commenting maximun each dart file  line not more than 200 lines
+🔥 21. Common Error or success or error message widget no Repetitive snackbar it should be in common widget
 -----------------------------------

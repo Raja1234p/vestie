@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/app_text.dart';
 
 /// Reusable gradient header for profile sub-screens (← Title).
 class ProfileSubHeader extends StatelessWidget {
@@ -28,14 +30,14 @@ class ProfileSubHeader extends StatelessWidget {
       child: Row(
         children: [
           GestureDetector(
-            onTap: onBack ?? () => Navigator.of(context).pop(),
+            onTap: onBack ?? () => context.pop(),
             child: Padding(
               padding: EdgeInsets.only(right: 8.w),
               child: Icon(Icons.arrow_back_ios_new_rounded,
                   size: 20.w, color: AppColors.textPrimary),
             ),
           ),
-          Text(
+          AppText(
             title,
             style: GoogleFonts.inter(
               fontSize: 22.sp,

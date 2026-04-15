@@ -87,6 +87,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                       CPTextField(
                         controller: _nameCtrl,
                         hint: AppStrings.hintProjectName,
+                        textInputAction: TextInputAction.next,
                         errorText: form.nameError,
                         onChanged: cubit.setProjectName,
                       ),
@@ -97,6 +98,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                         controller: _descCtrl,
                         hint: AppStrings.hintProjectDesc,
                         maxLines: 4,
+                        textInputAction: TextInputAction.done,
                         errorText: form.descError,
                         onChanged: cubit.setDescription,
                       ),

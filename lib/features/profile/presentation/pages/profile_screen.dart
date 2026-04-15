@@ -10,7 +10,9 @@ import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/app_text.dart';
 import '../cubit/profile_cubit.dart';
+import '../widgets/profile_logout_button.dart';
 import '../widgets/settings_section.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -28,6 +30,22 @@ class ProfileScreen extends StatelessWidget {
 class _ProfileBody extends StatelessWidget {
   const _ProfileBody();
 
+  Widget _buildPickerAction({
+    required BuildContext context,
+    required IconData icon,
+    required String title,
+    required ImageSource source,
+  }) {
+    return ListTile(
+      leading: Icon(icon),
+      title: AppText(title),
+      onTap: () {
+        context.pop();
+        context.read<ProfileCubit>().pickAvatar(source);
+      },
+    );
+  }
+
   void _showAvatarPicker(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -37,21 +55,17 @@ class _ProfileBody extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ListTile(
-              leading: const Icon(Icons.camera_alt_outlined),
-              title: const Text(AppStrings.takePhoto),
-              onTap: () {
-                Navigator.pop(context);
-                context.read<ProfileCubit>().pickAvatar(ImageSource.camera);
-              },
+            _buildPickerAction(
+              context: context,
+              icon: Icons.camera_alt_outlined,
+              title: AppStrings.takePhoto,
+              source: ImageSource.camera,
             ),
-            ListTile(
-              leading: const Icon(Icons.photo_library_outlined),
-              title: const Text(AppStrings.chooseFromGallery),
-              onTap: () {
-                Navigator.pop(context);
-                context.read<ProfileCubit>().pickAvatar(ImageSource.gallery);
-              },
+            _buildPickerAction(
+              context: context,
+              icon: Icons.photo_library_outlined,
+              title: AppStrings.chooseFromGallery,
+              source: ImageSource.gallery,
             ),
           ],
         ),
@@ -66,44 +80,51 @@ class _ProfileBody extends StatelessWidget {
         final profile = state.profile;
         return Scaffold(
           backgroundColor: AppColors.dashBg,
-          body: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // ── Header ──────────────────────────────────
-                _ProfileHeader(
-                    onSettings: () => context.push(AppRoutes.editProfile)),
-
-                Padding(
-                  padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _ProfileHeader(
+                onSettings: () => context.push(AppRoutes.editProfile),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(20.w, 14.h, 20.w, 12.h),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // ── Avatar + name ────────────────────
                       Row(children: [
                         GestureDetector(
                           onTap: () => _showAvatarPicker(context),
                           child: Stack(children: [
                             CircleAvatar(
-                              radius: 28.r,
+                              radius: 24.r,
                               backgroundColor: AppColors.cardBorder,
                               backgroundImage: state.avatarFile != null
                                   ? FileImage(state.avatarFile as File)
                                   : null,
                               child: state.avatarFile == null
-                                  ? Icon(Icons.person,
-                                      size: 28.w, color: AppColors.textBody)
+                                  ? Icon(
+                                      Icons.person,
+                                      size: 24.w,
+                                      color: AppColors.textBody,
+                                    )
                                   : null,
                             ),
                             Positioned(
-                              bottom: 0, right: 0,
+                              bottom: 0,
+                              right: 0,
                               child: Container(
-                                width: 16.w, height: 16.w,
-                                decoration: BoxDecoration(
-                                    color: AppColors.primary,
-                                    shape: BoxShape.circle),
-                                child: Icon(Icons.add,
-                                    size: 10.w, color: Colors.white),
+                                width: 16.w,
+                                height: 16.w,
+                                decoration: const BoxDecoration(
+                                  color: AppColors.primary,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.add,
+                                  size: 10.w,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ]),
@@ -112,29 +133,34 @@ class _ProfileBody extends StatelessWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(profile.fullName,
-                                style: GoogleFonts.inter(
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.textPrimary)),
-                            Text(profile.username,
-                                style: GoogleFonts.inter(
-                                    fontSize: 12.sp,
-                                    color: AppColors.textBody)),
+                            AppText(
+                              profile.fullName,
+                              style: GoogleFonts.inter(
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                            AppText(
+                              profile.username,
+                              style: GoogleFonts.inter(
+                                fontSize: 13.sp,
+                                color: AppColors.textBody,
+                              ),
+                            ),
                           ],
                         ),
                       ]),
-                      SizedBox(height: 24.h),
-
-                      // ── Settings label ───────────────────
-                      Text(AppStrings.settingsLabel,
-                          style: GoogleFonts.inter(
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.textPrimary)),
-                      SizedBox(height: 12.h),
-
-                      // ── Settings items ───────────────────
+                      SizedBox(height: 18.h),
+                      AppText(
+                        AppStrings.settingsLabel,
+                        style: GoogleFonts.inter(
+                          fontSize: 24.sp,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      SizedBox(height: 8.h),
                       SettingsSection(items: [
                         SettingsItem(
                           svgPath: AppAssets.iconEditProfile,
@@ -157,33 +183,16 @@ class _ProfileBody extends StatelessWidget {
                           onTap: () => context.push(AppRoutes.keyGuidelines),
                         ),
                       ]),
-                      SizedBox(height: 32.h),
-
-                      // ── Logout ───────────────────────────
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50.h,
-                        child: ElevatedButton(
-                          onPressed: () => context.go(AppRoutes.login),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.logoutBtn,
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.r)),
-                          ),
-                          child: Text(AppStrings.btnLogout,
-                              style: GoogleFonts.inter(
-                                  fontSize: 15.sp,
-                                  fontWeight: FontWeight.w600)),
-                        ),
+                      const Spacer(),
+                      ProfileLogoutButton(
+                        onTap: () => context.go(AppRoutes.login),
                       ),
-                      SizedBox(height: 24.h),
+                      SizedBox(height: 10.h),
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },
@@ -199,15 +208,15 @@ class _ProfileHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.fromLTRB(20.w, 52.h, 20.w, 20.h),
+      padding: EdgeInsets.fromLTRB(20.w, 48.h, 20.w, 16.h),
       decoration: const BoxDecoration(
           gradient: AppColors.appBackgroundGradient),
       child: Row(
         children: [
-          Text(AppStrings.profileTitle,
+          AppText(AppStrings.profileTitle,
               style: GoogleFonts.inter(
-                  fontSize: 24.sp,
-                  fontWeight: FontWeight.w800,
+                  fontSize: 34.sp,
+                  fontWeight: FontWeight.w500,
                   color: AppColors.textPrimary)),
           const Spacer(),
           GestureDetector(

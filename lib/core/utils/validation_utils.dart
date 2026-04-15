@@ -100,4 +100,50 @@ class ValidationUtils {
     if (n == null || n < 0 || n > 100) return AppStrings.errPenaltyInvalid;
     return null;
   }
+
+  // ── Payment Card ────────────────────────────────────────────────────────────
+
+  static String? validateCardHolderName(String? value) {
+    final v = value?.trim() ?? '';
+    if (v.isEmpty) return AppStrings.errCardHolderRequired;
+    return null;
+  }
+
+  static String? validateCardNumber(String? value) {
+    final digits = (value ?? '').replaceAll(RegExp(r'[^0-9]'), '');
+    if (digits.isEmpty) return AppStrings.errCardNumberRequired;
+    if (digits.length != 16) return AppStrings.errCardNumberInvalid;
+    return null;
+  }
+
+  static String? validateCardExpiry(String? value) {
+    final raw = (value ?? '').trim();
+    if (raw.isEmpty) return AppStrings.errExpiryRequired;
+
+    final match = RegExp(r'^(\d{2})/(\d{2})$').firstMatch(raw);
+    if (match == null) return AppStrings.errExpiryInvalid;
+
+    final month = int.tryParse(match.group(1)!);
+    final yearTwoDigit = int.tryParse(match.group(2)!);
+    if (month == null || yearTwoDigit == null || month < 1 || month > 12) {
+      return AppStrings.errExpiryInvalid;
+    }
+
+    final now = DateTime.now();
+    final fullYear = 2000 + yearTwoDigit;
+    final expiryMonthStart = DateTime(fullYear, month);
+    final currentMonthStart = DateTime(now.year, now.month);
+    if (expiryMonthStart.isBefore(currentMonthStart)) {
+      return AppStrings.errExpiryPast;
+    }
+
+    return null;
+  }
+
+  static String? validateCardCvv(String? value) {
+    final digits = (value ?? '').replaceAll(RegExp(r'[^0-9]'), '');
+    if (digits.isEmpty) return AppStrings.errCvvRequired;
+    if (digits.length < 3 || digits.length > 4) return AppStrings.errCvvInvalid;
+    return null;
+  }
 }

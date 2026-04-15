@@ -1,121 +1,145 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/utils/validation_utils.dart';
 import '../../domain/entities/payment_card.dart';
-
-enum CardField { holderName, cardNumber, expiry, cvv }
 
 class AddCardState extends Equatable {
   final String holderName;
-  final String cardNumber; // raw digits max 16
-  final String expiry;     // raw digits max 4 (MMYY)
-  final String cvv;        // raw digits max 3
-  final CardField activeField;
+  final String cardNumber;
+  final String expiry;
+  final String cvv;
+  final String? holderNameError;
+  final String? cardNumberError;
+  final String? expiryError;
+  final String? cvvError;
   final bool saving;
-  final bool saved;
 
   const AddCardState({
     this.holderName = '',
     this.cardNumber = '',
     this.expiry = '',
     this.cvv = '',
-    this.activeField = CardField.cardNumber,
+    this.holderNameError,
+    this.cardNumberError,
+    this.expiryError,
+    this.cvvError,
     this.saving = false,
-    this.saved = false,
   });
 
   AddCardState copyWith({
-    String? holderName, String? cardNumber, String? expiry, String? cvv,
-    CardField? activeField, bool? saving, bool? saved,
+    String? holderName,
+    String? cardNumber,
+    String? expiry,
+    String? cvv,
+    Object? holderNameError = _absent,
+    Object? cardNumberError = _absent,
+    Object? expiryError = _absent,
+    Object? cvvError = _absent,
+    bool? saving,
   }) {
     return AddCardState(
       holderName: holderName ?? this.holderName,
       cardNumber: cardNumber ?? this.cardNumber,
       expiry: expiry ?? this.expiry,
       cvv: cvv ?? this.cvv,
-      activeField: activeField ?? this.activeField,
+      holderNameError: holderNameError == _absent
+          ? this.holderNameError
+          : holderNameError as String?,
+      cardNumberError: cardNumberError == _absent
+          ? this.cardNumberError
+          : cardNumberError as String?,
+      expiryError:
+          expiryError == _absent ? this.expiryError : expiryError as String?,
+      cvvError: cvvError == _absent ? this.cvvError : cvvError as String?,
       saving: saving ?? this.saving,
-      saved: saved ?? this.saved,
     );
-  }
-
-  String get formattedCardNumber {
-    final d = cardNumber.padRight(16, ' ');
-    return '${d.substring(0,4)} ${d.substring(4,8)} ${d.substring(8,12)} ${d.substring(12,16)}'.trimRight();
-  }
-
-  String get formattedExpiry {
-    if (expiry.length <= 2) return expiry;
-    return '${expiry.substring(0, 2)}/${expiry.substring(2)}';
   }
 
   @override
   List<Object> get props =>
-      [holderName, cardNumber, expiry, cvv, activeField, saving, saved];
+      [
+        holderName,
+        cardNumber,
+        expiry,
+        cvv,
+        holderNameError ?? '',
+        cardNumberError ?? '',
+        expiryError ?? '',
+        cvvError ?? '',
+        saving,
+      ];
 }
+
+const Object _absent = Object();
 
 class AddCardCubit extends Cubit<AddCardState> {
   AddCardCubit() : super(const AddCardState());
 
-  void setActive(CardField field) => emit(state.copyWith(activeField: field));
-  void setHolderName(String v)    => emit(state.copyWith(holderName: v));
-
-  void appendDigit(String digit) {
-    switch (state.activeField) {
-      case CardField.cardNumber:
-        if (state.cardNumber.length < 16) {
-          emit(state.copyWith(cardNumber: state.cardNumber + digit));
-        }
-        break;
-      case CardField.expiry:
-        if (state.expiry.length < 4) {
-          emit(state.copyWith(expiry: state.expiry + digit));
-        }
-        break;
-      case CardField.cvv:
-        if (state.cvv.length < 3) {
-          emit(state.copyWith(cvv: state.cvv + digit));
-        }
-        break;
-      case CardField.holderName: break;
-    }
+  void setHolderName(String value) {
+    emit(state.copyWith(holderName: value, holderNameError: null));
   }
 
-  void backspace() {
-    switch (state.activeField) {
-      case CardField.cardNumber:
-        if (state.cardNumber.isNotEmpty) {
-          emit(state.copyWith(cardNumber: state.cardNumber.substring(0, state.cardNumber.length - 1)));
-        }
-        break;
-      case CardField.expiry:
-        if (state.expiry.isNotEmpty) {
-          emit(state.copyWith(expiry: state.expiry.substring(0, state.expiry.length - 1)));
-        }
-        break;
-      case CardField.cvv:
-        if (state.cvv.isNotEmpty) {
-          emit(state.copyWith(cvv: state.cvv.substring(0, state.cvv.length - 1)));
-        }
-        break;
-      case CardField.holderName: break;
-    }
+  void setCardNumber(String value) {
+    emit(state.copyWith(cardNumber: value, cardNumberError: null));
+  }
+
+  void setExpiry(String value) {
+    emit(state.copyWith(expiry: value, expiryError: null));
+  }
+
+  void setCvv(String value) {
+    emit(state.copyWith(cvv: value, cvvError: null));
+  }
+
+  bool validate() {
+    final holderNameError = ValidationUtils.validateCardHolderName(state.holderName);
+    final cardNumberError = ValidationUtils.validateCardNumber(state.cardNumber);
+    final expiryError = ValidationUtils.validateCardExpiry(state.expiry);
+    final cvvError = ValidationUtils.validateCardCvv(state.cvv);
+
+    emit(
+      state.copyWith(
+        holderNameError: holderNameError,
+        cardNumberError: cardNumberError,
+        expiryError: expiryError,
+        cvvError: cvvError,
+      ),
+    );
+    return holderNameError == null &&
+        cardNumberError == null &&
+        expiryError == null &&
+        cvvError == null;
   }
 
   Future<PaymentCard?> save() async {
+    if (!validate()) return null;
     emit(state.copyWith(saving: true));
     await Future.delayed(const Duration(milliseconds: 800));
-    // TODO: Replace with PaymentRepository.addCard(...)
+
+    final digits = state.cardNumber.replaceAll(RegExp(r'[^0-9]'), '');
+    final brand = _detectBrand(digits);
+    final last4 = digits.length >= 4 ? digits.substring(digits.length - 4) : '0000';
+
     final card = PaymentCard(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
-      holderName: state.holderName,
-      last4: state.cardNumber.length >= 4
-          ? state.cardNumber.substring(state.cardNumber.length - 4)
-          : '0000',
-      maskedNumber: '•••• ${state.cardNumber.length >= 4 ? state.cardNumber.substring(state.cardNumber.length - 4) : '0000'}',
-      expiry: state.formattedExpiry,
-      brand: CardBrand.visa,
+      holderName: state.holderName.trim(),
+      last4: last4,
+      maskedNumber: '•••• $last4',
+      expiry: state.expiry,
+      brand: brand,
     );
-    emit(state.copyWith(saving: false, saved: true));
+    emit(state.copyWith(saving: false));
     return card;
+  }
+
+  CardBrand _detectBrand(String digits) {
+    if (digits.startsWith('4')) return CardBrand.visa;
+    if (digits.length >= 2) {
+      final prefix = int.tryParse(digits.substring(0, 2));
+      if (prefix != null && prefix >= 51 && prefix <= 55) {
+        return CardBrand.mastercard;
+      }
+    }
+    return CardBrand.other;
   }
 }

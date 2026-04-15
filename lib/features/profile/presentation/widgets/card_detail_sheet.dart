@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/app_snackbar.dart';
+import '../../../../core/widgets/common/app_text.dart';
 import '../../domain/entities/payment_card.dart';
 import '../cubit/payment_methods_cubit.dart';
 import 'card_preview.dart';
+import 'payment_primary_button.dart';
 
 /// Bottom sheet showing card details: set primary toggle, remove card.
 class CardDetailSheet extends StatelessWidget {
@@ -19,7 +22,7 @@ class CardDetailSheet extends StatelessWidget {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.surface,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24.r))),
       builder: (_) => BlocProvider.value(
@@ -47,7 +50,7 @@ class CardDetailSheet extends StatelessWidget {
             children: [
               // ── Close ────────────────────────────────────
               GestureDetector(
-                onTap: () => Navigator.pop(context),
+                onTap: context.pop,
                 child: Icon(Icons.close, size: 24.w, color: AppColors.textBody),
               ),
               SizedBox(height: 16.h),
@@ -63,16 +66,22 @@ class CardDetailSheet extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(AppStrings.setPrimaryLabel,
-                            style: GoogleFonts.inter(
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.textPrimary)),
+                        AppText(
+                          AppStrings.setPrimaryLabel,
+                          style: GoogleFonts.inter(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
                         SizedBox(height: 2.h),
-                        Text(AppStrings.setPrimarySubtitle,
-                            style: GoogleFonts.inter(
-                                fontSize: 11.sp,
-                                color: AppColors.textBody)),
+                        AppText(
+                          AppStrings.setPrimarySubtitle,
+                          style: GoogleFonts.inter(
+                            fontSize: 11.sp,
+                            color: AppColors.textBody,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -99,24 +108,33 @@ class CardDetailSheet extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(AppStrings.removeCardLabel,
-                            style: GoogleFonts.inter(
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.textPrimary)),
+                        AppText(
+                          AppStrings.removeCardLabel,
+                          style: GoogleFonts.inter(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
                         SizedBox(height: 2.h),
-                        Text(AppStrings.removeCardSubtitle,
-                            style: GoogleFonts.inter(
-                                fontSize: 11.sp,
-                                color: AppColors.textBody)),
+                        AppText(
+                          AppStrings.removeCardSubtitle,
+                          style: GoogleFonts.inter(
+                            fontSize: 11.sp,
+                            color: AppColors.textBody,
+                          ),
+                        ),
                       ],
                     ),
                   ),
                   GestureDetector(
                     onTap: () {
                       context.read<PaymentMethodsCubit>().removeCard(current.id);
-                      Navigator.pop(context);
-                      AppSnackBar.showSuccess(context, 'Card removed.');
+                      context.pop();
+                      AppSnackBar.showSuccess(
+                        context,
+                        AppStrings.cardRemovedSuccess,
+                      );
                     },
                     child: Icon(Icons.delete_outline_rounded,
                         size: 22.w, color: AppColors.logoutBtn),
@@ -126,22 +144,9 @@ class CardDetailSheet extends StatelessWidget {
               SizedBox(height: 24.h),
 
               // ── Add Card button ───────────────────────────
-              SizedBox(
-                width: double.infinity,
-                height: 50.h,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.cardActionBtn,
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.r)),
-                  ),
-                  child: Text(AppStrings.btnAddCard,
-                      style: GoogleFonts.inter(
-                          fontSize: 15.sp, fontWeight: FontWeight.w600)),
-                ),
+              PaymentPrimaryButton(
+                label: AppStrings.btnAddCard,
+                onTap: context.pop,
               ),
             ],
           ),

@@ -20,6 +20,7 @@ import '../../features/onboarding/presentation/pages/onboarding_screen.dart';
 import '../../features/profile/presentation/cubit/profile_cubit.dart';
 import '../../features/profile/presentation/pages/add_card_screen.dart';
 import '../../features/profile/presentation/pages/edit_profile_screen.dart';
+import '../../features/profile/presentation/pages/key_guidelines_screen.dart';
 import '../../features/profile/presentation/pages/payment_methods_screen.dart';
 import '../../features/profile/presentation/pages/transaction_history_screen.dart';
 import '../../features/splash/presentation/pages/splash_screen.dart';
@@ -115,9 +116,7 @@ class AppRouter {
       ),
       GoRoute(
         path: AppRoutes.keyGuidelines,
-        builder: (context, _) => const Scaffold(
-          body: Center(child: Text(AppStrings.keyGuidelinesComingSoon)),
-        ),
+        builder: (context, _) => const KeyGuidelinesScreen(),
       ),
     ],
     errorBuilder: (context, _) => const Scaffold(

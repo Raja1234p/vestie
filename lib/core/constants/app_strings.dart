@@ -174,6 +174,14 @@ class AppStrings {
   static const String hintExpiry            = 'MM/YY';
   static const String hintCvv               = '000';
   static const String btnSaveCard           = 'Save Card';
+  static const String errCardHolderRequired = 'Card holder name is required';
+  static const String errCardNumberRequired = 'Card number is required';
+  static const String errCardNumberInvalid  = 'Enter a valid 16-digit card number';
+  static const String errExpiryRequired     = 'Expiry date is required';
+  static const String errExpiryInvalid      = 'Enter a valid expiry (MM/YY)';
+  static const String errExpiryPast         = 'Card expiry date cannot be in the past';
+  static const String errCvvRequired        = 'CVV is required';
+  static const String errCvvInvalid         = 'CVV must be 3 or 4 digits';
 
   // ── Transaction History ───────────────────────────────────────────────────
   static const String transactionHistoryTitle = 'Transaction History';
@@ -274,6 +282,7 @@ class AppStrings {
   static const String chooseFromGallery     = 'Choose from Gallery';
   static const String profileUpdatedSuccess = 'Profile updated successfully!';
   static const String cardSavedSuccess      = 'Card saved successfully!';
+  static const String cardRemovedSuccess    = 'Card removed.';
 
   // ── Router / placeholder stubs ────────────────────────────────────────────
   static const String keyGuidelinesComingSoon = 'Key Guidelines — Coming Soon';

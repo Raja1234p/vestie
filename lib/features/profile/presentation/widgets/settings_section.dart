@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/app_text.dart';
 
 class SettingsItem {
   final String svgPath; // asset path for the SVG icon
@@ -44,21 +45,21 @@ class SettingsSection extends StatelessWidget {
                 onTap: item.onTap,
                 child: Padding(
                   padding: EdgeInsets.symmetric(
-                      horizontal: 16.w, vertical: 14.h),
+                      horizontal: 14.w, vertical: 17.h),
                   child: Row(
                     children: [
                       SvgPicture.asset(
                         item.svgPath,
-                        width: 20.w,
-                        height: 20.w,
+                        width: 18.w,
+                        height: 18.w,
                         colorFilter: ColorFilter.mode(
                             AppColors.textBody, BlendMode.srcIn),
                       ),
                       SizedBox(width: 12.w),
-                      Text(
+                      AppText(
                         item.label,
                         style: GoogleFonts.inter(
-                          fontSize: 14.sp,
+                          fontSize: 15.sp,
                           fontWeight: FontWeight.w500,
                           color: AppColors.textPrimary,
                         ),

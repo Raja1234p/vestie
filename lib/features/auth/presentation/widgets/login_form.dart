@@ -40,6 +40,7 @@ class _LoginFormState extends State<LoginForm> {
       AppSnackBar.showInfo(context, AppStrings.socialComingSoon);
 
   void _submit(BuildContext context) {
+    FocusScope.of(context).unfocus();
     final formCubit = context.read<LoginFormCubit>();
     final valid = formCubit.validate(_emailCtrl.text, _passCtrl.text);
     if (valid) {

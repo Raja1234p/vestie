@@ -34,6 +34,8 @@ class CPTextField extends StatelessWidget {
   final int maxLines;
   final ValueChanged<String>? onChanged;
   final TextInputType? keyboardType;
+  final TextInputAction textInputAction;
+  final ValueChanged<String>? onSubmitted;
   final Widget? suffixIcon;
   final String? errorText;
 
@@ -44,6 +46,8 @@ class CPTextField extends StatelessWidget {
     this.maxLines = 1,
     this.onChanged,
     this.keyboardType,
+    this.textInputAction = TextInputAction.next,
+    this.onSubmitted,
     this.suffixIcon,
     this.errorText,
   });
@@ -67,6 +71,8 @@ class CPTextField extends StatelessWidget {
             onChanged: onChanged,
             maxLines: maxLines,
             keyboardType: keyboardType,
+            textInputAction: textInputAction,
+            onSubmitted: onSubmitted,
             style: GoogleFonts.inter(
                 fontSize: 14.sp, color: AppColors.textPrimary),
             decoration: InputDecoration(
