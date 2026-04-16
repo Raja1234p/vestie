@@ -31,10 +31,8 @@ class CreateProjectHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.fromLTRB(16.w, 52.h, 20.w, 20.h),
-      decoration: const BoxDecoration(
-        gradient: AppColors.appBackgroundGradient,
-      ),
+      padding: EdgeInsets.fromLTRB(16.w, 75.h, 20.w, 20.h),
+
       child: Row(
         children: [
           GestureDetector(
@@ -47,7 +45,7 @@ class CreateProjectHeader extends StatelessWidget {
           ),
           Text(
             title,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.lato(
               fontSize: 22.sp,
               fontWeight: FontWeight.w800,
               color: AppColors.textPrimary,
@@ -67,7 +65,7 @@ class CreateProjectHeader extends StatelessWidget {
               ),
               child: Text(
                 stepBadge!,
-                style: GoogleFonts.inter(
+                style: GoogleFonts.lato(
                   fontSize: 11.sp,
                   fontWeight: FontWeight.w700,
                   color: _badgeTextColor(),

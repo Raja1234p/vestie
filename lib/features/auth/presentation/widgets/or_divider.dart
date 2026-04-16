@@ -17,7 +17,7 @@ class OrDivider extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 12.w),
           child: Text(
             AppStrings.orDivider,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.lato(
               fontSize: 13.sp,
               color: AppColors.authOr,
               fontWeight: FontWeight.w400,

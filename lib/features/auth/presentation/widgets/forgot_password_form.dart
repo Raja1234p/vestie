@@ -68,7 +68,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
               // ── Title ─────────────────────────────────────────────
               Text(
                 AppStrings.forgotTitle,
-                style: GoogleFonts.inter(
+                style: GoogleFonts.lato(
                   fontSize: 28.sp,
                   fontWeight: FontWeight.w800,
                   color: AppColors.authTitle,
@@ -78,7 +78,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
               SizedBox(height: 6.h),
               Text(
                 AppStrings.forgotSubtitle,
-                style: GoogleFonts.inter(
+                style: GoogleFonts.lato(
                   fontSize: 13.5.sp,
                   color: AppColors.authSubtitle,
                   height: 1.5,

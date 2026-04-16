@@ -56,7 +56,7 @@ class AuthGradientButton extends StatelessWidget {
                     )
                   : Text(
                       text,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.lato(
                         fontSize: 15.sp,
                         fontWeight: FontWeight.w600,
                         color: Colors.white,

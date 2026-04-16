@@ -50,7 +50,7 @@ class CardPreview extends StatelessWidget {
                   borderRadius: BorderRadius.circular(100.r),
                 ),
                 child: Text(AppStrings.cardPrimary,
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.lato(
                         fontSize: 10.sp,
                         fontWeight: FontWeight.w600,
                         color: Colors.white)),
@@ -62,7 +62,7 @@ class CardPreview extends StatelessWidget {
             bottom: 0, left: 0,
             child: Text(
               card.maskedNumber,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.lato(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.w700,
                   color: Colors.white,

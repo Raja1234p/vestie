@@ -64,7 +64,7 @@ class _AgreementBody extends StatelessWidget {
                 child: Text(
                   AppStrings.agreementTitle,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.lato(
                     fontSize: 24.sp,
                     fontWeight: FontWeight.w800,
                     color: AppColors.textPrimary,
@@ -79,7 +79,7 @@ class _AgreementBody extends StatelessWidget {
                 child: Text(
                   AppStrings.agreementSubtitle,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.lato(
                     fontSize: 13.sp,
                     color: AppColors.textBody,
                     height: 1.5,
@@ -120,7 +120,7 @@ class _AgreementBody extends StatelessWidget {
                     Expanded(
                       child: Text(
                         AppStrings.agreementCheckbox,
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.lato(
                           fontSize: 13.sp,
                           color: AppColors.textBody,
                         ),
@@ -166,7 +166,7 @@ class _GuidelineItem extends StatelessWidget {
         children: [
           Text(
             '$number.',
-            style: GoogleFonts.inter(
+            style: GoogleFonts.lato(
               fontSize: 13.sp,
               fontWeight: FontWeight.w600,
               color: AppColors.primary,
@@ -176,7 +176,7 @@ class _GuidelineItem extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.lato(
                 fontSize: 13.sp,
                 color: AppColors.textBody,
                 height: 1.5,

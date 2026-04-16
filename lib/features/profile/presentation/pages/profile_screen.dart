@@ -11,6 +11,7 @@ import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_text.dart';
+import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../cubit/profile_cubit.dart';
 import '../widgets/profile_logout_button.dart';
 import '../widgets/settings_section.dart';
@@ -79,25 +80,26 @@ class _ProfileBody extends StatelessWidget {
       builder: (context, state) {
         final profile = state.profile;
         return Scaffold(
-          backgroundColor: AppColors.dashBg,
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _ProfileHeader(
-                onSettings: () => context.push(AppRoutes.editProfile),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(20.w, 14.h, 20.w, 12.h),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+          backgroundColor: Colors.transparent,
+          body: PostAuthGradientBackground(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _ProfileHeader(
+                  onSettings: () => context.push(AppRoutes.editProfile),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(20.w, 14.h, 20.w, 12.h),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                       Row(children: [
                         GestureDetector(
                           onTap: () => _showAvatarPicker(context),
                           child: Stack(children: [
                             CircleAvatar(
-                              radius: 24.r,
+                              radius: 50.r,
                               backgroundColor: AppColors.cardBorder,
                               backgroundImage: state.avatarFile != null
                                   ? FileImage(state.avatarFile as File)
@@ -105,7 +107,7 @@ class _ProfileBody extends StatelessWidget {
                               child: state.avatarFile == null
                                   ? Icon(
                                       Icons.person,
-                                      size: 24.w,
+                                      size: 30.w,
                                       color: AppColors.textBody,
                                     )
                                   : null,
@@ -114,15 +116,15 @@ class _ProfileBody extends StatelessWidget {
                               bottom: 0,
                               right: 0,
                               child: Container(
-                                width: 16.w,
-                                height: 16.w,
+                                width: 22.w,
+                                height: 22.w,
                                 decoration: const BoxDecoration(
                                   color: AppColors.primary,
                                   shape: BoxShape.circle,
                                 ),
                                 child: Icon(
                                   Icons.add,
-                                  size: 10.w,
+                                  size: 15.w,
                                   color: Colors.white,
                                 ),
                               ),
@@ -135,7 +137,7 @@ class _ProfileBody extends StatelessWidget {
                           children: [
                             AppText(
                               profile.fullName,
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.lato(
                                 fontSize: 18.sp,
                                 fontWeight: FontWeight.w600,
                                 color: AppColors.textPrimary,
@@ -143,7 +145,7 @@ class _ProfileBody extends StatelessWidget {
                             ),
                             AppText(
                               profile.username,
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.lato(
                                 fontSize: 13.sp,
                                 color: AppColors.textBody,
                               ),
@@ -154,7 +156,7 @@ class _ProfileBody extends StatelessWidget {
                       SizedBox(height: 18.h),
                       AppText(
                         AppStrings.settingsLabel,
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.lato(
                           fontSize: 24.sp,
                           fontWeight: FontWeight.w500,
                           color: AppColors.textPrimary,
@@ -188,11 +190,12 @@ class _ProfileBody extends StatelessWidget {
                         onTap: () => context.go(AppRoutes.login),
                       ),
                       SizedBox(height: 10.h),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
@@ -208,13 +211,12 @@ class _ProfileHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.fromLTRB(20.w, 48.h, 20.w, 16.h),
-      decoration: const BoxDecoration(
-          gradient: AppColors.appBackgroundGradient),
+      padding: EdgeInsets.fromLTRB(20.w, 60.h, 20.w, 16.h),
+
       child: Row(
         children: [
           AppText(AppStrings.profileTitle,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.lato(
                   fontSize: 34.sp,
                   fontWeight: FontWeight.w500,
                   color: AppColors.textPrimary)),

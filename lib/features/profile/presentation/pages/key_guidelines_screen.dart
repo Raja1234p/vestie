@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 
 class KeyGuidelinesScreen extends StatelessWidget {
   const KeyGuidelinesScreen({super.key});
@@ -6,16 +7,19 @@ class KeyGuidelinesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          SizedBox(
-            width: double.infinity, // Makes it stretch all the way across the screen
-            height: 150,            // The height of your header area
-            child: CustomPaint(
-              painter: CombinedGradientPainter(), // <--- Right here!
+      backgroundColor: Colors.transparent,
+      body: PostAuthGradientBackground(
+        child: Column(
+          children: [
+            SizedBox(
+              width: double.infinity, // Makes it stretch all the way across the screen
+              height: 150,            // The height of your header area
+              child: CustomPaint(
+                painter: CombinedGradientPainter(), // <--- Right here!
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

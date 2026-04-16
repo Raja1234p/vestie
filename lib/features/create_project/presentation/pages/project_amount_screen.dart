@@ -43,7 +43,7 @@ class ProjectAmountScreen extends StatelessWidget {
                         child: Text(
                           AppStrings.projectAmountTitle,
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.lato(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w600,
                             color: AppColors.textBody,
@@ -64,7 +64,7 @@ class ProjectAmountScreen extends StatelessWidget {
                   children: [
                     Text(
                       AppStrings.projectAmountSubtitle,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.lato(
                         fontSize: 14.sp,
                         color: AppColors.textBody,
                       ),
@@ -72,7 +72,7 @@ class ProjectAmountScreen extends StatelessWidget {
                     SizedBox(height: 12.h),
                     Text(
                       form.amountDigits.isEmpty ? '\$0.00' : form.formattedAmount,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.lato(
                         fontSize: 48.sp,
                         fontWeight: FontWeight.w800,
                         color: AppColors.textPrimary,
@@ -99,7 +99,7 @@ class ProjectAmountScreen extends StatelessWidget {
                           ),
                           child: Text(
                             AppStrings.btnContinue,
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.lato(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w600,
                             ),
@@ -116,8 +116,9 @@ class ProjectAmountScreen extends StatelessWidget {
                 onDigit: cubit.appendAmountDigit,
                 onBackspace: cubit.removeAmountDigit,
               ),
-            ],
-          ),
+              ],
+            ),
+
         );
       },
     );
@@ -157,7 +158,7 @@ class _AmountKeypad extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10.r),
                 boxShadow: [
                   BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
+                      color: AppColors.textBody.withValues(alpha: 0.05),
                       blurRadius: 4,
                       offset: const Offset(0, 2)),
                 ],
@@ -167,7 +168,7 @@ class _AmountKeypad extends StatelessWidget {
                     ? Icon(Icons.backspace_outlined,
                         size: 20.w, color: AppColors.textPrimary)
                     : Text(k,
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.lato(
                             fontSize: 22.sp,
                             fontWeight: FontWeight.w600,
                             color: AppColors.textPrimary)),

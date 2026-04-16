@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../domain/create_project_form.dart';
 import '../cubit/create_project_cubit.dart';
 import '../widgets/create_project_header.dart';
@@ -57,16 +58,17 @@ class _ProjectBorrowingScreenState extends State<ProjectBorrowingScreen> {
       builder: (context, form) {
         final cubit = context.read<CreateProjectCubit>();
         return Scaffold(
-          backgroundColor: Colors.white,
-          body: Column(
-            children: [
+          backgroundColor: Colors.transparent,
+          body: PostAuthGradientBackground(
+            child: Column(
+              children: [
               CreateProjectHeader(
                 title: AppStrings.createBorrowingTitle,
                 stepBadge: widget.isEditMode ? null : '3/4',
               ),
               Expanded(
                 child: SingleChildScrollView(
-                  padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 32.h),
+                  padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 16.h),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -85,7 +87,7 @@ class _ProjectBorrowingScreenState extends State<ProjectBorrowingScreen> {
                       ),
                       SizedBox(height: 6.h),
                       Text(AppStrings.roiSubtitle,
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.lato(
                               fontSize: 12.sp,
                               color: AppColors.textBody,
                               height: 1.5)),
@@ -98,7 +100,7 @@ class _ProjectBorrowingScreenState extends State<ProjectBorrowingScreen> {
                         children: [
                           Expanded(
                             child: Text(AppStrings.labelEnableBorrowing,
-                                style: GoogleFonts.inter(
+                                style: GoogleFonts.lato(
                                     fontSize: 14.sp,
                                     fontWeight: FontWeight.w500,
                                     color: AppColors.textPrimary)),
@@ -145,23 +147,29 @@ class _ProjectBorrowingScreenState extends State<ProjectBorrowingScreen> {
                         ),
                       ],
 
-                      SizedBox(height: 32.h),
-                      CPNextButton(
-                        label: widget.isEditMode
-                            ? AppStrings.btnSaveChanges
-                            : AppStrings.btnNext,
-                        onPressed: () {
-                          if (!cubit.validateBorrowing()) return;
-                          widget.isEditMode
-                              ? context.pop()
-                              : context.push(AppRoutes.createProjectReview);
-                        },
-                      ),
                     ],
                   ),
                 ),
               ),
-            ],
+              SafeArea(
+                top: false,
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 14.h),
+                  child: CPNextButton(
+                    label: widget.isEditMode
+                        ? AppStrings.btnSaveChanges
+                        : AppStrings.btnNext,
+                    onPressed: () {
+                      if (!cubit.validateBorrowing()) return;
+                      widget.isEditMode
+                          ? context.pop()
+                          : context.push(AppRoutes.createProjectReview);
+                    },
+                  ),
+                ),
+              ),
+              ],
+            ),
           ),
         );
       },

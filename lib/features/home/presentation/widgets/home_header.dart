@@ -16,9 +16,7 @@ class HomeHeader extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.fromLTRB(20.w, 52.h, 20.w, 24.h),
-      decoration: const BoxDecoration(
-        gradient: AppColors.appBackgroundGradient,
-      ),
+
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -28,8 +26,8 @@ class HomeHeader extends StatelessWidget {
               children: [
                 Text(
                   AppStrings.totalContributed,
-                  style: GoogleFonts.inter(
-                    fontSize: 13.sp,
+                  style: GoogleFonts.lato(
+                    fontSize: 16.sp,
                     color: AppColors.authSubtitle,
                     fontWeight: FontWeight.w500,
                   ),
@@ -37,7 +35,7 @@ class HomeHeader extends StatelessWidget {
                 SizedBox(height: 4.h),
                 Text(
                   '\$${_formatAmount(totalContributed)}',
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.lato(
                     fontSize: 32.sp,
                     fontWeight: FontWeight.w800,
                     color: AppColors.textPrimary,

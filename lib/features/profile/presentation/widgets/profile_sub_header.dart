@@ -23,10 +23,8 @@ class ProfileSubHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.fromLTRB(16.w, 52.h, 20.w, 20.h),
-      decoration: const BoxDecoration(
-        gradient: AppColors.appBackgroundGradient,
-      ),
+      padding: EdgeInsets.fromLTRB(16.w, 70.h, 20.w, 20.h),
+
       child: Row(
         children: [
           GestureDetector(
@@ -39,9 +37,9 @@ class ProfileSubHeader extends StatelessWidget {
           ),
           AppText(
             title,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.lato(
               fontSize: 22.sp,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
             ),
           ),

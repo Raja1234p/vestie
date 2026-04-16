@@ -16,37 +16,49 @@ class PaymentEmptyView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Stack(
       children: [
-        const Spacer(),
-        SvgPicture.asset(
-          AppAssets.iconPaymentMethods,
-          width: 72.w,
-          height: 72.w,
-          colorFilter: const ColorFilter.mode(AppColors.primary, BlendMode.srcIn),
-        ),
-        SizedBox(height: 16.h),
-        AppText(
-          AppStrings.emptyPaymentTitle,
-          style: GoogleFonts.inter(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w700,
-            color: AppColors.textPrimary,
+        Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SvgPicture.asset(
+                AppAssets.emptyPaymentMethodIcon,
+                width: 72.w,
+                height: 72.w,
+                colorFilter: const ColorFilter.mode(
+                  AppColors.primary,
+                  BlendMode.srcIn,
+                ),
+              ),
+              SizedBox(height: 16.h),
+              AppText(
+                AppStrings.emptyPaymentTitle,
+                style: GoogleFonts.lato(
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              SizedBox(height: 8.h),
+              AppText(
+                AppStrings.emptyPaymentSubtitle,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.lato(
+                  fontSize: 15.sp,
+                  color: AppColors.textBody,
+                  height: 1.5,
+                ),
+              ),
+            ],
           ),
         ),
-        SizedBox(height: 8.h),
-        AppText(
-          AppStrings.emptyPaymentSubtitle,
-          textAlign: TextAlign.center,
-          style: GoogleFonts.inter(
-            fontSize: 13.sp,
-            color: AppColors.textBody,
-            height: 1.5,
-          ),
-        ),
-        const Spacer(flex: 2),
-        Padding(
-          padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 32.h),
+        Positioned(
+          left: 20.w,
+          right: 20.w,
+          bottom: 32.h,
           child: PaymentPrimaryButton(
             label: AppStrings.btnAddCard,
             onTap: onAdd,

@@ -18,35 +18,43 @@ class AppButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isEnabled = onPressed != null;
+
     return SizedBox(
       width: double.infinity,
-      height: 52.h,
+      height: 56.h,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          gradient: onPressed == null
-              ? null
-              : const LinearGradient(
-                  colors: [AppColors.authButtonStart, AppColors.authButtonEnd],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                ),
-          color: onPressed == null ? AppColors.authHint : null,
-          borderRadius: BorderRadius.circular(100.r),
-          boxShadow: onPressed == null
-              ? null
-              : [
+          gradient: isEnabled
+              ? const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [AppColors.purple700, AppColors.purple900],
+                )
+              : null,
+          color: isEnabled ? null : AppColors.textHint,
+          borderRadius: BorderRadius.circular(999.r),
+          border: Border.all(
+            color: isEnabled
+                ? AppColors.purple500.withValues(alpha: 0.45)
+                : AppColors.grey400,
+            width: 1,
+          ),
+          boxShadow: isEnabled
+              ? [
                   BoxShadow(
-                    color: AppColors.authButtonEnd.withValues(alpha: 0.35),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
+                    color: AppColors.purple900.withValues(alpha: 0.28),
+                    blurRadius: 14.r,
+                    offset: Offset(0, 4.h),
                   ),
-                ],
+                ]
+              : null,
         ),
         child: Material(
           color: Colors.transparent,
-          borderRadius: BorderRadius.circular(100.r),
+          borderRadius: BorderRadius.circular(999.r),
           child: InkWell(
-            borderRadius: BorderRadius.circular(100.r),
+            borderRadius: BorderRadius.circular(999.r),
             onTap: isLoading ? null : onPressed,
             child: Center(
               child: isLoading
@@ -55,15 +63,15 @@ class AppButton extends StatelessWidget {
                       height: 22.h,
                       child: const CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: Colors.white,
+                        color: AppColors.surface,
                       ),
                     )
                   : Text(
                       text,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.lato(
                         fontSize: 15.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.surface,
                       ),
                     ),
             ),

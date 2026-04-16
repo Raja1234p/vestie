@@ -13,11 +13,11 @@ class CPFieldLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 8.h),
+      padding: EdgeInsets.only(bottom: 10.h),
       child: Text(
         text,
-        style: GoogleFonts.inter(
-          fontSize: 13.sp,
+        style: GoogleFonts.lato(
+          fontSize: 16.sp,
           fontWeight: FontWeight.w600,
           color: AppColors.textBody,
         ),
@@ -73,11 +73,11 @@ class CPTextField extends StatelessWidget {
             keyboardType: keyboardType,
             textInputAction: textInputAction,
             onSubmitted: onSubmitted,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.lato(
                 fontSize: 14.sp, color: AppColors.textPrimary),
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: GoogleFonts.inter(
+              hintStyle: GoogleFonts.lato(
                   fontSize: 14.sp, color: AppColors.authHint),
               border: InputBorder.none,
               contentPadding:
@@ -91,7 +91,7 @@ class CPTextField extends StatelessWidget {
             padding: EdgeInsets.only(top: 4.h, left: 4.w),
             child: Text(
               errorText!,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.lato(
                   fontSize: 11.sp, color: AppColors.error),
             ),
           ),
@@ -137,7 +137,7 @@ class CPNextButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      height: 52.h,
+      height: 48.h,
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
@@ -145,12 +145,15 @@ class CPNextButton extends StatelessWidget {
           foregroundColor: Colors.white,
           elevation: 0,
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(100.r)),
+            borderRadius: BorderRadius.circular(8.r),
+          ),
         ),
         child: Text(
           label,
-          style: GoogleFonts.inter(
-              fontSize: 15.sp, fontWeight: FontWeight.w600),
+          style: GoogleFonts.lato(
+            fontSize: 15.sp,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ),
     );

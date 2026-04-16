@@ -58,7 +58,7 @@ class SettingsSection extends StatelessWidget {
                       SizedBox(width: 12.w),
                       AppText(
                         item.label,
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.lato(
                           fontSize: 15.sp,
                           fontWeight: FontWeight.w500,
                           color: AppColors.textPrimary,

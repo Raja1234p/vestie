@@ -78,7 +78,7 @@ class TxListItem extends StatelessWidget {
                   tx.title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.lato(
                     fontSize: 13.sp,
                     fontWeight: FontWeight.w500,
                     color: AppColors.textPrimary,
@@ -87,14 +87,14 @@ class TxListItem extends StatelessWidget {
                 SizedBox(height: 2.h),
                 AppText(
                   tx.date,
-                  style: GoogleFonts.inter(fontSize: 11.sp, color: AppColors.textBody),
+                  style: GoogleFonts.lato(fontSize: 11.sp, color: AppColors.textBody),
                 ),
               ],
             ),
           ),
           AppText(
             tx.formattedAmount,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.lato(
               fontSize: 15.sp,
               fontWeight: FontWeight.w700,
               color: tx.isPositive ? AppColors.txPositive : AppColors.txNegative,

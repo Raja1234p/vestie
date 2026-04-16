@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../../../../core/constants/app_assets.dart';
 
 /// Shared background for every auth screen.
 ///
@@ -16,15 +17,18 @@ class AuthBackground extends StatelessWidget {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark, // dark icons on light lavender bg
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
-        body: Container(
-          width: double.infinity,
-          height: double.infinity,
-          decoration: const BoxDecoration(
-            gradient: AppColors.appBackgroundGradient,
-          ),
-          child: SafeArea(child: child),
+        body: Stack(
+          children: [
+            Positioned.fill(
+              child: SvgPicture.asset(
+                AppAssets.authLoginGradient,
+                fit: BoxFit.cover,
+              ),
+            ),
+            SafeArea(child: child),
+          ],
         ),
       ),
     );

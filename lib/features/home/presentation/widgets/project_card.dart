@@ -30,7 +30,7 @@ class ProjectCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
+            color: AppColors.textBody.withValues(alpha: 0.06),
             blurRadius: 12,
             spreadRadius: 0,
             offset: const Offset(0, 4),
@@ -55,7 +55,7 @@ class ProjectCard extends StatelessWidget {
             // Project name
             Text(
               project.name,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.lato(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.w800,
                 color: AppColors.textPrimary,
@@ -64,7 +64,7 @@ class ProjectCard extends StatelessWidget {
             if (project.description != null) ...[
               SizedBox(height: 2.h),
               Text(project.description!,
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.lato(
                       fontSize: 11.sp, color: AppColors.textBody)),
             ],
             if (project.goalAmount != null) ...[
@@ -79,7 +79,7 @@ class ProjectCard extends StatelessWidget {
             // Completed — raised/total amount as main large text
             Text(
               _raisedText,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.lato(
                 fontSize: 22.sp,
                 fontWeight: FontWeight.w800,
                 color: AppColors.textPrimary,
@@ -137,7 +137,7 @@ class _CategoryChip extends StatelessWidget {
           Icon(_icon, size: 12.w, color: AppColors.primary),
           SizedBox(width: 4.w),
           Text(_label,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.lato(
                   fontSize: 11.sp,
                   color: AppColors.textBody,
                   fontWeight: FontWeight.w500)),
@@ -158,25 +158,43 @@ class _StatusBadge extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
       decoration: BoxDecoration(
-        color: ongoing ? AppColors.badgeOnGoingBg : AppColors.badgeCompletedBg,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: ongoing
+              ? const [
+                  AppColors.blue600,
+                  AppColors.blue800, // #2E62C2
+                ]
+              : const [
+                  AppColors.green600,
+                  AppColors.green800, // #159A68
+                ],
+        ),
         borderRadius: BorderRadius.circular(100.r),
+        boxShadow: [
+          BoxShadow(
+            color: (ongoing ? AppColors.blue800 : AppColors.green800)
+                .withValues(alpha: 0.24),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (!ongoing) ...[
             Icon(Icons.check_circle_rounded,
-                size: 11.w, color: AppColors.badgeCompletedText),
+                size: 11.w, color: AppColors.surface),
             SizedBox(width: 3.w),
           ],
           Text(
             ongoing ? AppStrings.statusOnGoing : AppStrings.statusCompleted,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.lato(
               fontSize: 11.sp,
               fontWeight: FontWeight.w600,
-              color: ongoing
-                  ? AppColors.badgeOnGoingText
-                  : AppColors.badgeCompletedText,
+              color: AppColors.surface,
             ),
           ),
         ],
@@ -194,16 +212,16 @@ class _GoalRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return RichText(
       text: TextSpan(
-        style: GoogleFonts.inter(fontSize: 13.sp, color: AppColors.textBody),
+        style: GoogleFonts.lato(fontSize: 25.sp, color: AppColors.textBody),
         children: [
-          TextSpan(text: '${AppStrings.labelGoal} '),
+          TextSpan(text: '${AppStrings.labelGoal} ',style: TextStyle(fontWeight: FontWeight.w700,)),
           TextSpan(
             text: '\$${project.currentAmount?.toStringAsFixed(0) ?? '0'}',
             style: TextStyle(
                 fontWeight: FontWeight.w700, color: AppColors.textPrimary),
           ),
           TextSpan(
-              text: ' / \$${project.goalAmount?.toStringAsFixed(0) ?? '0'}'),
+              text: ' / \$${project.goalAmount?.toStringAsFixed(0) ?? '0'}',style: TextStyle(fontSize: 15.sp,)),
         ],
       ),
     );
@@ -221,7 +239,7 @@ class _ProgressBar extends StatelessWidget {
       borderRadius: BorderRadius.circular(100.r),
       child: LinearProgressIndicator(
         value: progress,
-        minHeight: 6.h,
+        minHeight: 12.h,
         backgroundColor: AppColors.progressBg,
         valueColor: const AlwaysStoppedAnimation(AppColors.progressFill),
       ),
@@ -242,8 +260,12 @@ class _DateRow extends StatelessWidget {
             size: 12.w, color: AppColors.textBody),
         SizedBox(width: 4.w),
         Text(
-          '${AppStrings.labelEndsIn} $endsIn',
-          style: GoogleFonts.inter(fontSize: 11.sp, color: AppColors.textBody),
+          '${AppStrings.labelEndsIn} ',
+          style: GoogleFonts.lato(fontSize: 13.sp, color: AppColors.textBody),
+        ),
+        Text(
+          endsIn,
+          style: GoogleFonts.lato(fontSize: 13.sp, color: AppColors.textBody,fontWeight: FontWeight.w800),
         ),
       ],
     );
@@ -266,21 +288,21 @@ class _ActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      height: 40.h,
+      height: 44.h,
       child: ElevatedButton(
         onPressed: onTap,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.cardActionBtn,
-          foregroundColor: Colors.white,
+          foregroundColor: AppColors.surface,
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(100.r), // full pill
+            borderRadius: BorderRadius.circular(10.r),
           ),
         ),
         child: Text(
           _label,
-          style: GoogleFonts.inter(
-              fontSize: 13.sp, fontWeight: FontWeight.w600),
+          style: GoogleFonts.lato(
+              fontSize: 13.sp, fontWeight: FontWeight.w500),
         ),
       ),
     );

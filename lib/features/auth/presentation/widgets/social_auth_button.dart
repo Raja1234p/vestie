@@ -52,7 +52,7 @@ class SocialAuthButton extends StatelessWidget {
               provider == SocialProvider.google
                   ? AppStrings.btnGoogle
                   : AppStrings.btnApple,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.lato(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w500,
                 color: AppColors.authSocialText,

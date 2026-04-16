@@ -12,8 +12,10 @@ import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/app_snackbar.dart';
+import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../cubit/create_project_cubit.dart';
 import '../../domain/create_project_form.dart';
+import 'form_helpers.dart';
 
 /// Final screen – project created successfully.
 class ProjectSuccessScreen extends StatelessWidget {
@@ -56,7 +58,7 @@ class ProjectSuccessScreen extends StatelessWidget {
                     // ── Title ─────────────────────────────────────
                     Text(
                       AppStrings.projectCreatedTitle,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.lato(
                         fontSize: 26.sp,
                         fontWeight: FontWeight.w800,
                         color: AppColors.textPrimary,
@@ -78,7 +80,7 @@ class ProjectSuccessScreen extends StatelessWidget {
                           Expanded(
                             child: Text(
                               shareLink,
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.lato(
                                 fontSize: 13.sp,
                                 color: AppColors.textPrimary,
                               ),
@@ -116,42 +118,57 @@ class ProjectSuccessScreen extends StatelessWidget {
                       },
                       child: Text(
                         AppStrings.shareViaWhatsapp,
-                        style: GoogleFonts.inter(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w600,
+                        style: GoogleFonts.lato(
+                          fontSize: 17.sp,
+                          fontWeight: FontWeight.w800,
                           color: AppColors.textPrimary,
                         ),
                       ),
                     ),
                     SizedBox(height: 12.h),
 
-                    // ── Go to my Project ──────────────────────────
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50.h,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Reset wizard state before navigating so a fresh
-                          // session starts if the user creates another project.
-                          context.read<CreateProjectCubit>().reset();
-                          context.go(AppRoutes.dashboard);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.cardActionBtn,
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(100.r)),
-                        ),
-                        child: Text(
-                          AppStrings.btnGoToMyProject,
-                          style: GoogleFonts.inter(
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.w600),
+                    // // ── Go to my Project ──────────────────────────
+                    // SizedBox(
+                    //   width: double.infinity,
+                    //   height: 50.h,
+                    //   child: ElevatedButton(
+                    //     onPressed: () {
+                    //       // Reset wizard state before navigating so a fresh
+                    //       // session starts if the user creates another project.
+                    //       context.read<CreateProjectCubit>().reset();
+                    //       context.go(AppRoutes.dashboard);
+                    //     },
+                    //     style: ElevatedButton.styleFrom(
+                    //       backgroundColor: AppColors.cardActionBtn,
+                    //       foregroundColor: Colors.white,
+                    //       elevation: 0,
+                    //       shape: RoundedRectangleBorder(
+                    //           borderRadius: BorderRadius.circular(100.r)),
+                    //     ),
+                    //     child: Text(
+                    //       AppStrings.btnGoToMyProject,
+                    //       style: GoogleFonts.lato(
+                    //           fontSize: 15.sp,
+                    //           fontWeight: FontWeight.w600),
+                    //     ),
+                    //   ),
+                    // ),
+                    // SizedBox(height: 32.h),
+                    SafeArea(
+                      top: false,
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(0.w, 0.h, 0.w, 20.h),
+                        child: CPNextButton(
+                          label:    AppStrings.btnGoToMyProject,
+                          onPressed: () {
+                            // Reset wizard state before navigating so a fresh
+                            // session starts if the user creates another project.
+                            context.read<CreateProjectCubit>().reset();
+                            context.go(AppRoutes.dashboard);
+                          },
                         ),
                       ),
                     ),
-                    SizedBox(height: 32.h),
                   ],
                 ),
               ),

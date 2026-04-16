@@ -44,7 +44,7 @@ class TxFilterBar extends StatelessWidget {
                 ),
                 child: AppText(
                   filter,
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.lato(
                     fontSize: 12.sp,
                     fontWeight: FontWeight.w500,
                     color: active ? AppColors.chipActiveText : AppColors.chipInactiveText,

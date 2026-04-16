@@ -64,14 +64,14 @@ class _LoginFormState extends State<LoginForm> {
             children: [
               SizedBox(height: 48.h),
               Text(AppStrings.loginTitle,
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.lato(
                       fontSize: 28.sp,
                       fontWeight: FontWeight.w800,
                       color: AppColors.authTitle,
                       height: 1.2)),
               SizedBox(height: 6.h),
               Text(AppStrings.loginSubtitle,
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.lato(
                       fontSize: 13.5.sp,
                       color: AppColors.authSubtitle,
                       height: 1.5)),
@@ -118,7 +118,7 @@ class _LoginFormState extends State<LoginForm> {
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
                   child: Text(AppStrings.forgotPassword,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.lato(
                           fontSize: 12.5.sp,
                           color: AppColors.authForgotLink,
                           fontWeight: FontWeight.w500,
@@ -148,7 +148,7 @@ class _LoginFormState extends State<LoginForm> {
               Center(
                 child: RichText(
                   text: TextSpan(
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.lato(
                         fontSize: 13.sp, color: AppColors.authBottomText),
                     children: [
                       TextSpan(text: AppStrings.noAccount),
@@ -156,7 +156,7 @@ class _LoginFormState extends State<LoginForm> {
                         child: GestureDetector(
                           onTap: () => context.go(AppRoutes.register),
                           child: Text(AppStrings.signupLink,
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.lato(
                                   fontSize: 13.sp,
                                   color: AppColors.authBottomLink,
                                   fontWeight: FontWeight.w600,

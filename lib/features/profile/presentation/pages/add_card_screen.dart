@@ -5,9 +5,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_strings.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/widgets/common/app_text_field.dart';
+import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../cubit/add_card_cubit.dart';
 import '../cubit/payment_methods_cubit.dart';
 import '../widgets/card_input_formatters.dart';
@@ -64,15 +64,16 @@ class _AddCardBodyState extends State<_AddCardBody> {
       builder: (context, state) {
         final cubit = context.read<AddCardCubit>();
         return Scaffold(
-          backgroundColor: AppColors.surface,
-          body: Column(
-            children: [
-              ProfileSubHeader(title: AppStrings.addCardTitle),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
-                  child: Column(
-                    children: [
+          backgroundColor: Colors.transparent,
+          body: PostAuthGradientBackground(
+            child: Column(
+              children: [
+                ProfileSubHeader(title: AppStrings.addCardTitle),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 16.h),
+                    child: Column(
+                      children: [
                       AppTextField(
                         label: AppStrings.labelCardHolderName,
                         hint: AppStrings.hintCardHolder,
@@ -96,6 +97,7 @@ class _AddCardBodyState extends State<_AddCardBody> {
                         onChanged: cubit.setCardNumber,
                         errorText: state.cardNumberError,
                       ),
+                        SizedBox(height: 14.h),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -136,18 +138,23 @@ class _AddCardBodyState extends State<_AddCardBody> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 20.h),
-                      PaymentPrimaryButton(
-                        label: AppStrings.btnSaveCard,
-                        onTap: state.saving ? null : () => _save(context),
-                        loading: state.saving,
-                      ),
-                      SizedBox(height: 16.h),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+                SafeArea(
+                  top: false,
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 16.h),
+                    child: PaymentPrimaryButton(
+                      label: AppStrings.btnSaveCard,
+                      onTap: state.saving ? null : () => _save(context),
+                      loading: state.saving,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },

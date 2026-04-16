@@ -44,7 +44,7 @@ class CPDeadlinePicker extends StatelessWidget {
                 Expanded(
                   child: Text(
                     label,
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.lato(
                       fontSize: 14.sp,
                       color: isEmpty ? AppColors.authHint : AppColors.textPrimary,
                     ),
@@ -61,7 +61,7 @@ class CPDeadlinePicker extends StatelessWidget {
             padding: EdgeInsets.only(top: 4.h, left: 4.w),
             child: Text(
               errorText!,
-              style: GoogleFonts.inter(fontSize: 11.sp, color: AppColors.error),
+              style: GoogleFonts.lato(fontSize: 11.sp, color: AppColors.error),
             ),
           ),
       ],
@@ -91,7 +91,7 @@ class CPCategoryDropdown extends StatelessWidget {
           isExpanded: true,
           icon: Icon(Icons.keyboard_arrow_down_rounded,
               size: 22.w, color: AppColors.textBody),
-          style: GoogleFonts.inter(fontSize: 14.sp, color: AppColors.textPrimary),
+          style: GoogleFonts.lato(fontSize: 14.sp, color: AppColors.textPrimary),
           items: NewProjectCategory.values.map((c) {
             return DropdownMenuItem(value: c, child: Text(c.label));
           }).toList(),
@@ -110,35 +110,44 @@ class CPVisibilityToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: ProjectVisibility.values.map((v) {
-        final isActive = v == value;
-        final label = v == ProjectVisibility.public
-            ? AppStrings.visibilityPublic
-            : AppStrings.visibilityPrivate;
-        return GestureDetector(
-          onTap: () => onChanged(v),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            padding: EdgeInsets.symmetric(horizontal: 28.w, vertical: 10.h),
-            decoration: BoxDecoration(
-              color: isActive ? AppColors.primary : Colors.white,
-              borderRadius: BorderRadius.circular(100.r),
-              border: Border.all(
-                color: isActive ? AppColors.primary : AppColors.cardBorder,
+    return Container(
+      height: 44.h,
+      padding: EdgeInsets.all(4.r),
+      decoration: BoxDecoration(
+        color: AppColors.grey200,
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: Row(
+        children: ProjectVisibility.values.map((v) {
+          final isActive = v == value;
+          final label = v == ProjectVisibility.public
+              ? AppStrings.visibilityPublic
+              : AppStrings.visibilityPrivate;
+          return Expanded(
+            child: GestureDetector(
+              onTap: () => onChanged(v),
+              behavior: HitTestBehavior.opaque,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                curve: Curves.easeInOut,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: isActive ? AppColors.primary : Colors.transparent,
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: Text(
+                  label,
+                  style: GoogleFonts.lato(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                    color: isActive ? Colors.white : AppColors.textPrimary,
+                  ),
+                ),
               ),
             ),
-            child: Text(
-              label,
-              style: GoogleFonts.inter(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w600,
-                color: isActive ? Colors.white : AppColors.textPrimary,
-              ),
-            ),
-          ),
-        );
-      }).toList(),
+          );
+        }).toList(),
+      ),
     );
   }
 }

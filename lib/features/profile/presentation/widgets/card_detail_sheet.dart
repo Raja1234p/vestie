@@ -68,7 +68,7 @@ class CardDetailSheet extends StatelessWidget {
                       children: [
                         AppText(
                           AppStrings.setPrimaryLabel,
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.lato(
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w600,
                             color: AppColors.textPrimary,
@@ -77,7 +77,7 @@ class CardDetailSheet extends StatelessWidget {
                         SizedBox(height: 2.h),
                         AppText(
                           AppStrings.setPrimarySubtitle,
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.lato(
                             fontSize: 11.sp,
                             color: AppColors.textBody,
                           ),
@@ -110,7 +110,7 @@ class CardDetailSheet extends StatelessWidget {
                       children: [
                         AppText(
                           AppStrings.removeCardLabel,
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.lato(
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w600,
                             color: AppColors.textPrimary,
@@ -119,7 +119,7 @@ class CardDetailSheet extends StatelessWidget {
                         SizedBox(height: 2.h),
                         AppText(
                           AppStrings.removeCardSubtitle,
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.lato(
                             fontSize: 11.sp,
                             color: AppColors.textBody,
                           ),

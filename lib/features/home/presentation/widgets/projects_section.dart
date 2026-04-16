@@ -38,8 +38,8 @@ class ProjectsSection extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.inter(
-                    fontSize: 15.sp,
+                  style: GoogleFonts.lato(
+                    fontSize: 18.sp,
                     fontWeight: FontWeight.w700,
                     color: AppColors.textPrimary,
                   ),

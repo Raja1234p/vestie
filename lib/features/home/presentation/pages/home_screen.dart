@@ -7,6 +7,7 @@ import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_loader.dart';
+import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../bloc/home_bloc.dart';
 import '../bloc/home_event.dart';
 import '../bloc/home_state.dart';
@@ -41,15 +42,19 @@ class _HomeBody extends StatelessWidget {
       builder: (context, state) {
         if (state is HomeLoading || state is HomeInitial) {
           return const Scaffold(
-            backgroundColor: AppColors.dashBg,
-            body: AppLoader(),
+            backgroundColor: Colors.transparent,
+            body: PostAuthGradientBackground(
+              child: AppLoader(),
+            ),
           );
         }
 
         if (state is HomeError) {
           return Scaffold(
-            backgroundColor: AppColors.dashBg,
-            body: Center(child: Text(state.message)),
+            backgroundColor: Colors.transparent,
+            body: PostAuthGradientBackground(
+              child: Center(child: Text(state.message)),
+            ),
           );
         }
 
@@ -83,43 +88,45 @@ class _HomeContent extends StatelessWidget {
       builder: (context, sections) {
         final cubit = context.read<HomeSectionsCubit>();
         return Scaffold(
-          backgroundColor: AppColors.dashBg,
-          body: RefreshIndicator(
-            color: AppColors.primary,
-            onRefresh: () async =>
-                context.read<HomeBloc>().add(const HomeRefreshRequested()),
-            child: CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(
-                  child: HomeHeader(
-                      totalContributed: data.totalContributed),
-                ),
-                SliverPadding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
-                  sliver: SliverToBoxAdapter(
-                    child: Column(
-                      children: [
-                        ProjectsSection(
-                          title: AppStrings.myProjects,
-                          projects: data.myProjects,
-                          expanded: sections.myProjectsExpanded,
-                          onToggle: cubit.toggleMyProjects,
-                          onProjectAction: (_) {},
-                        ),
-                        ProjectsSection(
-                          title: AppStrings.joinedProjects,
-                          projects: data.joinedProjects,
-                          expanded: sections.joinedProjectsExpanded,
-                          onToggle: cubit.toggleJoined,
-                          onProjectAction: (_) {},
-                        ),
-                        SizedBox(height: 16.h),
-                      ],
+          backgroundColor: Colors.transparent,
+          body: PostAuthGradientBackground(
+            child: RefreshIndicator(
+              color: AppColors.primary,
+              onRefresh: () async =>
+                  context.read<HomeBloc>().add(const HomeRefreshRequested()),
+              child: CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: HomeHeader(
+                        totalContributed: data.totalContributed),
+                  ),
+                  SliverPadding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+                    sliver: SliverToBoxAdapter(
+                      child: Column(
+                        children: [
+                          ProjectsSection(
+                            title: AppStrings.myProjects,
+                            projects: data.myProjects,
+                            expanded: sections.myProjectsExpanded,
+                            onToggle: cubit.toggleMyProjects,
+                            onProjectAction: (_) {},
+                          ),
+                          ProjectsSection(
+                            title: AppStrings.joinedProjects,
+                            projects: data.joinedProjects,
+                            expanded: sections.joinedProjectsExpanded,
+                            onToggle: cubit.toggleJoined,
+                            onProjectAction: (_) {},
+                          ),
+                          SizedBox(height: 16.h),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );

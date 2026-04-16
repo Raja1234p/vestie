@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../domain/create_project_form.dart';
 import '../cubit/create_project_cubit.dart';
 import '../widgets/create_project_header.dart';
@@ -21,17 +22,18 @@ class ProjectReviewScreen extends StatelessWidget {
     return BlocBuilder<CreateProjectCubit, CreateProjectForm>(
       builder: (context, form) {
         return Scaffold(
-          backgroundColor: AppColors.dashBg,
-          body: Column(
-            children: [
+          backgroundColor: Colors.transparent,
+          body: PostAuthGradientBackground(
+            child: Column(
+              children: [
               CreateProjectHeader(
                 title: AppStrings.createReviewTitle,
                 stepBadge: '4/4',
-                badgeColor: AppColors.badgeCompletedBg,
+                badgeColor: AppColors.green800,
               ),
               Expanded(
                 child: SingleChildScrollView(
-                  padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 16.h),
+                  padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 10.h),
                   child: Column(
                     children: [
                       // Project Details
@@ -87,18 +89,23 @@ class ProjectReviewScreen extends StatelessWidget {
                               : '${form.roi}%'),
                         ],
                       ),
-                      SizedBox(height: 24.h),
-
-                      CPNextButton(
-                        label: AppStrings.btnCreateProject2,
-                        onPressed: () =>
-                            context.push(AppRoutes.createProjectSuccess),
-                      ),
                     ],
                   ),
                 ),
               ),
-            ],
+              SafeArea(
+                top: false,
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 14.h),
+                  child: CPNextButton(
+                    label: AppStrings.btnCreateProject2,
+                    onPressed: () =>
+                        context.push(AppRoutes.createProjectSuccess),
+                  ),
+                ),
+              ),
+              ],
+            ),
           ),
         );
       },
@@ -137,15 +144,15 @@ class _ReviewSection extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(title,
-                  style: GoogleFonts.inter(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w700,
+                  style: GoogleFonts.lato(
+                      fontSize: 17.sp,
+                      fontWeight: FontWeight.w900,
                       color: AppColors.textPrimary)),
               GestureDetector(
                 onTap: onEdit,
                 child: Text(AppStrings.btnEdit,
-                    style: GoogleFonts.inter(
-                        fontSize: 13.sp,
+                    style: GoogleFonts.lato(
+                        fontSize: 15.sp,
                         fontWeight: FontWeight.w600,
                         color: AppColors.primary)),
               ),
@@ -157,7 +164,7 @@ class _ReviewSection extends StatelessWidget {
                 padding: EdgeInsets.only(top: 2.h),
                 child: Text(
                   e.key.isEmpty ? e.value : '${e.key}: ${e.value}',
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.lato(
                       fontSize: 12.sp,
                       color: AppColors.textBody,
                       height: 1.5),

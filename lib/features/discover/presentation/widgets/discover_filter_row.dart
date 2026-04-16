@@ -49,7 +49,7 @@ class DiscoverFilterRow extends StatelessWidget {
               ),
               child: Text(
                 f,
-                style: GoogleFonts.inter(
+                style: GoogleFonts.lato(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w600,
                   color: active

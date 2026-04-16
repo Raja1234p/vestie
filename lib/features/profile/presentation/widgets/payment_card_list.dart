@@ -21,6 +21,7 @@ class PaymentCardList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        const SizedBox(height: 10,),
         Expanded(
           child: ListView.separated(
             padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 0),
@@ -52,63 +53,65 @@ class _PaymentCardItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8.r),
-      child: Ink(
-        decoration: BoxDecoration(
-          color: AppColors.settingsCardBg,
-          borderRadius: BorderRadius.circular(8.r),
-          border: Border.all(color: AppColors.cardBorder),
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-          child: Row(
-            children: [
-              SvgPicture.asset(
-                card.brand == CardBrand.visa ? AppAssets.iconVisa : AppAssets.iconMastercard,
-                width: 40.w,
-                height: 26.h,
-              ),
-              SizedBox(width: 10.w),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AppText(
-                    card.brandName,
-                    style: GoogleFonts.inter(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  AppText(
-                    card.maskedNumber,
-                    style: GoogleFonts.inter(fontSize: 11.sp, color: AppColors.textBody),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              if (card.isPrimary) ...[
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
-                  decoration: BoxDecoration(
-                    color: AppColors.badgeOnGoingBg,
-                    borderRadius: BorderRadius.circular(100.r),
-                  ),
-                  child: AppText(
-                    AppStrings.cardPrimary,
-                    style: GoogleFonts.inter(
-                      fontSize: 10.sp,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.badgeOnGoingText,
-                    ),
-                  ),
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.appBgBottom,
+        borderRadius: BorderRadius.circular(14.r),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(14.r),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+            child: Row(
+              children: [
+                SvgPicture.asset(
+                  card.brand == CardBrand.visa ? AppAssets.iconVisa : AppAssets.iconMastercard,
+                  width: 28.w,
+                  height: 15.h,
                 ),
-                SizedBox(width: 8.w),
+                SizedBox(width: 10.w),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppText(
+                      card.brandName,
+                      style: GoogleFonts.lato(
+                        fontSize: 17.sp,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    AppText(
+                      card.maskedNumber,
+                      style: GoogleFonts.lato(fontSize: 14.sp, color: AppColors.neutral500),
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                if (card.isPrimary) ...[
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+                    decoration: BoxDecoration(
+                      color: AppColors.badgeOnGoingBg,
+                      borderRadius: BorderRadius.circular(100.r),
+                    ),
+                    child: AppText(
+                      AppStrings.cardPrimary,
+                      style: GoogleFonts.lato(
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.badgeOnGoingText,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                ],
+                Icon(Icons.chevron_right_rounded, size: 18.w, color: AppColors.primary),
               ],
-              Icon(Icons.chevron_right_rounded, size: 18.w, color: AppColors.primary),
-            ],
+            ),
           ),
         ),
       ),

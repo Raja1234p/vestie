@@ -40,7 +40,7 @@ class AuthTextField extends StatelessWidget {
         // ── Label ─────────────────────────────────────────
         Text(
           label,
-          style: GoogleFonts.inter(
+          style: GoogleFonts.lato(
             fontSize: 13.sp,
             fontWeight: FontWeight.w500,
             color: AppColors.authLabel,
@@ -56,14 +56,14 @@ class AuthTextField extends StatelessWidget {
           textInputAction: textInputAction,
           maxLength: maxLength,
           onChanged: onChanged,
-          style: GoogleFonts.inter(
+          style: GoogleFonts.lato(
             fontSize: 14.sp,
             fontWeight: FontWeight.w400,
             color: AppColors.authSocialText, // dark (#1A1033) — inside white input box
           ),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: GoogleFonts.inter(
+            hintStyle: GoogleFonts.lato(
               fontSize: 14.sp,
               color: AppColors.authHint,
               fontWeight: FontWeight.w400,
@@ -104,7 +104,7 @@ class AuthTextField extends StatelessWidget {
           SizedBox(height: 4.h),
           Text(
             errorText!,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.lato(
               fontSize: 11.sp,
               color: AppColors.error,
               fontWeight: FontWeight.w400,

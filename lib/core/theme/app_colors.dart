@@ -175,9 +175,9 @@ class AppColors {
   static const Color surface    = neutral100; // white
 
   // ── Text ─────────────────────────────────────────────────────────────────────
-  static const Color textPrimary   = grey1100; // #1A1630 — headings
-  static const Color textBody      = grey900;  // #443F63 — body / labels
-  static const Color textSecondary = grey900;
+  static const Color textPrimary   = grey900;  // #443F63
+  static const Color textBody      = grey900;  // #443F63
+  static const Color textSecondary = grey900;  // #443F63
   static const Color textHint      = grey500;  // #B8B2D1
 
   // ── Borders & Dividers ────────────────────────────────────────────────────────
@@ -197,7 +197,7 @@ class AppColors {
 
   // Progress bar
   static const Color progressBg   = grey300;    // #E4E0EE
-  static const Color progressFill = green700;   // #1DB87E
+  static const Color progressFill = green800;   // #1DB87E
 
   // Bottom navigation
   static const Color navActive   = purple900;   // #4C24A0

@@ -60,7 +60,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                   // ── Title ─────────────────────────────────────────
                   Text(
                     AppStrings.verifyTitle,
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.lato(
                       fontSize: 28.sp,
                       fontWeight: FontWeight.w800,
                       color: AppColors.authTitle,
@@ -70,7 +70,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                   SizedBox(height: 6.h),
                   Text(
                     AppStrings.verifySubtitle,
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.lato(
                       fontSize: 13.5.sp,
                       color: AppColors.authSubtitle,
                       height: 1.5,
@@ -107,7 +107,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                   Center(
                     child: RichText(
                       text: TextSpan(
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.lato(
                           fontSize: 13.sp,
                           color: AppColors.authBottomText,
                         ),
@@ -119,7 +119,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                                     onTap: cubit.resendCode,
                                     child: Text(
                                       AppStrings.resendCode,
-                                      style: GoogleFonts.inter(
+                                      style: GoogleFonts.lato(
                                         fontSize: 13.sp,
                                         color: AppColors.authBottomLink,
                                         fontWeight: FontWeight.w600,
@@ -130,7 +130,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                                   )
                                 : Text(
                                     '${AppStrings.resendCode} (${state.resendSeconds}s)',
-                                    style: GoogleFonts.inter(
+                                    style: GoogleFonts.lato(
                                       fontSize: 13.sp,
                                       color: AppColors.authBottomText
                                           .withValues(alpha: 0.55),

@@ -6,6 +6,9 @@ class AppAssets {
 
   // ── Images ────────────────────────────────────────────────────────────────
   static const String logoSvg = '$_imagePath/logo.svg';
+  static const String appGradient = '$_imagePath/gradient.png';
+  static const String authLoginGradient = '$_imagePath/Login gradient.svg';
+  static const String onboardingGradient = '$_imagePath/onboarding_gradient.svg';
 
   // Home empty-state illustration
   static const String homeEmptyState       = '$_imagePath/dashboard_empty_state_image.svg';
@@ -33,8 +36,8 @@ class AppAssets {
   static const String iconEditProfile       = '$_iconPath/edit_profile_icon.svg';
   static const String iconPaymentMethods    = '$_iconPath/payment_methods_icon.svg';
   static const String iconTransactionHistory = '$_iconPath/transactionhistory_icon.svg';
-  static const String iconKeyGuidelines     = '$_iconPath/guidelines_icons.svg';
-
+  static const String iconKeyGuidelines     = '$_iconPath/guidelines_icons.svg'; //
+  static const String emptyPaymentMethodIcon     = '$_iconPath/wallet-cards.svg';
   // ── Payment Card Brand Logos ──────────────────────────────────────────────
   static const String iconVisa       = '$_iconPath/visacard_icon.svg';
   static const String iconMastercard = '$_iconPath/mastercard_icon.svg';

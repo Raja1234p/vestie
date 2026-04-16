@@ -44,13 +44,13 @@ class AppTextField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.inter(
-            fontSize: 13.sp,
-            fontWeight: FontWeight.w500,
+          style: GoogleFonts.lato(
+            fontSize: 15.sp,
+            fontWeight: FontWeight.w600,
             color: AppColors.authLabel,
           ),
         ),
-        SizedBox(height: 6.h),
+        SizedBox(height: 10.h),
         TextField(
           controller: controller,
           obscureText: obscureText,
@@ -60,13 +60,13 @@ class AppTextField extends StatelessWidget {
           inputFormatters: inputFormatters,
           onChanged: onChanged,
           onSubmitted: onSubmitted,
-          style: GoogleFonts.inter(
+          style: GoogleFonts.lato(
             fontSize: 14.sp,
             color: AppColors.authSocialText,
           ),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: GoogleFonts.inter(
+            hintStyle: GoogleFonts.lato(
               fontSize: 14.sp,
               color: AppColors.authHint,
             ),
@@ -87,7 +87,7 @@ class AppTextField extends StatelessWidget {
           SizedBox(height: 4.h),
           Text(
             errorText!,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.lato(
               fontSize: 11.sp,
               color: AppColors.error,
             ),

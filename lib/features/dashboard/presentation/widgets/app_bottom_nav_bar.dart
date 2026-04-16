@@ -37,15 +37,21 @@ class AppBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 72.h,
+      height: 75.h,
       decoration: BoxDecoration(
         color: AppColors.navBg,
         border: Border(top: BorderSide(color: AppColors.cardBorder, width: 1)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 16,
-            offset: const Offset(0, -4),
+            color: AppColors.primary.withValues(alpha: 0.14),
+            blurRadius: 24,
+            spreadRadius: 1,
+            offset: const Offset(0, -6),
+          ),
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.08),
+            blurRadius: 12,
+            offset: const Offset(0, -2),
           ),
         ],
       ),
@@ -72,15 +78,15 @@ class AppBottomNavBar extends StatelessWidget {
                       border: active
                           ? null
                           : Border.all(
-                              color: AppColors.grey300, // #E4E0EE
+                              color: AppColors.grey100, // #E4E0EE
                               width: 1.5,
                             ),
                     ),
                     child: Center(
                       child: SvgPicture.asset(
                         _items[i].asset,
-                        width: 20.w,
-                        height: 20.w,
+                        width: 24.w,
+                        height: 24.w,
                         colorFilter: ColorFilter.mode(
                           active ? Colors.white : AppColors.navInactive,
                           BlendMode.srcIn,
@@ -93,7 +99,7 @@ class AppBottomNavBar extends StatelessWidget {
                   // ── Label ───────────────────────────────────
                   Text(
                     _items[i].label,
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.lato(
                       fontSize: 10.sp,
                       fontWeight:
                           active ? FontWeight.w600 : FontWeight.w400,

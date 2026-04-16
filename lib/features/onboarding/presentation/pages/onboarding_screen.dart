@@ -4,10 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../app/router/app_routes.dart';
+import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/app_button.dart';
 import '../bloc/onboarding_cubit.dart';
 import '../widgets/onboarding_page_indicator.dart';
 
@@ -62,27 +65,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         // Dark status-bar icons on light lavender background.
         value: SystemUiOverlayStyle.dark,
         child: Scaffold(
-          body: Container(
-            width: double.infinity,
-            height: double.infinity,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  AppColors.appBgTop,    // #CEBEFB lavender
-                  AppColors.appBgBottom, // #F8F7FA near-white
-                ],
+          body: Stack(
+            children: [
+              Positioned.fill(
+                child: SvgPicture.asset(
+                  AppAssets.onboardingGradient,
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
-            child: BlocBuilder<OnboardingCubit, int>(
-              builder: (context, currentIndex) {
-                final cubit = context.read<OnboardingCubit>();
-                final page = OnboardingCubit.pages[currentIndex];
+              BlocBuilder<OnboardingCubit, int>(
+                builder: (context, currentIndex) {
+                  final cubit = context.read<OnboardingCubit>();
+                  final page = OnboardingCubit.pages[currentIndex];
 
-                return SafeArea(
-                  child: Column(
-                    children: [
+                  return SafeArea(
+                    child: Column(
+                      children: [
                       // ── Page Indicators ─────────────────────────────────
                       Padding(
                         padding: EdgeInsets.only(top: 20.h),
@@ -135,7 +133,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             page.title,
                             key: ValueKey(page.title),
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.lato(
                               fontSize: 24.sp,
                               fontWeight: FontWeight.w800,
                               color: AppColors.onboardingTitle, // dark
@@ -150,30 +148,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       // ── Continue / Get Started button ────────────────────
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 28.w),
-                        child: SizedBox(
-                          width: double.infinity,
-                          height: 50.h,
-                          child: ElevatedButton(
-                            onPressed: () => _onContinue(context, cubit),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primary,
-                              foregroundColor: Colors.white,
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(100.r),
-                              ),
-                            ),
-                            child: Text(
-                              cubit.isLastPage
-                                  ? AppStrings.onboardingGetStarted
-                                  : AppStrings.onboardingContinue,
-                              style: GoogleFonts.inter(
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
+                        child: AppButton(
+                          text: cubit.isLastPage
+                              ? AppStrings.onboardingGetStarted
+                              : AppStrings.onboardingContinue,
+                          onPressed: () => _onContinue(context, cubit),
                         ),
                       ),
                       SizedBox(height: 12.h),
@@ -196,7 +175,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           ),
                           child: Text(
                             AppStrings.onboardingSkip,
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.lato(
                               fontSize: 14.sp,
                               fontWeight: FontWeight.w500,
                               color: AppColors.onboardingSubtitle, // dark
@@ -207,11 +186,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         SizedBox(height: 36.h),
 
                       SizedBox(height: 20.h),
-                    ],
-                  ),
-                );
-              },
-            ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
         ),
       ),

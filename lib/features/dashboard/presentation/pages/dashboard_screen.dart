@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/app_routes.dart';
+import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../discover/presentation/pages/discover_screen.dart';
 import '../../../home/presentation/pages/home_screen.dart';
 import '../../../profile/presentation/pages/profile_screen.dart';
@@ -28,7 +29,10 @@ class DashboardScreen extends StatelessWidget {
       child: BlocBuilder<NavCubit, int>(
         builder: (context, index) {
           return Scaffold(
-            body: IndexedStack(index: index, children: _tabs),
+            backgroundColor: Colors.transparent,
+            body: PostAuthGradientBackground(
+              child: IndexedStack(index: index, children: _tabs),
+            ),
             bottomNavigationBar: AppBottomNavBar(
               currentIndex: index,
               onTap: (i) {

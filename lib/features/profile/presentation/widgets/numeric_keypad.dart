@@ -67,7 +67,7 @@ class _KeyButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(10.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
+              color: AppColors.textBody.withValues(alpha: 0.05),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -78,7 +78,7 @@ class _KeyButton extends StatelessWidget {
               ? Icon(Icons.backspace_outlined,
                   size: 20.w, color: AppColors.textPrimary)
               : Text(label,
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.lato(
                       fontSize: 20.sp,
                       fontWeight: FontWeight.w600,
                       color: AppColors.textPrimary)),

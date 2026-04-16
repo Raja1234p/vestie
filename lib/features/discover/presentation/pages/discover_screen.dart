@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_loader.dart';
+import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../home/presentation/widgets/project_card.dart';
 import '../cubit/discover_cubit.dart';
 import '../widgets/discover_filter_row.dart';
@@ -29,11 +29,12 @@ class _DiscoverBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.dashBg,
-      body: BlocBuilder<DiscoverCubit, DiscoverState>(
-        builder: (context, state) {
-          return CustomScrollView(
-            slivers: [
+      backgroundColor: Colors.transparent,
+      body: PostAuthGradientBackground(
+        child: BlocBuilder<DiscoverCubit, DiscoverState>(
+          builder: (context, state) {
+            return CustomScrollView(
+              slivers: [
               // ── Header (gradient) ─────────────────────────
               const SliverToBoxAdapter(child: DiscoverHeader()),
 
@@ -84,9 +85,10 @@ class _DiscoverBody extends StatelessWidget {
                 ),
 
               SliverToBoxAdapter(child: SizedBox(height: 16.h)),
-            ],
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
     );
   }

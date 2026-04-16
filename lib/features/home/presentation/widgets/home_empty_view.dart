@@ -56,7 +56,7 @@ class HomeEmptyView extends StatelessWidget {
             Text(
               AppStrings.homeEmptyTitle,
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.lato(
                 fontSize: 22.sp,
                 fontWeight: FontWeight.w800,
                 color: AppColors.textPrimary,
@@ -68,7 +68,7 @@ class HomeEmptyView extends StatelessWidget {
             Text(
               AppStrings.homeEmptySubtitle,
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.lato(
                 fontSize: 13.5.sp,
                 color: AppColors.textBody,
                 height: 1.5,
@@ -94,7 +94,7 @@ class HomeEmptyView extends StatelessWidget {
                   ),
                   child: Text(
                     AppStrings.btnCreateProject,
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.lato(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w600,
                     ),

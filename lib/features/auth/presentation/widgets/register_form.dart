@@ -75,14 +75,14 @@ class _RegisterFormState extends State<RegisterForm> {
             children: [
               SizedBox(height: 48.h),
               Text(AppStrings.registerTitle,
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.lato(
                       fontSize: 28.sp,
                       fontWeight: FontWeight.w800,
                       color: AppColors.authTitle,
                       height: 1.2)),
               SizedBox(height: 6.h),
               Text(AppStrings.registerSubtitle,
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.lato(
                       fontSize: 13.5.sp,
                       color: AppColors.authSubtitle,
                       height: 1.5)),
@@ -158,7 +158,7 @@ class _RegisterFormState extends State<RegisterForm> {
                 ),
                 SizedBox(width: 6.w),
                 Text(AppStrings.passwordHint,
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.lato(
                         fontSize: 12.sp,
                         color: isStrong
                             ? AppColors.validSuccess
@@ -184,7 +184,7 @@ class _RegisterFormState extends State<RegisterForm> {
               Center(
                 child: RichText(
                   text: TextSpan(
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.lato(
                         fontSize: 13.sp, color: AppColors.authBottomText),
                     children: [
                       TextSpan(text: AppStrings.hasAccount),
@@ -192,7 +192,7 @@ class _RegisterFormState extends State<RegisterForm> {
                         child: GestureDetector(
                           onTap: () => context.go(AppRoutes.login),
                           child: Text(AppStrings.loginLink,
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.lato(
                                   fontSize: 13.sp,
                                   color: AppColors.authBottomLink,
                                   fontWeight: FontWeight.w600,

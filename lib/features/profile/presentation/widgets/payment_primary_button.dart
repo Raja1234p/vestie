@@ -40,7 +40,7 @@ class PaymentPrimaryButton extends StatelessWidget {
                   )
                 : AppText(
                     label,
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.lato(
                       fontSize: 15.sp,
                       fontWeight: FontWeight.w600,
                       color: AppColors.surface,

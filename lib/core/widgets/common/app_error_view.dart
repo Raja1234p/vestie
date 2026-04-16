@@ -26,7 +26,7 @@ class AppErrorView extends StatelessWidget {
             Text(
               message ?? AppStrings.errorGeneric,
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.lato(
                 fontSize: 14.sp,
                 color: AppColors.textSecondary,
                 height: 1.5,

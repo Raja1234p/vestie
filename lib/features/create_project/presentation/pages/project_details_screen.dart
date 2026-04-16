@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../domain/create_project_form.dart';
 import '../cubit/create_project_cubit.dart';
 import '../widgets/create_project_header.dart';
@@ -70,16 +71,17 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       builder: (context, form) {
         final cubit = context.read<CreateProjectCubit>();
         return Scaffold(
-          backgroundColor: Colors.white,
-          body: Column(
-            children: [
+          backgroundColor: Colors.transparent,
+          body: PostAuthGradientBackground(
+            child: Column(
+              children: [
               CreateProjectHeader(
                 title: AppStrings.createDetailsTitle,
                 stepBadge: widget.isEditMode ? null : '2/4',
               ),
               Expanded(
                 child: SingleChildScrollView(
-                  padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 32.h),
+                  padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 16.h),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -127,24 +129,29 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                         value: form.visibility,
                         onChanged: cubit.setVisibility,
                       ),
-                      SizedBox(height: 32.h),
-
-                      CPNextButton(
-                        label: widget.isEditMode
-                            ? AppStrings.btnSaveChanges
-                            : AppStrings.btnNext,
-                        onPressed: () {
-                          if (!cubit.validateDetails()) return;
-                          widget.isEditMode
-                              ? context.pop()
-                              : context.push(AppRoutes.createProjectBorrowing);
-                        },
-                      ),
                     ],
                   ),
                 ),
               ),
-            ],
+              SafeArea(
+                top: false,
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 14.h),
+                  child: CPNextButton(
+                    label: widget.isEditMode
+                        ? AppStrings.btnSaveChanges
+                        : AppStrings.btnNext,
+                    onPressed: () {
+                      if (!cubit.validateDetails()) return;
+                      widget.isEditMode
+                          ? context.pop()
+                          : context.push(AppRoutes.createProjectBorrowing);
+                    },
+                  ),
+                ),
+              ),
+              ],
+            ),
           ),
         );
       },

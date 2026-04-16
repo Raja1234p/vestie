@@ -21,11 +21,11 @@ class DiscoverSearchBar extends StatelessWidget {
       ),
       child: TextField(
         onChanged: onChanged,
-        style: GoogleFonts.inter(
+        style: GoogleFonts.lato(
             fontSize: 13.sp, color: AppColors.textPrimary),
         decoration: InputDecoration(
           hintText: AppStrings.discoverSearchHint,
-          hintStyle: GoogleFonts.inter(
+          hintStyle: GoogleFonts.lato(
               fontSize: 13.sp, color: AppColors.authHint),
           prefixIcon: Icon(Icons.search_rounded,
               size: 20.w, color: AppColors.authHint),

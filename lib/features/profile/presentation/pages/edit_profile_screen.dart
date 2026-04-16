@@ -8,6 +8,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/common/app_loader.dart';
+import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../cubit/edit_profile_cubit.dart';
 import '../cubit/profile_cubit.dart';
 import '../widgets/profile_sub_header.dart';
@@ -63,16 +64,17 @@ class _EditProfileBodyState extends State<_EditProfileBody> {
       builder: (context, state) {
         final cubit = context.read<EditProfileCubit>();
         return Scaffold(
-          backgroundColor: AppColors.dashBg,
-          body: Column(
-            children: [
-              ProfileSubHeader(title: AppStrings.editProfileTitle),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 24.h),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+          backgroundColor: Colors.transparent,
+          body: PostAuthGradientBackground(
+            child: Column(
+              children: [
+                ProfileSubHeader(title: AppStrings.editProfileTitle),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 24.h),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                       _FieldLabel(AppStrings.labelFullName2),
                       _ProfileField(
                           controller: _nameCtrl,
@@ -104,11 +106,12 @@ class _EditProfileBodyState extends State<_EditProfileBody> {
                             }
                           },
                         ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
@@ -124,8 +127,8 @@ class _FieldLabel extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(bottom: 8.h),
       child: Text(text,
-          style: GoogleFonts.inter(
-              fontSize: 13.sp,
+          style: GoogleFonts.lato(
+              fontSize: 16.sp,
               fontWeight: FontWeight.w600,
               color: AppColors.textBody)),
     );
@@ -157,10 +160,10 @@ class _ProfileField extends StatelessWidget {
         controller: controller,
         keyboardType: keyboardType,
         onChanged: onChanged,
-        style: GoogleFonts.inter(fontSize: 14.sp, color: AppColors.textPrimary),
+        style: GoogleFonts.lato(fontSize: 14.sp, color: AppColors.textPrimary),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.inter(fontSize: 14.sp, color: AppColors.authHint),
+          hintStyle: GoogleFonts.lato(fontSize: 14.sp, color: AppColors.authHint),
           border: InputBorder.none,
           contentPadding:
               EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
