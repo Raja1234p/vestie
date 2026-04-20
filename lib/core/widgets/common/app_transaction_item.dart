@@ -29,15 +29,12 @@ class AppTransactionItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 12.h),
+      margin: EdgeInsets.only(bottom: 6.h),
       padding: EdgeInsets.all(16.r),
       decoration: BoxDecoration(
         color: const Color(0xFFF8F7FA), // Exact from Figma
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: AppColors.neutral100.withValues(alpha: 0.3),
-          width: 1.w,
-        ),
+          border: Border.all(color: AppColors.neutral500)
       ),
       child: Row(
         children: [
@@ -91,7 +88,7 @@ class AppTransactionItem extends StatelessWidget {
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w700,
-                  color: isNegative ? AppColors.txNegative : AppColors.txPositive,
+                  color: isNegative ? AppColors.red900 : AppColors.green900,
                 ),
           ),
         ],

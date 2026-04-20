@@ -58,7 +58,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
               GestureDetector(
                 onTap: () => context.pop(),
                 child: Icon(
-                  Icons.arrow_back_ios_new,
+                  Icons.arrow_back,
                   color: AppColors.authTitle,
                   size: 20.w,
                 ),

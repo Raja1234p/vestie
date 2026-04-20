@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/post_auth_header.dart';
 
 /// Gradient header showing total contributed amount + bell icon.
 class HomeHeader extends StatelessWidget {
@@ -13,39 +14,12 @@ class HomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.fromLTRB(20.w, 52.h, 20.w, 24.h),
-
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  AppStrings.totalContributed,
-                  style: GoogleFonts.lato(
-                    fontSize: 16.sp,
-                    color: AppColors.authSubtitle,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                SizedBox(height: 4.h),
-                Text(
-                  '\$${_formatAmount(totalContributed)}',
-                  style: GoogleFonts.lato(
-                    fontSize: 32.sp,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.textPrimary,
-                    height: 1.1,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          GestureDetector(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        PostAuthHeader(
+          title: AppStrings.totalContributed,
+          trailing: GestureDetector(
             onTap: () {},
             child: Container(
               width: 38.w,
@@ -61,8 +35,20 @@ class HomeHeader extends StatelessWidget {
               ),
             ),
           ),
-        ],
-      ),
+        ),
+        Padding(
+          padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 24.h),
+          child: Text(
+            '\$${_formatAmount(totalContributed)}',
+            style: GoogleFonts.lato(
+              fontSize: 32.sp,
+              fontWeight: FontWeight.w800,
+              color: AppColors.textPrimary,
+              height: 1.1,
+            ),
+          ),
+        ),
+      ],
     );
   }
 

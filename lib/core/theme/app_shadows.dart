@@ -7,9 +7,15 @@ class AppShadows {
 
   static List<BoxShadow> get primaryButton => [
         BoxShadow(
+          color: AppColors.purple700.withValues(alpha: 0.36),
+          blurRadius: 20.r,
+          spreadRadius: 2.r,
+          offset: const Offset(0, 0),
+        ),
+        BoxShadow(
           color: AppColors.purple900.withValues(alpha: 0.28),
-          blurRadius: 14.r,
-          offset: Offset(0, 4.h),
+          blurRadius: 8.r,
+          offset: Offset(0, 5.h),
         ),
       ];
 

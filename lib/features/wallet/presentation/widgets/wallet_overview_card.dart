@@ -32,7 +32,7 @@ class WalletOverviewCard extends StatelessWidget {
                   AppStrings.walletAmountLabel,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         fontSize: 14.sp,
-                        color: AppColors.textPrimary.withValues(alpha: 0.7),
+                        color: AppColors.neutral1100,
                         fontWeight: FontWeight.w500,
                       ),
                 ),
@@ -55,7 +55,7 @@ class WalletOverviewCard extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(12.r),
             decoration: BoxDecoration(
-              color: const Color(0xFFF8F7FA).withValues(alpha: 0.8), // Exact from Figma
+              color: AppColors.grey100, // Exact from Figma
               borderRadius: BorderRadius.circular(12.r),
               border: Border.all(
                 color: AppColors.neutral100.withValues(alpha: 0.5),
@@ -77,7 +77,7 @@ class WalletOverviewCard extends StatelessWidget {
                   AppStrings.borrowedLabel,
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                         fontSize: 12.sp,
-                        color: AppColors.textPrimary.withValues(alpha: 0.6),
+                        color: AppColors.neutral1100,
                         fontWeight: FontWeight.w500,
                       ),
                 ),

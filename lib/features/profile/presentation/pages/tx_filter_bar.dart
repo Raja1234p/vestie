@@ -37,7 +37,7 @@ class TxFilterBar extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 7.h),
                 decoration: BoxDecoration(
                   color: active ? AppColors.chipActiveBg : AppColors.chipInactiveBg,
-                  borderRadius: BorderRadius.circular(8.r),
+                  borderRadius: BorderRadius.circular(24.r),
                   border: Border.all(
                     color: active ? AppColors.chipActiveBg : AppColors.chipBorder,
                   ),
@@ -45,7 +45,7 @@ class TxFilterBar extends StatelessWidget {
                 child: AppText(
                   filter,
                   style: GoogleFonts.lato(
-                    fontSize: 12.sp,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.w500,
                     color: active ? AppColors.chipActiveText : AppColors.chipInactiveText,
                   ),

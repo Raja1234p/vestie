@@ -11,6 +11,7 @@ import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_text.dart';
+import '../../../../core/widgets/common/post_auth_header.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../cubit/profile_cubit.dart';
 import '../widgets/profile_logout_button.dart';
@@ -209,24 +210,12 @@ class _ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.fromLTRB(20.w, 60.h, 20.w, 16.h),
-
-      child: Row(
-        children: [
-          AppText(AppStrings.profileTitle,
-              style: GoogleFonts.lato(
-                  fontSize: 34.sp,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textPrimary)),
-          const Spacer(),
-          GestureDetector(
-            onTap: onSettings,
-            child: Icon(Icons.settings_outlined,
-                size: 22.w, color: AppColors.textBody),
-          ),
-        ],
+    return PostAuthHeader(
+      title: AppStrings.profileTitle,
+      trailing: GestureDetector(
+        onTap: onSettings,
+        child: Icon(Icons.settings_outlined,
+            size: 22.w, color: AppColors.textBody),
       ),
     );
   }

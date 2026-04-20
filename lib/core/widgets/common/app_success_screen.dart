@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import '../../constants/app_assets.dart';
 import '../../theme/app_colors.dart';
 import '../text/app_text.dart';
 import 'app_button.dart';
@@ -10,6 +10,8 @@ class AppSuccessScreen extends StatelessWidget {
   final String? svgAssetPath;
   final String? backgroundImagePath;
   final String title;
+  final String? subtitle;
+  final Widget? subtitleWidget;
   final Widget? customContent;
   final String buttonText;
   final VoidCallback onButtonPressed;
@@ -17,8 +19,10 @@ class AppSuccessScreen extends StatelessWidget {
   const AppSuccessScreen({
     super.key,
     this.svgAssetPath,
-    this.backgroundImagePath,
+    this.backgroundImagePath=AppAssets.contributionSuccessBg,
     required this.title,
+    this.subtitle,
+    this.subtitleWidget,
     this.customContent,
     required this.buttonText,
     required this.onButtonPressed,
@@ -32,13 +36,10 @@ class AppSuccessScreen extends StatelessWidget {
         width: double.infinity,
         height: double.infinity,
         decoration: BoxDecoration(
-          gradient: backgroundImagePath == null ? AppColors.appBackgroundGradient : null,
-          image: backgroundImagePath != null 
-            ? DecorationImage(
+          image:  DecorationImage(
                 image: AssetImage(backgroundImagePath!),
                 fit: BoxFit.cover,
               )
-            : null,
         ),
         child: SafeArea(
           child: Padding(
@@ -49,10 +50,10 @@ class AppSuccessScreen extends StatelessWidget {
 
                 // ── Illustration ─────────────────────────────────
                 if (svgAssetPath != null)
-                  SvgPicture.asset(
+                  Image.asset(
                     svgAssetPath!,
-                    width: 120.w,
-                    height: 120.w,
+                    width: 150.w,
+                    height: 150.w,
                   ),
                 
                 if (svgAssetPath != null) SizedBox(height: 24.h),
@@ -67,10 +68,23 @@ class AppSuccessScreen extends StatelessWidget {
                   ),
                   textAlign: TextAlign.center,
                 ),
+                SizedBox(height: 10.h),
+
+                ?subtitleWidget,
+                if (subtitleWidget == null && subtitle != null)
+                  AppText(
+                    subtitle!,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontSize: 18.sp,
+                      color: AppColors.textBody,
+                    ),
+                  ),
+
                 SizedBox(height: 20.h),
 
                 // ── Custom Content (e.g. Share Links) ─────────────
-                if (customContent != null) customContent!,
+                ?customContent,
 
                 const Spacer(flex: 3),
 
@@ -81,6 +95,10 @@ class AppSuccessScreen extends StatelessWidget {
                     padding: EdgeInsets.fromLTRB(0.w, 0.h, 0.w, 20.h),
                     child: AppButton(
                       text: buttonText,
+                      color: AppColors.cardActionBtn,
+                      useGradient: false,
+                      hasShadow: false,
+                      borderRadius: 8.r,
                       onPressed: onButtonPressed,
                     ),
                   ),

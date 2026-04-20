@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/app_button.dart';
 import '../../domain/create_project_form.dart';
 import '../cubit/create_project_cubit.dart';
 
@@ -82,30 +83,12 @@ class ProjectAmountScreen extends StatelessWidget {
                     SizedBox(height: 28.h),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 40.w),
-                      child: SizedBox(
-                        width: double.infinity,
+                      child: AppButton(
+                        text: AppStrings.btnContinue,
                         height: 50.h,
-                        child: ElevatedButton(
-                          onPressed: form.amountDigits.isEmpty
-                              ? null
-                              : () => context.push(AppRoutes.createProjectDetails),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            disabledBackgroundColor:
-                                AppColors.primary.withValues(alpha: 0.4),
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(100.r)),
-                          ),
-                          child: Text(
-                            AppStrings.btnContinue,
-                            style: GoogleFonts.lato(
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
+                        onPressed: form.amountDigits.isEmpty
+                            ? null
+                            : () => context.push(AppRoutes.createProjectDetails),
                       ),
                     ),
                   ],

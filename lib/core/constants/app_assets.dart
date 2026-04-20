@@ -13,7 +13,7 @@ class AppAssets {
   static const String homeEmptyState       = '$_imagePath/dashboard_empty_state_image.svg';
 
   // Project created success illustration
-  static const String projectCreatedImage  = '$_imagePath/project_created_image.svg';
+  static const String projectCreatedImage  = '$_imagePath/project_created_image.png';
 
   // Onboarding
   static const String onboarding1 = '$_imagePath/onboarding_1.png';

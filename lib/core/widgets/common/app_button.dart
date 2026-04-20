@@ -12,6 +12,8 @@ class AppButton extends StatelessWidget {
   final bool isLoading;
   final bool isSecondary;
   final bool hasShadow;
+  final bool useGradient;
+  final double? borderRadius;
   final double? width;
   final double? height;
   final Color? color;
@@ -22,7 +24,9 @@ class AppButton extends StatelessWidget {
     required this.onPressed,
     this.isLoading = false,
     this.isSecondary = false,
-    this.hasShadow = false,
+    this.hasShadow = true,
+    this.useGradient = true,
+    this.borderRadius,
     this.width,
     this.height,
     this.color,
@@ -31,14 +35,17 @@ class AppButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isEnabled = onPressed != null;
+    final bool showPrimaryShadow = isEnabled && hasShadow && !isSecondary && useGradient;
     final theme = Theme.of(context);
+    final radius = BorderRadius.circular(borderRadius ?? 999.r);
 
     // Default primary gradient
-    final gradient = isEnabled && !isSecondary
+    final gradient = isEnabled && !isSecondary && useGradient
         ? const LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [AppColors.purple700, AppColors.purple900],
+            colors: [AppColors.purple600, AppColors.purple800, AppColors.purple700],
+            stops: [0.0, 0.55, 1.0],
           )
         : null;
 
@@ -51,22 +58,30 @@ class AppButton extends StatelessWidget {
           color: isEnabled 
               ? (isSecondary ? Colors.transparent : (gradient == null ? (color ?? AppColors.primary) : null))
               : AppColors.textHint,
-          borderRadius: BorderRadius.circular(999.r),
+          borderRadius: radius,
           border: isSecondary
               ? Border.all(color: AppColors.primary, width: 1.5.w)
-              : Border.all(
-                  color: isEnabled
-                      ? AppColors.purple500.withValues(alpha: 0.45)
-                      : AppColors.grey400,
-                  width: 1.w,
-                ),
-          boxShadow: isEnabled && hasShadow ? AppShadows.primaryButton : null,
+              : !isEnabled
+                  ? Border.all(
+                      color: AppColors.grey400,
+                      width: 1.w,
+                    )
+                  : useGradient
+                      ? Border.all(
+                          color: AppColors.surface.withValues(alpha: 0.42),
+                          width: 1.w,
+                        )
+                      : Border.all(
+                          color: Colors.transparent,
+                          width: 1.w,
+                        ),
+          boxShadow: showPrimaryShadow ? AppShadows.primaryButton : null,
         ),
         child: Material(
           color: Colors.transparent,
-          borderRadius: BorderRadius.circular(999.r),
+          borderRadius: radius,
           child: InkWell(
-            borderRadius: BorderRadius.circular(999.r),
+            borderRadius: radius,
             onTap: (isLoading || !isEnabled) ? null : onPressed,
             child: Center(
               child: isLoading
@@ -82,7 +97,7 @@ class AppButton extends StatelessWidget {
                       text,
                       style: theme.textTheme.labelLarge?.copyWith(
                         fontSize: 15.sp,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: isSecondary ? AppColors.primary : AppColors.surface,
                       ),
                     ),

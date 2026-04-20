@@ -7,6 +7,7 @@ import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
+import '../../../../core/widgets/common/post_auth_header.dart';
 import '../../../../core/widgets/text/app_text.dart';
 import '../cubit/wallet_transaction_cubit.dart';
 import '../../domain/wallet_transaction_type.dart';
@@ -19,28 +20,36 @@ class WalletScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final txItems = [
+      (
+        type: AppTransactionType.deposit,
+        title: AppStrings.txWalletDeposit,
+        date: 'Mar 12',
+        amount: '500',
+        isNegative: false,
+      ),
+      (
+        type: AppTransactionType.contribution,
+        title: '${AppStrings.txContributionPrefix}Family Vacation',
+        date: 'Mar 11',
+        amount: '115',
+        isNegative: true,
+      ),
+      (
+        type: AppTransactionType.borrow,
+        title: '${AppStrings.txBorrowPrefix}Family Vacation',
+        date: 'Mar 12',
+        amount: '650',
+        isNegative: false,
+      ),
+    ];
+
     return PostAuthGradientBackground(
       child: Column(
         children: [
           // ── Header ──────────────────────────────────────────────
-          SafeArea(
-            bottom: false,
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 12.h),
-              child: Row(
-                children: [
-                  AppText(
-                    AppStrings.walletTitle,
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontSize: 28.sp,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.grey1100,
-                          letterSpacing: -0.5,
-                        ),
-                  ),
-                ],
-              ),
-            ),
+          PostAuthHeader(
+            title: AppStrings.walletTitle,
           ),
 
           // ── Wallet Overview ─────────────────────────────────────
@@ -84,32 +93,21 @@ class WalletScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 8.h),
                   Expanded(
-                    child: ListView(
-                      padding: EdgeInsets.only(bottom: 24.h, top: 4.h),
+                    child: ListView.separated(
+                      padding: EdgeInsets.only(bottom: 16.h, top: 0.h),
                       physics: const BouncingScrollPhysics(),
-                      children: [
-                        AppTransactionItem(
-                          type: AppTransactionType.deposit,
-                          title: AppStrings.txWalletDeposit,
-                          date: 'Mar 12',
-                          amount: '500',
-                          isNegative: false,
-                        ),
-                        AppTransactionItem(
-                          type: AppTransactionType.contribution,
-                          title: '${AppStrings.txContributionPrefix}Family Vacation',
-                          date: 'Mar 11',
-                          amount: '115',
-                          isNegative: true,
-                        ),
-                        AppTransactionItem(
-                          type: AppTransactionType.borrow,
-                          title: '${AppStrings.txBorrowPrefix}Family Vacation',
-                          date: 'Mar 12',
-                          amount: '650',
-                          isNegative: false,
-                        ),
-                      ],
+                      separatorBuilder: (context, _) => SizedBox(height: 10.h),
+                      itemCount: txItems.length,
+                      itemBuilder: (_, index) {
+                        final item = txItems[index];
+                        return AppTransactionItem(
+                          type: item.type,
+                          title: item.title,
+                          date: item.date,
+                          amount: item.amount,
+                          isNegative: item.isNegative,
+                        );
+                      },
                     ),
                   ),
                 ],

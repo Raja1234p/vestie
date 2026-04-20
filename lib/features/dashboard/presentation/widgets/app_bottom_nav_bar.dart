@@ -74,7 +74,7 @@ class AppBottomNavBar extends StatelessWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       // Active: solid purple fill | Inactive: transparent with grey ring
-                      color: active ? AppColors.navActive : Colors.transparent,
+                      color: active ? AppColors.navActive : AppColors.grey200,
                       boxShadow: active
                           ? [
                               BoxShadow(
@@ -96,10 +96,10 @@ class AppBottomNavBar extends StatelessWidget {
                         _items[i].asset,
                         width: 24.w,
                         height: 24.w,
-                        colorFilter: ColorFilter.mode(
-                          active ? Colors.white : AppColors.navInactive,
+                        colorFilter: _items[i].asset!=AppAssets.iconHome? ColorFilter.mode(
+                          active ? Colors.white : AppColors.grey800,
                           BlendMode.srcIn,
-                        ),
+                        ):null,
                       ),
                     ),
                   ),

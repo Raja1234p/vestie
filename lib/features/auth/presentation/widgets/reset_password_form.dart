@@ -62,8 +62,8 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
               // ── Back arrow ────────────────────────────────────────
               GestureDetector(
                 onTap: () => context.pop(),
-                child: Icon(Icons.arrow_back_ios_new,
-                    color: AppColors.authTitle, size: 20.w),
+                child: Icon(Icons.arrow_back,
+                    color: AppColors.authTitle, size: 24.w),
               ),
               SizedBox(height: 20.h),
 

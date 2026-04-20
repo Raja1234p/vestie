@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/app_button.dart';
 
 /// Full-screen empty state shown when the user has no projects yet.
 class HomeEmptyView extends StatelessWidget {
@@ -79,27 +80,10 @@ class HomeEmptyView extends StatelessWidget {
             // CTA button
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 40.w),
-              child: SizedBox(
-                width: double.infinity,
+              child: AppButton(
+                text: AppStrings.btnCreateProject,
                 height: 48.h,
-                child: ElevatedButton(
-                  onPressed: onCreateProject,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(100.r),
-                    ),
-                  ),
-                  child: Text(
-                    AppStrings.btnCreateProject,
-                    style: GoogleFonts.lato(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
+                onPressed: onCreateProject,
               ),
             ),
 

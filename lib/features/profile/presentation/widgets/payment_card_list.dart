@@ -65,6 +65,7 @@ class _PaymentCardItem extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.appBgBottom,
         borderRadius: BorderRadius.circular(14.r),
+        border: Border.all(color: AppColors.neutral500)
       ),
       child: Material(
         color: Colors.transparent,
