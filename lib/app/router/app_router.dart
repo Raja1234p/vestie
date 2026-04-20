@@ -27,6 +27,10 @@ import '../../features/splash/presentation/pages/splash_screen.dart';
 import '../../features/wallet/presentation/pages/transaction_amount_screen.dart';
 import '../../features/wallet/presentation/pages/transaction_confirmation_screen.dart';
 import '../../features/wallet/presentation/pages/transaction_success_screen.dart';
+import '../../features/project_detail/domain/entities/borrow_request_entity.dart';
+import '../../features/project_detail/domain/entities/project_detail_entity.dart';
+import '../../features/project_detail/presentation/pages/project_detail_screen.dart';
+import '../../features/project_detail/presentation/pages/borrow_requests_screen.dart';
 import 'app_routes.dart';
 
 class AppRouter {
@@ -138,6 +142,22 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.transactionSuccess,
         builder: (context, _) => const TransactionSuccessScreen(),
+      ),
+
+      // ── Project Detail ────────────────────────────────────────────────
+      GoRoute(
+        path: AppRoutes.projectDetail,
+        builder: (context, state) {
+          final project = state.extra as ProjectDetailEntity;
+          return ProjectDetailScreen(project: project);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.borrowRequests,
+        builder: (context, state) {
+          final requests = state.extra as List<BorrowRequestEntity>;
+          return BorrowRequestsScreen(requests: requests);
+        },
       ),
     ],
     errorBuilder: (context, _) => const Scaffold(

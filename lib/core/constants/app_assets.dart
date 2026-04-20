@@ -46,6 +46,21 @@ class AppAssets {
   static const String iconContribution = '$_iconPath/contribution_icon.svg';
   static const String iconDollarCircle = '$_iconPath/dollar-circle.svg';
 
+  // ── Voting Icons ─────────────────────────────────────────────────────────
+  static const String iconThumbsUp   = '$_iconPath/thumbs-up.svg';
+  static const String iconThumbsDown = '$_iconPath/thumbs-down.svg';
+
+  // ── Arrow Direction Icons ────────────────────────────────────────────────
+  static const String iconArrowUpBig   = '$_iconPath/arrow-up-big.svg';
+  static const String iconArrowDownBig = '$_iconPath/arrow-down-big.svg';
+
+  // ── Leader Project Action Icons ───────────────────────────────────────────
+  static const String iconJoinRequest      = '$_iconPath/join-request.svg';
+  static const String iconAddAnnouncement  = '$_iconPath/add announcement.svg';
+  static const String iconEditProject      = '$_iconPath/edit project.svg';
+  static const String iconMarkSuccessful   = '$_iconPath/mark successfull.svg';
+  static const String iconCancelProject    = '$_iconPath/cancel project.svg';
+
   // ── Specific Feature Backgrounds ──────────────────────────────────────────
   static const String contributionSuccessBg = '$_imagePath/Contribution Successful.png';
 }

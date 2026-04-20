@@ -33,4 +33,8 @@ class AppRoutes {
   static const String selectPaymentMethod    = '/wallet/select-payment-method';
   static const String transactionConfirmation= '/wallet/transaction-confirmation';
   static const String transactionSuccess     = '/wallet/transaction-success';
+
+  // ── Project Detail Routing ───────────────────────────────────────────────
+  static const String projectDetail    = '/project/detail';
+  static const String borrowRequests   = '/project/borrow-requests';
 }

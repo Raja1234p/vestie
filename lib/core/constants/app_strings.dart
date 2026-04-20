@@ -336,4 +336,30 @@ class AppStrings {
   static const String txWalletDeposit           = 'Wallet Deposit';
   static const String txContributionPrefix      = 'Contribution: ';
   static const String txBorrowPrefix            = 'Borrow: ';
+
+  // ── Project Detail ────────────────────────────────────────────────────────
+  static const String projectDetailTitle        = 'Project';
+  static const String announcementTitle         = 'Announcement';
+  static const String announcementPlaceholder   = 'Any announcement will come up here';
+  static const String btnContribute             = 'Contribute';
+  static const String btnBorrow                 = 'Borrow';
+  static const String tabBorrowRequests         = 'Borrow Requests';
+  static const String tabMembers                = 'Members';
+  static const String requestedAmount           = 'Requested Amount';
+  static const String viewAllRequests           = 'View All Requests';
+  static const String borrowRequestsTitle       = 'Borrow Requests';
+  static const String upvoteLabel               = 'Upvote';
+  static const String downvoteLabel             = 'Downvote';
+  static const String educationLoan             = 'Education Loan';
+  static const String goalPrefix                = 'Goal ';
+
+  // ── Leader Project Actions ────────────────────────────────────────────────
+  static const String menuJoinRequests          = 'Join Requests';
+  static const String menuAddAnnouncement       = 'Add Announcement';
+  static const String menuEditProject           = 'Edit Project';
+  static const String menuInviteMembers         = 'Invite Members';
+  static const String menuMarkSuccessful        = 'Mark as Successful';
+  static const String menuCancelProject         = 'Cancel Project';
+  static const String hintAnnouncementText      = 'Type your announcement...';
+  static const String deleteAnnouncementLabel   = 'Delete announcement';
 }
