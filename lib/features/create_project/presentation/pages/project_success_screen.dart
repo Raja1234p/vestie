@@ -46,7 +46,7 @@ class ProjectSuccessScreen extends StatelessWidget {
                 padding: EdgeInsets.symmetric(
                     horizontal: 14.w, vertical: 12.h),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.purple300.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(12.r),
                   border: Border.all(color: AppColors.cardBorder),
                 ),
@@ -56,8 +56,8 @@ class ProjectSuccessScreen extends StatelessWidget {
                       child: AppText(
                         shareLink,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontSize: 13.sp,
-                          color: AppColors.textPrimary,
+                          fontSize: 15.sp,
+                          color: Colors.black,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -75,30 +75,28 @@ class ProjectSuccessScreen extends StatelessWidget {
                   ],
                 ),
               ),
-
-              SizedBox(height: 32.h), // ── Share via WhatsApp ─────────────────────────
-              GestureDetector(
-                onTap: () async {
-                  final msg = '${AppStrings.shareWhatsappPrefix}$shareLink';
-                  final uri = Uri.parse(
-                      'https://wa.me/?text=${Uri.encodeComponent(msg)}');
-                  if (await canLaunchUrl(uri)) {
-                    await launchUrl(
-                      uri,
-                      mode: LaunchMode.externalApplication,
-                    );
-                  }
-                },
-                child: AppText(
-                  AppStrings.shareViaWhatsapp,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontSize: 17.sp,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-              ),
             ],
+          ),
+          bottomContent: GestureDetector(
+            onTap: () async {
+              final msg = '${AppStrings.shareWhatsappPrefix}$shareLink';
+              final uri = Uri.parse(
+                  'https://wa.me/?text=${Uri.encodeComponent(msg)}');
+              if (await canLaunchUrl(uri)) {
+                await launchUrl(
+                  uri,
+                  mode: LaunchMode.externalApplication,
+                );
+              }
+            },
+            child: AppText(
+              AppStrings.shareViaWhatsapp,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                fontSize: 17.sp,
+                fontWeight: FontWeight.w800,
+                color: Colors.black,
+              ),
+            ),
           ),
         );
       },

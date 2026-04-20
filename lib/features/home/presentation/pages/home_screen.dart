@@ -7,12 +7,12 @@ import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_loader.dart';
-import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../bloc/home_bloc.dart';
 import '../bloc/home_event.dart';
 import '../bloc/home_state.dart';
 import '../cubit/home_sections_cubit.dart';
 import '../widgets/home_empty_view.dart';
+import '../widgets/home_gradient_background.dart';
 import '../widgets/home_header.dart';
 import '../widgets/projects_section.dart';
 
@@ -43,7 +43,7 @@ class _HomeBody extends StatelessWidget {
         if (state is HomeLoading || state is HomeInitial) {
           return const Scaffold(
             backgroundColor: Colors.transparent,
-            body: PostAuthGradientBackground(
+            body: HomeGradientBackground(
               child: AppLoader(),
             ),
           );
@@ -52,7 +52,7 @@ class _HomeBody extends StatelessWidget {
         if (state is HomeError) {
           return Scaffold(
             backgroundColor: Colors.transparent,
-            body: PostAuthGradientBackground(
+            body: HomeGradientBackground(
               child: Center(child: Text(state.message)),
             ),
           );
@@ -89,7 +89,7 @@ class _HomeContent extends StatelessWidget {
         final cubit = context.read<HomeSectionsCubit>();
         return Scaffold(
           backgroundColor: Colors.transparent,
-          body: PostAuthGradientBackground(
+          body: HomeGradientBackground(
             child: RefreshIndicator(
               color: AppColors.primary,
               onRefresh: () async =>

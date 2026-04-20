@@ -19,6 +19,12 @@ class HomeHeader extends StatelessWidget {
       children: [
         PostAuthHeader(
           title: AppStrings.totalContributed,
+          bottomGap: 0,
+          titleStyle: GoogleFonts.lato(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w400,
+            color: AppColors.textPrimary,
+          ),
           trailing: GestureDetector(
             onTap: () {},
             child: Container(
@@ -33,9 +39,9 @@ class HomeHeader extends StatelessWidget {
                 size: 20.w,
                 color: AppColors.primary,
               ),
-            ),
+            ),  
           ),
-        ),
+        ),  
         Padding(
           padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 24.h),
           child: Text(

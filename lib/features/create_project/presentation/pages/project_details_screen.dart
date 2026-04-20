@@ -20,7 +20,7 @@ import 'project_details_widgets.dart';
 /// Zero [setState] calls.
 class ProjectDetailsScreen extends StatefulWidget {
   /// True when navigated from the Review screen's "Edit" button.
-  /// In this mode the header shows no badge and "Next" pops back to Review.
+  /// In this mode the flow continues to Borrowing, then back to Review.
   final bool isEditMode;
   const ProjectDetailsScreen({super.key, this.isEditMode = false});
 
@@ -77,7 +77,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
               children: [
               CreateProjectHeader(
                 title: AppStrings.createDetailsTitle,
-                stepBadge: widget.isEditMode ? null : '2/4',
+                stepBadge: widget.isEditMode ? null : '1/3',
               ),
               Expanded(
                 child: SingleChildScrollView(
@@ -139,12 +139,15 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                   padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 14.h),
                   child: CPNextButton(
                     label: widget.isEditMode
-                        ? AppStrings.btnSaveChanges
+                        ? AppStrings.btnNext
                         : AppStrings.btnNext,
                     onPressed: () {
                       if (!cubit.validateDetails()) return;
                       widget.isEditMode
-                          ? context.pop()
+                          ? context.push(
+                              AppRoutes.createProjectBorrowing,
+                              extra: true,
+                            )
                           : context.push(AppRoutes.createProjectBorrowing);
                     },
                   ),

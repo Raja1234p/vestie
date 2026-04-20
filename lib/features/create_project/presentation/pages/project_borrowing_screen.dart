@@ -64,7 +64,7 @@ class _ProjectBorrowingScreenState extends State<ProjectBorrowingScreen> {
               children: [
               CreateProjectHeader(
                 title: AppStrings.createBorrowingTitle,
-                stepBadge: widget.isEditMode ? null : '3/4',
+                stepBadge: widget.isEditMode ? null : '2/3',
               ),
               Expanded(
                 child: SingleChildScrollView(
@@ -161,9 +161,12 @@ class _ProjectBorrowingScreenState extends State<ProjectBorrowingScreen> {
                         : AppStrings.btnNext,
                     onPressed: () {
                       if (!cubit.validateBorrowing()) return;
-                      widget.isEditMode
-                          ? context.pop()
-                          : context.push(AppRoutes.createProjectReview);
+                      if (widget.isEditMode) {
+                        context.pop(); // close Borrowing (edit)
+                        context.pop(); // close Details (edit) -> reveal Review
+                        return;
+                      }
+                      context.push(AppRoutes.createProjectReview);
                     },
                   ),
                 ),

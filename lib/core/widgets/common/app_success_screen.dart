@@ -13,6 +13,7 @@ class AppSuccessScreen extends StatelessWidget {
   final String? subtitle;
   final Widget? subtitleWidget;
   final Widget? customContent;
+  final Widget? bottomContent;
   final String buttonText;
   final VoidCallback onButtonPressed;
 
@@ -24,6 +25,7 @@ class AppSuccessScreen extends StatelessWidget {
     this.subtitle,
     this.subtitleWidget,
     this.customContent,
+    this.bottomContent,
     required this.buttonText,
     required this.onButtonPressed,
   }) : assert(svgAssetPath != null || backgroundImagePath != null, 
@@ -88,6 +90,10 @@ class AppSuccessScreen extends StatelessWidget {
 
                 const Spacer(flex: 3),
 
+                // ── Bottom Content (screen-specific footer actions) ─
+                ?bottomContent,
+                if (bottomContent != null) SizedBox(height: 12.h),
+
                 // ── Action Button ─────────────────────────────────
                 SafeArea(
                   top: false,
@@ -95,7 +101,7 @@ class AppSuccessScreen extends StatelessWidget {
                     padding: EdgeInsets.fromLTRB(0.w, 0.h, 0.w, 20.h),
                     child: AppButton(
                       text: buttonText,
-                      color: AppColors.cardActionBtn,
+                      color: Colors.black,
                       useGradient: false,
                       hasShadow: false,
                       borderRadius: 8.r,
