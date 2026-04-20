@@ -8,7 +8,8 @@ import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../cubit/transaction_history_cubit.dart';
 import '../widgets/profile_sub_header.dart';
 import 'tx_filter_bar.dart';
-import 'tx_list_item.dart';
+import '../../../../core/widgets/common/app_transaction_item.dart';
+import '../../domain/entities/transaction.dart';
 
 class TransactionHistoryScreen extends StatelessWidget {
   const TransactionHistoryScreen({super.key});
@@ -24,6 +25,21 @@ class TransactionHistoryScreen extends StatelessWidget {
 
 class _TxBody extends StatelessWidget {
   const _TxBody();
+
+  AppTransactionType _mapType(TransactionType type) {
+    switch (type) {
+      case TransactionType.deposit:
+        return AppTransactionType.deposit;
+      case TransactionType.contribution:
+        return AppTransactionType.contribution;
+      case TransactionType.withdrawal:
+        return AppTransactionType.withdrawal;
+      case TransactionType.lend:
+        return AppTransactionType.lend;
+      default:
+        return AppTransactionType.borrow;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +59,16 @@ class _TxBody extends StatelessWidget {
                           padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 16.h),
                           itemCount: state.filtered.length,
                           separatorBuilder: (context, _) => SizedBox(height: 10.h),
-                          itemBuilder: (_, i) => TxListItem(tx: state.filtered[i]),
+                          itemBuilder: (_, i) {
+                            final tx = state.filtered[i];
+                            return AppTransactionItem(
+                              type: _mapType(tx.type),
+                              title: tx.title,
+                              date: tx.date,
+                              amount: tx.amount.abs().toStringAsFixed(0),
+                              isNegative: !tx.isPositive,
+                            );
+                          },
                         ),
                 ),
               ],

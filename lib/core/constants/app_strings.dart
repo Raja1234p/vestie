@@ -287,4 +287,32 @@ class AppStrings {
   // ── Router / placeholder stubs ────────────────────────────────────────────
   static const String keyGuidelinesComingSoon = 'Key Guidelines — Coming Soon';
   static const String routeNotFound           = 'Route Not Found';
+
+  // ── Wallet ───────────────────────────────────────────────────────────────
+  static const String walletTitle              = 'Wallet';
+  static const String walletAmountLabel        = 'Wallet Amount';
+  static const String btnDepositFunds          = 'Deposit funds';
+  static const String btnWithdrawFunds          = 'Withdraw funds';
+  static const String depositFundsTitle         = 'Deposit Funds';
+  static const String withdrawFundsTitle        = 'Withdraw Funds';
+  static const String depositAmountSubtitle     = 'Enter amount to deposit';
+  static const String withdrawAmountSubtitle    = 'Enter amount to withdraw';
+  static const String confirmDepositTitle       = 'Confirm Deposit';
+  static const String confirmWithdrawTitle      = 'Confirm Withdrawal';
+  static const String labelAmount               = 'Amount';
+  static const String labelFee                  = 'Fee';
+  static const String labelFrom                 = 'From';
+  static const String labelTo                   = 'To';
+  static const String btnConfirm                = 'Confirm';
+  static const String depositSuccessTitle       = 'Deposit Successful';
+  static const String withdrawSuccessTitle      = 'Withdrawal Successful';
+  static const String contributionSuccessTitle  = 'Contribution Successful';
+  static const String btnBackToWallet           = 'Back to Wallet';
+
+  // ── Recent Activity ───────────────────────────────────────────────────────
+  static const String borrowedLabel             = 'Borrowed';
+  static const String recentActivityHeader     = 'Recent Activity';
+  static const String txWalletDeposit           = 'Wallet Deposit';
+  static const String txContributionPrefix      = 'Contribution: ';
+  static const String txBorrowPrefix            = 'Borrow: ';
 }

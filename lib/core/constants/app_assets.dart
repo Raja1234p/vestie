@@ -8,7 +8,6 @@ class AppAssets {
   static const String logoSvg = '$_imagePath/logo.svg';
   static const String appGradient = '$_imagePath/gradient.png';
   static const String authLoginGradient = '$_imagePath/Login gradient.svg';
-  static const String onboardingGradient = '$_imagePath/onboarding_gradient.svg';
 
   // Home empty-state illustration
   static const String homeEmptyState       = '$_imagePath/dashboard_empty_state_image.svg';
@@ -46,4 +45,7 @@ class AppAssets {
   static const String iconDeposit      = '$_iconPath/deposit_icon.svg';
   static const String iconContribution = '$_iconPath/contribution_icon.svg';
   static const String iconDollarCircle = '$_iconPath/dollar-circle.svg';
+
+  // ── Specific Feature Backgrounds ──────────────────────────────────────────
+  static const String contributionSuccessBg = '$_imagePath/Contribution Successful.png';
 }

@@ -27,4 +27,10 @@ class AppRoutes {
   static const String cardDetail         = '/profile/payment-methods/detail';
   static const String transactionHistory = '/profile/transaction-history';
   static const String keyGuidelines      = '/profile/key-guidelines';
+
+  // ── Wallet Transaction Routing ───────────────────────────────────────────
+  static const String transactionAmount      = '/wallet/transaction-amount';
+  static const String selectPaymentMethod    = '/wallet/select-payment-method';
+  static const String transactionConfirmation= '/wallet/transaction-confirmation';
+  static const String transactionSuccess     = '/wallet/transaction-success';
 }

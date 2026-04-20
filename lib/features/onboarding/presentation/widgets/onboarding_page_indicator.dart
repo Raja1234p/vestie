@@ -25,12 +25,12 @@ class OnboardingPageIndicator extends StatelessWidget {
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           margin: EdgeInsets.symmetric(horizontal: 3.w),
-          width: isActive ? 28.w : 8.w,
+          width: isActive ? 35.w : 35.w,
           height: 5.h,
           decoration: BoxDecoration(
             color: isActive
                 ? AppColors.onboardingIndicatorActive   // #4519A0
-                : AppColors.onboardingIndicatorInactive, // 33% primary
+                : AppColors.appBgTop, // 33% primary
             borderRadius: BorderRadius.circular(100.r),
           ),
         );

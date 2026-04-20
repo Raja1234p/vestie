@@ -75,6 +75,15 @@ class AppBottomNavBar extends StatelessWidget {
                       shape: BoxShape.circle,
                       // Active: solid purple fill | Inactive: transparent with grey ring
                       color: active ? AppColors.navActive : Colors.transparent,
+                      boxShadow: active
+                          ? [
+                              BoxShadow(
+                                color: AppColors.purple900.withValues(alpha: 0.28),
+                                blurRadius: 14.r,
+                                offset: Offset(0, 4.h),
+                              ),
+                            ]
+                          : null,
                       border: active
                           ? null
                           : Border.all(

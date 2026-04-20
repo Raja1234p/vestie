@@ -1,0 +1,1 @@
+enum WalletTransactionType { deposit, withdraw }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -14,8 +15,9 @@ import 'payment_primary_button.dart';
 class PaymentCardList extends StatelessWidget {
   final List<PaymentCard> cards;
   final VoidCallback onAdd;
+  final bool isSelectionMode;
 
-  const PaymentCardList({super.key, required this.cards, required this.onAdd});
+  const PaymentCardList({super.key, required this.cards, required this.onAdd, this.isSelectionMode = false});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +31,13 @@ class PaymentCardList extends StatelessWidget {
             separatorBuilder: (context, _) => SizedBox(height: 8.h),
             itemBuilder: (_, i) => _PaymentCardItem(
               card: cards[i],
-              onTap: () => CardDetailSheet.show(context, cards[i]),
+              onTap: () {
+                if (isSelectionMode) {
+                  context.pop(cards[i]);
+                } else {
+                  CardDetailSheet.show(context, cards[i]);
+                }
+              },
             ),
           ),
         ),

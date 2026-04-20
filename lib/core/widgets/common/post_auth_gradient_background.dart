@@ -12,10 +12,6 @@ class PostAuthGradientBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double width = MediaQuery.sizeOf(context).width;
-    final double headerWidth = width - 40;
-    final double headerHeight = headerWidth * (128 / 402);
-
     return Stack(
       children: [
         const Positioned.fill(

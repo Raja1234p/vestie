@@ -7,6 +7,7 @@ import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../discover/presentation/pages/discover_screen.dart';
 import '../../../home/presentation/pages/home_screen.dart';
 import '../../../profile/presentation/pages/profile_screen.dart';
+import '../../../wallet/presentation/pages/wallet_screen.dart';
 import '../cubit/nav_cubit.dart';
 import '../widgets/app_bottom_nav_bar.dart';
 
@@ -18,7 +19,7 @@ class DashboardScreen extends StatelessWidget {
     HomeScreen(),
     DiscoverScreen(),
     _PlaceholderTab(label: 'Add'),
-    _PlaceholderTab(label: 'Wallet'),
+    WalletScreen(),
     ProfileScreen(),
   ];
 

@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/app_text_field.dart';
 
-/// Figma-accurate Auth text field.
-/// Label sits ABOVE the field (not floating inside), with a white
-/// rounded container directly on the lavender gradient background.
+/// Wrapped Auth text field to redirect all usages to the central AppTextField 
+/// strictly adhering to Enterprise Rules.
 class AuthTextField extends StatelessWidget {
   final String label;
   final String hint;
@@ -34,84 +31,17 @@ class AuthTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // ── Label ─────────────────────────────────────────
-        Text(
-          label,
-          style: GoogleFonts.lato(
-            fontSize: 13.sp,
-            fontWeight: FontWeight.w500,
-            color: AppColors.authLabel,
-          ),
-        ),
-        SizedBox(height: 6.h),
-
-        // ── Input ─────────────────────────────────────────
-        TextField(
-          controller: controller,
-          obscureText: obscureText,
-          keyboardType: keyboardType,
-          textInputAction: textInputAction,
-          maxLength: maxLength,
-          onChanged: onChanged,
-          style: GoogleFonts.lato(
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w400,
-            color: AppColors.authSocialText, // dark (#1A1033) — inside white input box
-          ),
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: GoogleFonts.lato(
-              fontSize: 14.sp,
-              color: AppColors.authHint,
-              fontWeight: FontWeight.w400,
-            ),
-            suffixIcon: suffixIcon,
-            filled: true,
-            fillColor: AppColors.authInputBg,
-            counterText: '', // Hide maxLength counter
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: 16.w,
-              vertical: 14.h,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.r),
-              borderSide: BorderSide(color: AppColors.authInputBorder, width: 1),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.r),
-              borderSide: BorderSide(color: AppColors.authInputBorder, width: 1),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.r),
-              borderSide: BorderSide(color: AppColors.authLink, width: 1.5),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.r),
-              borderSide: BorderSide(color: AppColors.error, width: 1),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.r),
-              borderSide: BorderSide(color: AppColors.error, width: 1.5),
-            ),
-          ),
-        ),
-
-        // ── Inline Error ───────────────────────────────────
-        if (errorText != null) ...[
-          SizedBox(height: 4.h),
-          Text(
-            errorText!,
-            style: GoogleFonts.lato(
-              fontSize: 11.sp,
-              color: AppColors.error,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-        ],
-      ],
+    return AppTextField(
+      label: label,
+      hint: hint,
+      controller: controller,
+      obscureText: obscureText,
+      suffixIcon: suffixIcon,
+      keyboardType: keyboardType,
+      textInputAction: textInputAction,
+      errorText: errorText,
+      maxLength: maxLength,
+      onChanged: onChanged,
     );
   }
 }

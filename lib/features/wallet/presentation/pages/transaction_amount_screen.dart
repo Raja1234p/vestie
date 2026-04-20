@@ -1,25 +1,30 @@
 import 'package:flutter/material.dart';
-import '../../../../core/widgets/common/app_numpad.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../app/router/app_routes.dart';
-import '../../../../core/constants/app_strings.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../domain/create_project_form.dart';
-import '../cubit/create_project_cubit.dart';
+import '../../../../../app/router/app_routes.dart';
+import '../../../../../core/constants/app_strings.dart';
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/common/app_button.dart';
+import '../../../../../core/widgets/common/app_numpad.dart';
+import '../../../../../core/widgets/text/app_text.dart';
+import '../../domain/wallet_transaction_type.dart';
+import '../cubit/wallet_transaction_cubit.dart';
 
-/// Step 0: Goal amount entry with custom numpad.
-class ProjectAmountScreen extends StatelessWidget {
-  const ProjectAmountScreen({super.key});
+class TransactionAmountScreen extends StatelessWidget {
+  const TransactionAmountScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CreateProjectCubit, CreateProjectForm>(
-      builder: (context, form) {
-        final cubit = context.read<CreateProjectCubit>();
+    return BlocBuilder<WalletTransactionCubit, WalletTransactionState>(
+      builder: (context, state) {
+        final cubit = context.read<WalletTransactionCubit>();
+        final isDeposit = state.transactionType == WalletTransactionType.deposit;
+        final title = isDeposit ? AppStrings.depositFundsTitle : AppStrings.withdrawFundsTitle;
+        final subtitle = isDeposit ? AppStrings.depositAmountSubtitle : AppStrings.withdrawAmountSubtitle;
+
         return Scaffold(
           backgroundColor: Colors.white,
           body: Column(
@@ -28,8 +33,7 @@ class ProjectAmountScreen extends StatelessWidget {
               SafeArea(
                 bottom: false,
                 child: Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 20.w, vertical: 12.h),
+                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
                   child: Row(
                     children: [
                       GestureDetector(
@@ -41,8 +45,8 @@ class ProjectAmountScreen extends StatelessWidget {
                             size: 24.w, color: AppColors.textPrimary),
                       ),
                       Expanded(
-                        child: Text(
-                          AppStrings.projectAmountTitle,
+                        child: AppText(
+                          title,
                           textAlign: TextAlign.center,
                           style: GoogleFonts.lato(
                             fontSize: 16.sp,
@@ -51,8 +55,7 @@ class ProjectAmountScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      // invisible placeholder to balance the close icon
-                      SizedBox(width: 24.w),
+                      SizedBox(width: 24.w), // invisible placeholder
                     ],
                   ),
                 ),
@@ -63,16 +66,16 @@ class ProjectAmountScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      AppStrings.projectAmountSubtitle,
+                    AppText(
+                      subtitle,
                       style: GoogleFonts.lato(
                         fontSize: 14.sp,
                         color: AppColors.textBody,
                       ),
                     ),
                     SizedBox(height: 12.h),
-                    Text(
-                      form.amountDigits.isEmpty ? '\$0.00' : form.formattedAmount,
+                    AppText(
+                      state.amountDigits.isEmpty ? '\$0.00' : state.formattedAmount,
                       style: GoogleFonts.lato(
                         fontSize: 48.sp,
                         fontWeight: FontWeight.w800,
@@ -82,30 +85,22 @@ class ProjectAmountScreen extends StatelessWidget {
                     SizedBox(height: 28.h),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 40.w),
-                      child: SizedBox(
-                        width: double.infinity,
-                        height: 50.h,
-                        child: ElevatedButton(
-                          onPressed: form.amountDigits.isEmpty
-                              ? null
-                              : () => context.push(AppRoutes.createProjectDetails),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            disabledBackgroundColor:
-                                AppColors.primary.withValues(alpha: 0.4),
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(100.r)),
-                          ),
-                          child: Text(
-                            AppStrings.btnContinue,
-                            style: GoogleFonts.lato(
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
+                      child: AppButton(
+                        text: AppStrings.btnContinue,
+                        onPressed: () {
+                          if (state.amountDigits.isEmpty) return;
+                          
+                          // Navigate to Select Payment Method card sheet
+                          // As per our profile implementation, we can push the payment methods screen as selection mode
+                          context.push(AppRoutes.selectPaymentMethod).then((selectedCard) {
+                             if (selectedCard != null && context.mounted) {
+                               // Assuming the list returns a card
+                               cubit.selectCard(selectedCard as dynamic);
+                               // Automatically proceed to confirmation
+                               context.push(AppRoutes.transactionConfirmation);
+                             }
+                          });
+                        },
                       ),
                     ),
                   ],
@@ -117,12 +112,10 @@ class ProjectAmountScreen extends StatelessWidget {
                 onDigit: cubit.appendAmountDigit,
                 onBackspace: cubit.removeAmountDigit,
               ),
-              ],
-            ),
-
+            ],
+          ),
         );
       },
     );
   }
 }
-

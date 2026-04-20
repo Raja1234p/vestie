@@ -24,6 +24,9 @@ import '../../features/profile/presentation/pages/key_guidelines_screen.dart';
 import '../../features/profile/presentation/pages/payment_methods_screen.dart';
 import '../../features/profile/presentation/pages/transaction_history_screen.dart';
 import '../../features/splash/presentation/pages/splash_screen.dart';
+import '../../features/wallet/presentation/pages/transaction_amount_screen.dart';
+import '../../features/wallet/presentation/pages/transaction_confirmation_screen.dart';
+import '../../features/wallet/presentation/pages/transaction_success_screen.dart';
 import 'app_routes.dart';
 
 class AppRouter {
@@ -117,6 +120,24 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.keyGuidelines,
         builder: (context, _) => const KeyGuidelinesScreen(),
+      ),
+
+      // ── Wallet Transaction ──────────────────────────────────────────────
+      GoRoute(
+        path: AppRoutes.transactionAmount,
+        builder: (context, _) => const TransactionAmountScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.selectPaymentMethod,
+        builder: (context, _) => const PaymentMethodsScreen(isSelectionMode: true),
+      ),
+      GoRoute(
+        path: AppRoutes.transactionConfirmation,
+        builder: (context, _) => const TransactionConfirmationScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.transactionSuccess,
+        builder: (context, _) => const TransactionSuccessScreen(),
       ),
     ],
     errorBuilder: (context, _) => const Scaffold(

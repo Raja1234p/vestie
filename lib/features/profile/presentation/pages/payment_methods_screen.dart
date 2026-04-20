@@ -12,19 +12,21 @@ import '../widgets/payment_empty_view.dart';
 import '../widgets/profile_sub_header.dart';
 
 class PaymentMethodsScreen extends StatelessWidget {
-  const PaymentMethodsScreen({super.key});
+  final bool isSelectionMode;
+  const PaymentMethodsScreen({super.key, this.isSelectionMode = false});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => PaymentMethodsCubit(),
-      child: const _PaymentBody(),
+      child: _PaymentBody(isSelectionMode: isSelectionMode),
     );
   }
 }
 
 class _PaymentBody extends StatelessWidget {
-  const _PaymentBody();
+  final bool isSelectionMode;
+  const _PaymentBody({required this.isSelectionMode});
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +46,7 @@ class _PaymentBody extends StatelessWidget {
                           : PaymentCardList(
                               cards: state.cards,
                               onAdd: () => context.push(AppRoutes.addCard),
+                              isSelectionMode: isSelectionMode,
                             ),
                 ),
               ],

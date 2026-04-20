@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../core/constants/app_strings.dart';
 import '../core/theme/app_theme.dart';
 import '../features/create_project/presentation/cubit/create_project_cubit.dart';
+import '../features/wallet/presentation/cubit/wallet_transaction_cubit.dart';
 import 'router/app_router.dart';
 
 class MainApp extends StatelessWidget {
@@ -21,6 +22,9 @@ class MainApp extends StatelessWidget {
             // Wizard cubit lives at app-level so it persists across pushed routes
             BlocProvider<CreateProjectCubit>(
               create: (_) => CreateProjectCubit(),
+            ),
+            BlocProvider<WalletTransactionCubit>(
+              create: (_) => WalletTransactionCubit(),
             ),
           ],
           child: MaterialApp.router(

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/text/app_text.dart';
+import '../../../../core/widgets/common/app_button.dart';
 
 /// Shared label widget for create-project form fields.
 class CPFieldLabel extends StatelessWidget {
@@ -14,10 +14,9 @@ class CPFieldLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(bottom: 10.h),
-      child: Text(
+      child: AppText(
         text,
-        style: GoogleFonts.lato(
-          fontSize: 16.sp,
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
           fontWeight: FontWeight.w600,
           color: AppColors.textBody,
         ),
@@ -73,11 +72,11 @@ class CPTextField extends StatelessWidget {
             keyboardType: keyboardType,
             textInputAction: textInputAction,
             onSubmitted: onSubmitted,
-            style: GoogleFonts.lato(
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 fontSize: 14.sp, color: AppColors.textPrimary),
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: GoogleFonts.lato(
+              hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   fontSize: 14.sp, color: AppColors.authHint),
               border: InputBorder.none,
               contentPadding:
@@ -89,9 +88,9 @@ class CPTextField extends StatelessWidget {
         if (hasError)
           Padding(
             padding: EdgeInsets.only(top: 4.h, left: 4.w),
-            child: Text(
+            child: AppText(
               errorText!,
-              style: GoogleFonts.lato(
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   fontSize: 11.sp, color: AppColors.error),
             ),
           ),
@@ -135,27 +134,9 @@ class CPNextButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: 48.h,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.cardActionBtn,
-          foregroundColor: Colors.white,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.r),
-          ),
-        ),
-        child: Text(
-          label,
-          style: GoogleFonts.lato(
-            fontSize: 15.sp,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ),
+    return AppButton(
+      text: label,
+      onPressed: onPressed,
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../text/app_text.dart';
 import '../../theme/app_colors.dart';
 
 /// Generic text field supporting email, password, and text modes.
@@ -42,13 +42,13 @@ class AppTextField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        AppText(
           label,
-          style: GoogleFonts.lato(
-            fontSize: 15.sp,
-            fontWeight: FontWeight.w600,
-            color: AppColors.authLabel,
-          ),
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w600,
+                color: AppColors.authLabel,
+              ),
         ),
         SizedBox(height: 10.h),
         TextField(
@@ -60,13 +60,13 @@ class AppTextField extends StatelessWidget {
           inputFormatters: inputFormatters,
           onChanged: onChanged,
           onSubmitted: onSubmitted,
-          style: GoogleFonts.lato(
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
             fontSize: 14.sp,
             color: AppColors.authSocialText,
           ),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: GoogleFonts.lato(
+            hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
               fontSize: 14.sp,
               color: AppColors.authHint,
             ),
@@ -85,9 +85,9 @@ class AppTextField extends StatelessWidget {
         ),
         if (errorText != null) ...[
           SizedBox(height: 4.h),
-          Text(
+          AppText(
             errorText!,
-            style: GoogleFonts.lato(
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
               fontSize: 11.sp,
               color: AppColors.error,
             ),

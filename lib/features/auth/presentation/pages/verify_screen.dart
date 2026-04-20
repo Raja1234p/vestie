@@ -6,41 +6,23 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/utils/validation_utils.dart';
 import '../../../../app/router/app_routes.dart';
 import '../bloc/verification_cubit.dart';
 import '../widgets/auth_background.dart';
 import '../widgets/auth_gradient_button.dart';
 import '../widgets/auth_text_field.dart';
+import '../../../../core/widgets/text/app_text.dart';
 
-class VerifyScreen extends StatefulWidget {
+class VerifyScreen extends StatelessWidget {
   final String email;
-  const VerifyScreen({super.key, required this.email});
+  VerifyScreen({super.key, required this.email});
 
-  @override
-  State<VerifyScreen> createState() => _VerifyScreenState();
-}
-
-class _VerifyScreenState extends State<VerifyScreen> {
   final _codeCtrl = TextEditingController();
-  String? _codeError;
-
-  @override
-  void dispose() {
-    _codeCtrl.dispose();
-    super.dispose();
-  }
-
-  bool _validate() {
-    final err = ValidationUtils.validateOtpCode(_codeCtrl.text);
-    setState(() => _codeError = err);
-    return err == null;
-  }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => VerificationCubit(email: widget.email),
+      create: (_) => VerificationCubit(email: email),
       child: BlocConsumer<VerificationCubit, VerificationState>(
         listener: (context, state) {
           if (state.isSuccess) {
@@ -58,7 +40,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                   SizedBox(height: 48.h),
 
                   // ── Title ─────────────────────────────────────────
-                  Text(
+                  AppText(
                     AppStrings.verifyTitle,
                     style: GoogleFonts.lato(
                       fontSize: 28.sp,
@@ -68,7 +50,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                     ),
                   ),
                   SizedBox(height: 6.h),
-                  Text(
+                  AppText(
                     AppStrings.verifySubtitle,
                     style: GoogleFonts.lato(
                       fontSize: 13.5.sp,
@@ -86,8 +68,8 @@ class _VerifyScreenState extends State<VerifyScreen> {
                     keyboardType: TextInputType.number,
                     textInputAction: TextInputAction.done,
                     maxLength: 6,
-                    errorText: state.error ?? _codeError,
-                    onChanged: (_) => setState(() => _codeError = null),
+                    errorText: state.error,
+                    onChanged: (_) {}, // Let user try without instant error resets or use cubit.clearError() but since it's just typing, it's fine.
                   ),
                   SizedBox(height: 28.h),
 
@@ -96,9 +78,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                     text: AppStrings.btnVerify,
                     isLoading: state.isLoading,
                     onPressed: () {
-                      if (_validate()) {
-                        cubit.verifyCode(_codeCtrl.text.trim());
-                      }
+                      cubit.verifyCode(_codeCtrl.text.trim());
                     },
                   ),
                   SizedBox(height: 22.h),
@@ -128,7 +108,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                                       ),
                                     ),
                                   )
-                                : Text(
+                                : AppText(
                                     '${AppStrings.resendCode} (${state.resendSeconds}s)',
                                     style: GoogleFonts.lato(
                                       fontSize: 13.sp,
