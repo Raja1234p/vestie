@@ -26,14 +26,18 @@ class ProjectCard extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 12.h),
       padding: EdgeInsets.all(14.w),
       decoration: BoxDecoration(
-        color: AppColors.cardBg,
+        color: AppColors.appBgBottom,
         borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(
+          color: AppColors.purple300.withValues(alpha: 0.65),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.textBody.withValues(alpha: 0.06),
-            blurRadius: 12,
+            color: AppColors.textBody.withValues(alpha: 0.03),
+            blurRadius: 8,
             spreadRadius: 0,
-            offset: const Offset(0, 4),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -97,11 +101,22 @@ class ProjectCard extends StatelessWidget {
   }
 
   String get _raisedText {
-    final amount = project.currentAmount?.toStringAsFixed(0) ?? '0';
+    final amount = _formatWhole(project.currentAmount);
     final prefix = project.relation == ProjectRelation.owned
         ? AppStrings.labelRaised
         : 'Total';
     return '$prefix \$$amount';
+  }
+
+  String _formatWhole(double? value) {
+    final raw = (value ?? 0).toStringAsFixed(0);
+    final parts = raw.split('');
+    final buf = StringBuffer();
+    for (var i = 0; i < parts.length; i++) {
+      if (i > 0 && (parts.length - i) % 3 == 0) buf.write(',');
+      buf.write(parts[i]);
+    }
+    return buf.toString();
   }
 }
 
@@ -210,21 +225,55 @@ class _GoalRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RichText(
-      text: TextSpan(
-        style: GoogleFonts.lato(fontSize: 25.sp, color: AppColors.textBody),
-        children: [
-          TextSpan(text: '${AppStrings.labelGoal} ',style: TextStyle(fontWeight: FontWeight.w700,)),
-          TextSpan(
-            text: '\$${project.currentAmount?.toStringAsFixed(0) ?? '0'}',
-            style: TextStyle(
-                fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+    final current = _formatWhole(project.currentAmount);
+    final goal = _formatWhole(project.goalAmount);
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        RichText(
+          text: TextSpan(
+            style: GoogleFonts.lato(fontSize: 25.sp, color: AppColors.textBody),
+            children: [
+              TextSpan(
+                text: '${AppStrings.labelGoal} ',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
+              TextSpan(
+                text: '\$$current',
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ],
           ),
-          TextSpan(
-              text: ' / \$${project.goalAmount?.toStringAsFixed(0) ?? '0'}',style: TextStyle(fontSize: 15.sp,)),
-        ],
-      ),
+        ),
+        SizedBox(width: 6.w),
+        Padding(
+          padding: EdgeInsets.only(bottom: 3.h),
+          child: Text(
+            '/ \$$goal',
+            style: GoogleFonts.lato(
+              fontSize: 15.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textBody,
+            ),
+          ),
+        ),
+      ],
     );
+  }
+
+  String _formatWhole(double? value) {
+    final raw = (value ?? 0).toStringAsFixed(0);
+    final parts = raw.split('');
+    final buf = StringBuffer();
+    for (var i = 0; i < parts.length; i++) {
+      if (i > 0 && (parts.length - i) % 3 == 0) buf.write(',');
+      buf.write(parts[i]);
+    }
+    return buf.toString();
   }
 }
 
