@@ -1,8 +1,8 @@
-import '../utils/validators.dart';
+import '../utils/validation_utils.dart';
 
 extension StringExtensions on String {
-  bool get isEmailValid => AppValidators.validateEmail(this) == null;
-  bool get isPasswordValid => AppValidators.validatePassword(this) == null;
+  bool get isEmailValid => ValidationUtils.validateEmail(this) == null;
+  bool get isPasswordValid => ValidationUtils.validatePassword(this) == null;
 
   String get capitalize {
     if (isEmpty) return this;

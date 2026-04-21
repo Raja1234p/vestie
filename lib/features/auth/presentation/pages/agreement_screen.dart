@@ -32,7 +32,7 @@ class _AgreementBody extends StatelessWidget {
     final accepted = context.watch<AgreementCubit>().state;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.surface,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -47,13 +47,13 @@ class _AgreementBody extends StatelessWidget {
                   width: 64.w,
                   height: 64.w,
                   decoration: const BoxDecoration(
-                    color: Color(0xFFFFF3E0),
+                    color: AppColors.yellow100,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     Icons.warning_amber_rounded,
                     size: 34.w,
-                    color: const Color(0xFFFF9800),
+                    color: AppColors.warning,
                   ),
                 ),
               ),
@@ -105,15 +105,15 @@ class _AgreementBody extends StatelessWidget {
                       width: 22.w,
                       height: 22.w,
                       decoration: BoxDecoration(
-                        color: accepted ? AppColors.primary : Colors.white,
+                        color: accepted ? AppColors.primary : AppColors.surface,
                         border: Border.all(
-                          color: accepted ? AppColors.primary : const Color(0xFFCCCCDD),
+                          color: accepted ? AppColors.primary : AppColors.grey400,
                           width: 1.5,
                         ),
                         borderRadius: BorderRadius.circular(5.r),
                       ),
                       child: accepted
-                          ? Icon(Icons.check, color: Colors.white, size: 14.w)
+                          ? Icon(Icons.check, color: AppColors.surface, size: 14.w)
                           : null,
                     ),
                     SizedBox(width: 10.w),

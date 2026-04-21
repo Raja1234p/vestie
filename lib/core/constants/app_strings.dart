@@ -124,6 +124,7 @@ class AppStrings {
   static const String btnSendRequest    = 'Send Request';
   static const String labelGoal         = 'Goal';
   static const String labelRaised       = 'Raised';
+  static const String labelTotal        = 'Total';
   static const String labelEndsIn       = 'Ends in';
   static const String statusOnGoing     = 'On Going';
   static const String statusCompleted   = 'Completed';

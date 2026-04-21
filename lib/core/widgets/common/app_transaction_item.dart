@@ -32,9 +32,9 @@ class AppTransactionItem extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 6.h),
       padding: EdgeInsets.all(16.r),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8F7FA), // Exact from Figma
+        color: AppColors.appBgBottom,
         borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: AppColors.neutral500)
+        border: Border.all(color: AppColors.neutral500),
       ),
       child: Row(
         children: [

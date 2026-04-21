@@ -34,6 +34,10 @@ import '../../features/project_detail/presentation/pages/borrow_requests_screen.
 import 'app_routes.dart';
 
 class AppRouter {
+  static Widget _invalidRouteScreen() => const Scaffold(
+        body: Center(child: Text(AppStrings.routeNotFound)),
+      );
+
   static final GoRouter router = GoRouter(
     initialLocation: AppRoutes.splash,
     routes: [
@@ -55,8 +59,10 @@ class AppRouter {
       ),
       GoRoute(
         path: AppRoutes.verify,
-        builder: (context, state) =>
-            VerifyScreen(email: state.extra as String? ?? ''),
+        builder: (context, state) {
+          final email = state.extra is String ? state.extra as String : '';
+          return VerifyScreen(email: email);
+        },
       ),
       GoRoute(
         path: AppRoutes.forgotPassword,
@@ -148,14 +154,19 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.projectDetail,
         builder: (context, state) {
-          final project = state.extra as ProjectDetailEntity;
+          final extra = state.extra;
+          if (extra is! ProjectDetailEntity) return _invalidRouteScreen();
+          final project = extra;
           return ProjectDetailScreen(project: project);
         },
       ),
       GoRoute(
         path: AppRoutes.borrowRequests,
         builder: (context, state) {
-          final requests = state.extra as List<BorrowRequestEntity>;
+          final extra = state.extra;
+          if (extra is! List) return _invalidRouteScreen();
+          final requests = extra.whereType<BorrowRequestEntity>().toList();
+          if (requests.isEmpty) return _invalidRouteScreen();
           return BorrowRequestsScreen(requests: requests);
         },
       ),
