@@ -63,4 +63,9 @@ class AppAssets {
 
   // ── Specific Feature Backgrounds ──────────────────────────────────────────
   static const String contributionSuccessBg = '$_imagePath/Contribution Successful.png';
+  static const String upWordArrow    = '$_iconPath/arrow-up-big.svg';
+  static const String downWordArrow    = '$_iconPath/arrow-down-big.svg';
+  static const String crown    = '$_iconPath/crown.svg';
+
+
 }

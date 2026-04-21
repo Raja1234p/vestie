@@ -12,6 +12,7 @@ import '../../../home/presentation/widgets/project_card.dart';
 import '../../../project_detail/domain/entities/borrow_request_entity.dart';
 import '../../../project_detail/domain/entities/member_entity.dart';
 import '../../../project_detail/domain/entities/project_detail_entity.dart';
+import '../../../project_detail/domain/entities/project_detail_route_args.dart';
 import '../cubit/discover_cubit.dart';
 import '../widgets/discover_filter_row.dart';
 import '../widgets/discover_header.dart';
@@ -63,7 +64,10 @@ class _DiscoverBody extends StatelessWidget {
       // Discover cards are always joined (not owned) — no leader menu
       isLeader: false,
     );
-    context.push(AppRoutes.projectDetail, extra: detail);
+    context.push(
+      AppRoutes.projectDetail,
+      extra: ProjectDetailRouteArgs(project: detail),
+    );
   }
 
   @override

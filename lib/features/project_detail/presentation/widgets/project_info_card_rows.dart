@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/text/app_text.dart';
 
 String formatProjectInfoAmount(double value) {
   return value.toStringAsFixed(0).replaceAllMapped(
@@ -64,11 +65,11 @@ class ProjectInfoDeadlineRow extends StatelessWidget {
       children: [
         Icon(Icons.calendar_today_outlined, size: 14.w, color: AppColors.textBody),
         SizedBox(width: 6.w),
-        Text(
+        AppText(
           '${AppStrings.labelEndsIn} ',
           style: GoogleFonts.lato(fontSize: 13.sp, color: AppColors.textBody),
         ),
-        Text(
+        AppText(
           endsIn,
           style: GoogleFonts.lato(
             fontSize: 13.sp,

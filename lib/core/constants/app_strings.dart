@@ -351,6 +351,10 @@ class AppStrings {
   static const String borrowRequestsTitle       = 'Borrow Requests';
   static const String upvoteLabel               = 'Upvote';
   static const String downvoteLabel             = 'Downvote';
+  static const String upvotedStatusLabel        = 'You’ve Upvoted this Requested';
+  static const String downvotedStatusLabel      = 'You’ve Downvote this Requested';
+  static const String acceptLabel               = 'Accept';
+  static const String rejectLabel               = 'Reject';
   static const String educationLoan             = 'Education Loan';
   static const String goalPrefix                = 'Goal ';
 

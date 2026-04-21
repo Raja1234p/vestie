@@ -11,11 +11,11 @@ import '../../../../core/widgets/common/leader_action_menu.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../../core/widgets/common/post_auth_header.dart';
 import '../../domain/entities/project_detail_entity.dart';
+import '../../domain/entities/project_detail_route_args.dart';
 import '../cubit/project_detail_cubit.dart';
 import '../cubit/project_detail_state.dart';
 import '../widgets/announcement_card.dart';
-import '../widgets/borrow_requests_tab.dart';
-import '../widgets/members_list.dart';
+import '../widgets/project_detail_tab_panels.dart';
 import '../widgets/project_info_card.dart';
 
 /// Shell — provides ProjectDetailCubit. Route extra = [ProjectDetailEntity].
@@ -66,67 +66,90 @@ class _ProjectDetailBody extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: PostAuthGradientBackground(
-        child: CustomScrollView(
-          slivers: [
-            // ── Header ──────────────────────────────────────────
-            SliverToBoxAdapter(
-              child: PostAuthHeader(
-                title: project.name,
-                leading: GestureDetector(
-                  onTap: () => context.pop(),
-                  child: Icon(
-                    Icons.arrow_back_rounded,
-                    color: AppColors.grey1100,
-                    size: 22.w,
+        child: BlocBuilder<ProjectDetailCubit, ProjectDetailState>(
+          builder: (context, state) {
+            if (state.status == ProjectDetailViewStatus.error) {
+              return Center(
+                child: Text(
+                  state.errorMessage ?? AppStrings.errorGeneric,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: AppColors.textBody,
+                      ),
+                ),
+              );
+            }
+
+            if (state.status == ProjectDetailViewStatus.loading) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+
+            return CustomScrollView(
+              slivers: [
+                // ── Header ──────────────────────────────────────────
+                SliverToBoxAdapter(
+                  child: PostAuthHeader(
+                    title: project.name,
+                    leading: GestureDetector(
+                      onTap: () => context.pop(),
+                      child: Icon(
+                        Icons.arrow_back_rounded,
+                        color: AppColors.grey1100,
+                        size: 22.w,
+                      ),
+                    ),
+                    // "..." leader menu only visible to project owner
+                    trailing: project.isLeader
+                        ? LeaderActionMenu(
+                            joinRequestCount: 3,
+                            onSelected: (action) =>
+                                _handleLeaderAction(context, action),
+                          )
+                        : null,
                   ),
                 ),
-                // "..." leader menu only visible to project owner
-                trailing: project.isLeader
-                    ? LeaderActionMenu(
-                        joinRequestCount: 3,
-                        onSelected: (action) =>
-                            _handleLeaderAction(context, action),
-                      )
-                    : null,
-              ),
-            ),
 
-            // ── Content ─────────────────────────────────────────
-            SliverPadding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              sliver: SliverToBoxAdapter(
-                child: Column(
-                  children: [
-                    // Announcement card — leader sees trash icon
-                    AnnouncementCard(
-                      text: project.announcement,
-                      isLeader: project.isLeader,
-                      onDelete: () {
-                        // TODO: delete announcement via BLoC
-                      },
+                // ── Content ─────────────────────────────────────────
+                SliverPadding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  sliver: SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        SizedBox(height: 12.h),
+                        AnnouncementCard(
+                          text: project.announcement,
+                          isLeader: project.isLeader,
+                          onDelete: () {
+                            // TODO: delete announcement via BLoC
+                          },
+                        ),
+                        SizedBox(height: 12.h),
+                        ProjectInfoCard(project: project),
+                        SizedBox(height: 16.h),
+                        AppButton(
+                          text: AppStrings.btnContribute,
+                          onPressed: () =>
+                              context.push(AppRoutes.transactionAmount),
+                        ),
+                        SizedBox(height: 13.h),
+                        AppButton(
+                          text: AppStrings.btnBorrow,
+                          onPressed: () => context
+                              .read<ProjectDetailCubit>()
+                              .selectTab(ProjectDetailTab.borrowRequests),
+                          isSecondary: true,
+                        ),
+                        SizedBox(height: 20.h),
+                        _TabSection(project: project),
+                        SizedBox(height: 32.h),
+                      ],
                     ),
-                    SizedBox(height: 12.h),
-                    ProjectInfoCard(project: project),
-                    SizedBox(height: 16.h),
-                    AppButton(
-                      text: AppStrings.btnContribute,
-                      onPressed: () =>
-                          context.push(AppRoutes.transactionAmount),
-                    ),
-                    SizedBox(height: 10.h),
-                    AppButton(
-                      text: AppStrings.btnBorrow,
-                      onPressed: () {},
-                      isSecondary: true,
-                    ),
-                    SizedBox(height: 20.h),
-                    _TabSection(project: project),
-                    SizedBox(height: 32.h),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          ],
+              ],
+            );
+          },
         ),
       ),
     );
@@ -159,18 +182,38 @@ class _TabSection extends StatelessWidget {
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 280),
               child: isBorrowTab
-                  ? BorrowRequestsTab(
-                      key: const ValueKey('borrow'),
-                      requests: project.borrowRequests,
-                      onViewAll: () => context.push(
-                        AppRoutes.borrowRequests,
-                        extra: project.borrowRequests,
-                      ),
-                    )
-                  : MembersList(
-                      key: const ValueKey('members'),
-                      members: project.members,
-                    ),
+                  ? project.isLeader
+                      ? LeaderBorrowRequestsPanel(
+                          key: const ValueKey('leader-borrow'),
+                          requests: project.borrowRequests,
+                          onViewAll: () => context.push(
+                            AppRoutes.borrowRequests,
+                            extra: BorrowRequestsRouteArgs(
+                              requests: project.borrowRequests,
+                              isLeaderMode: true,
+                            ),
+                          ),
+                        )
+                      : UserBorrowRequestsPanel(
+                          key: const ValueKey('user-borrow'),
+                          requests: project.borrowRequests,
+                          onViewAll: () => context.push(
+                            AppRoutes.borrowRequests,
+                            extra: BorrowRequestsRouteArgs(
+                              requests: project.borrowRequests,
+                              isLeaderMode: false,
+                            ),
+                          ),
+                        )
+                  : project.isLeader
+                      ? LeaderMembersPanel(
+                          key: const ValueKey('leader-members'),
+                          members: project.members,
+                        )
+                      : UserMembersPanel(
+                          key: const ValueKey('user-members'),
+                          members: project.members,
+                        ),
             ),
           ],
         );

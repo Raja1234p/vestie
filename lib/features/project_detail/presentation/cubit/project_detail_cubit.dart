@@ -8,4 +8,27 @@ class ProjectDetailCubit extends Cubit<ProjectDetailState> {
 
   void selectTab(ProjectDetailTab tab) =>
       emit(state.copyWith(activeTab: tab));
+
+  void setLoading() => emit(
+        state.copyWith(
+          status: ProjectDetailViewStatus.loading,
+          errorMessage: null,
+        ),
+      );
+
+  void setLoaded() => emit(
+        state.copyWith(
+          status: ProjectDetailViewStatus.loaded,
+          errorMessage: null,
+        ),
+      );
+
+  void setError(String message) => emit(
+        state.copyWith(
+          status: ProjectDetailViewStatus.error,
+          errorMessage: message,
+        ),
+      );
+
+  void setActionBusy(bool value) => emit(state.copyWith(actionBusy: value));
 }

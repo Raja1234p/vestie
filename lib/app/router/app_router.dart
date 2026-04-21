@@ -27,8 +27,7 @@ import '../../features/splash/presentation/pages/splash_screen.dart';
 import '../../features/wallet/presentation/pages/transaction_amount_screen.dart';
 import '../../features/wallet/presentation/pages/transaction_confirmation_screen.dart';
 import '../../features/wallet/presentation/pages/transaction_success_screen.dart';
-import '../../features/project_detail/domain/entities/borrow_request_entity.dart';
-import '../../features/project_detail/domain/entities/project_detail_entity.dart';
+import '../../features/project_detail/domain/entities/project_detail_route_args.dart';
 import '../../features/project_detail/presentation/pages/project_detail_screen.dart';
 import '../../features/project_detail/presentation/pages/borrow_requests_screen.dart';
 import 'app_routes.dart';
@@ -39,7 +38,7 @@ class AppRouter {
       );
 
   static final GoRouter router = GoRouter(
-    initialLocation: AppRoutes.splash,
+    initialLocation: AppRoutes.dashboard,
     routes: [
       GoRoute(
         path: AppRoutes.splash,
@@ -155,19 +154,19 @@ class AppRouter {
         path: AppRoutes.projectDetail,
         builder: (context, state) {
           final extra = state.extra;
-          if (extra is! ProjectDetailEntity) return _invalidRouteScreen();
-          final project = extra;
-          return ProjectDetailScreen(project: project);
+          if (extra is! ProjectDetailRouteArgs) return _invalidRouteScreen();
+          return ProjectDetailScreen(project: extra.project);
         },
       ),
       GoRoute(
         path: AppRoutes.borrowRequests,
         builder: (context, state) {
           final extra = state.extra;
-          if (extra is! List) return _invalidRouteScreen();
-          final requests = extra.whereType<BorrowRequestEntity>().toList();
-          if (requests.isEmpty) return _invalidRouteScreen();
-          return BorrowRequestsScreen(requests: requests);
+          if (extra is! BorrowRequestsRouteArgs) return _invalidRouteScreen();
+          return BorrowRequestsScreen(
+            requests: extra.requests,
+            isLeaderMode: extra.isLeaderMode,
+          );
         },
       ),
     ],

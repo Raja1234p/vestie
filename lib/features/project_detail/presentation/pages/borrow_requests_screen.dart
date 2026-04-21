@@ -12,8 +12,13 @@ import '../widgets/borrow_request_card.dart';
 /// Receives a [List] of [BorrowRequestEntity] via GoRouter extra.
 class BorrowRequestsScreen extends StatelessWidget {
   final List<BorrowRequestEntity> requests;
+  final bool isLeaderMode;
 
-  const BorrowRequestsScreen({super.key, required this.requests});
+  const BorrowRequestsScreen({
+    super.key,
+    required this.requests,
+    this.isLeaderMode = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,12 +45,31 @@ class BorrowRequestsScreen extends StatelessWidget {
             // ── List ────────────────────────────────────────
             SliverPadding(
               padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 32.h),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (_, i) => BorrowRequestCard(request: requests[i]),
-                  childCount: requests.length,
-                ),
-              ),
+              sliver: requests.isEmpty
+                  ? SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 24.h),
+                        child: Center(
+                          child: Text(
+                            AppStrings.emptyData,
+                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                  color: AppColors.textBody,
+                                ),
+                          ),
+                        ),
+                      ),
+                    )
+                  : SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (_, i) => BorrowRequestCard(
+                          request: requests[i],
+                          actionMode: isLeaderMode
+                              ? BorrowRequestActionMode.decision
+                              : BorrowRequestActionMode.vote,
+                        ),
+                        childCount: requests.length,
+                      ),
+                    ),
             ),
           ],
         ),

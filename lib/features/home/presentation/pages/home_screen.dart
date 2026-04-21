@@ -11,6 +11,7 @@ import '../../../home/domain/entities/project.dart';
 import '../../../project_detail/domain/entities/borrow_request_entity.dart';
 import '../../../project_detail/domain/entities/member_entity.dart';
 import '../../../project_detail/domain/entities/project_detail_entity.dart';
+import '../../../project_detail/domain/entities/project_detail_route_args.dart';
 import '../bloc/home_bloc.dart';
 import '../bloc/home_event.dart';
 import '../bloc/home_state.dart';
@@ -87,7 +88,17 @@ class _HomeContent extends StatelessWidget {
   const _HomeContent({required this.data});
 
   /// Builds mock detail data from the card project and navigates.
-  void _navigateToDetail(BuildContext context, Project p) {
+  void _navigateToLeaderDetail(BuildContext context, Project p) {
+    _navigateToDetail(context, p, isLeaderView: true);
+  }
+
+  /// Builds mock detail data from the card project and navigates.
+  void _navigateToUserDetail(BuildContext context, Project p) {
+    _navigateToDetail(context, p, isLeaderView: false);
+  }
+
+  void _navigateToDetail(BuildContext context, Project p,
+      {required bool isLeaderView}) {
     final detail = ProjectDetailEntity(
       id: p.id,
       name: p.name,
@@ -113,9 +124,12 @@ class _HomeContent extends StatelessWidget {
         BorrowRequestEntity(id: 'b3', initials: 'OR', memberName: 'Olivia R.',
             loanType: AppStrings.educationLoan, requestedAmount: 2500, upvotes: 78, downvotes: 6),
       ],
-      isLeader: p.relation == ProjectRelation.owned,
+      isLeader: isLeaderView,
     );
-    context.push(AppRoutes.projectDetail, extra: detail);
+    context.push(
+      AppRoutes.projectDetail,
+      extra: ProjectDetailRouteArgs(project: detail),
+    );
   }
 
   @override
@@ -147,16 +161,14 @@ class _HomeContent extends StatelessWidget {
                             projects: data.myProjects,
                             expanded: sections.myProjectsExpanded,
                             onToggle: cubit.toggleMyProjects,
-                            onProjectAction: (p) =>
-                                _navigateToDetail(context, p),
+                            onProjectAction: (p) => _navigateToLeaderDetail(context, p),
                           ),
                           ProjectsSection(
                             title: AppStrings.joinedProjects,
                             projects: data.joinedProjects,
                             expanded: sections.joinedProjectsExpanded,
                             onToggle: cubit.toggleJoined,
-                            onProjectAction: (p) =>
-                                _navigateToDetail(context, p),
+                            onProjectAction: (p) => _navigateToUserDetail(context, p),
                           ),
                           SizedBox(height: 16.h),
                         ],

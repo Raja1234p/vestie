@@ -23,12 +23,13 @@ class AppToggleTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: height ?? 44.h,
+      height: height ?? 48.h,
       decoration: BoxDecoration(
         color: AppColors.grey200,
-        borderRadius: BorderRadius.circular(100.r),
+        borderRadius: BorderRadius.circular(100.r,),
+        border: Border.all(color: AppColors.neutral400)
       ),
-      padding: EdgeInsets.all(3.w),
+      padding: EdgeInsets.all(5.w),
       child: Row(
         children: List.generate(tabs.length, (i) {
           final isActive = i == activeIndex;

@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_avatar_circle.dart';
 import '../../../../core/widgets/common/app_role_badge.dart';
+import '../../../../core/widgets/text/app_text.dart';
 import '../../domain/entities/member_entity.dart';
 
 /// Scrollable member list displayed under the Members tab.
@@ -16,7 +17,10 @@ class MembersList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: members
-          .map((m) => _MemberRow(member: m))
+          .map((m) => Padding(
+            padding:  EdgeInsets.only(bottom: 12.h),
+            child: _MemberRow(member: m),
+          ))
           .toList(),
     );
   }
@@ -41,26 +45,27 @@ class _MemberRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 14.h),
+      padding: EdgeInsets.symmetric(vertical: 16.h,horizontal: 16.w),
       decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: AppColors.divider, width: 1)),
+        color: AppColors.grey100,
+        borderRadius: BorderRadius.circular(12.r)
       ),
       child: Row(
         children: [
           // Avatar
-          AppAvatarCircle(initials: member.initials),
+          AppAvatarCircle(initials: member.initials,size: 55.h),
           SizedBox(width: 12.w),
 
           // Name + badge
           Expanded(
             child: Row(
               children: [
-                Text(
+                AppText(
                   member.name,
                   style: GoogleFonts.lato(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.grey1100,
+                    color: AppColors.neutral1100,
                   ),
                 ),
                 if (_roleType != null) ...[
@@ -72,12 +77,12 @@ class _MemberRow extends StatelessWidget {
           ),
 
           // Amount
-          Text(
+          AppText(
             '+${_fmt(member.contributedAmount)}',
             style: GoogleFonts.lato(
-              fontSize: 15.sp,
+              fontSize: 18.sp,
               fontWeight: FontWeight.w700,
-              color: AppColors.success,
+              color: AppColors.badgeCompletedText,
             ),
           ),
         ],

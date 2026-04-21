@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../constants/app_assets.dart';
+import '../../constants/app_strings.dart';
 import '../../theme/app_colors.dart';
 
 /// Reusable Upvote / Downvote button pair.
@@ -32,7 +33,7 @@ class AppVoteButtons extends StatelessWidget {
         // ── Downvote ──────────────────────────────────────────
         Expanded(
           child: _VoteButton(
-            label: 'Downvote',
+            label: AppStrings.downvoteLabel,
             iconPath: AppAssets.iconThumbsDown,
             isActive: hasDownvoted,
             isPrimary: false,
@@ -43,7 +44,7 @@ class AppVoteButtons extends StatelessWidget {
         // ── Upvote ────────────────────────────────────────────
         Expanded(
           child: _VoteButton(
-            label: 'Upvote',
+            label: AppStrings.upvoteLabel,
             iconPath: AppAssets.iconThumbsUp,
             isActive: hasUpvoted,
             isPrimary: true,
@@ -78,11 +79,11 @@ class _VoteButton extends StatelessWidget {
         : Colors.transparent;
     final borderColor = isPrimary
         ? Colors.transparent
-        : (isActive ? AppColors.red600 : AppColors.grey300);
+        : (isActive ? AppColors.red600 : AppColors.red600);
     final iconColor = isPrimary
         ? AppColors.neutral100
-        : (isActive ? AppColors.red600 : AppColors.red700);
-    final textColor = isPrimary ? AppColors.neutral100 : AppColors.red700;
+        : (isActive ? AppColors.red900 : AppColors.red900);
+    final textColor = isPrimary ? AppColors.neutral100 : AppColors.red900;
 
     return GestureDetector(
       onTap: onTap,

@@ -35,9 +35,9 @@ class AppAvatarCircle extends StatelessWidget {
       child: Text(
         initials.toUpperCase(),
         style: GoogleFonts.lato(
-          fontSize: fontSize ?? 14.sp,
-          fontWeight: FontWeight.w700,
-          color: textColor ?? AppColors.purple900,
+          fontSize: fontSize ?? 16.sp,
+          fontWeight: FontWeight.w800,
+          color: textColor ?? AppColors.neutral1100,
         ),
       ),
     );

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/text/app_text.dart';
 import '../../domain/entities/borrow_request_entity.dart';
 import 'borrow_request_card.dart';
 
@@ -26,19 +26,22 @@ class BorrowRequestsTab extends StatelessWidget {
           (r) => BorrowRequestCard(request: r),
         ),
         if (requests.length > 2) ...[
-          SizedBox(height: 8.h),
+          SizedBox(height: 10.h),
           GestureDetector(
             onTap: onViewAll,
-            child: Center(
-              child: Text(
+            behavior: HitTestBehavior.opaque,
+            child: Container(
+              width: double.infinity,
+              color: AppColors.surface,
+              padding: EdgeInsets.symmetric(vertical: 14.h),
+              alignment: Alignment.center,
+              child: AppText(
                 AppStrings.viewAllRequests,
-                style: GoogleFonts.lato(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.primary,
-                  decoration: TextDecoration.underline,
-                  decorationColor: AppColors.primary,
-                ),
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.neutral1200,
+                    ),
               ),
             ),
           ),

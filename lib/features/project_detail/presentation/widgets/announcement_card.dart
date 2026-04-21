@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/text/app_text.dart';
 
 /// Displays the project announcement at the top of the detail screen.
 /// When [isLeader] is true a trash icon appears on the right to delete it.
@@ -28,7 +29,7 @@ class AnnouncementCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: AppColors.purple300),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,7 +39,7 @@ class AnnouncementCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                AppText(
                   AppStrings.announcementTitle,
                   style: GoogleFonts.lato(
                     fontSize: 16.sp,
@@ -47,7 +48,7 @@ class AnnouncementCard extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 4.h),
-                Text(
+                AppText(
                   text ?? AppStrings.announcementPlaceholder,
                   style: GoogleFonts.lato(
                     fontSize: 13.sp,

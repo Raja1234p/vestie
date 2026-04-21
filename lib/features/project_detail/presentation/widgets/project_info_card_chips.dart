@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/text/app_text.dart';
 import '../../domain/entities/project_detail_entity.dart';
 import '../../../home/domain/entities/project.dart';
 
@@ -37,7 +38,7 @@ class ProjectInfoCategoryChip extends StatelessWidget {
         children: [
           Icon(_icon, size: 13.w, color: AppColors.primary),
           SizedBox(width: 4.w),
-          Text(
+          AppText(
             project.categoryLabel,
             style: GoogleFonts.lato(
               fontSize: 12.sp,
@@ -69,7 +70,7 @@ class ProjectInfoStatusBadge extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(100.r),
       ),
-      child: Text(
+      child: AppText(
         ongoing ? AppStrings.statusOnGoing : AppStrings.statusCompleted,
         style: GoogleFonts.lato(
           fontSize: 12.sp,
