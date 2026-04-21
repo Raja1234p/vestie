@@ -20,6 +20,8 @@ class AppTextField extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onSubmitted;
+  final int minLines;
+  final int maxLines;
 
   const AppTextField({
     super.key,
@@ -35,10 +37,19 @@ class AppTextField extends StatelessWidget {
     this.inputFormatters,
     this.onChanged,
     this.onSubmitted,
+    this.minLines = 1,
+    this.maxLines = 1,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isMultiline = maxLines > 1 || minLines > 1;
+    final effectiveKeyboardType =
+        isMultiline ? TextInputType.multiline : keyboardType;
+    final effectiveTextInputAction = isMultiline
+        ? TextInputAction.newline
+        : textInputAction;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -54,12 +65,14 @@ class AppTextField extends StatelessWidget {
         TextField(
           controller: controller,
           obscureText: obscureText,
-          keyboardType: keyboardType,
-          textInputAction: textInputAction,
+          keyboardType: effectiveKeyboardType,
+          textInputAction: effectiveTextInputAction,
           maxLength: maxLength,
           inputFormatters: inputFormatters,
           onChanged: onChanged,
           onSubmitted: onSubmitted,
+          minLines: minLines,
+          maxLines: maxLines,
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
             fontSize: 14.sp,
             color: AppColors.authSocialText,

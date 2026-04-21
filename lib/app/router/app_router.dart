@@ -28,8 +28,14 @@ import '../../features/wallet/presentation/pages/transaction_amount_screen.dart'
 import '../../features/wallet/presentation/pages/transaction_confirmation_screen.dart';
 import '../../features/wallet/presentation/pages/transaction_success_screen.dart';
 import '../../features/project_detail/domain/entities/project_detail_route_args.dart';
+import '../../features/project_detail/domain/entities/member_entity.dart';
 import '../../features/project_detail/presentation/pages/project_detail_screen.dart';
 import '../../features/project_detail/presentation/pages/borrow_requests_screen.dart';
+import '../../features/project_detail/presentation/pages/investment_project_detail_screen.dart';
+import '../../features/project_detail/presentation/pages/member_detail_screen.dart';
+import '../../features/project_detail/presentation/pages/member_penalty_action_screen.dart';
+import '../../features/project_detail/presentation/pages/create_announcement_screen.dart';
+import '../../features/project_detail/presentation/pages/join_requests_screen.dart';
 import 'app_routes.dart';
 
 class AppRouter {
@@ -157,6 +163,42 @@ class AppRouter {
           if (extra is! ProjectDetailRouteArgs) return _invalidRouteScreen();
           return ProjectDetailScreen(project: extra.project);
         },
+      ),
+      GoRoute(
+        path: AppRoutes.investmentProjectDetail,
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is! ProjectDetailRouteArgs) return _invalidRouteScreen();
+          return InvestmentProjectDetailScreen(project: extra.project);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.memberDetail,
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is! MemberDetailRouteArgs) return _invalidRouteScreen();
+          return MemberDetailScreen(
+            member: extra.member,
+            projectName: extra.projectName,
+            isLeaderView: extra.isLeaderView,
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.memberPenaltyAction,
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is! MemberEntity) return _invalidRouteScreen();
+          return MemberPenaltyActionScreen(member: extra);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.createAnnouncement,
+        builder: (context, _) => const CreateAnnouncementScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.joinRequests,
+        builder: (context, _) => const JoinRequestsScreen(),
       ),
       GoRoute(
         path: AppRoutes.borrowRequests,

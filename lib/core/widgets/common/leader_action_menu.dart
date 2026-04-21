@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../constants/app_assets.dart';
 import '../../constants/app_strings.dart';
 import '../../theme/app_colors.dart';
+import '../text/app_text.dart';
 
 /// Action enum for each leader menu item.
 enum LeaderMenuAction {
@@ -33,13 +34,14 @@ class LeaderActionMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<LeaderMenuAction>(
-      offset: Offset(0, 40.h),
+      offset: Offset(0, 34.h),
+      constraints: BoxConstraints(minWidth: 282.w),
       color: AppColors.surface,
-      elevation: 8,
+      elevation: 6,
       shadowColor: AppColors.grey900.withValues(alpha: 0.12),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.r),
-        side: BorderSide(color: AppColors.border, width: 1),
+        borderRadius: BorderRadius.circular(20.r),
+        side: BorderSide(color: AppColors.grey300, width: 1),
       ),
       onSelected: onSelected,
       itemBuilder: (_) => [
@@ -93,17 +95,17 @@ class LeaderActionMenu extends StatelessWidget {
         ),
       ],
       child: Container(
-        width: 36.w,
-        height: 36.w,
-        decoration: BoxDecoration(
-          color: AppColors.grey200,
-          shape: BoxShape.circle,
-        ),
+        width: 30.w,
+        height: 30.w,
         alignment: Alignment.center,
-        child: Icon(
-          Icons.more_horiz_rounded,
-          size: 20.w,
-          color: AppColors.grey1100,
+        child: SvgPicture.asset(
+          AppAssets.iconPopMenu,
+          width: 22.w,
+          height: 22.w,
+          colorFilter: ColorFilter.mode(
+            AppColors.grey1000,
+            BlendMode.srcIn,
+          ),
         ),
       ),
     );
@@ -121,28 +123,28 @@ class LeaderActionMenu extends StatelessWidget {
   }) {
     return PopupMenuItem<LeaderMenuAction>(
       value: value,
-      padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 12.h),
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 14.h),
       child: Row(
         children: [
           // Icon — SVG or Material
           SizedBox(
-            width: 20.w,
-            height: 20.w,
+            width: 22.w,
+            height: 22.w,
             child: iconPath != null
                 ? SvgPicture.asset(
                     iconPath,
                     colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
                   )
-                : Icon(icon, size: 20.w, color: iconColor),
+                : Icon(icon, size: 22.w, color: iconColor),
           ),
-          SizedBox(width: 14.w),
+          SizedBox(width: 12.w),
 
           // Label
           Expanded(
-            child: Text(
+            child: AppText(
               label,
               style: GoogleFonts.lato(
-                fontSize: 14.sp,
+                fontSize: 19.sp,
                 fontWeight: FontWeight.w500,
                 color: labelColor,
               ),
@@ -157,10 +159,10 @@ class LeaderActionMenu extends StatelessWidget {
                 color: AppColors.grey200,
                 borderRadius: BorderRadius.circular(100.r),
               ),
-              child: Text(
+              child: AppText(
                 '$badge',
                 style: GoogleFonts.lato(
-                  fontSize: 12.sp,
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w600,
                   color: AppColors.textBody,
                 ),
@@ -173,5 +175,5 @@ class LeaderActionMenu extends StatelessWidget {
 
   // ── Helper: build a thin divider ──────────────────────────────────────────
   PopupMenuDivider _divider() =>
-      PopupMenuDivider(height: 1);
+      PopupMenuDivider(height: 1.h);
 }

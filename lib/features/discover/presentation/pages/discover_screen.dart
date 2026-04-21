@@ -52,6 +52,8 @@ class _DiscoverBody extends StatelessWidget {
             role: MemberRole.coLeader, contributedAmount: 65),
         MemberEntity(id: '3', initials: 'LN', name: 'Lien N.',
             role: MemberRole.member, contributedAmount: 19),
+        MemberEntity(id: '4', initials: 'SH', name: 'Sarah M.',
+            role: MemberRole.member, contributedAmount: -24, overdueAmount: 200),
       ],
       borrowRequests: const [
         BorrowRequestEntity(id: 'b1', initials: 'OR', memberName: 'Olivia R.',
@@ -64,10 +66,10 @@ class _DiscoverBody extends StatelessWidget {
       // Discover cards are always joined (not owned) — no leader menu
       isLeader: false,
     );
-    context.push(
-      AppRoutes.projectDetail,
-      extra: ProjectDetailRouteArgs(project: detail),
-    );
+    final route = p.category == ProjectCategory.investment
+        ? AppRoutes.investmentProjectDetail
+        : AppRoutes.projectDetail;
+    context.push(route, extra: ProjectDetailRouteArgs(project: detail));
   }
 
   @override

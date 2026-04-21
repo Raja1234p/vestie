@@ -342,10 +342,16 @@ class AppStrings {
   static const String projectDetailTitle        = 'Project';
   static const String announcementTitle         = 'Announcement';
   static const String announcementPlaceholder   = 'Any announcement will come up here';
+  static const String noMoreContributionTitle   = 'No More Contributon';
+  static const String noMoreContributionBody    = 'You can no longer contribute to this investment as leader has closed this project, leader will come back soon to fund your amount and ROI/profit.';
   static const String btnContribute             = 'Contribute';
   static const String btnBorrow                 = 'Borrow';
   static const String tabBorrowRequests         = 'Borrow Requests';
   static const String tabMembers                = 'Members';
+  static const String tabMember                 = 'Member';
+  static const String tabManageMembers          = 'Manage Members';
+  static const String labelContributedWithColon = 'Contributed: ';
+  static const String overdueLabel              = 'Overdue';
   static const String requestedAmount           = 'Requested Amount';
   static const String viewAllRequests           = 'View All Requests';
   static const String borrowRequestsTitle       = 'Borrow Requests';
@@ -357,6 +363,60 @@ class AppStrings {
   static const String rejectLabel               = 'Reject';
   static const String educationLoan             = 'Education Loan';
   static const String goalPrefix                = 'Goal ';
+  static const String memberProfileSuffix       = ' Profile';
+  static const String contributedLabel          = 'Contributed';
+  static const String contributionsLabel        = 'Contributions';
+  static const String borrowedLabelShort        = 'Borrowed';
+  static const String btnMakeCoLeader           = 'Make Co-Leader';
+  static const String btnRemoveCoLeader         = 'Remove Role';
+  static const String btnTakeAction             = 'Take Action';
+  static const String btnRemoveMember           = 'Remove Member';
+  static const String overdueBorrowNotice       = 'This User has 1 overdue borrow.';
+  static const String penaltyActionTitle        = 'Penalty Action';
+  static const String markAsDefaulted           = 'Mark as Defaulted';
+  static const String removeMemberConfirmTitle  = 'Remove Member?';
+  static const String removeMemberConfirmBody   = 'Are you sure you want to remove this member? This action cannot be undone.';
+  static const String markDefaultedConfirmTitle = 'Mark as Defaulted';
+  static const String markDefaultedConfirmBody  = 'Marking a user as defaulted blocks them from contributing or borrowing in any group until all dues are cleared.';
+  static const String makeCoLeaderConfirmTitle  = 'Make Co-Leader?';
+  static const String makeCoLeaderConfirmBody   = 'This user will be able to approve borrow requests, post announcements, and manage members. You will remain the main leader.';
+  static const String removeCoLeaderConfirmTitle = 'Remove Co-Leader?';
+  static const String removeCoLeaderConfirmBody  = 'This user will return to a regular member and lose the ability to approve requests and manage the group.';
+  static const String coLeaderAssignedTitle     = 'Co-Leader Assigned';
+  static const String coLeaderAssignedBody      = 'User is now Co-Leader and can approve requests and manage members.';
+  static const String coLeaderRemovedTitle      = 'Co-Leader Removed';
+  static const String coLeaderRemovedBody       = 'User is now a regular member.';
+  static const String btnRemove                 = 'Remove';
+  static const String btnCancel                 = 'Cancel';
+  static const String btnOk                     = 'Ok';
+  static const String btnNo                     = 'No';
+  static const String penaltyBorrowedLabel      = 'Borrowed';
+  static const String penaltyDueLabel           = 'Due';
+  static const String penaltyOverdueLabel       = 'Overdue';
+  static const String penaltyPenaltyLabel       = 'Penalty';
+  static const String penaltyTotalOwedLabel     = 'Total owed';
+  static const String penaltyBorrowedAmount     = '\$250';
+  static const String penaltyDueDateValue       = 'Apr 1, 2025';
+  static const String penaltyOverdueValue       = '15 days';
+  static const String penaltyChargeValue        = '\$20.00';
+  static const String penaltyTotalOwedValue     = '\$220.00';
+  static const String memberTxDateMar11         = 'Mar 11';
+  static const String memberTxDateMar12         = 'Mar 12';
+  static const String approveBorrowRequestTitle = 'Approve Borrow Request?';
+  static const String rejectBorrowRequestTitle  = 'Reject Borrow Request';
+  static const String borrowApprovedTitle       = 'Approve Borrow Request?';
+  static const String borrowRejectedTitle       = 'Borrow Request Rejected';
+  static const String approveLabel              = 'Approve';
+  static const String rejectShortLabel          = 'Reject';
+
+  static String borrowRequestActionDescription({
+    required bool isApprove,
+    required String memberName,
+    required String amount,
+  }) {
+    final action = isApprove ? 'approving' : 'rejecting';
+    return 'You’re $action borrow request\nfrom $memberName of \$$amount';
+  }
 
   // ── Leader Project Actions ────────────────────────────────────────────────
   static const String menuJoinRequests          = 'Join Requests';
@@ -367,4 +427,47 @@ class AppStrings {
   static const String menuCancelProject         = 'Cancel Project';
   static const String hintAnnouncementText      = 'Type your announcement...';
   static const String deleteAnnouncementLabel   = 'Delete announcement';
+  static const String createAnnouncementTitle   = 'Create Announcement';
+  static const String announcementHeadingLabel  = 'Announcement Heading';
+  static const String announcementContentLabel  = 'Announcement Content';
+  static const String announcementHeadingHint   = 'Deposit Issued';
+  static const String announcementContentHint   = 'Good News, Your deposit has been issued';
+  static const String announcementAutoRemoveNote = 'Announcement will auto remove after 24 hours';
+  static const String btnCreateAnnouncement     = 'Create Announcement';
+  static const String joinRequestApprovedTitle  = 'Join Request Approved';
+  static const String joinRequestDeclinedTitle  = 'Join Request Declined';
+  static const String joinRequestApproveLabel   = 'Accept';
+  static const String joinRequestDeclineLabel   = 'Decline';
+  static const String shareQrCode               = 'Share QR Code';
+  static const String copyCodeFromBelow         = 'Or copy code from below';
+  static const String inviteLinkSample          = 'vestie.app/join/family-vacation-2025';
+
+  static String joinRequestApprovedDescription(String memberName) =>
+      'You’ve approved the join request from $memberName';
+
+  static String joinRequestDeclinedDescription(String memberName) =>
+      'You’ve declined the join request from $memberName';
+
+  static String removeMemberTitle(String memberName) => 'Remove $memberName';
+
+  static String removeMemberBody(String memberName) =>
+      'Are you sure you want to remove $memberName? This action cannot be undone.';
+
+  static String makeCoLeaderDescription(String memberName) =>
+      '$memberName will be able to approve borrow requests, post announcements, and manage members. You\'ll remain the main leader.';
+
+  static String removeCoLeaderDescription(String memberName) =>
+      '$memberName will return to a regular member. They will lose the ability to approve requests and manage the group.';
+
+  static String coLeaderAssignedDescription(String memberName, String projectName) =>
+      '$memberName is now Co-Leader of $projectName. They can approve requests and manage members.';
+
+  static String coLeaderRemovedDescription(String memberName, String projectName) =>
+      '$memberName is now a regular member of $projectName.';
+
+  static String borrowApprovePrefix() =>
+      'You’re approving borrow request from ';
+
+  static String borrowRejectPrefix() =>
+      'You’re rejecting borrow request from ';
 }

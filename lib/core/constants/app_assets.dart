@@ -19,6 +19,7 @@ class AppAssets {
   static const String onboarding1 = '$_imagePath/onboarding_1.png';
   static const String onboarding2 = '$_imagePath/onboarding_2.png';
   static const String onboarding3 = '$_imagePath/onboarding_3.png';
+  static const String inviteQrCode = '$_imagePath/qrcode.png';
 
   // ── Auth Social Icons ─────────────────────────────────────────────────────
   static const String iconApple  = '$_iconPath/apple.svg';
@@ -53,6 +54,7 @@ class AppAssets {
   // ── Arrow Direction Icons ────────────────────────────────────────────────
   static const String iconArrowUpBig   = '$_iconPath/arrow-up-big.svg';
   static const String iconArrowDownBig = '$_iconPath/arrow-down-big.svg';
+  static const String iconPopMenu      = '$_iconPath/popmenuicon.svg';
   static const String iconEmergencyFund = '$_iconPath/emergency fund.svg';
   static const String iconInvestmentFund = '$_iconPath/investment  icon.svg';
 
@@ -65,6 +67,7 @@ class AppAssets {
 
   // ── Specific Feature Backgrounds ──────────────────────────────────────────
   static const String contributionSuccessBg = '$_imagePath/Contribution Successful.png';
+  static const String failureIcon           = '$_imagePath/failure_icon.png';
   static const String upWordArrow    = '$_iconPath/arrow-up-big.svg';
   static const String downWordArrow    = '$_iconPath/arrow-down-big.svg';
   static const String crown    = '$_iconPath/crown.svg';

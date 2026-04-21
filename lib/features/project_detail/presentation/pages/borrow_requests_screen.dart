@@ -7,6 +7,7 @@ import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../../core/widgets/common/post_auth_header.dart';
 import '../../domain/entities/borrow_request_entity.dart';
 import '../widgets/borrow_request_card.dart';
+import '../widgets/borrow_request_decision_dialogs.dart';
 
 /// Full-screen borrow requests list.
 /// Receives a [List] of [BorrowRequestEntity] via GoRouter extra.
@@ -66,6 +67,18 @@ class BorrowRequestsScreen extends StatelessWidget {
                           actionMode: isLeaderMode
                               ? BorrowRequestActionMode.decision
                               : BorrowRequestActionMode.vote,
+                          onAccept: isLeaderMode
+                              ? () => showApproveBorrowRequestFlow(
+                                    context,
+                                    requests[i],
+                                  )
+                              : null,
+                          onReject: isLeaderMode
+                              ? () => showRejectBorrowRequestFlow(
+                                    context,
+                                    requests[i],
+                                  )
+                              : null,
                         ),
                         childCount: requests.length,
                       ),

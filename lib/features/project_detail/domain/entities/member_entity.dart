@@ -7,6 +7,7 @@ class MemberEntity {
   final String name;
   final MemberRole role;
   final double contributedAmount;
+  final double? overdueAmount;
 
   const MemberEntity({
     required this.id,
@@ -14,5 +15,6 @@ class MemberEntity {
     required this.name,
     required this.role,
     required this.contributedAmount,
+    this.overdueAmount,
   });
 }

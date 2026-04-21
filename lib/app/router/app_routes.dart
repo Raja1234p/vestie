@@ -36,5 +36,10 @@ class AppRoutes {
 
   // ── Project Detail Routing ───────────────────────────────────────────────
   static const String projectDetail    = '/project/detail';
+  static const String investmentProjectDetail = '/project/investment-detail';
+  static const String memberDetail     = '/project/member-detail';
+  static const String memberPenaltyAction = '/project/member-penalty-action';
+  static const String createAnnouncement = '/project/create-announcement';
+  static const String joinRequests     = '/project/join-requests';
   static const String borrowRequests   = '/project/borrow-requests';
 }

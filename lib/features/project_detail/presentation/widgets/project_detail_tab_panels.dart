@@ -9,6 +9,8 @@ import '../../domain/entities/borrow_request_entity.dart';
 import '../../domain/entities/member_entity.dart';
 import 'borrow_requests_tab.dart';
 import 'borrow_request_card.dart';
+import 'borrow_request_decision_dialogs.dart';
+import 'leader_manage_members_list.dart';
 import 'members_list.dart';
 
 class UserBorrowRequestsPanel extends StatelessWidget {
@@ -49,6 +51,8 @@ class LeaderBorrowRequestsPanel extends StatelessWidget {
           (r) => BorrowRequestCard(
             request: r,
             actionMode: BorrowRequestActionMode.decision,
+            onAccept: () => showApproveBorrowRequestFlow(context, r),
+            onReject: () => showRejectBorrowRequestFlow(context, r),
           ),
         ),
         if (requests.length > 2) ...[
@@ -81,22 +85,38 @@ class LeaderBorrowRequestsPanel extends StatelessWidget {
 
 class UserMembersPanel extends StatelessWidget {
   final List<MemberEntity> members;
+  final ValueChanged<MemberEntity>? onMemberTap;
 
-  const UserMembersPanel({super.key, required this.members});
+  const UserMembersPanel({
+    super.key,
+    required this.members,
+    this.onMemberTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return MembersList(members: members);
+    return MembersList(
+      members: members,
+      onMemberTap: onMemberTap,
+    );
   }
 }
 
 class LeaderMembersPanel extends StatelessWidget {
   final List<MemberEntity> members;
+  final ValueChanged<MemberEntity>? onMemberTap;
 
-  const LeaderMembersPanel({super.key, required this.members});
+  const LeaderMembersPanel({
+    super.key,
+    required this.members,
+    this.onMemberTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return MembersList(members: members);
+    return LeaderManageMembersList(
+      members: members,
+      onMemberTap: onMemberTap,
+    );
   }
 }

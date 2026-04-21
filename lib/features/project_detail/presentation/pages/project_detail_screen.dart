@@ -6,10 +6,12 @@ import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_button.dart';
+import '../../../../core/widgets/common/app_invite_members_dialog.dart';
 import '../../../../core/widgets/common/app_toggle_tab_bar.dart';
 import '../../../../core/widgets/common/leader_action_menu.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../../core/widgets/common/post_auth_header.dart';
+import '../../domain/entities/member_entity.dart';
 import '../../domain/entities/project_detail_entity.dart';
 import '../../domain/entities/project_detail_route_args.dart';
 import '../cubit/project_detail_cubit.dart';
@@ -41,16 +43,16 @@ class _ProjectDetailBody extends StatelessWidget {
   void _handleLeaderAction(BuildContext context, LeaderMenuAction action) {
     switch (action) {
       case LeaderMenuAction.joinRequests:
-        // TODO: navigate to join requests screen
+        context.push(AppRoutes.joinRequests);
         break;
       case LeaderMenuAction.addAnnouncement:
-        // TODO: show announcement bottom sheet
+        context.push(AppRoutes.createAnnouncement);
         break;
       case LeaderMenuAction.editProject:
         context.push(AppRoutes.createProjectDetails, extra: true);
         break;
       case LeaderMenuAction.inviteMembers:
-        // TODO: navigate to invite screen
+        AppInviteMembersDialog.show(context);
         break;
       case LeaderMenuAction.markSuccessful:
         // TODO: confirm dialog then mark successful
@@ -141,7 +143,19 @@ class _ProjectDetailBody extends StatelessWidget {
                           isSecondary: true,
                         ),
                         SizedBox(height: 20.h),
-                        _TabSection(project: project),
+                        _TabSection(
+                          project: project,
+                          onMemberTap: (member) {
+                            context.push(
+                              AppRoutes.memberDetail,
+                              extra: MemberDetailRouteArgs(
+                                member: member,
+                                projectName: project.name,
+                                isLeaderView: project.isLeader,
+                              ),
+                            );
+                          },
+                        ),
                         SizedBox(height: 32.h),
                       ],
                     ),
@@ -159,7 +173,12 @@ class _ProjectDetailBody extends StatelessWidget {
 // ── Tab section ───────────────────────────────────────────────────────────────
 class _TabSection extends StatelessWidget {
   final ProjectDetailEntity project;
-  const _TabSection({required this.project});
+  final ValueChanged<MemberEntity> onMemberTap;
+
+  const _TabSection({
+    required this.project,
+    required this.onMemberTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -170,7 +189,12 @@ class _TabSection extends StatelessWidget {
         return Column(
           children: [
             AppToggleTabBar(
-              tabs: [AppStrings.tabBorrowRequests, AppStrings.tabMembers],
+              tabs: [
+                AppStrings.tabBorrowRequests,
+                project.isLeader
+                    ? AppStrings.tabManageMembers
+                    : AppStrings.tabMember,
+              ],
               activeIndex: isBorrowTab ? 0 : 1,
               onTabSelected: (i) => cubit.selectTab(
                 i == 0
@@ -209,10 +233,12 @@ class _TabSection extends StatelessWidget {
                       ? LeaderMembersPanel(
                           key: const ValueKey('leader-members'),
                           members: project.members,
+                          onMemberTap: onMemberTap,
                         )
                       : UserMembersPanel(
                           key: const ValueKey('user-members'),
                           members: project.members,
+                          onMemberTap: onMemberTap,
                         ),
             ),
           ],
