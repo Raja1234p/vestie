@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/entities/project.dart';
@@ -15,14 +17,14 @@ class ProjectCategoryChip extends StatelessWidget {
       ? project.name
       : project.categoryLabel;
 
-  IconData get _icon {
+  String? get _iconAsset {
     switch (project.category) {
       case ProjectCategory.vacations:
-        return Icons.beach_access_outlined;
+        return null;
       case ProjectCategory.emergency:
-        return Icons.shield_outlined;
+        return AppAssets.iconEmergencyFund;
       case ProjectCategory.investment:
-        return Icons.account_balance_outlined;
+        return AppAssets.iconInvestmentFund;
     }
   }
 
@@ -38,7 +40,16 @@ class ProjectCategoryChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(_icon, size: 12.w, color: AppColors.primary),
+          if (_iconAsset != null)
+            SvgPicture.asset(
+              _iconAsset!,
+              width: 12.w,
+              height: 12.w,
+              colorFilter:
+                  const ColorFilter.mode(AppColors.primary, BlendMode.srcIn),
+            )
+          else
+            Icon(Icons.beach_access_outlined, size: 12.w, color: AppColors.primary),
           SizedBox(width: 4.w),
           Text(
             _label,

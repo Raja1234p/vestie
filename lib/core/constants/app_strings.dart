@@ -134,8 +134,8 @@ class AppStrings {
   static const String discoverSearchHint = 'Search projects, categories, members';
   static const String filterAll          = 'All';
   static const String filterVacations    = 'Vacations';
-  static const String filterEmergency    = 'Emergency';
-  static const String filterInvestments  = 'Investments';
+  static const String filterEmergency    = 'Emergency Fund';
+  static const String filterInvestments  = 'Investment';
 
   // ── Profile Screen ───────────────────────────────────────────────────────
   static const String profileTitle        = 'Profile';

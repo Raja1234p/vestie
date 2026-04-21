@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/text/app_text.dart';
 import '../../domain/entities/project.dart';
 import 'project_card_components.dart';
 import 'project_card_formatters.dart';
@@ -17,9 +18,7 @@ class ProjectCard extends StatelessWidget {
 
   const ProjectCard({super.key, required this.project, required this.onAction});
 
-  bool get _showButton =>
-      project.status == ProjectStatus.ongoing ||
-      project.relation == ProjectRelation.joined;
+  bool get _showButton => project.status == ProjectStatus.ongoing;
 
   @override
   Widget build(BuildContext context) {
@@ -81,8 +80,17 @@ class ProjectCard extends StatelessWidget {
               ProjectDateRow(endsIn: project.endsIn ?? ''),
             ],
           ] else ...[
-            // Completed — raised/total amount as main large text
-            Text(
+            // Completed — project name + raised/total amount
+            AppText(
+              project.name,
+              style: GoogleFonts.lato(
+                fontSize: 20.sp,
+                fontWeight: FontWeight.w800,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            SizedBox(height: 6.h),
+            AppText(
               projectRaisedText(project),
               style: GoogleFonts.lato(
                 fontSize: 22.sp,

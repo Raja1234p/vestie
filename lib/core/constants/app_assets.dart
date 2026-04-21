@@ -53,6 +53,8 @@ class AppAssets {
   // ── Arrow Direction Icons ────────────────────────────────────────────────
   static const String iconArrowUpBig   = '$_iconPath/arrow-up-big.svg';
   static const String iconArrowDownBig = '$_iconPath/arrow-down-big.svg';
+  static const String iconEmergencyFund = '$_iconPath/emergency fund.svg';
+  static const String iconInvestmentFund = '$_iconPath/investment  icon.svg';
 
   // ── Leader Project Action Icons ───────────────────────────────────────────
   static const String iconJoinRequest      = '$_iconPath/join-request.svg';
