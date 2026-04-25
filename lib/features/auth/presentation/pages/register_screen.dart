@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/utils/app_snackbar.dart';
 import '../../../../app/router/app_routes.dart';
+import '../../../../core/widgets/common/app_failure_dialog.dart';
 import '../bloc/register_bloc.dart';
 import '../bloc/register_event.dart';
 import '../bloc/register_state.dart';
@@ -26,8 +26,18 @@ class RegisterScreen extends StatelessWidget {
         listener: (context, state) {
           if (state is RegisterSuccess) {
             context.go(AppRoutes.verify, extra: state.email);
+          } else if (state is RegisterGoogleSuccess) {
+            if (state.isDisclaimerAccepted) {
+              context.go(AppRoutes.dashboard);
+            } else {
+              context.go(AppRoutes.agreement);
+            }
           } else if (state is RegisterError) {
-            AppSnackBar.showError(context, state.message);
+            AppFailureDialog.show(
+              context,
+              title: state.title,
+              message: state.message,
+            );
             context.read<RegisterBloc>().add(const RegisterReset());
           }
         },

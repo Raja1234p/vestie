@@ -19,14 +19,21 @@ class LoginLoading extends LoginState {
 
 class LoginSuccess extends LoginState {
   final User user;
-  const LoginSuccess({required this.user});
+  final bool isDisclaimerAccepted;
+
+  const LoginSuccess({
+    required this.user,
+    this.isDisclaimerAccepted = false,
+  });
+
   @override
-  List<Object> get props => [user];
+  List<Object> get props => [user, isDisclaimerAccepted];
 }
 
 class LoginError extends LoginState {
   final String message;
-  const LoginError({required this.message});
+  final String? title;
+  const LoginError({required this.message, this.title});
   @override
-  List<Object> get props => [message];
+  List<Object?> get props => [message, title];
 }

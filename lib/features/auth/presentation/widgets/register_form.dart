@@ -53,10 +53,11 @@ class _RegisterFormState extends State<RegisterForm> {
         );
     if (valid) {
       context.read<RegisterBloc>().add(RegisterSubmitted(
-        name: _nameCtrl.text.trim(),
-        email: _emailCtrl.text.trim(),
-        password: _passCtrl.text,
-      ));
+            name: _nameCtrl.text.trim(),
+            email: _emailCtrl.text.trim(),
+            password: _passCtrl.text,
+            confirmPassword: _confirmCtrl.text,
+          ));
     }
   }
 
@@ -94,7 +95,12 @@ class _RegisterFormState extends State<RegisterForm> {
                 keyboardType: TextInputType.name,
                 errorText: form.nameError,
                 onChanged: (_) =>
-                    context.read<RegisterFormCubit>().clearNameError(),
+                    context.read<RegisterFormCubit>().onFieldsChanged(
+                      _nameCtrl.text,
+                      _emailCtrl.text,
+                      _passCtrl.text,
+                      _confirmCtrl.text,
+                    ),
               ),
               SizedBox(height: 14.h),
               AppTextField(
@@ -104,7 +110,12 @@ class _RegisterFormState extends State<RegisterForm> {
                 keyboardType: TextInputType.emailAddress,
                 errorText: form.emailError,
                 onChanged: (_) =>
-                    context.read<RegisterFormCubit>().clearEmailError(),
+                    context.read<RegisterFormCubit>().onFieldsChanged(
+                      _nameCtrl.text,
+                      _emailCtrl.text,
+                      _passCtrl.text,
+                      _confirmCtrl.text,
+                    ),
               ),
               SizedBox(height: 14.h),
               AppTextField(
@@ -114,17 +125,24 @@ class _RegisterFormState extends State<RegisterForm> {
                 obscureText: !form.passwordVisible,
                 errorText: form.passwordError,
                 onChanged: (_) =>
-                    context.read<RegisterFormCubit>().clearPasswordError(),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    form.passwordVisible
-                        ? Icons.visibility_outlined
-                        : Icons.visibility_off_outlined,
-                    size: 20.w,
-                    color: AppColors.authHint,
+                    context.read<RegisterFormCubit>().onFieldsChanged(
+                      _nameCtrl.text,
+                      _emailCtrl.text,
+                      _passCtrl.text,
+                      _confirmCtrl.text,
+                    ),
+                suffixIcon: ExcludeFocus(
+                  child: IconButton(
+                    icon: Icon(
+                      form.passwordVisible
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                      size: 20.w,
+                      color: AppColors.authHint,
+                    ),
+                    onPressed: () =>
+                        context.read<RegisterFormCubit>().togglePassword(),
                   ),
-                  onPressed: () =>
-                      context.read<RegisterFormCubit>().togglePassword(),
                 ),
               ),
               SizedBox(height: 14.h),
@@ -136,17 +154,24 @@ class _RegisterFormState extends State<RegisterForm> {
                 textInputAction: TextInputAction.done,
                 errorText: form.confirmError,
                 onChanged: (_) =>
-                    context.read<RegisterFormCubit>().clearConfirmError(),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    form.confirmVisible
-                        ? Icons.visibility_outlined
-                        : Icons.visibility_off_outlined,
-                    size: 20.w,
-                    color: AppColors.authHint,
+                    context.read<RegisterFormCubit>().onFieldsChanged(
+                      _nameCtrl.text,
+                      _emailCtrl.text,
+                      _passCtrl.text,
+                      _confirmCtrl.text,
+                    ),
+                suffixIcon: ExcludeFocus(
+                  child: IconButton(
+                    icon: Icon(
+                      form.confirmVisible
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                      size: 20.w,
+                      color: AppColors.authHint,
+                    ),
+                    onPressed: () =>
+                        context.read<RegisterFormCubit>().toggleConfirm(),
                   ),
-                  onPressed: () =>
-                      context.read<RegisterFormCubit>().toggleConfirm(),
                 ),
               ),
               SizedBox(height: 10.h),
@@ -168,14 +193,14 @@ class _RegisterFormState extends State<RegisterForm> {
               AppButton(
                 text: AppStrings.btnContinue,
                 isLoading: isLoading,
-                onPressed: () => _submit(context),
+                onPressed: form.isValid ? () => _submit(context) : null,
               ),
               SizedBox(height: 22.h),
               const OrDivider(),
               SizedBox(height: 20.h),
               SocialAuthButton(
                   provider: SocialProvider.google,
-                  onPressed: () => _showComingSoon(context)),
+                  onPressed: () => context.read<RegisterBloc>().add(const GoogleRegisterRequested())),
               SizedBox(height: 12.h),
               SocialAuthButton(
                   provider: SocialProvider.apple,

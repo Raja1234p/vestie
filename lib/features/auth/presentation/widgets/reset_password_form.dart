@@ -16,18 +16,21 @@ import '../cubit/reset_password_form_cubit.dart';
 
 /// Stateful only for TextEditingController lifecycle — zero setState calls.
 class ResetPasswordForm extends StatefulWidget {
-  const ResetPasswordForm({super.key});
+  final String email;
+  const ResetPasswordForm({super.key, required this.email});
 
   @override
   State<ResetPasswordForm> createState() => _ResetPasswordFormState();
 }
 
 class _ResetPasswordFormState extends State<ResetPasswordForm> {
+  final _codeCtrl     = TextEditingController();
   final _newPassCtrl  = TextEditingController();
   final _confirmCtrl  = TextEditingController();
 
   @override
   void dispose() {
+    _codeCtrl.dispose();
     _newPassCtrl.dispose();
     _confirmCtrl.dispose();
     super.dispose();
@@ -37,9 +40,20 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
     final valid = context
         .read<ResetPasswordFormCubit>()
         .validate(_newPassCtrl.text, _confirmCtrl.text);
-    if (valid) {
+    
+    final code = _codeCtrl.text.trim();
+    if (code.length != 6) {
+       // Simple inline error if cubit doesn't handle code yet
+       // But let's assume we want to be consistent.
+    }
+
+    if (valid && code.isNotEmpty) {
       context.read<ResetPasswordBloc>().add(
-        ResetPasswordSubmitted(newPassword: _newPassCtrl.text),
+        ResetPasswordSubmitted(
+          email: widget.email,
+          code: code,
+          newPassword: _newPassCtrl.text,
+        ),
       );
     }
   }
@@ -87,6 +101,18 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                 ),
               ),
               SizedBox(height: 32.h),
+              
+               // ── Verification Code ─────────────────────────────────
+              AppTextField(
+                label: AppStrings.labelVerifyCode,
+                hint: AppStrings.hintVerifyCode,
+                controller: _codeCtrl,
+                keyboardType: TextInputType.number,
+                textInputAction: TextInputAction.next,
+                maxLength: 6,
+                onChanged: (_) => setState(() {}),
+              ),
+              SizedBox(height: 14.h),
 
               // ── New password ──────────────────────────────────────
               AppTextField(
@@ -96,18 +122,22 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                 obscureText: !form.newPassVisible,
                 textInputAction: TextInputAction.next,
                 errorText: form.newPassError,
-                onChanged: (_) =>
-                    context.read<ResetPasswordFormCubit>().clearNewError(),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    form.newPassVisible
-                        ? Icons.visibility_outlined
-                        : Icons.visibility_off_outlined,
-                    size: 20.w,
-                    color: AppColors.authHint,
+                onChanged: (_) => context.read<ResetPasswordFormCubit>().onFieldsChanged(
+                      _newPassCtrl.text,
+                      _confirmCtrl.text,
+                    ),
+                suffixIcon: ExcludeFocus(
+                  child: IconButton(
+                    icon: Icon(
+                      form.newPassVisible
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                      size: 20.w,
+                      color: AppColors.authHint,
+                    ),
+                    onPressed: () =>
+                        context.read<ResetPasswordFormCubit>().toggleNewPass(),
                   ),
-                  onPressed: () =>
-                      context.read<ResetPasswordFormCubit>().toggleNewPass(),
                 ),
               ),
               SizedBox(height: 10.h),
@@ -139,18 +169,22 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                 obscureText: !form.confirmVisible,
                 textInputAction: TextInputAction.done,
                 errorText: form.confirmError,
-                onChanged: (_) =>
-                    context.read<ResetPasswordFormCubit>().clearConfirmError(),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    form.confirmVisible
-                        ? Icons.visibility_outlined
-                        : Icons.visibility_off_outlined,
-                    size: 20.w,
-                    color: AppColors.authHint,
+                onChanged: (_) => context.read<ResetPasswordFormCubit>().onFieldsChanged(
+                      _newPassCtrl.text,
+                      _confirmCtrl.text,
+                    ),
+                suffixIcon: ExcludeFocus(
+                  child: IconButton(
+                    icon: Icon(
+                      form.confirmVisible
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                      size: 20.w,
+                      color: AppColors.authHint,
+                    ),
+                    onPressed: () =>
+                        context.read<ResetPasswordFormCubit>().toggleConfirm(),
                   ),
-                  onPressed: () =>
-                      context.read<ResetPasswordFormCubit>().toggleConfirm(),
                 ),
               ),
               SizedBox(height: 28.h),
@@ -159,7 +193,9 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
               AppButton(
                 text: AppStrings.btnResetPassword,
                 isLoading: isLoading,
-                onPressed: () => _submit(context),
+                onPressed: (form.isValid && _codeCtrl.text.length == 6)
+                    ? () => _submit(context)
+                    : null,
               ),
               SizedBox(height: 24.h),
             ],

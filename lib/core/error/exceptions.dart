@@ -1,17 +1,17 @@
-/// Base class for all data-layer exceptions
 abstract class AppException implements Exception {
   final String message;
-  AppException(this.message);
+  final String? title;
+  AppException(this.message, [this.title]);
 }
 
 class ServerException extends AppException {
-  ServerException([super.message = 'Server error occurred']);
+  ServerException([super.message = 'Server error occurred', super.title]);
 }
 
 class CacheException extends AppException {
-  CacheException([super.message = 'Local cache error occurred']);
+  CacheException([super.message = 'Local cache error occurred', super.title]);
 }
 
 class UnauthorizedException extends AppException {
-  UnauthorizedException([super.message = 'Unauthorized']);
+  UnauthorizedException([super.message = 'Unauthorized', super.title]);
 }

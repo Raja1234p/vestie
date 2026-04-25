@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/utils/app_snackbar.dart';
+import '../../../../core/widgets/common/app_failure_dialog.dart';
 import '../bloc/reset_password_bloc.dart';
 import '../bloc/reset_password_event.dart';
 import '../bloc/reset_password_state.dart';
@@ -14,7 +15,8 @@ import '../widgets/reset_password_form.dart';
 
 /// Shell — provides ResetPasswordBloc + ResetPasswordFormCubit.
 class ResetPasswordScreen extends StatelessWidget {
-  const ResetPasswordScreen({super.key});
+  final String email;
+  const ResetPasswordScreen({super.key, required this.email});
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +31,15 @@ class ResetPasswordScreen extends StatelessWidget {
             AppSnackBar.showSuccess(context, AppStrings.resetSuccessMsg);
             context.go(AppRoutes.login);
           } else if (state is ResetPasswordError) {
-            AppSnackBar.showError(context, state.message);
+            AppFailureDialog.show(
+              context,
+              title: state.title,
+              message: state.message,
+            );
             context.read<ResetPasswordBloc>().add(const ResetPasswordReset());
           }
         },
-        child: const AuthBackground(child: ResetPasswordForm()),
+        child: AuthBackground(child: ResetPasswordForm(email: email)),
       ),
     );
   }

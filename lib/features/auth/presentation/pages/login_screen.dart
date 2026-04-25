@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../app/router/app_routes.dart';
+import '../../../../core/widgets/common/app_failure_dialog.dart';
 import '../bloc/login_bloc.dart';
 import '../bloc/login_event.dart';
 import '../bloc/login_state.dart';
@@ -27,9 +27,17 @@ class LoginScreen extends StatelessWidget {
         listener: (context, state) {
           if (state is LoginSuccess) {
             AppLogger.info('Login success: ${state.user.email}');
-            context.go(AppRoutes.dashboard);
+            if (state.isDisclaimerAccepted) {
+              context.go(AppRoutes.dashboard);
+            } else {
+              context.go(AppRoutes.agreement);
+            }
           } else if (state is LoginError) {
-            AppSnackBar.showError(context, state.message);
+            AppFailureDialog.show(
+              context,
+              title: state.title,
+              message: state.message,
+            );
             context.read<LoginBloc>().add(const LoginReset());
           }
         },

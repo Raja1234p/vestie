@@ -5,7 +5,16 @@ class AppStrings {
   static const String appName = 'Vestie';
   
   // General
-  static const String errorGeneric = 'Something went wrong. Please try again.';
+  static const String errorGeneric      = 'Something went wrong. Please try again.';
+  static const String errorNetwork      = 'No internet connection. Please check your network.';
+  static const String errorUnauthorized = 'Session expired. Please log in again.';
+  static const String errorServer       = 'Server error. Please try again later.';
+  static const String errorTimeout      = 'Request timed out. Please try again.';
+
+  // ── Error Dialog ──────────────────────────────────────────────────────────
+  static const String errorDialogTitle = 'Something went wrong';
+  static const String btnRetry         = 'Try Again';
+  static const String btnDismiss       = 'Dismiss';
   static const String noInternet = 'No internet connection detected.';
 
   // Auth Flow

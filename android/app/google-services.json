@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "895435860827",
+    "project_id": "vestie-98de7",
+    "storage_bucket": "vestie-98de7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:895435860827:android:db0447ef7c5b7cf08e887e",
+        "android_client_info": {
+          "package_name": "com.example.vestie"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCz2kTAPbnljA6S8pBH7aMWD_0upt1dC0o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

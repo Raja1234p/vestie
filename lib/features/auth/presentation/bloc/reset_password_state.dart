@@ -21,6 +21,7 @@ class ResetPasswordSuccess extends ResetPasswordState {
 
 class ResetPasswordError extends ResetPasswordState {
   final String message;
-  const ResetPasswordError({required this.message});
-  @override List<Object> get props => [message];
+  final String? title;
+  const ResetPasswordError({required this.message, this.title});
+  @override List<Object?> get props => [message, title];
 }

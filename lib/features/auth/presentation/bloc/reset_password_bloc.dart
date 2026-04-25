@@ -1,22 +1,37 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/di/service_locator.dart';
+import '../../domain/usecases/reset_password_use_case.dart';
 import 'reset_password_event.dart';
 import 'reset_password_state.dart';
 
-/// Handles password reset API flow.
-/// TODO: Inject AuthRepository when data layer is ready.
+/// Handles set-new-password API flow.
 class ResetPasswordBloc extends Bloc<ResetPasswordEvent, ResetPasswordState> {
-  ResetPasswordBloc() : super(const ResetPasswordInitial()) {
-    on<ResetPasswordSubmitted>(_onSubmitted);
+  final ResetPasswordUseCase _resetPasswordUseCase;
+
+  ResetPasswordBloc({ResetPasswordUseCase? resetPasswordUseCase})
+      : _resetPasswordUseCase = resetPasswordUseCase ??
+            ServiceLocator.instance.resetPasswordUseCase,
+        super(const ResetPasswordInitial()) {
+    on<ResetPasswordSubmitted>(_onResetPasswordSubmitted);
     on<ResetPasswordReset>((_, emit) => emit(const ResetPasswordInitial()));
   }
 
-  Future<void> _onSubmitted(
+  Future<void> _onResetPasswordSubmitted(
     ResetPasswordSubmitted event,
     Emitter<ResetPasswordState> emit,
   ) async {
     emit(const ResetPasswordLoading());
-    await Future.delayed(const Duration(milliseconds: 1200));
-    // TODO: Replace with AuthRepository.resetPassword(newPassword)
-    emit(const ResetPasswordSuccess());
+
+    final result = await _resetPasswordUseCase(
+      email: event.email,
+      code: event.code,
+      newPassword: event.newPassword,
+      confirmNewPassword: event.newPassword, // API requires confirmation too
+    );
+
+    result.fold(
+      (failure) => emit(ResetPasswordError(message: failure.message, title: failure.title)),
+      (_) => emit(const ResetPasswordSuccess()),
+    );
   }
 }

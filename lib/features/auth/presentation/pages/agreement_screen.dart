@@ -8,6 +8,7 @@ import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_button.dart';
+import '../../../../core/widgets/common/app_failure_dialog.dart';
 import '../cubit/agreement_cubit.dart';
 
 /// Shown to every new user after OTP verification.
@@ -29,124 +30,148 @@ class _AgreementBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accepted = context.watch<AgreementCubit>().state;
+    return BlocConsumer<AgreementCubit, AgreementState>(
+      listener: (context, state) {
+        if (state.isSuccess) {
+          context.go(AppRoutes.dashboard);
+        } else if (state.error != null) {
+          AppFailureDialog.show(context, message: state.error!);
+        }
+      },
+      builder: (context, state) {
+        final accepted = state.isAccepted;
 
-    return Scaffold(
-      backgroundColor: AppColors.surface,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 24.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 40.h),
+        return Scaffold(
+          backgroundColor: AppColors.surface,
+          body: SafeArea(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 40.h),
 
-              // ── Warning icon ──────────────────────────────────────
-              Center(
-                child: Container(
-                  width: 64.w,
-                  height: 64.w,
-                  decoration: const BoxDecoration(
-                    color: AppColors.yellow100,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.warning_amber_rounded,
-                    size: 34.w,
-                    color: AppColors.warning,
-                  ),
-                ),
-              ),
-              SizedBox(height: 20.h),
-
-              // ── Title ─────────────────────────────────────────────
-              Center(
-                child: Text(
-                  AppStrings.agreementTitle,
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.lato(
-                    fontSize: 24.sp,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.textPrimary,
-                    height: 1.2,
-                  ),
-                ),
-              ),
-              SizedBox(height: 8.h),
-
-              // ── Subtitle ──────────────────────────────────────────
-              Center(
-                child: Text(
-                  AppStrings.agreementSubtitle,
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.lato(
-                    fontSize: 13.sp,
-                    color: AppColors.textBody,
-                    height: 1.5,
-                  ),
-                ),
-              ),
-              SizedBox(height: 24.h),
-
-              // ── Guidelines list ───────────────────────────────────
-              ...AppStrings.agreementItems.asMap().entries.map(
-                (e) => _GuidelineItem(number: e.key + 1, text: e.value),
-              ),
-              SizedBox(height: 20.h),
-
-              // ── Checkbox row ──────────────────────────────────────
-              GestureDetector(
-                onTap: () => context.read<AgreementCubit>().toggle(),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      width: 22.w,
-                      height: 22.w,
-                      decoration: BoxDecoration(
-                        color: accepted ? AppColors.primary : AppColors.surface,
-                        border: Border.all(
-                          color: accepted ? AppColors.primary : AppColors.grey400,
-                          width: 1.5,
-                        ),
-                        borderRadius: BorderRadius.circular(5.r),
+                  // ── Warning icon ──────────────────────────────────────
+                  Center(
+                    child: Container(
+                      width: 64.w,
+                      height: 64.w,
+                      decoration: const BoxDecoration(
+                        color: AppColors.yellow100,
+                        shape: BoxShape.circle,
                       ),
-                      child: accepted
-                          ? Icon(Icons.check, color: AppColors.surface, size: 14.w)
+                      child: Icon(
+                        Icons.warning_amber_rounded,
+                        size: 34.w,
+                        color: AppColors.warning,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20.h),
+
+                  // ── Title ─────────────────────────────────────────────
+                  Center(
+                    child: Text(
+                      AppStrings.agreementTitle,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.lato(
+                        fontSize: 24.sp,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.textPrimary,
+                        height: 1.2,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+
+                  // ── Subtitle ──────────────────────────────────────────
+                  Center(
+                    child: Text(
+                      AppStrings.agreementSubtitle,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.lato(
+                        fontSize: 13.sp,
+                        color: AppColors.textBody,
+                        height: 1.5,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 24.h),
+
+                  // ── Guidelines list ───────────────────────────────────
+                  if (state.isLoading && state.disclaimer == null)
+                    const Center(child: CircularProgressIndicator())
+                  else
+                    ...(state.disclaimer?.guidelines ?? AppStrings.agreementItems)
+                        .asMap()
+                        .entries
+                        .map(
+                          (e) =>
+                              _GuidelineItem(number: e.key + 1, text: e.value),
+                        ),
+                  SizedBox(height: 20.h),
+
+                  // ── Checkbox row ──────────────────────────────────────
+                  GestureDetector(
+                    onTap: () => context.read<AgreementCubit>().toggle(),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          width: 22.w,
+                          height: 22.w,
+                          decoration: BoxDecoration(
+                            color: accepted
+                                ? AppColors.primary
+                                : AppColors.surface,
+                            border: Border.all(
+                              color: accepted
+                                  ? AppColors.primary
+                                  : AppColors.grey400,
+                              width: 1.5,
+                            ),
+                            borderRadius: BorderRadius.circular(5.r),
+                          ),
+                          child: accepted
+                              ? Icon(Icons.check,
+                                  color: AppColors.surface, size: 14.w)
+                              : null,
+                        ),
+                        SizedBox(width: 10.w),
+                        Expanded(
+                          child: Text(
+                            AppStrings.agreementCheckbox,
+                            style: GoogleFonts.lato(
+                              fontSize: 13.sp,
+                              color: AppColors.textBody,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 28.h),
+
+                  // ── Continue button ───────────────────────────────────
+                  AnimatedOpacity(
+                    duration: const Duration(milliseconds: 250),
+                    opacity: (accepted && !state.isLoading) ? 1.0 : 0.45,
+                    child: AppButton(
+                      text: AppStrings.btnContinue,
+                      isLoading: state.isLoading,
+                      onPressed: (accepted && !state.isLoading)
+                          ? () => context.read<AgreementCubit>().submit()
                           : null,
                     ),
-                    SizedBox(width: 10.w),
-                    Expanded(
-                      child: Text(
-                        AppStrings.agreementCheckbox,
-                        style: GoogleFonts.lato(
-                          fontSize: 13.sp,
-                          color: AppColors.textBody,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                  SizedBox(height: 32.h),
+                ],
               ),
-              SizedBox(height: 28.h),
-
-              // ── Continue button ───────────────────────────────────
-              AnimatedOpacity(
-                duration: const Duration(milliseconds: 250),
-                opacity: accepted ? 1.0 : 0.45,
-                child: AppButton(
-                  text: AppStrings.btnContinue,
-                  onPressed: accepted
-                      ? () => context.go(AppRoutes.dashboard)
-                      : null,
-                ),
-              ),
-              SizedBox(height: 32.h),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

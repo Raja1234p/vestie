@@ -6,12 +6,16 @@ class User extends Equatable {
   final String name;
   final String email;
   final bool isVerified;
+  final String? accessToken;
+  final String? refreshToken;
 
   const User({
     required this.id,
     required this.name,
     required this.email,
     this.isVerified = false,
+    this.accessToken,
+    this.refreshToken,
   });
 
   @override

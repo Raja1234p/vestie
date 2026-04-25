@@ -44,7 +44,7 @@ class AppRouter {
       );
 
   static final GoRouter router = GoRouter(
-    initialLocation: AppRoutes.dashboard,
+    initialLocation: AppRoutes.splash,
     routes: [
       GoRoute(
         path: AppRoutes.splash,
@@ -75,7 +75,10 @@ class AppRouter {
       ),
       GoRoute(
         path: AppRoutes.resetPassword,
-        builder: (context, _) => const ResetPasswordScreen(),
+        builder: (context, state) {
+          final email = state.extra is String ? state.extra as String : '';
+          return ResetPasswordScreen(email: email);
+        },
       ),
       GoRoute(
         path: AppRoutes.agreement,

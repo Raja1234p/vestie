@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET" />
     <!-- Image picker: photo library (API 33+) -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <!-- Photo library for API 32 and below -->

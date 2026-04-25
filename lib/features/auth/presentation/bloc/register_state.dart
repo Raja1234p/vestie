@@ -24,9 +24,17 @@ class RegisterSuccess extends RegisterState {
   List<Object> get props => [email];
 }
 
+class RegisterGoogleSuccess extends RegisterState {
+  final bool isDisclaimerAccepted;
+  const RegisterGoogleSuccess({this.isDisclaimerAccepted = false});
+  @override
+  List<Object> get props => [isDisclaimerAccepted];
+}
+
 class RegisterError extends RegisterState {
   final String message;
-  const RegisterError({required this.message});
+  final String? title;
+  const RegisterError({required this.message, this.title});
   @override
-  List<Object> get props => [message];
+  List<Object?> get props => [message, title];
 }

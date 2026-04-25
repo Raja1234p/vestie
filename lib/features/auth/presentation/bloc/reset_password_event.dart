@@ -5,10 +5,18 @@ abstract class ResetPasswordEvent extends Equatable {
 }
 
 class ResetPasswordSubmitted extends ResetPasswordEvent {
+  final String email;
+  final String code;
   final String newPassword;
-  const ResetPasswordSubmitted({required this.newPassword});
+
+  const ResetPasswordSubmitted({
+    required this.email,
+    required this.code,
+    required this.newPassword,
+  });
+
   @override
-  List<Object> get props => [newPassword];
+  List<Object> get props => [email, code, newPassword];
 }
 
 class ResetPasswordReset extends ResetPasswordEvent {

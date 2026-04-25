@@ -82,8 +82,10 @@ class _LoginFormState extends State<LoginForm> {
                 controller: _emailCtrl,
                 keyboardType: TextInputType.emailAddress,
                 errorText: form.emailError,
-                onChanged: (_) =>
-                    context.read<LoginFormCubit>().clearEmailError(),
+                onChanged: (_) => context.read<LoginFormCubit>().onFieldsChanged(
+                      _emailCtrl.text,
+                      _passCtrl.text,
+                    ),
               ),
               SizedBox(height: 16.h),
               AppTextField(
@@ -93,18 +95,22 @@ class _LoginFormState extends State<LoginForm> {
                 obscureText: !form.passwordVisible,
                 textInputAction: TextInputAction.done,
                 errorText: form.passwordError,
-                onChanged: (_) =>
-                    context.read<LoginFormCubit>().clearPasswordError(),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    form.passwordVisible
-                        ? Icons.visibility_outlined
-                        : Icons.visibility_off_outlined,
-                    size: 20.w,
-                    color: AppColors.authHint,
+                onChanged: (_) => context.read<LoginFormCubit>().onFieldsChanged(
+                      _emailCtrl.text,
+                      _passCtrl.text,
+                    ),
+                suffixIcon: ExcludeFocus(
+                  child: IconButton(
+                    icon: Icon(
+                      form.passwordVisible
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                      size: 20.w,
+                      color: AppColors.authHint,
+                    ),
+                    onPressed: () =>
+                        context.read<LoginFormCubit>().togglePassword(),
                   ),
-                  onPressed: () =>
-                      context.read<LoginFormCubit>().togglePassword(),
                 ),
               ),
               SizedBox(height: 8.h),
@@ -130,14 +136,14 @@ class _LoginFormState extends State<LoginForm> {
               AppButton(
                 text: AppStrings.btnContinue,
                 isLoading: isLoading,
-                onPressed: () => _submit(context),
+                onPressed: form.isValid ? () => _submit(context) : null,
               ),
               SizedBox(height: 22.h),
               const OrDivider(),
               SizedBox(height: 20.h),
               SocialAuthButton(
                 provider: SocialProvider.google,
-                onPressed: () => _showComingSoon(context),
+                onPressed: () => context.read<LoginBloc>().add(const GoogleLoginRequested()),
               ),
               SizedBox(height: 12.h),
               SocialAuthButton(

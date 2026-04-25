@@ -20,3 +20,10 @@ class LoginReset extends LoginEvent {
   @override
   List<Object> get props => [];
 }
+
+class GoogleLoginRequested extends LoginEvent {
+  const GoogleLoginRequested();
+
+  @override
+  List<Object> get props => [];
+}

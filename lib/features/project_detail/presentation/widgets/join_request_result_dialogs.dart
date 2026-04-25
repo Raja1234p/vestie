@@ -5,7 +5,6 @@ import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_action_dialog.dart';
-import '../../../../core/widgets/text/app_text.dart';
 
 Widget _descriptionWithHighlightedName(
   BuildContext context, {

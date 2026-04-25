@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'app/main_app.dart';
+import 'core/di/service_locator.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Lock orientation to portrait (standard for fintech apps unless tablets are explicitly handled dynamically)
+  // Initialize Firebase
+  await Firebase.initializeApp();
+
+  // Initialize Google Sign In (Handled in Repository with Client ID)
+
+
+  // Lock orientation to portrait
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
 
-  // TODO: Initialize Dependency Injection (e.g. GetIt)
-  // await setupDependencies();
+  // Initialize Dependency Injection
+  await ServiceLocator.instance.init();
 
   runApp(const MainApp());
 }
