@@ -6,17 +6,20 @@ class LoginFormState extends Equatable {
   final bool passwordVisible;
   final String? emailError;
   final String? passwordError;
+  final bool isValid;
 
   const LoginFormState({
     this.passwordVisible = false,
     this.emailError,
     this.passwordError,
+    this.isValid = false,
   });
 
   LoginFormState copyWith({
     bool? passwordVisible,
     String? emailError,
     String? passwordError,
+    bool? isValid,
     bool clearEmailError = false,
     bool clearPasswordError = false,
   }) {
@@ -26,11 +29,12 @@ class LoginFormState extends Equatable {
       passwordError: clearPasswordError
           ? null
           : (passwordError ?? this.passwordError),
+      isValid: isValid ?? this.isValid,
     );
   }
 
   @override
-  List<Object?> get props => [passwordVisible, emailError, passwordError];
+  List<Object?> get props => [passwordVisible, emailError, passwordError, isValid];
 }
 
 /// Manages login form UI state only.
@@ -45,11 +49,21 @@ class LoginFormCubit extends Cubit<LoginFormState> {
 
   void clearPasswordError() => emit(state.copyWith(clearPasswordError: true));
 
+  void onFieldsChanged(String email, String password) {
+    final emailErr = ValidationUtils.validateEmail(email);
+    final passErr  = ValidationUtils.validatePassword(password);
+    emit(state.copyWith(isValid: emailErr == null && passErr == null));
+  }
+
   /// Returns true if all fields pass validation.
   bool validate(String email, String password) {
     final emailErr = ValidationUtils.validateEmail(email);
     final passErr  = ValidationUtils.validatePassword(password);
-    emit(state.copyWith(emailError: emailErr, passwordError: passErr));
+    emit(state.copyWith(
+      emailError: emailErr,
+      passwordError: passErr,
+      isValid: emailErr == null && passErr == null,
+    ));
     return emailErr == null && passErr == null;
   }
 }

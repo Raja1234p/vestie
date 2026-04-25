@@ -23,7 +23,11 @@ class SplashScreen extends StatelessWidget {
         listener: (context, state) {
           if (state is SplashCompleted) {
             if (state.isAuthenticated) {
-              context.go(AppRoutes.dashboard);
+              if (state.isDisclaimerAccepted) {
+                context.go(AppRoutes.dashboard);
+              } else {
+                context.go(AppRoutes.agreement);
+              }
             } else {
               context.go(AppRoutes.onboarding);
             }

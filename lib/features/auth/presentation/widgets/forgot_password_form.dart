@@ -94,8 +94,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.done,
                 errorText: form.emailError,
-                onChanged: (_) =>
-                    context.read<ForgotPasswordFormCubit>().clearError(),
+                onChanged: (_) => context.read<ForgotPasswordFormCubit>().onFieldsChanged(_emailCtrl.text),
               ),
               SizedBox(height: 28.h),
 
@@ -103,7 +102,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
               AppButton(
                 text: AppStrings.btnSendResetEmail,
                 isLoading: isLoading,
-                onPressed: () => _submit(context),
+                onPressed: form.isValid ? () => _submit(context) : null,
               ),
               SizedBox(height: 24.h),
             ],

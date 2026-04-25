@@ -19,24 +19,31 @@ class AuthGradientButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isEnabled = onPressed != null && !isLoading;
+
     return SizedBox(
       width: double.infinity,
       height: 52.h,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [AppColors.authButtonStart, AppColors.authButtonEnd],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-          ),
+          gradient: isEnabled
+              ? const LinearGradient(
+                  colors: [AppColors.authButtonStart, AppColors.authButtonEnd],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                )
+              : null,
+          color: isEnabled ? null : AppColors.authHint.withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(100.r),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.authButtonEnd.withValues(alpha: 0.35),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          boxShadow: isEnabled
+              ? [
+                  BoxShadow(
+                    color: AppColors.authButtonEnd.withValues(alpha: 0.35),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : null,
         ),
         child: Material(
           color: Colors.transparent,

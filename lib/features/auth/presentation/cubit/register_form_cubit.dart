@@ -9,6 +9,7 @@ class RegisterFormState extends Equatable {
   final String? emailError;
   final String? passwordError;
   final String? confirmError;
+  final bool isValid;
 
   const RegisterFormState({
     this.passwordVisible = false,
@@ -17,6 +18,7 @@ class RegisterFormState extends Equatable {
     this.emailError,
     this.passwordError,
     this.confirmError,
+    this.isValid = false,
   });
 
   RegisterFormState copyWith({
@@ -26,6 +28,7 @@ class RegisterFormState extends Equatable {
     String? emailError,
     String? passwordError,
     String? confirmError,
+    bool? isValid,
     bool clearName = false,
     bool clearEmail = false,
     bool clearPassword = false,
@@ -39,12 +42,13 @@ class RegisterFormState extends Equatable {
       passwordError:
           clearPassword ? null : (passwordError ?? this.passwordError),
       confirmError: clearConfirm ? null : (confirmError ?? this.confirmError),
+      isValid: isValid ?? this.isValid,
     );
   }
 
   @override
   List<Object?> get props =>
-      [passwordVisible, confirmVisible, nameError, emailError, passwordError, confirmError];
+      [passwordVisible, confirmVisible, nameError, emailError, passwordError, confirmError, isValid];
 }
 
 /// Manages register form UI state only.
@@ -63,6 +67,16 @@ class RegisterFormCubit extends Cubit<RegisterFormState> {
   void clearPasswordError() => emit(state.copyWith(clearPassword: true));
   void clearConfirmError()  => emit(state.copyWith(clearConfirm: true));
 
+  void onFieldsChanged(String name, String email, String password, String confirm) {
+    final nameErr    = ValidationUtils.validateFullName(name);
+    final emailErr   = ValidationUtils.validateEmail(email);
+    final passErr    = ValidationUtils.validatePassword(password);
+    final confirmErr = ValidationUtils.validateConfirmPassword(confirm, password);
+    emit(state.copyWith(
+      isValid: nameErr == null && emailErr == null && passErr == null && confirmErr == null,
+    ));
+  }
+
   bool validate(String name, String email, String password, String confirm) {
     final nameErr    = ValidationUtils.validateFullName(name);
     final emailErr   = ValidationUtils.validateEmail(email);
@@ -73,6 +87,7 @@ class RegisterFormCubit extends Cubit<RegisterFormState> {
       emailError: emailErr,
       passwordError: passErr,
       confirmError: confirmErr,
+      isValid: nameErr == null && emailErr == null && passErr == null && confirmErr == null,
     ));
     return nameErr == null &&
         emailErr == null &&
