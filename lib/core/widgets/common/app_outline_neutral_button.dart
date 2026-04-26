@@ -11,6 +11,9 @@ class AppOutlineNeutralButton extends StatelessWidget {
   final double? borderRadius;
   /// When null, uses [AppColors.neutral1200].
   final Color? borderColor;
+  final Widget? leading;
+  /// When null, uses [AppColors.neutral1200] for the label.
+  final Color? labelColor;
 
   const AppOutlineNeutralButton({
     super.key,
@@ -18,6 +21,8 @@ class AppOutlineNeutralButton extends StatelessWidget {
     required this.onPressed,
     this.borderRadius,
     this.borderColor,
+    this.leading,
+    this.labelColor,
   });
 
   @override
@@ -25,6 +30,7 @@ class AppOutlineNeutralButton extends StatelessWidget {
     final theme = Theme.of(context);
     final radius = borderRadius ?? 999.r;
     final border = borderColor ?? AppColors.neutral1200;
+    final textColor = labelColor ?? AppColors.neutral1200;
     return Material(
       color: AppColors.surface,
       borderRadius: BorderRadius.circular(radius),
@@ -39,14 +45,31 @@ class AppOutlineNeutralButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(radius),
             border: Border.all(color: border, width: 1.5.w),
           ),
-          child: AppText(
-            label,
-            style: theme.textTheme.labelLarge?.copyWith(
-              fontSize: 15.sp,
-              fontWeight: FontWeight.w600,
-              color: AppColors.neutral1200,
-            ),
-          ),
+          child: leading == null
+              ? AppText(
+                  label,
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w600,
+                    color: textColor,
+                  ),
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    leading!,
+                    SizedBox(width: 8.w),
+                    AppText(
+                      label,
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w600,
+                        color: textColor,
+                      ),
+                    ),
+                  ],
+                ),
         ),
       ),
     );

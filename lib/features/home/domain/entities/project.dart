@@ -1,4 +1,7 @@
 import '../../../../core/constants/app_strings.dart';
+import 'user_flow_on_open.dart';
+
+export 'user_flow_on_open.dart';
 
 enum ProjectCategory { vacations, emergency, investment }
 
@@ -17,6 +20,8 @@ class Project {
   final String? endsIn;
   final String? description;
   final bool requestPending;
+  /// Mock: member-only — which full-screen flow opens instead of project detail.
+  final UserFlowOnOpen? userFlow;
 
   const Project({
     required this.id,
@@ -29,6 +34,7 @@ class Project {
     this.endsIn,
     this.description,
     this.requestPending = false,
+    this.userFlow,
   });
 
   String get categoryLabel {

@@ -39,6 +39,8 @@ import '../../features/project_detail/presentation/pages/join_requests_screen.da
 import '../../features/project_detail/presentation/pages/cancel_project_screen.dart';
 import '../../features/project_detail/presentation/pages/mark_project_successful_screen.dart';
 import '../../features/project_detail/presentation/pages/project_cancelled_screen.dart';
+import '../../features/project_detail/presentation/pages/user_status_flow_screen.dart';
+import '../../features/project_detail/presentation/pages/user_success_vote_screen.dart';
 import 'app_routes.dart';
 
 class AppRouter {
@@ -252,6 +254,29 @@ class AppRouter {
           return ProjectCancelledScreen(
             projectName: extra.projectName,
           );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.userStatusFlow,
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is! UserStatusFlowArgs) {
+            return _invalidRouteScreen();
+          }
+          return UserStatusFlowScreen(
+            projectName: extra.projectName,
+            kind: extra.kind,
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.userSuccessVote,
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is! UserSuccessVoteArgs) {
+            return _invalidRouteScreen();
+          }
+          return UserSuccessVoteScreen(args: extra);
         },
       ),
     ],

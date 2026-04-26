@@ -14,6 +14,7 @@ class AppAssets {
 
   // Project created success illustration
   static const String projectCreatedImage  = '$_imagePath/project_created_image.png';
+  /// 3D purple “success” badge (member flows: join approved, vote yes, mark complete).
   static const String markSuccessfullProject = '$_imagePath/markSuccessfullProject.png';
   static const String markCancel            = '$_imagePath/markcancel.png';
 

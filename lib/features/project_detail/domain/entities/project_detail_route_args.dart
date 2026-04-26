@@ -51,3 +51,40 @@ class ProjectCancelledRouteArgs {
 
   const ProjectCancelledRouteArgs({required this.projectName});
 }
+
+/// Full-screen join / mark-vote outcomes (member flows).
+enum UserStatusFlowKind {
+  joinApproved,
+  joinRejected,
+  markVotedSuccess,
+  markVotedIncomplete,
+}
+
+class UserStatusFlowArgs {
+  final String projectName;
+  final UserStatusFlowKind kind;
+
+  const UserStatusFlowArgs({
+    required this.projectName,
+    required this.kind,
+  });
+}
+
+/// Member success-vote screen (leader has started a vote).
+class UserSuccessVoteArgs {
+  final String projectName;
+  final double goalAmount;
+  final int memberCount;
+  final double totalRaised;
+  final String deadlineLabel;
+  final int daysRemaining;
+
+  const UserSuccessVoteArgs({
+    required this.projectName,
+    required this.goalAmount,
+    required this.memberCount,
+    required this.totalRaised,
+    required this.deadlineLabel,
+    required this.daysRemaining,
+  });
+}

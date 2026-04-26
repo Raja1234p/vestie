@@ -217,6 +217,9 @@ class AppColors {
   // Dark pill action button (inside cards)
   static const Color cardActionBtn = grey1100; // #1A1630
 
+  /// Full-width “Back to Home” outline (Figma #7B73A3).
+  static const Color backToHomeButtonBorder = grey700;
+
   // ── Profile / Payment ────────────────────────────────────────────────────────
   static const Color logoutBtn      = red700;     // #E03F3F
   static const Color settingsCardBg = grey100;    // #F8F7FA

@@ -17,6 +17,7 @@ class AppButton extends StatelessWidget {
   final double? width;
   final double? height;
   final Color? color;
+  final Widget? leading;
 
   const AppButton({
     super.key,
@@ -30,6 +31,7 @@ class AppButton extends StatelessWidget {
     this.width,
     this.height,
     this.color,
+    this.leading,
   });
 
   @override
@@ -93,18 +95,43 @@ class AppButton extends StatelessWidget {
                         color: isSecondary ? AppColors.primary : AppColors.surface,
                       ),
                     )
-                  : AppText(
-                      text,
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w600,
-                        color: isSecondary ? AppColors.primary : AppColors.surface,
-                      ),
+                  : _labelRow(
+                      context: context,
+                      theme: theme,
+                      isSecondary: isSecondary,
                     ),
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _labelRow({
+    required BuildContext context,
+    required ThemeData theme,
+    required bool isSecondary,
+  }) {
+    final style = theme.textTheme.labelLarge?.copyWith(
+      fontSize: 15.sp,
+      fontWeight: FontWeight.w600,
+      color: isSecondary ? AppColors.primary : AppColors.surface,
+    );
+    final label = AppText(
+      text,
+      style: style,
+    );
+    if (leading == null) {
+      return label;
+    }
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        leading!,
+        SizedBox(width: 8.w),
+        label,
+      ],
     );
   }
 }

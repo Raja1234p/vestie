@@ -45,4 +45,8 @@ class AppRoutes {
   static const String markProjectSuccessful = '/project/mark-successful';
   static const String cancelProject        = '/project/cancel';
   static const String projectCancelled     = '/project/cancelled';
+
+  // ── Member user flows (join + success vote) ────────────────────────────
+  static const String userStatusFlow  = '/user/status-flow';
+  static const String userSuccessVote  = '/user/success-vote';
 }

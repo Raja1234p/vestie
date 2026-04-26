@@ -65,7 +65,7 @@ class ProjectCancelledScreen extends StatelessWidget {
                 label: AppStrings.btnBackToHome,
                 onPressed: () => context.go(AppRoutes.dashboard),
                 borderRadius: AppRadius.r8,
-                borderColor: AppColors.grey700,
+                borderColor: AppColors.backToHomeButtonBorder,
               ),
               SizedBox(height: 16.h),
             ],

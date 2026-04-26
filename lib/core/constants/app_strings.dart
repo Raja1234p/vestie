@@ -479,6 +479,38 @@ class AppStrings {
       'You’ve declined the join request from ';
   static const String joinRequestApproveLabel   = 'Accept';
   static const String joinRequestDeclineLabel   = 'Decline';
+
+  // ── Member: join result (after leader approves / rejects) ──────────────
+  static const String userJoinRequestApprovedStatusTitle   = 'Request Approved';
+  static const String userJoinRequestApprovedStatusBody   =
+      'The group leader has approved your request to join this project. You can now contribute and take part in the pot.';
+  static const String userJoinRequestRejectedStatusTitle  = 'Not Approved';
+  static const String userJoinRequestRejectedStatusBody  =
+      'The group leader did not approve your request to join this project. You can still discover other projects on Vestie.';
+
+  // ── Member: success vote (leader started vote) ───────────────────────
+  static const String userSuccessVoteBannerTitle = 'The leader has called a success vote!';
+  static const String userSuccessVoteBannerBody  =
+      'Vote before the deadline to help decide if the project should be marked as successful.';
+  static const String userSuccessVoteDeadlineLabel  = 'Voting deadline';
+  static const String userSuccessVoteStatGoal     = 'Goal Amount';
+  static const String userSuccessVoteStatMembers = 'Members';
+  static const String userSuccessVoteTotalRaised = 'Total Raised';
+  static const String userSuccessVoteQuestion  =
+      'Do you agree this project was successful?';
+  static const String userSuccessVoteYes       = 'Yes, It was';
+  static const String userSuccessVoteNotYet    = 'No, not yet';
+  static const String userSuccessVoteFooter   =
+      'Your vote is anonymous. A majority \'Yes\' releases funds to all members. '
+      '\'No\' majority refunds contributions.';
+
+  // ── Member: immediate feedback after voting (mark complete) ────────────
+  static const String markUserVotedSuccessTitle  = 'Approved';
+  static const String markUserVotedSuccessBody  =
+      'You’ve marked the project as complete. If the majority agrees, funds will be released to the creator.';
+  static const String markUserVotedIncompleteTitle  = 'Not Approved';
+  static const String markUserVotedIncompleteBody  =
+      'You’ve marked the project as incomplete. If the majority disagrees, all contributions will be refunded.';
   static const String shareQrCode               = 'Share QR Code';
   static const String copyCodeFromBelow         = 'Or copy code from below';
   static const String inviteLinkSample          = 'vestie.app/join/family-vacation-2025';

@@ -34,20 +34,24 @@ class PostAuthHeader extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 if (leading != null) ...[leading!, SizedBox(width: 8.w)],
-                AppText(
-                  title,
-                  style: titleStyle ??
-                      GoogleFonts.lato(
-                        fontSize: 28.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.grey1100,
-                        letterSpacing: -0.5,
-                      ),
+                Expanded(
+                  child: AppText(
+                    title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: titleStyle ??
+                        GoogleFonts.lato(
+                          fontSize: 28.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.grey1100,
+                          letterSpacing: -0.5,
+                        ),
+                  ),
                 ),
-                const Spacer(),
-                ?trailing,
+                if (trailing != null) ...[SizedBox(width: 8.w), trailing!],
               ],
             ),
             SizedBox(height: bottomGap.h),
