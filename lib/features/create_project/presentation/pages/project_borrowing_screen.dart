@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/app_tick_switch.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../domain/create_project_form.dart';
 import '../cubit/create_project_cubit.dart';
@@ -105,10 +106,8 @@ class _ProjectBorrowingScreenState extends State<ProjectBorrowingScreen> {
                                     fontWeight: FontWeight.w500,
                                     color: AppColors.textPrimary)),
                           ),
-                          Switch(
+                          AppTickSwitch(
                             value: form.borrowingEnabled,
-                            activeThumbColor: Colors.white,
-                            activeTrackColor: AppColors.primary,
                             onChanged: cubit.toggleBorrowing,
                           ),
                         ],

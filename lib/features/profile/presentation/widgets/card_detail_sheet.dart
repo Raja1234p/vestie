@@ -8,6 +8,7 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/widgets/common/app_text.dart';
+import '../../../../core/widgets/common/app_tick_switch.dart';
 import '../../domain/entities/payment_card.dart';
 import '../cubit/payment_methods_cubit.dart';
 import 'card_preview.dart';
@@ -85,15 +86,17 @@ class CardDetailSheet extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Switch(
+                  AppTickSwitch(
                     value: current.isPrimary,
-                    activeThumbColor: AppColors.primary,
-                    activeTrackColor: AppColors.primary.withValues(alpha: 0.4),
-                    onChanged: (val) {
-                      if (val) {
-                        context.read<PaymentMethodsCubit>().setPrimary(current.id);
-                      }
-                    },
+                    onChanged: current.isPrimary
+                        ? null
+                        : (val) {
+                            if (val) {
+                              context
+                                  .read<PaymentMethodsCubit>()
+                                  .setPrimary(current.id);
+                            }
+                          },
                   ),
                 ],
               ),

@@ -9,6 +9,7 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/common/app_failure_dialog.dart';
+import '../../../../core/widgets/common/app_tick_switch.dart';
 import '../cubit/agreement_cubit.dart';
 
 /// Shown to every new user after OTP verification.
@@ -111,45 +112,25 @@ class _AgreementBody extends StatelessWidget {
                         ),
                   SizedBox(height: 20.h),
 
-                  // ── Checkbox row ──────────────────────────────────────
-                  GestureDetector(
-                    onTap: () => context.read<AgreementCubit>().toggle(),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          width: 22.w,
-                          height: 22.w,
-                          decoration: BoxDecoration(
-                            color: accepted
-                                ? AppColors.primary
-                                : AppColors.surface,
-                            border: Border.all(
-                              color: accepted
-                                  ? AppColors.primary
-                                  : AppColors.grey400,
-                              width: 1.5,
-                            ),
-                            borderRadius: BorderRadius.circular(5.r),
-                          ),
-                          child: accepted
-                              ? Icon(Icons.check,
-                                  color: AppColors.surface, size: 14.w)
-                              : null,
-                        ),
-                        SizedBox(width: 10.w),
-                        Expanded(
-                          child: Text(
-                            AppStrings.agreementCheckbox,
-                            style: GoogleFonts.lato(
-                              fontSize: 13.sp,
-                              color: AppColors.textBody,
-                            ),
+                  // ── Agreement switch row ──────────────────────────────
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      AppTickSwitch(
+                        value: accepted,
+                        onChanged: (_) => context.read<AgreementCubit>().toggle(),
+                      ),
+                      SizedBox(width: 10.w),
+                      Expanded(
+                        child: Text(
+                          AppStrings.agreementCheckbox,
+                          style: GoogleFonts.lato(
+                            fontSize: 13.sp,
+                            color: AppColors.textBody,
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 28.h),
 
