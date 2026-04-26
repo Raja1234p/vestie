@@ -1,6 +1,6 @@
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
-import '../../domain/entities/project_detail_route_args.dart';
+import '../../../../app/router/route_args/project_detail_flow_args.dart';
 
 /// Maps [UserStatusFlowKind] to static copy + art — keeps screens free of
 /// per-kind conditionals and avoids depending on a particular cubit.

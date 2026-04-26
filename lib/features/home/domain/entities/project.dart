@@ -1,5 +1,6 @@
 import '../../../../core/constants/app_strings.dart';
 import 'user_flow_on_open.dart';
+import 'project_category_extensions.dart';
 
 export 'user_flow_on_open.dart';
 
@@ -38,11 +39,7 @@ class Project {
   });
 
   String get categoryLabel {
-    switch (category) {
-      case ProjectCategory.vacations:   return AppStrings.filterVacations;
-      case ProjectCategory.emergency:   return AppStrings.filterEmergency;
-      case ProjectCategory.investment:  return AppStrings.filterInvestments;
-    }
+    return category.label;
   }
 
   String get statusLabel =>

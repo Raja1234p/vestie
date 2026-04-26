@@ -1,4 +1,5 @@
 import '../../../home/domain/entities/project.dart';
+import '../../../home/domain/entities/project_category_extensions.dart';
 import '../../../../core/constants/app_strings.dart';
 
 /// Resolves [title] / [body] for the “no more activity” callout on completed
@@ -14,18 +15,15 @@ class CompletedProjectNoticeCopy {
 
   /// Investment vs pooled funds use different copy (see [AppStrings]).
   static CompletedProjectNoticeCopy forCategory(ProjectCategory category) {
-    switch (category) {
-      case ProjectCategory.investment:
-        return const CompletedProjectNoticeCopy(
-          title: AppStrings.noMoreContributionTitle,
-          body: AppStrings.noMoreContributionBody,
-        );
-      case ProjectCategory.vacations:
-      case ProjectCategory.emergency:
-        return const CompletedProjectNoticeCopy(
-          title: AppStrings.projectCompletedUserTitle,
-          body: AppStrings.projectCompletedUserBody,
-        );
+    if (category.isInvestment) {
+      return const CompletedProjectNoticeCopy(
+        title: AppStrings.noMoreContributionTitle,
+        body: AppStrings.noMoreContributionBody,
+      );
     }
+    return const CompletedProjectNoticeCopy(
+      title: AppStrings.projectCompletedUserTitle,
+      body: AppStrings.projectCompletedUserBody,
+    );
   }
 }

@@ -7,7 +7,6 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_back_button.dart';
 import '../../../../core/widgets/common/app_button.dart';
-import '../../../../core/widgets/common/app_invite_members_dialog.dart';
 import '../../../../core/widgets/common/leader_action_menu.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../../core/widgets/common/post_auth_header.dart';
@@ -15,7 +14,7 @@ import '../../../../core/widgets/text/app_text.dart';
 import '../../../home/domain/entities/project.dart';
 import '../../domain/entities/member_entity.dart';
 import '../../domain/entities/project_detail_entity.dart';
-import '../../domain/entities/project_detail_route_args.dart';
+import '../navigation/project_detail_navigation_helpers.dart';
 import '../widgets/announcement_card.dart';
 import '../widgets/project_detail_user_completed_content.dart';
 import '../widgets/members_list.dart';
@@ -31,51 +30,8 @@ class InvestmentProjectDetailScreen extends StatelessWidget {
   void _openMemberDetail(BuildContext context, MemberEntity member) {
     context.push(
       AppRoutes.memberDetail,
-      extra: MemberDetailRouteArgs(
-        member: member,
-        projectName: project.name,
-        isLeaderView: project.isLeader,
-      ),
+      extra: ProjectDetailNavigationHelpers.memberDetailArgs(project, member),
     );
-  }
-
-  void _handleLeaderAction(BuildContext context, LeaderMenuAction action) {
-    switch (action) {
-      case LeaderMenuAction.joinRequests:
-        context.push(AppRoutes.joinRequests);
-        break;
-      case LeaderMenuAction.addAnnouncement:
-        context.push(AppRoutes.createAnnouncement);
-        break;
-      case LeaderMenuAction.editProject:
-        context.push(AppRoutes.createProjectDetails, extra: true);
-        break;
-      case LeaderMenuAction.inviteMembers:
-        AppInviteMembersDialog.show(context);
-        break;
-      case LeaderMenuAction.markSuccessful:
-        context.push(
-          AppRoutes.markProjectSuccessful,
-          extra: MarkSuccessfulRouteArgs(
-            memberCount: project.members.length,
-          ),
-        );
-        break;
-      case LeaderMenuAction.cancelProject:
-        final unpaid = project.members
-            .where(
-              (m) => m.overdueAmount != null && m.overdueAmount! > 0,
-            )
-            .length;
-        context.push(
-          AppRoutes.cancelProject,
-          extra: CancelProjectRouteArgs(
-            projectName: project.name,
-            membersWithUnpaidBorrows: unpaid,
-          ),
-        );
-        break;
-    }
   }
 
   @override
@@ -94,8 +50,12 @@ class InvestmentProjectDetailScreen extends StatelessWidget {
                 trailing: project.isLeader
                     ? LeaderActionMenu(
                         joinRequestCount: 3,
-                        onSelected: (action) =>
-                            _handleLeaderAction(context, action),
+                        onSelected: (action) => ProjectDetailNavigationHelpers
+                            .handleLeaderAction(
+                          context,
+                          project: project,
+                          action: action,
+                        ),
                       )
                     : null,
               ),
@@ -130,7 +90,8 @@ class InvestmentProjectDetailScreen extends StatelessWidget {
                             text: AppStrings.btnContribute,
                             onPressed: () => context.push(
                               AppRoutes.contributeFlow,
-                              extra: ProjectWalletFlowArgs.fromProject(project),
+                              extra:
+                                  ProjectDetailNavigationHelpers.walletArgs(project),
                             ),
                           ),
                           SizedBox(height: 13.h),
@@ -138,7 +99,8 @@ class InvestmentProjectDetailScreen extends StatelessWidget {
                             text: AppStrings.btnBorrow,
                             onPressed: () => context.push(
                               AppRoutes.borrowFlow,
-                              extra: ProjectWalletFlowArgs.fromProject(project),
+                              extra:
+                                  ProjectDetailNavigationHelpers.walletArgs(project),
                             ),
                             isSecondary: true,
                           ),

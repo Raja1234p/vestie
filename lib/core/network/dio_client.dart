@@ -1,7 +1,4 @@
-import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
-import 'package:flutter/foundation.dart';
 
 import 'interceptors/auth_interceptor.dart';
 import 'interceptors/logging_interceptor.dart';
@@ -27,14 +24,14 @@ class DioClient {
       ),
     );
 
-    // Bypass SSL certificate verification for development on real devices
-    if (kDebugMode) {
-      (_dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
-        final client = HttpClient();
-        client.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
-        return client;
-      };
-    }
+    // // Bypass SSL certificate verification for development on real devices
+    // if (kDebugMode) {
+    //   (_dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+    //     final client = HttpClient();
+    //     client.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+    //     return client;
+    //   };
+    // }
 
     _dio.interceptors.addAll([
       AuthInterceptor(secureStorage: secureStorage),

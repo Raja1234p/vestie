@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/app_routes.dart';
+import '../../../../app/router/route_args/project_detail_flow_args.dart';
 import '../../../../core/constants/app_dimens.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -11,7 +12,6 @@ import '../../../../core/widgets/common/app_outline_neutral_button.dart';
 import '../../../../core/widgets/common/centered_hero_status_block.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../../core/widgets/common/post_auth_header.dart';
-import '../../domain/entities/project_detail_route_args.dart';
 import '../models/user_status_flow_copy.dart';
 
 /// Member: join result or mark-vote submission feedback.

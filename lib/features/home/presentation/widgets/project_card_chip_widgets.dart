@@ -3,10 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/entities/project.dart';
+import '../../domain/entities/project_category_extensions.dart';
 
 class ProjectCategoryChip extends StatelessWidget {
   final Project project;
@@ -17,16 +17,7 @@ class ProjectCategoryChip extends StatelessWidget {
       ? project.name
       : project.categoryLabel;
 
-  String? get _iconAsset {
-    switch (project.category) {
-      case ProjectCategory.vacations:
-        return null;
-      case ProjectCategory.emergency:
-        return AppAssets.iconEmergencyFund;
-      case ProjectCategory.investment:
-        return AppAssets.iconInvestmentFund;
-    }
-  }
+  String? get _iconAsset => project.category.iconAsset;
 
   @override
   Widget build(BuildContext context) {

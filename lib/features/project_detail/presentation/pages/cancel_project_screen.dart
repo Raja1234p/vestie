@@ -11,7 +11,7 @@ import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/common/app_outline_neutral_button.dart';
 import '../../../../core/widgets/common/flow_hero_image_card.dart';
 import '../../../../core/widgets/text/app_text.dart';
-import '../../domain/entities/project_detail_route_args.dart';
+import '../../../../app/router/route_args/project_detail_flow_args.dart';
 import '../widgets/cancel_project_confirm_dialog.dart';
 
 class CancelProjectScreen extends StatelessWidget {

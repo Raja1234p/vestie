@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/foundation.dart';
 import 'package:vestie/core/network/dio_client.dart';
 import 'package:vestie/features/auth/data/datasources/auth_remote_data_source_impl.dart';
 import 'package:vestie/core/storage/secure_storage_impl.dart';
@@ -11,11 +12,11 @@ void main() {
   // We use testWidgets or just a regular test but we need flutter environment.
   
   test('Auth Flow Integration Test', () async {
-    print('--- Starting Auth Flow Integration Test ---');
+    debugPrint('--- Starting Auth Flow Integration Test ---');
     
     final mockStorage = MockSecureStorage();
     when(() => mockStorage.getString(any())).thenAnswer((_) async => null);
-    when(() => mockStorage.saveString(any(), any())).thenAnswer((_) async => null);
+    when(() => mockStorage.saveString(any(), any())).thenAnswer((_) async {});
     
     final client = DioClient(secureStorage: mockStorage);
     final dataSource = AuthRemoteDataSourceImpl(client);
@@ -26,18 +27,18 @@ void main() {
 
     try {
       // 1. Register
-      print('Testing Register: $testEmail');
+      debugPrint('Testing Register: $testEmail');
       await dataSource.register(
         fullName: testName,
         email: testEmail,
         password: testPass,
         confirmPassword: testPass,
       );
-      print('Registration request sent successfully.');
+      debugPrint('Registration request sent successfully.');
 
       // 2. Login
       // Expecting 401 if verification is required, or 200 if it works.
-      print('\nTesting Login: $testEmail');
+      debugPrint('\nTesting Login: $testEmail');
       try {
         final tokens = await dataSource.login(
           email: testEmail,
@@ -45,22 +46,22 @@ void main() {
           deviceName: 'IntegrationTestRunner',
           ipAddress: '127.0.0.1',
         );
-        print('Login Success!');
-        print('Access Token: ${tokens.accessToken?.substring(0, 10)}...');
+        debugPrint('Login Success!');
+        debugPrint('Access Token: ${tokens.accessToken?.substring(0, 10)}...');
       } catch (e) {
-        print('Login failed (Expected if email verification is mandatory): $e');
+        debugPrint('Login failed (Expected if email verification is mandatory): $e');
       }
 
       // 3. Forgot Password
-      print('\nTesting Forgot Password: $testEmail');
+      debugPrint('\nTesting Forgot Password: $testEmail');
       await dataSource.forgotPassword(email: testEmail);
-      print('Forgot password request sent.');
+      debugPrint('Forgot password request sent.');
 
     } catch (e) {
-      print('\n[ERROR] Test failed: $e');
+      debugPrint('\n[ERROR] Test failed: $e');
       fail('Integration test failed with error: $e');
     }
 
-    print('\n--- Integration Test Completed ---');
+    debugPrint('\n--- Integration Test Completed ---');
   });
 }

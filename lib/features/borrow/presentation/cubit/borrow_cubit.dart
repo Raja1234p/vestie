@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../project_detail/domain/entities/project_detail_route_args.dart';
+import '../../../../app/router/route_args/project_wallet_flow_args.dart';
 
 enum BorrowStep { amount, confirm, success }
 

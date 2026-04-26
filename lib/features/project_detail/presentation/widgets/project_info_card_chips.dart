@@ -3,28 +3,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/text/app_text.dart';
 import '../../domain/entities/project_detail_entity.dart';
-import '../../../home/domain/entities/project.dart';
+import '../../../home/domain/entities/project.dart' show ProjectStatus;
+import '../../../home/domain/entities/project_category_extensions.dart';
 
 class ProjectInfoCategoryChip extends StatelessWidget {
   final ProjectDetailEntity project;
 
   const ProjectInfoCategoryChip({super.key, required this.project});
 
-  String? get _iconAsset {
-    switch (project.category) {
-      case ProjectCategory.vacations:
-        return null;
-      case ProjectCategory.emergency:
-        return AppAssets.iconEmergencyFund;
-      case ProjectCategory.investment:
-        return AppAssets.iconInvestmentFund;
-    }
-  }
+  String? get _iconAsset => project.category.iconAsset;
 
   @override
   Widget build(BuildContext context) {

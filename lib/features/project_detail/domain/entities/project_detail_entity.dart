@@ -1,4 +1,5 @@
 import '../../../home/domain/entities/project.dart';
+import '../../../home/domain/entities/project_category_extensions.dart';
 import 'member_entity.dart';
 import 'borrow_request_entity.dart';
 
@@ -34,10 +35,6 @@ class ProjectDetailEntity {
       goalAmount > 0 ? (currentAmount / goalAmount).clamp(0.0, 1.0) : 0.0;
 
   String get categoryLabel {
-    switch (category) {
-      case ProjectCategory.vacations:  return 'Vacations';
-      case ProjectCategory.emergency:  return 'Emergency';
-      case ProjectCategory.investment: return 'Investment';
-    }
+    return category.detailLabel;
   }
 }

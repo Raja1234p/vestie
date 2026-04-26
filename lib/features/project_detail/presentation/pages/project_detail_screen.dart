@@ -7,7 +7,6 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_back_button.dart';
 import '../../../../core/widgets/common/app_button.dart';
-import '../../../../core/widgets/common/app_invite_members_dialog.dart';
 import '../../../../core/widgets/common/app_toggle_tab_bar.dart';
 import '../../../../core/widgets/common/leader_action_menu.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
@@ -15,15 +14,9 @@ import '../../../../core/widgets/common/post_auth_header.dart';
 import '../../../home/domain/entities/project.dart';
 import '../../domain/entities/member_entity.dart';
 import '../../domain/entities/project_detail_entity.dart';
-import '../../domain/entities/project_detail_route_args.dart'
-    show
-        BorrowRequestsRouteArgs,
-        MemberDetailRouteArgs,
-        MarkSuccessfulRouteArgs,
-        ProjectWalletFlowArgs,
-        CancelProjectRouteArgs;
 import '../cubit/project_detail_cubit.dart';
 import '../cubit/project_detail_state.dart';
+import '../navigation/project_detail_navigation_helpers.dart';
 import '../widgets/announcement_card.dart';
 import '../widgets/project_detail_tab_panels.dart';
 import '../widgets/project_detail_user_completed_content.dart';
@@ -48,45 +41,6 @@ class ProjectDetailScreen extends StatelessWidget {
 class _ProjectDetailBody extends StatelessWidget {
   final ProjectDetailEntity project;
   const _ProjectDetailBody({required this.project});
-
-  void _handleLeaderAction(BuildContext context, LeaderMenuAction action) {
-    switch (action) {
-      case LeaderMenuAction.joinRequests:
-        context.push(AppRoutes.joinRequests);
-        break;
-      case LeaderMenuAction.addAnnouncement:
-        context.push(AppRoutes.createAnnouncement);
-        break;
-      case LeaderMenuAction.editProject:
-        context.push(AppRoutes.createProjectDetails, extra: true);
-        break;
-      case LeaderMenuAction.inviteMembers:
-        AppInviteMembersDialog.show(context);
-        break;
-      case LeaderMenuAction.markSuccessful:
-        context.push(
-          AppRoutes.markProjectSuccessful,
-          extra: MarkSuccessfulRouteArgs(
-            memberCount: project.members.length,
-          ),
-        );
-        break;
-      case LeaderMenuAction.cancelProject:
-        final unpaid = project.members
-            .where(
-              (m) => m.overdueAmount != null && m.overdueAmount! > 0,
-            )
-            .length;
-        context.push(
-          AppRoutes.cancelProject,
-          extra: CancelProjectRouteArgs(
-            projectName: project.name,
-            membersWithUnpaidBorrows: unpaid,
-          ),
-        );
-        break;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -128,8 +82,12 @@ class _ProjectDetailBody extends StatelessWidget {
                     trailing: project.isLeader
                         ? LeaderActionMenu(
                             joinRequestCount: 3,
-                            onSelected: (action) =>
-                                _handleLeaderAction(context, action),
+                            onSelected: (action) => ProjectDetailNavigationHelpers
+                                .handleLeaderAction(
+                              context,
+                              project: project,
+                              action: action,
+                            ),
                           )
                         : null,
                   ),
@@ -145,11 +103,8 @@ class _ProjectDetailBody extends StatelessWidget {
                             onMemberTap: (member) {
                               context.push(
                                 AppRoutes.memberDetail,
-                                extra: MemberDetailRouteArgs(
-                                  member: member,
-                                  projectName: project.name,
-                                  isLeaderView: project.isLeader,
-                                ),
+                                extra: ProjectDetailNavigationHelpers
+                                    .memberDetailArgs(project, member),
                               );
                             },
                           )
@@ -170,9 +125,8 @@ class _ProjectDetailBody extends StatelessWidget {
                                 text: AppStrings.btnContribute,
                                 onPressed: () => context.push(
                                   AppRoutes.contributeFlow,
-                                  extra: ProjectWalletFlowArgs.fromProject(
-                                    project,
-                                  ),
+                                  extra: ProjectDetailNavigationHelpers
+                                      .walletArgs(project),
                                 ),
                               ),
                               SizedBox(height: 13.h),
@@ -180,9 +134,8 @@ class _ProjectDetailBody extends StatelessWidget {
                                 text: AppStrings.btnBorrow,
                                 onPressed: () => context.push(
                                   AppRoutes.borrowFlow,
-                                  extra: ProjectWalletFlowArgs.fromProject(
-                                    project,
-                                  ),
+                                  extra: ProjectDetailNavigationHelpers
+                                      .walletArgs(project),
                                 ),
                                 isSecondary: true,
                               ),
@@ -192,11 +145,8 @@ class _ProjectDetailBody extends StatelessWidget {
                                 onMemberTap: (member) {
                                   context.push(
                                     AppRoutes.memberDetail,
-                                    extra: MemberDetailRouteArgs(
-                                      member: member,
-                                      projectName: project.name,
-                                      isLeaderView: project.isLeader,
-                                    ),
+                                    extra: ProjectDetailNavigationHelpers
+                                        .memberDetailArgs(project, member),
                                   );
                                 },
                               ),
@@ -256,8 +206,9 @@ class _TabSection extends StatelessWidget {
                           requests: project.borrowRequests,
                           onViewAll: () => context.push(
                             AppRoutes.borrowRequests,
-                            extra: BorrowRequestsRouteArgs(
-                              requests: project.borrowRequests,
+                            extra: ProjectDetailNavigationHelpers
+                                .borrowRequestsArgs(
+                              project,
                               isLeaderMode: true,
                             ),
                           ),
@@ -267,8 +218,9 @@ class _TabSection extends StatelessWidget {
                           requests: project.borrowRequests,
                           onViewAll: () => context.push(
                             AppRoutes.borrowRequests,
-                            extra: BorrowRequestsRouteArgs(
-                              requests: project.borrowRequests,
+                            extra: ProjectDetailNavigationHelpers
+                                .borrowRequestsArgs(
+                              project,
                               isLeaderMode: false,
                             ),
                           ),

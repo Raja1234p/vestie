@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/text/app_text.dart';
-import '../../domain/entities/project_detail_route_args.dart';
+import '../../../../app/router/route_args/project_detail_flow_args.dart';
 import 'project_info_card_rows.dart';
 
 /// Banners and stats for [UserSuccessVoteScreen] (no route logic).

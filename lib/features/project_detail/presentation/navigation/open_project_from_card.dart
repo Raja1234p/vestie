@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/app_routes.dart';
-import '../../../home/domain/entities/project.dart' show Project, UserFlowOnOpen, ProjectCategory;
+import '../../../../app/router/route_args/project_detail_flow_args.dart';
+import '../../../home/domain/entities/project.dart' show Project, UserFlowOnOpen;
+import '../../../home/domain/entities/project_category_extensions.dart';
 import '../../domain/entities/project_detail_route_args.dart';
 import '../mocks/mock_project_detail_from_card.dart';
 
@@ -70,7 +72,7 @@ void openProjectFromCard(
   }
 
   final detail = mockProjectDetailFromCard(p, isLeaderView: isLeaderView);
-  final route = p.category == ProjectCategory.investment
+  final route = p.category.isInvestment
       ? AppRoutes.investmentProjectDetail
       : AppRoutes.projectDetail;
   context.push(route, extra: ProjectDetailRouteArgs(project: detail));
