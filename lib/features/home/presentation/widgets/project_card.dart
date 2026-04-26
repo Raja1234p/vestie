@@ -18,7 +18,12 @@ class ProjectCard extends StatelessWidget {
 
   const ProjectCard({super.key, required this.project, required this.onAction});
 
-  bool get _showButton => project.status == ProjectStatus.ongoing;
+  /// Ongoing: always. Completed: “View” is shown only for **Joined** (no button on
+  /// My Projects for completed — Figma: leader sees card without a CTA here).
+  bool get _showActionButton =>
+      project.status == ProjectStatus.ongoing ||
+      (project.status == ProjectStatus.completed &&
+          project.relation == ProjectRelation.joined);
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +105,7 @@ class ProjectCard extends StatelessWidget {
             ),
           ],
 
-          if (_showButton) ...[
+          if (_showActionButton) ...[
             SizedBox(height: 12.h),
             ProjectActionButton(project: project, onTap: onAction),
           ],

@@ -351,8 +351,12 @@ class AppStrings {
   static const String projectDetailTitle        = 'Project';
   static const String announcementTitle         = 'Announcement';
   static const String announcementPlaceholder   = 'Any announcement will come up here';
-  static const String noMoreContributionTitle   = 'No More Contributon';
+  static const String noMoreContributionTitle   = 'No More Contribution';
   static const String noMoreContributionBody    = 'You can no longer contribute to this investment as leader has closed this project, leader will come back soon to fund your amount and ROI/profit.';
+  /// Member (non-investment) projects completed by the leader — vacations / emergency.
+  static const String projectCompletedUserTitle = 'No more contribution';
+  static const String projectCompletedUserBody  =
+      'The group leader has marked this project as complete. You can no longer add contributions or borrow from this project.';
   static const String btnContribute             = 'Contribute';
   static const String btnBorrow                 = 'Borrow';
   static const String tabBorrowRequests         = 'Borrow Requests';

@@ -12,6 +12,7 @@ import '../../../../core/widgets/common/app_toggle_tab_bar.dart';
 import '../../../../core/widgets/common/leader_action_menu.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../../core/widgets/common/post_auth_header.dart';
+import '../../../home/domain/entities/project.dart';
 import '../../domain/entities/member_entity.dart';
 import '../../domain/entities/project_detail_entity.dart';
 import '../../domain/entities/project_detail_route_args.dart';
@@ -19,6 +20,7 @@ import '../cubit/project_detail_cubit.dart';
 import '../cubit/project_detail_state.dart';
 import '../widgets/announcement_card.dart';
 import '../widgets/project_detail_tab_panels.dart';
+import '../widgets/project_detail_user_completed_content.dart';
 import '../widgets/project_info_card.dart';
 
 /// Shell — provides ProjectDetailCubit. Route extra = [ProjectDetailEntity].
@@ -104,6 +106,9 @@ class _ProjectDetailBody extends StatelessWidget {
               );
             }
 
+            final isMemberCompletedView =
+                !project.isLeader && project.status == ProjectStatus.completed;
+
             return CustomScrollView(
               slivers: [
                 // ── Header ──────────────────────────────────────────
@@ -128,49 +133,64 @@ class _ProjectDetailBody extends StatelessWidget {
                 SliverPadding(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
                   sliver: SliverToBoxAdapter(
-                    child: Column(
-                      children: [
-                        SizedBox(height: 12.h),
-                        AnnouncementCard(
-                          text: project.announcement,
-                          isLeader: project.isLeader,
-                          onDelete: () {
-                            // TODO: delete announcement via BLoC
-                          },
-                        ),
-                        SizedBox(height: 12.h),
-                        ProjectInfoCard(project: project),
-                        SizedBox(height: 16.h),
-                        AppButton(
-                          text: AppStrings.btnContribute,
-                          onPressed: () =>
-                              context.push(AppRoutes.transactionAmount),
-                        ),
-                        SizedBox(height: 13.h),
-                        AppButton(
-                          text: AppStrings.btnBorrow,
-                          onPressed: () => context
-                              .read<ProjectDetailCubit>()
-                              .selectTab(ProjectDetailTab.borrowRequests),
-                          isSecondary: true,
-                        ),
-                        SizedBox(height: 20.h),
-                        _TabSection(
-                          project: project,
-                          onMemberTap: (member) {
-                            context.push(
-                              AppRoutes.memberDetail,
-                              extra: MemberDetailRouteArgs(
-                                member: member,
-                                projectName: project.name,
-                                isLeaderView: project.isLeader,
+                    child: isMemberCompletedView
+                        ? ProjectDetailUserCompletedContent(
+                            project: project,
+                            onMemberTap: (member) {
+                              context.push(
+                                AppRoutes.memberDetail,
+                                extra: MemberDetailRouteArgs(
+                                  member: member,
+                                  projectName: project.name,
+                                  isLeaderView: project.isLeader,
+                                ),
+                              );
+                            },
+                          )
+                        : Column(
+                            children: [
+                              SizedBox(height: 12.h),
+                              AnnouncementCard(
+                                text: project.announcement,
+                                isLeader: project.isLeader,
+                                onDelete: () {
+                                  // TODO: delete announcement via BLoC
+                                },
                               ),
-                            );
-                          },
-                        ),
-                        SizedBox(height: 32.h),
-                      ],
-                    ),
+                              SizedBox(height: 12.h),
+                              ProjectInfoCard(project: project),
+                              SizedBox(height: 16.h),
+                              AppButton(
+                                text: AppStrings.btnContribute,
+                                onPressed: () =>
+                                    context.push(AppRoutes.transactionAmount),
+                              ),
+                              SizedBox(height: 13.h),
+                              AppButton(
+                                text: AppStrings.btnBorrow,
+                                onPressed: () => context
+                                    .read<ProjectDetailCubit>()
+                                    .selectTab(
+                                        ProjectDetailTab.borrowRequests),
+                                isSecondary: true,
+                              ),
+                              SizedBox(height: 20.h),
+                              _TabSection(
+                                project: project,
+                                onMemberTap: (member) {
+                                  context.push(
+                                    AppRoutes.memberDetail,
+                                    extra: MemberDetailRouteArgs(
+                                      member: member,
+                                      projectName: project.name,
+                                      isLeaderView: project.isLeader,
+                                    ),
+                                  );
+                                },
+                              ),
+                              SizedBox(height: 32.h),
+                            ],
+                          ),
                   ),
                 ),
               ],

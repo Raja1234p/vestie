@@ -17,6 +17,9 @@ class ProjectActionButton extends StatelessWidget {
   });
 
   String get _label {
+    if (project.status == ProjectStatus.completed) {
+      return AppStrings.btnView;
+    }
     if (project.relation == ProjectRelation.owned) return AppStrings.btnView;
     if (project.requestPending) return AppStrings.btnSendRequest;
     return AppStrings.btnJoin;

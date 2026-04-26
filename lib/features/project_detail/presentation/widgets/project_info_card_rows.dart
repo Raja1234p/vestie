@@ -54,6 +54,34 @@ class ProjectInfoGoalRow extends StatelessWidget {
   }
 }
 
+/// Single headline when the project is complete (Figma: “Raised $5,000” only).
+class ProjectInfoRaisedTotalRow extends StatelessWidget {
+  final double current;
+
+  const ProjectInfoRaisedTotalRow({super.key, required this.current});
+
+  @override
+  Widget build(BuildContext context) {
+    final v = formatProjectInfoAmount(current);
+    return RichText(
+      text: TextSpan(
+        style: GoogleFonts.lato(fontSize: 28.sp, color: AppColors.textPrimary),
+        children: [
+          TextSpan(
+            text: AppStrings.labelRaised,
+            style: const TextStyle(fontWeight: FontWeight.w700),
+          ),
+          const TextSpan(text: ' '),
+          TextSpan(
+            text: '\$$v',
+            style: const TextStyle(fontWeight: FontWeight.w800),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class ProjectInfoDeadlineRow extends StatelessWidget {
   final String endsIn;
 

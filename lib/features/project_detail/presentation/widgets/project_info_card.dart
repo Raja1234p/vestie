@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../home/domain/entities/project.dart';
 import '../../domain/entities/project_detail_entity.dart';
 import 'project_info_card_chips.dart';
 import 'project_info_card_rows.dart';
@@ -35,12 +36,17 @@ class ProjectInfoCard extends StatelessWidget {
           ),
           SizedBox(height: 10.h),
 
-          // ── Goal amount ─────────────────────────────────────
-          ProjectInfoGoalRow(goal: project.goalAmount, current: project.currentAmount),
-          SizedBox(height: 8.h),
-
-          // ── Deadline ────────────────────────────────────────
-          ProjectInfoDeadlineRow(endsIn: project.endsIn),
+          // ── Amount: ongoing = goal + deadline; completed = raised total only (Figma)
+          if (project.status == ProjectStatus.completed) ...[
+            ProjectInfoRaisedTotalRow(current: project.currentAmount),
+          ] else ...[
+            ProjectInfoGoalRow(
+              goal: project.goalAmount,
+              current: project.currentAmount,
+            ),
+            SizedBox(height: 8.h),
+            ProjectInfoDeadlineRow(endsIn: project.endsIn),
+          ],
         ],
       ),
     );
