@@ -29,7 +29,7 @@ class PostAuthHeader extends StatelessWidget {
     return SafeArea(
       bottom: false,
       child: Padding(
-        padding: padding ?? EdgeInsets.fromLTRB(2.w, 20.h, 16.w, 12.h),
+        padding: padding ?? EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 12.h),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

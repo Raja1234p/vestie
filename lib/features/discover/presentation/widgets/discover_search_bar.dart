@@ -21,6 +21,9 @@ class DiscoverSearchBar extends StatelessWidget {
       ),
       child: TextField(
         onChanged: onChanged,
+        onTapOutside: (_) {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
         style: GoogleFonts.lato(
             fontSize: 13.sp, color: AppColors.textPrimary),
         decoration: InputDecoration(

@@ -22,6 +22,7 @@ class AppTextField extends StatelessWidget {
   final ValueChanged<String>? onSubmitted;
   final int minLines;
   final int maxLines;
+  final FocusNode? focusNode;
 
   const AppTextField({
     super.key,
@@ -39,6 +40,7 @@ class AppTextField extends StatelessWidget {
     this.onSubmitted,
     this.minLines = 1,
     this.maxLines = 1,
+    this.focusNode,
   });
 
   @override
@@ -46,8 +48,12 @@ class AppTextField extends StatelessWidget {
     final isMultiline = maxLines > 1 || minLines > 1;
     final effectiveKeyboardType =
         isMultiline ? TextInputType.multiline : keyboardType;
+    // Multiline fields default to Enter for new lines; pass [textInputAction:
+    // TextInputAction.done] to show a Done key and dismiss on submit instead.
     final effectiveTextInputAction = isMultiline
-        ? TextInputAction.newline
+        ? (textInputAction == TextInputAction.done
+            ? TextInputAction.done
+            : TextInputAction.newline)
         : textInputAction;
 
     return Column(
@@ -63,6 +69,7 @@ class AppTextField extends StatelessWidget {
         ),
         SizedBox(height: 10.h),
         TextField(
+          focusNode: focusNode,
           controller: controller,
           obscureText: obscureText,
           keyboardType: effectiveKeyboardType,
@@ -71,6 +78,9 @@ class AppTextField extends StatelessWidget {
           inputFormatters: inputFormatters,
           onChanged: onChanged,
           onSubmitted: onSubmitted,
+          onTapOutside: (_) {
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
           minLines: minLines,
           maxLines: maxLines,
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(

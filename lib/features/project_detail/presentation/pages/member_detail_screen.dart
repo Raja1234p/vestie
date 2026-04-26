@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_strings.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/app_back_button.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../../core/widgets/common/post_auth_header.dart';
 import '../../domain/entities/member_entity.dart';
@@ -52,13 +52,8 @@ class MemberDetailScreen extends StatelessWidget {
             SliverToBoxAdapter(
               child: PostAuthHeader(
                 title: '${member.name}${AppStrings.memberProfileSuffix}',
-                leading: GestureDetector(
-                  onTap: () => context.pop(),
-                  child: Icon(
-                    Icons.arrow_back_rounded,
-                    color: AppColors.grey1100,
-                    size: 22.w,
-                  ),
+                leading: AppBackButton(
+                  onPressed: () => context.pop(),
                 ),
               ),
             ),

@@ -146,4 +146,20 @@ class ValidationUtils {
     if (digits.length < 3 || digits.length > 4) return AppStrings.errCvvInvalid;
     return null;
   }
+
+  // ── Announcement ───────────────────────────────────────────────────────────
+
+  static String? validateAnnouncementHeading(String? value) {
+    final v = value?.trim() ?? '';
+    if (v.isEmpty) return AppStrings.errAnnouncementHeadingRequired;
+    if (v.length < 3) return AppStrings.errAnnouncementHeadingShort;
+    return null;
+  }
+
+  static String? validateAnnouncementContent(String? value) {
+    final v = value?.trim() ?? '';
+    if (v.isEmpty) return AppStrings.errAnnouncementContentRequired;
+    if (v.length < 5) return AppStrings.errAnnouncementContentShort;
+    return null;
+  }
 }

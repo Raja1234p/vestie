@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/app_back_button.dart';
 import '../../../../core/widgets/common/post_auth_header.dart';
 
 /// Gradient header shared across all create-project steps.
@@ -33,10 +34,9 @@ class CreateProjectHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return PostAuthHeader(
       title: title,
-      leading: GestureDetector(
-        onTap: onBack ?? () => context.pop(),
-        child: Icon(Icons.arrow_back,
-            size: 24.w, color: AppColors.textPrimary),
+      leading: AppBackButton(
+        onPressed: onBack ?? () => context.pop(),
+        color: AppColors.textPrimary,
       ),
       trailing: stepBadge == null
           ? null

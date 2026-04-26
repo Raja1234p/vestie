@@ -160,6 +160,9 @@ class _ProfileField extends StatelessWidget {
         controller: controller,
         keyboardType: keyboardType,
         onChanged: onChanged,
+        onTapOutside: (_) {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
         style: GoogleFonts.lato(fontSize: 14.sp, color: AppColors.textPrimary),
         decoration: InputDecoration(
           hintText: hint,

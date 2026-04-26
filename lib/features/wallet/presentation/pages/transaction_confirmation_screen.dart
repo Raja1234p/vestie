@@ -8,6 +8,7 @@ import '../../../../../app/router/app_routes.dart';
 import '../../../../../core/constants/app_strings.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/widgets/common/app_button.dart';
+import '../../../../../core/widgets/common/app_back_button.dart';
 import '../../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../../../core/widgets/common/post_auth_header.dart';
 import '../../../../../core/widgets/text/app_text.dart';
@@ -54,13 +55,9 @@ class TransactionConfirmationScreen extends StatelessWidget {
                 PostAuthHeader(
                   title: title,
                   padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 8.h),
-                  leading: GestureDetector(
-                    onTap: context.pop,
-                    child: Icon(
-                      Icons.arrow_back,
-                      size: 24.w,
-                      color: AppColors.textPrimary,
-                    ),
+                  leading: AppBackButton(
+                    onPressed: context.pop,
+                    color: AppColors.textPrimary,
                   ),
                 ),
                 Padding(

@@ -59,7 +59,7 @@ class AppInviteMembersDialog extends StatelessWidget {
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(34.r),
       ),
-      padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 18.h),
+      padding: EdgeInsets.fromLTRB(20.w, 14.h, 20.w, 18.h),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -69,14 +69,15 @@ class AppInviteMembersDialog extends StatelessWidget {
               onTap: () => Navigator.of(context).pop(),
               child: Icon(
                 Icons.close_rounded,
-                color: AppColors.primary,
+                color: AppColors.primaryDark,
                 size: 30.w,
               ),
             ),
           ),
-          SizedBox(height: 10.h),
+          SizedBox(height: 16.h),
           Container(
-            width: double.infinity,
+            width: 312.w,
+            height: 312.h,
             padding: EdgeInsets.all(14.w),
             decoration: BoxDecoration(
               color: AppColors.purple100,
@@ -84,7 +85,7 @@ class AppInviteMembersDialog extends StatelessWidget {
             ),
             child: Image.asset(AppAssets.inviteQrCode),
           ),
-          SizedBox(height: 12.h),
+          SizedBox(height: 16.h),
           _InvitePrimaryButton(
             label: AppStrings.shareQrCode,
             onTap: () => _shareWhatsapp(context),
@@ -111,7 +112,7 @@ class AppInviteMembersDialog extends StatelessWidget {
                   child: AppText(
                     inviteLink,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontSize: 16.sp,
+                          fontSize: 15.sp,
                           color: AppColors.grey1100,
                         ),
                   ),
@@ -135,10 +136,11 @@ class AppInviteMembersDialog extends StatelessWidget {
             child: AppText(
               AppStrings.shareViaWhatsapp,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontSize: 37.sp,
+                    fontSize: 20.sp,
                     fontWeight: FontWeight.w500,
                     color: AppColors.grey900,
                   ),
+              textAlign: TextAlign.center,
             ),
           ),
         ],

@@ -9,6 +9,7 @@ import '../../../../../core/constants/app_strings.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/widgets/common/app_button.dart';
 import '../../../../../core/widgets/common/app_numpad.dart';
+import '../../../../../core/widgets/common/app_back_button.dart';
 import '../../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../../../core/widgets/common/post_auth_header.dart';
 import '../../../../../core/widgets/text/app_text.dart';
@@ -35,16 +36,12 @@ class TransactionAmountScreen extends StatelessWidget {
                 PostAuthHeader(
                   title: title,
                   padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 10.h),
-                  leading: GestureDetector(
-                    onTap: () {
+                  leading: AppBackButton(
+                    onPressed: () {
                       cubit.reset();
                       context.pop();
                     },
-                    child: Icon(
-                      Icons.arrow_back,
-                      size: 24.w,
-                      color: AppColors.textPrimary,
-                    ),
+                    color: AppColors.textPrimary,
                   ),
                 ),
                 Expanded(

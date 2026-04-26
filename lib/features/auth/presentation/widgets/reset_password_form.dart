@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/validation_utils.dart';
+import '../../../../core/widgets/common/app_back_button.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/common/app_text_field.dart';
 import '../bloc/reset_password_bloc.dart';
@@ -74,10 +75,9 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
               SizedBox(height: 48.h),
 
               // ── Back arrow ────────────────────────────────────────
-              GestureDetector(
-                onTap: () => context.pop(),
-                child: Icon(Icons.arrow_back,
-                    color: AppColors.authTitle, size: 24.w),
+              AppBackButton(
+                onPressed: () => context.pop(),
+                color: AppColors.authTitle,
               ),
               SizedBox(height: 20.h),
 

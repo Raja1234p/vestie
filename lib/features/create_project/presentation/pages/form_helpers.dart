@@ -68,6 +68,9 @@ class CPTextField extends StatelessWidget {
           child: TextField(
             controller: controller,
             onChanged: onChanged,
+            onTapOutside: (_) {
+              FocusManager.instance.primaryFocus?.unfocus();
+            },
             maxLines: maxLines,
             keyboardType: keyboardType,
             textInputAction: textInputAction,

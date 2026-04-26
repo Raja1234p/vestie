@@ -21,6 +21,9 @@ class AppDimens {
   static double get iconMedium => 24.0.w;
   static double get iconLarge => 32.0.w;
 
+  /// App bar / header back chevron (keep in sync with [AppBackButton]).
+  static double get backIconSize => iconMedium;
+
   // Button Heights
   static double get buttonHeightSm => 40.0.h;
   static double get buttonHeightMd => 48.0.h;

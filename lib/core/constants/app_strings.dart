@@ -443,6 +443,10 @@ class AppStrings {
   static const String announcementContentHint   = 'Good News, Your deposit has been issued';
   static const String announcementAutoRemoveNote = 'Announcement will auto remove after 24 hours';
   static const String btnCreateAnnouncement     = 'Create Announcement';
+  static const String errAnnouncementHeadingRequired = 'Announcement heading is required';
+  static const String errAnnouncementHeadingShort    = 'At least 3 characters required';
+  static const String errAnnouncementContentRequired = 'Announcement content is required';
+  static const String errAnnouncementContentShort    = 'At least 5 characters required';
   static const String joinRequestApprovedTitle  = 'Join Request Approved';
   static const String joinRequestDeclinedTitle  = 'Join Request Declined';
   static const String joinRequestApproveLabel   = 'Accept';

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/app_back_button.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/common/app_invite_members_dialog.dart';
 import '../../../../core/widgets/common/app_toggle_tab_bar.dart';
@@ -93,13 +94,8 @@ class _ProjectDetailBody extends StatelessWidget {
                 SliverToBoxAdapter(
                   child: PostAuthHeader(
                     title: project.name,
-                    leading: GestureDetector(
-                      onTap: () => context.pop(),
-                      child: Icon(
-                        Icons.arrow_back_rounded,
-                        color: AppColors.grey1100,
-                        size: 22.w,
-                      ),
+                    leading: AppBackButton(
+                      onPressed: () => context.pop(),
                     ),
                     // "..." leader menu only visible to project owner
                     trailing: project.isLeader

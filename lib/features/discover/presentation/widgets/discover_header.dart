@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/app_back_button.dart';
 import '../../../../core/widgets/common/post_auth_header.dart';
 import '../../../dashboard/presentation/cubit/nav_cubit.dart';
 
@@ -17,13 +18,9 @@ class DiscoverHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return PostAuthHeader(
       title: AppStrings.discoverTitle,
-      leading: GestureDetector(
-        onTap: () => context.read<NavCubit>().selectTab(0),
-        child: Icon(
-          Icons.arrow_back,
-          size: 24.w,
-          color: AppColors.textPrimary,
-        ),
+      leading: AppBackButton(
+        onPressed: () => context.read<NavCubit>().selectTab(0),
+        color: AppColors.textPrimary,
       ),
       trailing: Container(
         width: 38.w,

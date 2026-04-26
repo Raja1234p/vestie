@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/app_back_button.dart';
 import '../../../../core/widgets/common/post_auth_header.dart';
 
 /// Reusable gradient header for profile sub-screens (← Title).
@@ -22,10 +22,9 @@ class ProfileSubHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return PostAuthHeader(
       title: title,
-      leading: GestureDetector(
-        onTap: onBack ?? () => context.pop(),
-        child: Icon(Icons.arrow_back,
-            size: 24.w, color: AppColors.textPrimary),
+      leading: AppBackButton(
+        onPressed: onBack ?? () => context.pop(),
+        color: AppColors.textPrimary,
       ),
       trailing: trailing,
     );
