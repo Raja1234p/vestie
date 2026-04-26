@@ -42,4 +42,7 @@ class AppRoutes {
   static const String createAnnouncement = '/project/create-announcement';
   static const String joinRequests     = '/project/join-requests';
   static const String borrowRequests   = '/project/borrow-requests';
+  static const String markProjectSuccessful = '/project/mark-successful';
+  static const String cancelProject        = '/project/cancel';
+  static const String projectCancelled     = '/project/cancelled';
 }

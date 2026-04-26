@@ -29,3 +29,25 @@ class MemberDetailRouteArgs {
     this.isLeaderView = false,
   });
 }
+
+class MarkSuccessfulRouteArgs {
+  final int memberCount;
+
+  const MarkSuccessfulRouteArgs({required this.memberCount});
+}
+
+class CancelProjectRouteArgs {
+  final String projectName;
+  final int membersWithUnpaidBorrows;
+
+  const CancelProjectRouteArgs({
+    required this.projectName,
+    this.membersWithUnpaidBorrows = 0,
+  });
+}
+
+class ProjectCancelledRouteArgs {
+  final String projectName;
+
+  const ProjectCancelledRouteArgs({required this.projectName});
+}

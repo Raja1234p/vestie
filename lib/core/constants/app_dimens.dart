@@ -35,6 +35,8 @@ class AppRadius {
 
   static double get r4 => 4.0.r;
   static double get r8 => 8.0.r;
+  /// [AppActionDialog] primary/secondary action corners (Figma: 24).
+  static double get dialogActionButton => r24;
   static double get r12 => 12.0.r;
   static double get r16 => 16.0.r;
   static double get r24 => 24.0.r;

@@ -434,6 +434,26 @@ class AppStrings {
   static const String menuInviteMembers         = 'Invite Members';
   static const String menuMarkSuccessful        = 'Mark as Successful';
   static const String menuCancelProject         = 'Cancel Project';
+  static const String markSuccessfulIntro1 =
+      'Marking the project as successful will notify all members to vote. '
+      'A majority must agree before funds are released to your wallet.';
+  static const String markSuccessfulIntro2 =
+      'Voting window: 21 days. If majority disagrees, all contributions are refunded.';
+  static const String btnInitiateSuccessVote   = 'Initiate Success Vote';
+  static const String startSuccessVoteDialogTitle = 'Start the success vote?';
+  static const String btnStartVoting            = 'Start Voting';
+  static const String successVoteStartedMessage =
+      'Success vote started. Members have been notified.';
+  static const String cancelProjectHeroWarning =
+      'This will permanently cancel the project for all members.';
+  static const String cancelProjectRefundParagraph =
+      'All contributions will be automatically refunded to each member\'s wallet. '
+      'Defaulted members receive no refund.';
+  static const String btnYesCancel         = 'Yes, Cancel';
+  static const String projectCancelledTitle = 'Project Cancelled';
+  static const String btnBackToHome        = 'Back to Home';
+  static const String defaultedNoRefundShort =
+      'Defaulted members received no refund.';
   static const String hintAnnouncementText      = 'Type your announcement...';
   static const String deleteAnnouncementLabel   = 'Delete announcement';
   static const String createAnnouncementTitle   = 'Create Announcement';
@@ -449,17 +469,15 @@ class AppStrings {
   static const String errAnnouncementContentShort    = 'At least 5 characters required';
   static const String joinRequestApprovedTitle  = 'Join Request Approved';
   static const String joinRequestDeclinedTitle  = 'Join Request Declined';
+  static const String joinRequestApprovedPrefix =
+      'You’ve approved the join request from ';
+  static const String joinRequestDeclinedPrefix =
+      'You’ve declined the join request from ';
   static const String joinRequestApproveLabel   = 'Accept';
   static const String joinRequestDeclineLabel   = 'Decline';
   static const String shareQrCode               = 'Share QR Code';
   static const String copyCodeFromBelow         = 'Or copy code from below';
   static const String inviteLinkSample          = 'vestie.app/join/family-vacation-2025';
-
-  static String joinRequestApprovedDescription(String memberName) =>
-      'You’ve approved the join request from $memberName';
-
-  static String joinRequestDeclinedDescription(String memberName) =>
-      'You’ve declined the join request from $memberName';
 
   static String removeMemberTitle(String memberName) => 'Remove $memberName';
 
@@ -471,6 +489,23 @@ class AppStrings {
 
   static String removeCoLeaderDescription(String memberName) =>
       '$memberName will return to a regular member. They will lose the ability to approve requests and manage the group.';
+
+  static String startSuccessVoteDialogBody(int memberCount) {
+    final unit = memberCount == 1 ? 'member' : 'members';
+    return 'All $memberCount $unit will be notified and asked to vote. You cannot undo this.';
+  }
+
+  static String cancelProjectUnpaidBorrowsLine(int count) {
+    final unit = count == 1 ? 'member' : 'members';
+    return '$count $unit have unpaid borrows - they will be marked as DEFAULTED.';
+  }
+
+  static String cancelProjectConfirmTitle(String projectName) =>
+      'Are you sure you want to cancel $projectName?';
+
+  static String projectCancelledDescription(String projectName) =>
+      '$projectName has been permanently cancelled. All eligible contributions '
+      'have been refunded to members\' wallets.';
 
   static String coLeaderAssignedDescription(String memberName, String projectName) =>
       '$memberName is now Co-Leader of $projectName. They can approve requests and manage members.';

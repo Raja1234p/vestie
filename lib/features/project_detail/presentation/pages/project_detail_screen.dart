@@ -56,10 +56,26 @@ class _ProjectDetailBody extends StatelessWidget {
         AppInviteMembersDialog.show(context);
         break;
       case LeaderMenuAction.markSuccessful:
-        // TODO: confirm dialog then mark successful
+        context.push(
+          AppRoutes.markProjectSuccessful,
+          extra: MarkSuccessfulRouteArgs(
+            memberCount: project.members.length,
+          ),
+        );
         break;
       case LeaderMenuAction.cancelProject:
-        // TODO: confirm dialog then cancel
+        final unpaid = project.members
+            .where(
+              (m) => m.overdueAmount != null && m.overdueAmount! > 0,
+            )
+            .length;
+        context.push(
+          AppRoutes.cancelProject,
+          extra: CancelProjectRouteArgs(
+            projectName: project.name,
+            membersWithUnpaidBorrows: unpaid,
+          ),
+        );
         break;
     }
   }

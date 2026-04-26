@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../constants/app_dimens.dart';
 import '../../constants/app_strings.dart';
 import '../../theme/app_colors.dart';
 import '../text/app_text.dart';
@@ -199,13 +200,13 @@ class _DialogButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(999.r),
+      borderRadius: BorderRadius.circular(AppRadius.dialogActionButton),
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(vertical: 13.h),
         decoration: BoxDecoration(
           color: bgColor,
-          borderRadius: BorderRadius.circular(999.r),
+          borderRadius: BorderRadius.circular(AppRadius.dialogActionButton),
           border: Border.all(color: borderColor),
         ),
         child: Center(

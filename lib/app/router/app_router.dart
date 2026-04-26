@@ -36,6 +36,9 @@ import '../../features/project_detail/presentation/pages/member_detail_screen.da
 import '../../features/project_detail/presentation/pages/member_penalty_action_screen.dart';
 import '../../features/project_detail/presentation/pages/create_announcement_screen.dart';
 import '../../features/project_detail/presentation/pages/join_requests_screen.dart';
+import '../../features/project_detail/presentation/pages/cancel_project_screen.dart';
+import '../../features/project_detail/presentation/pages/mark_project_successful_screen.dart';
+import '../../features/project_detail/presentation/pages/project_cancelled_screen.dart';
 import 'app_routes.dart';
 
 class AppRouter {
@@ -211,6 +214,43 @@ class AppRouter {
           return BorrowRequestsScreen(
             requests: extra.requests,
             isLeaderMode: extra.isLeaderMode,
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.markProjectSuccessful,
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is! MarkSuccessfulRouteArgs) {
+            return _invalidRouteScreen();
+          }
+          return MarkProjectSuccessfulScreen(
+            memberCount: extra.memberCount,
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.cancelProject,
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is! CancelProjectRouteArgs) {
+            return _invalidRouteScreen();
+          }
+          return CancelProjectScreen(
+            projectName: extra.projectName,
+            membersWithUnpaidBorrows: extra.membersWithUnpaidBorrows,
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.projectCancelled,
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is! ProjectCancelledRouteArgs) {
+            return _invalidRouteScreen();
+          }
+          return ProjectCancelledScreen(
+            projectName: extra.projectName,
           );
         },
       ),

@@ -14,6 +14,8 @@ class AppAssets {
 
   // Project created success illustration
   static const String projectCreatedImage  = '$_imagePath/project_created_image.png';
+  static const String markSuccessfullProject = '$_imagePath/markSuccessfullProject.png';
+  static const String markCancel            = '$_imagePath/markcancel.png';
 
   // Onboarding
   static const String onboarding1 = '$_imagePath/onboarding_1.png';
