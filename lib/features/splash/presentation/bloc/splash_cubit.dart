@@ -24,7 +24,7 @@ class SplashCubit extends Cubit<SplashState> {
     emit(SplashLoading());
 
     // Simulate minor delay for branding
-    await Future.delayed(const Duration(seconds: 10000));
+    await Future.delayed(const Duration(seconds: 5));
 
     // Check if user is logged in and has an access token
     final isLoggedIn =
