@@ -85,7 +85,7 @@ class AppActionDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(18.w, 20.h, 18.w, 18.h),
+      padding: EdgeInsets.fromLTRB(12.w, 20.h, 12.w, 18.h),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(28.r),
@@ -99,18 +99,18 @@ class AppActionDialog extends StatelessWidget {
               iconData: iconData,
               iconColor: iconColor,
             ),
-            SizedBox(height: 12.h),
+            SizedBox(height: 6.h),
           ],
           AppText(
             title,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontSize: 38.sp,
+                  fontSize: 26.sp,
                   fontWeight: FontWeight.w700,
                   color: AppColors.grey1100,
                 ),
           ),
-          SizedBox(height: 10.h),
+          SizedBox(height: 6.h),
           descriptionWidget ??
               AppText(
                 description,
@@ -157,8 +157,8 @@ class _DialogIcon extends StatelessWidget {
     if (iconAsset != null) {
       final isSvg = iconAsset!.toLowerCase().endsWith('.svg');
       return SizedBox(
-        width: 74.w,
-        height: 74.w,
+        width: 100.w,
+        height: 100.w,
         child: isSvg
             ? SvgPicture.asset(iconAsset!)
             : Image.asset(iconAsset!, fit: BoxFit.contain),

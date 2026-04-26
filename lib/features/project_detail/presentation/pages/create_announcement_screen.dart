@@ -76,7 +76,7 @@ class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
                       label: AppStrings.announcementContentLabel,
                       hint: AppStrings.announcementContentHint,
                       controller: _contentController,
-                      textInputAction: TextInputAction.newline,
+                      textInputAction: TextInputAction.done,
                       minLines: 5,
                       maxLines: 5,
                     ),

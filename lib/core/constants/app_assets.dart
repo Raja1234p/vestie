@@ -64,7 +64,9 @@ class AppAssets {
   static const String iconEditProject      = '$_iconPath/edit project.svg';
   static const String iconMarkSuccessful   = '$_iconPath/mark successfull.svg';
   static const String iconCancelProject    = '$_iconPath/cancel project.svg';
-
+  static const String plusSign    = '$_iconPath/plus-sign.svg';
+  static const String checkMarkSuccessful    = '$_iconPath/checkmark-circle-02.svg'; //
+  static const String infoIcon    = '$_iconPath/alert-01.svg';
   // ── Specific Feature Backgrounds ──────────────────────────────────────────
   static const String contributionSuccessBg = '$_imagePath/Contribution Successful.png';
   static const String failureIcon           = '$_imagePath/failure_icon.png';

@@ -224,16 +224,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<AuthTokenModel> loginWithGoogle({
     required String idToken,
-    required String deviceName,
-    required String ipAddress,
   }) async {
     try {
       final response = await _client.post(
         ApiConstants.googleLogin,
         data: {
           'idToken': idToken,
-          'deviceName': deviceName,
-          'ipAddress': ipAddress,
         },
       );
       return AuthTokenModel.fromJson(response.data);

@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:google_sign_in/google_sign_in.dart';
-import '../../../../core/constants/api_constants.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/utils/logger.dart';
@@ -214,14 +213,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, User>> loginWithGoogle() async {
     try {
-      final googleSignIn = GoogleSignIn.instance;
-      
-      // Initialize with serverClientId to resolve the Android error
-      await googleSignIn.initialize(
-        serverClientId: ApiConstants.googleServerClientId,
-      );
-
-      final googleUser = await googleSignIn.authenticate();
+      final googleUser = await GoogleSignIn.instance.authenticate();
       
       // In this version, authentication is a getter, not a Future
       final googleAuth = googleUser.authentication;
@@ -235,7 +227,7 @@ class AuthRepositoryImpl implements AuthRepository {
       // For the accessToken, we must now explicitly authorize scopes
       final authClient = await googleUser.authorizationClient.authorizeScopes(['email', 'profile']);
       final accessToken = authClient.accessToken;
-
+      
       // Sign in to Firebase to keep everything in sync
       final credential = firebase_auth.GoogleAuthProvider.credential(
         accessToken: accessToken,
@@ -246,8 +238,6 @@ class AuthRepositoryImpl implements AuthRepository {
       // Call backend with the ID token
       final userModel = await _remoteDataSource.loginWithGoogle(
         idToken: idToken,
-        deviceName: ApiConstants.defaultDeviceName,
-        ipAddress: ApiConstants.defaultIpAddress,
       );
 
       return Right(userModel);

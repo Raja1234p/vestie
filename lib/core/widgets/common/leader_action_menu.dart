@@ -36,7 +36,7 @@ class LeaderActionMenu extends StatelessWidget {
     return PopupMenuButton<LeaderMenuAction>(
       offset: Offset(0, 34.h),
       constraints: BoxConstraints(minWidth: 282.w),
-      color: AppColors.surface,
+      color: AppColors.background,
       elevation: 6,
       shadowColor: AppColors.grey900.withValues(alpha: 0.12),
       shape: RoundedRectangleBorder(
@@ -72,7 +72,7 @@ class LeaderActionMenu extends StatelessWidget {
         _divider(),
         _buildItem(
           value: LeaderMenuAction.inviteMembers,
-          icon: Icons.add,
+          iconPath: AppAssets.plusSign,
           label: AppStrings.menuInviteMembers,
           iconColor: AppColors.primary,
           labelColor: AppColors.grey1100,
@@ -80,18 +80,18 @@ class LeaderActionMenu extends StatelessWidget {
         _divider(),
         _buildItem(
           value: LeaderMenuAction.markSuccessful,
-          iconPath: AppAssets.iconMarkSuccessful,
+          iconPath: AppAssets.checkMarkSuccessful,
           label: AppStrings.menuMarkSuccessful,
-          iconColor: AppColors.success,
-          labelColor: AppColors.success,
+          iconColor: AppColors.green1000,
+          labelColor: AppColors.badgeCompletedText,
         ),
         _divider(),
         _buildItem(
           value: LeaderMenuAction.cancelProject,
           iconPath: AppAssets.iconCancelProject,
           label: AppStrings.menuCancelProject,
-          iconColor: AppColors.error,
-          labelColor: AppColors.error,
+          iconColor: AppColors.red900,
+          labelColor: AppColors.red900,
         ),
       ],
       child: Container(
@@ -115,7 +115,6 @@ class LeaderActionMenu extends StatelessWidget {
   PopupMenuItem<LeaderMenuAction> _buildItem({
     required LeaderMenuAction value,
     String? iconPath,
-    IconData? icon,
     required String label,
     required Color iconColor,
     required Color labelColor,
@@ -125,19 +124,19 @@ class LeaderActionMenu extends StatelessWidget {
       value: value,
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 14.h),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Icon — SVG or Material
           SizedBox(
-            width: 22.w,
-            height: 22.w,
-            child: iconPath != null
-                ? SvgPicture.asset(
-                    iconPath,
+            width: 50.w,
+            height: 24.w,
+            child: SvgPicture.asset(
+                    iconPath!,
                     colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
                   )
-                : Icon(icon, size: 22.w, color: iconColor),
+
           ),
-          SizedBox(width: 12.w),
+          SizedBox(width: 3.w),
 
           // Label
           Expanded(
@@ -145,7 +144,7 @@ class LeaderActionMenu extends StatelessWidget {
               label,
               style: GoogleFonts.lato(
                 fontSize: 19.sp,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
                 color: labelColor,
               ),
             ),
@@ -175,5 +174,5 @@ class LeaderActionMenu extends StatelessWidget {
 
   // ── Helper: build a thin divider ──────────────────────────────────────────
   PopupMenuDivider _divider() =>
-      PopupMenuDivider(height: 1.h);
+      PopupMenuDivider(height: 1.h,color: AppColors.neutral300,);
 }

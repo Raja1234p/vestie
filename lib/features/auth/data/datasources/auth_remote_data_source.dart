@@ -54,7 +54,5 @@ abstract class AuthRemoteDataSource {
 
   Future<AuthTokenModel> loginWithGoogle({
     required String idToken,
-    required String deviceName,
-    required String ipAddress,
   });
 }

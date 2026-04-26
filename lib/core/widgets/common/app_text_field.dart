@@ -57,7 +57,7 @@ class AppTextField extends StatelessWidget {
           label,
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 fontSize: 15.sp,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w500,
                 color: AppColors.authLabel,
               ),
         ),

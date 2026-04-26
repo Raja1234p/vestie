@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'app/main_app.dart';
+import 'core/constants/api_constants.dart';
 import 'core/di/service_locator.dart';
 
 void main() async {
@@ -10,7 +12,10 @@ void main() async {
   // Initialize Firebase
   await Firebase.initializeApp();
 
-  // Initialize Google Sign In (Handled in Repository with Client ID)
+  // Initialize Google Sign In (v7.0.0+ requires initialization once)
+  await GoogleSignIn.instance.initialize(
+    serverClientId: ApiConstants.googleServerClientId,
+  );
 
 
   // Lock orientation to portrait
