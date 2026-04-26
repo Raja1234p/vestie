@@ -62,6 +62,14 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             StorageKeys.isLoggedIn,
             true,
           );
+          await ServiceLocator.instance.sharedPrefs.saveString(
+            StorageKeys.userName,
+            user.name,
+          );
+          await ServiceLocator.instance.sharedPrefs.saveString(
+            StorageKeys.userEmail,
+            user.email,
+          );
 
           // Check Risk Disclaimer status
           final disclaimerResult = await _getRiskDisclaimerUseCase();

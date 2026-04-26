@@ -15,8 +15,10 @@ class ResetPasswordLoading extends ResetPasswordState {
 }
 
 class ResetPasswordSuccess extends ResetPasswordState {
-  const ResetPasswordSuccess();
-  @override List<Object> get props => [];
+  final String message;
+  const ResetPasswordSuccess({required this.message});
+  @override
+  List<Object> get props => [message];
 }
 
 class ResetPasswordError extends ResetPasswordState {

@@ -26,7 +26,7 @@ class ForgotPasswordBloc extends Bloc<ForgotPasswordEvent, ForgotPasswordState> 
 
     result.fold(
       (failure) => emit(ForgotPasswordError(message: failure.message, title: failure.title)),
-      (_) => emit(ForgotPasswordSuccess(email: event.email)),
+      (message) => emit(ForgotPasswordSuccess(email: event.email, message: message)),
     );
   }
 }

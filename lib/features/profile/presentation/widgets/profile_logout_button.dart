@@ -8,8 +8,13 @@ import '../../../../core/widgets/common/app_text.dart';
 
 class ProfileLogoutButton extends StatelessWidget {
   final VoidCallback onTap;
+  final bool isLoading;
 
-  const ProfileLogoutButton({super.key, required this.onTap});
+  const ProfileLogoutButton({
+    super.key,
+    required this.onTap,
+    this.isLoading = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,16 +26,25 @@ class ProfileLogoutButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(10.r),
         child: InkWell(
           borderRadius: BorderRadius.circular(10.r),
-          onTap: onTap,
+          onTap: isLoading ? null : onTap,
           child: Center(
-            child: AppText(
-              AppStrings.btnLogout,
-              style: GoogleFonts.lato(
-                fontSize: 17.sp,
-                fontWeight: FontWeight.w500,
-                color: AppColors.surface,
-              ),
-            ),
+            child: isLoading
+                ? SizedBox(
+                    width: 24.w,
+                    height: 24.w,
+                    child: const CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2,
+                    ),
+                  )
+                : AppText(
+                    AppStrings.btnLogout,
+                    style: GoogleFonts.lato(
+                      fontSize: 17.sp,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.surface,
+                    ),
+                  ),
           ),
         ),
       ),

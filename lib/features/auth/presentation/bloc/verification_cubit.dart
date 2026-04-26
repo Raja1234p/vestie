@@ -16,6 +16,7 @@ class VerificationState extends Equatable {
   final bool isSuccess;
   final int resendSeconds;
   final bool isValid;
+  final String? resendMessage;
 
   const VerificationState({
     this.isLoading = false,
@@ -24,6 +25,7 @@ class VerificationState extends Equatable {
     this.isSuccess = false,
     this.resendSeconds = 60,
     this.isValid = false,
+    this.resendMessage,
   });
 
   bool get canResend => resendSeconds == 0;
@@ -35,7 +37,9 @@ class VerificationState extends Equatable {
     bool? isSuccess,
     int? resendSeconds,
     bool? isValid,
+    String? resendMessage,
     bool clearError = false,
+    bool clearResendMessage = false,
   }) {
     return VerificationState(
       isLoading: isLoading ?? this.isLoading,
@@ -44,11 +48,20 @@ class VerificationState extends Equatable {
       isSuccess: isSuccess ?? this.isSuccess,
       resendSeconds: resendSeconds ?? this.resendSeconds,
       isValid: isValid ?? this.isValid,
+      resendMessage: clearResendMessage ? null : (resendMessage ?? this.resendMessage),
     );
   }
 
   @override
-  List<Object?> get props => [isLoading, error, title, isSuccess, resendSeconds, isValid];
+  List<Object?> get props => [
+        isLoading,
+        error,
+        title,
+        isSuccess,
+        resendSeconds,
+        isValid,
+        resendMessage,
+      ];
 }
 
 // ─── Cubit ──────────────────────────────────────────────────────────────────
@@ -122,6 +135,14 @@ class VerificationCubit extends Cubit<VerificationState> {
             StorageKeys.isLoggedIn,
             true,
           );
+          await ServiceLocator.instance.sharedPrefs.saveString(
+            StorageKeys.userName,
+            user.name,
+          );
+          await ServiceLocator.instance.sharedPrefs.saveString(
+            StorageKeys.userEmail,
+            user.email,
+          );
 
           if (!isClosed) {
             emit(state.copyWith(isLoading: false, isSuccess: true));
@@ -136,8 +157,15 @@ class VerificationCubit extends Cubit<VerificationState> {
     emit(state.copyWith(resendSeconds: 60, clearError: true));
     _startResendCountdown();
 
-    await _resendCodeUseCase(email: email);
+    await _resendCodeUseCase(email: email).then((result) {
+      result.fold(
+        (failure) => emit(state.copyWith(error: failure.message, title: failure.title)),
+        (message) => emit(state.copyWith(resendMessage: message)),
+      );
+    });
   }
+
+  void clearResendMessage() => emit(state.copyWith(clearResendMessage: true));
 
   void clearError() => emit(state.copyWith(clearError: true));
 

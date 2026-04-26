@@ -17,9 +17,10 @@ class ForgotPasswordLoading extends ForgotPasswordState {
 /// Reset email sent successfully — navigate to set-new-password screen.
 class ForgotPasswordSuccess extends ForgotPasswordState {
   final String email;
-  const ForgotPasswordSuccess({required this.email});
+  final String message;
+  const ForgotPasswordSuccess({required this.email, required this.message});
   @override
-  List<Object> get props => [email];
+  List<Object> get props => [email, message];
 }
 
 class ForgotPasswordError extends ForgotPasswordState {

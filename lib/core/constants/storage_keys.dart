@@ -9,6 +9,8 @@ class StorageKeys {
 
   // ── SharedPreferences (non-sensitive) ─────────────────────────────────────
   static const String isLoggedIn           = 'is_logged_in';
+  static const String userName             = 'user_name';
+  static const String userEmail            = 'user_email';
   static const String hasSeenOnboarding    = 'has_seen_onboarding';
   static const String disclaimerAccepted   = 'disclaimer_accepted';
 }

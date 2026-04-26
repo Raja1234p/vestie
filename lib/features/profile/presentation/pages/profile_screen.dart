@@ -24,7 +24,14 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => ProfileCubit(),
-      child: const _ProfileBody(),
+      child: BlocListener<ProfileCubit, ProfileState>(
+        listener: (context, state) {
+          if (state.isLogoutSuccess) {
+            context.go(AppRoutes.login);
+          }
+        },
+        child: const _ProfileBody(),
+      ),
     );
   }
 }
@@ -137,7 +144,9 @@ class _ProfileBody extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             AppText(
-                              profile.fullName,
+                              profile.fullName.isNotEmpty
+                                  ? profile.fullName
+                                  : AppStrings.appName, // Fallback to app name or "User"
                               style: GoogleFonts.lato(
                                 fontSize: 18.sp,
                                 fontWeight: FontWeight.w600,
@@ -145,7 +154,9 @@ class _ProfileBody extends StatelessWidget {
                               ),
                             ),
                             AppText(
-                              profile.username,
+                              profile.email.isNotEmpty
+                                  ? profile.email
+                                  : '...', // Fallback or loading indicator
                               style: GoogleFonts.lato(
                                 fontSize: 13.sp,
                                 color: AppColors.textBody,
@@ -154,6 +165,11 @@ class _ProfileBody extends StatelessWidget {
                           ],
                         ),
                       ]),
+                      if (state.isLoading && profile.fullName.isEmpty)
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 20.h),
+                          child: const Center(child: CircularProgressIndicator()),
+                        ),
                       SizedBox(height: 18.h),
                       AppText(
                         AppStrings.settingsLabel,
@@ -188,7 +204,8 @@ class _ProfileBody extends StatelessWidget {
                       ]),
                       const Spacer(),
                       ProfileLogoutButton(
-                        onTap: () => context.go(AppRoutes.login),
+                        isLoading: state.isLoading,
+                        onTap: () => context.read<ProfileCubit>().logout(),
                       ),
                       SizedBox(height: 10.h),
                       ],

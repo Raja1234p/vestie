@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../app/router/app_routes.dart';
+import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/widgets/common/app_failure_dialog.dart';
 import '../bloc/verification_cubit.dart';
 import '../widgets/auth_background.dart';
@@ -35,6 +36,9 @@ class VerifyScreen extends StatelessWidget {
               message: state.error!,
             );
             context.read<VerificationCubit>().clearError();
+          } else if (state.resendMessage != null) {
+            AppSnackBar.showSuccess(context, state.resendMessage!);
+            context.read<VerificationCubit>().clearResendMessage();
           }
         },
         child: AuthBackground(

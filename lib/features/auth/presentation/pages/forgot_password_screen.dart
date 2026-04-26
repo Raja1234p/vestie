@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/app_routes.dart';
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/widgets/common/app_failure_dialog.dart';
 import '../bloc/forgot_password_bloc.dart';
@@ -28,7 +27,7 @@ class ForgotPasswordScreen extends StatelessWidget {
       child: BlocListener<ForgotPasswordBloc, ForgotPasswordState>(
         listener: (context, state) {
           if (state is ForgotPasswordSuccess) {
-            AppSnackBar.showSuccess(context, AppStrings.forgotSuccessMsg);
+            AppSnackBar.showSuccess(context, state.message);
             context.push(AppRoutes.resetPassword, extra: state.email);
           } else if (state is ForgotPasswordError) {
             AppFailureDialog.show(
