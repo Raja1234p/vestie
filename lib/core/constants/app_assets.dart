@@ -8,6 +8,7 @@ class AppAssets {
   static const String logoSvg = '$_imagePath/logo.svg';
   static const String appGradient = '$_imagePath/gradient.png';
   static const String authLoginGradient = '$_imagePath/Login gradient.svg';
+  static const String splashBackground = '$_imagePath/splash_background.png';
 
   // Home empty-state illustration
   static const String homeEmptyState       = '$_imagePath/dashboard_empty_state_image.svg';

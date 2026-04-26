@@ -8,11 +8,26 @@ import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_dimens.dart';
 import '../../../../core/extensions/widget_extensions.dart';
-import '../../../../core/widgets/layout/app_gradient_background.dart';
 import '../bloc/splash_cubit.dart';
 
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  bool _didPrecache = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_didPrecache) return;
+    _didPrecache = true;
+    // Warm up the splash bitmap to avoid visible decode jank on first paint.
+    precacheImage(const AssetImage(AppAssets.splashBackground), context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,19 +48,28 @@ class SplashScreen extends StatelessWidget {
             }
           }
         },
-        child: AppGradientBackground(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Logo restricted by generic percentage / AppDimens to avoid absolute hardcoding
-              SvgPicture.asset(
-                AppAssets.logoSvg,
-                width: 140.w,
-                // SVG is natively white (fill="white") — no colorFilter needed
-              ).padding(EdgeInsets.only(bottom: AppDimens.p16)),
-            ],
-          ).center(),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Positioned.fill(
+              child: Image.asset(
+                AppAssets.splashBackground,
+                fit: BoxFit.cover,
+                alignment: Alignment.center,
+              ),
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // SVG is natively white (fill="white"), so no color filter needed.
+                SvgPicture.asset(
+                  AppAssets.logoSvg,
+                  width: 200.w,
+                ).padding(EdgeInsets.only(bottom: AppDimens.p16)),
+              ],
+            ).center(),
+          ],
         ),
       ),
     );
