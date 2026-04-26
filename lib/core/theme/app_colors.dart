@@ -203,6 +203,9 @@ class AppColors {
   static const Color navActive   = purple900;   // #4C24A0
   static const Color navInactive = grey600;     // #9990BB
   static const Color navBg       = neutral100;  // white
+  /// Inactive icon tondo only — pale lavender (Figma). Active state stays
+  /// [navActive] + existing elevation/shadows.
+  static const Color bottomNavIconCircle = purple100; // #F5F0FE
 
   // Filter chips
   static const Color chipActiveBg    = purple800;   // #4C24A0

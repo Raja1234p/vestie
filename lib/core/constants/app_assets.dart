@@ -11,6 +11,7 @@ class AppAssets {
 
   // Home empty-state illustration
   static const String homeEmptyState       = '$_imagePath/dashboard_empty_state_image.svg';
+  static const String emptyNotification    = '$_imagePath/emptynotification.png';
 
   // Project created success illustration
   static const String projectCreatedImage  = '$_imagePath/project_created_image.png';
@@ -27,6 +28,11 @@ class AppAssets {
   // ── Auth Social Icons ─────────────────────────────────────────────────────
   static const String iconApple  = '$_iconPath/apple.svg';
   static const String iconGoogle = '$_iconPath/gmail.svg';
+
+  // Header / system
+  static const String iconNotification = '$_iconPath/notification-01.svg';
+  /// List row graphic (notification item, design export “Frame 258”).
+  static const String notificationRowIcon = '$_iconPath/Frame 258.png';
 
   // ── Bottom Navigation Icons ───────────────────────────────────────────────
   static const String iconHome    = '$_iconPath/home_icon.svg';

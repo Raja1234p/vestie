@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../app/router/app_routes.dart';
+import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_back_button.dart';
@@ -22,15 +26,17 @@ class DiscoverHeader extends StatelessWidget {
         onPressed: () => context.read<NavCubit>().selectTab(0),
         color: AppColors.textPrimary,
       ),
-      trailing: Container(
-        width: 38.w,
-        height: 38.w,
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.7),
-          shape: BoxShape.circle,
+      trailing: GestureDetector(
+        onTap: () => context.push(AppRoutes.notifications),
+        child: Padding(
+          padding: EdgeInsets.all(4.w),
+          child: SvgPicture.asset(
+            AppAssets.iconNotification,
+            width: 24.w,
+            height: 24.w,
+            fit: BoxFit.contain,
+          ),
         ),
-        child: Icon(Icons.notifications_outlined,
-            size: 20.w, color: AppColors.primary),
       ),
     );
   }

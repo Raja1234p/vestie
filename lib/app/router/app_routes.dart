@@ -12,6 +12,7 @@ class AppRoutes {
   static const String resetPassword  = '/reset-password';
   static const String agreement     = '/agreement';
   static const String dashboard          = '/dashboard';
+  static const String notifications     = '/notifications';
 
   // ── Create Project wizard ────────────────────────────────────────────────
   static const String createProjectAmount   = '/create-project/amount';

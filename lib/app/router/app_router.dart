@@ -23,6 +23,8 @@ import '../../features/profile/presentation/pages/edit_profile_screen.dart';
 import '../../features/profile/presentation/pages/key_guidelines_screen.dart';
 import '../../features/profile/presentation/pages/payment_methods_screen.dart';
 import '../../features/profile/presentation/pages/transaction_history_screen.dart';
+import '../../features/notifications/presentation/cubit/notifications_cubit.dart';
+import '../../features/notifications/presentation/pages/notifications_screen.dart';
 import '../../features/splash/presentation/pages/splash_screen.dart';
 import '../../features/wallet/presentation/pages/transaction_amount_screen.dart';
 import '../../features/wallet/presentation/pages/transaction_confirmation_screen.dart';
@@ -92,6 +94,13 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.dashboard,
         builder: (context, _) => const DashboardScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.notifications,
+        builder: (context, _) => BlocProvider(
+          create: (_) => NotificationsCubit(),
+          child: const NotificationsScreen(),
+        ),
       ),
 
       // ── Create Project wizard ────────────────────────────────────────────

@@ -146,6 +146,39 @@ class AppStrings {
   static const String filterEmergency    = 'Emergency Fund';
   static const String filterInvestments  = 'Investment';
 
+  // ── Notifications ───────────────────────────────────────────────────────
+  static const String notificationsTitle   = 'Notifications';
+  static const String notificationEmptyTitle   = 'No Notification Yet';
+  static const String notificationEmptySubtitle  =
+      "You'll see notification when they are available";
+  // Sample list (debug / design preview) — [notification_samples]
+  static const String notificationTime3min    = '3 min ago';
+  static const String notificationTime12min   = '12 min ago';
+  static const String notificationTime1hr     = '1 hr ago';
+  static const String notificationTime2hr     = '2 hr ago';
+  static const String notificationTimeYesterday = 'Yesterday';
+  static const String notificationTime2days   = '2 days ago';
+  static const String notificationSample1Title  = 'Deposit Successful';
+  static const String notificationSample1Body   = 'Your wallet has been topped up.';
+  static const String notificationSample2Title  = 'Project Created';
+  static const String notificationSample2Body  =
+      'Your new project is live. Start inviting members.';
+  static const String notificationSample3Title  = 'Contribution Sent';
+  static const String notificationSample3Body  =
+      'Your payment was received by the pot.';
+  static const String notificationSample4Title  = 'Member Overdue';
+  static const String notificationSample4Body  =
+      'Alex has an unpaid borrow in your group.';
+  static const String notificationSample5Title  = 'Join Request';
+  static const String notificationSample5Body  =
+      'Alex wants to join Beach trip.';
+  static const String notificationSample6Title  = 'Interest Paid Out!';
+  static const String notificationSample6Body  =
+      'Your ROI has been added to your wallet.';
+  static const String notificationSample7Title  = 'Account Verified';
+  static const String notificationSample7Body  =
+      "You're all set to use Vestie.";
+
   // ── Profile Screen ───────────────────────────────────────────────────────
   static const String profileTitle        = 'Profile';
   static const String settingsLabel       = 'Settings';
