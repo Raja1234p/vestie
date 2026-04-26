@@ -13,6 +13,7 @@ class ContributionSuccessScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppSuccessScreen(
       backgroundImagePath: AppAssets.contributionSuccessBg,
+      svgAssetPath: AppAssets.projectCreatedImage,
       title: AppStrings.contributionSuccessTitle,
       buttonText: AppStrings.btnBackToWallet,
       onButtonPressed: () {

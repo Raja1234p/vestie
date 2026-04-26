@@ -75,6 +75,8 @@ class AppAssets {
   static const String iconCancelProject    = '$_iconPath/cancel project.svg';
   static const String plusSign    = '$_iconPath/plus-sign.svg';
   static const String checkMarkSuccessful    = '$_iconPath/checkmark-circle-02.svg'; //
+  /// Agreement / terms “switch”: gradient tile + check when selected.
+  static const String iconTick02    = '$_iconPath/tick-02.svg';
   static const String infoIcon    = '$_iconPath/alert-01.svg';
   // ── Specific Feature Backgrounds ──────────────────────────────────────────
   static const String contributionSuccessBg = '$_imagePath/Contribution Successful.png';

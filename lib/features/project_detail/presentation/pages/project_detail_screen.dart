@@ -15,7 +15,13 @@ import '../../../../core/widgets/common/post_auth_header.dart';
 import '../../../home/domain/entities/project.dart';
 import '../../domain/entities/member_entity.dart';
 import '../../domain/entities/project_detail_entity.dart';
-import '../../domain/entities/project_detail_route_args.dart';
+import '../../domain/entities/project_detail_route_args.dart'
+    show
+        BorrowRequestsRouteArgs,
+        MemberDetailRouteArgs,
+        MarkSuccessfulRouteArgs,
+        ProjectWalletFlowArgs,
+        CancelProjectRouteArgs;
 import '../cubit/project_detail_cubit.dart';
 import '../cubit/project_detail_state.dart';
 import '../widgets/announcement_card.dart';
@@ -162,16 +168,22 @@ class _ProjectDetailBody extends StatelessWidget {
                               SizedBox(height: 16.h),
                               AppButton(
                                 text: AppStrings.btnContribute,
-                                onPressed: () =>
-                                    context.push(AppRoutes.transactionAmount),
+                                onPressed: () => context.push(
+                                  AppRoutes.contributeFlow,
+                                  extra: ProjectWalletFlowArgs.fromProject(
+                                    project,
+                                  ),
+                                ),
                               ),
                               SizedBox(height: 13.h),
                               AppButton(
                                 text: AppStrings.btnBorrow,
-                                onPressed: () => context
-                                    .read<ProjectDetailCubit>()
-                                    .selectTab(
-                                        ProjectDetailTab.borrowRequests),
+                                onPressed: () => context.push(
+                                  AppRoutes.borrowFlow,
+                                  extra: ProjectWalletFlowArgs.fromProject(
+                                    project,
+                                  ),
+                                ),
                                 isSecondary: true,
                               ),
                               SizedBox(height: 20.h),

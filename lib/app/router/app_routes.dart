@@ -37,6 +37,8 @@ class AppRoutes {
 
   // ── Project Detail Routing ───────────────────────────────────────────────
   static const String projectDetail    = '/project/detail';
+  static const String contributeFlow   = '/project/contribute';
+  static const String borrowFlow       = '/project/borrow';
   static const String investmentProjectDetail = '/project/investment-detail';
   static const String memberDetail     = '/project/member-detail';
   static const String memberPenaltyAction = '/project/member-penalty-action';

@@ -2,6 +2,47 @@ import 'borrow_request_entity.dart';
 import 'member_entity.dart';
 import 'project_detail_entity.dart';
 
+/// Contribute / borrow wallet flows from project detail. Pass via [GoRouter] `extra`.
+class ProjectWalletFlowArgs {
+  final String projectId;
+  final String projectName;
+  final double walletBalance;
+  final double borrowLimit;
+  final String borrowDueByLabel;
+  static const _defaultWallet = 2400.0;
+  static const _defaultBorrowLimit = 250.0;
+
+  const ProjectWalletFlowArgs({
+    required this.projectId,
+    required this.projectName,
+    this.walletBalance = _defaultWallet,
+    this.borrowLimit = _defaultBorrowLimit,
+    this.borrowDueByLabel = 'May 1, 2025 (30 days)',
+  });
+
+  /// Until wallet balance comes from a repository, uses sensible defaults.
+  factory ProjectWalletFlowArgs.fromProject(
+    ProjectDetailEntity project, {
+    double walletBalance = _defaultWallet,
+    double? borrowLimit,
+    String? borrowDueByLabel,
+  }) {
+    return ProjectWalletFlowArgs(
+      projectId: project.id,
+      projectName: project.name,
+      walletBalance: walletBalance,
+      borrowLimit: borrowLimit ?? _defaultBorrowLimit,
+      borrowDueByLabel: borrowDueByLabel ?? 'May 1, 2025 (30 days)',
+    );
+  }
+
+  String get walletAmountFormatted {
+    return walletBalance
+        .toStringAsFixed(0)
+        .replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (_) => ',');
+  }
+}
+
 class ProjectDetailRouteArgs {
   final ProjectDetailEntity project;
 

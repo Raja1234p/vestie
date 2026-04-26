@@ -23,6 +23,10 @@ import '../../features/profile/presentation/pages/edit_profile_screen.dart';
 import '../../features/profile/presentation/pages/key_guidelines_screen.dart';
 import '../../features/profile/presentation/pages/payment_methods_screen.dart';
 import '../../features/profile/presentation/pages/transaction_history_screen.dart';
+import '../../features/contribute/presentation/cubit/contribute_cubit.dart';
+import '../../features/contribute/presentation/pages/contribute_flow_screen.dart';
+import '../../features/borrow/presentation/cubit/borrow_cubit.dart';
+import '../../features/borrow/presentation/pages/borrow_flow_screen.dart';
 import '../../features/notifications/presentation/cubit/notifications_cubit.dart';
 import '../../features/notifications/presentation/pages/notifications_screen.dart';
 import '../../features/splash/presentation/pages/splash_screen.dart';
@@ -187,6 +191,28 @@ class AppRouter {
           final extra = state.extra;
           if (extra is! ProjectDetailRouteArgs) return _invalidRouteScreen();
           return InvestmentProjectDetailScreen(project: extra.project);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.contributeFlow,
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is! ProjectWalletFlowArgs) return _invalidRouteScreen();
+          return BlocProvider(
+            create: (_) => ContributeCubit(extra),
+            child: const ContributeFlowScreen(),
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.borrowFlow,
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is! ProjectWalletFlowArgs) return _invalidRouteScreen();
+          return BlocProvider(
+            create: (_) => BorrowCubit(extra),
+            child: const BorrowFlowScreen(),
+          );
         },
       ),
       GoRoute(

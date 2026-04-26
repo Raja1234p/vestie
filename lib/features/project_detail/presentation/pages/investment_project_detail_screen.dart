@@ -128,8 +128,19 @@ class InvestmentProjectDetailScreen extends StatelessWidget {
                           SizedBox(height: 16.h),
                           AppButton(
                             text: AppStrings.btnContribute,
-                            onPressed: () =>
-                                context.push(AppRoutes.transactionAmount),
+                            onPressed: () => context.push(
+                              AppRoutes.contributeFlow,
+                              extra: ProjectWalletFlowArgs.fromProject(project),
+                            ),
+                          ),
+                          SizedBox(height: 13.h),
+                          AppButton(
+                            text: AppStrings.btnBorrow,
+                            onPressed: () => context.push(
+                              AppRoutes.borrowFlow,
+                              extra: ProjectWalletFlowArgs.fromProject(project),
+                            ),
+                            isSecondary: true,
                           ),
                           SizedBox(height: 16.h),
                           AppText(

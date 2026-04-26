@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/app_purple_dashed_line.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../profile/presentation/widgets/profile_sub_header.dart';
 import '../../domain/entities/notification_list_entry.dart';
@@ -128,7 +129,7 @@ class _NotificationListView extends StatelessWidget {
       itemCount: items.length,
       separatorBuilder: (context, index) => Padding(
         padding: EdgeInsets.symmetric(vertical: 4.h),
-        child: const _DashedSeparator(),
+        child: const AppPurpleDashedLine(),
       ),
       itemBuilder: (context, i) {
         return Padding(
@@ -141,53 +142,6 @@ class _NotificationListView extends StatelessWidget {
       },
     );
   }
-}
-
-class _DashedSeparator extends StatelessWidget {
-  const _DashedSeparator();
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, c) {
-        return CustomPaint(
-          size: Size(c.maxWidth, 2),
-          painter: const _DashedLinePainter(
-            color: AppColors.purple300,
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _DashedLinePainter extends CustomPainter {
-  const _DashedLinePainter({required this.color});
-
-  final Color color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    const dashWidth = 15;
-    const gap = 6.0;
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = 1
-      ..isAntiAlias = true
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-    var x = 0.0;
-    final y = size.height * 0.5;
-    while (x < size.width) {
-      final end = (x + dashWidth).clamp(0.0, size.width);
-      canvas.drawLine(Offset(x, y), Offset(end, y), paint);
-      x += dashWidth + gap;
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _DashedLinePainter oldDelegate) =>
-      oldDelegate.color != color;
 }
 
 class _NotificationListTile extends StatelessWidget {

@@ -373,6 +373,34 @@ class AppStrings {
   static const String contributionSuccessTitle  = 'Contribution Successful';
   static const String btnBackToWallet           = 'Back to Wallet';
   static const String addAmount               = 'Add Amount';
+  // ── Project Contribute / Borrow (from project detail) ─────────────────────
+  static const String contributeScreenTitle     = 'Contribute';
+  static const String contributeConfirmHeader   = 'Confirm';
+  static const String labelPaymentMethod        = 'Payment Method';
+  static const String labelPaymentFrom         = 'Payment from';
+  static const String labelBreakdown            = 'Breakdown';
+  static const String labelContributionAmount  = 'Contribution amount';
+  static const String labelVestieFee3           = 'Vestie fee (3%)';
+  static const String labelTotalDeduction      = 'Total Deduction';
+  static const String contributeNonRefundable  =
+      'I understand this contribution is non-refundable';
+  static const String borrowScreenTitle         = 'Borrow';
+  static const String borrowTermsTitle          = 'Borrow Terms';
+  static const String labelBorrowLimitChip     = 'Borrow Limit';
+  static const String labelNote                 = 'Note';
+  static const String hintBorrowNote            = 'Add a short note (optional)';
+  static const String sectionBorrowAmount      = 'Borrow Amount';
+  static const String labelFullAmountDueBy     = 'Full amount due by';
+  static const String sectionPenalty           = 'Penalty';
+  static const String labelPenaltyIfMissed     = 'Penalty if missed';
+  static const String labelPenaltyApplies      = 'Penalty applies';
+  static const String penaltyValuePercent      = '10% of borrowed amount';
+  static const String penaltyValueOneTime      = 'One time';
+  static const String btnSubmitBorrowRequest   = 'Submit Borrow Request';
+  static const String borrowRequestSubmitted     = 'Request Submitted';
+  static const String btnBackToProject          = 'Back to Project';
+  static const String borrowAmountExceedsLimit  =
+      'Amount exceeds your borrow limit for this project.';
   // ── Recent Activity ───────────────────────────────────────────────────────
   static const String borrowedLabel             = 'Borrowed';
   static const String recentActivityHeader     = 'Recent Activity';
