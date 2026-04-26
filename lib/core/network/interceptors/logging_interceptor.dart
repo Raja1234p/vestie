@@ -5,6 +5,7 @@ class LoggingInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     log('>>> [DIO] REQUEST[${options.method}] => PATH: ${options.path}');
+    log('>>> [DIO] HEADERS: ${options.headers}');
     log('>>> [DIO] DATA: ${options.data}');
     super.onRequest(options, handler);
   }
