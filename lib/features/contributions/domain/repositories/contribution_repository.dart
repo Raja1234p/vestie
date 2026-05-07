@@ -5,6 +5,22 @@ import '../entities/contribution_preview_entity.dart';
 
 abstract class ContributionRepository {
   Future<Either<Failure, ContributionConfigEntity>> getContributionConfig(String projectId);
-  Future<Either<Failure, ContributionPreviewEntity>> previewContribution(String projectId, double amount);
-  Future<Either<Failure, void>> confirmContribution(String projectId, double amount, String walletId);
+  Future<Either<Failure, ContributionPreviewEntity>> previewContribution({
+    required String projectId,
+    required String membershipId,
+    required String walletId,
+    required double amount,
+    required String currency,
+    String? externalReference,
+    required bool confirmNonRefundable,
+  });
+  Future<Either<Failure, void>> confirmContribution({
+    required String projectId,
+    required String membershipId,
+    required String walletId,
+    required double amount,
+    required String currency,
+    String? externalReference,
+    required bool confirmNonRefundable,
+  });
 }

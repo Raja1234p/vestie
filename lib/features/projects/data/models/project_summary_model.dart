@@ -16,6 +16,7 @@ class ProjectSummaryModel extends ProjectSummaryEntity {
     required super.borrowingEnabled,
     required super.suggestedContributionAmount,
     required super.createdUtc,
+    super.viewerRole,
   });
 
   factory ProjectSummaryModel.fromJson(Map<String, dynamic> json) {
@@ -33,6 +34,7 @@ class ProjectSummaryModel extends ProjectSummaryEntity {
       borrowingEnabled: json.safeBool('borrowingEnabled'),
       suggestedContributionAmount: json.safeDouble('suggestedContributionAmount'),
       createdUtc: json.safeDateTimeUtc('createdUtc') ?? DateTime.now().toUtc(),
+      viewerRole: _parseViewerRole(json),
     );
   }
 
@@ -51,6 +53,19 @@ class ProjectSummaryModel extends ProjectSummaryEntity {
       'borrowingEnabled': borrowingEnabled,
       'suggestedContributionAmount': suggestedContributionAmount,
       'createdUtc': createdUtc.toIso8601String(),
+      'viewerRole': viewerRole,
     };
+  }
+
+  static String _parseViewerRole(Map<String, dynamic> json) {
+    final viewerMembership = json['viewerMembership'];
+    if (viewerMembership is Map<String, dynamic>) {
+      return viewerMembership.safeString('role');
+    }
+    if (viewerMembership is Map) {
+      final role = viewerMembership['role'];
+      return role?.toString() ?? '';
+    }
+    return json.safeString('viewerRole');
   }
 }

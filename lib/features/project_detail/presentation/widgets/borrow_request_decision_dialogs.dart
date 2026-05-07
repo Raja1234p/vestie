@@ -43,6 +43,9 @@ Widget _borrowDescription(
 Future<void> showApproveBorrowRequestFlow(
   BuildContext context,
   BorrowRequestEntity request,
+  [
+  Future<bool> Function()? onConfirmed,
+  ]
 ) async {
   await AppActionDialog.show(
     context,
@@ -52,7 +55,15 @@ Future<void> showApproveBorrowRequestFlow(
         _borrowDescription(context, isApprove: true, request: request),
     primaryLabel: AppStrings.approveLabel,
     primaryColor: AppColors.green800,
-    onPrimary: () => Navigator.of(context).pop(),
+    onPrimary: () async {
+      if (onConfirmed == null) {
+        Navigator.of(context).pop();
+        return;
+      }
+      final ok = await onConfirmed();
+      if (!context.mounted || !ok) return;
+      Navigator.of(context).pop();
+    },
   );
   if (!context.mounted) return;
   await AppActionDialog.show(
@@ -74,6 +85,9 @@ Future<void> showApproveBorrowRequestFlow(
 Future<void> showRejectBorrowRequestFlow(
   BuildContext context,
   BorrowRequestEntity request,
+  [
+  Future<bool> Function()? onConfirmed,
+  ]
 ) async {
   await AppActionDialog.show(
     context,
@@ -83,7 +97,15 @@ Future<void> showRejectBorrowRequestFlow(
         _borrowDescription(context, isApprove: false, request: request),
     primaryLabel: AppStrings.rejectShortLabel,
     primaryColor: AppColors.red800,
-    onPrimary: () => Navigator.of(context).pop(),
+    onPrimary: () async {
+      if (onConfirmed == null) {
+        Navigator.of(context).pop();
+        return;
+      }
+      final ok = await onConfirmed();
+      if (!context.mounted || !ok) return;
+      Navigator.of(context).pop();
+    },
   );
   if (!context.mounted) return;
   await AppActionDialog.show(

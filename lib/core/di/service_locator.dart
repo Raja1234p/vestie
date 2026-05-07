@@ -30,6 +30,8 @@ import '../../features/projects/domain/repositories/project_repository.dart';
 import '../../features/projects/domain/repositories/projects_repository.dart';
 import '../../features/projects/domain/usecases/list_projects_use_case.dart';
 import '../../features/projects/domain/usecases/create_project_use_case.dart';
+import '../../features/projects/domain/usecases/preview_invite_usecase.dart';
+import '../../features/projects/domain/usecases/join_project_usecase.dart';
 import '../../features/project_detail/data/datasources/project_detail_remote_data_source.dart';
 import '../../features/project_detail/data/datasources/project_detail_remote_data_source_impl.dart';
 import '../../features/project_detail/data/datasources/project_actions_remote_data_source.dart';
@@ -39,21 +41,19 @@ import '../../features/project_detail/domain/repositories/project_detail_reposit
 import '../../features/project_detail/domain/repositories/project_actions_repository.dart';
 import '../../features/projects/domain/usecases/get_project_detail_usecase.dart';
 import '../../features/project_detail/domain/usecases/project_actions_usecases.dart';
-import '../../features/contributions/data/datasources/contributions_remote_data_source.dart';
-import '../../features/contributions/data/datasources/contributions_remote_data_source_impl.dart';
 import '../../features/contributions/data/datasources/contribution_remote_data_source.dart';
 import '../../features/contributions/data/repositories/contribution_repository_impl.dart';
 import '../../features/contributions/domain/repositories/contribution_repository.dart';
-import '../../features/contributions/data/repositories/contributions_repository_impl.dart';
-import '../../features/contributions/domain/repositories/contributions_repository.dart';
-import '../../features/contributions/domain/usecases/get_contribution_config_use_case.dart';
 import '../../features/contributions/domain/usecases/preview_contribution_usecase.dart';
 import '../../features/contributions/domain/usecases/confirm_contribution_usecase.dart';
+import '../../features/contributions/domain/usecases/fetch_contribution_config_usecase.dart';
 import '../../features/borrow/data/datasources/borrow_remote_data_source.dart';
 import '../../features/borrow/data/datasources/borrow_remote_data_source_impl.dart';
 import '../../features/borrow/data/repositories/borrow_repository_impl.dart';
 import '../../features/borrow/domain/repositories/borrow_repository.dart';
 import '../../features/borrow/domain/usecases/create_borrow_request_use_case.dart';
+import '../../features/borrow/domain/usecases/approve_borrow_request_use_case.dart';
+import '../../features/borrow/domain/usecases/reject_borrow_request_use_case.dart';
 import '../network/base_api_client.dart';
 import '../../features/projects/presentation/bloc/project_detail_bloc.dart';
 import '../../features/project_detail/domain/usecases/moderate_member_usecase.dart';
@@ -100,6 +100,8 @@ class ServiceLocator {
   late final ProjectRepository projectRepository;
   late final ListProjectsUseCase listProjectsUseCase;
   late final CreateProjectUseCase createProjectUseCase;
+  late final PreviewInviteUseCase previewInviteUseCase;
+  late final JoinProjectUseCase joinProjectUseCase;
 
   // ── Project Detail Feature ───────────────────────────────────────────────
   late final ProjectDetailRemoteDataSource projectDetailRemoteDataSource;
@@ -127,9 +129,7 @@ class ServiceLocator {
   // ── Contributions Feature ────────────────────────────────────────────────
   late final ContributionRemoteDataSource contributionRemoteDataSource;
   late final ContributionRepository contributionRepository;
-  late final ContributionsRemoteDataSource contributionsRemoteDataSource;
-  late final ContributionsRepository contributionsRepository;
-  late final GetContributionConfigUseCase getContributionConfigUseCase;
+  late final FetchContributionConfigUseCase fetchContributionConfigUseCase;
   late final PreviewContributionUseCase previewContributionUseCase;
   late final ConfirmContributionUseCase confirmContributionUseCase;
 
@@ -137,6 +137,8 @@ class ServiceLocator {
   late final BorrowRemoteDataSource borrowRemoteDataSource;
   late final BorrowRepository borrowRepository;
   late final CreateBorrowRequestUseCase createBorrowRequestUseCase;
+  late final ApproveBorrowRequestUseCase approveBorrowRequestUseCase;
+  late final RejectBorrowRequestUseCase rejectBorrowRequestUseCase;
 
   late final BaseApiClient apiClient;
   late final VotingRemoteDataSource votingRemoteDataSource;
@@ -155,6 +157,7 @@ class ServiceLocator {
     sharedPrefs = SharedPrefsImpl(sharedPreferences);
     secureStorage = SecureStorageImpl();
     dioClient = DioClient(secureStorage: secureStorage);
+    apiClient = BaseApiClient(dio: dioClient.dio);
     connectivity = Connectivity();
     networkInfo = NetworkInfoImpl(connectivity);
     projectLocalDataSource = ProjectLocalDataSourceImpl(localStorage: sharedPrefs);
@@ -187,6 +190,8 @@ class ServiceLocator {
     );
     listProjectsUseCase = ListProjectsUseCase(projectsRepository);
     createProjectUseCase = CreateProjectUseCase(projectsRepository);
+    previewInviteUseCase = PreviewInviteUseCase(projectRepository);
+    joinProjectUseCase = JoinProjectUseCase(projectRepository);
 
     // ── Project Detail Feature ─────────────────────────────────────────────
     projectDetailRemoteDataSource = ProjectDetailRemoteDataSourceImpl(dioClient);
@@ -214,9 +219,7 @@ class ServiceLocator {
     // ── Contributions Feature ──────────────────────────────────────────────
     contributionRemoteDataSource = ContributionRemoteDataSourceImpl(apiClient: apiClient);
     contributionRepository = ContributionRepositoryImpl(remoteDataSource: contributionRemoteDataSource);
-    contributionsRemoteDataSource = ContributionsRemoteDataSourceImpl(dioClient);
-    contributionsRepository = ContributionsRepositoryImpl(contributionsRemoteDataSource);
-    getContributionConfigUseCase = GetContributionConfigUseCase(contributionsRepository);
+    fetchContributionConfigUseCase = FetchContributionConfigUseCase(contributionRepository);
     previewContributionUseCase = PreviewContributionUseCase(contributionRepository);
     confirmContributionUseCase = ConfirmContributionUseCase(contributionRepository);
 
@@ -224,9 +227,10 @@ class ServiceLocator {
     borrowRemoteDataSource = BorrowRemoteDataSourceImpl(dioClient);
     borrowRepository = BorrowRepositoryImpl(borrowRemoteDataSource);
     createBorrowRequestUseCase = CreateBorrowRequestUseCase(borrowRepository);
+    approveBorrowRequestUseCase = ApproveBorrowRequestUseCase(borrowRepository);
+    rejectBorrowRequestUseCase = RejectBorrowRequestUseCase(borrowRepository);
 
     // ── Unified API Client & Action Handlers ──────────────────────────────
-    apiClient = BaseApiClient(dio: dioClient.dio);
     votingRemoteDataSource = VotingRemoteDataSourceImpl(apiClient: apiClient);
     votingRepository = VotingRepositoryImpl(remoteDataSource: votingRemoteDataSource);
     submitVoteUseCase = SubmitVoteUseCase(repository: votingRepository);
@@ -236,6 +240,10 @@ class ServiceLocator {
     projectDetailBloc = ProjectDetailBloc(repository: projectDetailRepository);
     moderationBloc = ModerationBloc(moderateMemberUseCase: moderateMemberUseCase);
     votingBloc = VotingBloc(submitVoteUseCase: submitVoteUseCase);
-    contributeBloc = ContributeBloc(previewUseCase: previewContributionUseCase, confirmUseCase: confirmContributionUseCase);
+    contributeBloc = ContributeBloc(
+      configUseCase: fetchContributionConfigUseCase,
+      previewUseCase: previewContributionUseCase,
+      confirmUseCase: confirmContributionUseCase,
+    );
   }
 }

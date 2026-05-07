@@ -1,5 +1,7 @@
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/network/base_api_client.dart';
+import '../models/invite_preview_model.dart';
+import '../models/join_project_result_model.dart';
 import '../models/project_summary_model.dart';
 import '../models/project_detail_model.dart';
 
@@ -8,6 +10,11 @@ abstract class ProjectRemoteDataSource {
   Future<ProjectDetailModel> getProjectDetail(String projectId);
   Future<void> launchProject(String projectId);
   Future<void> completeProject(String projectId);
+  Future<InvitePreviewModel> previewInvite(String inviteCode);
+  Future<JoinProjectResultModel> joinProject({
+    required String projectId,
+    required String inviteCode,
+  });
 }
 
 class ProjectRemoteDataSourceImpl implements ProjectRemoteDataSource {
@@ -18,7 +25,7 @@ class ProjectRemoteDataSourceImpl implements ProjectRemoteDataSource {
   @override
   Future<List<ProjectSummaryModel>> getProjects({required String scope}) async {
     final response = await apiClient.get<List<dynamic>>(
-      '${ApiConstants.baseUrl}/projects',
+      ApiConstants.projects,
       queryParameters: {'scope': scope},
     );
     return response.map((json) => ProjectSummaryModel.fromJson(json as Map<String, dynamic>)).toList();
@@ -26,17 +33,40 @@ class ProjectRemoteDataSourceImpl implements ProjectRemoteDataSource {
 
   @override
   Future<ProjectDetailModel> getProjectDetail(String projectId) async {
-    final response = await apiClient.get<Map<String, dynamic>>('${ApiConstants.baseUrl}/projects/$projectId');
+    final response = await apiClient.get<Map<String, dynamic>>('${ApiConstants.projects}/$projectId');
     return ProjectDetailModel.fromJson(response);
   }
 
   @override
   Future<void> launchProject(String projectId) async {
-    await apiClient.post('${ApiConstants.baseUrl}/projects/$projectId/launch');
+    await apiClient.post('${ApiConstants.projects}/$projectId/launch');
   }
 
   @override
   Future<void> completeProject(String projectId) async {
-    await apiClient.post('${ApiConstants.baseUrl}/projects/$projectId/complete');
+    await apiClient.post('${ApiConstants.projects}/$projectId/complete');
+  }
+
+  @override
+  Future<InvitePreviewModel> previewInvite(String inviteCode) async {
+    final response = await apiClient.get<Map<String, dynamic>>(
+      '${ApiConstants.projects}/invites/$inviteCode/preview',
+    );
+    return InvitePreviewModel.fromJson(response);
+  }
+
+  @override
+  Future<JoinProjectResultModel> joinProject({
+    required String projectId,
+    required String inviteCode,
+  }) async {
+    final response = await apiClient.post<Map<String, dynamic>>(
+      '${ApiConstants.projects}/join',
+      data: {
+        'projectId': projectId,
+        'inviteCode': inviteCode,
+      },
+    );
+    return JoinProjectResultModel.fromJson(response);
   }
 }

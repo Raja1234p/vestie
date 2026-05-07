@@ -119,7 +119,7 @@ class ProjectDetailShimmer extends StatelessWidget {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: 3,
-              itemBuilder: (_, __) => Padding(
+              itemBuilder: (context, index) => Padding(
                 padding: const EdgeInsets.only(bottom: 12),
                 child: Row(
                   children: [

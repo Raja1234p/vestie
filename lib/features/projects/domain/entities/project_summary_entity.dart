@@ -14,6 +14,7 @@ class ProjectSummaryEntity extends Equatable {
   final bool borrowingEnabled;
   final double suggestedContributionAmount;
   final DateTime createdUtc;
+  final String viewerRole;
 
   const ProjectSummaryEntity({
     required this.id,
@@ -29,6 +30,7 @@ class ProjectSummaryEntity extends Equatable {
     required this.borrowingEnabled,
     required this.suggestedContributionAmount,
     required this.createdUtc,
+    this.viewerRole = '',
   });
 
   @override
@@ -46,5 +48,6 @@ class ProjectSummaryEntity extends Equatable {
         borrowingEnabled,
         suggestedContributionAmount,
         createdUtc,
+        viewerRole,
       ];
 }

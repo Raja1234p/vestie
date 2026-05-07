@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/network/network_info.dart';
+import '../../domain/entities/invite_preview_entity.dart';
+import '../../domain/entities/join_project_result_entity.dart';
 import '../../domain/entities/project_summary_entity.dart';
 import '../../domain/entities/project_detail_entity.dart';
 import '../../domain/repositories/project_repository.dart';
@@ -75,6 +77,38 @@ class ProjectRepositoryImpl implements ProjectRepository {
     try {
       await remoteDataSource.completeProject(projectId);
       return const Right(null);
+    } on Failure catch (f) {
+      return Left(f);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, InvitePreviewEntity>> previewInvite(String inviteCode) async {
+    if (!await networkInfo.isConnected) return const Left(NetworkFailure());
+    try {
+      final preview = await remoteDataSource.previewInvite(inviteCode);
+      return Right(preview);
+    } on Failure catch (f) {
+      return Left(f);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, JoinProjectResultEntity>> joinProject({
+    required String projectId,
+    required String inviteCode,
+  }) async {
+    if (!await networkInfo.isConnected) return const Left(NetworkFailure());
+    try {
+      final result = await remoteDataSource.joinProject(
+        projectId: projectId,
+        inviteCode: inviteCode,
+      );
+      return Right(result);
     } on Failure catch (f) {
       return Left(f);
     } catch (e) {

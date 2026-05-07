@@ -161,7 +161,9 @@ class _ContributeAmountViewState extends State<_ContributeAmountView> {
                   child: AppButton(
                     text: AppStrings.btnConfirm,
                     isLoading: state.isPreviewLoading,
-                    onPressed: state.amountValue <= 0 ? null : () => bloc.add(GoToConfirmEvent()),
+                    onPressed: state.amountValue <= 0 || state.selectedWalletId.isEmpty
+                        ? null
+                        : () => bloc.add(GoToConfirmEvent()),
                   ),
                 ),
                 SizedBox(height: 12.h),
@@ -289,7 +291,7 @@ class _ContributeConfirmView extends StatelessWidget {
                     : () => bloc.add(ConfirmSubmitEvent(
                           projectId: args?.projectId ?? '',
                           amount: state.amountValue,
-                          walletId: '1', // default mock wallet
+                          walletId: state.selectedWalletId,
                         )),
               ),
             ),

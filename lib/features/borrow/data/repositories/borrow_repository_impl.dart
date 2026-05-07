@@ -45,5 +45,51 @@ class BorrowRepositoryImpl implements BorrowRepository {
       return const Left(ServerFailure('Failed to submit borrow request'));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> approveBorrowRequest({
+    required String projectId,
+    required String borrowRequestId,
+  }) async {
+    try {
+      await _remote.approveBorrowRequest(
+        projectId: projectId,
+        borrowRequestId: borrowRequestId,
+      );
+      return const Right(null);
+    } on UnauthorizedException catch (e, stack) {
+      AppLogger.error('ApproveBorrowRequest Unauthorized', error: e, stackTrace: stack);
+      return Left(ServerFailure(e.message, e.title));
+    } on ServerException catch (e, stack) {
+      AppLogger.error('ApproveBorrowRequest Server Exception', error: e, stackTrace: stack);
+      return Left(ServerFailure(e.message, e.title));
+    } catch (e, stack) {
+      AppLogger.error('ApproveBorrowRequest Unexpected Exception', error: e, stackTrace: stack);
+      return const Left(ServerFailure('Failed to approve borrow request'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> rejectBorrowRequest({
+    required String projectId,
+    required String borrowRequestId,
+  }) async {
+    try {
+      await _remote.rejectBorrowRequest(
+        projectId: projectId,
+        borrowRequestId: borrowRequestId,
+      );
+      return const Right(null);
+    } on UnauthorizedException catch (e, stack) {
+      AppLogger.error('RejectBorrowRequest Unauthorized', error: e, stackTrace: stack);
+      return Left(ServerFailure(e.message, e.title));
+    } on ServerException catch (e, stack) {
+      AppLogger.error('RejectBorrowRequest Server Exception', error: e, stackTrace: stack);
+      return Left(ServerFailure(e.message, e.title));
+    } catch (e, stack) {
+      AppLogger.error('RejectBorrowRequest Unexpected Exception', error: e, stackTrace: stack);
+      return const Left(ServerFailure('Failed to reject borrow request'));
+    }
+  }
 }
 

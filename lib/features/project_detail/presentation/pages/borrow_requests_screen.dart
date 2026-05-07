@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/di/service_locator.dart';
+import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_back_button.dart';
@@ -15,12 +17,42 @@ import '../widgets/borrow_request_decision_dialogs.dart';
 class BorrowRequestsScreen extends StatelessWidget {
   final List<BorrowRequestEntity> requests;
   final bool isLeaderMode;
+  final String projectId;
 
   const BorrowRequestsScreen({
     super.key,
     required this.requests,
+    required this.projectId,
     this.isLeaderMode = false,
   });
+
+  Future<bool> _approve(BuildContext context, BorrowRequestEntity request) async {
+    final result = await ServiceLocator.instance.approveBorrowRequestUseCase(
+      projectId: projectId,
+      borrowRequestId: request.id,
+    );
+    return result.fold(
+      (failure) {
+        AppSnackBar.showError(context, failure.message);
+        return false;
+      },
+      (_) => true,
+    );
+  }
+
+  Future<bool> _reject(BuildContext context, BorrowRequestEntity request) async {
+    final result = await ServiceLocator.instance.rejectBorrowRequestUseCase(
+      projectId: projectId,
+      borrowRequestId: request.id,
+    );
+    return result.fold(
+      (failure) {
+        AppSnackBar.showError(context, failure.message);
+        return false;
+      },
+      (_) => true,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,12 +99,14 @@ class BorrowRequestsScreen extends StatelessWidget {
                               ? () => showApproveBorrowRequestFlow(
                                     context,
                                     requests[i],
+                                    () => _approve(context, requests[i]),
                                   )
                               : null,
                           onReject: isLeaderMode
                               ? () => showRejectBorrowRequestFlow(
                                     context,
                                     requests[i],
+                                    () => _reject(context, requests[i]),
                                   )
                               : null,
                         ),

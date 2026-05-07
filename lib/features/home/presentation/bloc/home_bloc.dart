@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/service_locator.dart';
+import '../../domain/entities/project.dart';
 import '../../../projects/domain/usecases/list_projects_use_case.dart';
 import 'home_event.dart';
 import 'home_state.dart';
@@ -21,24 +22,26 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     emit(const HomeLoading());
 
     final mineResult = await _listProjectsUseCase(scope: 'mine');
-    final discoverResult = await _listProjectsUseCase(scope: 'discover');
-
     final mine = mineResult.fold((_) => null, (v) => v);
-    final discover = discoverResult.fold((_) => null, (v) => v);
 
-    if (mine == null && discover == null) {
-      final failure = mineResult.fold((f) => f, (_) => null) ??
-          discoverResult.fold((f) => f, (_) => null);
+    if (mine == null) {
+      final failure = mineResult.fold((f) => f, (_) => null);
       emit(HomeError(message: failure?.message ?? 'Failed to load projects'));
       return;
     }
 
+    final myProjects = mine
+        .where((p) => p.relation == ProjectRelation.owned)
+        .toList(growable: false);
+    final joinedProjects = mine
+        .where((p) => p.relation == ProjectRelation.joined)
+        .toList(growable: false);
+
     emit(HomeLoaded(
       // TODO (backend): wire real total contributed API when available.
       totalContributed: 0,
-      myProjects: mine ?? const [],
-      // UI currently treats "joined projects" separately; map discover here for now.
-      joinedProjects: discover ?? const [],
+      myProjects: myProjects,
+      joinedProjects: joinedProjects,
     ));
   }
 }

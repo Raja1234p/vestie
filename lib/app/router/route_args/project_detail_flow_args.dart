@@ -1,9 +1,11 @@
 class BorrowRequestsRouteArgs<T> {
   final List<T> requests;
   final bool isLeaderMode;
+  final String projectId;
 
   const BorrowRequestsRouteArgs({
     required this.requests,
+    required this.projectId,
     this.isLeaderMode = false,
   });
 }

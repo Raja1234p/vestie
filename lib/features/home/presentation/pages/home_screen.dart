@@ -5,9 +5,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/di/service_locator.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/widgets/common/app_shimmer.dart';
-import '../../../../core/widgets/common/app_loader.dart';
 import '../../../home/domain/entities/project.dart';
 import '../../../project_detail/presentation/navigation/open_project_from_card.dart';
 import '../bloc/home_bloc.dart';
@@ -104,6 +105,72 @@ class _HomeContent extends StatelessWidget {
     );
   }
 
+  Future<void> _handleJoinAction(BuildContext context, Project p) async {
+    final inviteCode = await _askInviteCode(context);
+    if (!context.mounted || inviteCode == null || inviteCode.isEmpty) return;
+
+    final previewResult =
+        await ServiceLocator.instance.previewInviteUseCase(inviteCode);
+    if (!context.mounted) return;
+
+    await previewResult.fold(
+      (failure) async => AppSnackBar.showError(context, failure.message),
+      (preview) async {
+        if (!preview.isJoinable || preview.isExpired) {
+          AppSnackBar.showInfo(context, AppStrings.errorGeneric);
+          return;
+        }
+
+        final joinResult = await ServiceLocator.instance.joinProjectUseCase(
+          projectId: p.id,
+          inviteCode: inviteCode,
+        );
+        if (!context.mounted) return;
+        joinResult.fold(
+          (failure) => AppSnackBar.showError(context, failure.message),
+          (result) {
+            if (result.status.toLowerCase().contains('pending')) {
+              AppSnackBar.showSuccess(context, AppStrings.joinRequestApprovedTitle);
+            } else {
+              AppSnackBar.showSuccess(context, AppStrings.btnDone);
+            }
+            context.read<HomeBloc>().add(const HomeRefreshRequested());
+          },
+        );
+      },
+    );
+  }
+
+  Future<String?> _askInviteCode(BuildContext context) async {
+    final controller = TextEditingController();
+    return showDialog<String>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Enter Invite Code'),
+          content: TextField(
+            controller: controller,
+            autofocus: true,
+            textCapitalization: TextCapitalization.characters,
+            decoration: const InputDecoration(
+              hintText: 'INV-XXXXXX',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(controller.text.trim()),
+              child: const Text('Join'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeSectionsCubit, HomeSectionsState>(
@@ -140,7 +207,16 @@ class _HomeContent extends StatelessWidget {
                             projects: data.joinedProjects,
                             expanded: sections.joinedProjectsExpanded,
                             onToggle: cubit.toggleJoined,
-                            onProjectAction: (p) => _navigateToUserDetail(context, p),
+                            onProjectAction: (p) {
+                              final isJoinAction = p.status == ProjectStatus.ongoing &&
+                                  p.relation != ProjectRelation.owned &&
+                                  !p.requestPending;
+                              if (isJoinAction) {
+                                _handleJoinAction(context, p);
+                                return;
+                              }
+                              _navigateToUserDetail(context, p);
+                            },
                           ),
                           SizedBox(height: 16.h),
                         ],

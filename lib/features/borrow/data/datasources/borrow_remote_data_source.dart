@@ -20,5 +20,15 @@ abstract class BorrowRemoteDataSource {
     required String projectId,
     required CreateBorrowRequestBody body,
   });
+
+  Future<void> approveBorrowRequest({
+    required String projectId,
+    required String borrowRequestId,
+  });
+
+  Future<void> rejectBorrowRequest({
+    required String projectId,
+    required String borrowRequestId,
+  });
 }
 

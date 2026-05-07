@@ -23,9 +23,25 @@ class ContributionRepositoryImpl implements ContributionRepository {
   }
 
   @override
-  Future<Either<Failure, ContributionPreviewEntity>> previewContribution(String projectId, double amount) async {
+  Future<Either<Failure, ContributionPreviewEntity>> previewContribution({
+    required String projectId,
+    required String membershipId,
+    required String walletId,
+    required double amount,
+    required String currency,
+    String? externalReference,
+    required bool confirmNonRefundable,
+  }) async {
     try {
-      final preview = await remoteDataSource.previewContribution(projectId, amount);
+      final preview = await remoteDataSource.previewContribution(
+        projectId: projectId,
+        membershipId: membershipId,
+        walletId: walletId,
+        amount: amount,
+        currency: currency,
+        externalReference: externalReference,
+        confirmNonRefundable: confirmNonRefundable,
+      );
       return Right(preview);
     } on Failure catch (f) {
       return Left(f);
@@ -35,9 +51,25 @@ class ContributionRepositoryImpl implements ContributionRepository {
   }
 
   @override
-  Future<Either<Failure, void>> confirmContribution(String projectId, double amount, String walletId) async {
+  Future<Either<Failure, void>> confirmContribution({
+    required String projectId,
+    required String membershipId,
+    required String walletId,
+    required double amount,
+    required String currency,
+    String? externalReference,
+    required bool confirmNonRefundable,
+  }) async {
     try {
-      await remoteDataSource.confirmContribution(projectId, amount, walletId);
+      await remoteDataSource.confirmContribution(
+        projectId: projectId,
+        membershipId: membershipId,
+        walletId: walletId,
+        amount: amount,
+        currency: currency,
+        externalReference: externalReference,
+        confirmNonRefundable: confirmNonRefundable,
+      );
       return const Right(null);
     } on Failure catch (f) {
       return Left(f);

@@ -24,8 +24,11 @@ class NetworkFailure extends Failure {
 
 class ValidationFailure extends Failure {
   final Map<String, List<String>>? errors;
-  const ValidationFailure([String message = 'Validation failed.', String? title, this.errors])
-      : super(message, title);
+  const ValidationFailure([
+    super.message = 'Validation failed.',
+    super.title,
+    this.errors,
+  ]);
 
   @override
   List<Object?> get props => [message, title, errors];

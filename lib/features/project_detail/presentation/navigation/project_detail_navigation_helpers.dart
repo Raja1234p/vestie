@@ -46,6 +46,7 @@ class ProjectDetailNavigationHelpers {
   }) {
     return BorrowRequestsRouteArgs(
       requests: project.borrowRequests,
+      projectId: project.id,
       isLeaderMode: isLeaderMode,
     );
   }

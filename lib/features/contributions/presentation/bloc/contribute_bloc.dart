@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
+import '../../domain/usecases/fetch_contribution_config_usecase.dart';
 import '../../domain/usecases/preview_contribution_usecase.dart';
 import '../../domain/usecases/confirm_contribution_usecase.dart';
 import 'contribute_event.dart';
@@ -10,16 +11,16 @@ EventTransformer<Event> debounce<Event>(Duration duration) {
 }
 
 class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
+  final FetchContributionConfigUseCase configUseCase;
   final PreviewContributionUseCase previewUseCase;
   final ConfirmContributionUseCase confirmUseCase;
 
   ContributeBloc({
+    required this.configUseCase,
     required this.previewUseCase,
     required this.confirmUseCase,
   }) : super(const ContributeState()) {
-    on<InitArgsEvent>((event, emit) {
-      emit(state.copyWith(args: event.args));
-    });
+    on<InitArgsEvent>(_onInitArgs);
 
     on<DigitsChangedEvent>((event, emit) {
       var d = event.digits.replaceAll(RegExp(r'[^0-9]'), '');
@@ -48,14 +49,45 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
     on<ConfirmSubmitEvent>(_onConfirmSubmit);
   }
 
+  Future<void> _onInitArgs(InitArgsEvent event, Emitter<ContributeState> emit) async {
+    emit(state.copyWith(
+      args: event.args,
+      isConfigLoading: true,
+      clearPreviewFailure: true,
+      clearSubmitFailure: true,
+    ));
+
+    final result = await configUseCase(projectId: event.args.projectId);
+    result.fold(
+      (failure) {
+        emit(state.copyWith(
+          isConfigLoading: false,
+          submitFailure: failure,
+        ));
+      },
+      (config) {
+        final walletId = config.wallets.isNotEmpty ? config.wallets.first.walletId : '';
+        emit(state.copyWith(
+          isConfigLoading: false,
+          selectedWalletId: walletId,
+        ));
+      },
+    );
+  }
+
   Future<void> _onGoToConfirm(GoToConfirmEvent event, Emitter<ContributeState> emit) async {
-    if (state.amountValue <= 0) return;
+    if (state.amountValue <= 0 || state.selectedWalletId.isEmpty) return;
 
     emit(state.copyWith(isPreviewLoading: true, clearPreviewFailure: true, clearSubmitFailure: true));
 
     final result = await previewUseCase(PreviewContributionParams(
       projectId: state.args?.projectId ?? '',
+      membershipId: state.args?.membershipId ?? '',
+      walletId: state.selectedWalletId,
       amount: state.amountValue,
+      currency: 'USD',
+      externalReference: null,
+      confirmNonRefundable: state.nonRefundableAccepted,
     ));
 
     result.fold(
@@ -78,7 +110,12 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
 
     final result = await previewUseCase(PreviewContributionParams(
       projectId: event.projectId,
+      membershipId: state.args?.membershipId ?? '',
+      walletId: state.selectedWalletId,
       amount: event.amount,
+      currency: 'USD',
+      externalReference: null,
+      confirmNonRefundable: state.nonRefundableAccepted,
     ));
 
     result.fold(
@@ -92,8 +129,14 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
 
     final result = await confirmUseCase(ConfirmContributionParams(
       projectId: event.projectId,
+      membershipId: state.args?.membershipId ?? '',
       amount: event.amount,
-      walletId: event.walletId,
+      walletId: state.selectedWalletId.isNotEmpty
+          ? state.selectedWalletId
+          : event.walletId,
+      currency: 'USD',
+      externalReference: null,
+      confirmNonRefundable: state.nonRefundableAccepted,
     ));
 
     result.fold(

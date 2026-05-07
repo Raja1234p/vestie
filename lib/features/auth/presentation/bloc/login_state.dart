@@ -37,8 +37,8 @@ class LoginError extends LoginState {
   const LoginError({
     required this.message,
     this.title,
-    Map<String, String>? validationErrors,
-  }) : super(status: FormSubmissionStatus.failure, errorMessage: message, validationErrors: validationErrors);
+    super.validationErrors,
+  }) : super(status: FormSubmissionStatus.failure, errorMessage: message);
 
   @override
   List<Object?> get props => [status, errorMessage, validationErrors, message, title];

@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/error/failures.dart';
-import '../../../../core/usecases/usecase.dart'; // Assuming a generic UseCase exists
 import '../entities/project_summary_entity.dart';
 import '../repositories/project_repository.dart';
 

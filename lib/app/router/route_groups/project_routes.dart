@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import '../../../features/borrow/presentation/cubit/borrow_cubit.dart';
 import '../../../features/borrow/presentation/pages/borrow_flow_screen.dart';
 import '../../../../core/di/service_locator.dart';
-import '../../../features/contributions/presentation/bloc/contribute_bloc.dart';
 import '../../../features/contributions/presentation/bloc/contribute_event.dart';
 import '../../../features/contribute/presentation/pages/contribute_flow_screen.dart';
 import '../../../features/project_detail/domain/entities/borrow_request_entity.dart';
@@ -118,6 +117,7 @@ List<RouteBase> buildProjectRoutes({
         }
         return BorrowRequestsScreen(
           requests: requests.cast<BorrowRequestEntity>(),
+          projectId: extra.projectId,
           isLeaderMode: extra.isLeaderMode,
         );
       },

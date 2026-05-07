@@ -12,6 +12,8 @@ class ContributeState extends Equatable {
   final bool nonRefundableAccepted;
   final bool isPreviewLoading;
   final bool isSubmitLoading;
+  final bool isConfigLoading;
+  final String selectedWalletId;
   final ContributionPreviewEntity? preview;
   final Failure? previewFailure;
   final Failure? submitFailure;
@@ -24,6 +26,8 @@ class ContributeState extends Equatable {
     this.nonRefundableAccepted = false,
     this.isPreviewLoading = false,
     this.isSubmitLoading = false,
+    this.isConfigLoading = false,
+    this.selectedWalletId = '',
     this.preview,
     this.previewFailure,
     this.submitFailure,
@@ -37,6 +41,8 @@ class ContributeState extends Equatable {
     bool? nonRefundableAccepted,
     bool? isPreviewLoading,
     bool? isSubmitLoading,
+    bool? isConfigLoading,
+    String? selectedWalletId,
     ContributionPreviewEntity? preview,
     Failure? previewFailure,
     Failure? submitFailure,
@@ -52,6 +58,8 @@ class ContributeState extends Equatable {
       nonRefundableAccepted: nonRefundableAccepted ?? this.nonRefundableAccepted,
       isPreviewLoading: isPreviewLoading ?? this.isPreviewLoading,
       isSubmitLoading: isSubmitLoading ?? this.isSubmitLoading,
+      isConfigLoading: isConfigLoading ?? this.isConfigLoading,
+      selectedWalletId: selectedWalletId ?? this.selectedWalletId,
       preview: clearPreview ? null : (preview ?? this.preview),
       previewFailure: clearPreviewFailure ? null : (previewFailure ?? this.previewFailure),
       submitFailure: clearSubmitFailure ? null : (submitFailure ?? this.submitFailure),
@@ -71,9 +79,10 @@ class ContributeState extends Equatable {
 
   String get displayAmountDollar => '\$$amountFormatted';
 
-  double get vestieFee => amountValue * 0.03;
+  double get vestieFee => preview?.platformFee ?? (amountValue * 0.03);
   String get vestieFeeFormatted => vestieFee.toStringAsFixed(2);
-  String get totalDeductionFormatted => (amountValue + vestieFee).toStringAsFixed(2);
+  String get totalDeductionFormatted =>
+      (preview?.totalDeduction ?? (amountValue + vestieFee)).toStringAsFixed(2);
 
   bool get canSubmit => preview != null && !isPreviewLoading && previewFailure == null;
 
@@ -85,6 +94,8 @@ class ContributeState extends Equatable {
         nonRefundableAccepted,
         isPreviewLoading,
         isSubmitLoading,
+        isConfigLoading,
+        selectedWalletId,
         preview,
         previewFailure,
         submitFailure,

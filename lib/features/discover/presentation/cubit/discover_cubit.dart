@@ -65,6 +65,8 @@ class DiscoverCubit extends Cubit<DiscoverState> {
     );
   }
 
+  Future<void> refresh() => _load();
+
   void selectFilter(String filter) {
     final projects = state.allProjects;
     final filtered = filter == AppStrings.filterAll

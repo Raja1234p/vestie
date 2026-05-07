@@ -3,14 +3,14 @@ import 'package:dartz/dartz.dart';
 import 'form_submission_state.dart';
 import '../error/failures.dart';
 
-abstract class BaseFormBloc<Event, State extends FormSubmissionState> extends Bloc<Event, State> {
+abstract class BaseFormBloc<Event, TState extends FormSubmissionState> extends Bloc<Event, TState> {
   BaseFormBloc(super.initialState);
 
   /// Helper to safely execute a repository call and map it to the generic FormSubmissionState
   Future<void> executeSubmission<R>(
     Future<Either<Failure, R>> Function() action,
-    Emitter<State> emit, {
-    required State Function(FormSubmissionStatus, String?, Map<String, String>?, R?) stateBuilder,
+    Emitter<TState> emit, {
+    required TState Function(FormSubmissionStatus, String?, Map<String, String>?, R?) stateBuilder,
   }) async {
     if (state.status == FormSubmissionStatus.submitting) return;
 

@@ -16,7 +16,7 @@ class VotingRemoteDataSourceImpl implements VotingRemoteDataSource {
   @override
   Future<void> submitVote(String projectId, bool isPositive) async {
     await apiClient.post(
-      '${ApiConstants.baseUrl}/projects/$projectId/closure-voting/vote',
+      '${ApiConstants.projects}/$projectId/closure-voting/vote',
       data: {'decision': isPositive ? 'Approve' : 'Reject'},
     );
   }
@@ -24,20 +24,20 @@ class VotingRemoteDataSourceImpl implements VotingRemoteDataSource {
   @override
   Future<void> requestVoteExtension(String projectId, int extraDays, String reason) async {
     await apiClient.post(
-      '${ApiConstants.baseUrl}/projects/$projectId/closure-voting/extend',
+      '${ApiConstants.projects}/$projectId/closure-voting/extend',
       data: {'additionalHours': extraDays * 24},
     );
   }
 
   @override
   Future<void> finalizeVote(String projectId) async {
-    await apiClient.post('${ApiConstants.baseUrl}/projects/$projectId/closure-voting/finalize');
+    await apiClient.post('${ApiConstants.projects}/$projectId/closure-voting/finalize');
   }
 
   @override
   Future<void> cancelProject(String projectId, String reason) async {
     await apiClient.post(
-      '${ApiConstants.baseUrl}/projects/$projectId/cancel',
+      '${ApiConstants.projects}/$projectId/cancel',
     );
   }
 }

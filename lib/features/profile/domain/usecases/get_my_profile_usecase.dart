@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/error/failures.dart';
-import '../../../../core/usecases/usecase.dart'; // generic UseCase<Type, Params>
 import '../entities/user_profile_entity.dart';
 import '../repositories/profile_repository.dart';
 

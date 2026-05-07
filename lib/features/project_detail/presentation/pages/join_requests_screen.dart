@@ -91,9 +91,10 @@ class JoinRequestsScreen extends StatelessWidget {
                               name: m.name,
                               username: username,
                               onAccept: () {
+                                final membershipId = m.membershipId.isNotEmpty ? m.membershipId : m.id;
                                 context.read<ModerationBloc>().add(SubmitModerationActionEvent(
                                   projectId: projectId,
-                                  userId: m.id,
+                                  userId: membershipId,
                                   action: ModerationAction.approve,
                                 ));
                                 showJoinRequestApprovedDialog(
@@ -102,9 +103,10 @@ class JoinRequestsScreen extends StatelessWidget {
                                 );
                               },
                               onDecline: () {
+                                final membershipId = m.membershipId.isNotEmpty ? m.membershipId : m.id;
                                 context.read<ModerationBloc>().add(SubmitModerationActionEvent(
                                   projectId: projectId,
-                                  userId: m.id,
+                                  userId: membershipId,
                                   action: ModerationAction.reject,
                                 ));
                                 showJoinRequestDeclinedDialog(

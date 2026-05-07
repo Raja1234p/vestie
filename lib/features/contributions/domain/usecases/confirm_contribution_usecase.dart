@@ -9,21 +9,45 @@ class ConfirmContributionUseCase {
   ConfirmContributionUseCase(this.repository);
 
   Future<Either<Failure, void>> call(ConfirmContributionParams params) async {
-    return await repository.confirmContribution(params.projectId, params.amount, params.walletId);
+    return await repository.confirmContribution(
+      projectId: params.projectId,
+      membershipId: params.membershipId,
+      walletId: params.walletId,
+      amount: params.amount,
+      currency: params.currency,
+      externalReference: params.externalReference,
+      confirmNonRefundable: params.confirmNonRefundable,
+    );
   }
 }
 
 class ConfirmContributionParams extends Equatable {
   final String projectId;
+  final String membershipId;
   final double amount;
   final String walletId;
+  final String currency;
+  final String? externalReference;
+  final bool confirmNonRefundable;
 
   const ConfirmContributionParams({
     required this.projectId,
+    required this.membershipId,
     required this.amount,
     required this.walletId,
+    required this.currency,
+    this.externalReference,
+    required this.confirmNonRefundable,
   });
 
   @override
-  List<Object?> get props => [projectId, amount, walletId];
+  List<Object?> get props => [
+        projectId,
+        membershipId,
+        amount,
+        walletId,
+        currency,
+        externalReference,
+        confirmNonRefundable,
+      ];
 }

@@ -13,7 +13,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
   @override
   Future<UserProfileModel> getMyProfile() async {
-    final response = await apiClient.get<Map<String, dynamic>>('${ApiConstants.baseUrl}/users/me');
+    final response = await apiClient.get<Map<String, dynamic>>(ApiConstants.me);
     return UserProfileModel.fromJson(response);
   }
 }

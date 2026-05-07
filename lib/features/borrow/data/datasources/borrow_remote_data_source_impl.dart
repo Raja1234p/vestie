@@ -55,5 +55,41 @@ class BorrowRemoteDataSourceImpl implements BorrowRemoteDataSource {
       _handleError(e, 'Failed to submit borrow request');
     }
   }
+
+  @override
+  Future<void> approveBorrowRequest({
+    required String projectId,
+    required String borrowRequestId,
+  }) async {
+    try {
+      await _client.post(
+        '${ApiConstants.projects}/$projectId/borrow-requests/$borrowRequestId/approve',
+      );
+    } on DioException catch (e) {
+      AppLogger.error(
+        'API ApproveBorrowRequest Error: ${e.response?.statusCode}',
+        error: e.response?.data,
+      );
+      _handleError(e, 'Failed to approve borrow request');
+    }
+  }
+
+  @override
+  Future<void> rejectBorrowRequest({
+    required String projectId,
+    required String borrowRequestId,
+  }) async {
+    try {
+      await _client.post(
+        '${ApiConstants.projects}/$projectId/borrow-requests/$borrowRequestId/reject',
+      );
+    } on DioException catch (e) {
+      AppLogger.error(
+        'API RejectBorrowRequest Error: ${e.response?.statusCode}',
+        error: e.response?.data,
+      );
+      _handleError(e, 'Failed to reject borrow request');
+    }
+  }
 }
 

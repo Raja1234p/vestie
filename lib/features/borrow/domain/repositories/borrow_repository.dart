@@ -26,5 +26,15 @@ abstract class BorrowRepository {
     required double amount,
     required String reason,
   });
+
+  Future<Either<Failure, void>> approveBorrowRequest({
+    required String projectId,
+    required String borrowRequestId,
+  });
+
+  Future<Either<Failure, void>> rejectBorrowRequest({
+    required String projectId,
+    required String borrowRequestId,
+  });
 }
 

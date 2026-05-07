@@ -6,8 +6,8 @@ class ResolveGoalUseCase {
   final ProjectActionsRepository repository;
   ResolveGoalUseCase(this.repository);
 
-  Future<Either<Failure, void>> call() async {
-    return const Right(null);
+  Future<Either<Failure, void>> call({required String projectId}) async {
+    return repository.resolveGoal(projectId: projectId);
   }
 }
 
@@ -15,8 +15,14 @@ class ExtendDeadlineUseCase {
   final ProjectActionsRepository repository;
   ExtendDeadlineUseCase(this.repository);
 
-  Future<Either<Failure, void>> call() async {
-    return const Right(null);
+  Future<Either<Failure, void>> call({
+    required String projectId,
+    required int extraDays,
+  }) async {
+    return repository.extendDeadline(
+      projectId: projectId,
+      extraDays: extraDays,
+    );
   }
 }
 
@@ -24,8 +30,8 @@ class CompleteProjectUseCase {
   final ProjectActionsRepository repository;
   CompleteProjectUseCase(this.repository);
 
-  Future<Either<Failure, void>> call() async {
-    return const Right(null);
+  Future<Either<Failure, void>> call({required String projectId}) async {
+    return repository.completeProject(projectId: projectId);
   }
 }
 
@@ -34,7 +40,7 @@ class AssignCoLeaderUseCase {
   AssignCoLeaderUseCase(this.repository);
 
   Future<Either<Failure, void>> call({required String projectId, required String userId}) async {
-    return const Right(null);
+    return repository.promoteToCoLeader(projectId, userId);
   }
 }
 
@@ -43,7 +49,7 @@ class RemoveCoLeaderUseCase {
   RemoveCoLeaderUseCase(this.repository);
 
   Future<Either<Failure, void>> call({required String projectId, required String userId}) async {
-    return const Right(null);
+    return repository.demoteCoLeader(projectId, userId);
   }
 }
 
@@ -52,7 +58,7 @@ class RemoveMemberUseCase {
   RemoveMemberUseCase(this.repository);
 
   Future<Either<Failure, void>> call({required String projectId, required String userId}) async {
-    return const Right(null);
+    return repository.removeMember(projectId, userId);
   }
 }
 
@@ -61,7 +67,7 @@ class MarkDefaultedUseCase {
   MarkDefaultedUseCase(this.repository);
 
   Future<Either<Failure, void>> call({required String projectId, required String userId}) async {
-    return const Right(null);
+    return repository.markDefaulted(projectId: projectId, userId: userId);
   }
 }
 
@@ -70,7 +76,7 @@ class RemoveForNonRepaymentUseCase {
   RemoveForNonRepaymentUseCase(this.repository);
 
   Future<Either<Failure, void>> call({required String projectId, required String userId}) async {
-    return const Right(null);
+    return repository.removeForNonRepayment(projectId: projectId, userId: userId);
   }
 }
 
@@ -78,8 +84,14 @@ class CastClosureVoteUseCase {
   final ProjectActionsRepository repository;
   CastClosureVoteUseCase(this.repository);
 
-  Future<Either<Failure, void>> call() async {
-    return const Right(null);
+  Future<Either<Failure, void>> call({
+    required String projectId,
+    required bool voteForSuccess,
+  }) async {
+    return repository.castClosureVote(
+      projectId: projectId,
+      voteForSuccess: voteForSuccess,
+    );
   }
 }
 
@@ -87,8 +99,14 @@ class ExtendClosureVotingUseCase {
   final ProjectActionsRepository repository;
   ExtendClosureVotingUseCase(this.repository);
 
-  Future<Either<Failure, void>> call() async {
-    return const Right(null);
+  Future<Either<Failure, void>> call({
+    required String projectId,
+    required int extraDays,
+  }) async {
+    return repository.extendClosureVoting(
+      projectId: projectId,
+      extraDays: extraDays,
+    );
   }
 }
 
@@ -96,8 +114,8 @@ class FinalizeClosureVotingUseCase {
   final ProjectActionsRepository repository;
   FinalizeClosureVotingUseCase(this.repository);
 
-  Future<Either<Failure, void>> call() async {
-    return const Right(null);
+  Future<Either<Failure, void>> call({required String projectId}) async {
+    return repository.finalizeClosureVoting(projectId: projectId);
   }
 }
 
@@ -106,7 +124,7 @@ class CancelProjectUseCase {
   CancelProjectUseCase(this.repository);
 
   Future<Either<Failure, void>> call({required String projectId}) async {
-    return const Right(null);
+    return repository.cancelProject(projectId: projectId);
   }
 }
 
@@ -114,8 +132,11 @@ class ApproveMembershipUseCase {
   final ProjectActionsRepository repository;
   ApproveMembershipUseCase(this.repository);
 
-  Future<Either<Failure, void>> call() async {
-    return const Right(null);
+  Future<Either<Failure, void>> call({
+    required String projectId,
+    required String membershipId,
+  }) async {
+    return repository.approveJoinRequest(projectId, membershipId);
   }
 }
 
@@ -123,8 +144,11 @@ class RejectMembershipUseCase {
   final ProjectActionsRepository repository;
   RejectMembershipUseCase(this.repository);
 
-  Future<Either<Failure, void>> call() async {
-    return const Right(null);
+  Future<Either<Failure, void>> call({
+    required String projectId,
+    required String membershipId,
+  }) async {
+    return repository.rejectJoinRequest(projectId, membershipId);
   }
 }
 
@@ -138,7 +162,12 @@ class CreateInviteUseCase {
     required int expiresInDays,
     required int maxUses,
   }) async {
-    return const Right('dummy_invite_code');
+    return repository.createInvite(
+      projectId: projectId,
+      requiresApproval: requiresApproval,
+      expiresInDays: expiresInDays,
+      maxUses: maxUses,
+    );
   }
 }
 
@@ -147,6 +176,6 @@ class OpenClosureVotingUseCase {
   OpenClosureVotingUseCase(this.repository);
 
   Future<Either<Failure, void>> call({required String projectId}) async {
-    return const Right(null);
+    return repository.openClosureVoting(projectId: projectId);
   }
 }
