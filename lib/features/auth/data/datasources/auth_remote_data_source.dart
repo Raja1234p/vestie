@@ -45,6 +45,13 @@ abstract class AuthRemoteDataSource {
 
   Future<UserModel> getMe();
 
+  Future<UserModel> updateMe({
+    required String firstName,
+    required String lastName,
+    required String userName,
+    required String photoUrl,
+  });
+
   Future<RiskDisclaimerModel> getRiskDisclaimer();
 
   Future<MessageResponseModel> acceptRiskDisclaimer({

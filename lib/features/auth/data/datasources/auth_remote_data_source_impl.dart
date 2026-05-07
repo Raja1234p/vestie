@@ -191,6 +191,33 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
+  Future<UserModel> updateMe({
+    required String firstName,
+    required String lastName,
+    required String userName,
+    required String photoUrl,
+  }) async {
+    try {
+      final response = await _client.put(
+        ApiConstants.me,
+        data: {
+          'firstName': firstName,
+          'lastName': lastName,
+          'userName': userName,
+          'photoUrl': photoUrl,
+        },
+      );
+      return UserModel.fromJson(response.data);
+    } on DioException catch (e) {
+      AppLogger.error(
+        'API UpdateMe Error: ${e.response?.statusCode}',
+        error: e.response?.data,
+      );
+      _handleError(e, 'Failed to update user profile');
+    }
+  }
+
+  @override
   Future<RiskDisclaimerModel> getRiskDisclaimer() async {
     try {
       final response = await _client.get(ApiConstants.riskDisclaimer);
@@ -230,6 +257,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         ApiConstants.googleLogin,
         data: {
           'idToken': idToken,
+          'deviceName': ApiConstants.defaultDeviceName,
+          'ipAddress': ApiConstants.defaultIpAddress,
         },
       );
       return AuthTokenModel.fromJson(response.data);

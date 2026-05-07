@@ -11,6 +11,8 @@ import '../storage/secure_storage_impl.dart';
 class DioClient {
   late final Dio _dio;
 
+  Dio get dio => _dio;
+
   DioClient({required SecureStorageImpl secureStorage}) {
     _dio = Dio(
       BaseOptions(

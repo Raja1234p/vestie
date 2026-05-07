@@ -6,7 +6,9 @@ import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_dimens.dart';
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/di/service_locator.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/common/app_outline_neutral_button.dart';
 import '../../../../core/widgets/common/flow_hero_image_card.dart';
@@ -15,11 +17,13 @@ import '../../../../app/router/route_args/project_detail_flow_args.dart';
 import '../widgets/cancel_project_confirm_dialog.dart';
 
 class CancelProjectScreen extends StatelessWidget {
+  final String projectId;
   final String projectName;
   final int membersWithUnpaidBorrows;
 
   const CancelProjectScreen({
     super.key,
+    required this.projectId,
     required this.projectName,
     this.membersWithUnpaidBorrows = 0,
   });
@@ -94,12 +98,23 @@ class CancelProjectScreen extends StatelessWidget {
                           projectName: projectName,
                           onConfirm: () {
                             if (!context.mounted) return;
-                            context.pushReplacement(
-                              AppRoutes.projectCancelled,
-                              extra: ProjectCancelledRouteArgs(
-                                projectName: projectName,
-                              ),
-                            );
+                            final useCase =
+                                ServiceLocator.instance.cancelProjectUseCase;
+                            useCase(projectId: projectId).then((result) {
+                              if (!context.mounted) return;
+                              result.fold(
+                                (failure) => AppSnackBar.showError(
+                                  context,
+                                  failure.message,
+                                ),
+                                (_) => context.pushReplacement(
+                                  AppRoutes.projectCancelled,
+                                  extra: ProjectCancelledRouteArgs(
+                                    projectName: projectName,
+                                  ),
+                                ),
+                              );
+                            });
                           },
                         );
                       },

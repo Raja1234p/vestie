@@ -3,7 +3,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../../features/borrow/presentation/cubit/borrow_cubit.dart';
 import '../../../features/borrow/presentation/pages/borrow_flow_screen.dart';
-import '../../../features/contribute/presentation/cubit/contribute_cubit.dart';
+import '../../../../core/di/service_locator.dart';
+import '../../../features/contributions/presentation/bloc/contribute_bloc.dart';
+import '../../../features/contributions/presentation/bloc/contribute_event.dart';
 import '../../../features/contribute/presentation/pages/contribute_flow_screen.dart';
 import '../../../features/project_detail/domain/entities/borrow_request_entity.dart';
 import '../../../features/project_detail/domain/entities/member_entity.dart';
@@ -34,7 +36,7 @@ List<RouteBase> buildProjectRoutes({
       builder: (context, state) {
         final extra = state.extra;
         if (extra is! ProjectDetailRouteArgs) return invalidRouteScreen();
-        return ProjectDetailScreen(project: extra.project);
+        return ProjectDetailScreen(projectId: extra.projectId);
       },
     ),
     GoRoute(
@@ -42,7 +44,7 @@ List<RouteBase> buildProjectRoutes({
       builder: (context, state) {
         final extra = state.extra;
         if (extra is! ProjectDetailRouteArgs) return invalidRouteScreen();
-        return InvestmentProjectDetailScreen(project: extra.project);
+        return InvestmentProjectDetailScreen(projectId: extra.projectId);
       },
     ),
     GoRoute(
@@ -51,7 +53,7 @@ List<RouteBase> buildProjectRoutes({
         final extra = state.extra;
         if (extra is! ProjectWalletFlowArgs) return invalidRouteScreen();
         return BlocProvider(
-          create: (_) => ContributeCubit(extra),
+          create: (_) => ServiceLocator.instance.contributeBloc..add(InitArgsEvent(args: extra)),
           child: const ContributeFlowScreen(),
         );
       },
@@ -75,6 +77,7 @@ List<RouteBase> buildProjectRoutes({
         if (extra.member is! MemberEntity) return invalidRouteScreen();
         return MemberDetailScreen(
           member: extra.member as MemberEntity,
+          projectId: extra.projectId,
           projectName: extra.projectName,
           isLeaderView: extra.isLeaderView,
         );
@@ -84,8 +87,12 @@ List<RouteBase> buildProjectRoutes({
       path: AppRoutes.memberPenaltyAction,
       builder: (context, state) {
         final extra = state.extra;
-        if (extra is! MemberEntity) return invalidRouteScreen();
-        return MemberPenaltyActionScreen(member: extra);
+        if (extra is! MemberPenaltyActionRouteArgs) return invalidRouteScreen();
+        if (extra.member is! MemberEntity) return invalidRouteScreen();
+        return MemberPenaltyActionScreen(
+          member: extra.member as MemberEntity,
+          projectId: extra.projectId,
+        );
       },
     ),
     GoRoute(
@@ -94,7 +101,11 @@ List<RouteBase> buildProjectRoutes({
     ),
     GoRoute(
       path: AppRoutes.joinRequests,
-      builder: (context, _) => const JoinRequestsScreen(),
+      builder: (context, state) {
+        final extra = state.extra;
+        if (extra is! JoinRequestsRouteArgs) return invalidRouteScreen();
+        return JoinRequestsScreen(projectId: extra.projectId);
+      },
     ),
     GoRoute(
       path: AppRoutes.borrowRequests,
@@ -116,7 +127,10 @@ List<RouteBase> buildProjectRoutes({
       builder: (context, state) {
         final extra = state.extra;
         if (extra is! MarkSuccessfulRouteArgs) return invalidRouteScreen();
-        return MarkProjectSuccessfulScreen(memberCount: extra.memberCount);
+        return MarkProjectSuccessfulScreen(
+          projectId: extra.projectId,
+          memberCount: extra.memberCount,
+        );
       },
     ),
     GoRoute(
@@ -125,6 +139,7 @@ List<RouteBase> buildProjectRoutes({
         final extra = state.extra;
         if (extra is! CancelProjectRouteArgs) return invalidRouteScreen();
         return CancelProjectScreen(
+          projectId: extra.projectId,
           projectName: extra.projectName,
           membersWithUnpaidBorrows: extra.membersWithUnpaidBorrows,
         );

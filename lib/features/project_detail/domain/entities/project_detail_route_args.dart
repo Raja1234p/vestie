@@ -1,7 +1,5 @@
-import 'project_detail_entity.dart';
-
 class ProjectDetailRouteArgs {
-  final ProjectDetailEntity project;
+  final String projectId;
 
-  const ProjectDetailRouteArgs({required this.project});
+  const ProjectDetailRouteArgs({required this.projectId});
 }

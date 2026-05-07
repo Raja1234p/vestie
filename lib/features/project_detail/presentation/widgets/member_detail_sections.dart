@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/app_routes.dart';
+import '../../../../app/router/route_args/project_detail_flow_args.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_button.dart';
@@ -18,6 +19,8 @@ class MemberIdentitySection extends StatelessWidget {
   final String projectName;
   final bool isLeaderView;
   final bool isCoLeader;
+  final Future<bool> Function()? onAssignCoLeader;
+  final Future<bool> Function()? onRemoveCoLeader;
 
   const MemberIdentitySection({
     super.key,
@@ -26,6 +29,8 @@ class MemberIdentitySection extends StatelessWidget {
     required this.projectName,
     required this.isLeaderView,
     required this.isCoLeader,
+    this.onAssignCoLeader,
+    this.onRemoveCoLeader,
   });
 
   @override
@@ -78,11 +83,13 @@ class MemberIdentitySection extends StatelessWidget {
                     context,
                     memberName: member.name,
                     projectName: projectName,
+                    onConfirmed: onRemoveCoLeader,
                   )
                 : showMakeCoLeaderFlow(
                     context,
                     memberName: member.name,
                     projectName: projectName,
+                    onConfirmed: onAssignCoLeader,
                   ),
           ),
         ],
@@ -184,8 +191,13 @@ class MemberTransactionsSection extends StatelessWidget {
 
 class MemberOverdueBanner extends StatelessWidget {
   final MemberEntity member;
+  final String? projectId;
 
-  const MemberOverdueBanner({super.key, required this.member});
+  const MemberOverdueBanner({
+    super.key,
+    required this.member,
+    this.projectId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -214,7 +226,10 @@ class MemberOverdueBanner extends StatelessWidget {
             text: AppStrings.btnTakeAction,
             onPressed: () => context.push(
               AppRoutes.memberPenaltyAction,
-              extra: member,
+              extra: MemberPenaltyActionRouteArgs(
+                member: member,
+                projectId: projectId ?? '',
+              ),
             ),
             width: 120.w,
             height: 40.h,

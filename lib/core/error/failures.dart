@@ -17,3 +17,32 @@ class ServerFailure extends Failure {
 class CacheFailure extends Failure {
   const CacheFailure([super.message = 'A local storage error occurred.', super.title]);
 }
+
+class NetworkFailure extends Failure {
+  const NetworkFailure([super.message = 'Please check your internet connection.', super.title]);
+}
+
+class ValidationFailure extends Failure {
+  final Map<String, List<String>>? errors;
+  const ValidationFailure([String message = 'Validation failed.', String? title, this.errors])
+      : super(message, title);
+
+  @override
+  List<Object?> get props => [message, title, errors];
+}
+
+class UnauthorizedFailure extends Failure {
+  const UnauthorizedFailure([super.message = 'Unauthorized', super.title]);
+}
+
+class ForbiddenFailure extends Failure {
+  const ForbiddenFailure([super.message = 'Forbidden', super.title]);
+}
+
+class TimeoutFailure extends Failure {
+  const TimeoutFailure([super.message = 'Request timed out.', super.title]);
+}
+
+class UnknownFailure extends Failure {
+  const UnknownFailure([super.message = 'An unknown error occurred.', super.title]);
+}

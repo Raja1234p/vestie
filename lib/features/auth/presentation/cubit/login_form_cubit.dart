@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/utils/validation_utils.dart';
+import '../../../../core/utils/validators.dart';
 
 class LoginFormState extends Equatable {
   final bool passwordVisible;
@@ -50,15 +50,15 @@ class LoginFormCubit extends Cubit<LoginFormState> {
   void clearPasswordError() => emit(state.copyWith(clearPasswordError: true));
 
   void onFieldsChanged(String email, String password) {
-    final emailErr = ValidationUtils.validateEmail(email);
-    final passErr  = ValidationUtils.validatePassword(password);
+    final emailErr = Validators.email(email);
+    final passErr  = Validators.password(password);
     emit(state.copyWith(isValid: emailErr == null && passErr == null));
   }
 
   /// Returns true if all fields pass validation.
   bool validate(String email, String password) {
-    final emailErr = ValidationUtils.validateEmail(email);
-    final passErr  = ValidationUtils.validatePassword(password);
+    final emailErr = Validators.email(email);
+    final passErr  = Validators.password(password);
     emit(state.copyWith(
       emailError: emailErr,
       passwordError: passErr,

@@ -25,7 +25,7 @@ class RegisterScreen extends StatelessWidget {
       child: BlocListener<RegisterBloc, RegisterState>(
         listener: (context, state) {
           if (state is RegisterSuccess) {
-            context.go(AppRoutes.verify, extra: state.email);
+            context.go(AppRoutes.verify, extra: state.user.email);
           } else if (state is RegisterGoogleSuccess) {
             if (state.isDisclaimerAccepted) {
               context.go(AppRoutes.dashboard);

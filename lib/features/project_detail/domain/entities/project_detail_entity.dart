@@ -16,6 +16,11 @@ class ProjectDetailEntity {
   final List<MemberEntity> members;
   final List<BorrowRequestEntity> borrowRequests;
   final bool isLeader;
+  final String membershipId;
+  final double borrowLimitAmount;
+  final int repaymentWindowDays;
+  final int repaymentGraceDays;
+  final bool contributionsAreNonRefundable;
 
   const ProjectDetailEntity({
     required this.id,
@@ -29,6 +34,11 @@ class ProjectDetailEntity {
     required this.members,
     required this.borrowRequests,
     this.isLeader = false,
+    this.membershipId = '',
+    this.borrowLimitAmount = 0,
+    this.repaymentWindowDays = 0,
+    this.repaymentGraceDays = 0,
+    this.contributionsAreNonRefundable = false,
   });
 
   double get progress =>

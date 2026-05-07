@@ -2,14 +2,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/constants/storage_keys.dart';
 import '../../../../core/di/service_locator.dart';
+import '../../../../core/bloc/form_submission_state.dart';
+import '../../../../core/bloc/base_form_bloc.dart';
+import '../../../../core/utils/validators.dart';
 import '../../domain/usecases/login_use_case.dart';
 import '../../domain/usecases/google_login_use_case.dart';
 import '../../domain/usecases/get_risk_disclaimer_use_case.dart';
+import '../../domain/entities/user.dart';
 import 'login_event.dart';
 import 'login_state.dart';
 
 /// Handles login API flow.
-class LoginBloc extends Bloc<LoginEvent, LoginState> {
+class LoginBloc extends BaseFormBloc<LoginEvent, LoginState> {
   final LoginUseCase _loginUseCase;
   final GoogleLoginUseCase _googleLoginUseCase;
   final GetRiskDisclaimerUseCase _getRiskDisclaimerUseCase;
@@ -31,8 +35,30 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     LoginSubmitted event,
     Emitter<LoginState> emit,
   ) async {
-    emit(const LoginLoading());
+    final emailError = Validators.validateEmail(event.email);
+    if (emailError != null) {
+      emit(LoginError(message: 'Validation Error', validationErrors: {'email': emailError}));
+      return;
+    }
 
+    await executeSubmission<User>(
+      () => _loginUseCase(
+        email: event.email,
+        password: event.password,
+        deviceName: ApiConstants.defaultDeviceName,
+        ipAddress: ApiConstants.defaultIpAddress,
+      ),
+      emit,
+      stateBuilder: (status, errorMessage, errors, user) {
+        if (status == FormSubmissionStatus.submitting) return const LoginLoading();
+        if (status == FormSubmissionStatus.failure) return LoginError(message: errorMessage ?? 'Error', validationErrors: errors);
+        return const LoginLoading(); // Temporarily loading while resolving disclaimer
+      },
+    );
+
+    if (state is LoginError) return;
+
+    // Resolve success explicitly since we need the disclaimer
     final result = await _loginUseCase(
       email: event.email,
       password: event.password,
@@ -41,9 +67,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     );
 
     await result.fold(
-      (failure) async {
-        emit(LoginError(message: failure.message, title: failure.title));
-      },
+      (failure) async {},
       (user) async {
         // Save tokens
         if (user.accessToken != null) {

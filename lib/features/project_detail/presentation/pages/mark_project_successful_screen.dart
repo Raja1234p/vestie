@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_dimens.dart';
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/di/service_locator.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/widgets/common/app_button.dart';
@@ -13,10 +14,12 @@ import '../widgets/mark_project_successful_widgets.dart';
 import '../widgets/mark_successful_vote_dialog.dart';
 
 class MarkProjectSuccessfulScreen extends StatelessWidget {
+  final String projectId;
   final int memberCount;
 
   const MarkProjectSuccessfulScreen({
     super.key,
+    required this.projectId,
     required this.memberCount,
   });
 
@@ -73,11 +76,22 @@ class MarkProjectSuccessfulScreen extends StatelessWidget {
                         memberCount: memberCount,
                         onStarted: () {
                           if (!context.mounted) return;
-                          context.pop();
-                          AppSnackBar.showSuccess(
-                            context,
-                            AppStrings.successVoteStartedMessage,
-                          );
+                          final useCase =
+                              ServiceLocator.instance.openClosureVotingUseCase;
+                          useCase(projectId: projectId).then((result) {
+                            if (!context.mounted) return;
+                            result.fold(
+                              (failure) =>
+                                  AppSnackBar.showError(context, failure.message),
+                              (_) {
+                                context.pop();
+                                AppSnackBar.showSuccess(
+                                  context,
+                                  AppStrings.successVoteStartedMessage,
+                                );
+                              },
+                            );
+                          });
                         },
                       );
                     },

@@ -47,6 +47,7 @@ class LeaderActionOutlineButton extends StatelessWidget {
 Future<void> showRemoveMemberConfirm(
   BuildContext context, {
   required String memberName,
+  Future<void> Function()? onConfirmed,
 }) {
   return AppActionDialog.show(
     context,
@@ -54,18 +55,27 @@ Future<void> showRemoveMemberConfirm(
     description: AppStrings.removeMemberBody(memberName),
     primaryLabel: AppStrings.btnRemove,
     primaryColor: AppColors.red800,
-    onPrimary: () => Navigator.of(context).pop(),
+    onPrimary: () async {
+      Navigator.of(context).pop();
+      await onConfirmed?.call();
+    },
   );
 }
 
-Future<void> showMarkDefaultedConfirm(BuildContext context) {
+Future<void> showMarkDefaultedConfirm(
+  BuildContext context, {
+  Future<void> Function()? onConfirmed,
+}) {
   return AppActionDialog.show(
     context,
     title: AppStrings.markDefaultedConfirmTitle,
     description: AppStrings.markDefaultedConfirmBody,
     primaryLabel: AppStrings.markAsDefaulted,
     primaryColor: AppColors.red800,
-    onPrimary: () => Navigator.of(context).pop(),
+    onPrimary: () async {
+      Navigator.of(context).pop();
+      await onConfirmed?.call();
+    },
   );
 }
 
@@ -73,16 +83,21 @@ Future<void> showMakeCoLeaderFlow(
   BuildContext context, {
   required String memberName,
   required String projectName,
+  Future<bool> Function()? onConfirmed,
 }) async {
+  var shouldShowSuccess = true;
   await AppActionDialog.show(
     context,
     title: AppStrings.makeCoLeaderConfirmTitle,
     description: AppStrings.makeCoLeaderDescription(memberName),
     primaryLabel: AppStrings.btnMakeCoLeader,
     primaryColor: AppColors.purple800,
-    onPrimary: () => Navigator.of(context).pop(),
+    onPrimary: () async {
+      Navigator.of(context).pop();
+      shouldShowSuccess = await onConfirmed?.call() ?? true;
+    },
   );
-  if (!context.mounted) return;
+  if (!context.mounted || !shouldShowSuccess) return;
   await AppActionDialog.show(
     context,
     title: AppStrings.coLeaderAssignedTitle,
@@ -101,7 +116,9 @@ Future<void> showRemoveCoLeaderFlow(
   BuildContext context, {
   required String memberName,
   required String projectName,
+  Future<bool> Function()? onConfirmed,
 }) async {
+  var shouldShowSuccess = true;
   await AppActionDialog.show(
     context,
     title: AppStrings.removeCoLeaderConfirmTitle,
@@ -109,9 +126,12 @@ Future<void> showRemoveCoLeaderFlow(
     primaryLabel: AppStrings.btnRemoveCoLeader,
     secondaryLabel: AppStrings.btnCancel,
     primaryColor: AppColors.red800,
-    onPrimary: () => Navigator.of(context).pop(),
+    onPrimary: () async {
+      Navigator.of(context).pop();
+      shouldShowSuccess = await onConfirmed?.call() ?? true;
+    },
   );
-  if (!context.mounted) return;
+  if (!context.mounted || !shouldShowSuccess) return;
   await AppActionDialog.show(
     context,
     title: AppStrings.coLeaderRemovedTitle,

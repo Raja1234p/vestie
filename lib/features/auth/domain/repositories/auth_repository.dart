@@ -46,6 +46,13 @@ abstract class AuthRepository {
 
   Future<Either<Failure, User>> getMe();
 
+  Future<Either<Failure, User>> updateMe({
+    required String firstName,
+    required String lastName,
+    required String userName,
+    required String photoUrl,
+  });
+
   Future<Either<Failure, RiskDisclaimer>> getRiskDisclaimer();
 
   Future<Either<Failure, String>> acceptRiskDisclaimer({

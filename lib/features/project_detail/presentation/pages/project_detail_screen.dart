@@ -11,48 +11,47 @@ import '../../../../core/widgets/common/app_toggle_tab_bar.dart';
 import '../../../../core/widgets/common/leader_action_menu.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../../core/widgets/common/post_auth_header.dart';
+import '../../../../core/di/service_locator.dart';
 import '../../../home/domain/entities/project.dart';
 import '../../domain/entities/member_entity.dart';
 import '../../domain/entities/project_detail_entity.dart';
-import '../cubit/project_detail_cubit.dart';
-import '../cubit/project_detail_state.dart';
+import '../../../projects/presentation/bloc/project_detail_bloc.dart';
 import '../navigation/project_detail_navigation_helpers.dart';
 import '../widgets/announcement_card.dart';
 import '../widgets/project_detail_tab_panels.dart';
 import '../widgets/project_detail_user_completed_content.dart';
 import '../widgets/project_info_card.dart';
 
-/// Shell — provides ProjectDetailCubit. Route extra = [ProjectDetailEntity].
+/// Shell — provides ProjectDetailBloc. Route extra = [ProjectDetailEntity].
 class ProjectDetailScreen extends StatelessWidget {
-  final ProjectDetailEntity project;
+  final String projectId;
 
-  const ProjectDetailScreen({super.key, required this.project});
+  const ProjectDetailScreen({super.key, required this.projectId});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ProjectDetailCubit(),
-      child: _ProjectDetailBody(project: project),
+      create: (_) => ServiceLocator.instance.projectDetailBloc..add(LoadProjectDetailEvent(projectId: projectId)),
+      child: const _ProjectDetailBody(),
     );
   }
 }
 
 // ── Body ──────────────────────────────────────────────────────────────────────
 class _ProjectDetailBody extends StatelessWidget {
-  final ProjectDetailEntity project;
-  const _ProjectDetailBody({required this.project});
+  const _ProjectDetailBody();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: PostAuthGradientBackground(
-        child: BlocBuilder<ProjectDetailCubit, ProjectDetailState>(
+        child: BlocBuilder<ProjectDetailBloc, ProjectDetailState>(
           builder: (context, state) {
-            if (state.status == ProjectDetailViewStatus.error) {
+            if (state is ProjectDetailError) {
               return Center(
                 child: Text(
-                  state.errorMessage ?? AppStrings.errorGeneric,
+                  state.message,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: AppColors.textBody,
                       ),
@@ -60,102 +59,114 @@ class _ProjectDetailBody extends StatelessWidget {
               );
             }
 
-            if (state.status == ProjectDetailViewStatus.loading) {
+            if (state is ProjectDetailLoading || state is ProjectDetailInitial) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
             }
 
-            final isMemberCompletedView =
-                !project.isLeader && project.status == ProjectStatus.completed;
+            if (state is ProjectDetailLoaded) {
+              final project = state.project;
+              final isMemberCompletedView =
+                  !project.isLeader && project.status == ProjectStatus.completed;
 
-            return CustomScrollView(
-              slivers: [
-                // ── Header ──────────────────────────────────────────
-                SliverToBoxAdapter(
-                  child: PostAuthHeader(
-                    title: project.name,
-                    leading: AppBackButton(
-                      onPressed: () => context.pop(),
-                    ),
-                    // "..." leader menu only visible to project owner
-                    trailing: project.isLeader
-                        ? LeaderActionMenu(
-                            joinRequestCount: 3,
-                            onSelected: (action) => ProjectDetailNavigationHelpers
-                                .handleLeaderAction(
-                              context,
-                              project: project,
-                              action: action,
-                            ),
-                          )
-                        : null,
-                  ),
-                ),
-
-                // ── Content ─────────────────────────────────────────
-                SliverPadding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  sliver: SliverToBoxAdapter(
-                    child: isMemberCompletedView
-                        ? ProjectDetailUserCompletedContent(
-                            project: project,
-                            onMemberTap: (member) {
-                              context.push(
-                                AppRoutes.memberDetail,
-                                extra: ProjectDetailNavigationHelpers
-                                    .memberDetailArgs(project, member),
-                              );
-                            },
-                          )
-                        : Column(
-                            children: [
-                              SizedBox(height: 12.h),
-                              AnnouncementCard(
-                                text: project.announcement,
-                                isLeader: project.isLeader,
-                                onDelete: () {
-                                  // TODO: delete announcement via BLoC
-                                },
-                              ),
-                              SizedBox(height: 12.h),
-                              ProjectInfoCard(project: project),
-                              SizedBox(height: 16.h),
-                              AppButton(
-                                text: AppStrings.btnContribute,
-                                onPressed: () => context.push(
-                                  AppRoutes.contributeFlow,
-                                  extra: ProjectDetailNavigationHelpers
-                                      .walletArgs(project),
-                                ),
-                              ),
-                              SizedBox(height: 13.h),
-                              AppButton(
-                                text: AppStrings.btnBorrow,
-                                onPressed: () => context.push(
-                                  AppRoutes.borrowFlow,
-                                  extra: ProjectDetailNavigationHelpers
-                                      .walletArgs(project),
-                                ),
-                                isSecondary: true,
-                              ),
-                              SizedBox(height: 20.h),
-                              _TabSection(
+              return CustomScrollView(
+                slivers: [
+                  // ── Header ──────────────────────────────────────────
+                  SliverToBoxAdapter(
+                    child: PostAuthHeader(
+                      title: project.name,
+                      leading: AppBackButton(
+                        onPressed: () => context.pop(),
+                      ),
+                      // "..." leader menu only visible to project owner
+                      trailing: project.isLeader
+                          ? LeaderActionMenu(
+                              joinRequestCount: 3,
+                              onSelected: (action) => ProjectDetailNavigationHelpers
+                                  .handleLeaderAction(
+                                context,
                                 project: project,
-                                onMemberTap: (member) {
-                                  context.push(
-                                    AppRoutes.memberDetail,
-                                    extra: ProjectDetailNavigationHelpers
-                                        .memberDetailArgs(project, member),
-                                  );
-                                },
+                                action: action,
                               ),
-                              SizedBox(height: 32.h),
-                            ],
-                          ),
+                            )
+                          : null,
+                    ),
                   ),
-                ),
-              ],
+
+                  // ── Content ─────────────────────────────────────────
+                  SliverPadding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    sliver: SliverToBoxAdapter(
+                      child: isMemberCompletedView
+                          ? ProjectDetailUserCompletedContent(
+                              project: project,
+                              onMemberTap: (member) {
+                                context.push(
+                                  AppRoutes.memberDetail,
+                                  extra: ProjectDetailNavigationHelpers
+                                      .memberDetailArgs(project, member),
+                                );
+                              },
+                            )
+                          : Column(
+                              children: [
+                                SizedBox(height: 12.h),
+                                AnnouncementCard(
+                                  text: project.announcement,
+                                  isLeader: project.isLeader,
+                                  onDelete: () {
+                                    // TODO: delete announcement via BLoC
+                                  },
+                                ),
+                                SizedBox(height: 12.h),
+                                ProjectInfoCard(project: project),
+                                SizedBox(height: 16.h),
+                                AppButton(
+                                  text: AppStrings.btnContribute,
+                                  onPressed: () => context.push(
+                                    AppRoutes.contributeFlow,
+                                    extra: ProjectDetailNavigationHelpers
+                                        .walletArgs(project),
+                                  ),
+                                ),
+                                SizedBox(height: 13.h),
+                                AppButton(
+                                  text: AppStrings.btnBorrow,
+                                  onPressed: () => context.push(
+                                    AppRoutes.borrowFlow,
+                                    extra: ProjectDetailNavigationHelpers
+                                        .walletArgs(project),
+                                  ),
+                                  isSecondary: true,
+                                ),
+                                SizedBox(height: 20.h),
+                                _TabSection(
+                                  project: project,
+                                  onMemberTap: (member) {
+                                    context.push(
+                                      AppRoutes.memberDetail,
+                                      extra: ProjectDetailNavigationHelpers
+                                          .memberDetailArgs(project, member),
+                                    );
+                                  },
+                                ),
+                                SizedBox(height: 32.h),
+                              ],
+                            ),
+                    ),
+                  ),
+                ],
+              );
+            }
+
+            return Center(
+              child: Text(
+                AppStrings.errorGeneric,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: AppColors.textBody,
+                    ),
+              ),
             );
           },
         ),
@@ -176,9 +187,10 @@ class _TabSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ProjectDetailCubit, ProjectDetailState>(
+    return BlocBuilder<ProjectDetailBloc, ProjectDetailState>(
       builder: (context, state) {
-        final cubit = context.read<ProjectDetailCubit>();
+        if (state is! ProjectDetailLoaded) return const SizedBox.shrink();
+        final bloc = context.read<ProjectDetailBloc>();
         final isBorrowTab = state.activeTab == ProjectDetailTab.borrowRequests;
         return Column(
           children: [
@@ -190,11 +202,11 @@ class _TabSection extends StatelessWidget {
                     : AppStrings.tabMember,
               ],
               activeIndex: isBorrowTab ? 0 : 1,
-              onTabSelected: (i) => cubit.selectTab(
-                i == 0
+              onTabSelected: (i) => bloc.add(ChangeTabEvent(
+                activeTab: i == 0
                     ? ProjectDetailTab.borrowRequests
                     : ProjectDetailTab.members,
-              ),
+              )),
             ),
             SizedBox(height: 16.h),
             AnimatedSwitcher(

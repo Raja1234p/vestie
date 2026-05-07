@@ -8,16 +8,19 @@ class ProjectWalletFlowArgs {
   final double walletBalance;
   final double borrowLimit;
   final String borrowDueByLabel;
+  final String? membershipId;
 
   static const double defaultWallet = 2400.0;
   static const double defaultBorrowLimit = 250.0;
+  static const String defaultBorrowDueByLabel = 'May 1, 2025 (30 days)';
 
   const ProjectWalletFlowArgs({
     required this.projectId,
     required this.projectName,
     this.walletBalance = defaultWallet,
     this.borrowLimit = defaultBorrowLimit,
-    this.borrowDueByLabel = 'May 1, 2025 (30 days)',
+    this.borrowDueByLabel = defaultBorrowDueByLabel,
+    this.membershipId,
   });
 
   String get walletAmountFormatted {

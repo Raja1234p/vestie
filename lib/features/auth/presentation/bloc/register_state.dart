@@ -1,40 +1,51 @@
-import 'package:equatable/equatable.dart';
+import '../../../../core/bloc/form_submission_state.dart';
+import '../../domain/entities/user.dart';
 
-abstract class RegisterState extends Equatable {
-  const RegisterState();
+abstract class RegisterState extends FormSubmissionState {
+  const RegisterState({
+    super.status = FormSubmissionStatus.initial,
+    super.errorMessage,
+    super.validationErrors,
+  });
 }
 
 class RegisterInitial extends RegisterState {
-  const RegisterInitial();
-  @override
-  List<Object> get props => [];
+  const RegisterInitial() : super(status: FormSubmissionStatus.initial);
 }
 
 class RegisterLoading extends RegisterState {
-  const RegisterLoading();
-  @override
-  List<Object> get props => [];
+  const RegisterLoading() : super(status: FormSubmissionStatus.submitting);
 }
 
-/// Registration succeeded — carry email to OTP verify screen.
 class RegisterSuccess extends RegisterState {
-  final String email;
-  const RegisterSuccess({required this.email});
-  @override
-  List<Object> get props => [email];
-}
+  final User user;
 
-class RegisterGoogleSuccess extends RegisterState {
-  final bool isDisclaimerAccepted;
-  const RegisterGoogleSuccess({this.isDisclaimerAccepted = false});
+  const RegisterSuccess({required this.user}) : super(status: FormSubmissionStatus.success);
+
   @override
-  List<Object> get props => [isDisclaimerAccepted];
+  List<Object?> get props => [status, errorMessage, validationErrors, user];
 }
 
 class RegisterError extends RegisterState {
   final String message;
   final String? title;
-  const RegisterError({required this.message, this.title});
+
+  const RegisterError({
+    required this.message,
+    this.title,
+    Map<String, String>? validationErrors,
+  }) : super(status: FormSubmissionStatus.failure, errorMessage: message, validationErrors: validationErrors);
+
   @override
-  List<Object?> get props => [message, title];
+  List<Object?> get props => [status, errorMessage, validationErrors, message, title];
+}
+
+class RegisterGoogleSuccess extends RegisterState {
+  final bool isDisclaimerAccepted;
+
+  const RegisterGoogleSuccess({required this.isDisclaimerAccepted})
+      : super(status: FormSubmissionStatus.success);
+
+  @override
+  List<Object?> get props => [status, errorMessage, validationErrors, isDisclaimerAccepted];
 }

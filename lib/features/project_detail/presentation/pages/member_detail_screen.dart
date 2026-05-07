@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/di/service_locator.dart';
+import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/widgets/common/app_back_button.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../../core/widgets/common/post_auth_header.dart';
@@ -12,12 +14,14 @@ import '../widgets/member_detail_sections.dart';
 
 class MemberDetailScreen extends StatelessWidget {
   final MemberEntity member;
+  final String projectId;
   final String projectName;
   final bool isLeaderView;
 
   const MemberDetailScreen({
     super.key,
     required this.member,
+    required this.projectId,
     required this.projectName,
     this.isLeaderView = false,
   });
@@ -41,6 +45,48 @@ class MemberDetailScreen extends StatelessWidget {
           );
 
   String get _username => '@${member.name.toLowerCase().replaceAll(' ', '-')}';
+
+  Future<bool> _assignCoLeader(BuildContext context) async {
+    final result = await ServiceLocator.instance.assignCoLeaderUseCase(
+      projectId: projectId,
+      userId: member.id,
+    );
+    if (!context.mounted) return false;
+    return result.fold(
+      (failure) {
+        AppSnackBar.showError(context, failure.message);
+        return false;
+      },
+      (_) => true,
+    );
+  }
+
+  Future<bool> _removeCoLeader(BuildContext context) async {
+    final result = await ServiceLocator.instance.removeCoLeaderUseCase(
+      projectId: projectId,
+      userId: member.id,
+    );
+    if (!context.mounted) return false;
+    return result.fold(
+      (failure) {
+        AppSnackBar.showError(context, failure.message);
+        return false;
+      },
+      (_) => true,
+    );
+  }
+
+  Future<void> _removeMember(BuildContext context) async {
+    final result = await ServiceLocator.instance.removeMemberUseCase(
+      projectId: projectId,
+      userId: member.id,
+    );
+    if (!context.mounted) return;
+    result.fold(
+      (failure) => AppSnackBar.showError(context, failure.message),
+      (_) => AppSnackBar.showSuccess(context, 'Member removed successfully'),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +115,8 @@ class MemberDetailScreen extends StatelessWidget {
                       projectName: projectName,
                       isLeaderView: isLeaderView,
                       isCoLeader: _isCoLeader,
+                      onAssignCoLeader: () => _assignCoLeader(context),
+                      onRemoveCoLeader: () => _removeCoLeader(context),
                     ),
                     SizedBox(height: 16.h),
                     MemberMetricsSection(
@@ -83,7 +131,7 @@ class MemberDetailScreen extends StatelessWidget {
                     ),
                     if (isLeaderView && _hasOverdue) ...[
                       SizedBox(height: 12.h),
-                      MemberOverdueBanner(member: member),
+                      MemberOverdueBanner(member: member, projectId: projectId),
                     ],
                     if (isLeaderView) ...[
                       SizedBox(height: 70.h),
@@ -92,6 +140,7 @@ class MemberDetailScreen extends StatelessWidget {
                         onTap: () => showRemoveMemberConfirm(
                           context,
                           memberName: member.name,
+                          onConfirmed: () => _removeMember(context),
                         ),
                       ),
                     ],

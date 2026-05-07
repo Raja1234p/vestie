@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/service_locator.dart';
+import '../../domain/entities/user.dart';
 import '../../domain/usecases/register_use_case.dart';
 import '../../domain/usecases/google_login_use_case.dart';
 import '../../domain/usecases/get_risk_disclaimer_use_case.dart';
@@ -41,7 +42,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
     result.fold(
       (failure) => emit(RegisterError(message: failure.message, title: failure.title)),
-      (_) => emit(RegisterSuccess(email: event.email)),
+      (_) => emit(RegisterSuccess(user: User(id: '', name: event.name, email: event.email))),
     );
   }
 

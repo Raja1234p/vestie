@@ -14,13 +14,19 @@ class ApiConstants {
   static const String refreshToken   = '/api/v1/auth/refresh';
   static const String forgotPassword = '/api/v1/auth/forgot-password';
   static const String resetPassword  = '/api/v1/auth/reset-password';
-  static const String googleLogin    = '/api/v1/google';
+  static const String googleLogin    = '/api/v1/auth/google';
   static const String appleLogin     = '/api/v1/auth/apple';
   static const String logout         = '/api/v1/auth/logout';
 
   // ── User ─────────────────────────────────────────────────────────────────
   static const String me              = '/api/v1/users/me';
   static const String riskDisclaimer  = '/api/v1/users/me/risk-disclaimer';
+
+  // ── Projects ─────────────────────────────────────────────────────────────
+  static const String projects = '/api/v1/projects';
+
+  // ── Contributions ────────────────────────────────────────────────────────
+  static const String contributions = '/api/v1/contributions';
 
   static const String googleServerClientId = '531408349211-pfs5okgjus8t8iecl9arrt782mo4ppob.apps.googleusercontent.com';
 

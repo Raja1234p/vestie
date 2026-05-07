@@ -8,29 +8,53 @@ class BorrowRequestsRouteArgs<T> {
   });
 }
 
+class JoinRequestsRouteArgs {
+  final String projectId;
+
+  const JoinRequestsRouteArgs({required this.projectId});
+}
+
 class MemberDetailRouteArgs<T> {
   final T member;
+  final String projectId;
   final String projectName;
   final bool isLeaderView;
 
   const MemberDetailRouteArgs({
     required this.member,
+    required this.projectId,
     required this.projectName,
     this.isLeaderView = false,
   });
 }
 
+class MemberPenaltyActionRouteArgs<T> {
+  final T member;
+  final String projectId;
+
+  const MemberPenaltyActionRouteArgs({
+    required this.member,
+    required this.projectId,
+  });
+}
+
 class MarkSuccessfulRouteArgs {
+  final String projectId;
   final int memberCount;
 
-  const MarkSuccessfulRouteArgs({required this.memberCount});
+  const MarkSuccessfulRouteArgs({
+    required this.projectId,
+    required this.memberCount,
+  });
 }
 
 class CancelProjectRouteArgs {
+  final String projectId;
   final String projectName;
   final int membersWithUnpaidBorrows;
 
   const CancelProjectRouteArgs({
+    required this.projectId,
     required this.projectName,
     this.membersWithUnpaidBorrows = 0,
   });
@@ -62,6 +86,7 @@ class UserStatusFlowArgs {
 
 /// Member success-vote screen (leader has started a vote).
 class UserSuccessVoteArgs {
+  final String? projectId;
   final String projectName;
   final double goalAmount;
   final int memberCount;
@@ -70,6 +95,7 @@ class UserSuccessVoteArgs {
   final int daysRemaining;
 
   const UserSuccessVoteArgs({
+    this.projectId,
     required this.projectName,
     required this.goalAmount,
     required this.memberCount,

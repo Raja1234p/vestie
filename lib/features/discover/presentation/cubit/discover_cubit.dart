@@ -2,8 +2,9 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/di/service_locator.dart';
 import '../../../home/domain/entities/project.dart';
-import '../../../home/domain/mock_projects.dart';
+import '../../../projects/domain/usecases/list_projects_use_case.dart';
 
 class DiscoverState extends Equatable {
   final List<Project> allProjects;
@@ -42,20 +43,26 @@ class DiscoverState extends Equatable {
 }
 
 class DiscoverCubit extends Cubit<DiscoverState> {
-  DiscoverCubit() : super(const DiscoverState()) {
+  final ListProjectsUseCase _listProjectsUseCase;
+
+  DiscoverCubit({ListProjectsUseCase? listProjectsUseCase})
+      : _listProjectsUseCase =
+            listProjectsUseCase ?? ServiceLocator.instance.listProjectsUseCase,
+        super(const DiscoverState()) {
     _load();
   }
 
   Future<void> _load() async {
     emit(state.copyWith(loading: true));
-    await Future.delayed(const Duration(milliseconds: 600));
-    // TODO: Replace with DiscoverRepository call
-    final projects = MockProjects.discoverProjects;
-    emit(state.copyWith(
-      loading: false,
-      allProjects: projects,
-      filtered: projects,
-    ));
+    final result = await _listProjectsUseCase(scope: 'discover');
+    result.fold(
+      (failure) => emit(state.copyWith(loading: false, allProjects: const [], filtered: const [])),
+      (projects) => emit(state.copyWith(
+        loading: false,
+        allProjects: projects,
+        filtered: projects,
+      )),
+    );
   }
 
   void selectFilter(String filter) {

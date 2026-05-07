@@ -106,6 +106,16 @@ class _EditProfileBodyState extends State<_EditProfileBody> {
                             }
                           },
                         ),
+                      if (state.error != null && state.error!.isNotEmpty) ...[
+                        SizedBox(height: 12.h),
+                        Text(
+                          state.error!,
+                          style: GoogleFonts.lato(
+                            fontSize: 12.sp,
+                            color: AppColors.error,
+                          ),
+                        ),
+                      ],
                       ],
                     ),
                   ),

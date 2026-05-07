@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/widgets/common/app_back_button.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/common/app_purple_dashed_line.dart';
@@ -17,24 +18,35 @@ import '../../../../core/widgets/common/app_tick_switch.dart';
 import '../../../../core/widgets/common/app_wallet_pill.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../../core/widgets/common/post_auth_header.dart';
-import '../cubit/contribute_cubit.dart';
+import '../../../contributions/presentation/bloc/contribute_bloc.dart';
+import '../../../contributions/presentation/bloc/contribute_event.dart';
+import '../../../contributions/presentation/bloc/contribute_state.dart';
 
 class ContributeFlowScreen extends StatelessWidget {
   const ContributeFlowScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ContributeCubit, ContributeState>(
-      builder: (context, s) {
-        switch (s.step) {
-          case ContributeStep.amount:
-            return const _ContributeAmountView();
-          case ContributeStep.confirm:
-            return _ContributeConfirmView(state: s);
-          case ContributeStep.success:
-            return _ContributeSuccessView(state: s);
+    return BlocListener<ContributeBloc, ContributeState>(
+      listenWhen: (p, c) => p.submitFailure != c.submitFailure || p.previewFailure != c.previewFailure,
+      listener: (context, state) {
+        final msg = state.submitFailure?.message ?? state.previewFailure?.message;
+        if (msg != null && msg.isNotEmpty) {
+          AppSnackBar.showError(context, msg);
         }
       },
+      child: BlocBuilder<ContributeBloc, ContributeState>(
+        builder: (context, s) {
+          switch (s.step) {
+            case ContributeStep.amount:
+              return const _ContributeAmountView();
+            case ContributeStep.confirm:
+              return _ContributeConfirmView(state: s);
+            case ContributeStep.success:
+              return _ContributeSuccessView(state: s);
+          }
+        },
+      ),
     );
   }
 }
@@ -60,7 +72,7 @@ class _ContributeAmountViewState extends State<_ContributeAmountView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       _amountDigitsController.text =
-          context.read<ContributeCubit>().state.amountDigits;
+          context.read<ContributeBloc>().state.amountDigits;
     });
   }
 
@@ -83,11 +95,13 @@ class _ContributeAmountViewState extends State<_ContributeAmountView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ContributeCubit, ContributeState>(
+    return BlocBuilder<ContributeBloc, ContributeState>(
       builder: (context, state) {
-        final c = context.read<ContributeCubit>();
+        final bloc = context.read<ContributeBloc>();
         _syncAmountField(state);
         final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
+        final args = state.args;
+
         return Scaffold(
           resizeToAvoidBottomInset: true,
           backgroundColor: Colors.transparent,
@@ -128,11 +142,11 @@ class _ContributeAmountViewState extends State<_ContributeAmountView> {
                                     : state.displayAmountDollar,
                                 controller: _amountDigitsController,
                                 focusNode: _amountFocus,
-                                onDigitsChanged: c.setAmountDigits,
+                                onDigitsChanged: (raw) => bloc.add(DigitsChangedEvent(digits: raw)),
                               ),
                               SizedBox(height: 20.h),
                               AppWalletPill(
-                                formattedBalance: state.args.walletAmountFormatted,
+                                formattedBalance: args?.walletAmountFormatted ?? '0.00',
                                 onTap: () {},
                               ),
                             ],
@@ -146,7 +160,8 @@ class _ContributeAmountViewState extends State<_ContributeAmountView> {
                   padding: EdgeInsets.symmetric(horizontal: 24.w),
                   child: AppButton(
                     text: AppStrings.btnConfirm,
-                    onPressed: state.amountValue <= 0 ? null : c.toConfirm,
+                    isLoading: state.isPreviewLoading,
+                    onPressed: state.amountValue <= 0 ? null : () => bloc.add(GoToConfirmEvent()),
                   ),
                 ),
                 SizedBox(height: 12.h),
@@ -165,7 +180,9 @@ class _ContributeConfirmView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = context.read<ContributeCubit>();
+    final bloc = context.read<ContributeBloc>();
+    final args = state.args;
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: PostAuthGradientBackground(
@@ -176,7 +193,7 @@ class _ContributeConfirmView extends StatelessWidget {
               title: AppStrings.contributeConfirmHeader,
               padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 8.h),
               leading: AppBackButton(
-                onPressed: c.backToAmount,
+                onPressed: () => bloc.add(BackToAmountEvent()),
                 color: AppColors.textPrimary,
               ),
             ),
@@ -201,7 +218,7 @@ class _ContributeConfirmView extends StatelessWidget {
                             ),
                           ),
                           AppWalletPill(
-                            formattedBalance: state.args.walletAmountFormatted,
+                            formattedBalance: args?.walletAmountFormatted ?? '0.00',
                             onTap: () {},
                             backgroundColor: AppColors.cardBg,
                             borderColor: AppColors.cardBorder,
@@ -241,7 +258,7 @@ class _ContributeConfirmView extends StatelessWidget {
                     children: [
                       AppTickSwitch(
                         value: state.nonRefundableAccepted,
-                        onChanged: (v) => c.setNonRefundable(v),
+                        onChanged: (v) => bloc.add(SetNonRefundableEvent(accepted: v)),
                       ),
                       SizedBox(width: 6.w),
                       SizedBox(width: 4.w),
@@ -266,9 +283,14 @@ class _ContributeConfirmView extends StatelessWidget {
               minimum: EdgeInsets.fromLTRB(16.w, 0, 16.w, 24.h),
               child: AppButton(
                 text: AppStrings.btnConfirm,
+                isLoading: state.isSubmitLoading,
                 onPressed: !state.nonRefundableAccepted
                     ? null
-                    : c.toSuccess,
+                    : () => bloc.add(ConfirmSubmitEvent(
+                          projectId: args?.projectId ?? '',
+                          amount: state.amountValue,
+                          walletId: '1', // default mock wallet
+                        )),
               ),
             ),
           ],
@@ -334,12 +356,13 @@ class _ContributeSuccessView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final args = state.args;
     return AppSuccessScreen(
       backgroundImagePath: AppAssets.contributionSuccessBg,
       svgAssetPath: AppAssets.projectCreatedImage,
       title: AppStrings.contributionSuccessTitle,
       subtitleWidget: AppText(
-        '\$${state.amountFormatted} added to ${state.args.projectName}',
+        '\$${state.amountFormatted} added to ${args?.projectName ?? ""}',
         textAlign: TextAlign.center,
         style: GoogleFonts.lato(
           fontSize: 18.sp,

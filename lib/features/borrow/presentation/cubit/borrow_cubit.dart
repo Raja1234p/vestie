@@ -1,6 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../app/router/route_args/project_wallet_flow_args.dart';
+import '../../../../core/di/service_locator.dart';
+import '../../../borrow/domain/usecases/create_borrow_request_use_case.dart';
 
 enum BorrowStep { amount, confirm, success }
 
@@ -10,6 +12,8 @@ class BorrowState {
   final String amountDigits;
   final String note;
   final bool termsAccepted;
+  final bool loading;
+  final String? errorMessage;
 
   const BorrowState({
     required this.args,
@@ -17,6 +21,8 @@ class BorrowState {
     this.amountDigits = '',
     this.note = '',
     this.termsAccepted = false,
+    this.loading = false,
+    this.errorMessage,
   });
 
   BorrowState copyWith({
@@ -24,6 +30,9 @@ class BorrowState {
     String? amountDigits,
     String? note,
     bool? termsAccepted,
+    bool? loading,
+    String? errorMessage,
+    bool clearError = false,
   }) {
     return BorrowState(
       args: args,
@@ -31,6 +40,8 @@ class BorrowState {
       amountDigits: amountDigits ?? this.amountDigits,
       note: note ?? this.note,
       termsAccepted: termsAccepted ?? this.termsAccepted,
+      loading: loading ?? this.loading,
+      errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
     );
   }
 
@@ -51,7 +62,14 @@ class BorrowState {
 }
 
 class BorrowCubit extends Cubit<BorrowState> {
-  BorrowCubit(ProjectWalletFlowArgs args) : super(BorrowState(args: args));
+  final CreateBorrowRequestUseCase _createBorrowRequestUseCase;
+
+  BorrowCubit(
+    ProjectWalletFlowArgs args, {
+    CreateBorrowRequestUseCase? createBorrowRequestUseCase,
+  })  : _createBorrowRequestUseCase = createBorrowRequestUseCase ??
+            ServiceLocator.instance.createBorrowRequestUseCase,
+        super(BorrowState(args: args));
 
   void appendDigit(String d) {
     if (state.amountDigits.length >= 8) return;
@@ -98,6 +116,34 @@ class BorrowCubit extends Cubit<BorrowState> {
 
   void submit() {
     if (!state.termsAccepted) return;
-    emit(state.copyWith(step: BorrowStep.success));
+    _submitBorrowRequest();
+  }
+
+  Future<void> _submitBorrowRequest() async {
+    final membershipId = state.args.membershipId;
+    if (membershipId == null || membershipId.isEmpty) {
+      emit(state.copyWith(
+        errorMessage: 'Missing membership id. Please reopen project.',
+      ));
+      return;
+    }
+
+    emit(state.copyWith(loading: true, clearError: true));
+    final result = await _createBorrowRequestUseCase(
+      projectId: state.args.projectId,
+      amount: state.amountValue,
+      reason: state.note.trim(),
+    );
+
+    result.fold(
+      (failure) => emit(state.copyWith(
+        loading: false,
+        errorMessage: failure.message,
+      )),
+      (_) => emit(state.copyWith(
+        loading: false,
+        step: BorrowStep.success,
+      )),
+    );
   }
 }

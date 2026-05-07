@@ -3,7 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/di/service_locator.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/widgets/common/app_back_button.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../../core/widgets/common/post_auth_header.dart';
@@ -13,8 +15,37 @@ import '../widgets/member_detail_actions.dart';
 
 class MemberPenaltyActionScreen extends StatelessWidget {
   final MemberEntity member;
+  final String projectId;
 
-  const MemberPenaltyActionScreen({super.key, required this.member});
+  const MemberPenaltyActionScreen({
+    super.key,
+    required this.member,
+    required this.projectId,
+  });
+
+  Future<void> _removeMember(BuildContext context) async {
+    final result = await ServiceLocator.instance.removeForNonRepaymentUseCase(
+      projectId: projectId,
+      userId: member.id,
+    );
+    if (!context.mounted) return;
+    result.fold(
+      (failure) => AppSnackBar.showError(context, failure.message),
+      (_) => AppSnackBar.showSuccess(context, 'Member removed successfully'),
+    );
+  }
+
+  Future<void> _markDefaulted(BuildContext context) async {
+    final result = await ServiceLocator.instance.markDefaultedUseCase(
+      projectId: projectId,
+      userId: member.id,
+    );
+    if (!context.mounted) return;
+    result.fold(
+      (failure) => AppSnackBar.showError(context, failure.message),
+      (_) => AppSnackBar.showSuccess(context, 'Member marked as defaulted'),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,12 +71,16 @@ class MemberPenaltyActionScreen extends StatelessWidget {
                 onTap: () => showRemoveMemberConfirm(
                   context,
                   memberName: member.name,
+                  onConfirmed: () => _removeMember(context),
                 ),
               ),
               SizedBox(height: 14.h),
               LeaderActionOutlineButton(
                 label: AppStrings.markAsDefaulted,
-                onTap: () => showMarkDefaultedConfirm(context),
+                onTap: () => showMarkDefaultedConfirm(
+                  context,
+                  onConfirmed: () => _markDefaulted(context),
+                ),
               ),
             ],
           ),

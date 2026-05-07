@@ -173,6 +173,30 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Either<Failure, User>> updateMe({
+    required String firstName,
+    required String lastName,
+    required String userName,
+    required String photoUrl,
+  }) async {
+    try {
+      final userModel = await _remoteDataSource.updateMe(
+        firstName: firstName,
+        lastName: lastName,
+        userName: userName,
+        photoUrl: photoUrl,
+      );
+      return Right(userModel);
+    } on ServerException catch (e, stack) {
+      AppLogger.error('UpdateMe Server Exception', error: e, stackTrace: stack);
+      return Left(ServerFailure(e.message, e.title));
+    } catch (e, stack) {
+      AppLogger.error('UpdateMe Unexpected Exception', error: e, stackTrace: stack);
+      return const Left(ServerFailure('An unexpected error occurred while updating user profile'));
+    }
+  }
+
+  @override
   Future<Either<Failure, RiskDisclaimer>> getRiskDisclaimer() async {
     try {
       final model = await _remoteDataSource.getRiskDisclaimer();

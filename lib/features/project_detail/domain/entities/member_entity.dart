@@ -5,6 +5,8 @@ class MemberEntity {
   final String id;
   final String initials;
   final String name;
+  final String username;
+  final String status;
   final MemberRole role;
   final double contributedAmount;
   final double? overdueAmount;
@@ -13,6 +15,8 @@ class MemberEntity {
     required this.id,
     required this.initials,
     required this.name,
+    this.username = '',
+    this.status = '',
     required this.role,
     required this.contributedAmount,
     this.overdueAmount,

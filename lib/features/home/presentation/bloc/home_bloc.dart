@@ -1,34 +1,44 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/mock_projects.dart';
+import '../../../../core/di/service_locator.dart';
+import '../../../projects/domain/usecases/list_projects_use_case.dart';
 import 'home_event.dart';
 import 'home_state.dart';
 
 /// Handles Home data fetch.
-/// TODO: Inject HomeRepository when API layer is ready.
+/// Uses Projects API via [ListProjectsUseCase].
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
-  HomeBloc() : super(const HomeInitial()) {
+  final ListProjectsUseCase _listProjectsUseCase;
+
+  HomeBloc({ListProjectsUseCase? listProjectsUseCase})
+      : _listProjectsUseCase =
+            listProjectsUseCase ?? ServiceLocator.instance.listProjectsUseCase,
+        super(const HomeInitial()) {
     on<HomeFetchStarted>(_onFetch);
     on<HomeRefreshRequested>(_onFetch);
   }
 
   Future<void> _onFetch(HomeEvent event, Emitter<HomeState> emit) async {
-    // ── DEV: show empty state for 15 s so UI can be reviewed ─────────────────
-    emit(const HomeLoaded(
-      totalContributed: 0,
-      myProjects: [],
-      joinedProjects: [],
-    ));
-    await Future.delayed(const Duration(seconds: 15));
-
-    // ── Loading shimmer ───────────────────────────────────────────────────────
     emit(const HomeLoading());
-    await Future.delayed(const Duration(milliseconds: 800));
 
-    // TODO: Replace with repository call
-    emit(const HomeLoaded(
-      totalContributed: 4223,
-      myProjects: MockProjects.myProjects,
-      joinedProjects: MockProjects.joinedProjects,
+    final mineResult = await _listProjectsUseCase(scope: 'mine');
+    final discoverResult = await _listProjectsUseCase(scope: 'discover');
+
+    final mine = mineResult.fold((_) => null, (v) => v);
+    final discover = discoverResult.fold((_) => null, (v) => v);
+
+    if (mine == null && discover == null) {
+      final failure = mineResult.fold((f) => f, (_) => null) ??
+          discoverResult.fold((f) => f, (_) => null);
+      emit(HomeError(message: failure?.message ?? 'Failed to load projects'));
+      return;
+    }
+
+    emit(HomeLoaded(
+      // TODO (backend): wire real total contributed API when available.
+      totalContributed: 0,
+      myProjects: mine ?? const [],
+      // UI currently treats "joined projects" separately; map discover here for now.
+      joinedProjects: discover ?? const [],
     ));
   }
 }

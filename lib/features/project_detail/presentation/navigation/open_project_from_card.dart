@@ -6,7 +6,6 @@ import '../../../../app/router/route_args/project_detail_flow_args.dart';
 import '../../../home/domain/entities/project.dart' show Project, UserFlowOnOpen;
 import '../../../home/domain/entities/project_category_extensions.dart';
 import '../../domain/entities/project_detail_route_args.dart';
-import '../mocks/mock_project_detail_from_card.dart';
 
 /// Single entry for Home / Discover when a project card is tapped. Handles
 /// optional [Project.userFlow] (member test flows) without coupling cards to
@@ -41,6 +40,7 @@ void openProjectFromCard(
         context.push(
           AppRoutes.userSuccessVote,
           extra: UserSuccessVoteArgs(
+            projectId: p.id,
             projectName: name,
             goalAmount: p.goalAmount ?? 5000,
             memberCount: 5,
@@ -71,9 +71,8 @@ void openProjectFromCard(
     }
   }
 
-  final detail = mockProjectDetailFromCard(p, isLeaderView: isLeaderView);
   final route = p.category.isInvestment
       ? AppRoutes.investmentProjectDetail
       : AppRoutes.projectDetail;
-  context.push(route, extra: ProjectDetailRouteArgs(project: detail));
+  context.push(route, extra: ProjectDetailRouteArgs(projectId: p.id));
 }
