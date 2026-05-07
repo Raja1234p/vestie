@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/app_shimmer.dart';
 import '../../../../core/widgets/common/app_loader.dart';
 import '../../../home/domain/entities/project.dart';
 import '../../../project_detail/presentation/navigation/open_project_from_card.dart';
@@ -46,7 +47,7 @@ class _HomeBody extends StatelessWidget {
           return const Scaffold(
             backgroundColor: Colors.transparent,
             body: HomeGradientBackground(
-              child: AppLoader(),
+              child: HomeShimmer(),
             ),
           );
         }

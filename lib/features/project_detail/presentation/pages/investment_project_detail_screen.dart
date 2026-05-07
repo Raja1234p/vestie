@@ -11,6 +11,7 @@ import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/common/leader_action_menu.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../../core/widgets/common/post_auth_header.dart';
+import '../../../../core/widgets/common/app_shimmer.dart';
 import '../../../../core/widgets/text/app_text.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../home/domain/entities/project.dart';
@@ -37,7 +38,7 @@ class InvestmentProjectDetailScreen extends StatelessWidget {
             return const Scaffold(
               backgroundColor: Colors.transparent,
               body: PostAuthGradientBackground(
-                child: Center(child: CircularProgressIndicator()),
+                child: ProjectDetailShimmer(),
               ),
             );
           }

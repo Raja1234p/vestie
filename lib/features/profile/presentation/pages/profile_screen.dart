@@ -13,6 +13,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_text.dart';
 import '../../../../core/widgets/common/post_auth_header.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
+import '../../../../core/widgets/common/app_shimmer.dart';
 import '../cubit/profile_cubit.dart';
 import '../widgets/profile_logout_button.dart';
 import '../widgets/settings_section.dart';
@@ -102,74 +103,71 @@ class _ProfileBody extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                      Row(children: [
-                        GestureDetector(
-                          onTap: () => _showAvatarPicker(context),
-                          child: Stack(children: [
-                            CircleAvatar(
-                              radius: 50.r,
-                              backgroundColor: AppColors.cardBorder,
-                              backgroundImage: state.avatarFile != null
-                                  ? FileImage(state.avatarFile as File)
-                                  : null,
-                              child: state.avatarFile == null
-                                  ? Icon(
-                                      Icons.person,
-                                      size: 30.w,
+                      state.isLoading && profile.fullName.isEmpty
+                          ? const ProfileHeaderShimmer()
+                          : Row(children: [
+                              GestureDetector(
+                                onTap: () => _showAvatarPicker(context),
+                                child: Stack(children: [
+                                  CircleAvatar(
+                                    radius: 50.r,
+                                    backgroundColor: AppColors.cardBorder,
+                                    backgroundImage: state.avatarFile != null
+                                        ? FileImage(state.avatarFile as File)
+                                        : null,
+                                    child: state.avatarFile == null
+                                        ? Icon(
+                                            Icons.person,
+                                            size: 30.w,
+                                            color: AppColors.textBody,
+                                          )
+                                        : null,
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: Container(
+                                      width: 22.w,
+                                      height: 22.w,
+                                      decoration: const BoxDecoration(
+                                        color: AppColors.primary,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(
+                                        Icons.add,
+                                        size: 15.w,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ]),
+                              ),
+                              SizedBox(width: 12.w),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  AppText(
+                                    profile.fullName.isNotEmpty
+                                        ? profile.fullName
+                                        : AppStrings.appName, // Fallback to app name or "User"
+                                    style: GoogleFonts.lato(
+                                      fontSize: 18.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.textPrimary,
+                                    ),
+                                  ),
+                                  AppText(
+                                    profile.email.isNotEmpty
+                                        ? profile.email
+                                        : '...', // Fallback or loading indicator
+                                    style: GoogleFonts.lato(
+                                      fontSize: 13.sp,
                                       color: AppColors.textBody,
-                                    )
-                                  : null,
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: Container(
-                                width: 22.w,
-                                height: 22.w,
-                                decoration: const BoxDecoration(
-                                  color: AppColors.primary,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  Icons.add,
-                                  size: 15.w,
-                                  color: Colors.white,
-                                ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                          ]),
-                        ),
-                        SizedBox(width: 12.w),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AppText(
-                              profile.fullName.isNotEmpty
-                                  ? profile.fullName
-                                  : AppStrings.appName, // Fallback to app name or "User"
-                              style: GoogleFonts.lato(
-                                fontSize: 18.sp,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.textPrimary,
-                              ),
-                            ),
-                            AppText(
-                              profile.email.isNotEmpty
-                                  ? profile.email
-                                  : '...', // Fallback or loading indicator
-                              style: GoogleFonts.lato(
-                                fontSize: 13.sp,
-                                color: AppColors.textBody,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ]),
-                      if (state.isLoading && profile.fullName.isEmpty)
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: 20.h),
-                          child: const Center(child: CircularProgressIndicator()),
-                        ),
+                            ]),
                       SizedBox(height: 18.h),
                       AppText(
                         AppStrings.settingsLabel,

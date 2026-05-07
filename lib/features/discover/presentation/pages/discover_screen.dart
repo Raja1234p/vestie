@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../core/widgets/common/app_loader.dart';
+import '../../../../core/widgets/common/app_shimmer.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../home/domain/entities/project.dart';
 import '../../../home/presentation/widgets/project_card.dart';
@@ -70,8 +70,15 @@ class _DiscoverBody extends StatelessWidget {
 
               // ── Loading ───────────────────────────────────
               if (state.loading)
-                const SliverFillRemaining(
-                  child: AppLoader(),
+                SliverPadding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 16.w),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (_, __) => const ProjectCardShimmer(),
+                      childCount: 3,
+                    ),
+                  ),
                 ),
 
               // ── Project list ──────────────────────────────

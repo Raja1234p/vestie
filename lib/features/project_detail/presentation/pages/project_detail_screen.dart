@@ -11,6 +11,7 @@ import '../../../../core/widgets/common/app_toggle_tab_bar.dart';
 import '../../../../core/widgets/common/leader_action_menu.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../../core/widgets/common/post_auth_header.dart';
+import '../../../../core/widgets/common/app_shimmer.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../home/domain/entities/project.dart';
 import '../../domain/entities/member_entity.dart';
@@ -60,9 +61,7 @@ class _ProjectDetailBody extends StatelessWidget {
             }
 
             if (state is ProjectDetailLoading || state is ProjectDetailInitial) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+              return const ProjectDetailShimmer();
             }
 
             if (state is ProjectDetailLoaded) {
