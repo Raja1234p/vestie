@@ -10,6 +10,7 @@ import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/app_svg_icon.dart';
 import '../../../../core/widgets/common/app_text.dart';
 import '../../../../core/widgets/common/post_auth_header.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
@@ -42,12 +43,13 @@ class _ProfileBody extends StatelessWidget {
 
   Widget _buildPickerAction({
     required BuildContext context,
-    required IconData icon,
+    required String glyphAsset,
     required String title,
     required ImageSource source,
   }) {
     return ListTile(
-      leading: Icon(icon),
+      leading: AppSvgIcon(
+          assetPath: glyphAsset, size: 24.w, color: AppColors.textPrimary),
       title: AppText(title),
       onTap: () {
         context.pop();
@@ -67,13 +69,13 @@ class _ProfileBody extends StatelessWidget {
           children: [
             _buildPickerAction(
               context: context,
-              icon: Icons.camera_alt_outlined,
+              glyphAsset: AppAssets.iconCamera,
               title: AppStrings.takePhoto,
               source: ImageSource.camera,
             ),
             _buildPickerAction(
               context: context,
-              icon: Icons.photo_library_outlined,
+              glyphAsset: AppAssets.iconPhotoLibrary,
               title: AppStrings.chooseFromGallery,
               source: ImageSource.gallery,
             ),
@@ -116,8 +118,8 @@ class _ProfileBody extends StatelessWidget {
                                         ? FileImage(state.avatarFile as File)
                                         : null,
                                     child: state.avatarFile == null
-                                        ? Icon(
-                                            Icons.person,
+                                        ? AppSvgIcon(
+                                            assetPath: AppAssets.iconPerson,
                                             size: 30.w,
                                             color: AppColors.textBody,
                                           )
@@ -133,8 +135,8 @@ class _ProfileBody extends StatelessWidget {
                                         color: AppColors.primary,
                                         shape: BoxShape.circle,
                                       ),
-                                      child: Icon(
-                                        Icons.add,
+                                      child: AppSvgIcon(
+                                        assetPath: AppAssets.iconAdd,
                                         size: 15.w,
                                         color: Colors.white,
                                       ),
@@ -229,8 +231,10 @@ class _ProfileHeader extends StatelessWidget {
       title: AppStrings.profileTitle,
       trailing: GestureDetector(
         onTap: onSettings,
-        child: Icon(Icons.settings_outlined,
-            size: 22.w, color: AppColors.textBody),
+        child: AppSvgIcon(
+            assetPath: AppAssets.iconSettings,
+            size: 22.w,
+            color: AppColors.textBody),
       ),
     );
   }

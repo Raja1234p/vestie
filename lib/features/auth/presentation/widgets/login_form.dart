@@ -4,10 +4,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/widgets/common/app_button.dart';
+import '../../../../core/widgets/common/app_svg_icon.dart';
 import '../../../../core/widgets/common/app_text_field.dart';
 import '../../../../app/router/app_routes.dart';
 import '../bloc/login_bloc.dart';
@@ -101,10 +103,10 @@ class _LoginFormState extends State<LoginForm> {
                     ),
                 suffixIcon: ExcludeFocus(
                   child: IconButton(
-                    icon: Icon(
-                      form.passwordVisible
-                          ? Icons.visibility_outlined
-                          : Icons.visibility_off_outlined,
+                    icon: AppSvgIcon(
+                      assetPath: form.passwordVisible
+                          ? AppAssets.iconVisibility
+                          : AppAssets.iconVisibilityOff,
                       size: 20.w,
                       color: AppColors.authHint,
                     ),

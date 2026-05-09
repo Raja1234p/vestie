@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../constants/app_assets.dart';
 import '../../theme/app_colors.dart';
+import 'app_svg_icon.dart';
 
 /// Reusable "Wallet: $X" pill with optional tap (e.g. future payment method picker).
 /// Uses [Ink] so the fill is one rounded surface — avoids rectangular [Material] color
@@ -58,8 +60,8 @@ class AppWalletPill extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 4.w),
-                Icon(
-                  Icons.keyboard_arrow_down_rounded,
+                AppSvgIcon(
+                  assetPath: AppAssets.iconChevronDown,
                   size: 20.sp,
                   color: AppColors.grey1100,
                 ),

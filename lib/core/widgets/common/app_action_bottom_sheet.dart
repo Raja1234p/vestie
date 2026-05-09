@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../constants/app_assets.dart';
 import '../../constants/app_strings.dart';
 import '../../theme/app_colors.dart';
 import '../text/app_text.dart';
+import 'app_svg_icon.dart';
 
 class AppActionBottomSheet extends StatelessWidget {
   final String title;
@@ -15,7 +17,7 @@ class AppActionBottomSheet extends StatelessWidget {
   final Color primaryColor;
   final Color primaryTextColor;
   final String? iconAsset;
-  final IconData? iconData;
+  final String? glyphAsset;
   final Color? iconColor;
   final VoidCallback onPrimary;
   final VoidCallback onSecondary;
@@ -32,7 +34,7 @@ class AppActionBottomSheet extends StatelessWidget {
     required this.onPrimary,
     required this.onSecondary,
     this.iconAsset,
-    this.iconData,
+    this.glyphAsset,
     this.iconColor,
   });
 
@@ -46,7 +48,7 @@ class AppActionBottomSheet extends StatelessWidget {
     required Color primaryColor,
     Color primaryTextColor = AppColors.surface,
     String? iconAsset,
-    IconData? iconData,
+    String? glyphAsset,
     Color? iconColor,
     required VoidCallback onPrimary,
   }) {
@@ -63,7 +65,7 @@ class AppActionBottomSheet extends StatelessWidget {
         primaryColor: primaryColor,
         primaryTextColor: primaryTextColor,
         iconAsset: iconAsset,
-        iconData: iconData,
+        glyphAsset: glyphAsset,
         iconColor: iconColor,
         onPrimary: onPrimary,
         onSecondary: () => Navigator.of(context).pop(),
@@ -84,10 +86,10 @@ class AppActionBottomSheet extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (iconAsset != null || iconData != null) ...[
+            if (iconAsset != null || glyphAsset != null) ...[
               _SheetIcon(
                 iconAsset: iconAsset,
-                iconData: iconData,
+                glyphAsset: glyphAsset,
                 iconColor: iconColor,
               ),
               SizedBox(height: 12.h),
@@ -138,10 +140,10 @@ class AppActionBottomSheet extends StatelessWidget {
 
 class _SheetIcon extends StatelessWidget {
   final String? iconAsset;
-  final IconData? iconData;
+  final String? glyphAsset;
   final Color? iconColor;
 
-  const _SheetIcon({this.iconAsset, this.iconData, this.iconColor});
+  const _SheetIcon({this.iconAsset, this.glyphAsset, this.iconColor});
 
   @override
   Widget build(BuildContext context) {
@@ -162,10 +164,12 @@ class _SheetIcon extends StatelessWidget {
         color: (iconColor ?? AppColors.primary).withValues(alpha: 0.12),
         shape: BoxShape.circle,
       ),
-      child: Icon(
-        iconData ?? Icons.check_rounded,
-        color: iconColor ?? AppColors.primary,
-        size: 46.w,
+      child: Center(
+        child: AppSvgIcon(
+          assetPath: glyphAsset ?? AppAssets.checkMarkSuccessful,
+          size: 46.w,
+          color: iconColor ?? AppColors.primary,
+        ),
       ),
     );
   }

@@ -12,10 +12,12 @@ class AppAssets {
 
   // Home empty-state illustration
   static const String homeEmptyState       = '$_imagePath/dashboard_empty_state_image.svg';
+  /// Discover tab when there are no public projects (same illustration as home empty).
+  static const String discoverEmptyIllustration = homeEmptyState;
   static const String emptyNotification    = '$_imagePath/emptynotification.png';
 
-  // Project created success illustration
-  static const String projectCreatedImage  = '$_imagePath/project_created_image.png';
+  // Project created success illustration (PNG — reliable rendering across devices).
+  static const String projectCreatedImage = '$_imagePath/project_created_image.png';
   /// 3D purple “success” badge (member flows: join approved, vote yes, mark complete).
   static const String markSuccessfullProject = '$_imagePath/markSuccessfullProject.png';
   static const String markCancel            = '$_imagePath/markcancel.png';
@@ -48,6 +50,8 @@ class AppAssets {
   static const String iconTransactionHistory = '$_iconPath/transactionhistory_icon.svg';
   static const String iconKeyGuidelines     = '$_iconPath/guidelines_icons.svg'; //
   static const String emptyPaymentMethodIcon     = '$_iconPath/wallet-cards.svg';
+  /// Wallet “Recent Activity” empty — stacked cards motif.
+  static const String walletEmptyActivityIllustration = emptyPaymentMethodIcon;
   // ── Payment Card Brand Logos ──────────────────────────────────────────────
   static const String iconVisa       = '$_iconPath/visacard_icon.svg';
   static const String iconMastercard = '$_iconPath/mastercard_icon.svg';
@@ -86,5 +90,33 @@ class AppAssets {
   static const String downWordArrow    = '$_iconPath/arrow-down-big.svg';
   static const String crown    = '$_iconPath/crown.svg';
 
-
+  // ── UI glyphs (replace Material Icons; stroke icons tint via ColorFilter) ─
+  static const String iconArrowBack = '$_iconPath/icon_arrow_back.svg';
+  static const String iconChevronRight = '$_iconPath/icon_chevron_right.svg';
+  static const String iconClose = '$_iconPath/icon_close.svg';
+  static const String iconHeart = '$_iconPath/icon_heart.svg';
+  static const String iconChevronDown = '$_iconPath/icon_chevron_down.svg';
+  static const String iconCopy = '$_iconPath/icon_copy.svg';
+  static const String iconVisibility = '$_iconPath/icon_visibility.svg';
+  static const String iconVisibilityOff = '$_iconPath/icon_visibility_off.svg';
+  static const String iconBackspace = '$_iconPath/icon_backspace.svg';
+  static const String iconCalendar = '$_iconPath/icon_calendar.svg';
+  static const String iconSchedule = '$_iconPath/icon_schedule.svg';
+  static const String iconGroups = '$_iconPath/icon_groups.svg';
+  static const String iconShield = '$_iconPath/icon_shield.svg';
+  static const String iconPeople = '$_iconPath/icon_people.svg';
+  static const String iconPerson = '$_iconPath/icon_person.svg';
+  static const String iconSettings = '$_iconPath/icon_settings.svg';
+  static const String iconDelete = '$_iconPath/icon_delete.svg';
+  static const String iconInfo = '$_iconPath/icon_info.svg';
+  static const String iconCamera = '$_iconPath/icon_camera.svg';
+  static const String iconPhotoLibrary = '$_iconPath/icon_photo_library.svg';
+  static const String iconChat = '$_iconPath/icon_chat.svg';
+  static const String iconLink = '$_iconPath/icon_link.svg';
+  static const String iconFacebook = '$_iconPath/icon_facebook.svg';
+  static const String iconInstagram = '$_iconPath/icon_instagram.svg';
+  static const String iconRadioOn = '$_iconPath/icon_radio_on.svg';
+  static const String iconRadioOff = '$_iconPath/icon_radio_off.svg';
+  static const String iconList = '$_iconPath/icon_list.svg';
+  static const String iconLightning = '$_iconPath/icon_lightning.svg';
 }

@@ -8,9 +8,11 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../constants/app_assets.dart';
 import '../../constants/app_strings.dart';
 import '../../theme/app_colors.dart';
 import '../text/app_text.dart';
+import 'app_svg_icon.dart';
 
 class AppFailureDialog {
   AppFailureDialog._();
@@ -66,10 +68,12 @@ class _FailureDialogWidget extends StatelessWidget {
                 color: AppColors.error.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                Icons.error_outline_rounded,
-                color: AppColors.error,
-                size: 36.w,
+              child: Center(
+                child: AppSvgIcon(
+                  assetPath: AppAssets.iconClose,
+                  color: AppColors.error,
+                  size: 36.w,
+                ),
               ),
             ),
             SizedBox(height: 14.h),

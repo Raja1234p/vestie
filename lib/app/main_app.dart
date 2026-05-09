@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:device_preview/device_preview.dart';
 import '../core/constants/app_strings.dart';
 import '../core/theme/app_theme.dart';
-import '../features/create_project/presentation/cubit/create_project_cubit.dart';
+import 'package:vestie/leader/features/create_project/presentation/cubit/create_project_cubit.dart';
 import '../features/wallet/presentation/cubit/wallet_transaction_cubit.dart';
 import 'router/app_router.dart';
 

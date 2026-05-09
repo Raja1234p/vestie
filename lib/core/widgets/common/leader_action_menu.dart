@@ -7,8 +7,9 @@ import '../../constants/app_strings.dart';
 import '../../theme/app_colors.dart';
 import '../text/app_text.dart';
 
-/// Action enum for each leader menu item.
+/// Action enum for leader / co-leader overflow menu items.
 enum LeaderMenuAction {
+  projectSettings,
   joinRequests,
   addAnnouncement,
   editProject,
@@ -17,17 +18,22 @@ enum LeaderMenuAction {
   cancelProject,
 }
 
-/// Reusable "..." popup menu for project leaders.
-/// Renders a `PopupMenuButton` that follows the Figma design:
-/// white card, dividers, color-coded items.
-/// Pass [joinRequestCount] to show the badge on Join Requests.
+/// Storyboard distinction: primary owner sees success/cancel ownership actions.
+enum LeaderMenuAudience {
+  primaryLeader,
+  coLeader,
+}
+
+/// Reusable "..." popup for project moderators (`LeaderMenuAudience`).
 class LeaderActionMenu extends StatelessWidget {
+  final LeaderMenuAudience audience;
   final int joinRequestCount;
   final void Function(LeaderMenuAction) onSelected;
 
   const LeaderActionMenu({
     super.key,
     required this.onSelected,
+    this.audience = LeaderMenuAudience.primaryLeader,
     this.joinRequestCount = 0,
   });
 
@@ -44,56 +50,7 @@ class LeaderActionMenu extends StatelessWidget {
         side: BorderSide(color: AppColors.grey300, width: 1),
       ),
       onSelected: onSelected,
-      itemBuilder: (_) => [
-        _buildItem(
-          value: LeaderMenuAction.joinRequests,
-          iconPath: AppAssets.iconJoinRequest,
-          label: AppStrings.menuJoinRequests,
-          badge: joinRequestCount > 0 ? joinRequestCount : null,
-          iconColor: AppColors.primary,
-          labelColor: AppColors.grey1100,
-        ),
-        _divider(),
-        _buildItem(
-          value: LeaderMenuAction.addAnnouncement,
-          iconPath: AppAssets.iconAddAnnouncement,
-          label: AppStrings.menuAddAnnouncement,
-          iconColor: AppColors.primary,
-          labelColor: AppColors.grey1100,
-        ),
-        _divider(),
-        _buildItem(
-          value: LeaderMenuAction.editProject,
-          iconPath: AppAssets.iconEditProject,
-          label: AppStrings.menuEditProject,
-          iconColor: AppColors.primary,
-          labelColor: AppColors.grey1100,
-        ),
-        _divider(),
-        _buildItem(
-          value: LeaderMenuAction.inviteMembers,
-          iconPath: AppAssets.plusSign,
-          label: AppStrings.menuInviteMembers,
-          iconColor: AppColors.primary,
-          labelColor: AppColors.grey1100,
-        ),
-        _divider(),
-        _buildItem(
-          value: LeaderMenuAction.markSuccessful,
-          iconPath: AppAssets.checkMarkSuccessful,
-          label: AppStrings.menuMarkSuccessful,
-          iconColor: AppColors.green1000,
-          labelColor: AppColors.badgeCompletedText,
-        ),
-        _divider(),
-        _buildItem(
-          value: LeaderMenuAction.cancelProject,
-          iconPath: AppAssets.iconCancelProject,
-          label: AppStrings.menuCancelProject,
-          iconColor: AppColors.red900,
-          labelColor: AppColors.red900,
-        ),
-      ],
+      itemBuilder: (_) => _buildEntries(),
       child: Container(
         width: 30.w,
         height: 30.w,
@@ -111,7 +68,85 @@ class LeaderActionMenu extends StatelessWidget {
     );
   }
 
-  // ── Helper: build a menu item ──────────────────────────────────────────────
+  List<PopupMenuEntry<LeaderMenuAction>> _buildEntries() {
+    final out = <PopupMenuEntry<LeaderMenuAction>>[];
+
+    void push(PopupMenuItem<LeaderMenuAction> item) {
+      if (out.isNotEmpty) out.add(_divider());
+      out.add(item);
+    }
+
+    push(
+      _buildItem(
+        value: LeaderMenuAction.projectSettings,
+        iconPath: AppAssets.iconEditProject,
+        label: AppStrings.menuLeaderProjectSettings,
+        iconColor: AppColors.primary,
+        labelColor: AppColors.grey1100,
+      ),
+    );
+    push(
+      _buildItem(
+        value: LeaderMenuAction.joinRequests,
+        iconPath: AppAssets.iconJoinRequest,
+        label: AppStrings.menuJoinRequests,
+        badge: joinRequestCount > 0 ? joinRequestCount : null,
+        iconColor: AppColors.primary,
+        labelColor: AppColors.grey1100,
+      ),
+    );
+    push(
+      _buildItem(
+        value: LeaderMenuAction.addAnnouncement,
+        iconPath: AppAssets.iconAddAnnouncement,
+        label: AppStrings.menuAddAnnouncement,
+        iconColor: AppColors.primary,
+        labelColor: AppColors.grey1100,
+      ),
+    );
+    push(
+      _buildItem(
+        value: LeaderMenuAction.editProject,
+        iconPath: AppAssets.iconEditProject,
+        label: AppStrings.menuEditProject,
+        iconColor: AppColors.primary,
+        labelColor: AppColors.grey1100,
+      ),
+    );
+    push(
+      _buildItem(
+        value: LeaderMenuAction.inviteMembers,
+        iconPath: AppAssets.plusSign,
+        label: AppStrings.menuInviteMembers,
+        iconColor: AppColors.primary,
+        labelColor: AppColors.grey1100,
+      ),
+    );
+
+    if (audience == LeaderMenuAudience.primaryLeader) {
+      push(
+        _buildItem(
+          value: LeaderMenuAction.markSuccessful,
+          iconPath: AppAssets.checkMarkSuccessful,
+          label: AppStrings.menuMarkSuccessful,
+          iconColor: AppColors.green1000,
+          labelColor: AppColors.badgeCompletedText,
+        ),
+      );
+      push(
+        _buildItem(
+          value: LeaderMenuAction.cancelProject,
+          iconPath: AppAssets.iconCancelProject,
+          label: AppStrings.menuCancelProject,
+          iconColor: AppColors.red900,
+          labelColor: AppColors.red900,
+        ),
+      );
+    }
+
+    return out;
+  }
+
   PopupMenuItem<LeaderMenuAction> _buildItem({
     required LeaderMenuAction value,
     String? iconPath,
@@ -126,19 +161,15 @@ class LeaderActionMenu extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Icon — SVG or Material
           SizedBox(
             width: 50.w,
             height: 24.w,
             child: SvgPicture.asset(
-                    iconPath!,
-                    colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
-                  )
-
+              iconPath!,
+              colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+            ),
           ),
           SizedBox(width: 3.w),
-
-          // Label
           Expanded(
             child: AppText(
               label,
@@ -149,8 +180,6 @@ class LeaderActionMenu extends StatelessWidget {
               ),
             ),
           ),
-
-          // Badge count
           if (badge != null)
             Container(
               padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
@@ -172,7 +201,6 @@ class LeaderActionMenu extends StatelessWidget {
     );
   }
 
-  // ── Helper: build a thin divider ──────────────────────────────────────────
   PopupMenuDivider _divider() =>
-      PopupMenuDivider(height: 1.h,color: AppColors.neutral300,);
+      PopupMenuDivider(height: 1.h, color: AppColors.neutral300);
 }

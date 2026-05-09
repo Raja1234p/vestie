@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/constants/app_assets.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/app_svg_icon.dart';
 import '../../../../core/widgets/text/app_text.dart';
 
 /// Informational callout: closed project, no further contributions.
@@ -28,8 +30,8 @@ class CompletedProjectNoticeBar extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            Icons.info_outline_rounded,
+          AppSvgIcon(
+            assetPath: AppAssets.iconInfo,
             size: 20.w,
             color: AppColors.grey800,
           ),

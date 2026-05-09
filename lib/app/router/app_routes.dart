@@ -17,9 +17,25 @@ class AppRoutes {
   // ── Create Project wizard ────────────────────────────────────────────────
   static const String createProjectAmount   = '/create-project/amount';
   static const String createProjectDetails  = '/create-project/details';
-  static const String createProjectBorrowing = '/create-project/borrowing';
+  static const String createProjectSavingSettings = '/create-project/saving-settings';
+  static const String createProjectFundsBorrowing = '/create-project/funds-borrowing';
   static const String createProjectReview   = '/create-project/review';
   static const String createProjectSuccess  = '/create-project/success';
+
+  /// Vacation / Emergency member-view storyboard (local mocks, Desktop images).
+  static const String createProjectVacationSetup =
+      '/create-project/member-flow/vacation/setup';
+  static const String createProjectEmergencySetup =
+      '/create-project/member-flow/emergency/setup';
+  /// Member Vacation/Emergency flow → summary sheet (storyboard-aligned names).
+  static const String createProjectFundSummary =
+      '/create-project/member-flow/summary';
+  static const String createProjectFundDetail =
+      '/create-project/member-flow/detail';
+  static const String createProjectFundContributionProgress =
+      '/create-project/member-flow/contribution-progress';
+  static const String createProjectFundStatus =
+      '/create-project/member-flow/status';
 
   // ── Profile sub-routes ───────────────────────────────────────────────────
   static const String editProfile        = '/profile/edit';
@@ -31,6 +47,7 @@ class AppRoutes {
 
   // ── Wallet Transaction Routing ───────────────────────────────────────────
   static const String transactionAmount      = '/wallet/transaction-amount';
+  static const String withdrawMethod         = '/wallet/withdraw-method';
   static const String selectPaymentMethod    = '/wallet/select-payment-method';
   static const String transactionConfirmation= '/wallet/transaction-confirmation';
   static const String transactionSuccess     = '/wallet/transaction-success';
@@ -43,6 +60,8 @@ class AppRoutes {
   static const String memberDetail     = '/project/member-detail';
   static const String memberPenaltyAction = '/project/member-penalty-action';
   static const String createAnnouncement = '/project/create-announcement';
+  /// Leader / co-leader storyboard hub (rows depend on primary vs co-leader).
+  static const String leaderProjectSettings = '/project/leader-settings';
   static const String joinRequests     = '/project/join-requests';
   static const String borrowRequests   = '/project/borrow-requests';
   static const String markProjectSuccessful = '/project/mark-successful';
@@ -52,4 +71,25 @@ class AppRoutes {
   // ── Member user flows (join + success vote) ────────────────────────────
   static const String userStatusFlow  = '/user/status-flow';
   static const String userSuccessVote  = '/user/success-vote';
+
+  /// User investment journey (Vacation/Emergency style — mocks).
+  static const String userInvestmentProjectDetail =
+      '/user/investment/project-detail';
+  static const String userInvestmentReturns =
+      '/user/investment/my-returns';
+  static const String userInvestmentFundsHistory =
+      '/user/investment/funds-history';
+  static const String userInvestmentLeaveWarning =
+      '/user/investment/leave-warning';
+  static const String userInvestmentLeaveSuccess =
+      '/user/investment/leave-success';
+
+  // ── VFF (Verified Friends & Family) ───────────────────────────────────────
+  static const String userVffMain = '/user/vff';
+  /// Hub “See all” on inbound VFF request rows (`user_vff_vff_requests_screen.dart`).
+  static const String userVffVffRequestsAll = '/user/vff/requests-all';
+  static const String userVffGroupInvitesAll = '/user/vff/group-invites-all';
+  static const String userVffProfile = '/user/vff/profile';
+  /// Accept / join success terminal (`user_vff_invites_sent_screen.dart`).
+  static const String userVffInvitesSent = '/user/vff/invite-success';
 }

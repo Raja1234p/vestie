@@ -141,10 +141,198 @@ class AppStrings {
   // ── Discover Screen ──────────────────────────────────────────────────────
   static const String discoverTitle      = 'Discover';
   static const String discoverSearchHint = 'Search projects, categories, members';
+  static const String discoverEmptyTitle = 'No Projects';
+  static const String discoverEmptySubtitle =
+      'No projects are available to discover.';
+  static const String discoverNoMatchingTitle = 'No matching projects';
+  static const String discoverNoMatchingSubtitle =
+      'Try adjusting your search or filters.';
   static const String filterAll          = 'All';
   static const String filterVacations    = 'Vacations';
   static const String filterEmergency    = 'Emergency Fund';
   static const String filterInvestments  = 'Investment';
+  static const String createProjectMemberWalkthroughLink =
+      'Vacation & Emergency fund · UI walkthrough';
+
+  // ── Member Vacation/Emergency flow picker (pure UI mocks)
+  static const String createProjectMemberWalkthroughSheetTitle =
+      'Choose fund type (mock flow)';
+  static const String createProjectMemberWalkthroughVacationTitle = 'Vacation Fund';
+  static const String createProjectMemberWalkthroughVacationSubtitle =
+      'Setup → Summary → Detail → Contributions → Payment status';
+  static const String createProjectMemberWalkthroughEmergencyTitle =
+      'Emergency Fund';
+  static const String createProjectMemberWalkthroughEmergencySubtitle =
+      'Same navigation pattern with emergency demo values';
+
+  static const String createProjectVacationFundTitle = 'Vacation Fund';
+  static const String createProjectEmergencyFundTitle = 'Emergency Fund';
+  static const String createProjectSummaryTitle = 'Project summary';
+  static const String createSummarySubtitleVacation =
+      'Review vacation goal and timeline — no server call yet.';
+  static const String createSummarySubtitleEmergency =
+      'Review emergency buffer goal — no server call yet.';
+  static const String summaryDesignNotePlaceholder =
+      'Design note: screenshots can be dropped into Desktop/images/';
+  static const String summaryPlaceholderDescription =
+      'No description added — placeholder copy for empty stages.';
+  static const String summaryLabelGoal = 'Goal';
+  static const String summaryLabelStarts = 'Starts';
+  static const String summaryLabelEnds = 'Ends';
+  static const String summaryLabelAbout = 'About';
+
+  static const String pickDatePlaceholder = 'Tap to choose a date';
+
+  static const String labelGoalAmountUsd = 'Goal Amount';
+  static const String hintGoalAmountUsd = 'e.g. 10750 or 1450';
+  static const String labelStartDate = 'Start date';
+  static const String labelEndDate = 'End date';
+  static const String hintVacationEmergencyProjectName =
+      'Rainy getaway pot · buffer fund';
+
+  static const String detailCardProjectLeader = 'Project leader';
+  static const String detailCardDescription = 'Description';
+  static const String detailCardTimeline = 'Timeline';
+  static const String detailMembersStripTitle = 'Members';
+  static const String detailMembersViewAll = 'View all';
+  static const String placeholderLeaderDisplayName = 'Taylor (mock)';
+  static const String placeholderLeaderSubtitle =
+      'You are previewing member view';
+
+  static String timelineStartsOn(String formatted) => 'Starts on $formatted';
+  static String timelineEndsOn(String formatted) => 'Ends on $formatted';
+
+  static const String contributionProgressTitle = 'Contribution progress';
+  static const String contributionProgressSubtitle = 'toward goal';
+  static const String contributionHistoryTitle = 'Contribution history';
+  static const String contributionProgressDemoHint =
+      'Actions below only navigate — no checkout or APIs yet.';
+  static const String btnSimulatePaymentSuccess = 'Simulate successful payment';
+  static const String btnSimulatePaymentFailure = 'Simulate failed payment';
+
+  static const String transactionStatusSuccessTitle = 'Payment successful';
+  static const String transactionStatusSuccessSubtitle =
+      'Funds would move to this pot once the backend is wired.';
+  static const String transactionStatusFailureTitle = 'Transaction failed';
+  static const String transactionStatusFailureSubtitle =
+      'Mock feedback for the Emergency flow — try again or cancel.';
+
+  static const String validationProjectNameRequired =
+      'Project name is required.';
+  static const String validationGoalUsdInvalid =
+      'Enter a goal amount greater than zero.';
+  static const String validationStartDateRequired =
+      'Please pick a start date.';
+  static const String validationEndAfterStartRequired =
+      'End date must be after start date.';
+
+  // ── User investment flow (Vacation/Emergency — UI mocks)
+  static const String userInvestmentDiscoverEntry =
+      'User investment · UI walkthrough';
+  static const String userInvestmentChooserTitle = 'Investment flow preview';
+  static const String userInvestmentChooserWithMembers =
+      'Active members (storyboard)';
+  static const String userInvestmentChooserEmptyMembers =
+      'Empty members state';
+  static const String userInvestmentGoalMonthly =
+      'Goal \$2,700 / Month';
+  static String userInvestmentGoalMonthlyAmount(String amountUsd) =>
+      'Goal \$$amountUsd / Month';
+  static String userInvestmentRaisedAmount(String amountUsd) =>
+      'Raised \$$amountUsd';
+  static String userInvestmentNextContribution(String formattedDate) =>
+      'My Next Contribution • $formattedDate';
+  static const String userInvestmentMembersEmpty = 'No Members';
+  static const String userInvestmentMembersTitle = 'Members';
+  static const String userInvestmentMemberActive = 'Active';
+  static const String btnViewMyReturns = 'View My Returns';
+  static const String userInvestmentReturnsTitle = 'My Investment Returns';
+  static const String userInvestmentInvestedAmountLabel = 'Invested Amount';
+  static const String userInvestmentReturnsHistoryTitle = 'Returns History';
+  static const String userInvestmentFundsHistoryTitle = 'Project Funds History';
+  static const String userInvestmentTotalFundsLabel = 'Total Project Funds';
+  static String userInvestmentMembersModalTitle(int count) =>
+      'Project Members ($count)';
+  static const String userInvestmentShareRowHint =
+      'Share this pot with your circle.';
+  static const String userInvestmentMenuFundsHistory =
+      'Project Funds History';
+  static const String userInvestmentMenuViewMembers = 'View Members';
+  static const String userInvestmentMenuLeave = 'Leave Project';
+  static const String userLeaveProjectDialogTitle = 'Are you sure?';
+  static const String userLeaveProjectDialogBody =
+      'You can leave or stay on this project.';
+  static const String userLeaveStayHere = 'Stay Here';
+  static const String userLeaveConfirmYes = 'Yes';
+  static const String userLeaveWarningTitle = 'Leaving project';
+  static const String userLeaveWarningBody =
+      'By leaving this project, you will lose all your previous contributions. '
+      'This action may be irreversible for this prototype.';
+  static const String userLeaveConfirmLeave = 'Leave Project';
+  static const String userLeaveSuccessfulTitle =
+      'You\'re no longer part of this project.';
+  static const String userLeaveSuccessfulSubtitle =
+      'You can rejoin later if invitations open again.';
+  static const String userLeaveBrowseOther = 'Back to Discover';
+
+  // ── VFF (Verified Friends & Family — UI model, ready for API wiring)
+  static const String userVffHubTitle = 'My VFFs & Requests';
+  static const String userVffTabMyVffs = 'My VFFs';
+  static const String userVffTabRequests = 'Requests';
+  static const String userVffEmptyMyVffs = 'You don\'t have any VFF';
+  static const String userVffEmptyRequests = 'No Pending Requests';
+  static const String userVffSectionMyVffs = 'My VFFs';
+  static const String userVffSectionVffRequests = 'VFF Requests';
+  static const String userVffSectionGroupInvites = 'Group Invitations';
+  static const String userVffSeeAllVffRequestsLink = 'See all Requests';
+  static const String userVffSeeAllGroupInvitesLink = 'See all';
+  static const String userVffViaProject = 'via';
+  static const String userVffInvitedBy = 'Invited by';
+  static const String btnAccept = 'Accept';
+  static const String btnDecline = 'Decline';
+  static const String userVffJoined = 'Joined';
+  static const String userVffRequestToJoin = 'Request to join';
+  static String userVffMutualProjects(int n) => '$n mutual projects';
+  static const String userVffStatusRequestSentSmall = 'Request Sent';
+  static const String userVffVffRequestsListTitle = 'VFF Requests';
+  static const String userVffGroupInvitationsTitle = 'Group Invitations';
+
+  /// Profile
+  static const String userVffBadgeMember = 'Member';
+  static const String userVffBadgeVff = 'VFF Badge';
+  static const String userVffProfileTitleSuffix = ' Profile';
+  static const String userVffContributed = 'Contributed';
+  static const String userVffContributions = 'Contributions';
+  static const String userVffContribution = 'Contribution';
+  static const String userVffProjectsMetric = 'Projects';
+  static const String btnSendVffRequest = 'Send VFF Request';
+  static const String btnVffRequestSent = 'VFF Request Sent';
+  static String userVffTxTitle(String fundNamePortion) => 'Contribution: $fundNamePortion';
+
+  /// Remove VFF dialog
+  static String userVffRemoveTitle(String username) =>
+      'Are you sure you want to remove @$username';
+  static const String userVffRemoveBody =
+      'You can not view their joined projects after removing them.';
+
+  /// Following menu
+  static const String userVffFollowing = 'Following';
+  static const String userVffMenuRemoveConnection = 'Remove VFF';
+
+  /// Invite success (headline + sub copy + bold project line in UI)
+  static const String userVffInviteSuccessTitle = 'Invites Sent!';
+  static String userVffInviteSubtitle(int inviteCount) {
+    if (inviteCount <= 1) return '1 VFF has been invited to';
+    return '$inviteCount VFFs have been invited to';
+  }
+
+  /// Profile metrics (trio variant)
+  static const String userVffContributionLabelSingular = 'Contribution';
+  static const String userVffContributionsPlural = 'Contributions';
+  static const String userVffProjectsLabel = 'Projects';
+
+  /// Joined projects strip
+  static const String userVffMembersCountSuffix = 'Members';
 
   // ── Notifications ───────────────────────────────────────────────────────
   static const String notificationsTitle   = 'Notifications';
@@ -250,20 +438,53 @@ class AppStrings {
   static const String visibilityPublic       = 'Public';
   static const String visibilityPrivate      = 'Private';
 
-  // Category options
+  // Category options (shown in dropdown)
   static const String catVacation            = 'Vacation';
+  static const String catEducation           = 'Education';
   static const String catEmergency           = 'Emergency';
   static const String catInvestment          = 'Investment';
   static const String catOther               = 'Other';
 
-  // Step 2 – Borrowing
-  static const String createBorrowingTitle   = 'Borrowing';
-  static const String labelRoi               = 'ROI (optional)';
-  static const String roiHint                = '5%';
-  static const String roiSubtitle            = 'Set this to incentivize contributors. Paid out on project close.';
-  static const String labelEnableBorrowing   = 'Enable borrowing for members?';
+  // Three wizard flows — matches product screens
+  static const String labelProjectSetup      = 'How should this project work?';
+  static const String flowSavingTitle       = 'Save together';
+  static const String flowSavingSubtitle     =
+      'Auto-save rhythm and shared savings before review.';
+  static const String flowBorrowingTitle     = 'Funds borrowing';
+  static const String flowBorrowingSubtitle  =
+      'Members can borrow against the pool — set interest & repayment.';
+  static const String flowSimpleTitle       = 'Simple';
+  static const String flowSimpleSubtitle     =
+      'Just the essentials — details then straight to review.';
+
+  // Saving path — Project Settings
+  static const String createSavingSettingsTitle = 'Project Settings';
+  static const String labelAutoSave            = 'Auto-save';
+  static const String autoSaveDescription      =
+      'Automatically save a portion of your income to this project.';
+  static const String reviewSectionSaving      = 'Project settings';
+  static const String reviewLabelAutoSave       = 'Auto-save';
+
+  // Borrowing path
+  static const String createFundsBorrowingTitle = 'Funds Borrowing';
+  static const String labelEnableBorrowProject =
+      'Enable borrowing for this project';
+  static const String labelAnnualInterest      = 'Interest rate (Annual %)';
+  static const String hintAnnualInterest       = '5';
+  static const String labelRepaymentMonths     = 'Repayment period (months)';
+  static const String hintRepaymentMonths      = '6';
+  static const String reviewBorrowingEnabledLabel = 'Borrowing';
+  static const String reviewAnnualInterestLabel  = 'Interest (annual)';
+  static const String reviewRepaymentMonthsLabel = 'Repayment (months)';
+  static const String reviewLabelMonths          = 'months';
+
+  // Deprecated borrow-step labels retained for backwards copy search (unused in UI)
+  static const String labelRoi               = 'Interest rate (Annual %)';
+  static const String roiHint                = '5';
+  static const String roiSubtitle            = 'Shown only when borrowing is enabled.';
+  static const String labelEnableBorrowing   = 'Enable borrowing for this project';
   static const String labelBorrowLimit       = 'Default borrow limit per member';
-  static const String labelRepaymentWindow   = 'Repayment window (days)';
+  static const String labelRepaymentWindow   = 'Repayment window (months)';
   static const String labelPenalty           = 'Penalty (%)';
   static const String btnNext                = 'Next';
 
@@ -296,6 +517,7 @@ class AppStrings {
   static const String reviewLabelLimit       = 'Limit';
   static const String reviewLabelWindow      = 'Window';
   static const String reviewLabelPenalty     = 'Penalty';
+  static const String reviewLabelProjectFlow = 'Setup';
   static const String reviewValuePublic      = 'Public';
   static const String reviewValuePrivate     = 'Private';
   static const String reviewValueEnabled     = 'Enabled';
@@ -317,6 +539,13 @@ class AppStrings {
   static const String errBorrowLimitInvalid  = 'Enter a valid amount';
   static const String errWindowRequired      = 'Repayment window is required';
   static const String errWindowInvalid       = 'Enter a valid number of days';
+  static const String errAnnualRoiRequired   = 'Interest rate is required';
+  static const String errAnnualRoiInvalid    =
+      'Enter a valid percentage (0–100)';
+  static const String errRepaymentMonthsRequired =
+      'Repayment period is required';
+  static const String errRepaymentMonthsInvalid =
+      'Enter months between 1 and 120';
   static const String errPenaltyRequired     = 'Penalty is required';
   static const String errPenaltyInvalid      = 'Enter a value between 0–100';
 
@@ -373,6 +602,37 @@ class AppStrings {
   static const String contributionSuccessTitle  = 'Contribution Successful';
   static const String btnBackToWallet           = 'Back to Wallet';
   static const String addAmount               = 'Add Amount';
+
+  // ── Withdraw method & confirm (Figma withdrawal flow) ──────────────────────
+  static const String withdrawMethodTitle = 'Withdraw Method';
+  static const String withdrawStandardTitle = 'Standard Withdraw';
+  static const String withdrawStandardSubtitle =
+      'Delivery: 1-3 business days';
+  static const String withdrawInstantTitle = 'Instant Withdraw';
+  static const String withdrawInstantSubtitle = 'Delivery: Arrives in minutes';
+  static const String withdrawFeeDisclaimerPrefix = 'Fee: ';
+  static const String withdrawFeeDisclaimerInstant =
+      '1.5% of withdraw amount';
+  static const String withdrawFeeDisclaimerLine =
+      'Fee: 1.5% of withdraw amount';
+  static const String badgeInstant = 'Instant';
+  static const String labelWithdrawalAmount = 'Withdrawal Amount';
+  static const String labelYouWillReceive = 'You will receive';
+  static const String withdrawProcessingInstantValue = 'About 30 minutes';
+  static const String btnConfirmInstantWithdraw = 'Confirm Instant Withdraw';
+  static const String btnConfirmStandardWithdraw = 'Confirm Standard Withdraw';
+
+  static String withdrawFeeInstantRow(double feeDollars) {
+    final v = feeDollars.toStringAsFixed(2);
+    return '1.5% (- \$$v)';
+  }
+
+  static String withdrawSuccessBodyInstant(String amountFormatted) =>
+      'Your $amountFormatted will arrive in about 30 minutes.';
+
+  static String withdrawSuccessBodyStandard(String amountFormatted) =>
+      'Your $amountFormatted will arrive in 1-3 business days.';
+
   // ── Project Contribute / Borrow (from project detail) ─────────────────────
   static const String contributeScreenTitle     = 'Contribute';
   static const String contributeConfirmHeader   = 'Confirm';
@@ -404,6 +664,9 @@ class AppStrings {
   // ── Recent Activity ───────────────────────────────────────────────────────
   static const String borrowedLabel             = 'Borrowed';
   static const String recentActivityHeader     = 'Recent Activity';
+  static const String walletEmptyActivityTitle = 'No Recent Activity';
+  static const String walletEmptyActivitySubtitle =
+      'Your transactions will show here.';
   static const String txWalletDeposit           = 'Wallet Deposit';
   static const String txContributionPrefix      = 'Contribution: ';
   static const String txBorrowPrefix            = 'Borrow: ';
@@ -493,6 +756,8 @@ class AppStrings {
   }
 
   // ── Leader Project Actions ────────────────────────────────────────────────
+  static const String menuLeaderProjectSettings = 'Project settings';
+  static const String leaderProjectSettingsTitle = 'Project settings';
   static const String menuJoinRequests          = 'Join Requests';
   static const String menuAddAnnouncement       = 'Add Announcement';
   static const String menuEditProject           = 'Edit Project';

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../core/constants/app_assets.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/app_svg_icon.dart';
 
 /// Figma-accurate numeric keypad (1-9, 0, backspace).
 class NumericKeypad extends StatelessWidget {
@@ -75,8 +77,11 @@ class _KeyButton extends StatelessWidget {
         ),
         child: Center(
           child: isBackspace
-              ? Icon(Icons.backspace_outlined,
-                  size: 20.w, color: AppColors.textPrimary)
+              ? AppSvgIcon(
+                  assetPath: AppAssets.iconBackspace,
+                  size: 20.w,
+                  color: AppColors.textPrimary,
+                )
               : Text(label,
                   style: GoogleFonts.lato(
                       fontSize: 20.sp,

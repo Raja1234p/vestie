@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'app_colors.dart';
 
 class AppShadows {
@@ -21,7 +22,7 @@ class AppShadows {
 
   static List<BoxShadow> get cardShadow => [
         BoxShadow(
-          color: Colors.black.withValues(alpha: 0.05),
+          color: AppColors.grey1100.withValues(alpha: 0.05),
           blurRadius: 10.r,
           offset: Offset(0, 2.h),
         ),

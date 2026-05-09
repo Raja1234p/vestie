@@ -1,5 +1,5 @@
-import '../../../home/domain/entities/project.dart';
-import '../../../home/domain/entities/project_category_extensions.dart';
+import 'package:vestie/user/features/home/domain/entities/project.dart';
+import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
 import '../../../../core/constants/app_strings.dart';
 
 /// Resolves [title] / [body] for the “no more activity” callout on completed

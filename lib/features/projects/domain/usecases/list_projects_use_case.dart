@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/error/failures.dart';
-import '../../../home/domain/entities/project.dart';
+import 'package:vestie/user/features/home/domain/entities/project.dart';
 import '../repositories/projects_repository.dart';
 
 class ListProjectsUseCase {

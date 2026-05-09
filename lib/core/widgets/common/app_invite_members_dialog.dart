@@ -8,6 +8,7 @@ import '../../constants/app_strings.dart';
 import '../../theme/app_colors.dart';
 import '../../utils/app_snackbar.dart';
 import '../text/app_text.dart';
+import 'app_svg_icon.dart';
 
 class AppInviteMembersDialog extends StatelessWidget {
   final String inviteLink;
@@ -67,8 +68,8 @@ class AppInviteMembersDialog extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: GestureDetector(
               onTap: () => Navigator.of(context).pop(),
-              child: Icon(
-                Icons.close_rounded,
+              child: AppSvgIcon(
+                assetPath: AppAssets.iconClose,
                 color: AppColors.primaryDark,
                 size: 30.w,
               ),
@@ -119,8 +120,8 @@ class AppInviteMembersDialog extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () => _copyLink(context),
-                  child: Icon(
-                    Icons.copy_rounded,
+                  child: AppSvgIcon(
+                    assetPath: AppAssets.iconCopy,
                     size: 22.w,
                     color: AppColors.primary,
                   ),

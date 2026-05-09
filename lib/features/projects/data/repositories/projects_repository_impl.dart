@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/error/failures.dart';
-import '../../../home/domain/entities/project.dart';
-import '../../../create_project/domain/create_project_form.dart';
+import 'package:vestie/user/features/home/domain/entities/project.dart';
+import 'package:vestie/leader/features/create_project/domain/create_project_form.dart';
 import '../../domain/repositories/projects_repository.dart';
 import '../datasources/projects_remote_data_source.dart';
 import '../models/create_project_request_model.dart';

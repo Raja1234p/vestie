@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../app/router/app_routes.dart';
-import '../../../../core/widgets/common/post_auth_gradient_background.dart';
-import '../../../discover/presentation/pages/discover_screen.dart';
-import '../../../home/presentation/pages/home_screen.dart';
+import 'package:vestie/app/router/app_routes.dart';
+import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
+import 'package:vestie/user/features/discover/presentation/pages/discover_screen.dart';
+import 'package:vestie/user/features/home/presentation/pages/home_screen.dart';
 import '../../../profile/presentation/pages/profile_screen.dart';
 import '../../../wallet/presentation/pages/wallet_screen.dart';
 import '../cubit/nav_cubit.dart';

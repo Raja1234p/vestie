@@ -5,10 +5,12 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../app/router/app_routes.dart';
+import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/common/app_failure_dialog.dart';
+import '../../../../core/widgets/common/app_svg_icon.dart';
 import '../../../../core/widgets/common/app_tick_switch.dart';
 import '../cubit/agreement_cubit.dart';
 
@@ -61,8 +63,8 @@ class _AgreementBody extends StatelessWidget {
                         color: AppColors.yellow100,
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(
-                        Icons.warning_amber_rounded,
+                      child: AppSvgIcon(
+                        assetPath: AppAssets.infoIcon,
                         size: 34.w,
                         color: AppColors.warning,
                       ),

@@ -1,7 +1,7 @@
 import '../../domain/entities/borrow_request_entity.dart';
 import '../../domain/entities/member_entity.dart';
 import '../../domain/entities/project_detail_entity.dart';
-import '../../../home/domain/entities/project.dart';
+import 'package:vestie/user/features/home/domain/entities/project.dart';
 
 class ProjectDetailResponseModel {
   final _ProjectPayload _project;
@@ -35,7 +35,8 @@ class ProjectDetailResponseModel {
   }
 
   ProjectDetailEntity toEntity() {
-    final isLeader = _viewerMembership.isLeader;
+    final isPrimaryLeader = _viewerMembership.isPrimaryLeader;
+    final isCoLeader = _viewerMembership.isCoLeaderRole;
 
     final mappedMembers = _members.map(_mapMember).toList(growable: false);
 
@@ -51,7 +52,8 @@ class ProjectDetailResponseModel {
       announcement: '',
       members: mappedMembers,
       borrowRequests: const <BorrowRequestEntity>[],
-      isLeader: isLeader,
+      isLeader: isPrimaryLeader,
+      isCoLeader: isCoLeader,
       membershipId: _viewerMembership.membershipId,
       borrowLimitAmount: _viewerMembership.borrowLimitAmount,
       repaymentWindowDays: _rules.repaymentWindowDays,
@@ -183,7 +185,16 @@ class _ViewerMembershipPayload {
         borrowLimitAmount: (json['borrowLimitAmount'] as num?)?.toDouble() ?? 0.0,
       );
 
-  bool get isLeader => role.toLowerCase().contains('leader');
+  /// Primary owner — never treat `co-leader` as primary (`co-leader`.contains('leader') bug).
+  bool get isPrimaryLeader {
+    final compact = role.toLowerCase().replaceAll(RegExp(r'[\s_-]'), '');
+    return compact == 'leader' || compact == 'owner';
+  }
+
+  bool get isCoLeaderRole {
+    final compact = role.toLowerCase().replaceAll(RegExp(r'[\s_-]'), '');
+    return compact == 'coleader';
+  }
 }
 
 class _MemberPayload {

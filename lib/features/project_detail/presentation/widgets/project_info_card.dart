@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../../../home/domain/entities/project.dart';
+import 'package:vestie/user/features/home/domain/entities/project.dart';
 import '../../domain/entities/project_detail_entity.dart';
 import 'project_info_card_chips.dart';
 import 'project_info_card_rows.dart';

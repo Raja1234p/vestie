@@ -7,10 +7,10 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/text/app_text.dart';
 import '../../domain/entities/borrow_request_entity.dart';
 import '../../domain/entities/member_entity.dart';
-import 'borrow_requests_tab.dart';
-import 'borrow_request_card.dart';
-import 'borrow_request_decision_dialogs.dart';
-import 'leader_manage_members_list.dart';
+import 'package:vestie/leader/features/project_detail/presentation/widgets/borrow_requests_tab.dart';
+import 'package:vestie/leader/features/project_detail/presentation/widgets/borrow_request_card.dart';
+import 'package:vestie/leader/features/project_detail/presentation/widgets/borrow_request_decision_dialogs.dart';
+import 'package:vestie/leader/features/project_detail/presentation/widgets/leader_manage_members_list.dart';
 import 'members_list.dart';
 
 class UserBorrowRequestsPanel extends StatelessWidget {

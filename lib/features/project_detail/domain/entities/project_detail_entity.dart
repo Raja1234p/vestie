@@ -1,5 +1,5 @@
-import '../../../home/domain/entities/project.dart';
-import '../../../home/domain/entities/project_category_extensions.dart';
+import 'package:vestie/user/features/home/domain/entities/project.dart';
+import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
 import 'member_entity.dart';
 import 'borrow_request_entity.dart';
 
@@ -15,7 +15,10 @@ class ProjectDetailEntity {
   final String announcement;
   final List<MemberEntity> members;
   final List<BorrowRequestEntity> borrowRequests;
+  /// Primary project owner (API role `leader`).
   final bool isLeader;
+  /// Co-leader / moderator (API role `co-leader`). Has approval + member tools, not ownership actions.
+  final bool isCoLeader;
   final String membershipId;
   final double borrowLimitAmount;
   final int repaymentWindowDays;
@@ -34,6 +37,7 @@ class ProjectDetailEntity {
     required this.members,
     required this.borrowRequests,
     this.isLeader = false,
+    this.isCoLeader = false,
     this.membershipId = '',
     this.borrowLimitAmount = 0,
     this.repaymentWindowDays = 0,
@@ -43,6 +47,12 @@ class ProjectDetailEntity {
 
   double get progress =>
       goalAmount > 0 ? (currentAmount / goalAmount).clamp(0.0, 1.0) : 0.0;
+
+  /// Leader or co-leader: borrow approvals, member list management, announcements, invites.
+  bool get hasManagementPrivileges => isLeader || isCoLeader;
+
+  int get pendingJoinRequestCount =>
+      members.where((m) => m.status.toLowerCase().contains('pending')).length;
 
   String get categoryLabel {
     return category.detailLabel;

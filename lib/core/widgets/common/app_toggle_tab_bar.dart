@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../theme/app_colors.dart';
+import '../text/app_text.dart';
 
 /// Reusable pill-style toggle tab bar with two options.
 /// Active tab = dark filled pill. Inactive = outlined.
@@ -44,7 +45,7 @@ class AppToggleTabBar extends StatelessWidget {
                   borderRadius: BorderRadius.circular(100.r),
                 ),
                 alignment: Alignment.center,
-                child: Text(
+                child: AppText(
                   tabs[i],
                   style: GoogleFonts.lato(
                     fontSize: 13.sp,

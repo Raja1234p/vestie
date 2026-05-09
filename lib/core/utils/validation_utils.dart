@@ -93,6 +93,28 @@ class ValidationUtils {
     return null;
   }
 
+  /// Borrowing wizard: APR-style interest (e.g. `5` or `5%`).
+  static String? validateAnnualRoiPercent(String? value) {
+    final v = value?.trim().replaceAll('%', '') ?? '';
+    if (v.isEmpty) return AppStrings.errAnnualRoiRequired;
+    final n = double.tryParse(v);
+    if (n == null || n < 0 || n > 100) {
+      return AppStrings.errAnnualRoiInvalid;
+    }
+    return null;
+  }
+
+  /// Repayment period measured in whole months (`6` meaning six months).
+  static String? validateRepaymentMonths(String? value) {
+    final raw = value?.trim() ?? '';
+    if (raw.isEmpty) return AppStrings.errRepaymentMonthsRequired;
+    final n = int.tryParse(raw);
+    if (n == null || n < 1 || n > 120) {
+      return AppStrings.errRepaymentMonthsInvalid;
+    }
+    return null;
+  }
+
   static String? validatePenalty(String? value) {
     final v = value?.trim() ?? '';
     if (v.isEmpty) return AppStrings.errPenaltyRequired;

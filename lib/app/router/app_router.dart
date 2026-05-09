@@ -6,6 +6,8 @@ import 'app_routes.dart';
 import 'route_groups/core_routes.dart';
 import 'route_groups/profile_wallet_routes.dart';
 import 'route_groups/project_routes.dart';
+import 'route_groups/create_project_member_flow_routes.dart';
+import 'route_groups/user_vff_routes.dart';
 
 class AppRouter {
   static Widget _invalidRouteScreen() => const Scaffold(
@@ -18,6 +20,8 @@ class AppRouter {
       ...buildCoreRoutes(),
       ...buildProfileWalletRoutes(),
       ...buildProjectRoutes(invalidRouteScreen: _invalidRouteScreen),
+      ...buildCreateProjectMemberFlowRoutes(),
+      ...buildUserVffRoutes(invalidRouteScreen: _invalidRouteScreen),
     ],
     errorBuilder: (context, _) => const Scaffold(
       body: Center(child: Text(AppStrings.routeNotFound)),

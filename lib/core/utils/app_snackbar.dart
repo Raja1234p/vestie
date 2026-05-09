@@ -10,7 +10,10 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../constants/app_assets.dart';
 import '../theme/app_colors.dart';
+import '../widgets/common/app_svg_icon.dart';
 
 class AppSnackBar {
   AppSnackBar._();
@@ -20,7 +23,7 @@ class AppSnackBar {
       context,
       message: message,
       backgroundColor: AppColors.validSuccess,
-      icon: Icons.check_circle_outline_rounded,
+      iconAsset: AppAssets.checkMarkSuccessful,
     );
   }
 
@@ -29,7 +32,7 @@ class AppSnackBar {
       context,
       message: message,
       backgroundColor: AppColors.error,
-      icon: Icons.error_outline_rounded,
+      iconAsset: AppAssets.iconClose,
     );
   }
 
@@ -38,7 +41,7 @@ class AppSnackBar {
       context,
       message: message,
       backgroundColor: AppColors.primary,
-      icon: Icons.info_outline_rounded,
+      iconAsset: AppAssets.iconInfo,
     );
   }
 
@@ -46,7 +49,7 @@ class AppSnackBar {
     BuildContext context, {
     required String message,
     required Color backgroundColor,
-    required IconData icon,
+    required String iconAsset,
   }) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
@@ -61,7 +64,11 @@ class AppSnackBar {
           duration: const Duration(seconds: 3),
           content: Row(
             children: [
-              Icon(icon, color: Colors.white, size: 18.w),
+              AppSvgIcon(
+                assetPath: iconAsset,
+                size: 18.w,
+                color: Colors.white,
+              ),
               SizedBox(width: 10.w),
               Expanded(
                 child: Text(

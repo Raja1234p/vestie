@@ -16,17 +16,28 @@ class JoinRequestsRouteArgs {
   const JoinRequestsRouteArgs({required this.projectId});
 }
 
+/// Storyboard “Project settings” hub (leader + co-leader; rows vary by role).
+class LeaderProjectSettingsRouteArgs {
+  final String projectId;
+
+  const LeaderProjectSettingsRouteArgs({required this.projectId});
+}
+
 class MemberDetailRouteArgs<T> {
   final T member;
   final String projectId;
   final String projectName;
+  /// Leader or co-leader: moderation tools (overdue, borrow context).
   final bool isLeaderView;
+  /// Primary owner only: remove member, assign / remove co-leader.
+  final bool isPrimaryLeaderView;
 
   const MemberDetailRouteArgs({
     required this.member,
     required this.projectId,
     required this.projectName,
     this.isLeaderView = false,
+    this.isPrimaryLeaderView = false,
   });
 }
 

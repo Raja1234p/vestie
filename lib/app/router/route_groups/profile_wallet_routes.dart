@@ -10,6 +10,7 @@ import '../../../features/profile/presentation/pages/transaction_history_screen.
 import '../../../features/wallet/presentation/pages/transaction_amount_screen.dart';
 import '../../../features/wallet/presentation/pages/transaction_confirmation_screen.dart';
 import '../../../features/wallet/presentation/pages/transaction_success_screen.dart';
+import '../../../features/wallet/presentation/pages/withdraw_method_screen.dart';
 import '../app_routes.dart';
 
 List<RouteBase> buildProfileWalletRoutes() {
@@ -40,6 +41,10 @@ List<RouteBase> buildProfileWalletRoutes() {
     GoRoute(
       path: AppRoutes.transactionAmount,
       builder: (context, _) => const TransactionAmountScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.withdrawMethod,
+      builder: (context, _) => const WithdrawMethodScreen(),
     ),
     GoRoute(
       path: AppRoutes.selectPaymentMethod,

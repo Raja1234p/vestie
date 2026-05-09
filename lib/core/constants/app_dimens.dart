@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// Centralized dimensions ensuring zero hardcoded numbers in widgets.
@@ -8,6 +9,7 @@ class AppDimens {
   static double get p4 => 4.0.w;
   static double get p8 => 8.0.w;
   static double get p12 => 12.0.w;
+  static double get p14 => 14.0.w;
   static double get p16 => 16.0.w; // Standard screen padding
   static double get p20 => 20.0.w;
   static double get p24 => 24.0.w;
@@ -15,11 +17,56 @@ class AppDimens {
   static double get p40 => 40.0.w;
   static double get p48 => 48.0.w;
   static double get p64 => 64.0.w;
+  /// Horizontal gutters used on some auth / VFF sheets (between p16–p24).
+  static double get p18 => 18.0.w;
+  static double get p22 => 22.0.w;
+
+  /// Vertical rhythm (ScreenUtil heights).
+  static double get v4 => 4.0.h;
+  static double get v8 => 8.0.h;
+  static double get v10 => 10.0.h;
+  static double get v12 => 12.0.h;
+  static double get v14 => 14.0.h;
+  static double get v16 => 16.0.h;
+  static double get v18 => 18.0.h;
+  static double get v20 => 20.0.h;
+  static double get v22 => 22.0.h;
+  static double get v24 => 24.0.h;
+  static double get v28 => 28.0.h;
+  static double get v48 => 48.0.h;
+
+  /// Room for stacked primary footer on dense profile layouts.
+  static double get v92 => 92.0.h;
+
+  /// VFF rounded white sheet padding presets.
+  static EdgeInsets get sheetInsetComfort =>
+      EdgeInsets.fromLTRB(p18, v20, p18, v4);
+
+  static EdgeInsets get sheetInsetList =>
+      EdgeInsets.fromLTRB(p18, v20, p18, v8);
+
+  static EdgeInsets get sheetInsetProfile =>
+      EdgeInsets.fromLTRB(p18, v16, p18, v16);
+
+  static EdgeInsets get screenHorizontalComfort =>
+      EdgeInsets.symmetric(horizontal: p22);
+
+  /// Hero illustration square (VFF success / mocks).
+  static double get illustrationLg => 200.0.w;
+
+  static EdgeInsets get removeDialogOuterInsets =>
+      EdgeInsets.symmetric(horizontal: p22);
+
+  static EdgeInsets get removeDialogInnerInsets =>
+      EdgeInsets.fromLTRB(p20, v22, p20, v18);
 
   // Icon Sizes
   static double get iconSmall => 16.0.w;
   static double get iconMedium => 24.0.w;
   static double get iconLarge => 32.0.w;
+
+  /// Bold dialog glyphs (e.g. destructive “X”).
+  static double get iconGlyphLg => 40.0.r;
 
   /// App bar / header back chevron (keep in sync with [AppBackButton]).
   static double get backIconSize => iconMedium;
@@ -27,7 +74,13 @@ class AppDimens {
   // Button Heights
   static double get buttonHeightSm => 40.0.h;
   static double get buttonHeightMd => 48.0.h;
+
+  /// VFF dialogs / stacked rows (matches Figma 50px rails).
+  static double get buttonHeightDialogCompact => 50.0.h;
   static double get buttonHeightLg => 56.0.h;
+
+  /// Error icon medallion diameter in dialogs.
+  static double get dialogErrorIconDiameter => 72.0.r;
 }
 
 class AppRadius {
@@ -38,7 +91,9 @@ class AppRadius {
   /// [AppActionDialog] primary/secondary action corners (Figma: 24).
   static double get dialogActionButton => r24;
   static double get r12 => 12.0.r;
+  static double get r14 => 14.0.r;
   static double get r16 => 16.0.r;
+  static double get r22 => 22.0.r;
   static double get r24 => 24.0.r;
   static double get r32 => 32.0.r;
   

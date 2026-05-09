@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../theme/app_colors.dart';
+import '../../constants/app_assets.dart';
 import '../../constants/app_strings.dart';
+import '../../theme/app_colors.dart';
 import 'app_button.dart';
+import 'app_svg_icon.dart';
 
 /// Full-view error state widget with an optional retry action.
 class AppErrorView extends StatelessWidget {
@@ -20,8 +22,11 @@ class AppErrorView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.error_outline_rounded,
-                size: 56.w, color: AppColors.error),
+            AppSvgIcon(
+              assetPath: AppAssets.iconClose,
+              size: 56.w,
+              color: AppColors.error,
+            ),
             SizedBox(height: 16.h),
             Text(
               message ?? AppStrings.errorGeneric,

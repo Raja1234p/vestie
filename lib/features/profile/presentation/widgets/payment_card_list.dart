@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/app_svg_icon.dart';
 import '../../../../core/widgets/common/app_text.dart';
 import '../../domain/entities/payment_card.dart';
 import 'card_detail_sheet.dart';
@@ -118,7 +119,10 @@ class _PaymentCardItem extends StatelessWidget {
                   ),
                   SizedBox(width: 8.w),
                 ],
-                Icon(Icons.chevron_right_rounded, size: 18.w, color: AppColors.primary),
+                AppSvgIcon(
+                    assetPath: AppAssets.iconChevronRight,
+                    size: 18.w,
+                    color: AppColors.primary),
               ],
             ),
           ),

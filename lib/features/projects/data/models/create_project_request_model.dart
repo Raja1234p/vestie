@@ -1,4 +1,4 @@
-import '../../../create_project/domain/create_project_form.dart';
+import 'package:vestie/leader/features/create_project/domain/create_project_form.dart';
 
 class CreateProjectRequestModel {
   final String name;
@@ -48,7 +48,6 @@ class CreateProjectRequestModel {
           NewProjectCategory.vacation => 'Vacation',
           NewProjectCategory.emergency => 'Emergency',
           NewProjectCategory.investment => 'Investment',
-          NewProjectCategory.other => 'Other',
         };
 
     String mapVisibility(ProjectVisibility v) => switch (v) {
@@ -71,12 +70,15 @@ class CreateProjectRequestModel {
       endsAtUtc: ends,
       contributionDeadlineUtc: ends,
       borrowingEnabled: form.borrowingEnabled,
-      suggestedContributionAmount: 0.0,
+      suggestedContributionAmount: 0,
       joinApprovalRequired: true,
-      roiPercentage: parseDouble(form.roi),
-      repaymentWindowDays: parseInt(form.repaymentWindow),
+      roiPercentage:
+          form.borrowingEnabled ? parseDouble(form.roi) : 0.0,
+      repaymentWindowDays: form.borrowingEnabled
+          ? parseInt(form.repaymentWindow) * 30
+          : 0,
       repaymentGraceDays: 0,
-      penaltyPercentage: parseDouble(form.penalty),
+      penaltyPercentage: 0,
       minimumContributionAmount: 0.0,
       contributionsAreNonRefundable: false,
     );

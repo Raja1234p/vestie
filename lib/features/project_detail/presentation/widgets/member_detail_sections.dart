@@ -4,20 +4,24 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/app_routes.dart';
 import '../../../../app/router/route_args/project_detail_flow_args.dart';
+import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/app_avatar_circle.dart';
 import '../../../../core/widgets/common/app_button.dart';
+import '../../../../core/widgets/common/app_svg_icon.dart';
 import '../../../../core/widgets/common/app_transaction_item.dart';
 import '../../../../core/widgets/text/app_text.dart';
 import '../../domain/entities/member_entity.dart';
-import 'member_detail_actions.dart';
+import 'package:vestie/leader/features/project_detail/presentation/widgets/member_detail_actions.dart';
 import 'member_metric_card.dart';
 
 class MemberIdentitySection extends StatelessWidget {
   final MemberEntity member;
   final String username;
   final String projectName;
-  final bool isLeaderView;
+  /// Primary leader only — promote / demote co-leader chip.
+  final bool showCoLeaderRoleControls;
   final bool isCoLeader;
   final Future<bool> Function()? onAssignCoLeader;
   final Future<bool> Function()? onRemoveCoLeader;
@@ -27,7 +31,7 @@ class MemberIdentitySection extends StatelessWidget {
     required this.member,
     required this.username,
     required this.projectName,
-    required this.isLeaderView,
+    required this.showCoLeaderRoleControls,
     required this.isCoLeader,
     this.onAssignCoLeader,
     this.onRemoveCoLeader,
@@ -37,17 +41,12 @@ class MemberIdentitySection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        CircleAvatar(
-          radius: 27.r,
+        AppAvatarCircle(
+          initials: member.initials,
+          size: 54.r,
           backgroundColor: AppColors.purple300,
-          child: AppText(
-            member.initials,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontSize: 24.sp,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.grey1100,
-                ),
-          ),
+          textColor: AppColors.grey1100,
+          fontSize: 24.sp,
         ),
         SizedBox(width: 12.w),
         Expanded(
@@ -74,7 +73,7 @@ class MemberIdentitySection extends StatelessWidget {
             ],
           ),
         ),
-        if (isLeaderView) ...[
+        if (showCoLeaderRoleControls) ...[
           SizedBox(width: 8.w),
           MemberLeaderRoleButton(
             isCoLeader: isCoLeader,
@@ -210,7 +209,10 @@ class MemberOverdueBanner extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.warning_amber_rounded, color: AppColors.red900, size: 20.w),
+          AppSvgIcon(
+              assetPath: AppAssets.infoIcon,
+              color: AppColors.red900,
+              size: 20.w),
           SizedBox(width: 8.w),
           Expanded(
             child: AppText(

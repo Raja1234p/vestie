@@ -3,7 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/constants/app_assets.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/app_svg_icon.dart';
 import '../../../../core/widgets/text/app_text.dart';
 
 String formatProjectInfoAmount(double value) {
@@ -91,7 +93,10 @@ class ProjectInfoDeadlineRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(Icons.calendar_today_outlined, size: 14.w, color: AppColors.textBody),
+        AppSvgIcon(
+            assetPath: AppAssets.iconCalendar,
+            size: 14.w,
+            color: AppColors.textBody),
         SizedBox(width: 6.w),
         AppText(
           '${AppStrings.labelEndsIn} ',

@@ -9,18 +9,19 @@ import '../../../../core/widgets/common/app_back_button.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/common/app_toggle_tab_bar.dart';
 import '../../../../core/widgets/common/leader_action_menu.dart';
+import '../../../../core/widgets/text/app_text.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../../core/widgets/common/post_auth_header.dart';
 import '../../../../core/widgets/common/app_shimmer.dart';
 import '../../../../core/di/service_locator.dart';
-import '../../../home/domain/entities/project.dart';
+import 'package:vestie/user/features/home/domain/entities/project.dart';
 import '../../domain/entities/member_entity.dart';
 import '../../domain/entities/project_detail_entity.dart';
-import '../../../projects/presentation/bloc/project_detail_bloc.dart';
+import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
 import '../navigation/project_detail_navigation_helpers.dart';
 import '../widgets/announcement_card.dart';
 import '../widgets/project_detail_tab_panels.dart';
-import '../widgets/project_detail_user_completed_content.dart';
+import 'package:vestie/user/features/project_detail/presentation/widgets/project_detail_user_completed_content.dart';
 import '../widgets/project_info_card.dart';
 
 /// Shell — provides ProjectDetailBloc. Route extra = [ProjectDetailEntity].
@@ -51,7 +52,7 @@ class _ProjectDetailBody extends StatelessWidget {
           builder: (context, state) {
             if (state is ProjectDetailError) {
               return Center(
-                child: Text(
+                child: AppText(
                   state.message,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: AppColors.textBody,
@@ -66,8 +67,8 @@ class _ProjectDetailBody extends StatelessWidget {
 
             if (state is ProjectDetailLoaded) {
               final project = state.project;
-              final isMemberCompletedView =
-                  !project.isLeader && project.status == ProjectStatus.completed;
+              final isMemberCompletedView = !project.hasManagementPrivileges &&
+                  project.status == ProjectStatus.completed;
 
               return CustomScrollView(
                 slivers: [
@@ -79,9 +80,12 @@ class _ProjectDetailBody extends StatelessWidget {
                         onPressed: () => context.pop(),
                       ),
                       // "..." leader menu only visible to project owner
-                      trailing: project.isLeader
+                      trailing: project.hasManagementPrivileges
                           ? LeaderActionMenu(
-                              joinRequestCount: 3,
+                              audience: project.isLeader
+                                  ? LeaderMenuAudience.primaryLeader
+                                  : LeaderMenuAudience.coLeader,
+                              joinRequestCount: project.pendingJoinRequestCount,
                               onSelected: (action) => ProjectDetailNavigationHelpers
                                   .handleLeaderAction(
                                 context,
@@ -113,7 +117,7 @@ class _ProjectDetailBody extends StatelessWidget {
                                 SizedBox(height: 12.h),
                                 AnnouncementCard(
                                   text: project.announcement,
-                                  isLeader: project.isLeader,
+                                  isLeader: project.hasManagementPrivileges,
                                   onDelete: () {
                                     // TODO: delete announcement via BLoC
                                   },
@@ -160,7 +164,7 @@ class _ProjectDetailBody extends StatelessWidget {
             }
 
             return Center(
-              child: Text(
+              child: AppText(
                 AppStrings.errorGeneric,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: AppColors.textBody,
@@ -196,7 +200,7 @@ class _TabSection extends StatelessWidget {
             AppToggleTabBar(
               tabs: [
                 AppStrings.tabBorrowRequests,
-                project.isLeader
+                project.hasManagementPrivileges
                     ? AppStrings.tabManageMembers
                     : AppStrings.tabMember,
               ],
@@ -211,7 +215,7 @@ class _TabSection extends StatelessWidget {
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 280),
               child: isBorrowTab
-                  ? project.isLeader
+                  ? project.hasManagementPrivileges
                       ? LeaderBorrowRequestsPanel(
                           key: const ValueKey('leader-borrow'),
                           requests: project.borrowRequests,
@@ -236,7 +240,7 @@ class _TabSection extends StatelessWidget {
                             ),
                           ),
                         )
-                  : project.isLeader
+                  : project.hasManagementPrivileges
                       ? LeaderMembersPanel(
                           key: const ValueKey('leader-members'),
                           members: project.members,

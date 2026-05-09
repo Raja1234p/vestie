@@ -1,0 +1,61 @@
+import 'package:flutter/widgets.dart';
+import 'package:go_router/go_router.dart';
+
+import 'package:vestie/app/router/app_routes.dart';
+import '../domain/create_project_form.dart';
+import 'cubit/create_project_cubit.dart';
+
+String? createProjectDetailsStepBadge(CreateProjectForm form, {required bool editMode}) {
+  if (editMode) return null;
+  return '2/${form.flowType.wizardStepTotal}';
+}
+
+String? createProjectSavingSettingsStepBadge(
+  CreateProjectForm form, {
+  required bool editMode,
+}) {
+  if (editMode) return null;
+  return '3/${form.flowType.wizardStepTotal}';
+}
+
+String? createProjectBorrowingSettingsStepBadge(
+  CreateProjectForm form, {
+  required bool editMode,
+}) {
+  if (editMode) return null;
+  return '3/${form.flowType.wizardStepTotal}';
+}
+
+String createProjectReviewStepBadge(CreateProjectForm form) =>
+    '${form.flowType.wizardStepTotal}/${form.flowType.wizardStepTotal}';
+
+/// After validating details, routes to Saving settings, Borrowing settings, or Review.
+void pushNextAfterDetailsStep(
+  BuildContext context,
+  CreateProjectCubit cubit, {
+  required bool editMode,
+}) {
+  if (!cubit.validateDetails()) return;
+  final form = cubit.state;
+
+  if (editMode) {
+    switch (form.flowType) {
+      case ProjectCreationFlowType.collaborativeSaving:
+        context.push(AppRoutes.createProjectSavingSettings, extra: true);
+      case ProjectCreationFlowType.fundsBorrowing:
+        context.push(AppRoutes.createProjectFundsBorrowing, extra: true);
+      case ProjectCreationFlowType.streamlined:
+        context.pop();
+    }
+    return;
+  }
+
+  switch (form.flowType) {
+    case ProjectCreationFlowType.collaborativeSaving:
+      context.push(AppRoutes.createProjectSavingSettings);
+    case ProjectCreationFlowType.fundsBorrowing:
+      context.push(AppRoutes.createProjectFundsBorrowing);
+    case ProjectCreationFlowType.streamlined:
+      context.push(AppRoutes.createProjectReview);
+  }
+}

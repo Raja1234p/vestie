@@ -3,8 +3,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/app_routes.dart';
 import '../../../../app/router/route_args/project_detail_flow_args.dart';
-import '../../../home/domain/entities/project.dart' show Project, UserFlowOnOpen;
-import '../../../home/domain/entities/project_category_extensions.dart';
+import 'package:vestie/user/features/home/domain/entities/project.dart' show Project, UserFlowOnOpen;
+import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
 import '../../domain/entities/project_detail_route_args.dart';
 
 /// Single entry for Home / Discover when a project card is tapped. Handles

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../constants/app_assets.dart';
 import '../../theme/app_colors.dart';
 import '../text/app_text.dart';
+import 'app_svg_icon.dart';
 
 /// A reusable numeric keypad with a backspace button.
 /// Extracts the custom numpad from the Create Project flow for global usage.
@@ -51,8 +53,11 @@ class AppNumpad extends StatelessWidget {
               ),
               child: Center(
                 child: k == '⌫'
-                    ? Icon(Icons.backspace_outlined,
-                        size: 20.w, color: AppColors.textPrimary)
+                    ? AppSvgIcon(
+                        assetPath: AppAssets.iconBackspace,
+                        size: 20.w,
+                        color: AppColors.textPrimary,
+                      )
                     : AppText(k,
                         style: GoogleFonts.lato(
                             fontSize: 22.sp,

@@ -36,7 +36,8 @@ class ProjectDetailNavigationHelpers {
       member: member,
       projectId: project.id,
       projectName: project.name,
-      isLeaderView: project.isLeader,
+      isLeaderView: project.hasManagementPrivileges,
+      isPrimaryLeaderView: project.isLeader,
     );
   }
 
@@ -57,6 +58,12 @@ class ProjectDetailNavigationHelpers {
     required LeaderMenuAction action,
   }) {
     switch (action) {
+      case LeaderMenuAction.projectSettings:
+        context.push(
+          AppRoutes.leaderProjectSettings,
+          extra: LeaderProjectSettingsRouteArgs(projectId: project.id),
+        );
+        break;
       case LeaderMenuAction.joinRequests:
         context.push(
           AppRoutes.joinRequests,

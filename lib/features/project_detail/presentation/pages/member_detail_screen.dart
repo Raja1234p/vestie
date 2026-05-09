@@ -9,14 +9,17 @@ import '../../../../core/widgets/common/app_back_button.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../../core/widgets/common/post_auth_header.dart';
 import '../../domain/entities/member_entity.dart';
-import '../widgets/member_detail_actions.dart';
+import 'package:vestie/leader/features/project_detail/presentation/widgets/member_detail_actions.dart';
 import '../widgets/member_detail_sections.dart';
 
 class MemberDetailScreen extends StatelessWidget {
   final MemberEntity member;
   final String projectId;
   final String projectName;
+  /// Leader or co-leader moderation context (borrow / overdue tooling).
   final bool isLeaderView;
+  /// Primary owner only — remove member, promote / demote co-leader.
+  final bool isPrimaryLeaderView;
 
   const MemberDetailScreen({
     super.key,
@@ -24,6 +27,7 @@ class MemberDetailScreen extends StatelessWidget {
     required this.projectId,
     required this.projectName,
     this.isLeaderView = false,
+    this.isPrimaryLeaderView = false,
   });
 
   int get _contributionsCount => member.contributedAmount >= 0 ? 3 : 2;
@@ -113,7 +117,8 @@ class MemberDetailScreen extends StatelessWidget {
                       member: member,
                       username: _username,
                       projectName: projectName,
-                      isLeaderView: isLeaderView,
+                      showCoLeaderRoleControls:
+                          isPrimaryLeaderView,
                       isCoLeader: _isCoLeader,
                       onAssignCoLeader: () => _assignCoLeader(context),
                       onRemoveCoLeader: () => _removeCoLeader(context),
@@ -133,7 +138,7 @@ class MemberDetailScreen extends StatelessWidget {
                       SizedBox(height: 12.h),
                       MemberOverdueBanner(member: member, projectId: projectId),
                     ],
-                    if (isLeaderView) ...[
+                    if (isPrimaryLeaderView) ...[
                       SizedBox(height: 70.h),
                       LeaderActionOutlineButton(
                         label: AppStrings.btnRemoveMember,

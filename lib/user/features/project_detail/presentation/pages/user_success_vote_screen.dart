@@ -1,0 +1,154 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import 'package:vestie/app/router/app_routes.dart';
+import 'package:vestie/app/router/route_args/project_detail_flow_args.dart';
+import 'package:vestie/core/constants/app_dimens.dart';
+import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/di/service_locator.dart';
+import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/utils/app_snackbar.dart';
+import 'package:vestie/core/widgets/common/app_back_button.dart';
+import 'package:vestie/core/widgets/common/app_button.dart';
+import 'package:vestie/core/widgets/common/app_outline_neutral_button.dart';
+import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
+import 'package:vestie/core/widgets/common/post_auth_header.dart';
+import 'package:vestie/core/widgets/text/app_text.dart';
+import 'package:vestie/features/project_detail/presentation/bloc/voting_bloc.dart';
+import 'package:vestie/features/project_detail/presentation/bloc/voting_event.dart';
+import 'package:vestie/features/project_detail/presentation/bloc/voting_state.dart';
+import '../widgets/user_success_vote_panels.dart';
+
+/// Member: vote on whether the project was successful (Figma: banner, deadline,
+/// stats, question, CTA, disclaimer — all in one scroll below header).
+class UserSuccessVoteScreen extends StatelessWidget {
+  final UserSuccessVoteArgs args;
+
+  const UserSuccessVoteScreen({super.key, required this.args});
+
+  void _submitVote(BuildContext context, {required bool voteForSuccess}) {
+    final projectId = args.projectId;
+    if (projectId == null || projectId.isEmpty) {
+      context.pushReplacement(
+        AppRoutes.userStatusFlow,
+        extra: UserStatusFlowArgs(
+          projectName: args.projectName,
+          kind: voteForSuccess
+              ? UserStatusFlowKind.markVotedSuccess
+              : UserStatusFlowKind.markVotedIncomplete,
+        ),
+      );
+      return;
+    }
+
+    context.read<VotingBloc>().add(SubmitVoteActionEvent(
+          projectId: projectId,
+          isPositive: voteForSuccess,
+        ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => ServiceLocator.instance.votingBloc,
+      child: BlocConsumer<VotingBloc, VotingState>(
+        listener: (context, state) {
+          if (state.isSuccess) {
+            context.pushReplacement(
+              AppRoutes.userStatusFlow,
+              extra: UserStatusFlowArgs(
+                projectName: args.projectName,
+                kind: UserStatusFlowKind.markVotedSuccess,
+              ),
+            );
+          } else if (state.failure != null) {
+            AppSnackBar.showError(context, state.failure!.message);
+          }
+        },
+        builder: (context, state) {
+          return Scaffold(
+            backgroundColor: Colors.transparent,
+            body: PostAuthGradientBackground(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  PostAuthHeader(
+                    title: args.projectName,
+                    leading: AppBackButton(
+                      onPressed: () {
+                        if (context.canPop()) {
+                          context.pop();
+                        } else {
+                          context.go(AppRoutes.dashboard);
+                        }
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 24.h),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          UserSuccessVotePanels(args: args),
+                          SizedBox(height: 20.h),
+                          AppText(
+                            AppStrings.userSuccessVoteQuestion,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.lato(
+                              fontSize: 20.sp,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.grey1100,
+                              height: 1.3,
+                            ),
+                          ),
+                          SizedBox(height: 12.h),
+                          AppButton(
+                            text: AppStrings.userSuccessVoteYes,
+                            isLoading: state.isLoading,
+                            onPressed: state.isLoading
+                                ? null
+                                : () => _submitVote(context, voteForSuccess: true),
+                            useGradient: true,
+                            borderRadius: AppRadius.r24,
+                          ),
+                          SizedBox(height: 12.h),
+                          AppOutlineNeutralButton(
+                            label: AppStrings.userSuccessVoteNotYet,
+                            onPressed: () {
+                              if (!state.isLoading) {
+                                _submitVote(context, voteForSuccess: false);
+                              }
+                            },
+                            borderRadius: AppRadius.r24,
+                            borderColor: AppColors.primary,
+                            labelColor: AppColors.primary,
+                          ),
+                          SizedBox(height: 10.h),
+                          AppText(
+                            AppStrings.userSuccessVoteFooter,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.lato(
+                              fontSize: 11.sp,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.grey600,
+                              height: 1.45,
+                            ),
+                          ),
+                          SizedBox(height: 8.h),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}

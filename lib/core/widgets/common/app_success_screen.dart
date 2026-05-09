@@ -37,6 +37,18 @@ class AppSuccessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Widget? resolvedSubtitle = subtitleWidget ??
+        (subtitle != null
+            ? AppText(
+                subtitle!,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontSize: 18.sp,
+                      color: AppColors.textBody,
+                    ),
+              )
+            : null);
+
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
@@ -76,16 +88,7 @@ class AppSuccessScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 10.h),
 
-                  ?subtitleWidget,
-                  if (subtitleWidget == null && subtitle != null)
-                    AppText(
-                      subtitle!,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontSize: 18.sp,
-                            color: AppColors.textBody,
-                          ),
-                    ),
+                  ?resolvedSubtitle,
 
                   SizedBox(height: 20.h),
 
@@ -93,8 +96,10 @@ class AppSuccessScreen extends StatelessWidget {
 
                   const Spacer(flex: 3),
 
-                  ?bottomContent,
-                  if (bottomContent != null) SizedBox(height: 12.h),
+                  if (bottomContent case final b?) ...[
+                    b,
+                    SizedBox(height: 12.h),
+                  ],
 
                   SafeArea(
                     top: false,
@@ -102,7 +107,7 @@ class AppSuccessScreen extends StatelessWidget {
                       padding: EdgeInsets.fromLTRB(0.w, 0.h, 0.w, 20.h),
                       child: AppButton(
                         text: buttonText,
-                        color: Colors.black,
+                        color: AppColors.cardActionBtn,
                         useGradient: false,
                         hasShadow: false,
                         borderRadius: 8.r,

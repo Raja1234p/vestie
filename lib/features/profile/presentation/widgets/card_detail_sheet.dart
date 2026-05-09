@@ -4,9 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/app_snackbar.dart';
+import '../../../../core/widgets/common/app_svg_icon.dart';
 import '../../../../core/widgets/common/app_text.dart';
 import '../../../../core/widgets/common/app_tick_switch.dart';
 import '../../domain/entities/payment_card.dart';
@@ -52,7 +54,10 @@ class CardDetailSheet extends StatelessWidget {
               // ── Close ────────────────────────────────────
               GestureDetector(
                 onTap: context.pop,
-                child: Icon(Icons.close, size: 24.w, color: AppColors.textBody),
+                child: AppSvgIcon(
+                    assetPath: AppAssets.iconClose,
+                    size: 24.w,
+                    color: AppColors.textBody),
               ),
               SizedBox(height: 16.h),
 
@@ -139,8 +144,10 @@ class CardDetailSheet extends StatelessWidget {
                         AppStrings.cardRemovedSuccess,
                       );
                     },
-                    child: Icon(Icons.delete_outline_rounded,
-                        size: 22.w, color: AppColors.logoutBtn),
+                    child: AppSvgIcon(
+                        assetPath: AppAssets.iconDelete,
+                        size: 22.w,
+                        color: AppColors.logoutBtn),
                   ),
                 ],
               ),

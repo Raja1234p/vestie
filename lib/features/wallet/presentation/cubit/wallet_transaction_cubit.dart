@@ -1,27 +1,34 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/wallet_transaction_type.dart';
+
 import '../../../profile/domain/entities/payment_card.dart';
+import '../../domain/wallet_transaction_type.dart';
+import '../../domain/withdraw_delivery_method.dart';
 
 class WalletTransactionState {
   final WalletTransactionType transactionType;
   final String amountDigits;
   final PaymentCard? selectedCard;
+  final WithdrawDeliveryMethod? withdrawDeliveryMethod;
 
   const WalletTransactionState({
     required this.transactionType,
     this.amountDigits = '',
     this.selectedCard,
+    this.withdrawDeliveryMethod,
   });
 
   WalletTransactionState copyWith({
     WalletTransactionType? transactionType,
     String? amountDigits,
     PaymentCard? selectedCard,
+    WithdrawDeliveryMethod? withdrawDeliveryMethod,
   }) {
     return WalletTransactionState(
       transactionType: transactionType ?? this.transactionType,
       amountDigits: amountDigits ?? this.amountDigits,
       selectedCard: selectedCard ?? this.selectedCard,
+      withdrawDeliveryMethod:
+          withdrawDeliveryMethod ?? this.withdrawDeliveryMethod,
     );
   }
 
@@ -61,6 +68,17 @@ class WalletTransactionCubit extends Cubit<WalletTransactionState> {
 
   void selectCard(PaymentCard card) {
     emit(state.copyWith(selectedCard: card));
+  }
+
+  /// Default instant rail before the user opens the method picker.
+  void prepareWithdrawMethodSelection() {
+    emit(state.copyWith(
+      withdrawDeliveryMethod: WithdrawDeliveryMethod.instant,
+    ));
+  }
+
+  void setWithdrawDeliveryMethod(WithdrawDeliveryMethod method) {
+    emit(state.copyWith(withdrawDeliveryMethod: method));
   }
 
   void reset() {

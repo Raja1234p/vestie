@@ -3,12 +3,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/app_svg_icon.dart';
 import '../../../../core/widgets/text/app_text.dart';
 import '../../domain/entities/project_detail_entity.dart';
-import '../../../home/domain/entities/project.dart' show ProjectStatus;
-import '../../../home/domain/entities/project_category_extensions.dart';
+import 'package:vestie/user/features/home/domain/entities/project.dart' show ProjectStatus;
+import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
 
 class ProjectInfoCategoryChip extends StatelessWidget {
   final ProjectDetailEntity project;
@@ -38,7 +40,10 @@ class ProjectInfoCategoryChip extends StatelessWidget {
                   const ColorFilter.mode(AppColors.primary, BlendMode.srcIn),
             )
           else
-            Icon(Icons.beach_access_outlined, size: 13.w, color: AppColors.primary),
+            AppSvgIcon(
+                assetPath: AppAssets.iconEmergencyFund,
+                size: 13.w,
+                color: AppColors.primary),
           SizedBox(width: 4.w),
           AppText(
             project.categoryLabel,

@@ -13,6 +13,7 @@ import '../cubit/wallet_transaction_cubit.dart';
 import '../../domain/wallet_transaction_type.dart';
 import '../widgets/wallet_overview_card.dart';
 import '../widgets/wallet_action_buttons.dart';
+import '../widgets/wallet_recent_activity_empty.dart';
 import '../../../../core/widgets/common/app_transaction_item.dart';
 
 class WalletScreen extends StatelessWidget {
@@ -20,29 +21,14 @@ class WalletScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final txItems = [
-      (
-        type: AppTransactionType.deposit,
-        title: AppStrings.txWalletDeposit,
-        date: 'Mar 12',
-        amount: '500',
-        isNegative: false,
-      ),
-      (
-        type: AppTransactionType.contribution,
-        title: '${AppStrings.txContributionPrefix}Family Vacation',
-        date: 'Mar 11',
-        amount: '115',
-        isNegative: true,
-      ),
-      (
-        type: AppTransactionType.borrow,
-        title: '${AppStrings.txBorrowPrefix}Family Vacation',
-        date: 'Mar 12',
-        amount: '650',
-        isNegative: false,
-      ),
-    ];
+    // Replace with API-backed history when available.
+    final txItems = <({
+      AppTransactionType type,
+      String title,
+      String date,
+      String amount,
+      bool isNegative,
+    })>[];
 
     return PostAuthGradientBackground(
       child: Column(
@@ -93,22 +79,26 @@ class WalletScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 8.h),
                   Expanded(
-                    child: ListView.separated(
-                      padding: EdgeInsets.only(bottom: 16.h, top: 0.h),
-                      physics: const BouncingScrollPhysics(),
-                      separatorBuilder: (context, _) => SizedBox(height: 10.h),
-                      itemCount: txItems.length,
-                      itemBuilder: (_, index) {
-                        final item = txItems[index];
-                        return AppTransactionItem(
-                          type: item.type,
-                          title: item.title,
-                          date: item.date,
-                          amount: item.amount,
-                          isNegative: item.isNegative,
-                        );
-                      },
-                    ),
+                    child: txItems.isEmpty
+                        ? const WalletRecentActivityEmpty()
+                        : ListView.separated(
+                            padding:
+                                EdgeInsets.only(bottom: 16.h, top: 0.h),
+                            physics: const BouncingScrollPhysics(),
+                            separatorBuilder: (context, _) =>
+                                SizedBox(height: 10.h),
+                            itemCount: txItems.length,
+                            itemBuilder: (_, index) {
+                              final item = txItems[index];
+                              return AppTransactionItem(
+                                type: item.type,
+                                title: item.title,
+                                date: item.date,
+                                amount: item.amount,
+                                isNegative: item.isNegative,
+                              );
+                            },
+                          ),
                   ),
                 ],
               ),
