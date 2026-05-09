@@ -22,6 +22,8 @@ import 'package:vestie/leader/features/create_project/presentation/pages/create_
 
 import 'package:vestie/leader/features/create_project/presentation/pages/create_project_details_screen.dart';
 
+import 'package:vestie/leader/features/create_project/presentation/pages/create_project_investment_settings_screen.dart';
+
 import 'package:vestie/leader/features/create_project/presentation/pages/create_project_review_screen.dart';
 
 import 'package:vestie/leader/features/create_project/presentation/pages/create_project_saving_settings_screen.dart';
@@ -181,6 +183,18 @@ List<RouteBase> buildCoreRoutes() {
       path: AppRoutes.createProjectFundsBorrowing,
 
       builder: (context, state) => CreateProjectBorrowingSettingsScreen(
+
+        isEditMode: state.extra == true,
+
+      ),
+
+    ),
+
+    GoRoute(
+
+      path: AppRoutes.createProjectInvestmentSettings,
+
+      builder: (context, state) => CreateProjectInvestmentSettingsScreen(
 
         isEditMode: state.extra == true,
 

@@ -15,7 +15,7 @@ class AppRouter {
       );
 
   static final GoRouter router = GoRouter(
-    initialLocation: AppRoutes.splash,
+    initialLocation: AppRoutes.dashboard,
     routes: [
       ...buildCoreRoutes(),
       ...buildProfileWalletRoutes(),

@@ -13,7 +13,7 @@ import '../cubit/create_project_cubit.dart';
 import '../widgets/create_project_header.dart';
 import 'create_project_form_widgets.dart';
 
-/// Funds-borrowing flow — toggle, annual %, repayment in months (`AppStrings` aligned to design).
+/// Vacation / Emergency + Funds borrowing — repayment window (days) & penalty (%).
 ///
 /// Stateful only for controller lifecycle; wizard state stays in [CreateProjectCubit].
 class CreateProjectBorrowingSettingsScreen extends StatefulWidget {
@@ -31,21 +31,21 @@ class CreateProjectBorrowingSettingsScreen extends StatefulWidget {
 
 class _CreateProjectBorrowingSettingsScreenState
     extends State<CreateProjectBorrowingSettingsScreen> {
-  late final TextEditingController _roiCtrl;
-  late final TextEditingController _monthsCtrl;
+  late final TextEditingController _daysCtrl;
+  late final TextEditingController _penaltyCtrl;
 
   @override
   void initState() {
     super.initState();
     final f = context.read<CreateProjectCubit>().state;
-    _roiCtrl = TextEditingController(text: f.roi);
-    _monthsCtrl = TextEditingController(text: f.repaymentWindow);
+    _daysCtrl = TextEditingController(text: f.repaymentWindow);
+    _penaltyCtrl = TextEditingController(text: f.penalty);
   }
 
   @override
   void dispose() {
-    _roiCtrl.dispose();
-    _monthsCtrl.dispose();
+    _daysCtrl.dispose();
+    _penaltyCtrl.dispose();
     super.dispose();
   }
 
@@ -102,24 +102,24 @@ class _CreateProjectBorrowingSettingsScreenState
                           SizedBox(height: 20.h),
                           const CPDashedDivider(),
                           SizedBox(height: 20.h),
-                          CPFieldLabel(AppStrings.labelAnnualInterest),
+                          CPFieldLabel(AppStrings.labelRepaymentWindowDays),
                           CPTextField(
-                            controller: _roiCtrl,
-                            hint: AppStrings.hintAnnualInterest,
+                            controller: _daysCtrl,
+                            hint: AppStrings.hintRepaymentDays,
                             keyboardType: TextInputType.number,
                             textInputAction: TextInputAction.next,
-                            errorText: form.roiError,
-                            onChanged: cubit.setRoi,
+                            errorText: form.repaymentWindowError,
+                            onChanged: cubit.setRepaymentDays,
                           ),
                           SizedBox(height: 16.h),
-                          CPFieldLabel(AppStrings.labelRepaymentMonths),
+                          CPFieldLabel(AppStrings.labelBorrowPenaltyPercent),
                           CPTextField(
-                            controller: _monthsCtrl,
-                            hint: AppStrings.hintRepaymentMonths,
+                            controller: _penaltyCtrl,
+                            hint: AppStrings.hintBorrowPenalty,
                             keyboardType: TextInputType.number,
                             textInputAction: TextInputAction.done,
-                            errorText: form.repaymentWindowError,
-                            onChanged: cubit.setRepaymentMonths,
+                            errorText: form.penaltyError,
+                            onChanged: cubit.setPenalty,
                           ),
                         ],
                       ],
@@ -129,7 +129,7 @@ class _CreateProjectBorrowingSettingsScreenState
                 SafeArea(
                   top: false,
                   child: Padding(
-                    padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 14.h),
+                    padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 20.h),
                     child: CPNextButton(
                       label: widget.isEditMode
                           ? AppStrings.btnSaveChanges

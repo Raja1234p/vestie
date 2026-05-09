@@ -7,6 +7,11 @@ import 'cubit/create_project_cubit.dart';
 
 String? createProjectDetailsStepBadge(CreateProjectForm form, {required bool editMode}) {
   if (editMode) return null;
+  // Amount is outside 1/3–3/3 (vacation·borrow, emergency·borrow, investment·ROI).
+  if (form.flowType == ProjectCreationFlowType.fundsBorrowing ||
+      form.flowType == ProjectCreationFlowType.investmentOptionalRoi) {
+    return '1/3';
+  }
   return '2/${form.flowType.wizardStepTotal}';
 }
 
@@ -23,11 +28,30 @@ String? createProjectBorrowingSettingsStepBadge(
   required bool editMode,
 }) {
   if (editMode) return null;
+  if (form.flowType == ProjectCreationFlowType.fundsBorrowing) {
+    return '2/3';
+  }
   return '3/${form.flowType.wizardStepTotal}';
 }
 
-String createProjectReviewStepBadge(CreateProjectForm form) =>
-    '${form.flowType.wizardStepTotal}/${form.flowType.wizardStepTotal}';
+String createProjectReviewStepBadge(CreateProjectForm form) {
+  if (form.flowType == ProjectCreationFlowType.fundsBorrowing ||
+      form.flowType == ProjectCreationFlowType.investmentOptionalRoi) {
+    return '3/3';
+  }
+  return '${form.flowType.wizardStepTotal}/${form.flowType.wizardStepTotal}';
+}
+
+String? createProjectInvestmentSettingsStepBadge(
+  CreateProjectForm form, {
+  required bool editMode,
+}) {
+  if (editMode) return null;
+  if (form.flowType == ProjectCreationFlowType.investmentOptionalRoi) {
+    return '2/3';
+  }
+  return '3/${form.flowType.wizardStepTotal}';
+}
 
 /// After validating details, routes to Saving settings, Borrowing settings, or Review.
 void pushNextAfterDetailsStep(
@@ -46,6 +70,8 @@ void pushNextAfterDetailsStep(
         context.push(AppRoutes.createProjectFundsBorrowing, extra: true);
       case ProjectCreationFlowType.streamlined:
         context.pop();
+      case ProjectCreationFlowType.investmentOptionalRoi:
+        context.push(AppRoutes.createProjectInvestmentSettings, extra: true);
     }
     return;
   }
@@ -57,5 +83,7 @@ void pushNextAfterDetailsStep(
       context.push(AppRoutes.createProjectFundsBorrowing);
     case ProjectCreationFlowType.streamlined:
       context.push(AppRoutes.createProjectReview);
+    case ProjectCreationFlowType.investmentOptionalRoi:
+      context.push(AppRoutes.createProjectInvestmentSettings);
   }
 }

@@ -452,10 +452,19 @@ class AppStrings {
       'Auto-save rhythm and shared savings before review.';
   static const String flowBorrowingTitle     = 'Funds borrowing';
   static const String flowBorrowingSubtitle  =
-      'Members can borrow against the pool — set interest & repayment.';
+      'Members can borrow — set repayment window and penalty.';
   static const String flowSimpleTitle       = 'Simple';
   static const String flowSimpleSubtitle     =
       'Just the essentials — details then straight to review.';
+  /// Only used for exhaustive UI switches; investment flow is category-driven.
+  static const String flowInvestmentRoiCardTitle = 'Investment';
+  static const String flowInvestmentRoiCardSubtitle =
+      'Optional ROI for contributors — no borrowing.';
+
+  // Investment path — optional ROI only (no borrowing)
+  static const String labelRoiOptional        = 'ROI (optional)';
+  static const String roiOptionalHelper       =
+      'Set this to incentivize contributors. Paid out on project close.';
 
   // Saving path — Project Settings
   static const String createSavingSettingsTitle = 'Project Settings';
@@ -465,18 +474,19 @@ class AppStrings {
   static const String reviewSectionSaving      = 'Project settings';
   static const String reviewLabelAutoSave       = 'Auto-save';
 
-  // Borrowing path
+  // Borrowing path (Vacation / Emergency — production frames)
   static const String createFundsBorrowingTitle = 'Funds Borrowing';
   static const String labelEnableBorrowProject =
-      'Enable borrowing for this project';
+      'Enable borrowing for members?';
   static const String labelAnnualInterest      = 'Interest rate (Annual %)';
   static const String hintAnnualInterest       = '5';
-  static const String labelRepaymentMonths     = 'Repayment period (months)';
-  static const String hintRepaymentMonths      = '6';
+  static const String labelRepaymentWindowDays   = 'Repayment window (days)';
+  static const String hintRepaymentDays         = '30';
+  static const String labelBorrowPenaltyPercent = 'Penalty (%)';
+  static const String hintBorrowPenalty        = '20';
   static const String reviewBorrowingEnabledLabel = 'Borrowing';
-  static const String reviewAnnualInterestLabel  = 'Interest (annual)';
-  static const String reviewRepaymentMonthsLabel = 'Repayment (months)';
-  static const String reviewLabelMonths          = 'months';
+  static const String reviewRepaymentDaysLabel   = 'Repayment window';
+  static const String reviewPenaltyPercentLabel  = 'Penalty';
 
   // Deprecated borrow-step labels retained for backwards copy search (unused in UI)
   static const String labelRoi               = 'Interest rate (Annual %)';
@@ -546,6 +556,10 @@ class AppStrings {
       'Repayment period is required';
   static const String errRepaymentMonthsInvalid =
       'Enter months between 1 and 120';
+  static const String errRepaymentDaysRequired =
+      'Repayment window is required';
+  static const String errRepaymentDaysInvalid =
+      'Enter days between 1 and 3650';
   static const String errPenaltyRequired     = 'Penalty is required';
   static const String errPenaltyInvalid      = 'Enter a value between 0–100';
 

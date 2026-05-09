@@ -104,6 +104,17 @@ class ValidationUtils {
     return null;
   }
 
+  /// Empty is valid; if filled, must be a plausible annual % (create-project ROI optional step).
+  static String? validateOptionalAnnualRoiPercent(String? value) {
+    final v = value?.trim().replaceAll('%', '') ?? '';
+    if (v.isEmpty) return null;
+    final n = double.tryParse(v);
+    if (n == null || n < 0 || n > 100) {
+      return AppStrings.errAnnualRoiInvalid;
+    }
+    return null;
+  }
+
   /// Repayment period measured in whole months (`6` meaning six months).
   static String? validateRepaymentMonths(String? value) {
     final raw = value?.trim() ?? '';
@@ -111,6 +122,17 @@ class ValidationUtils {
     final n = int.tryParse(raw);
     if (n == null || n < 1 || n > 120) {
       return AppStrings.errRepaymentMonthsInvalid;
+    }
+    return null;
+  }
+
+  /// Vacation/Emergency borrow step — whole days (maps to API `repaymentWindowDays`).
+  static String? validateRepaymentDays(String? value) {
+    final raw = value?.trim() ?? '';
+    if (raw.isEmpty) return AppStrings.errRepaymentDaysRequired;
+    final n = int.tryParse(raw);
+    if (n == null || n < 1 || n > 3650) {
+      return AppStrings.errRepaymentDaysInvalid;
     }
     return null;
   }

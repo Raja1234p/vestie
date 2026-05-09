@@ -58,6 +58,9 @@ class CreateProjectRequestModel {
     double parseDouble(String s) => double.tryParse(s.trim()) ?? 0.0;
     int parseInt(String s) => int.tryParse(s.trim()) ?? 0;
 
+    final investmentRoiOnly =
+        form.flowType == ProjectCreationFlowType.investmentOptionalRoi;
+
     // Backend requires fields not present in UI today. We send safe defaults
     // until those inputs are added to the wizard.
     return CreateProjectRequestModel(
@@ -69,16 +72,21 @@ class CreateProjectRequestModel {
       maxMembers: 20,
       endsAtUtc: ends,
       contributionDeadlineUtc: ends,
-      borrowingEnabled: form.borrowingEnabled,
+      borrowingEnabled: investmentRoiOnly ? false : form.borrowingEnabled,
       suggestedContributionAmount: 0,
       joinApprovalRequired: true,
-      roiPercentage:
-          form.borrowingEnabled ? parseDouble(form.roi) : 0.0,
-      repaymentWindowDays: form.borrowingEnabled
-          ? parseInt(form.repaymentWindow) * 30
-          : 0,
+      roiPercentage: investmentRoiOnly
+          ? parseDouble(form.roi.replaceAll('%', ''))
+          : 0.0,
+      repaymentWindowDays: investmentRoiOnly
+          ? 0
+          : (form.borrowingEnabled ? parseInt(form.repaymentWindow) : 0),
       repaymentGraceDays: 0,
-      penaltyPercentage: 0,
+      penaltyPercentage: investmentRoiOnly
+          ? 0.0
+          : (form.borrowingEnabled
+              ? parseDouble(form.penalty.replaceAll('%', ''))
+              : 0.0),
       minimumContributionAmount: 0.0,
       contributionsAreNonRefundable: false,
     );

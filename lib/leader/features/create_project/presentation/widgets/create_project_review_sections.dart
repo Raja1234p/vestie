@@ -6,17 +6,8 @@ import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import '../../domain/create_project_form.dart';
 
-String _visibilityReviewText(ProjectVisibility v) =>
-    v == ProjectVisibility.public
-        ? AppStrings.reviewValuePublic
-        : AppStrings.reviewValuePrivate;
-
 List<MapEntry<String, String>> buildProjectDetailsReviewRows(CreateProjectForm form) {
-  final rows = <MapEntry<String, String>>[
-    MapEntry(
-      AppStrings.reviewLabelProjectFlow,
-      form.flowType.shortLabel,
-    ),
+  return [
     MapEntry(
       AppStrings.reviewLabelName,
       form.projectName.isEmpty ? '—' : form.projectName,
@@ -24,67 +15,33 @@ List<MapEntry<String, String>> buildProjectDetailsReviewRows(CreateProjectForm f
     MapEntry(AppStrings.reviewLabelGoal, form.formattedAmount),
     MapEntry(
       AppStrings.reviewLabelDeadline,
-      form.deadlineFormatted.isEmpty ? '—' : form.deadlineFormatted,
+      form.deadline == null ? '—' : form.deadlineIsoFormatted,
     ),
     MapEntry(AppStrings.reviewLabelCategory, form.category.label),
-    MapEntry(AppStrings.reviewLabelVisibility,
-        _visibilityReviewText(form.visibility)),
   ];
-
-  final desc = form.description.trim();
-  if (desc.isNotEmpty) {
-    rows.add(MapEntry(AppStrings.reviewLabelDescription, desc));
-  }
-  return rows;
 }
 
-List<MapEntry<String, String>> buildSavingSettingsReviewRows(CreateProjectForm form) {
+List<MapEntry<String, String>> buildInvestmentRoiReviewRows(CreateProjectForm form) {
+  final raw = form.roi.trim().replaceAll('%', '');
+  final roi = raw.isEmpty
+      ? AppStrings.reviewRoiNotSet
+      : '$raw%';
   return [
-    MapEntry(
-      AppStrings.reviewLabelAutoSave,
-      form.autoSaveEnabled
-          ? AppStrings.reviewValueEnabled
-          : AppStrings.reviewValueDisabled,
-    ),
+    MapEntry(AppStrings.labelRoiOptional, roi),
   ];
-}
-
-List<MapEntry<String, String>> buildBorrowingSettingsReviewRows(CreateProjectForm form) {
-  final rows = <MapEntry<String, String>>[
-    MapEntry(
-      AppStrings.reviewBorrowingEnabledLabel,
-      form.borrowingEnabled
-          ? AppStrings.reviewValueEnabled
-          : AppStrings.reviewValueDisabled,
-    ),
-  ];
-  if (!form.borrowingEnabled) return rows;
-
-  final roi = form.roi.trim().isEmpty
-      ? AppStrings.reviewRoiNotSet
-      : '${form.roi.trim()}%';
-
-  final months = form.repaymentWindow.trim().isEmpty
-      ? AppStrings.reviewRoiNotSet
-      : '${form.repaymentWindow.trim()} ${AppStrings.reviewLabelMonths}';
-
-  rows.addAll([
-    MapEntry(AppStrings.reviewAnnualInterestLabel, roi),
-    MapEntry(AppStrings.reviewRepaymentMonthsLabel, months),
-  ]);
-  return rows;
 }
 
 /// White summary card shared by [CreateProjectReviewScreen].
 class CreateProjectReviewSectionCard extends StatelessWidget {
   final String title;
-  final VoidCallback onEdit;
+  /// Only the Project Details card supplies this — edit restarts the wizard at details.
+  final VoidCallback? onEdit;
   final List<MapEntry<String, String>> rows;
 
   const CreateProjectReviewSectionCard({
     super.key,
     required this.title,
-    required this.onEdit,
+    this.onEdit,
     required this.rows,
   });
 
@@ -107,33 +64,36 @@ class CreateProjectReviewSectionCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                title,
-                style: GoogleFonts.lato(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
+              Expanded(
+                child: Text(
+                  title,
+                  style: GoogleFonts.lato(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                  ),
                 ),
               ),
-              GestureDetector(
-                onTap: onEdit,
-                child: Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 15.w, vertical: 7.h),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(100.r),
-                  ),
-                  child: Text(
-                    AppStrings.btnEdit,
-                    style: GoogleFonts.lato(
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
+              if (onEdit != null)
+                GestureDetector(
+                  onTap: onEdit,
+                  child: Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 15.w, vertical: 7.h),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(100.r),
+                    ),
+                    child: Text(
+                      AppStrings.btnEdit,
+                      style: GoogleFonts.lato(
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
-              ),
             ],
           ),
           SizedBox(height: 12.h),
@@ -159,13 +119,11 @@ class CreateProjectReviewValueTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final normalizedValue = value.trim().isEmpty ? '—' : value.trim();
-    final isPrimaryDetailsRow = label == AppStrings.reviewLabelProjectFlow ||
-        label == AppStrings.reviewLabelName ||
+    final isPrimaryDetailsRow = label == AppStrings.reviewLabelName ||
         label == AppStrings.reviewLabelGoal ||
         label == AppStrings.reviewLabelDeadline ||
         label == AppStrings.reviewLabelCategory ||
-        label == AppStrings.reviewLabelVisibility ||
-        label == AppStrings.reviewLabelDescription;
+        label == AppStrings.labelRoiOptional;
 
     final isLongValue = normalizedValue.length > 28;
     final valueFontSize =

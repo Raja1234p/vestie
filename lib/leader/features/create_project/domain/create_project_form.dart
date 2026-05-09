@@ -13,24 +13,27 @@ enum NewProjectCategory {
 }
 
 extension NewProjectCategoryLabel on NewProjectCategory {
+  /// Dropdown + review — matches product frames ("Vacation Funds", etc.).
   String get label {
     switch (this) {
       case NewProjectCategory.vacation:
-        return 'Vacation';
+        return 'Vacation Funds';
       case NewProjectCategory.emergency:
-        return 'Emergency';
+        return 'Emergency Funds';
       case NewProjectCategory.investment:
-        return 'Investment';
+        return 'Investment Funds';
     }
   }
 }
 
-/// Matches the three end-to-end product flows:
-/// Saving (auto-save settings) | Funds borrowing | Simple (review after details).
+/// Product flows after Project Details:
+/// Saving (auto-save) | Borrowing | Simple | Investment (optional ROI only, no borrow).
 enum ProjectCreationFlowType {
   collaborativeSaving,
   fundsBorrowing,
   streamlined,
+  /// Investment category — Project Settings step with optional ROI only (Figma).
+  investmentOptionalRoi,
 }
 
 extension ProjectCreationFlowTypeLabel on ProjectCreationFlowType {
@@ -38,12 +41,14 @@ extension ProjectCreationFlowTypeLabel on ProjectCreationFlowType {
         ProjectCreationFlowType.collaborativeSaving => 'Saving',
         ProjectCreationFlowType.fundsBorrowing => 'Borrowing',
         ProjectCreationFlowType.streamlined => 'Simple',
+        ProjectCreationFlowType.investmentOptionalRoi => 'Investment',
       };
 }
 
 extension ProjectCreationFlowTypeRouting on ProjectCreationFlowType {
   int get wizardStepTotal => switch (this) {
         ProjectCreationFlowType.streamlined => 3,
+        ProjectCreationFlowType.investmentOptionalRoi => 3,
         _ => 4,
       };
 
@@ -52,6 +57,9 @@ extension ProjectCreationFlowTypeRouting on ProjectCreationFlowType {
 
   bool get usesBorrowingSettings =>
       this == ProjectCreationFlowType.fundsBorrowing;
+
+  bool get usesInvestmentRoiOnlySettings =>
+      this == ProjectCreationFlowType.investmentOptionalRoi;
 }
 
 /// Immutable form state for the Create Project wizard.
@@ -73,10 +81,12 @@ class CreateProjectForm extends Equatable {
   // ── Funds borrowing path ────────────────────────────────────────────────
   final String roi;
   final bool borrowingEnabled;
-  /// Repayment period in **whole months** (UX); not mapped 1:1 to API here.
+  /// Full repayment window in **days** (Vacation/Emergency borrow — maps to API).
   final String repaymentWindow;
   final String? repaymentWindowError;
   final String? roiError;
+  final String penalty;
+  final String? penaltyError;
 
   // ── Validation errors (details) ─────────────────────────────────────────
   final String? nameError;
@@ -85,7 +95,7 @@ class CreateProjectForm extends Equatable {
 
   const CreateProjectForm({
     this.amountDigits = '',
-    this.flowType = ProjectCreationFlowType.collaborativeSaving,
+    this.flowType = ProjectCreationFlowType.fundsBorrowing,
     this.projectName = '',
     this.description = '',
     this.category = NewProjectCategory.vacation,
@@ -97,6 +107,8 @@ class CreateProjectForm extends Equatable {
     this.repaymentWindow = '',
     this.repaymentWindowError,
     this.roiError,
+    this.penalty = '',
+    this.penaltyError,
     this.nameError,
     this.descError,
     this.deadlineError,
@@ -120,6 +132,13 @@ class CreateProjectForm extends Equatable {
         '${deadline!.year}';
   }
 
+  /// Review / API-style date (e.g. 2025-06-30) — matches summary screens.
+  String get deadlineIsoFormatted {
+    if (deadline == null) return '';
+    final d = deadline!;
+    return '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+  }
+
   CreateProjectForm copyWith({
     String? amountDigits,
     ProjectCreationFlowType? flowType,
@@ -134,6 +153,8 @@ class CreateProjectForm extends Equatable {
     String? repaymentWindow,
     Object? repaymentWindowError = _absent,
     Object? roiError = _absent,
+    String? penalty,
+    Object? penaltyError = _absent,
     Object? nameError = _absent,
     Object? descError = _absent,
     Object? deadlineError = _absent,
@@ -154,6 +175,10 @@ class CreateProjectForm extends Equatable {
           ? this.repaymentWindowError
           : repaymentWindowError as String?,
       roiError: identical(roiError, _absent) ? this.roiError : roiError as String?,
+      penalty: penalty ?? this.penalty,
+      penaltyError: identical(penaltyError, _absent)
+          ? this.penaltyError
+          : penaltyError as String?,
       nameError: identical(nameError, _absent) ? this.nameError : nameError as String?,
       descError: identical(descError, _absent) ? this.descError : descError as String?,
       deadlineError: identical(deadlineError, _absent)
@@ -177,6 +202,8 @@ class CreateProjectForm extends Equatable {
         repaymentWindow,
         repaymentWindowError,
         roiError,
+        penalty,
+        penaltyError,
         nameError,
         descError,
         deadlineError,

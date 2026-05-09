@@ -19,6 +19,8 @@ class AppRoutes {
   static const String createProjectDetails  = '/create-project/details';
   static const String createProjectSavingSettings = '/create-project/saving-settings';
   static const String createProjectFundsBorrowing = '/create-project/funds-borrowing';
+  static const String createProjectInvestmentSettings =
+      '/create-project/investment-settings';
   static const String createProjectReview   = '/create-project/review';
   static const String createProjectSuccess  = '/create-project/success';
 

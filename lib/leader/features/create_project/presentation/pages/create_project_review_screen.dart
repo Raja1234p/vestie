@@ -55,26 +55,11 @@ class CreateProjectReviewScreen extends StatelessWidget {
                               ),
                               rows: buildProjectDetailsReviewRows(form),
                             ),
-                            if (form.flowType.usesSavingSettings) ...[
+                            if (form.flowType.usesInvestmentRoiOnlySettings) ...[
                               SizedBox(height: 12.h),
                               CreateProjectReviewSectionCard(
-                                title: AppStrings.reviewSectionSaving,
-                                onEdit: () => context.push(
-                                  AppRoutes.createProjectSavingSettings,
-                                  extra: true,
-                                ),
-                                rows: buildSavingSettingsReviewRows(form),
-                              ),
-                            ],
-                            if (form.flowType.usesBorrowingSettings) ...[
-                              SizedBox(height: 12.h),
-                              CreateProjectReviewSectionCard(
-                                title: AppStrings.reviewSectionBorrowing,
-                                onEdit: () => context.push(
-                                  AppRoutes.createProjectFundsBorrowing,
-                                  extra: true,
-                                ),
-                                rows: buildBorrowingSettingsReviewRows(form),
+                                title: AppStrings.reviewSectionRoi,
+                                rows: buildInvestmentRoiReviewRows(form),
                               ),
                             ],
                             BlocBuilder<CreateProjectSubmitCubit,
@@ -104,13 +89,13 @@ class CreateProjectReviewScreen extends StatelessWidget {
                     SafeArea(
                       top: false,
                       child: Padding(
-                        padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 14.h),
+                        padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 20.h),
                         child: BlocBuilder<CreateProjectSubmitCubit,
                             CreateProjectSubmitState>(
                           buildWhen: (p, c) => p.loading != c.loading,
                           builder: (context, submit) {
                             return CPNextButton(
-                              label: AppStrings.btnCreateProject2,
+                              label: AppStrings.btnNext,
                               onPressed: submit.loading
                                   ? () {}
                                   : () => context

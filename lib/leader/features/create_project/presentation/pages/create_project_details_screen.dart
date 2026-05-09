@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/widgets/common/app_svg_icon.dart';
+import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import '../../domain/create_project_form.dart';
 import '../create_project_flow.dart';
@@ -12,7 +15,7 @@ import '../widgets/create_project_header.dart';
 import 'create_project_details_fields.dart';
 import 'create_project_form_widgets.dart';
 
-/// Shared project-metadata step — user picks category + **one of three wizard flows**.
+/// Project metadata — category selects the wizard (investment ROI vs vacation/emergency borrow).
 class CreateProjectDetailsScreen extends StatefulWidget {
   final bool isEditMode;
 
@@ -92,7 +95,31 @@ class _CreateProjectDetailsScreenState extends State<CreateProjectDetailsScreen>
                           onChanged: cubit.setProjectName,
                         ),
                         SizedBox(height: 16.h),
-                        CPFieldLabel(AppStrings.labelProjectDesc),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 10.h),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: AppText(
+                                  AppStrings.labelProjectDesc,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.textBody,
+                                      ),
+                                ),
+                              ),
+                              AppSvgIcon(
+                                assetPath: AppAssets.iconInfo,
+                                size: 18.w,
+                                color: AppColors.textBody,
+                              ),
+                            ],
+                          ),
+                        ),
                         CPTextField(
                           controller: _descCtrl,
                           hint: AppStrings.hintProjectDesc,
@@ -102,12 +129,6 @@ class _CreateProjectDetailsScreenState extends State<CreateProjectDetailsScreen>
                           onChanged: cubit.setDescription,
                         ),
                         SizedBox(height: 16.h),
-                        CPFieldLabel(AppStrings.labelProjectSetup),
-                        CPCreationFlowPicker(
-                          value: form.flowType,
-                          onChanged: cubit.setCreationFlow,
-                        ),
-                        SizedBox(height: 8.h),
                         CPFieldLabel(AppStrings.labelCategory),
                         CPCategoryDropdown(
                           value: form.category,
@@ -136,7 +157,7 @@ class _CreateProjectDetailsScreenState extends State<CreateProjectDetailsScreen>
                 SafeArea(
                   top: false,
                   child: Padding(
-                    padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 14.h),
+                    padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 20.h),
                     child: CPNextButton(
                       label: AppStrings.btnNext,
                       onPressed: () => pushNextAfterDetailsStep(
