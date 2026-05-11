@@ -67,7 +67,7 @@ class AppTextField extends StatelessWidget {
                 color: AppColors.authLabel,
               ),
         ),
-        SizedBox(height: 10.h),
+        SizedBox(height: 12.h),
         TextField(
           focusNode: focusNode,
           controller: controller,
@@ -121,7 +121,7 @@ class AppTextField extends StatelessWidget {
   }
 
   OutlineInputBorder _border(Color color, double width) => OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10.r),
+        borderRadius: BorderRadius.circular(12.r),
         borderSide: BorderSide(color: color, width: width),
       );
 }

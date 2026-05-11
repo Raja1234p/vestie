@@ -11,6 +11,7 @@ import '../../../../core/utils/validation_utils.dart';
 import '../../../../core/widgets/common/app_back_button.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/common/app_svg_icon.dart';
+import 'auth_password_visibility_icon.dart';
 import '../../../../core/widgets/common/app_text_field.dart';
 import '../bloc/reset_password_bloc.dart';
 import '../bloc/reset_password_event.dart';
@@ -93,7 +94,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                   height: 1.2,
                 ),
               ),
-              SizedBox(height: 6.h),
+              SizedBox(height: 12.h),
               Text(
                 AppStrings.resetPasswordSubtitle,
                 style: GoogleFonts.lato(
@@ -102,7 +103,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                   height: 1.5,
                 ),
               ),
-              SizedBox(height: 32.h),
+              SizedBox(height: 12.h),
               
                // ── Verification Code ─────────────────────────────────
               AppTextField(
@@ -114,7 +115,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                 maxLength: 6,
                 onChanged: (_) => setState(() {}),
               ),
-              SizedBox(height: 14.h),
+              SizedBox(height: 12.h),
 
               // ── New password ──────────────────────────────────────
               AppTextField(
@@ -130,19 +131,16 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                     ),
                 suffixIcon: ExcludeFocus(
                   child: IconButton(
-                    icon: AppSvgIcon(
-                      assetPath: form.newPassVisible
-                          ? AppAssets.iconVisibility
-                          : AppAssets.iconVisibilityOff,
-                      size: 20.w,
-                      color: AppColors.authHint,
+                    icon: AuthPasswordVisibilityIcon(
+                      passwordVisible: form.newPassVisible,
+                      logicalSize: 20.w,
                     ),
                     onPressed: () =>
                         context.read<ResetPasswordFormCubit>().toggleNewPass(),
                   ),
                 ),
               ),
-              SizedBox(height: 10.h),
+              SizedBox(height: 12.h),
 
               // ── Strength indicator ────────────────────────────────
               Row(children: [
@@ -162,7 +160,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                   ),
                 ),
               ]),
-              SizedBox(height: 14.h),
+              SizedBox(height: 12.h),
 
               // ── Confirm password ──────────────────────────────────
               AppTextField(
@@ -178,19 +176,16 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                     ),
                 suffixIcon: ExcludeFocus(
                   child: IconButton(
-                    icon: AppSvgIcon(
-                      assetPath: form.confirmVisible
-                          ? AppAssets.iconVisibility
-                          : AppAssets.iconVisibilityOff,
-                      size: 20.w,
-                      color: AppColors.authHint,
+                    icon: AuthPasswordVisibilityIcon(
+                      passwordVisible: form.confirmVisible,
+                      logicalSize: 20.w,
                     ),
                     onPressed: () =>
                         context.read<ResetPasswordFormCubit>().toggleConfirm(),
                   ),
                 ),
               ),
-              SizedBox(height: 28.h),
+              SizedBox(height: 12.h),
 
               // ── Reset password button ─────────────────────────────
               AppButton(
@@ -200,7 +195,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                     ? () => _submit(context)
                     : null,
               ),
-              SizedBox(height: 24.h),
+              SizedBox(height: 12.h),
             ],
           ),
         );

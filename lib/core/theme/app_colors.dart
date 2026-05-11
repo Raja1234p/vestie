@@ -138,14 +138,15 @@ class AppColors {
   static const Color authBgBottom = appBgBottom;
 
   static const Color authTitle    = grey1100;   // #1A1630 — darkest heading
-  static const Color authSubtitle = grey900;    // #443F63
+  static const Color authSubtitle = grey800;    // #5E5783 — medium body under title
   static const Color authLabel    = grey900;    // #443F63
   static const Color authHint     = grey500;    // #B8B2D1 — placeholder
 
   static const Color authLink       = purple900;  // #4C24A0
   static const Color authForgotLink = purple900;
-  static const Color authBottomText = grey700;    // #7B73A3
-  static const Color authBottomLink = purple900;
+  /// Login / register footer line (“Don’t have an account? Sign up”) — Figma #443F63.
+  static const Color authBottomText = grey900;
+  static const Color authBottomLink = grey900;
   static const Color authOr         = grey600;    // #9990BB
 
   static const Color authPurple     = Color(0xE64C24A0); // purple900 with opacity
@@ -155,7 +156,7 @@ class AppColors {
   static const Color authInputBorder  = grey300;     // #E4E0EE
   static const Color authButtonStart  = purple700;   // #7A3FE0
   static const Color authButtonEnd    = purple900;   // #4C24A0
-  static const Color authSocialBorder = grey300;     // #E4E0EE
+  static const Color authSocialBorder = purple300;   // #DDD0FC — social outline
   static const Color authSocialText   = grey1100;    // #1A1630
 
   static const Color validSuccess = green700;   // #1DB87E

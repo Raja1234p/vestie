@@ -46,10 +46,10 @@ class AppStrings {
   static const String btnGoogle           = 'Continue with Google';
   static const String btnApple            = 'Continue with Apple';
   static const String forgotPassword      = 'Forgot password?';
-  static const String noAccount           = "Don't have account? ";
-  static const String signupLink          = 'Signup';
-  static const String hasAccount          = 'Already have account? ';
-  static const String loginLink           = 'Login';
+  static const String noAccount           = "Don't have an account? ";
+  static const String signupLink          = 'Sign up';
+  static const String hasAccount          = 'Already have an account? ';
+  static const String loginLink           = 'Log In';
   static const String didntReceive        = "Didn't receive it? ";
   static const String resendCode          = 'Resend code';
   static const String orDivider           = 'or';

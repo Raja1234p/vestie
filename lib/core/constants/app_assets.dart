@@ -99,6 +99,8 @@ class AppAssets {
   static const String iconCopy = '$_iconPath/icon_copy.svg';
   static const String iconVisibility = '$_iconPath/icon_visibility.svg';
   static const String iconVisibilityOff = '$_iconPath/icon_visibility_off.svg';
+  /// Login / auth password “hidden” state — design PNG (closed eye), crisp at small sizes.
+  static const String iconPasswordHiddenEye = '$_iconPath/password_eye_hidden.png';
   static const String iconBackspace = '$_iconPath/icon_backspace.svg';
   static const String iconCalendar = '$_iconPath/icon_calendar.svg';
   static const String iconSchedule = '$_iconPath/icon_schedule.svg';

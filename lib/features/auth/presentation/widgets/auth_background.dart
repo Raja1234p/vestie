@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
 import '../../../../core/constants/app_assets.dart';
 
-/// Shared background for every auth screen.
-///
-/// Uses the app-wide 3-stop gradient (#CEBEFB → #E0D6FC → #F8F7FA):
-///   - Top ~30 %  : rich lavender  (title / hero zone clearly purple)
-///   - Bottom 70 %: fades to near-white (form / content area looks light)
+/// Shared background for every auth screen — Figma [AppAssets.authLoginGradient] SVG.
 class AuthBackground extends StatelessWidget {
   final Widget child;
   const AuthBackground({super.key, required this.child});

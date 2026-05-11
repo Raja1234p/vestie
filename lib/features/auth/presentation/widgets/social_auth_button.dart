@@ -9,7 +9,7 @@ import '../../../../core/theme/app_colors.dart';
 enum SocialProvider { google, apple }
 
 /// Social auth button using the real Figma brand SVG icons.
-/// White outlined pill — matches Login/Register Figma screens exactly.
+/// White card, 12px corners, #DDD0FC border ([AppColors.authSocialBorder]).
 class SocialAuthButton extends StatelessWidget {
   final SocialProvider provider;
   final VoidCallback onPressed;
@@ -29,9 +29,9 @@ class SocialAuthButton extends StatelessWidget {
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
           backgroundColor: Colors.white,
-          side: BorderSide(color: AppColors.authSocialBorder, width: 1.2),
+          side: BorderSide(color: AppColors.authSocialBorder, width: 1),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(100.r),
+            borderRadius: BorderRadius.circular(12.r),
           ),
           elevation: 0,
         ),

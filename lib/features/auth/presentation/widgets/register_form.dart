@@ -10,6 +10,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/common/app_svg_icon.dart';
+import 'auth_password_visibility_icon.dart';
 import '../../../../core/widgets/common/app_text_field.dart';
 import '../../../../app/router/app_routes.dart';
 import '../bloc/register_bloc.dart';
@@ -71,25 +72,26 @@ class _RegisterFormState extends State<RegisterForm> {
             context.watch<RegisterBloc>().state is RegisterLoading;
         final isStrong =
             _passCtrl.text.length >= 8 && _passCtrl.text.contains(RegExp(r'[a-zA-Z]')) && _passCtrl.text.contains(RegExp(r'[0-9]'));
-        return SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 24.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+        final bottomInset = MediaQuery.paddingOf(context).bottom;
+        return CustomScrollView(
+          slivers: [
+            SliverPadding(
+              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate([
               SizedBox(height: 48.h),
               Text(AppStrings.registerTitle,
                   style: GoogleFonts.lato(
-                      fontSize: 28.sp,
+                      fontSize: 34.sp,
                       fontWeight: FontWeight.w800,
                       color: AppColors.authTitle,
                       height: 1.2)),
-              SizedBox(height: 6.h),
               Text(AppStrings.registerSubtitle,
                   style: GoogleFonts.lato(
-                      fontSize: 13.5.sp,
+                      fontSize: 18.sp,
                       color: AppColors.authSubtitle,
                       height: 1.5)),
-              SizedBox(height: 28.h),
+              SizedBox(height: 12.h),
               AppTextField(
                 label: AppStrings.labelFullName,
                 hint: AppStrings.hintFullName,
@@ -104,7 +106,7 @@ class _RegisterFormState extends State<RegisterForm> {
                       _confirmCtrl.text,
                     ),
               ),
-              SizedBox(height: 14.h),
+              SizedBox(height: 12.h),
               AppTextField(
                 label: AppStrings.labelEmail,
                 hint: AppStrings.hintEmail,
@@ -119,7 +121,7 @@ class _RegisterFormState extends State<RegisterForm> {
                       _confirmCtrl.text,
                     ),
               ),
-              SizedBox(height: 14.h),
+              SizedBox(height: 12.h),
               AppTextField(
                 label: AppStrings.labelPassword,
                 hint: AppStrings.hintCreatePassword,
@@ -135,19 +137,16 @@ class _RegisterFormState extends State<RegisterForm> {
                     ),
                 suffixIcon: ExcludeFocus(
                   child: IconButton(
-                    icon: AppSvgIcon(
-                      assetPath: form.passwordVisible
-                          ? AppAssets.iconVisibility
-                          : AppAssets.iconVisibilityOff,
-                      size: 20.w,
-                      color: AppColors.authHint,
+                    icon: AuthPasswordVisibilityIcon(
+                      passwordVisible: form.passwordVisible,
+                      logicalSize: 20.w,
                     ),
                     onPressed: () =>
                         context.read<RegisterFormCubit>().togglePassword(),
                   ),
                 ),
               ),
-              SizedBox(height: 14.h),
+              SizedBox(height: 12.h),
               AppTextField(
                 label: AppStrings.labelConfirmPassword,
                 hint: AppStrings.hintConfirmPassword,
@@ -164,19 +163,16 @@ class _RegisterFormState extends State<RegisterForm> {
                     ),
                 suffixIcon: ExcludeFocus(
                   child: IconButton(
-                    icon: AppSvgIcon(
-                      assetPath: form.confirmVisible
-                          ? AppAssets.iconVisibility
-                          : AppAssets.iconVisibilityOff,
-                      size: 20.w,
-                      color: AppColors.authHint,
+                    icon: AuthPasswordVisibilityIcon(
+                      passwordVisible: form.confirmVisible,
+                      logicalSize: 20.w,
                     ),
                     onPressed: () =>
                         context.read<RegisterFormCubit>().toggleConfirm(),
                   ),
                 ),
               ),
-              SizedBox(height: 10.h),
+              SizedBox(height: 12.h),
               Row(children: [
                 AppSvgIcon(
                   assetPath: AppAssets.checkMarkSuccessful,
@@ -192,15 +188,15 @@ class _RegisterFormState extends State<RegisterForm> {
                             ? AppColors.validSuccess
                             : AppColors.authHint)),
               ]),
-              SizedBox(height: 24.h),
+              SizedBox(height: 12.h),
               AppButton(
                 text: AppStrings.btnContinue,
                 isLoading: isLoading,
                 onPressed: form.isValid ? () => _submit(context) : null,
               ),
-              SizedBox(height: 22.h),
+              SizedBox(height: 12.h),
               const OrDivider(),
-              SizedBox(height: 20.h),
+              SizedBox(height: 12.h),
               SocialAuthButton(
                   provider: SocialProvider.google,
                   onPressed: () => context.read<RegisterBloc>().add(const GoogleRegisterRequested())),
@@ -208,33 +204,48 @@ class _RegisterFormState extends State<RegisterForm> {
               SocialAuthButton(
                   provider: SocialProvider.apple,
                   onPressed: () => _showComingSoon(context)),
-              SizedBox(height: 32.h),
-              Center(
-                child: RichText(
-                  text: TextSpan(
-                    style: GoogleFonts.lato(
-                        fontSize: 13.sp, color: AppColors.authBottomText),
+              SizedBox(height: 12.h),
+                ]),
+              ),
+            ),
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 16.h + bottomInset),
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
-                      TextSpan(text: AppStrings.hasAccount),
-                      WidgetSpan(
-                        child: GestureDetector(
-                          onTap: () => context.go(AppRoutes.login),
-                          child: Text(AppStrings.loginLink,
-                              style: GoogleFonts.lato(
-                                  fontSize: 13.sp,
-                                  color: AppColors.authBottomLink,
-                                  fontWeight: FontWeight.w600,
-                                  decoration: TextDecoration.underline,
-                                  decorationColor: AppColors.authBottomLink)),
+                      Text(
+                        AppStrings.hasAccount,
+                        style: GoogleFonts.lato(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.grey900,
+                          height: 1.35,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => context.go(AppRoutes.login),
+                        behavior: HitTestBehavior.opaque,
+                        child: Text(
+                          AppStrings.loginLink,
+                          style: GoogleFonts.lato(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.grey900,
+                            height: 1.35,
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-              SizedBox(height: 24.h),
-            ],
-          ),
+            ),
+          ],
         );
       },
     );
