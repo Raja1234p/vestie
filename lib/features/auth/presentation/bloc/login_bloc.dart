@@ -49,9 +49,15 @@ class LoginBloc extends BaseFormBloc<LoginEvent, LoginState> {
         ipAddress: ApiConstants.defaultIpAddress,
       ),
       emit,
-      stateBuilder: (status, errorMessage, errors, user) {
+      stateBuilder: (status, errorMessage, errorTitle, errors, user) {
         if (status == FormSubmissionStatus.submitting) return const LoginLoading();
-        if (status == FormSubmissionStatus.failure) return LoginError(message: errorMessage ?? 'Error', validationErrors: errors);
+        if (status == FormSubmissionStatus.failure) {
+          return LoginError(
+            message: errorMessage ?? 'Error',
+            title: errorTitle,
+            validationErrors: errors,
+          );
+        }
         return const LoginLoading(); // Temporarily loading while resolving disclaimer
       },
     );

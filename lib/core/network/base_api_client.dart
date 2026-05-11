@@ -35,13 +35,26 @@ class BaseApiClient {
       if (e.response != null && e.response!.data is Map<String, dynamic>) {
         final apiError = ApiErrorResponseModel.fromJson(e.response!.data as Map<String, dynamic>);
         if (e.response!.statusCode == 400) {
-          throw ValidationFailure(apiError.detail ?? apiError.title, null, apiError.errors);
+          throw ValidationFailure(
+            apiError.detail ?? apiError.title,
+            apiError.title,
+            apiError.errors,
+          );
         } else if (e.response!.statusCode == 401) {
-           throw const UnauthorizedFailure();
+          throw UnauthorizedFailure(
+            apiError.detail ?? apiError.title,
+            apiError.title,
+          );
         } else if (e.response!.statusCode == 403) {
-           throw const ForbiddenFailure();
+          throw ForbiddenFailure(
+            apiError.detail ?? apiError.title,
+            apiError.title,
+          );
         }
-        throw ServerFailure(apiError.detail ?? apiError.title);
+        throw ServerFailure(
+          apiError.detail ?? apiError.title,
+          apiError.title,
+        );
       }
       if (e.type == DioExceptionType.connectionTimeout || e.type == DioExceptionType.receiveTimeout) {
          throw const TimeoutFailure();
