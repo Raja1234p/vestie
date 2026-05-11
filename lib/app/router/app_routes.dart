@@ -10,6 +10,7 @@ class AppRoutes {
   static const String verify        = '/verify';
   static const String forgotPassword = '/forgot-password';
   static const String resetPassword  = '/reset-password';
+  static const String passwordUpdatedSuccess = '/password-updated-success';
   static const String agreement     = '/agreement';
   static const String dashboard          = '/dashboard';
   static const String notifications     = '/notifications';

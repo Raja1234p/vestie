@@ -8,6 +8,8 @@ class AppAssets {
   static const String logoSvg = '$_imagePath/logo.svg';
   static const String appGradient = '$_imagePath/gradient.png';
   static const String authLoginGradient = '$_imagePath/Login gradient.svg';
+  /// Auth screens background — purple-to-white gradient PNG.
+  static const String authGradientBg = '$_imagePath/auth_gradient_bg.png';
   static const String splashBackground = '$_imagePath/splash_background.png';
   /// Risk / agreement screen hero (`agreement_icon.svg` — triangle + “i” on soft circle).
   static const String agreementIcon = '$_imagePath/agreement_icon.svg';
@@ -93,7 +95,7 @@ class AppAssets {
   static const String crown    = '$_iconPath/crown.svg';
 
   // ── UI glyphs (replace Material Icons; stroke icons tint via ColorFilter) ─
-  static const String iconArrowBack = '$_iconPath/icon_arrow_back.svg';
+  static const String iconArrowBack = '$_iconPath/arrow_back.png';
   static const String iconChevronRight = '$_iconPath/icon_chevron_right.svg';
   static const String iconClose = '$_iconPath/icon_close.svg';
   static const String iconHeart = '$_iconPath/icon_heart.svg';

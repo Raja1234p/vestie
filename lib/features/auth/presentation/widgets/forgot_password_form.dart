@@ -53,14 +53,16 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 48.h),
+              // Match login screen vertical offset so the gradient band
+              // behind the header looks identical.
+              SizedBox(height: 40.h),
 
               // ── Back arrow ────────────────────────────────────────
               AppBackButton(
                 onPressed: () => context.pop(),
                 color: AppColors.authTitle,
               ),
-              SizedBox(height: 20.h),
+              SizedBox(height: 24.h),
 
               // ── Title ─────────────────────────────────────────────
               Text(

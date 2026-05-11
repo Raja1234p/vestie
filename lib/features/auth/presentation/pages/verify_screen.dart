@@ -4,31 +4,64 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../app/router/app_routes.dart';
 import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/widgets/common/app_failure_dialog.dart';
+import '../../../../core/widgets/text/app_text.dart';
 import '../bloc/verification_cubit.dart';
+import '../models/auth_route_extras.dart';
 import '../widgets/auth_background.dart';
 import '../widgets/auth_gradient_button.dart';
 import '../widgets/auth_text_field.dart';
-import '../../../../core/widgets/text/app_text.dart';
 
-class VerifyScreen extends StatelessWidget {
+class VerifyScreen extends StatefulWidget {
+  const VerifyScreen({
+    super.key,
+    required this.email,
+    this.flow = VerifyFlow.registration,
+  });
+
   final String email;
-  VerifyScreen({super.key, required this.email});
+  final VerifyFlow flow;
 
+  @override
+  State<VerifyScreen> createState() => _VerifyScreenState();
+}
+
+class _VerifyScreenState extends State<VerifyScreen> {
   final _codeCtrl = TextEditingController();
+
+  @override
+  void dispose() {
+    _codeCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => VerificationCubit(email: email),
+      create: (_) => VerificationCubit(
+        email: widget.email,
+        flow: widget.flow,
+      ),
       child: BlocListener<VerificationCubit, VerificationState>(
+        listenWhen: (prev, curr) =>
+            prev.isSuccess != curr.isSuccess ||
+            prev.error != curr.error ||
+            prev.resendMessage != curr.resendMessage,
         listener: (context, state) {
           if (state.isSuccess) {
-            context.go(AppRoutes.agreement);
+            if (widget.flow == VerifyFlow.registration) {
+              context.go(AppRoutes.agreement);
+            } else {
+              final code = _codeCtrl.text.trim();
+              context.push(
+                AppRoutes.resetPassword,
+                extra: ResetPasswordExtra(email: widget.email, code: code),
+              );
+            }
           } else if (state.error != null) {
             AppFailureDialog.show(
               context,
@@ -48,8 +81,6 @@ class VerifyScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 48.h),
-
-                // ── Title ─────────────────────────────────────────
                 AppText(
                   AppStrings.verifyTitle,
                   style: GoogleFonts.lato(
@@ -69,8 +100,6 @@ class VerifyScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 32.h),
-
-                // ── OTP Field ─────────────────────────────────────
                 BlocBuilder<VerificationCubit, VerificationState>(
                   buildWhen: (prev, curr) => prev.error != curr.error,
                   builder: (context, state) {
@@ -82,32 +111,29 @@ class VerifyScreen extends StatelessWidget {
                       textInputAction: TextInputAction.done,
                       maxLength: 6,
                       errorText: state.error,
-                      onChanged: (val) => context.read<VerificationCubit>().onCodeChanged(val),
+                      onChanged: (val) =>
+                          context.read<VerificationCubit>().onCodeChanged(val),
                     );
                   },
                 ),
                 SizedBox(height: 28.h),
-
-                // ── Verify Button ─────────────────────────────────
                 BlocBuilder<VerificationCubit, VerificationState>(
-                  buildWhen: (prev, curr) => 
-                      prev.isLoading != curr.isLoading || 
+                  buildWhen: (prev, curr) =>
+                      prev.isLoading != curr.isLoading ||
                       prev.isValid != curr.isValid,
                   builder: (context, state) {
                     return AuthGradientButton(
                       text: AppStrings.btnVerify,
                       isLoading: state.isLoading,
-                      onPressed: state.isValid ? () {
-                        context
-                            .read<VerificationCubit>()
-                            .verifyCode(_codeCtrl.text.trim());
-                      } : null,
+                      onPressed: state.isValid
+                          ? () => context
+                              .read<VerificationCubit>()
+                              .verifyCode(_codeCtrl.text.trim())
+                          : null,
                     );
                   },
                 ),
                 SizedBox(height: 22.h),
-
-                // ── Resend ────────────────────────────────────────
                 Center(
                   child: BlocBuilder<VerificationCubit, VerificationState>(
                     buildWhen: (prev, curr) =>

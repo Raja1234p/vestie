@@ -14,7 +14,7 @@ class ForgotPasswordLoading extends ForgotPasswordState {
   @override List<Object> get props => [];
 }
 
-/// Reset email sent successfully — navigate to set-new-password screen.
+/// Reset email sent successfully — navigate to shared OTP ([AppRoutes.verify]) screen.
 class ForgotPasswordSuccess extends ForgotPasswordState {
   final String email;
   final String message;

@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/app_routes.dart';
-import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/widgets/common/app_failure_dialog.dart';
 import '../bloc/forgot_password_bloc.dart';
 import '../bloc/forgot_password_event.dart';
@@ -11,9 +10,10 @@ import '../bloc/forgot_password_state.dart';
 import '../cubit/forgot_password_form_cubit.dart';
 import '../widgets/auth_background.dart';
 import '../widgets/forgot_password_form.dart';
+import '../models/auth_route_extras.dart';
 
 /// Shell — provides ForgotPasswordBloc + ForgotPasswordFormCubit.
-/// On success → pushes to /reset-password (set new password screen).
+/// On success → same OTP screen as register ([AppRoutes.verify], forgot flow).
 class ForgotPasswordScreen extends StatelessWidget {
   const ForgotPasswordScreen({super.key});
 
@@ -27,8 +27,13 @@ class ForgotPasswordScreen extends StatelessWidget {
       child: BlocListener<ForgotPasswordBloc, ForgotPasswordState>(
         listener: (context, state) {
           if (state is ForgotPasswordSuccess) {
-            AppSnackBar.showSuccess(context, state.message);
-            context.push(AppRoutes.resetPassword, extra: state.email);
+            context.push(
+              AppRoutes.verify,
+              extra: VerifyScreenExtra(
+                email: state.email,
+                flow: VerifyFlow.forgotPassword,
+              ),
+            );
           } else if (state is ForgotPasswordError) {
             AppFailureDialog.show(
               context,

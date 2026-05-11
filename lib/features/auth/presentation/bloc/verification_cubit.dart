@@ -1,12 +1,15 @@
 import 'dart:async';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/storage_keys.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/utils/validation_utils.dart';
-import '../../domain/usecases/verify_email_use_case.dart';
+import '../../domain/usecases/forgot_password_use_case.dart';
 import '../../domain/usecases/resend_code_use_case.dart';
+import '../../domain/usecases/verify_email_use_case.dart';
+import '../models/auth_route_extras.dart';
 
 // ─── State ──────────────────────────────────────────────────────────────────
 class VerificationState extends Equatable {
@@ -48,7 +51,8 @@ class VerificationState extends Equatable {
       isSuccess: isSuccess ?? this.isSuccess,
       resendSeconds: resendSeconds ?? this.resendSeconds,
       isValid: isValid ?? this.isValid,
-      resendMessage: clearResendMessage ? null : (resendMessage ?? this.resendMessage),
+      resendMessage:
+          clearResendMessage ? null : (resendMessage ?? this.resendMessage),
     );
   }
 
@@ -66,22 +70,29 @@ class VerificationState extends Equatable {
 
 // ─── Cubit ──────────────────────────────────────────────────────────────────
 class VerificationCubit extends Cubit<VerificationState> {
-  final String email;
-  final VerifyEmailUseCase _verifyEmailUseCase;
-  final ResendCodeUseCase _resendCodeUseCase;
-  Timer? _timer;
-
   VerificationCubit({
     required this.email,
+    this.flow = VerifyFlow.registration,
     VerifyEmailUseCase? verifyEmailUseCase,
     ResendCodeUseCase? resendCodeUseCase,
+    ForgotPasswordUseCase? forgotPasswordUseCase,
   })  : _verifyEmailUseCase =
             verifyEmailUseCase ?? ServiceLocator.instance.verifyEmailUseCase,
         _resendCodeUseCase =
             resendCodeUseCase ?? ServiceLocator.instance.resendCodeUseCase,
+        _forgotPasswordUseCase =
+            forgotPasswordUseCase ?? ServiceLocator.instance.forgotPasswordUseCase,
         super(const VerificationState()) {
     _startResendCountdown();
   }
+
+  final String email;
+  final VerifyFlow flow;
+
+  final VerifyEmailUseCase _verifyEmailUseCase;
+  final ResendCodeUseCase _resendCodeUseCase;
+  final ForgotPasswordUseCase _forgotPasswordUseCase;
+  Timer? _timer;
 
   void _startResendCountdown() {
     _timer?.cancel();
@@ -97,7 +108,8 @@ class VerificationCubit extends Cubit<VerificationState> {
   }
 
   void onCodeChanged(String code) {
-    emit(state.copyWith(isValid: ValidationUtils.validateOtpCode(code) == null));
+    emit(state.copyWith(
+        isValid: ValidationUtils.validateOtpCode(code) == null));
   }
 
   Future<void> verifyCode(String code) async {
@@ -106,6 +118,15 @@ class VerificationCubit extends Cubit<VerificationState> {
       emit(state.copyWith(error: err, isValid: false));
       return;
     }
+
+    if (flow == VerifyFlow.forgotPassword) {
+      emit(state.copyWith(isLoading: true, clearError: true, isValid: true));
+      if (!isClosed) {
+        emit(state.copyWith(isLoading: false, isSuccess: true));
+      }
+      return;
+    }
+
     emit(state.copyWith(isLoading: true, clearError: true, isValid: true));
 
     final result = await _verifyEmailUseCase(email: email, code: code);
@@ -118,7 +139,6 @@ class VerificationCubit extends Cubit<VerificationState> {
           title: failure.title,
         )),
         (user) async {
-          // Save tokens returned by verifyEmail
           if (user.accessToken != null) {
             await ServiceLocator.instance.secureStorage.saveString(
               StorageKeys.accessToken,
@@ -157,11 +177,26 @@ class VerificationCubit extends Cubit<VerificationState> {
     emit(state.copyWith(resendSeconds: 60, clearError: true));
     _startResendCountdown();
 
+    if (flow == VerifyFlow.forgotPassword) {
+      final result = await _forgotPasswordUseCase(email: email);
+      if (!isClosed) {
+        result.fold(
+          (failure) => emit(
+              state.copyWith(error: failure.message, title: failure.title)),
+          (message) => emit(state.copyWith(resendMessage: message)),
+        );
+      }
+      return;
+    }
+
     await _resendCodeUseCase(email: email).then((result) {
-      result.fold(
-        (failure) => emit(state.copyWith(error: failure.message, title: failure.title)),
-        (message) => emit(state.copyWith(resendMessage: message)),
-      );
+      if (!isClosed) {
+        result.fold(
+          (failure) => emit(
+              state.copyWith(error: failure.message, title: failure.title)),
+          (message) => emit(state.copyWith(resendMessage: message)),
+        );
+      }
     });
   }
 

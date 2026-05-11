@@ -12,9 +12,13 @@ import '../../../features/auth/presentation/pages/login_screen.dart';
 
 import '../../../features/auth/presentation/pages/register_screen.dart';
 
+import '../../../features/auth/presentation/pages/password_updated_success_screen.dart';
+
 import '../../../features/auth/presentation/pages/reset_password_screen.dart';
 
 import '../../../features/auth/presentation/pages/verify_screen.dart';
+
+import '../../../features/auth/presentation/models/auth_route_extras.dart';
 
 import 'package:vestie/leader/features/create_project/presentation/pages/create_project_amount_screen.dart';
 
@@ -86,9 +90,21 @@ List<RouteBase> buildCoreRoutes() {
 
       builder: (context, state) {
 
-        final email = state.extra is String ? state.extra as String : '';
+        final extra = state.extra;
 
-        return VerifyScreen(email: email);
+        if (extra is VerifyScreenExtra) {
+
+          return VerifyScreen(email: extra.email, flow: extra.flow);
+
+        }
+
+        if (extra is String) {
+
+          return VerifyScreen(email: extra);
+
+        }
+
+        return const VerifyScreen(email: '');
 
       },
 
@@ -108,11 +124,25 @@ List<RouteBase> buildCoreRoutes() {
 
       builder: (context, state) {
 
-        final email = state.extra is String ? state.extra as String : '';
+        final extra = state.extra;
 
-        return ResetPasswordScreen(email: email);
+        if (extra is ResetPasswordExtra) {
+
+          return ResetPasswordScreen(email: extra.email, code: extra.code);
+
+        }
+
+        return const ResetPasswordScreen(email: '', code: '');
 
       },
+
+    ),
+
+    GoRoute(
+
+      path: AppRoutes.passwordUpdatedSuccess,
+
+      builder: (context, _) => const PasswordUpdatedSuccessScreen(),
 
     ),
 

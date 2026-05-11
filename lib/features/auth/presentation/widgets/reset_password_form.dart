@@ -18,47 +18,46 @@ import '../bloc/reset_password_event.dart';
 import '../bloc/reset_password_state.dart';
 import '../cubit/reset_password_form_cubit.dart';
 
-/// Stateful only for TextEditingController lifecycle — zero setState calls.
+/// New password + confirm only — OTP was verified on the shared [VerifyScreen].
 class ResetPasswordForm extends StatefulWidget {
+  const ResetPasswordForm({
+    super.key,
+    required this.email,
+    required this.code,
+  });
+
   final String email;
-  const ResetPasswordForm({super.key, required this.email});
+  final String code;
 
   @override
   State<ResetPasswordForm> createState() => _ResetPasswordFormState();
 }
 
 class _ResetPasswordFormState extends State<ResetPasswordForm> {
-  final _codeCtrl     = TextEditingController();
-  final _newPassCtrl  = TextEditingController();
-  final _confirmCtrl  = TextEditingController();
+  final _newPassCtrl = TextEditingController();
+  final _confirmCtrl = TextEditingController();
 
   @override
   void dispose() {
-    _codeCtrl.dispose();
     _newPassCtrl.dispose();
     _confirmCtrl.dispose();
     super.dispose();
   }
 
   void _submit(BuildContext context) {
-    final valid = context
-        .read<ResetPasswordFormCubit>()
-        .validate(_newPassCtrl.text, _confirmCtrl.text);
-    
-    final code = _codeCtrl.text.trim();
-    if (code.length != 6) {
-       // Simple inline error if cubit doesn't handle code yet
-       // But let's assume we want to be consistent.
-    }
+    final valid = context.read<ResetPasswordFormCubit>().validate(
+          _newPassCtrl.text,
+          _confirmCtrl.text,
+        );
 
-    if (valid && code.isNotEmpty) {
+    if (valid && widget.code.length == 6) {
       context.read<ResetPasswordBloc>().add(
-        ResetPasswordSubmitted(
-          email: widget.email,
-          code: code,
-          newPassword: _newPassCtrl.text,
-        ),
-      );
+            ResetPasswordSubmitted(
+              email: widget.email,
+              code: widget.code,
+              newPassword: _newPassCtrl.text,
+            ),
+          );
     }
   }
 
@@ -69,6 +68,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
         final isLoading =
             context.watch<ResetPasswordBloc>().state is ResetPasswordLoading;
         final isStrong = ValidationUtils.isPasswordStrong(_newPassCtrl.text);
+        final canSubmit = form.isValid && widget.code.length == 6;
 
         return SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -76,15 +76,11 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 48.h),
-
-              // ── Back arrow ────────────────────────────────────────
               AppBackButton(
                 onPressed: () => context.pop(),
                 color: AppColors.authTitle,
               ),
               SizedBox(height: 20.h),
-
-              // ── Title ─────────────────────────────────────────────
               Text(
                 AppStrings.resetPasswordTitle,
                 style: GoogleFonts.lato(
@@ -104,20 +100,6 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                 ),
               ),
               SizedBox(height: 12.h),
-              
-               // ── Verification Code ─────────────────────────────────
-              AppTextField(
-                label: AppStrings.labelVerifyCode,
-                hint: AppStrings.hintVerifyCode,
-                controller: _codeCtrl,
-                keyboardType: TextInputType.number,
-                textInputAction: TextInputAction.next,
-                maxLength: 6,
-                onChanged: (_) => setState(() {}),
-              ),
-              SizedBox(height: 12.h),
-
-              // ── New password ──────────────────────────────────────
               AppTextField(
                 label: AppStrings.labelNewPassword,
                 hint: AppStrings.hintNewPassword,
@@ -125,10 +107,11 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                 obscureText: !form.newPassVisible,
                 textInputAction: TextInputAction.next,
                 errorText: form.newPassError,
-                onChanged: (_) => context.read<ResetPasswordFormCubit>().onFieldsChanged(
-                      _newPassCtrl.text,
-                      _confirmCtrl.text,
-                    ),
+                onChanged: (_) =>
+                    context.read<ResetPasswordFormCubit>().onFieldsChanged(
+                          _newPassCtrl.text,
+                          _confirmCtrl.text,
+                        ),
                 suffixIcon: ExcludeFocus(
                   child: IconButton(
                     icon: AuthPasswordVisibilityIcon(
@@ -141,8 +124,6 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                 ),
               ),
               SizedBox(height: 12.h),
-
-              // ── Strength indicator ────────────────────────────────
               Row(children: [
                 AppSvgIcon(
                   assetPath: AppAssets.checkMarkSuccessful,
@@ -161,8 +142,6 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                 ),
               ]),
               SizedBox(height: 12.h),
-
-              // ── Confirm password ──────────────────────────────────
               AppTextField(
                 label: AppStrings.labelConfirmNewPass,
                 hint: AppStrings.hintConfirmNewPass,
@@ -170,10 +149,11 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                 obscureText: !form.confirmVisible,
                 textInputAction: TextInputAction.done,
                 errorText: form.confirmError,
-                onChanged: (_) => context.read<ResetPasswordFormCubit>().onFieldsChanged(
-                      _newPassCtrl.text,
-                      _confirmCtrl.text,
-                    ),
+                onChanged: (_) =>
+                    context.read<ResetPasswordFormCubit>().onFieldsChanged(
+                          _newPassCtrl.text,
+                          _confirmCtrl.text,
+                        ),
                 suffixIcon: ExcludeFocus(
                   child: IconButton(
                     icon: AuthPasswordVisibilityIcon(
@@ -186,14 +166,10 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                 ),
               ),
               SizedBox(height: 12.h),
-
-              // ── Reset password button ─────────────────────────────
               AppButton(
                 text: AppStrings.btnResetPassword,
                 isLoading: isLoading,
-                onPressed: (form.isValid && _codeCtrl.text.length == 6)
-                    ? () => _submit(context)
-                    : null,
+                onPressed: canSubmit ? () => _submit(context) : null,
               ),
               SizedBox(height: 12.h),
             ],

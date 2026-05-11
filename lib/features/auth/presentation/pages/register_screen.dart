@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/app_routes.dart';
+import '../models/auth_route_extras.dart';
 import '../../../../core/widgets/common/app_failure_dialog.dart';
 import '../bloc/register_bloc.dart';
 import '../bloc/register_event.dart';
@@ -25,7 +26,10 @@ class RegisterScreen extends StatelessWidget {
       child: BlocListener<RegisterBloc, RegisterState>(
         listener: (context, state) {
           if (state is RegisterSuccess) {
-            context.go(AppRoutes.verify, extra: state.user.email);
+            context.go(
+              AppRoutes.verify,
+              extra: VerifyScreenExtra(email: state.user.email),
+            );
           } else if (state is RegisterGoogleSuccess) {
             if (state.isDisclaimerAccepted) {
               context.go(AppRoutes.dashboard);

@@ -74,6 +74,10 @@ class AppStrings {
   static const String hintConfirmNewPass    = 'Re-enter new password';
   static const String btnResetPassword      = 'Reset password';
   static const String resetSuccessMsg       = 'Password reset successfully!';
+  static const String passwordUpdatedTitle   = 'Password Updated!';
+  static const String passwordUpdatedSubtitle =
+      'Your password has been changed successfully. You can now log in with your new password.';
+  static const String btnBackToLogin         = 'Back to Login';
 
   // Agreement Screen
   static const String agreementTitle     = 'Before You Continue';

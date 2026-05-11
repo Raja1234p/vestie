@@ -9,17 +9,20 @@ class AuthGradientButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
   final bool isLoading;
+  final double? borderRadius;
 
   const AuthGradientButton({
     super.key,
     required this.text,
     required this.onPressed,
     this.isLoading = false,
+    this.borderRadius,
   });
 
   @override
   Widget build(BuildContext context) {
     final isEnabled = onPressed != null && !isLoading;
+    final radius = BorderRadius.circular(borderRadius ?? 100.r);
 
     return SizedBox(
       width: double.infinity,
@@ -34,7 +37,7 @@ class AuthGradientButton extends StatelessWidget {
                 )
               : null,
           color: isEnabled ? null : AppColors.authHint.withValues(alpha: 0.3),
-          borderRadius: BorderRadius.circular(100.r),
+          borderRadius: radius,
           boxShadow: isEnabled
               ? [
                   BoxShadow(
@@ -47,9 +50,9 @@ class AuthGradientButton extends StatelessWidget {
         ),
         child: Material(
           color: Colors.transparent,
-          borderRadius: BorderRadius.circular(100.r),
+          borderRadius: radius,
           child: InkWell(
-            borderRadius: BorderRadius.circular(100.r),
+            borderRadius: radius,
             onTap: isLoading ? null : onPressed,
             child: Center(
               child: isLoading
