@@ -1,6 +1,8 @@
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -10,7 +12,6 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/common/app_failure_dialog.dart';
-import '../../../../core/widgets/common/app_svg_icon.dart';
 import '../../../../core/widgets/common/app_tick_switch.dart';
 import '../cubit/agreement_cubit.dart';
 
@@ -43,6 +44,7 @@ class _AgreementBody extends StatelessWidget {
       },
       builder: (context, state) {
         final accepted = state.isAccepted;
+        final iconSide = 64.w;
 
         return Scaffold(
           backgroundColor: AppColors.surface,
@@ -54,19 +56,16 @@ class _AgreementBody extends StatelessWidget {
                 children: [
                   SizedBox(height: 40.h),
 
-                  // ── Warning icon ──────────────────────────────────────
+                  // ── Agreement hero icon (design SVG) ──────────────────
                   Center(
-                    child: Container(
-                      width: 64.w,
-                      height: 64.w,
-                      decoration: const BoxDecoration(
-                        color: AppColors.yellow100,
-                        shape: BoxShape.circle,
-                      ),
-                      child: AppSvgIcon(
-                        assetPath: AppAssets.infoIcon,
-                        size: 34.w,
-                        color: AppColors.warning,
+                    child: SizedBox(
+                      width: iconSide,
+                      height: iconSide,
+                      child: SvgPicture.asset(
+                        AppAssets.agreementIcon,
+                        width: iconSide,
+                        height: iconSide,
+                        fit: BoxFit.contain,
                       ),
                     ),
                   ),
@@ -101,17 +100,14 @@ class _AgreementBody extends StatelessWidget {
                   ),
                   SizedBox(height: 24.h),
 
-                  // ── Guidelines list ───────────────────────────────────
+                  // ── Guidelines list (dashed frame + internal dividers) ─
                   if (state.isLoading && state.disclaimer == null)
                     const Center(child: CircularProgressIndicator())
                   else
-                    ...(state.disclaimer?.guidelines ?? AppStrings.agreementItems)
-                        .asMap()
-                        .entries
-                        .map(
-                          (e) =>
-                              _GuidelineItem(number: e.key + 1, text: e.value),
-                        ),
+                    _AgreementGuidelinesBox(
+                      guidelines: state.disclaimer?.guidelines ??
+                          AppStrings.agreementItems,
+                    ),
                   SizedBox(height: 20.h),
 
                   // ── Agreement switch row ──────────────────────────────
@@ -159,6 +155,93 @@ class _AgreementBody extends StatelessWidget {
   }
 }
 
+/// Lavender dashed outer border (#DDD0FC) + dashed row separators.
+class _AgreementGuidelinesBox extends StatelessWidget {
+  const _AgreementGuidelinesBox({required this.guidelines});
+
+  final List<String> guidelines;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: DottedBorder(
+        options: RoundedRectDottedBorderOptions(
+          radius: Radius.circular(12.r),
+          color: AppColors.purple300,
+          strokeWidth: 1,
+          dashPattern: const [4, 4],
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+        ),
+        child: Container(
+          width: double.infinity,
+          color: Colors.white,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (var i = 0; i < guidelines.length; i++) ...[
+                if (i > 0) ...[
+                  SizedBox(height: 12.h),
+                  const _AgreementGuidelineDivider(),
+                  SizedBox(height: 12.h),
+                ],
+                _GuidelineItem(number: i + 1, text: guidelines[i]),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AgreementGuidelineDivider extends StatelessWidget {
+  const _AgreementGuidelineDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return CustomPaint(
+          size: Size(constraints.maxWidth, 1),
+          painter: _AgreementHorizontalDashPainter(color: AppColors.purple300),
+        );
+      },
+    );
+  }
+}
+
+class _AgreementHorizontalDashPainter extends CustomPainter {
+  _AgreementHorizontalDashPainter({required this.color});
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke;
+
+    const dashWidth = 4.0;
+    const dashSpace = 4.0;
+    var startX = 0.0;
+    final y = size.height / 2;
+
+    while (startX < size.width) {
+      canvas.drawLine(
+        Offset(startX, y),
+        Offset(startX + dashWidth, y),
+        paint,
+      );
+      startX += dashWidth + dashSpace;
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
 class _GuidelineItem extends StatelessWidget {
   final int number;
   final String text;
@@ -167,32 +250,29 @@ class _GuidelineItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 14.h),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '$number.',
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '$number.',
+          style: GoogleFonts.lato(
+            fontSize: 13.sp,
+            fontWeight: FontWeight.w600,
+            color: AppColors.authSubtitle,
+          ),
+        ),
+        SizedBox(width: 8.w),
+        Expanded(
+          child: Text(
+            text,
             style: GoogleFonts.lato(
               fontSize: 13.sp,
-              fontWeight: FontWeight.w600,
-              color: AppColors.primary,
+              color: AppColors.textBody,
+              height: 1.5,
             ),
           ),
-          SizedBox(width: 8.w),
-          Expanded(
-            child: Text(
-              text,
-              style: GoogleFonts.lato(
-                fontSize: 13.sp,
-                color: AppColors.textBody,
-                height: 1.5,
-              ),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
