@@ -86,28 +86,29 @@ class CreateProjectReviewScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SafeArea(
-                      top: false,
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          left: 20.w,
-                          right: 20.w,
-                          bottom: 20.h + MediaQuery.viewInsetsOf(context).bottom,
-                        ),
-                        child: BlocBuilder<CreateProjectSubmitCubit,
-                            CreateProjectSubmitState>(
-                          buildWhen: (p, c) => p.loading != c.loading,
-                          builder: (context, submit) {
-                            return AppButton(
-                              text: AppStrings.btnNext,
-                              isLoading: submit.loading,
-                              onPressed: submit.loading
-                                  ? () {}
-                                  : () => context
-                                      .read<CreateProjectSubmitCubit>()
-                                      .submit(form),
-                            );
-                          },
+                    Padding(
+                      padding: EdgeInsets.only(
+                        bottom: MediaQuery.viewInsetsOf(context).bottom,
+                      ),
+                      child: SafeArea(
+                        top: false,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20.w),
+                          child: BlocBuilder<CreateProjectSubmitCubit,
+                              CreateProjectSubmitState>(
+                            buildWhen: (p, c) => p.loading != c.loading,
+                            builder: (context, submit) {
+                              return AppButton(
+                                text: AppStrings.btnNext,
+                                isLoading: submit.loading,
+                                onPressed: submit.loading
+                                    ? () {}
+                                    : () => context
+                                        .read<CreateProjectSubmitCubit>()
+                                        .submit(form),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ),

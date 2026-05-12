@@ -69,6 +69,12 @@ class _CreateProjectDetailsScreenState extends State<CreateProjectDetailsScreen>
     return BlocBuilder<CreateProjectCubit, CreateProjectForm>(
       builder: (context, form) {
         final cubit = context.read<CreateProjectCubit>();
+        final detailsLabelStyle =
+            Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.authLabel,
+                );
         return Scaffold(
           backgroundColor: Colors.transparent,
           body: PostAuthGradientBackground(
@@ -94,19 +100,25 @@ class _CreateProjectDetailsScreenState extends State<CreateProjectDetailsScreen>
                           textInputAction: TextInputAction.next,
                           errorText: form.nameError,
                           onChanged: cubit.setProjectName,
+                          labelStyle: detailsLabelStyle,
+                          fillColor: AppColors.searchBarBg,
                         ),
                         SizedBox(height: 16.h),
                         AppTextField(
                           label: AppStrings.labelProjectDesc,
                           hint: AppStrings.hintProjectDesc,
                           controller: _descCtrl,
+                          minLines: 4,
                           maxLines: 4,
                           textInputAction: TextInputAction.done,
                           errorText: form.descError,
                           onChanged: cubit.setDescription,
+                          labelStyle: detailsLabelStyle,
+                          fillColor: AppColors.searchBarBg,
+                          labelTrailingGap: 6.w,
                           labelTrailing: AppSvgIcon(
-                            assetPath: AppAssets.iconInfo,
-                            size: 18.w,
+                            assetPath: AppAssets.iconInformationCircle,
+                            size: 16,
                             color: AppColors.inputFieldIcon,
                           ),
                         ),
@@ -136,25 +148,26 @@ class _CreateProjectDetailsScreenState extends State<CreateProjectDetailsScreen>
                     ),
                   ),
                 ),
-                SafeArea(
-                  top: false,
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      left: 20.w,
-                      right: 20.w,
-                      bottom: 20.h + MediaQuery.viewInsetsOf(context).bottom,
-                    ),
-                    child: AppButton(
-                      text: AppStrings.btnNext,
-                      useGradient: false,
-                      hasShadow: false,
-                      color: AppColors.neutral1200,
-                      borderRadius: 16.r,
-                      onPressed: () => pushNextAfterDetailsStep(
-                            context,
-                            cubit,
-                            editMode: widget.isEditMode,
-                          ),
+                Padding(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.viewInsetsOf(context).bottom,
+                  ),
+                  child: SafeArea(
+                    top: false,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.w),
+                      child: AppButton(
+                        text: AppStrings.btnNext,
+                        useGradient: false,
+                        hasShadow: false,
+                        color: AppColors.neutral1200,
+                        borderRadius: 10.r,
+                        onPressed: () => pushNextAfterDetailsStep(
+                              context,
+                              cubit,
+                              editMode: widget.isEditMode,
+                            ),
+                      ),
                     ),
                   ),
                 ),

@@ -15,8 +15,9 @@ class CPFieldLabel extends StatelessWidget {
       child: AppText(
         text,
         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-          fontWeight: FontWeight.w600,
-          color: AppColors.textBody,
+          fontSize: 18.sp,
+          fontWeight: FontWeight.w500,
+          color: AppColors.authLabel,
         ),
       ),
     );

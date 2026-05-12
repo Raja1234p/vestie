@@ -117,6 +117,8 @@ class AppAssets {
   static const String iconSettings = '$_iconPath/icon_settings.svg';
   static const String iconDelete = '$_iconPath/icon_delete.svg';
   static const String iconInfo = '$_iconPath/icon_info.svg';
+  /// Information circle (design export `information-circle.svg`).
+  static const String iconInformationCircle = '$_iconPath/information_circle.svg';
   static const String iconCamera = '$_iconPath/icon_camera.svg';
   static const String iconPhotoLibrary = '$_iconPath/icon_photo_library.svg';
   static const String iconChat = '$_iconPath/icon_chat.svg';

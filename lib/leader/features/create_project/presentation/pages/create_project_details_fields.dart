@@ -33,8 +33,7 @@ class CPDeadlinePicker extends StatelessWidget {
         GestureDetector(
           onTap: onTap,
           child: Container(
-            height: 48.h,
-            padding: EdgeInsets.symmetric(horizontal: 14.w),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
             decoration: BoxDecoration(
               color: AppColors.searchBarBg,
               borderRadius: BorderRadius.circular(12.r),
@@ -43,6 +42,7 @@ class CPDeadlinePicker extends StatelessWidget {
               ),
             ),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
                   child: Text(
@@ -55,9 +55,10 @@ class CPDeadlinePicker extends StatelessWidget {
                   ),
                 ),
                 AppSvgIcon(
-                    assetPath: AppAssets.iconCalendar,
-                    size: 20.w,
-                    color: AppColors.inputFieldIcon),
+                  assetPath: AppAssets.iconCalendar,
+                  size: 20.w,
+                  color: AppColors.inputFieldIcon,
+                ),
               ],
             ),
           ),
@@ -187,14 +188,14 @@ class CPCategoryDropdown extends StatelessWidget {
         onTap: () => _openPicker(context),
         borderRadius: BorderRadius.circular(12.r),
         child: Ink(
-          height: 48.h,
-          padding: EdgeInsets.symmetric(horizontal: 14.w),
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
           decoration: BoxDecoration(
             color: AppColors.searchBarBg,
             borderRadius: BorderRadius.circular(12.r),
             border: Border.all(color: AppColors.inputFieldBorder),
           ),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
                 child: Align(

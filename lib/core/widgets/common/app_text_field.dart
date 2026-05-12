@@ -25,6 +25,14 @@ class AppTextField extends StatelessWidget {
   final FocusNode? focusNode;
   /// Shown on the same row as [label] (e.g. info icon) — optional.
   final Widget? labelTrailing;
+  /// Horizontal gap between [label] text and [labelTrailing] (e.g. up to `10.w`).
+  final double? labelTrailingGap;
+  /// Space to the right of [labelTrailing] after label + icon.
+  final double? labelTrailingEndGap;
+  /// When set, overrides default label typography (e.g. create-project details).
+  final TextStyle? labelStyle;
+  /// When set, overrides default input fill ([AppColors.authInputBg]).
+  final Color? fillColor;
 
   const AppTextField({
     super.key,
@@ -44,6 +52,10 @@ class AppTextField extends StatelessWidget {
     this.maxLines = 1,
     this.focusNode,
     this.labelTrailing,
+    this.labelTrailingGap,
+    this.labelTrailingEndGap,
+    this.labelStyle,
+    this.fillColor,
   });
 
   @override
@@ -59,25 +71,32 @@ class AppTextField extends StatelessWidget {
             : TextInputAction.newline)
         : textInputAction;
 
-    final labelStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
-          fontSize: 15.sp,
-          fontWeight: FontWeight.w500,
-          color: AppColors.authLabel,
-        );
+    final effectiveLabelStyle = labelStyle ??
+        Theme.of(context).textTheme.bodyLarge?.copyWith(
+              fontSize: 15.sp,
+              fontWeight: FontWeight.w500,
+              color: AppColors.authLabel,
+            );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (labelTrailing != null)
           Row(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Expanded(child: AppText(label, style: labelStyle)),
+              AppText(label, style: effectiveLabelStyle),
+              if (labelTrailingGap != null && labelTrailingGap! > 0)
+                SizedBox(width: labelTrailingGap!),
               labelTrailing!,
+              if (labelTrailingEndGap != null && labelTrailingEndGap! > 0)
+                SizedBox(width: labelTrailingEndGap!),
             ],
           )
         else
-          AppText(label, style: labelStyle),
+          AppText(label, style: effectiveLabelStyle),
         SizedBox(height: 12.h),
         TextField(
           focusNode: focusNode,
@@ -108,7 +127,7 @@ class AppTextField extends StatelessWidget {
                 ),
             suffixIcon: suffixIcon,
             filled: true,
-            fillColor: AppColors.authInputBg,
+            fillColor: fillColor ?? AppColors.authInputBg,
             counterText: '',
             suffixIconColor: AppColors.inputFieldIcon,
             prefixIconColor: AppColors.inputFieldIcon,

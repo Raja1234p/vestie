@@ -110,27 +110,28 @@ class _CreateProjectInvestmentSettingsScreenState
                     ),
                   ),
                 ),
-                SafeArea(
-                  top: false,
+                Padding(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.viewInsetsOf(context).bottom,
+                  ),
+                  child: SafeArea(
+                    top: false,
                     child: Padding(
-                      padding: EdgeInsets.only(
-                        left: 20.w,
-                        right: 20.w,
-                        bottom: 20.h + MediaQuery.viewInsetsOf(context).bottom,
-                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 20.w),
                       child: AppButton(
-                      text: widget.isEditMode
-                          ? AppStrings.btnSaveChanges
-                          : AppStrings.btnNext,
-                      onPressed: () {
-                        if (!cubit.validateInvestmentOptionalRoi()) return;
-                        if (widget.isEditMode) {
-                          context.pop();
-                          context.pop();
-                          return;
-                        }
-                        context.push(AppRoutes.createProjectReview);
-                      },
+                        text: widget.isEditMode
+                            ? AppStrings.btnSaveChanges
+                            : AppStrings.btnNext,
+                        onPressed: () {
+                          if (!cubit.validateInvestmentOptionalRoi()) return;
+                          if (widget.isEditMode) {
+                            context.pop();
+                            context.pop();
+                            return;
+                          }
+                          context.push(AppRoutes.createProjectReview);
+                        },
+                      ),
                     ),
                   ),
                 ),
