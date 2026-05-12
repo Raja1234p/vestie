@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
-import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import 'package:vestie/core/widgets/common/app_text_field.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import '../../domain/create_project_form.dart';
@@ -61,6 +60,25 @@ class _CreateProjectInvestmentSettingsScreenState
           return const Scaffold(body: SizedBox.shrink());
         }
 
+        final roiLabelStyle =
+            Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.authLabel, // #443F63 — same as Project Details labels
+                );
+        final roiHelperStyle =
+            Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.grey800, // #5E5783
+                );
+        final roiHintStyle =
+            Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w500,
+                  color: const Color(0xFF141414).withValues(alpha: 0.5),
+                );
+
         return Scaffold(
           backgroundColor: Colors.transparent,
           body: PostAuthGradientBackground(
@@ -88,23 +106,35 @@ class _CreateProjectInvestmentSettingsScreenState
                           textInputAction: TextInputAction.done,
                           errorText: form.roiError,
                           onChanged: cubit.setRoi,
+                          labelStyle: roiLabelStyle,
+                          fillColor: AppColors.purple100, // #F5F0FE
+                          hintStyle: roiHintStyle,
+                          suffixIconConstraints: BoxConstraints(
+                            minWidth: 0,
+                            minHeight: 0,
+                            maxWidth: 8.w + 20.w + 8.w,
+                            maxHeight: 28.h,
+                          ),
                           suffixIcon: Padding(
                             padding: EdgeInsets.only(right: 8.w),
-                            child: AppSvgIcon(
-                              assetPath: AppAssets.iconInfo,
-                              size: 18.w,
-                              color: AppColors.inputFieldIcon,
+                            child: SizedBox(
+                              width: 20.w,
+                              height: 20.h,
+                              child: SvgPicture.asset(
+                                AppAssets.iconInformationCircle,
+                                fit: BoxFit.contain,
+                                colorFilter: ColorFilter.mode(
+                                  AppColors.inputFieldIcon,
+                                  BlendMode.srcIn,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                        SizedBox(height: 10.h),
+                        SizedBox(height: 16.h),
                         Text(
                           AppStrings.roiOptionalHelper,
-                          style: GoogleFonts.lato(
-                            fontSize: 13.sp,
-                            height: 1.45,
-                            color: Colors.black.withValues(alpha: 0.55),
-                          ),
+                          style: roiHelperStyle,
                         ),
                       ],
                     ),
@@ -122,6 +152,10 @@ class _CreateProjectInvestmentSettingsScreenState
                         text: widget.isEditMode
                             ? AppStrings.btnSaveChanges
                             : AppStrings.btnNext,
+                        useGradient: false,
+                        hasShadow: false,
+                        color: AppColors.neutral1200,
+                        borderRadius: 10.r,
                         onPressed: () {
                           if (!cubit.validateInvestmentOptionalRoi()) return;
                           if (widget.isEditMode) {

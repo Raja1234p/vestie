@@ -87,6 +87,10 @@ class ValidationUtils {
 
   static String? validateProjectDeadline(DateTime? value) {
     if (value == null) return AppStrings.errDeadlineRequired;
+    final v = DateTime(value.year, value.month, value.day);
+    final n = DateTime.now();
+    final today = DateTime(n.year, n.month, n.day);
+    if (v.isBefore(today)) return AppStrings.errDeadlinePast;
     return null;
   }
 

@@ -47,8 +47,10 @@ class CreateProjectCubit extends Cubit<CreateProjectForm> {
     ));
   }
 
-  void setDeadline(DateTime d) =>
-      emit(state.copyWith(deadline: d, deadlineError: null));
+  void setDeadline(DateTime d) {
+    final normalized = DateTime(d.year, d.month, d.day);
+    emit(state.copyWith(deadline: normalized, deadlineError: null));
+  }
 
   void setVisibility(ProjectVisibility v) =>
       emit(state.copyWith(visibility: v));

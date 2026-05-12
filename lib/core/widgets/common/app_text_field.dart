@@ -33,6 +33,10 @@ class AppTextField extends StatelessWidget {
   final TextStyle? labelStyle;
   /// When set, overrides default input fill ([AppColors.authInputBg]).
   final Color? fillColor;
+  /// When set, overrides default hint style (e.g. ROI field).
+  final TextStyle? hintStyle;
+  /// When set with [suffixIcon], overrides M3’s default 48×48 suffix slot (shrinks small glyphs).
+  final BoxConstraints? suffixIconConstraints;
 
   const AppTextField({
     super.key,
@@ -56,6 +60,8 @@ class AppTextField extends StatelessWidget {
     this.labelTrailingEndGap,
     this.labelStyle,
     this.fillColor,
+    this.hintStyle,
+    this.suffixIconConstraints,
   });
 
   @override
@@ -85,7 +91,6 @@ class AppTextField extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               AppText(label, style: effectiveLabelStyle),
               if (labelTrailingGap != null && labelTrailingGap! > 0)
@@ -120,12 +125,14 @@ class AppTextField extends StatelessWidget {
               ),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            hintStyle: hintStyle ??
+                Theme.of(context).textTheme.bodyLarge?.copyWith(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w500,
                   color: AppColors.authHint,
                 ),
             suffixIcon: suffixIcon,
+            suffixIconConstraints: suffixIconConstraints,
             filled: true,
             fillColor: fillColor ?? AppColors.authInputBg,
             counterText: '',

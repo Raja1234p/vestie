@@ -556,6 +556,8 @@ class AppStrings {
   static const String errProjectNameShort    = 'At least 3 characters required';
   static const String errDescRequired        = 'Description is required';
   static const String errDeadlineRequired    = 'Deadline is required';
+  static const String errDeadlinePast        =
+      'Deadline cannot be in the past';
   static const String errBorrowLimitRequired = 'Borrow limit is required';
   static const String errBorrowLimitInvalid  = 'Enter a valid amount';
   static const String errWindowRequired      = 'Repayment window is required';

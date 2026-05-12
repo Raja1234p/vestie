@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_text_field.dart';
 import 'package:vestie/core/widgets/common/app_tick_switch.dart';
@@ -64,6 +65,13 @@ class _CreateProjectBorrowingSettingsScreenState
           return const Scaffold(body: SizedBox.shrink());
         }
 
+        final settingsLabelStyle =
+            Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.authLabel,
+                );
+
         return Scaffold(
           backgroundColor: Colors.transparent,
           body: PostAuthGradientBackground(
@@ -84,14 +92,12 @@ class _CreateProjectBorrowingSettingsScreenState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Expanded(
                               child: Text(
                                 AppStrings.labelEnableBorrowProject,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.copyWith(fontWeight: FontWeight.w600),
+                                style: settingsLabelStyle,
                               ),
                             ),
                             AppTickSwitch(
@@ -101,9 +107,9 @@ class _CreateProjectBorrowingSettingsScreenState
                           ],
                         ),
                         if (form.borrowingEnabled) ...[
-                          SizedBox(height: 20.h),
+                          SizedBox(height: 16.h),
                           const CPDashedDivider(),
-                          SizedBox(height: 20.h),
+                          SizedBox(height: 16.h),
                           AppTextField(
                             label: AppStrings.labelRepaymentWindowDays,
                             hint: AppStrings.hintRepaymentDays,
@@ -112,6 +118,8 @@ class _CreateProjectBorrowingSettingsScreenState
                             textInputAction: TextInputAction.next,
                             errorText: form.repaymentWindowError,
                             onChanged: cubit.setRepaymentDays,
+                            labelStyle: settingsLabelStyle,
+                            fillColor: AppColors.searchBarBg,
                           ),
                           SizedBox(height: 16.h),
                           AppTextField(
@@ -122,6 +130,8 @@ class _CreateProjectBorrowingSettingsScreenState
                             textInputAction: TextInputAction.done,
                             errorText: form.penaltyError,
                             onChanged: cubit.setPenalty,
+                            labelStyle: settingsLabelStyle,
+                            fillColor: AppColors.searchBarBg,
                           ),
                         ],
                       ],
@@ -140,6 +150,10 @@ class _CreateProjectBorrowingSettingsScreenState
                         text: widget.isEditMode
                             ? AppStrings.btnSaveChanges
                             : AppStrings.btnNext,
+                        useGradient: false,
+                        hasShadow: false,
+                        color: AppColors.neutral1200,
+                        borderRadius: 10.r,
                         onPressed: () {
                           if (!cubit.validateFundsBorrowing()) return;
                           if (widget.isEditMode) {

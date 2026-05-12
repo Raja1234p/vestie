@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_strings.dart';
@@ -37,6 +36,18 @@ class CreateProjectSavingSettingsScreen extends StatelessWidget {
           return const Scaffold(body: SizedBox.shrink());
         }
 
+        final settingsLabelStyle =
+            Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.authLabel,
+                );
+        final helperStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
+              fontSize: 13.sp,
+              height: 1.45,
+              color: AppColors.authHint,
+            );
+
         return Scaffold(
           backgroundColor: Colors.transparent,
           body: PostAuthGradientBackground(
@@ -57,16 +68,12 @@ class CreateProjectSavingSettingsScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Expanded(
                               child: Text(
                                 AppStrings.labelAutoSave,
-                                style: GoogleFonts.lato(
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.textPrimary,
-                                ),
+                                style: settingsLabelStyle,
                               ),
                             ),
                             AppTickSwitch(
@@ -75,14 +82,10 @@ class CreateProjectSavingSettingsScreen extends StatelessWidget {
                             ),
                           ],
                         ),
-                        SizedBox(height: 10.h),
+                        SizedBox(height: 16.h),
                         Text(
                           AppStrings.autoSaveDescription,
-                          style: GoogleFonts.lato(
-                            fontSize: 13.sp,
-                            height: 1.45,
-                            color: Colors.black.withValues(alpha: 0.55),
-                          ),
+                          style: helperStyle,
                         ),
                       ],
                     ),
@@ -100,6 +103,10 @@ class CreateProjectSavingSettingsScreen extends StatelessWidget {
                         text: isEditMode
                             ? AppStrings.btnSaveChanges
                             : AppStrings.btnNext,
+                        useGradient: false,
+                        hasShadow: false,
+                        color: AppColors.neutral1200,
+                        borderRadius: 10.r,
                         onPressed: () {
                           if (isEditMode) {
                             context.pop();
