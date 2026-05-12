@@ -17,6 +17,9 @@ class AppDimens {
   static double get p40 => 40.0.w;
   static double get p48 => 48.0.w;
   static double get p64 => 64.0.w;
+  /// Create project amount sheet — vertical gap between close icon and title (Figma 70).
+  static double get createProjectAmountSheetIconTitleVerticalGap => 70.0.h;
+
   /// Horizontal gutters used on some auth / VFF sheets (between p16–p24).
   static double get p18 => 18.0.w;
   static double get p22 => 22.0.w;

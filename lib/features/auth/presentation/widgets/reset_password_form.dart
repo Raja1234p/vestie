@@ -77,7 +77,12 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
             children: [
               SizedBox(height: 48.h),
               AppBackButton(
-                onPressed: () => context.pop(),
+                onPressed: () {
+                  _newPassCtrl.clear();
+                  _confirmCtrl.clear();
+                  context.read<ResetPasswordFormCubit>().reset();
+                  context.pop();
+                },
                 color: AppColors.authTitle,
               ),
               SizedBox(height: 20.h),

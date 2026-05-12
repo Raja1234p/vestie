@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
-import 'package:vestie/app/router/app_routes.dart';
+import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/theme/app_text_styles.dart';
+import 'package:vestie/core/widgets/common/app_text.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
+import 'package:vestie/leader/features/create_project/presentation/widgets/create_project_amount_sheet.dart';
 import 'package:vestie/user/features/discover/presentation/pages/discover_screen.dart';
 import 'package:vestie/user/features/home/presentation/pages/home_screen.dart';
 import '../../../profile/presentation/pages/profile_screen.dart';
@@ -18,7 +20,7 @@ class DashboardScreen extends StatelessWidget {
   static const _tabs = [
     HomeScreen(),
     DiscoverScreen(),
-    _PlaceholderTab(label: 'Add'),
+    _PlaceholderTab(),
     WalletScreen(),
     ProfileScreen(),
   ];
@@ -38,8 +40,7 @@ class DashboardScreen extends StatelessWidget {
               currentIndex: index,
               onTap: (i) {
                 if (i == 2) {
-                  // Add tab → open Create Project wizard
-                  context.push(AppRoutes.createProjectAmount);
+                  showCreateProjectAmountSheet(context);
                 } else {
                   context.read<NavCubit>().selectTab(i);
                 }
@@ -52,15 +53,17 @@ class DashboardScreen extends StatelessWidget {
   }
 }
 
-/// Placeholder for tabs not yet implemented.
+/// Placeholder for the center nav slot (Add opens sheet, not this tab).
 class _PlaceholderTab extends StatelessWidget {
-  final String label;
-  const _PlaceholderTab({required this.label});
+  const _PlaceholderTab();
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Text(label, style: const TextStyle(fontSize: 18)),
+      child: AppText(
+        AppStrings.navAdd,
+        style: AppTextStyles.bodyLarge,
+      ),
     );
   }
 }

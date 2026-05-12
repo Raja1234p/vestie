@@ -8,13 +8,14 @@ import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_svg_icon.dart';
+import 'package:vestie/core/widgets/common/app_text_field.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import '../../domain/create_project_form.dart';
 import '../create_project_flow.dart';
 import '../cubit/create_project_cubit.dart';
 import '../widgets/create_project_header.dart';
-import 'create_project_form_widgets.dart';
 
 /// Investment category — optional ROI only (no borrowing). Matches Figma Project Settings 2/3.
 class CreateProjectInvestmentSettingsScreen extends StatefulWidget {
@@ -79,10 +80,10 @@ class _CreateProjectInvestmentSettingsScreenState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CPFieldLabel(AppStrings.labelRoiOptional),
-                        CPTextField(
-                          controller: _roiCtrl,
+                        AppTextField(
+                          label: AppStrings.labelRoiOptional,
                           hint: AppStrings.hintAnnualInterest,
+                          controller: _roiCtrl,
                           keyboardType: TextInputType.number,
                           textInputAction: TextInputAction.done,
                           errorText: form.roiError,
@@ -92,7 +93,7 @@ class _CreateProjectInvestmentSettingsScreenState
                             child: AppSvgIcon(
                               assetPath: AppAssets.iconInfo,
                               size: 18.w,
-                              color: AppColors.textBody,
+                              color: AppColors.inputFieldIcon,
                             ),
                           ),
                         ),
@@ -111,10 +112,14 @@ class _CreateProjectInvestmentSettingsScreenState
                 ),
                 SafeArea(
                   top: false,
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 20.h),
-                    child: CPNextButton(
-                      label: widget.isEditMode
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        left: 20.w,
+                        right: 20.w,
+                        bottom: 20.h + MediaQuery.viewInsetsOf(context).bottom,
+                      ),
+                      child: AppButton(
+                      text: widget.isEditMode
                           ? AppStrings.btnSaveChanges
                           : AppStrings.btnNext,
                       onPressed: () {

@@ -102,9 +102,15 @@ class AppStrings {
   static const String errorEmailRequired    = 'Email is required.';
   static const String errorEmailInvalid     = 'Enter a valid email address.';
   static const String errorPasswordRequired = 'Password is required.';
-  static const String errorPasswordWeak     = 'Password must be 8+ characters with letters and numbers.';
+  static const String errorPasswordWeak     =
+      'Use 8+ characters with at least one letter and one number. Special characters are allowed.';
   static const String errorPasswordMismatch = 'Passwords do not match.';
   static const String errorNameRequired     = 'Full name is required.';
+  static const String errorPersonNameInvalidChars =
+      'Use letters and spaces only. Numbers and symbols are not allowed.';
+  static const String errUsernameRequired   = 'Username is required.';
+  static const String errorUsernameInvalidChars =
+      'Use letters only. Numbers, spaces, and symbols are not allowed.';
   static const String errorOtpInvalid       = 'Please enter a valid 6-digit code.';
 
   // Onboarding Flow
@@ -429,6 +435,7 @@ class AppStrings {
   // Amount screen
   static const String projectAmountTitle     = 'Project Amount';
   static const String projectAmountSubtitle  = 'How much you want to save?';
+  static const String projectAmountEmptyDisplay = '\$0.00';
 
   // Step 1 – Details
   static const String createDetailsTitle     = 'Project Details';

@@ -59,4 +59,7 @@ class ResetPasswordFormCubit extends Cubit<ResetPasswordFormState> {
     emit(state.copyWith(newPassError: passErr, confirmError: confirmErr, isValid: passErr == null && confirmErr == null));
     return passErr == null && confirmErr == null;
   }
+
+  /// Clears visibility + errors; use with empty controllers after leaving the screen.
+  void reset() => emit(const ResetPasswordFormState());
 }

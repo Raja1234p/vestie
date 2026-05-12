@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../../../core/widgets/common/app_text_field.dart';
 
 /// Wrapped Auth text field to redirect all usages to the central AppTextField 
@@ -13,6 +14,7 @@ class AuthTextField extends StatelessWidget {
   final TextInputAction textInputAction;
   final String? errorText;
   final int? maxLength;
+  final List<TextInputFormatter>? inputFormatters;
   final void Function(String)? onChanged;
 
   const AuthTextField({
@@ -26,6 +28,7 @@ class AuthTextField extends StatelessWidget {
     this.textInputAction = TextInputAction.next,
     this.errorText,
     this.maxLength,
+    this.inputFormatters,
     this.onChanged,
   });
 
@@ -41,6 +44,7 @@ class AuthTextField extends StatelessWidget {
       textInputAction: textInputAction,
       errorText: errorText,
       maxLength: maxLength,
+      inputFormatters: inputFormatters,
       onChanged: onChanged,
     );
   }

@@ -12,6 +12,7 @@ import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/common/app_svg_icon.dart';
 import 'auth_password_visibility_icon.dart';
 import '../../../../core/widgets/common/app_text_field.dart';
+import '../../../../core/utils/person_name_input_formatter.dart';
 import '../../../../app/router/app_routes.dart';
 import '../bloc/register_bloc.dart';
 import '../bloc/register_event.dart';
@@ -97,6 +98,9 @@ class _RegisterFormState extends State<RegisterForm> {
                 hint: AppStrings.hintFullName,
                 controller: _nameCtrl,
                 keyboardType: TextInputType.name,
+                inputFormatters: [
+                  PersonNameInputFormatter(allowSpaces: true),
+                ],
                 errorText: form.nameError,
                 onChanged: (_) =>
                     context.read<RegisterFormCubit>().onFieldsChanged(

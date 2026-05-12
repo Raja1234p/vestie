@@ -62,7 +62,7 @@ class MemberFundTextField extends StatelessWidget {
             color: AppColors.searchBarBg,
             borderRadius: BorderRadius.circular(12.r),
             border: Border.all(
-              color: hasError ? AppColors.error : AppColors.cardBorder,
+              color: hasError ? AppColors.error : AppColors.inputFieldBorder,
             ),
           ),
           child: TextField(
@@ -75,13 +75,15 @@ class MemberFundTextField extends StatelessWidget {
             keyboardType: keyboardType,
             textInputAction: textInputAction,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontSize: 14.sp,
-                  color: AppColors.textPrimary,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.inputFieldText,
                 ),
             decoration: InputDecoration(
               hintText: hint,
               hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontSize: 14.sp,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w500,
                     color: AppColors.authHint,
                   ),
               border: InputBorder.none,

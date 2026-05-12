@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/widgets/common/app_button.dart';
+import 'package:vestie/core/widgets/common/app_text_field.dart';
 import 'package:vestie/core/widgets/common/app_tick_switch.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import '../../domain/create_project_form.dart';
@@ -102,20 +104,20 @@ class _CreateProjectBorrowingSettingsScreenState
                           SizedBox(height: 20.h),
                           const CPDashedDivider(),
                           SizedBox(height: 20.h),
-                          CPFieldLabel(AppStrings.labelRepaymentWindowDays),
-                          CPTextField(
-                            controller: _daysCtrl,
+                          AppTextField(
+                            label: AppStrings.labelRepaymentWindowDays,
                             hint: AppStrings.hintRepaymentDays,
+                            controller: _daysCtrl,
                             keyboardType: TextInputType.number,
                             textInputAction: TextInputAction.next,
                             errorText: form.repaymentWindowError,
                             onChanged: cubit.setRepaymentDays,
                           ),
                           SizedBox(height: 16.h),
-                          CPFieldLabel(AppStrings.labelBorrowPenaltyPercent),
-                          CPTextField(
-                            controller: _penaltyCtrl,
+                          AppTextField(
+                            label: AppStrings.labelBorrowPenaltyPercent,
                             hint: AppStrings.hintBorrowPenalty,
+                            controller: _penaltyCtrl,
                             keyboardType: TextInputType.number,
                             textInputAction: TextInputAction.done,
                             errorText: form.penaltyError,
@@ -128,10 +130,14 @@ class _CreateProjectBorrowingSettingsScreenState
                 ),
                 SafeArea(
                   top: false,
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 20.h),
-                    child: CPNextButton(
-                      label: widget.isEditMode
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        left: 20.w,
+                        right: 20.w,
+                        bottom: 20.h + MediaQuery.viewInsetsOf(context).bottom,
+                      ),
+                      child: AppButton(
+                      text: widget.isEditMode
                           ? AppStrings.btnSaveChanges
                           : AppStrings.btnNext,
                       onPressed: () {

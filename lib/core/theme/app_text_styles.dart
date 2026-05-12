@@ -35,4 +35,18 @@ class AppTextStyles {
         fontWeight: FontWeight.bold,
         color: AppColors.surface,
       );
+
+  /// Create project amount sheet — “How much you want to save?” (Figma #5E5783).
+  static TextStyle get createProjectAmountSheetTitle => GoogleFonts.lato(
+        fontSize: 26.sp,
+        fontWeight: FontWeight.w600,
+        color: AppColors.authSubtitle,
+      );
+
+  /// Dollar amount line on create-project amount step.
+  static TextStyle get createProjectAmountSheetValue => GoogleFonts.lato(
+        fontSize: 36.sp,
+        fontWeight: FontWeight.w800,
+        color: AppColors.grey1100,
+      );
 }

@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/utils/app_snackbar.dart';
+import '../../../../core/utils/person_name_input_formatter.dart';
 import '../../../../core/widgets/common/app_text_field.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../cubit/add_card_cubit.dart';
@@ -79,6 +80,9 @@ class _AddCardBodyState extends State<_AddCardBody> {
                         hint: AppStrings.hintCardHolder,
                         controller: _nameCtrl,
                         textInputAction: TextInputAction.next,
+                        inputFormatters: [
+                          PersonNameInputFormatter(allowSpaces: true),
+                        ],
                         onChanged: cubit.setHolderName,
                         errorText: state.holderNameError,
                       ),

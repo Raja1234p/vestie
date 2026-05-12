@@ -5,8 +5,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_svg_icon.dart';
-import 'package:vestie/core/widgets/text/app_text.dart';
+import 'package:vestie/core/widgets/common/app_text_field.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import '../../domain/create_project_form.dart';
 import '../create_project_flow.dart';
@@ -86,47 +87,28 @@ class _CreateProjectDetailsScreenState extends State<CreateProjectDetailsScreen>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CPFieldLabel(AppStrings.labelProjectName),
-                        CPTextField(
-                          controller: _nameCtrl,
+                        AppTextField(
+                          label: AppStrings.labelProjectName,
                           hint: AppStrings.hintProjectName,
+                          controller: _nameCtrl,
                           textInputAction: TextInputAction.next,
                           errorText: form.nameError,
                           onChanged: cubit.setProjectName,
                         ),
                         SizedBox(height: 16.h),
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 10.h),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                child: AppText(
-                                  AppStrings.labelProjectDesc,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.textBody,
-                                      ),
-                                ),
-                              ),
-                              AppSvgIcon(
-                                assetPath: AppAssets.iconInfo,
-                                size: 18.w,
-                                color: AppColors.textBody,
-                              ),
-                            ],
-                          ),
-                        ),
-                        CPTextField(
-                          controller: _descCtrl,
+                        AppTextField(
+                          label: AppStrings.labelProjectDesc,
                           hint: AppStrings.hintProjectDesc,
+                          controller: _descCtrl,
                           maxLines: 4,
                           textInputAction: TextInputAction.done,
                           errorText: form.descError,
                           onChanged: cubit.setDescription,
+                          labelTrailing: AppSvgIcon(
+                            assetPath: AppAssets.iconInfo,
+                            size: 18.w,
+                            color: AppColors.inputFieldIcon,
+                          ),
                         ),
                         SizedBox(height: 16.h),
                         CPFieldLabel(AppStrings.labelCategory),
@@ -157,9 +139,17 @@ class _CreateProjectDetailsScreenState extends State<CreateProjectDetailsScreen>
                 SafeArea(
                   top: false,
                   child: Padding(
-                    padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 20.h),
-                    child: CPNextButton(
-                      label: AppStrings.btnNext,
+                    padding: EdgeInsets.only(
+                      left: 20.w,
+                      right: 20.w,
+                      bottom: 20.h + MediaQuery.viewInsetsOf(context).bottom,
+                    ),
+                    child: AppButton(
+                      text: AppStrings.btnNext,
+                      useGradient: false,
+                      hasShadow: false,
+                      color: AppColors.neutral1200,
+                      borderRadius: 16.r,
                       onPressed: () => pushNextAfterDetailsStep(
                             context,
                             cubit,

@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import '../../domain/create_project_form.dart';
 import '../create_project_flow.dart';
@@ -13,7 +14,6 @@ import '../cubit/create_project_cubit.dart';
 import '../cubit/create_project_submit_cubit.dart';
 import '../widgets/create_project_header.dart';
 import '../widgets/create_project_review_sections.dart';
-import 'create_project_form_widgets.dart';
 
 /// Summary before submit — sections depend on the chosen [ProjectCreationFlowType].
 class CreateProjectReviewScreen extends StatelessWidget {
@@ -89,13 +89,18 @@ class CreateProjectReviewScreen extends StatelessWidget {
                     SafeArea(
                       top: false,
                       child: Padding(
-                        padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 20.h),
+                        padding: EdgeInsets.only(
+                          left: 20.w,
+                          right: 20.w,
+                          bottom: 20.h + MediaQuery.viewInsetsOf(context).bottom,
+                        ),
                         child: BlocBuilder<CreateProjectSubmitCubit,
                             CreateProjectSubmitState>(
                           buildWhen: (p, c) => p.loading != c.loading,
                           builder: (context, submit) {
-                            return CPNextButton(
-                              label: AppStrings.btnNext,
+                            return AppButton(
+                              text: AppStrings.btnNext,
+                              isLoading: submit.loading,
                               onPressed: submit.loading
                                   ? () {}
                                   : () => context

@@ -94,4 +94,7 @@ class RegisterFormCubit extends Cubit<RegisterFormState> {
         passErr == null &&
         confirmErr == null;
   }
+
+  /// Fresh register form (e.g. after route returns); pair with clearing controllers.
+  void reset() => emit(const RegisterFormState());
 }

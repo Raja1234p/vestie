@@ -51,16 +51,20 @@ class _VerifyScreenState extends State<VerifyScreen> {
             prev.isSuccess != curr.isSuccess ||
             prev.error != curr.error ||
             prev.resendMessage != curr.resendMessage,
-        listener: (context, state) {
+        listener: (context, state) async {
           if (state.isSuccess) {
             if (widget.flow == VerifyFlow.registration) {
               context.go(AppRoutes.agreement);
             } else {
               final code = _codeCtrl.text.trim();
-              context.push(
+              final verificationCubit = context.read<VerificationCubit>();
+              await context.push(
                 AppRoutes.resetPassword,
                 extra: ResetPasswordExtra(email: widget.email, code: code),
               );
+              if (!mounted) return;
+              _codeCtrl.clear();
+              verificationCubit.clearCodeAfterResetPasswordRoutePopped();
             }
           } else if (state.error != null) {
             AppFailureDialog.show(

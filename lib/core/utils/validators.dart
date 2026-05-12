@@ -1,3 +1,5 @@
+import 'validation_utils.dart';
+
 class Validators {
   static const String emailRequiredMsg = 'Email is required';
   static const String emailInvalidMsg = 'Enter a valid email address';
@@ -8,7 +10,6 @@ class Validators {
   static const String amountInvalidMsg = 'Enter a valid amount';
 
   static const String emailRegex = r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
-  static const String passwordRegex = r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$'; 
   static const String amountRegex = r'^\d+(\.\d{1,2})?$';
 
   // central validation aliases matching user requirements
@@ -27,18 +28,8 @@ class Validators {
     return null;
   }
 
-  static String? validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return passwordRequiredMsg;
-    }
-    if (value.length < 8) {
-      return passwordShortMsg;
-    }
-    if (!RegExp(passwordRegex).hasMatch(value)) {
-      return passwordFormatMsg;
-    }
-    return null;
-  }
+  static String? validatePassword(String? value) =>
+      ValidationUtils.validatePassword(value);
 
   static String? validateAmount(String? value, {double? min, double? max}) {
     if (value == null || value.isEmpty) {

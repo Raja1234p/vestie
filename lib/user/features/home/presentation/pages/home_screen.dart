@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 
-import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/theme/app_colors.dart';
@@ -11,6 +9,7 @@ import 'package:vestie/core/utils/app_snackbar.dart';
 import 'package:vestie/core/widgets/common/app_shimmer.dart';
 import '../../../home/domain/entities/project.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart';
+import 'package:vestie/leader/features/create_project/presentation/widgets/create_project_amount_sheet.dart';
 import 'package:vestie/user/features/create_project_member_fund/presentation/widgets/create_project_member_walkthrough_sheet.dart';
 import '../bloc/home_bloc.dart';
 import '../bloc/home_event.dart';
@@ -69,8 +68,7 @@ class _HomeBody extends StatelessWidget {
 
           if (isEmpty) {
             return HomeEmptyView(
-              onCreateProject: () =>
-                  context.push(AppRoutes.createProjectAmount),
+              onCreateProject: () => showCreateProjectAmountSheet(context),
               onMemberFundWalkthrough: () =>
                   showCreateProjectMemberWalkthroughSheet(context),
             );

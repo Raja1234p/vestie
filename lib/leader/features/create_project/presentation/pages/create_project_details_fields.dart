@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/core/constants/app_assets.dart';
+import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_svg_icon.dart';
@@ -38,7 +39,7 @@ class CPDeadlinePicker extends StatelessWidget {
               color: AppColors.searchBarBg,
               borderRadius: BorderRadius.circular(12.r),
               border: Border.all(
-                color: hasError ? AppColors.error : AppColors.cardBorder,
+                color: hasError ? AppColors.error : AppColors.inputFieldBorder,
               ),
             ),
             child: Row(
@@ -47,15 +48,16 @@ class CPDeadlinePicker extends StatelessWidget {
                   child: Text(
                     label,
                     style: GoogleFonts.lato(
-                      fontSize: 14.sp,
-                      color: isEmpty ? AppColors.authHint : AppColors.textPrimary,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w500,
+                      color: isEmpty ? AppColors.authHint : AppColors.inputFieldText,
                     ),
                   ),
                 ),
                 AppSvgIcon(
                     assetPath: AppAssets.iconCalendar,
                     size: 20.w,
-                    color: AppColors.textBody),
+                    color: AppColors.inputFieldIcon),
               ],
             ),
           ),
@@ -73,35 +75,149 @@ class CPDeadlinePicker extends StatelessWidget {
   }
 }
 
-/// Category selector dropdown for the project details form.
+/// Category selector — opens a bottom sheet so users can dismiss with Cancel
+/// or by tapping outside (avoids Dropdown overlay that can feel impossible to close).
 class CPCategoryDropdown extends StatelessWidget {
   final NewProjectCategory value;
   final ValueChanged<NewProjectCategory> onChanged;
   const CPCategoryDropdown({super.key, required this.value, required this.onChanged});
 
+  Future<void> _openPicker(BuildContext context) async {
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      barrierColor: AppColors.modalBarrier,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return Padding(
+          padding: EdgeInsets.fromLTRB(
+            16.w,
+            0,
+            16.w,
+            16.h + MediaQuery.viewPaddingOf(sheetContext).bottom,
+          ),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(AppRadius.r12),
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(height: 10.h),
+                Container(
+                  width: 36.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: AppColors.grey400,
+                    borderRadius: BorderRadius.circular(2.r),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 8.h),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      AppStrings.labelCategory,
+                      style: GoogleFonts.lato(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.inputFieldText,
+                      ),
+                    ),
+                  ),
+                ),
+                for (final c in NewProjectCategory.values)
+                  ListTile(
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 20.w, vertical: 4.h),
+                    title: Text(
+                      c.label,
+                      style: GoogleFonts.lato(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.inputFieldText,
+                      ),
+                    ),
+                    trailing: c == value
+                        ? Icon(
+                            Icons.check,
+                            color: AppColors.inputFieldIcon,
+                            size: 22.w,
+                          )
+                        : null,
+                    onTap: () {
+                      onChanged(c);
+                      Navigator.of(sheetContext).pop();
+                    },
+                  ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(12.w, 4.h, 12.w, 8.h),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: TextButton(
+                      onPressed: () => Navigator.of(sheetContext).pop(),
+                      child: Text(
+                        AppStrings.btnCancel,
+                        style: GoogleFonts.lato(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.inputFieldIcon,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 48.h,
-      padding: EdgeInsets.symmetric(horizontal: 14.w),
-      decoration: BoxDecoration(
-        color: AppColors.searchBarBg,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => _openPicker(context),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: AppColors.cardBorder),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<NewProjectCategory>(
-          value: value,
-          isExpanded: true,
-          icon: AppSvgIcon(
-              assetPath: AppAssets.iconChevronDown,
-              size: 22.w,
-              color: AppColors.textBody),
-          style: GoogleFonts.lato(fontSize: 14.sp, color: AppColors.textPrimary),
-          items: NewProjectCategory.values.map((c) {
-            return DropdownMenuItem(value: c, child: Text(c.label));
-          }).toList(),
-          onChanged: (v) { if (v != null) onChanged(v); },
+        child: Ink(
+          height: 48.h,
+          padding: EdgeInsets.symmetric(horizontal: 14.w),
+          decoration: BoxDecoration(
+            color: AppColors.searchBarBg,
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(color: AppColors.inputFieldBorder),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    value.label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.lato(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.inputFieldText,
+                    ),
+                  ),
+                ),
+              ),
+              AppSvgIcon(
+                assetPath: AppAssets.iconChevronDown,
+                size: 22.w,
+                color: AppColors.inputFieldIcon,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -117,7 +233,7 @@ class CPVisibilityToggle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 44.h,
+      height: 50.h,
       padding: EdgeInsets.all(4.r),
       decoration: BoxDecoration(
         color: AppColors.grey200,

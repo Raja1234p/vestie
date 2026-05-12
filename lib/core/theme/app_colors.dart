@@ -152,8 +152,16 @@ class AppColors {
   static const Color authPurple     = Color(0xE64C24A0); // purple900 with opacity
   static const Color authPurpleFade = Color(0x004C24A0);
 
-  static const Color authInputBg      = neutral100;  // white
-  static const Color authInputBorder  = grey300;     // #E4E0EE
+  static const Color authInputBg = neutral100; // white
+
+  /// Standard text field outline — Figma #DDD0FC.
+  static const Color inputFieldBorder = purple300;
+  /// Typed input text — Figma #141414.
+  static const Color inputFieldText = neutral1100;
+  /// Leading / trailing icons on standard text fields — Figma #4C24A0.
+  static const Color inputFieldIcon = purple900;
+
+  static const Color authInputBorder = inputFieldBorder;
   static const Color authButtonStart  = purple700;   // #7A3FE0
   static const Color authButtonEnd    = purple900;   // #4C24A0
   static const Color authSocialBorder = purple300;   // #DDD0FC — social outline
@@ -242,4 +250,7 @@ class AppColors {
   static const Color txContribIcon = red700;     // #E03F3F
   static const Color txBorrowBg    = purple200;  // #EBE1FD
   static const Color txBorrowIcon  = purple900;  // #4C24A0
+
+  /// Dim layer behind modal bottom sheets (Figma).
+  static Color get modalBarrier => grey1100.withValues(alpha: 0.45);
 }

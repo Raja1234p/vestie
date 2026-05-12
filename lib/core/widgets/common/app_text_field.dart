@@ -23,6 +23,8 @@ class AppTextField extends StatelessWidget {
   final int minLines;
   final int maxLines;
   final FocusNode? focusNode;
+  /// Shown on the same row as [label] (e.g. info icon) — optional.
+  final Widget? labelTrailing;
 
   const AppTextField({
     super.key,
@@ -41,6 +43,7 @@ class AppTextField extends StatelessWidget {
     this.minLines = 1,
     this.maxLines = 1,
     this.focusNode,
+    this.labelTrailing,
   });
 
   @override
@@ -56,17 +59,25 @@ class AppTextField extends StatelessWidget {
             : TextInputAction.newline)
         : textInputAction;
 
+    final labelStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
+          fontSize: 15.sp,
+          fontWeight: FontWeight.w500,
+          color: AppColors.authLabel,
+        );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AppText(
-          label,
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontSize: 15.sp,
-                fontWeight: FontWeight.w500,
-                color: AppColors.authLabel,
-              ),
-        ),
+        if (labelTrailing != null)
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(child: AppText(label, style: labelStyle)),
+              labelTrailing!,
+            ],
+          )
+        else
+          AppText(label, style: labelStyle),
         SizedBox(height: 12.h),
         TextField(
           focusNode: focusNode,
@@ -84,29 +95,34 @@ class AppTextField extends StatelessWidget {
           minLines: minLines,
           maxLines: maxLines,
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            fontSize: 14.sp,
-            color: AppColors.authSocialText,
-          ),
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w500,
+                color: AppColors.inputFieldText,
+              ),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              fontSize: 14.sp,
-              color: AppColors.authHint,
-            ),
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.authHint,
+                ),
             suffixIcon: suffixIcon,
             filled: true,
             fillColor: AppColors.authInputBg,
             counterText: '',
+            suffixIconColor: AppColors.inputFieldIcon,
+            prefixIconColor: AppColors.inputFieldIcon,
             contentPadding:
                 EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-            border: _border(AppColors.authInputBorder, 1),
-            enabledBorder: _border(AppColors.authInputBorder, 1),
-            focusedBorder: _border(AppColors.authLink, 1.5),
+            border: _border(AppColors.inputFieldBorder, 1),
+            enabledBorder: _border(AppColors.inputFieldBorder, 1),
+            focusedBorder: _border(AppColors.inputFieldBorder, 1.5),
+            disabledBorder: _border(AppColors.inputFieldBorder, 1),
             errorBorder: _border(AppColors.error, 1),
             focusedErrorBorder: _border(AppColors.error, 1.5),
           ),
         ),
-        if (errorText != null) ...[
+        if (errorText != null && errorText!.isNotEmpty) ...[
           SizedBox(height: 4.h),
           AppText(
             errorText!,

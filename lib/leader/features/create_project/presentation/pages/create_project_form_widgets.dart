@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
-import 'package:vestie/core/widgets/common/app_button.dart';
 
 /// Shared label widget for create-project form fields.
 class CPFieldLabel extends StatelessWidget {
@@ -25,83 +23,6 @@ class CPFieldLabel extends StatelessWidget {
   }
 }
 
-/// Shared text field with consistent styling.
-/// Pass [errorText] to display an inline red error below the field.
-class CPTextField extends StatelessWidget {
-  final TextEditingController controller;
-  final String hint;
-  final int maxLines;
-  final ValueChanged<String>? onChanged;
-  final TextInputType? keyboardType;
-  final TextInputAction textInputAction;
-  final ValueChanged<String>? onSubmitted;
-  final Widget? suffixIcon;
-  final String? errorText;
-
-  const CPTextField({
-    super.key,
-    required this.controller,
-    required this.hint,
-    this.maxLines = 1,
-    this.onChanged,
-    this.keyboardType,
-    this.textInputAction = TextInputAction.next,
-    this.onSubmitted,
-    this.suffixIcon,
-    this.errorText,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final hasError = errorText != null && errorText!.isNotEmpty;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            color: AppColors.searchBarBg,
-            borderRadius: BorderRadius.circular(12.r),
-            border: Border.all(
-              color: hasError ? AppColors.error : AppColors.cardBorder,
-            ),
-          ),
-          child: TextField(
-            controller: controller,
-            onChanged: onChanged,
-            onTapOutside: (_) {
-              FocusManager.instance.primaryFocus?.unfocus();
-            },
-            maxLines: maxLines,
-            keyboardType: keyboardType,
-            textInputAction: textInputAction,
-            onSubmitted: onSubmitted,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontSize: 14.sp, color: AppColors.textPrimary),
-            decoration: InputDecoration(
-              hintText: hint,
-              hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontSize: 14.sp, color: AppColors.authHint),
-              border: InputBorder.none,
-              contentPadding:
-                  EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
-              suffixIcon: suffixIcon,
-            ),
-          ),
-        ),
-        if (hasError)
-          Padding(
-            padding: EdgeInsets.only(top: 4.h, left: 4.w),
-            child: AppText(
-              errorText!,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontSize: 11.sp, color: AppColors.error),
-            ),
-          ),
-      ],
-    );
-  }
-}
-
 /// Horizontal dashed divider used between form sections.
 class CPDashedDivider extends StatelessWidget {
   const CPDashedDivider({super.key});
@@ -119,27 +40,5 @@ class CPDashedDivider extends StatelessWidget {
         )),
       );
     });
-  }
-}
-
-/// Shared dark pill button used for all wizard step actions
-/// (Next, Save Changes, Create Project).
-/// Matches Figma pill shape on every step screen.
-class CPNextButton extends StatelessWidget {
-  final VoidCallback onPressed;
-  final String label;
-
-  const CPNextButton({
-    super.key,
-    required this.onPressed,
-    this.label = AppStrings.btnNext,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return AppButton(
-      text: label,
-      onPressed: onPressed,
-    );
   }
 }

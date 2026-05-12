@@ -169,22 +169,41 @@ class _BorrowAmountViewState extends State<_BorrowAmountView> {
                           maxLines: 3,
                           keyboardType: TextInputType.multiline,
                           textCapitalization: TextCapitalization.sentences,
+                          style: GoogleFonts.lato(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.inputFieldText,
+                          ),
                           decoration: InputDecoration(
                             hintText: AppStrings.hintBorrowNote,
+                            hintStyle: GoogleFonts.lato(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.authHint,
+                            ),
                             filled: true,
                             fillColor: AppColors.searchBarBg,
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 14.w,
+                              vertical: 12.h,
+                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12.r),
-                              borderSide: BorderSide(color: AppColors.cardBorder),
+                              borderSide: const BorderSide(
+                                color: AppColors.inputFieldBorder,
+                              ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12.r),
-                              borderSide: BorderSide(color: AppColors.cardBorder),
+                              borderSide: const BorderSide(
+                                color: AppColors.inputFieldBorder,
+                              ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12.r),
-                              borderSide: BorderSide(
-                                color: AppColors.cardBorder,
+                              borderSide: const BorderSide(
+                                color: AppColors.inputFieldBorder,
+                                width: 1.5,
                               ),
                             ),
                           ),

@@ -42,6 +42,9 @@ class LoginFormState extends Equatable {
 class LoginFormCubit extends Cubit<LoginFormState> {
   LoginFormCubit() : super(const LoginFormState());
 
+  /// Clears validation UI and password visibility — call after clearing controllers.
+  void reset() => emit(const LoginFormState());
+
   void togglePassword() =>
       emit(state.copyWith(passwordVisible: !state.passwordVisible));
 

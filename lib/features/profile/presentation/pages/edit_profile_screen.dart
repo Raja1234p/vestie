@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/app_snackbar.dart';
+import '../../../../core/utils/person_name_input_formatter.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/common/app_loader.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
@@ -79,12 +81,18 @@ class _EditProfileBodyState extends State<_EditProfileBody> {
                       _ProfileField(
                           controller: _nameCtrl,
                           hint: AppStrings.hintCardHolder,
+                          inputFormatters: [
+                            PersonNameInputFormatter(allowSpaces: true),
+                          ],
                           onChanged: cubit.setFullName),
                       SizedBox(height: 16.h),
                       _FieldLabel(AppStrings.labelUsername),
                       _ProfileField(
                           controller: _userCtrl,
                           hint: AppStrings.hintUsername,
+                          inputFormatters: [
+                            PersonNameInputFormatter(allowSpaces: false),
+                          ],
                           onChanged: cubit.setUsername),
                       SizedBox(height: 16.h),
                       _FieldLabel(AppStrings.labelEmail),
@@ -149,6 +157,7 @@ class _ProfileField extends StatelessWidget {
   final TextEditingController controller;
   final String hint;
   final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
   final ValueChanged<String> onChanged;
 
   const _ProfileField({
@@ -156,6 +165,7 @@ class _ProfileField extends StatelessWidget {
     required this.hint,
     required this.onChanged,
     this.keyboardType,
+    this.inputFormatters,
   });
 
   @override
@@ -164,19 +174,28 @@ class _ProfileField extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: AppColors.cardBorder),
+        border: Border.all(color: AppColors.inputFieldBorder),
       ),
       child: TextField(
         controller: controller,
         keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
         onChanged: onChanged,
         onTapOutside: (_) {
           FocusManager.instance.primaryFocus?.unfocus();
         },
-        style: GoogleFonts.lato(fontSize: 14.sp, color: AppColors.textPrimary),
+        style: GoogleFonts.lato(
+          fontSize: 16.sp,
+          fontWeight: FontWeight.w500,
+          color: AppColors.inputFieldText,
+        ),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.lato(fontSize: 14.sp, color: AppColors.authHint),
+          hintStyle: GoogleFonts.lato(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w500,
+            color: AppColors.authHint,
+          ),
           border: InputBorder.none,
           contentPadding:
               EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),

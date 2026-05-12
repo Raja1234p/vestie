@@ -4,8 +4,13 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_shadows.dart';
 import '../text/app_text.dart';
 
-/// Central Master Button for the application.
-/// Supports Primary (Gradient), Secondary (Outline), Shadows, and Loading states.
+/// Full-width call-to-action used across auth, onboarding, and flows like create-project.
+///
+/// **Defaults:** purple vertical gradient, light edge stroke, drop shadow, pill shape
+/// (`borderRadius` ~999.r), label **18.sp / w500** (white on primary, purple on secondary).
+///
+/// Override when needed: [isSecondary] (outline), [useGradient] + [color] (flat fill),
+/// [hasShadow], [borderRadius], [isLoading], [leading].
 class AppButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
@@ -113,8 +118,8 @@ class AppButton extends StatelessWidget {
     required bool isSecondary,
   }) {
     final style = theme.textTheme.labelLarge?.copyWith(
-      fontSize: 15.sp,
-      fontWeight: FontWeight.w600,
+      fontSize: 18.sp,
+      fontWeight: FontWeight.w500,
       color: isSecondary ? AppColors.primary : AppColors.surface,
     );
     final label = AppText(

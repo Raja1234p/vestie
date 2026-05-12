@@ -38,4 +38,7 @@ class ForgotPasswordFormCubit extends Cubit<ForgotPasswordFormState> {
     emit(state.copyWith(emailError: err, isValid: err == null));
     return err == null;
   }
+
+  /// Clears validation UI after abandoning a pushed route (e.g. verify).
+  void reset() => emit(const ForgotPasswordFormState());
 }

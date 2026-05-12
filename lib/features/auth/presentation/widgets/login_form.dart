@@ -125,7 +125,15 @@ class _LoginFormState extends State<LoginForm> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                      onPressed: () => context.push(AppRoutes.forgotPassword),
+                      onPressed: () async {
+                        FocusScope.of(context).unfocus();
+                        await context.push(AppRoutes.forgotPassword);
+                        if (!context.mounted) return;
+                        _emailCtrl.clear();
+                        _passCtrl.clear();
+                        context.read<LoginFormCubit>().reset();
+                        context.read<LoginBloc>().add(const LoginReset());
+                      },
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.zero,
                         minimumSize: Size(0, 32.h),

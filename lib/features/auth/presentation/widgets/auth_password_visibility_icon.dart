@@ -29,7 +29,7 @@ class AuthPasswordVisibilityIcon extends StatelessWidget {
       return AppSvgIcon(
         assetPath: AppAssets.iconVisibility,
         size: logicalSize,
-        color: AppColors.authHint,
+        color: AppColors.inputFieldIcon,
       );
     }
     final dpr = MediaQuery.devicePixelRatioOf(context);

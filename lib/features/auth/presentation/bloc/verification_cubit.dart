@@ -204,6 +204,15 @@ class VerificationCubit extends Cubit<VerificationState> {
 
   void clearError() => emit(state.copyWith(clearError: true));
 
+  /// After [AppRoutes.resetPassword] is popped/replaced — clear OTP UI so user can re-enter code.
+  void clearCodeAfterResetPasswordRoutePopped() {
+    emit(state.copyWith(
+      isSuccess: false,
+      isValid: false,
+      clearError: true,
+    ));
+  }
+
   @override
   Future<void> close() {
     _timer?.cancel();

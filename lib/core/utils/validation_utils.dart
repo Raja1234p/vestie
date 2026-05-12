@@ -1,4 +1,5 @@
 import '../constants/app_strings.dart';
+import 'person_name_input_formatter.dart';
 
 /// All form validation lives here.
 /// UI calls these methods and shows the returned error string.
@@ -39,11 +40,23 @@ class ValidationUtils {
     return null;
   }
 
-  // ── Full Name ──────────────────────────────────────────────────────────────
-
+  /// Legal / display name — letters + internal spaces only (see [PersonNameInputFormatter]).
   static String? validateFullName(String? value) {
     final v = value?.trim() ?? '';
     if (v.isEmpty) return AppStrings.errorNameRequired;
+    if (!PersonNameInputFormatter.isValidTrimmed(v, allowSpaces: true)) {
+      return AppStrings.errorPersonNameInvalidChars;
+    }
+    return null;
+  }
+
+  /// Profile `@handle` without digits or symbols (letters only, no spaces).
+  static String? validateProfileUsernameHandle(String? value) {
+    final t = (value ?? '').trim().replaceFirst(RegExp(r'^@+'), '');
+    if (t.isEmpty) return AppStrings.errUsernameRequired;
+    if (!PersonNameInputFormatter.isValidTrimmed(t, allowSpaces: false)) {
+      return AppStrings.errorUsernameInvalidChars;
+    }
     return null;
   }
 
@@ -150,6 +163,9 @@ class ValidationUtils {
   static String? validateCardHolderName(String? value) {
     final v = value?.trim() ?? '';
     if (v.isEmpty) return AppStrings.errCardHolderRequired;
+    if (!PersonNameInputFormatter.isValidTrimmed(v, allowSpaces: true)) {
+      return AppStrings.errorPersonNameInvalidChars;
+    }
     return null;
   }
 

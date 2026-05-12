@@ -98,6 +98,8 @@ class AppAssets {
   static const String iconArrowBack = '$_iconPath/arrow_back.png';
   static const String iconChevronRight = '$_iconPath/icon_chevron_right.svg';
   static const String iconClose = '$_iconPath/icon_close.svg';
+  /// Create project amount sheet — dismiss (design `cross-icon.svg`).
+  static const String iconCreateProjectSheetClose = '$_iconPath/cross_icon.svg';
   static const String iconHeart = '$_iconPath/icon_heart.svg';
   static const String iconChevronDown = '$_iconPath/icon_chevron_down.svg';
   static const String iconCopy = '$_iconPath/icon_copy.svg';

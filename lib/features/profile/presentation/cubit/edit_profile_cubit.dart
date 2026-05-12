@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/service_locator.dart';
+import '../../../../core/utils/validation_utils.dart';
 import '../../../auth/domain/usecases/update_me_use_case.dart';
 import '../../domain/entities/user_profile.dart';
 
@@ -60,6 +61,22 @@ class EditProfileCubit extends Cubit<EditProfileState> {
   void setEmail(String v)    => emit(state.copyWith(email: v));
 
   Future<UserProfile?> save() async {
+    final nameErr = ValidationUtils.validateFullName(state.fullName);
+    if (nameErr != null) {
+      emit(state.copyWith(isSaving: false, error: nameErr));
+      return null;
+    }
+    final userErr = ValidationUtils.validateProfileUsernameHandle(state.username);
+    if (userErr != null) {
+      emit(state.copyWith(isSaving: false, error: userErr));
+      return null;
+    }
+    final emailErr = ValidationUtils.validateEmail(state.email);
+    if (emailErr != null) {
+      emit(state.copyWith(isSaving: false, error: emailErr));
+      return null;
+    }
+
     emit(state.copyWith(isSaving: true, clearError: true));
 
     final parts = state.fullName.trim().split(RegExp(r'\s+'));
@@ -69,7 +86,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     final result = await _updateMeUseCase(
       firstName: firstName,
       lastName: lastName,
-      userName: state.username.trim(),
+      userName: state.username.trim().replaceFirst(RegExp(r'^@+'), ''),
       photoUrl: '',
     );
 

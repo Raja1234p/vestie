@@ -25,15 +25,17 @@ class ForgotPasswordScreen extends StatelessWidget {
         BlocProvider(create: (_) => ForgotPasswordFormCubit()),
       ],
       child: BlocListener<ForgotPasswordBloc, ForgotPasswordState>(
-        listener: (context, state) {
+        listener: (context, state) async {
           if (state is ForgotPasswordSuccess) {
-            context.push(
+            await context.push(
               AppRoutes.verify,
               extra: VerifyScreenExtra(
                 email: state.email,
                 flow: VerifyFlow.forgotPassword,
               ),
             );
+            if (!context.mounted) return;
+            context.read<ForgotPasswordBloc>().add(const ForgotPasswordReset());
           } else if (state is ForgotPasswordError) {
             AppFailureDialog.show(
               context,
