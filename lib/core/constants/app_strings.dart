@@ -13,6 +13,8 @@ class AppStrings {
 
   // ── Error Dialog ──────────────────────────────────────────────────────────
   static const String errorDialogTitle = 'Something went wrong';
+  /// Shown when there is no HTTP response (offline / DNS / unreachable).
+  static const String errorDialogOfflineTitle = 'Please check your internet connection and try again.';
   static const String btnRetry         = 'Try Again';
   static const String btnDismiss       = 'Dismiss';
   static const String noInternet = 'No internet connection detected.';

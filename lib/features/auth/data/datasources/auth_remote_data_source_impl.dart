@@ -1,5 +1,6 @@
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/constants/api_constants.dart';
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/error/exceptions.dart';
 import '../models/auth_token_model.dart';
 import '../models/user_model.dart';
@@ -16,9 +17,25 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   AuthRemoteDataSourceImpl(this._client);
 
   Never _handleError(DioException e, String defaultMessage) {
+    if (e.type == DioExceptionType.cancel) {
+      throw ServerException(defaultMessage, null);
+    }
+    // No HTTP response — wrong credentials vs offline both used to show "Login failed".
+    if (e.response == null) {
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.sendTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        throw ServerException(AppStrings.errorTimeout, null);
+      }
+      throw ServerException(
+        AppStrings.errorNetwork,
+        AppStrings.errorDialogOfflineTitle,
+      );
+    }
+
     String message = defaultMessage;
     String? title;
-    
+
     if (e.response?.data != null && e.response?.data is Map) {
       final data = e.response!.data as Map;
       // Backend usually returns error in 'detail' or 'message' or 'title'

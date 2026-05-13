@@ -105,6 +105,7 @@ class _CreateProjectInvestmentSettingsScreenState
                           controller: _roiCtrl,
                           keyboardType: TextInputType.number,
                           textInputAction: TextInputAction.done,
+                          maxLength: 3,
                           errorText: form.roiError,
                           onChanged: cubit.setRoi,
                           labelStyle: roiLabelStyle,
