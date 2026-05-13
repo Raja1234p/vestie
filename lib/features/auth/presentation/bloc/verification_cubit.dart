@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:dartz/dartz.dart';
 
 import '../../../../core/constants/storage_keys.dart';
 import '../../../../core/di/service_locator.dart';
+import '../../../../core/error/failures.dart';
 import '../../../../core/utils/validation_utils.dart';
 import '../../domain/usecases/forgot_password_use_case.dart';
 import '../../domain/usecases/resend_code_use_case.dart';
@@ -14,6 +16,7 @@ import '../models/auth_route_extras.dart';
 // ─── State ──────────────────────────────────────────────────────────────────
 class VerificationState extends Equatable {
   final bool isLoading;
+  final bool isResending;
   final String? error;
   final String? title;
   final bool isSuccess;
@@ -23,6 +26,7 @@ class VerificationState extends Equatable {
 
   const VerificationState({
     this.isLoading = false,
+    this.isResending = false,
     this.error,
     this.title,
     this.isSuccess = false,
@@ -35,6 +39,7 @@ class VerificationState extends Equatable {
 
   VerificationState copyWith({
     bool? isLoading,
+    bool? isResending,
     String? error,
     String? title,
     bool? isSuccess,
@@ -46,6 +51,7 @@ class VerificationState extends Equatable {
   }) {
     return VerificationState(
       isLoading: isLoading ?? this.isLoading,
+      isResending: isResending ?? this.isResending,
       error: clearError ? null : (error ?? this.error),
       title: clearError ? null : (title ?? this.title),
       isSuccess: isSuccess ?? this.isSuccess,
@@ -59,6 +65,7 @@ class VerificationState extends Equatable {
   @override
   List<Object?> get props => [
         isLoading,
+        isResending,
         error,
         title,
         isSuccess,
@@ -173,31 +180,31 @@ class VerificationCubit extends Cubit<VerificationState> {
   }
 
   Future<void> resendCode() async {
-    if (!state.canResend) return;
-    emit(state.copyWith(resendSeconds: 60, clearError: true));
+    if (!state.canResend || state.isResending) return;
+    emit(state.copyWith(
+      resendSeconds: 60,
+      clearError: true,
+      isResending: true,
+    ));
     _startResendCountdown();
 
-    if (flow == VerifyFlow.forgotPassword) {
-      final result = await _forgotPasswordUseCase(email: email);
-      if (!isClosed) {
-        result.fold(
-          (failure) => emit(
-              state.copyWith(error: failure.message, title: failure.title)),
-          (message) => emit(state.copyWith(resendMessage: message)),
-        );
-      }
-      return;
-    }
+    final Either<Failure, String> result = flow == VerifyFlow.forgotPassword
+        ? await _forgotPasswordUseCase(email: email)
+        : await _resendCodeUseCase(email: email);
 
-    await _resendCodeUseCase(email: email).then((result) {
-      if (!isClosed) {
-        result.fold(
-          (failure) => emit(
-              state.copyWith(error: failure.message, title: failure.title)),
-          (message) => emit(state.copyWith(resendMessage: message)),
-        );
-      }
-    });
+    if (isClosed) return;
+
+    result.fold(
+      (failure) => emit(state.copyWith(
+        isResending: false,
+        error: failure.message,
+        title: failure.title,
+      )),
+      (message) => emit(state.copyWith(
+        isResending: false,
+        resendMessage: message,
+      )),
+    );
   }
 
   void clearResendMessage() => emit(state.copyWith(clearResendMessage: true));
@@ -209,6 +216,7 @@ class VerificationCubit extends Cubit<VerificationState> {
     emit(state.copyWith(
       isSuccess: false,
       isValid: false,
+      isResending: false,
       clearError: true,
     ));
   }

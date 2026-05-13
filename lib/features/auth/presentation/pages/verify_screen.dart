@@ -8,7 +8,9 @@ import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/app_snackbar.dart';
+import '../../../../core/widgets/common/app_back_button.dart';
 import '../../../../core/widgets/common/app_failure_dialog.dart';
+import '../../../../core/widgets/common/app_loading_dialog.dart';
 import '../../../../core/widgets/text/app_text.dart';
 import '../bloc/verification_cubit.dart';
 import '../models/auth_route_extras.dart';
@@ -46,38 +48,78 @@ class _VerifyScreenState extends State<VerifyScreen> {
         email: widget.email,
         flow: widget.flow,
       ),
-      child: BlocListener<VerificationCubit, VerificationState>(
-        listenWhen: (prev, curr) =>
-            prev.isSuccess != curr.isSuccess ||
-            prev.error != curr.error ||
-            prev.resendMessage != curr.resendMessage,
-        listener: (context, state) async {
-          if (state.isSuccess) {
-            if (widget.flow == VerifyFlow.registration) {
-              context.go(AppRoutes.agreement);
-            } else {
-              final code = _codeCtrl.text.trim();
-              final verificationCubit = context.read<VerificationCubit>();
-              await context.push(
-                AppRoutes.resetPassword,
-                extra: ResetPasswordExtra(email: widget.email, code: code),
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<VerificationCubit, VerificationState>(
+            listenWhen: (prev, curr) =>
+                !prev.isResending && curr.isResending,
+            listener: (context, _) {
+              final cubit = context.read<VerificationCubit>();
+              showDialog<void>(
+                context: context,
+                useRootNavigator: true,
+                barrierDismissible: false,
+                barrierColor: Colors.black.withValues(alpha: 0.35),
+                builder: (dialogContext) {
+                  return BlocProvider.value(
+                    value: cubit,
+                    child: BlocListener<VerificationCubit, VerificationState>(
+                      listenWhen: (prev, curr) =>
+                          prev.isResending && !curr.isResending,
+                      listener: (_, s) {
+                        if (s.isResending) return;
+                        final nav = Navigator.of(dialogContext);
+                        if (nav.canPop()) nav.pop();
+                      },
+                      child: AppLoadingDialog.body(
+                        message: AppStrings.loadingResendOtp,
+                      ),
+                    ),
+                  );
+                },
               );
-              if (!mounted) return;
-              _codeCtrl.clear();
-              verificationCubit.clearCodeAfterResetPasswordRoutePopped();
-            }
-          } else if (state.error != null) {
-            AppFailureDialog.show(
-              context,
-              title: state.title,
-              message: state.error!,
-            );
-            context.read<VerificationCubit>().clearError();
-          } else if (state.resendMessage != null) {
-            AppSnackBar.showSuccess(context, state.resendMessage!);
-            context.read<VerificationCubit>().clearResendMessage();
-          }
-        },
+            },
+          ),
+          BlocListener<VerificationCubit, VerificationState>(
+            listenWhen: (prev, curr) =>
+                prev.isSuccess != curr.isSuccess ||
+                prev.error != curr.error ||
+                prev.resendMessage != curr.resendMessage,
+            listener: (context, state) async {
+              if (state.isSuccess) {
+                if (widget.flow == VerifyFlow.registration) {
+                  context.go(AppRoutes.agreement);
+                } else {
+                  final code = _codeCtrl.text.trim();
+                  final verificationCubit = context.read<VerificationCubit>();
+                  await context.push(
+                    AppRoutes.resetPassword,
+                    extra: ResetPasswordExtra(email: widget.email, code: code),
+                  );
+                  if (!mounted) return;
+                  _codeCtrl.clear();
+                  verificationCubit.clearCodeAfterResetPasswordRoutePopped();
+                }
+              } else if (state.error != null) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (!context.mounted) return;
+                  AppFailureDialog.show(
+                    context,
+                    title: state.title,
+                    message: state.error!,
+                  );
+                  context.read<VerificationCubit>().clearError();
+                });
+              } else if (state.resendMessage != null) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (!context.mounted) return;
+                  AppSnackBar.showSuccess(context, state.resendMessage!);
+                  context.read<VerificationCubit>().clearResendMessage();
+                });
+              }
+            },
+          ),
+        ],
         child: AuthBackground(
           child: SingleChildScrollView(
             padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -85,6 +127,16 @@ class _VerifyScreenState extends State<VerifyScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 48.h),
+                if (widget.flow == VerifyFlow.forgotPassword) ...[
+                  AppBackButton(
+                    onPressed: () {
+                      FocusScope.of(context).unfocus();
+                      context.pop();
+                    },
+                    color: AppColors.authTitle,
+                  ),
+                  SizedBox(height: 20.h),
+                ],
                 AppText(
                   AppStrings.verifyTitle,
                   style: GoogleFonts.lato(
@@ -138,47 +190,59 @@ class _VerifyScreenState extends State<VerifyScreen> {
                   },
                 ),
                 SizedBox(height: 22.h),
-                Center(
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w),
                   child: BlocBuilder<VerificationCubit, VerificationState>(
                     buildWhen: (prev, curr) =>
                         prev.resendSeconds != curr.resendSeconds ||
-                        prev.canResend != curr.canResend,
+                        prev.canResend != curr.canResend ||
+                        prev.isResending != curr.isResending,
                     builder: (context, state) {
                       final cubit = context.read<VerificationCubit>();
-                      return RichText(
-                        text: TextSpan(
-                          style: GoogleFonts.lato(
-                            fontSize: 13.sp,
-                            color: AppColors.authBottomText,
-                          ),
+                      final baseStyle = GoogleFonts.lato(
+                        fontSize: 13.sp,
+                        color: AppColors.authBottomText,
+                      );
+                      final linkStyle = GoogleFonts.lato(
+                        fontSize: 13.sp,
+                        color: AppColors.authBottomLink,
+                        fontWeight: FontWeight.w600,
+                        decoration: TextDecoration.underline,
+                        decorationColor: AppColors.authBottomLink,
+                      );
+                      final disabledStyle = GoogleFonts.lato(
+                        fontSize: 13.sp,
+                        color: AppColors.authBottomText.withValues(alpha: 0.55),
+                        fontWeight: FontWeight.w500,
+                      );
+                      return SizedBox(
+                        width: double.infinity,
+                        child: Wrap(
+                          alignment: WrapAlignment.center,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          spacing: 0,
+                          runSpacing: 6.h,
                           children: [
-                            TextSpan(text: AppStrings.didntReceive),
-                            WidgetSpan(
-                              child: state.canResend
-                                  ? GestureDetector(
-                                      onTap: cubit.resendCode,
-                                      child: Text(
-                                        AppStrings.resendCode,
-                                        style: GoogleFonts.lato(
-                                          fontSize: 13.sp,
-                                          color: AppColors.authBottomLink,
-                                          fontWeight: FontWeight.w600,
-                                          decoration: TextDecoration.underline,
-                                          decorationColor:
-                                              AppColors.authBottomLink,
-                                        ),
-                                      ),
-                                    )
-                                  : AppText(
-                                      '${AppStrings.resendCode} (${state.resendSeconds}s)',
-                                      style: GoogleFonts.lato(
-                                        fontSize: 13.sp,
-                                        color: AppColors.authBottomText
-                                            .withValues(alpha: 0.55),
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                            ),
+                            Text(AppStrings.didntReceive, style: baseStyle),
+                            if (!state.isResending && state.canResend)
+                              Padding(
+                                padding: EdgeInsets.only(left: 6.w),
+                                child: GestureDetector(
+                                  onTap: cubit.resendCode,
+                                  child: Text(
+                                    AppStrings.resendCode,
+                                    style: linkStyle,
+                                  ),
+                                ),
+                              )
+                            else if (!state.isResending)
+                              Padding(
+                                padding: EdgeInsets.only(left: 6.w),
+                                child: Text(
+                                  '${AppStrings.resendCode} (${state.resendSeconds}s)',
+                                  style: disabledStyle,
+                                ),
+                              ),
                           ],
                         ),
                       );

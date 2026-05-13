@@ -95,6 +95,7 @@ class AppStrings {
 
   // State
   static const String loading = 'Loading...';
+  static const String loadingResendOtp = 'Sending code...';
   static const String emptyData = 'No data available';
 
   // ── Social Auth ────────────────────────────────────────────────────────────

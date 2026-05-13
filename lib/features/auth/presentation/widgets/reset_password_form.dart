@@ -4,15 +4,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/utils/validation_utils.dart';
 import '../../../../core/widgets/common/app_back_button.dart';
 import '../../../../core/widgets/common/app_button.dart';
-import '../../../../core/widgets/common/app_svg_icon.dart';
 import 'auth_password_visibility_icon.dart';
 import '../../../../core/widgets/common/app_text_field.dart';
+import 'register_password_requirement_bar.dart';
 import '../bloc/reset_password_bloc.dart';
 import '../bloc/reset_password_event.dart';
 import '../bloc/reset_password_state.dart';
@@ -67,7 +65,6 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
       builder: (context, form) {
         final isLoading =
             context.watch<ResetPasswordBloc>().state is ResetPasswordLoading;
-        final isStrong = ValidationUtils.isPasswordStrong(_newPassCtrl.text);
         final canSubmit = form.isValid && widget.code.length == 6;
 
         return SingleChildScrollView(
@@ -129,24 +126,6 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                 ),
               ),
               SizedBox(height: 12.h),
-              Row(children: [
-                AppSvgIcon(
-                  assetPath: AppAssets.checkMarkSuccessful,
-                  size: 16.w,
-                  color:
-                      isStrong ? AppColors.validSuccess : AppColors.authHint,
-                ),
-                SizedBox(width: 6.w),
-                Text(
-                  AppStrings.passwordHint,
-                  style: GoogleFonts.lato(
-                    fontSize: 12.sp,
-                    color:
-                        isStrong ? AppColors.validSuccess : AppColors.authHint,
-                  ),
-                ),
-              ]),
-              SizedBox(height: 12.h),
               AppTextField(
                 label: AppStrings.labelConfirmNewPass,
                 hint: AppStrings.hintConfirmNewPass,
@@ -171,6 +150,8 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                 ),
               ),
               SizedBox(height: 12.h),
+              RegisterPasswordRequirementBar(),
+              SizedBox(height: 24.h),
               AppButton(
                 text: AppStrings.btnResetPassword,
                 isLoading: isLoading,
