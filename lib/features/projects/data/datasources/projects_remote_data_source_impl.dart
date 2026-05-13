@@ -19,8 +19,13 @@ class ProjectsRemoteDataSourceImpl implements ProjectsRemoteDataSource {
 
     if (e.response?.data != null && e.response?.data is Map) {
       final data = e.response!.data as Map;
+      final fromErrors = _problemDetailsErrorsToMessage(data['errors']);
       message = data['detail']?.toString() ??
           data['message']?.toString() ??
+          fromErrors ??
+          (data['title'] != null && data['title'].toString().trim().isNotEmpty
+              ? data['title'].toString()
+              : null) ??
           defaultMessage;
       title = data['title']?.toString();
     }
@@ -29,6 +34,25 @@ class ProjectsRemoteDataSourceImpl implements ProjectsRemoteDataSource {
       throw UnauthorizedException(message, title);
     }
     throw ServerException(message, title);
+  }
+
+  /// ASP.NET ProblemDetails: `errors` is `{ "FieldName": ["msg1", ...], ... }`.
+  String? _problemDetailsErrorsToMessage(dynamic errors) {
+    if (errors is! Map) return null;
+    final lines = <String>[];
+    for (final entry in errors.entries) {
+      final field = entry.key.toString();
+      final v = entry.value;
+      if (v is List) {
+        for (final item in v) {
+          lines.add('$field: ${item.toString()}');
+        }
+      } else if (v != null) {
+        lines.add('$field: ${v.toString()}');
+      }
+    }
+    if (lines.isEmpty) return null;
+    return lines.join('\n');
   }
 
   @override

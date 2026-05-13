@@ -20,6 +20,8 @@ import '../../../features/auth/presentation/pages/verify_screen.dart';
 
 import '../../../features/auth/presentation/models/auth_route_extras.dart';
 
+import 'package:vestie/leader/features/create_project/presentation/create_project_entry_mode.dart';
+
 import 'package:vestie/leader/features/create_project/presentation/pages/create_project_amount_screen.dart';
 
 import 'package:vestie/leader/features/create_project/presentation/pages/create_project_borrowing_settings_screen.dart';
@@ -190,7 +192,7 @@ List<RouteBase> buildCoreRoutes() {
 
       builder: (context, state) => CreateProjectDetailsScreen(
 
-        isEditMode: state.extra == true,
+        entryMode: createProjectEntryModeFromExtra(state.extra),
 
       ),
 
@@ -202,7 +204,7 @@ List<RouteBase> buildCoreRoutes() {
 
       builder: (context, state) => CreateProjectSavingSettingsScreen(
 
-        isEditMode: state.extra == true,
+        entryMode: createProjectEntryModeFromExtra(state.extra),
 
       ),
 
@@ -214,7 +216,7 @@ List<RouteBase> buildCoreRoutes() {
 
       builder: (context, state) => CreateProjectBorrowingSettingsScreen(
 
-        isEditMode: state.extra == true,
+        entryMode: createProjectEntryModeFromExtra(state.extra),
 
       ),
 
@@ -226,7 +228,7 @@ List<RouteBase> buildCoreRoutes() {
 
       builder: (context, state) => CreateProjectInvestmentSettingsScreen(
 
-        isEditMode: state.extra == true,
+        entryMode: createProjectEntryModeFromExtra(state.extra),
 
       ),
 

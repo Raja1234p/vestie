@@ -74,7 +74,7 @@ class CreateProjectRequestModel {
       contributionDeadlineUtc: ends,
       borrowingEnabled: investmentRoiOnly ? false : form.borrowingEnabled,
       suggestedContributionAmount: 0,
-      joinApprovalRequired: true,
+      joinApprovalRequired: form.visibility != ProjectVisibility.public,
       roiPercentage: investmentRoiOnly
           ? parseDouble(form.roi.replaceAll('%', ''))
           : 0.0,

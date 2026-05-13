@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:vestie/leader/features/create_project/presentation/create_project_entry_mode.dart';
+
 import '../../../../app/router/app_routes.dart';
 import '../../../../app/router/route_args/project_detail_flow_args.dart';
 import '../../../../app/router/route_args/project_wallet_flow_args.dart';
@@ -74,7 +76,10 @@ class ProjectDetailNavigationHelpers {
         context.push(AppRoutes.createAnnouncement);
         break;
       case LeaderMenuAction.editProject:
-        context.push(AppRoutes.createProjectDetails, extra: true);
+        context.push(
+          AppRoutes.createProjectDetails,
+          extra: CreateProjectEntryMode.editFromProjectDetail,
+        );
         break;
       case LeaderMenuAction.inviteMembers:
         ServiceLocator.instance.createInviteUseCase(

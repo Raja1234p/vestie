@@ -35,6 +35,9 @@ class AppAssets {
   // ── Auth Social Icons ─────────────────────────────────────────────────────
   static const String iconApple  = '$_iconPath/apple.svg';
   static const String iconGoogle = '$_iconPath/gmail.svg';
+  /// Register password hint met state — green circle + white check (design PNG).
+  static const String passwordRequirementMetIcon =
+      '$_iconPath/password_requirement_met.png';
 
   // Header / system
   static const String iconNotification = '$_iconPath/notification-01.svg';

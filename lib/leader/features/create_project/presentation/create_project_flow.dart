@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
 import '../domain/create_project_form.dart';
+import 'create_project_entry_mode.dart';
 import 'cubit/create_project_cubit.dart';
 
 String? createProjectDetailsStepBadge(CreateProjectForm form, {required bool editMode}) {
@@ -57,21 +58,21 @@ String? createProjectInvestmentSettingsStepBadge(
 void pushNextAfterDetailsStep(
   BuildContext context,
   CreateProjectCubit cubit, {
-  required bool editMode,
+  required CreateProjectEntryMode entryMode,
 }) {
   if (!cubit.validateDetails()) return;
   final form = cubit.state;
 
-  if (editMode) {
+  if (entryMode.isEditFlow) {
     switch (form.flowType) {
       case ProjectCreationFlowType.collaborativeSaving:
-        context.push(AppRoutes.createProjectSavingSettings, extra: true);
+        context.push(AppRoutes.createProjectSavingSettings, extra: entryMode);
       case ProjectCreationFlowType.fundsBorrowing:
-        context.push(AppRoutes.createProjectFundsBorrowing, extra: true);
+        context.push(AppRoutes.createProjectFundsBorrowing, extra: entryMode);
       case ProjectCreationFlowType.streamlined:
         context.pop();
       case ProjectCreationFlowType.investmentOptionalRoi:
-        context.push(AppRoutes.createProjectInvestmentSettings, extra: true);
+        context.push(AppRoutes.createProjectInvestmentSettings, extra: entryMode);
     }
     return;
   }

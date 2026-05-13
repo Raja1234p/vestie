@@ -10,17 +10,18 @@ import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_tick_switch.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import '../../domain/create_project_form.dart';
+import '../create_project_entry_mode.dart';
 import '../create_project_flow.dart';
 import '../cubit/create_project_cubit.dart';
 import '../widgets/create_project_header.dart';
 
 /// Collaborative saving flow — mirrors “Project Settings” + auto-save in product designs.
 class CreateProjectSavingSettingsScreen extends StatelessWidget {
-  final bool isEditMode;
+  final CreateProjectEntryMode entryMode;
 
   const CreateProjectSavingSettingsScreen({
     super.key,
-    this.isEditMode = false,
+    this.entryMode = CreateProjectEntryMode.wizard,
   });
 
   @override
@@ -57,7 +58,7 @@ class CreateProjectSavingSettingsScreen extends StatelessWidget {
                   title: AppStrings.createSavingSettingsTitle,
                   stepBadge: createProjectSavingSettingsStepBadge(
                     form,
-                    editMode: isEditMode,
+                    editMode: entryMode.isEditFlow,
                   ),
                   badgeColor: Colors.white,
                 ),
@@ -100,15 +101,13 @@ class CreateProjectSavingSettingsScreen extends StatelessWidget {
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20.w),
                       child: AppButton(
-                        text: isEditMode
-                            ? AppStrings.btnSaveChanges
-                            : AppStrings.btnNext,
+                        text: AppStrings.btnNext,
                         useGradient: false,
                         hasShadow: false,
                         color: AppColors.neutral1200,
                         borderRadius: 10.r,
                         onPressed: () {
-                          if (isEditMode) {
+                          if (entryMode.isEditFlow) {
                             context.pop();
                             context.pop();
                             return;

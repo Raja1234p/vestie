@@ -6,9 +6,11 @@ import 'package:go_router/go_router.dart';
 import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/widgets/common/app_failure_dialog.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import '../../domain/create_project_form.dart';
+import '../create_project_entry_mode.dart';
 import '../create_project_flow.dart';
 import '../cubit/create_project_cubit.dart';
 import '../cubit/create_project_submit_cubit.dart';
@@ -26,10 +28,31 @@ class CreateProjectReviewScreen extends StatelessWidget {
       child: BlocBuilder<CreateProjectCubit, CreateProjectForm>(
         builder: (context, form) {
           return BlocListener<CreateProjectSubmitCubit, CreateProjectSubmitState>(
-            listener: (context, state) {
+            listenWhen: (previous, current) {
+              final idReady = (current.createdProjectId ?? '').isNotEmpty &&
+                  current.createdProjectId != previous.createdProjectId;
+              final errReady = (current.error ?? '').isNotEmpty &&
+                  current.error != previous.error &&
+                  !current.loading;
+              return idReady || errReady;
+            },
+            listener: (context, state) async {
               if (state.createdProjectId != null &&
                   state.createdProjectId!.isNotEmpty) {
+                if (!context.mounted) return;
                 context.push(AppRoutes.createProjectSuccess);
+                return;
+              }
+              final err = state.error;
+              if (err != null && err.isNotEmpty && !state.loading) {
+                await AppFailureDialog.show(
+                  context,
+                  title: state.errorTitle,
+                  message: err,
+                );
+                if (context.mounted) {
+                  context.read<CreateProjectSubmitCubit>().clearError();
+                }
               }
             },
             child: Scaffold(
@@ -51,7 +74,7 @@ class CreateProjectReviewScreen extends StatelessWidget {
                               title: AppStrings.reviewSectionDetails,
                               onEdit: () => context.push(
                                 AppRoutes.createProjectDetails,
-                                extra: true,
+                                extra: CreateProjectEntryMode.editFromReview,
                               ),
                               rows: buildProjectDetailsReviewRows(form),
                             ),
@@ -62,26 +85,6 @@ class CreateProjectReviewScreen extends StatelessWidget {
                                 rows: buildInvestmentRoiReviewRows(form),
                               ),
                             ],
-                            BlocBuilder<CreateProjectSubmitCubit,
-                                CreateProjectSubmitState>(
-                              buildWhen: (p, c) => p.error != c.error,
-                              builder: (context, submit) {
-                                if (submit.error == null ||
-                                    submit.error!.isEmpty) {
-                                  return const SizedBox.shrink();
-                                }
-                                return Padding(
-                                  padding: EdgeInsets.only(top: 12.h),
-                                  child: Text(
-                                    submit.error!,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(color: AppColors.error),
-                                  ),
-                                );
-                              },
-                            ),
                           ],
                         ),
                       ),
@@ -100,6 +103,10 @@ class CreateProjectReviewScreen extends StatelessWidget {
                             builder: (context, submit) {
                               return AppButton(
                                 text: AppStrings.btnNext,
+                                useGradient: false,
+                                hasShadow: false,
+                                color: AppColors.neutral1200,
+                                borderRadius: 10.r,
                                 isLoading: submit.loading,
                                 onPressed: submit.loading
                                     ? () {}

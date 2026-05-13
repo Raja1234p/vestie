@@ -10,6 +10,7 @@ import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import 'package:vestie/core/widgets/common/app_text_field.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import '../../domain/create_project_form.dart';
+import '../create_project_entry_mode.dart';
 import '../create_project_flow.dart';
 import '../cubit/create_project_cubit.dart';
 import '../widgets/create_project_header.dart';
@@ -18,9 +19,12 @@ import 'create_project_form_widgets.dart';
 
 /// Project metadata — category selects the wizard (investment ROI vs vacation/emergency borrow).
 class CreateProjectDetailsScreen extends StatefulWidget {
-  final bool isEditMode;
+  final CreateProjectEntryMode entryMode;
 
-  const CreateProjectDetailsScreen({super.key, this.isEditMode = false});
+  const CreateProjectDetailsScreen({
+    super.key,
+    this.entryMode = CreateProjectEntryMode.wizard,
+  });
 
   @override
   State<CreateProjectDetailsScreen> createState() =>
@@ -112,7 +116,7 @@ class _CreateProjectDetailsScreenState extends State<CreateProjectDetailsScreen>
                   title: AppStrings.createDetailsTitle,
                   stepBadge: createProjectDetailsStepBadge(
                     form,
-                    editMode: widget.isEditMode,
+                    editMode: widget.entryMode.isEditFlow,
                   ),
                 ),
                 Expanded(
@@ -193,7 +197,7 @@ class _CreateProjectDetailsScreenState extends State<CreateProjectDetailsScreen>
                         onPressed: () => pushNextAfterDetailsStep(
                               context,
                               cubit,
-                              editMode: widget.isEditMode,
+                              entryMode: widget.entryMode,
                             ),
                       ),
                     ),

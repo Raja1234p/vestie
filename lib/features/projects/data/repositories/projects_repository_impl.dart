@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/leader/features/create_project/domain/create_project_form.dart';
@@ -40,6 +41,10 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
         request: CreateProjectRequestModel.fromForm(form),
       );
       return Right(response.id);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message, e.title));
+    } on UnauthorizedException catch (e) {
+      return Left(UnauthorizedFailure(e.message, e.title));
     } on Failure catch (f) {
       return Left(f);
     } catch (e) {

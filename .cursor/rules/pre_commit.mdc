@@ -1,419 +1,117 @@
------------------------------------
-FLUTTER ENTERPRISE RULES (STRICT)
------------------------------------
-
-You are a PRINCIPAL FLUTTER ENGINEER.
-
-You MUST follow ALL rules below WITHOUT exception.
-
-Design should be accurate like Figma 100%
-
-If any rule is violated → REFACTOR immediately.
-
------------------------------------
-🔥 1. NO HARDCODING (ABSOLUTE RULE)
------------------------------------
-
-NEVER use raw values directly in UI or logic.
-
-DO NOT use:
-- "Login"
-- Colors (Color(0xFF...))
-- fontSize: 16
-- EdgeInsets values
-- asset paths
-- API URLs
-- durations
-- border radius
-- strings in snackbar/toast
+---
+description: Pre-commit / coding standards for Vestie Flutter app (align with README & codebase).
+alwaysApply: false
+---
 
-ALWAYS use:
-- AppStrings
-- AppColors
-- AppDimens
-- AppTextStyles
-- AppAssets
-- ApiConstants
-- AppRoutes
-- AppDurations
-- AppGradients
+# Vestie — engineering rules (pre-commit / AI)
 
------------------------------------
-🔥 2. NO setState (STRICT)
------------------------------------
+Principal Flutter engineer mindset: **scalable, testable, team-ready**. Prefer matching **Figma** for UI work.
 
-setState is COMPLETELY FORBIDDEN.
-
-Use ONLY:
-- Bloc → business logic & API
-- Cubit → UI state
-
------------------------------------
-🔥 3. VALIDATION RULE
------------------------------------
-
-Validation must NEVER exist in:
-- UI
-- Bloc/Cubit
-
-ALL validation must be in:
-utils/validation_utils.dart
-
-UI → calls ValidationUtils  
-Bloc → receives validated data only
-
------------------------------------
-🔥 4. FILE SIZE LIMIT
------------------------------------
+---
 
-Each file MUST be under 150 lines.
-
-If exceeded:
-- Split into smaller widgets/files
-- Extract reusable components
-
------------------------------------
-🔥 5. COMMON COMPONENTS (MANDATORY)
------------------------------------
-
-DO NOT use raw widgets directly.
-
-❌ Forbidden:
-- Text
-- TextField
-- ElevatedButton
-- SnackBar
-- ScaffoldMessenger
-- FlutterToast direct usage
-
-✅ Use ONLY:
-- AppText
-- AppTextField
-- AppButton
-- AppLoader
-- AppShimmer
-- AppErrorView
-- AppSnackBar
-- AppToast
-
-All must exist in:
-presentation/widgets/common/
-or
-core/utils/
+## 1. No hardcoding (product-facing)
 
------------------------------------
-🔥 6. SNACKBAR & TOAST SYSTEM (NEW 🔥)
------------------------------------
+- **Strings** → `AppStrings` (or localized keys when i18n lands).
+- **Colors** → `AppColors` (add a named token if a design color is missing; avoid random `Color(0xFF…)` in widgets except rare one-offs—then add `AppColors` in the same change when possible).
+- **Assets** → `AppAssets`.
+- **Routes** → `AppRoutes` + `go_router` (`context.push`, `context.go`, etc.) — **no** `Navigator.push` with raw path strings.
+- **API paths** → `ApiConstants` (or feature data-layer constants).
+- **Spacing / radius** → `AppDimens` / `AppRadius` where the project already centralizes them; otherwise **`flutter_screenutil`** (`.w`, `.h`, `.r`) for responsive layout—**not** raw magic numbers scattered in UI.
 
-Create centralized system:
+---
 
-core/utils/app_snackbar.dart  
-core/utils/app_toast.dart  
+## 2. State management
 
-RULES:
+- **No `setState` for business or cross-widget state** — use **Cubit** (local UI / form slices) or **Bloc** (heavier flows, submission).
+- **`StatefulWidget` is allowed** when required for **lifecycle**: `TextEditingController`, `FocusNode`, `AnimationController`, `TickerProvider`, etc. Keep state minimal; delegate logic to Cubit/Bloc.
 
-- NEVER call ScaffoldMessenger directly
-- NEVER show snackbar/toast inline
+---
 
-USE:
+## 3. Validation
 
-AppSnackBar.showSuccess(context, message)
-AppSnackBar.showError(context, message)
-AppSnackBar.showInfo(context, message)
+- **All validation rules** live in `lib/core/utils/validation_utils.dart` (or feature-specific validators only if truly domain-specific and still **not** in raw UI).
+- **Cubits/Blocs may call** `ValidationUtils.*`, write error strings onto state, and return `bool` — that is the intended pattern (e.g. `CreateProjectCubit.validateDetails()`).
+- **Widgets** should not embed regex / business rules; they call cubit methods or display `errorText` from state.
 
-AppToast.showSuccess(message)
-AppToast.showError(message)
+---
 
-All messages MUST come from AppStrings
+## 4. File size & structure
 
------------------------------------
-🔥 7. TEXTFIELD SYSTEM
------------------------------------
+- **Target** ≤ **150 lines per file** for **new** screens/widgets; split into `widgets/` subfiles when a screen grows.
+- **Legacy files** may exceed this — **refactor opportunistically** when you touch them for a feature (do not block PRs solely for line count).
 
-AppTextField must support:
-- email
-- password
-- username
+---
 
-Features:
-- validation error display
-- prefix/suffix icons
-- password toggle (Cubit)
+## 5. Common UI components
 
------------------------------------
-🔥 8. STATE MANAGEMENT RULE
------------------------------------
+Prefer **`lib/core/widgets/common/`**:
 
-Cubit:
-- UI-only state
-- toggles
-- visibility
-- checkbox
+- `AppText`, `AppTextField`, `AppButton`, loaders, snackbars, etc.
+- **Do not** use raw `Text` / `TextField` / `ElevatedButton` / `ScaffoldMessenger` for product UI—use the app wrappers.
 
-Bloc:
-- API calls
-- authentication
-- business logic
-- multi-state flows
+**`AppTextField` extensions (use when needed):**
 
------------------------------------
-🔥 9. ARCHITECTURE RULE
------------------------------------
+- `labelStyle`, `fillColor`, `hintStyle`
+- `labelTrailing` + `labelTrailingGap` / `labelTrailingEndGap` (label row)
+- `suffixIcon` + optional **`suffixIconConstraints`** — Material 3 defaults to a **48×48** suffix slot; pass tight `BoxConstraints(minWidth: 0, minHeight: 0, maxWidth: …, maxHeight: …)` so small icons (e.g. 20×20) do not look oversized.
 
-Follow:
+---
 
-- MVVM + Clean Architecture
-- Feature-based structure
+## 6. Snackbar / feedback
 
-lib/
- core/
- data/
- domain/
- presentation/
+- Central helpers: `lib/core/utils/app_snackbar.dart` (and related patterns).
+- **No** ad-hoc `ScaffoldMessenger.of(context).showSnackBar` for standard success/error copy — use the shared API; messages from **`AppStrings`**.
 
------------------------------------
-🔥 10. UI RULES (PIXEL PERFECT)
------------------------------------
+---
 
-UI MUST:
-- Match Figma EXACTLY
-- Use exact spacing
-- Use exact typography
-- Use SVG assets (flutter_svg)
+## 7. Architecture & folders
 
-NO approximations allowed.
+- **Clean-ish feature layout**: `data` / `domain` / `presentation` under each feature where applicable.
+- **Top-level `lib/`** (actual repo shape):
+  - **`app/`** — `MainApp`, `GoRouter`, route tables, `AppRoutes`.
+  - **`core/`** — constants, theme, DI, shared utils, **`core/widgets/common/`**.
+  - **`features/`** — cross-cutting modules (e.g. auth, profile, projects) when not split by role.
+  - **`leader/`** — leader-only flows (e.g. **`leader/features/create_project/`** — create-project wizard Cubit + screens).
+  - **`user/`** — member/user flows (home, discover, contributions, member fund setup, etc.).
 
------------------------------------
-🔥 11. RESPONSIVENESS
------------------------------------
+---
 
-Use:
-- flutter_screenutil (preferred)
-- MediaQuery if needed
+## 8. UI & responsiveness
 
-Support:
-- small phones
-- large phones
-- tablets
+- **Figma**: match spacing, typography, and components when implementing design tasks.
+- **`flutter_screenutil`** — design base **390 × 844** (see `MainApp` / `ScreenUtilInit`).
+- **SVG** — `flutter_svg`; tint with `ColorFilter.mode(..., BlendMode.srcIn)` where needed.
 
------------------------------------
-🔥 12. NAVIGATION
------------------------------------
+---
 
-Use ONLY:
-- GoRouter
-- AppRoutes
+## 9. Networking & storage (when touching those layers)
 
-❌ Forbidden:
-Navigator.push
+- **HTTP**: Dio with interceptors, token injection, no raw `http` calls from widgets.
+- **Storage**: tokens in **secure** storage; non-sensitive prefs in **SharedPreferences**.
 
------------------------------------
-🔥 13. NETWORKING RULE
------------------------------------
+---
 
-Use Dio with:
+## 10. Navigation
 
-- BaseOptions
-- Interceptors
-- Token injection
-- Refresh token flow
-- Retry mechanism (exponential backoff)
+- **Only** `go_router` + **`AppRoutes`** constants.
 
-NO inline API calls in UI.
+---
 
------------------------------------
-🔥 14. STORAGE RULE
------------------------------------
+## 11. Quality bar before merge / before ending a task
 
-Use:
+1. **`dart analyze`** (or IDE equivalent) — **no errors** on changed files.
+2. Imports resolved; no dead code left from refactors.
+3. Null-safety and types sound; avoid unnecessary `!`.
+4. New user-visible strings and colors wired through **`AppStrings`** / **`AppColors`** where applicable.
 
-- SharedPreferences → normal data
-- FlutterSecureStorage → tokens
+---
 
-NEVER store tokens in plain storage.
+## 12. Agent / codegen note
 
------------------------------------
-🔥 15. REUSABILITY RULE
------------------------------------
+When producing patches: **prioritize correct, minimal diffs** and **verify compilation**. Brief notes to the author are fine; avoid huge unrelated refactors.
 
-If UI repeats:
-→ Extract into reusable widget
+---
 
-DO NOT duplicate UI code.
+## 13. Reuse
 
------------------------------------
-🔥 16. COMMENTS & CLEAN CODE
------------------------------------
-
-Each file MUST include:
-
-- File header comment
-- Class-level comment
-- Method comments (only when needed)
-
-Code must be:
-- readable
-- structured
-- production-ready
-
------------------------------------
-🔥 17. OUTPUT BEHAVIOR (CRITICAL)
------------------------------------
-
-When generating code:
-
-- DO NOT explain
-- DO NOT summarize
-- ONLY write code
-- Follow all rules strictly
-
------------------------------------
-🔥 18. AUTO-FIX RULE
------------------------------------
-
-If you detect:
-
-- hardcoding
-- setState usage
-- large file (>150 lines)
-- direct widget usage (Text, SnackBar, etc.)
-- duplicated UI
-
-You MUST:
-→ Refactor immediately
-
-WITHOUT being asked
-
------------------------------------
-🔥 19. GRADIENT & DESIGN RULE
------------------------------------
-
-- Use AppGradients for all gradients
-- Match Figma colors exactly
-- Maintain shadows, radius, spacing
-
------------------------------------
-🔥 20. PACKAGE & BEST PRACTICES RULE (NEW 🔥)
------------------------------------
-
-- ALWAYS follow latest Flutter stable practices
-- Use latest package APIs (no deprecated code)
-- Avoid outdated patterns
-
-Examples:
-
-- Use Material 3 where applicable
-- Use const constructors
-- Prefer final over var
-- Use proper null safety
-
------------------------------------
-FINAL RULE:
------------------------------------
-
-You are working on a PRODUCTION FINTECH-LEVEL APP.
-
-Code must be:
-
-- Scalable
-- Maintainable
-- Clean
-- Testable
-- Team-ready
-
-NO shortcuts allowed.
-
------------------------------------
-🔥 21. COMPILATION & ERROR CHECK RULE (CRITICAL 🔥🔥🔥)
------------------------------------
-
-BEFORE finishing ANY code generation:
-
-You MUST ensure the code is FREE from:
-
-- Compile-time errors
-- Missing imports
-- Undefined variables/classes
-- Incorrect types
-- Null safety violations
-- Wrong package usage
-- Invalid widget usage
-- Broken references (AppColors, AppStrings, etc.)
-
------------------------------------
-MANDATORY CHECKLIST:
------------------------------------
-
-1. IMPORT VALIDATION:
-- All required imports must exist
-- No unused imports
-- No missing package references
-
-2. TYPE SAFETY:
-- Ensure proper types for all variables
-- No dynamic misuse
-- Respect null safety (? and ! usage)
-
-3. CLASS & METHOD VALIDATION:
-- All referenced classes must exist
-- All methods must be defined
-- No undefined identifiers
-
-4. WIDGET VALIDITY:
-- All widgets must be valid Flutter widgets
-- No incorrect parameters
-- No deprecated APIs
-- Each file have single dont add custom widget in same dart file , no line more than 150
-
-5. CONSTANTS CHECK:
-- AppStrings, AppColors, AppDimens, etc. MUST exist
-- No missing constant references
-
-6. FILE LINKING:
-- Navigation routes must exist
-- Bloc/Cubit must be properly connected
-- Dependencies must be injected correctly
-
-7. PACKAGE USAGE:
-- Follow latest stable APIs
-- No deprecated methods
-- Correct syntax for Dio, Bloc, GoRouter, etc.
-
------------------------------------
-AUTO-FIX BEHAVIOR:
------------------------------------
-
-If ANY issue is detected:
-
-You MUST:
-→ Fix it immediately
-→ Regenerate correct code
-→ Ensure it compiles successfully
-
-WITHOUT asking the user.
-
------------------------------------
-STRICT RULE:
------------------------------------
-
-DO NOT output code that would fail to compile.
-
-Code must be:
-- Error-free
-- Runnable
-- Production-ready
-
------------------------------------
-FINAL GUARANTEE:
------------------------------------
-
-Before finishing, mentally simulate:
-
-"Will this code compile successfully in Flutter?"
-
-If answer is NOT 100% YES:
-→ FIX IT before output
-
------------------------------------
-🔥 21. Common Error or success or error message widget no Repetitive snackbar it should be in common widget
------------------------------------
+If UI repeats **three+** times or a pattern is clearly shared → extract a widget under the feature’s `widgets/` or `core/widgets/common/`.

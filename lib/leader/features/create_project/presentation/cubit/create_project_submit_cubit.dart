@@ -8,29 +8,33 @@ import '../../domain/create_project_form.dart';
 class CreateProjectSubmitState extends Equatable {
   final bool loading;
   final String? error;
+  final String? errorTitle;
   final String? createdProjectId;
 
   const CreateProjectSubmitState({
     this.loading = false,
     this.error,
+    this.errorTitle,
     this.createdProjectId,
   });
 
   CreateProjectSubmitState copyWith({
     bool? loading,
     String? error,
+    String? errorTitle,
     String? createdProjectId,
     bool clearError = false,
   }) {
     return CreateProjectSubmitState(
       loading: loading ?? this.loading,
       error: clearError ? null : (error ?? this.error),
+      errorTitle: clearError ? null : (errorTitle ?? this.errorTitle),
       createdProjectId: createdProjectId ?? this.createdProjectId,
     );
   }
 
   @override
-  List<Object?> get props => [loading, error, createdProjectId];
+  List<Object?> get props => [loading, error, errorTitle, createdProjectId];
 }
 
 class CreateProjectSubmitCubit extends Cubit<CreateProjectSubmitState> {
@@ -44,9 +48,22 @@ class CreateProjectSubmitCubit extends Cubit<CreateProjectSubmitState> {
     emit(state.copyWith(loading: true, clearError: true));
     final result = await _useCase(form: form);
     result.fold(
-      (failure) => emit(state.copyWith(loading: false, error: failure.message)),
-      (id) => emit(state.copyWith(loading: false, createdProjectId: id)),
+      (failure) => emit(state.copyWith(
+            loading: false,
+            error: failure.message,
+            errorTitle: failure.title,
+          )),
+      (id) => emit(CreateProjectSubmitState(
+            loading: false,
+            createdProjectId: id,
+          )),
     );
+  }
+
+  void clearError() {
+    if (state.error != null || state.errorTitle != null) {
+      emit(state.copyWith(clearError: true));
+    }
   }
 }
 

@@ -4,16 +4,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/widgets/common/app_button.dart';
-import '../../../../core/widgets/common/app_svg_icon.dart';
-import 'auth_password_visibility_icon.dart';
 import '../../../../core/widgets/common/app_text_field.dart';
+import 'auth_password_visibility_icon.dart';
 import '../../../../core/utils/person_name_input_formatter.dart';
 import '../../../../app/router/app_routes.dart';
+import 'register_password_requirement_bar.dart';
 import '../bloc/register_bloc.dart';
 import '../bloc/register_event.dart';
 import '../bloc/register_state.dart';
@@ -71,8 +70,6 @@ class _RegisterFormState extends State<RegisterForm> {
       builder: (context, form) {
         final isLoading =
             context.watch<RegisterBloc>().state is RegisterLoading;
-        final isStrong =
-            _passCtrl.text.length >= 8 && _passCtrl.text.contains(RegExp(r'[a-zA-Z]')) && _passCtrl.text.contains(RegExp(r'[0-9]'));
         final bottomInset = MediaQuery.paddingOf(context).bottom;
         return CustomScrollView(
           slivers: [
@@ -177,22 +174,8 @@ class _RegisterFormState extends State<RegisterForm> {
                 ),
               ),
               SizedBox(height: 12.h),
-              Row(children: [
-                AppSvgIcon(
-                  assetPath: AppAssets.checkMarkSuccessful,
-                  size: 16.w,
-                  color:
-                      isStrong ? AppColors.validSuccess : AppColors.authHint,
-                ),
-                SizedBox(width: 6.w),
-                Text(AppStrings.passwordHint,
-                    style: GoogleFonts.lato(
-                        fontSize: 12.sp,
-                        color: isStrong
-                            ? AppColors.validSuccess
-                            : AppColors.authHint)),
-              ]),
-              SizedBox(height: 12.h),
+              RegisterPasswordRequirementBar(),
+              SizedBox(height: 24.h),
               AppButton(
                 text: AppStrings.btnContinue,
                 isLoading: isLoading,

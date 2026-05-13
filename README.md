@@ -46,34 +46,41 @@ flutter run
 ```
 lib/
 ├── app/
-│   ├── main_app.dart            # MultiBlocProvider root + MaterialApp.router
+│   ├── main_app.dart            # ScreenUtilInit + MultiBlocProvider + MaterialApp.router
 │   └── router/
-│       ├── app_router.dart      # GoRouter with all routes
-│       └── app_routes.dart      # Route constants (never use raw strings)
+│       ├── app_router.dart      # GoRouter
+│       └── app_routes.dart      # Route path constants (never raw strings)
 │
 ├── core/
-│   ├── constants/
-│   │   ├── app_assets.dart      # All asset paths (SVG + PNG)
-│   │   ├── app_strings.dart     # Every user-visible string
-│   │   └── app_dimens.dart      # Spacing / radius constants
-│   ├── theme/
-│   │   ├── app_colors.dart      # Full palette + LinearGradient constants
-│   │   └── app_theme.dart       # ThemeData
-│   ├── utils/
-│   │   ├── app_snackbar.dart    # Centralised success / error / info toasts
-│   │   └── validation_utils.dart
-│   └── widgets/common/          # AppButton, AppTextField, AppText, AppLoader …
+│   ├── constants/               # AppStrings, AppAssets, AppDimens, ApiConstants, …
+│   ├── theme/                   # AppColors, AppTheme
+│   ├── utils/                   # validation_utils, app_snackbar, …
+│   ├── widgets/common/          # AppButton, AppTextField, AppText, AppLoader, …
+│   └── di/                      # service_locator (when used)
 │
-└── features/
-    ├── splash/
-    ├── onboarding/
-    ├── auth/
-    ├── dashboard/
-    ├── home/
-    ├── discover/
-    ├── create_project/          # ← 5-step project wizard
-    └── profile/                 # ← full profile + payment + transactions
+├── features/                    # Shared / cross-role modules
+│   ├── auth/
+│   ├── profile/
+│   ├── projects/
+│   ├── project_detail/
+│   ├── wallet/
+│   └── …
+│
+├── leader/                      # Project owner (leader) flows
+│   └── features/
+│       ├── create_project/      # Wizard: amount → details → settings → review → success
+│       └── project_detail/
+│
+└── user/                        # Member / contributor flows
+    └── features/
+        ├── home/
+        ├── discover/
+        ├── contributions/
+        ├── create_project_member_fund/
+        └── …
 ```
+
+**Create-project wizard state:** `CreateProjectCubit` is provided at **`MainApp`** so it survives all pushed wizard routes under `leader/features/create_project/`.
 
 ---
 
@@ -104,19 +111,24 @@ The `DashboardScreen` hosts an `IndexedStack` with 5 tabs, driven by `NavCubit`.
 | Wallet | Wallet | 3 | Placeholder |
 | Profile | Profile | 4 | `ProfileCubit` |
 
-### Create Project Wizard (5 steps)
+### Create Project Wizard (leader)
 
-Triggered by tapping the **Add** tab. All steps share one `CreateProjectCubit` provided at the app root (`main_app.dart`), so state persists across pushed routes.
+Triggered by tapping the **Add** tab. **`CreateProjectCubit`** is at the app root (`main_app.dart`); flow type depends on **category** (saving vs vacation/emergency borrowing vs investment ROI-only vs streamlined).
 
-| Step | Screen | Route | Badge |
-|------|--------|-------|-------|
-| 0 | **Project Amount** — numeric keypad, `$240.00` display, purple Continue | `/create-project/amount` | — |
-| 1 | **Project Details** — name, description, category dropdown, date picker, Public/Private toggle | `/create-project/details` | `1/3` white |
-| 2 | **Borrowing** — ROI field + info icon, dashed divider, enable-borrowing toggle, limit / window / penalty | `/create-project/borrowing` | `2/3` white |
-| 3 | **Review** — 4 section cards (Project Details, Description & Rules, Borrowing, ROI) each with inline **Edit** | `/create-project/review` | `4/4` green |
-| ✓ | **Project Created** — full gradient, SVG badge, share link + copy, WhatsApp deep-link, "Go to my Project" → Home | `/create-project/success` | — |
+| Step | Screen | Route | Notes |
+|------|--------|-------|--------|
+| 0 | **Project Amount** | `AppRoutes.createProjectAmount` | Keypad + amount |
+| 1 | **Project Details** | `AppRoutes.createProjectDetails` | Name, description, category, deadline, visibility |
+| 2a | **Project Settings** (collaborative saving) | `AppRoutes.createProjectSavingSettings` | Auto-save toggle |
+| 2b | **Funds Borrowing** (vacation / emergency) | `AppRoutes.createProjectFundsBorrowing` | Borrow toggle, repayment / penalty when enabled |
+| 2c | **Project Settings** (investment) | `AppRoutes.createProjectInvestmentSettings` | Optional ROI field |
+| — | *(streamlined)* | — | Details → **Review** (no settings step) |
+| 3 | **Review** | `AppRoutes.createProjectReview` | Sections + **Edit** links |
+| ✓ | **Project Created** | `AppRoutes.createProjectSuccess` | Share / home |
 
-**"Go to my Project"** calls `context.go(AppRoutes.dashboard)` + `NavCubit.selectTab(0)` to land on the Home tab.
+Step badges (`1/3`, `2/3`, …) are defined in `leader/features/create_project/presentation/create_project_flow.dart` per `ProjectCreationFlowType`.
+
+**"Go to my Project"** uses `context.go(AppRoutes.dashboard)` + `NavCubit.selectTab(0)` to land on Home.
 
 ### Profile Flow (sub-routes, full-screen pushed over Dashboard)
 
@@ -216,23 +228,27 @@ Used on: all auth screens, onboarding, all profile sub-headers, create project h
 
 ## Engineering Rules
 
-1. **No hardcoding** — All strings → `AppStrings`, all colors → `AppColors`, all paths → `AppAssets`, all sizes → `AppDimens` / screenutil
-2. **No `setState`** — UI state via `Cubit`; business logic via `Bloc`; all widgets are `StatelessWidget` or minimal `StatefulWidget` (controller lifecycle only)
-3. **File size < 150 lines** — Large screens split into sub-widgets in `widgets/` directories
-4. **Validation in `ValidationUtils`** — Never inside UI widgets or Bloc/Cubit
-5. **Common widgets** — `AppButton`, `AppTextField`, `AppText`, `AppLoader`, `AppSnackBar` used everywhere; no raw `Text()`, `TextField()`, or `ScaffoldMessenger` calls
-6. **SVG icons** via `flutter_svg` with `ColorFilter.mode(color, BlendMode.srcIn)` tinting
-7. **Navigation** via `GoRouter` + `AppRoutes` constants only — no raw string paths
-8. **Snackbars** — `AppSnackBar.showSuccess/showError/showInfo` only (Rule 21)
+1. **No hardcoding** — Strings → `AppStrings`, colors → `AppColors`, assets → `AppAssets`, routes → `AppRoutes`; spacing via `AppDimens` / **ScreenUtil** (`.w`, `.h`, `.r`).
+2. **State** — Prefer **Cubit** / **Bloc**; **no `setState`** for app logic. **`StatefulWidget`** is OK for controller / focus / animation lifecycle.
+3. **File size** — **Target** &lt; 150 lines for new files; split into `widgets/`. Legacy files may be larger—refactor when you touch them.
+4. **Validation** — Rules in **`ValidationUtils`**; Cubits call it and store errors on state (see `CreateProjectCubit.validateDetails()`). **No** validation rules copy-pasted in UI widgets.
+5. **Common widgets** — `AppButton`, `AppTextField`, `AppText`, etc. from **`lib/core/widgets/common/`**; avoid raw `Text` / `TextField` / `ScaffoldMessenger` in product UI.
+6. **`AppTextField`** — Optional `hintStyle`, `suffixIconConstraints` (use tight constraints in **Material 3** so small suffix icons are not forced into a 48×48 visual slot).
+7. **SVG** — `flutter_svg` + `ColorFilter.mode(..., BlendMode.srcIn)` where tinting is needed.
+8. **Navigation** — `GoRouter` + `AppRoutes` only.
+9. **Feedback** — Centralised snackbars / dialogs (`app_snackbar.dart`, shared widgets); user messages from **`AppStrings`**.
+
+Cursor / team checklist: **`.cursor/rules/pre_commit.mdc`**
 
 ---
 
 ## State Architecture Summary
 
 ```
-App Root (main_app.dart)
+App Root (lib/app/main_app.dart)
 └── MultiBlocProvider
-    └── CreateProjectCubit (wizard persists across all pushed routes)
+    ├── CreateProjectCubit   # leader create-project wizard (all pushed steps)
+    └── WalletTransactionCubit
 
 DashboardScreen
 └── BlocProvider<NavCubit>

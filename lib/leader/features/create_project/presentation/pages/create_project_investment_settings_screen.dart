@@ -12,17 +12,18 @@ import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_text_field.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import '../../domain/create_project_form.dart';
+import '../create_project_entry_mode.dart';
 import '../create_project_flow.dart';
 import '../cubit/create_project_cubit.dart';
 import '../widgets/create_project_header.dart';
 
 /// Investment category — optional ROI only (no borrowing). Matches Figma Project Settings 2/3.
 class CreateProjectInvestmentSettingsScreen extends StatefulWidget {
-  final bool isEditMode;
+  final CreateProjectEntryMode entryMode;
 
   const CreateProjectInvestmentSettingsScreen({
     super.key,
-    this.isEditMode = false,
+    this.entryMode = CreateProjectEntryMode.wizard,
   });
 
   @override
@@ -88,7 +89,7 @@ class _CreateProjectInvestmentSettingsScreenState
                   title: AppStrings.createSavingSettingsTitle,
                   stepBadge: createProjectInvestmentSettingsStepBadge(
                     form,
-                    editMode: widget.isEditMode,
+                    editMode: widget.entryMode.isEditFlow,
                   ),
                   badgeColor: Colors.white,
                 ),
@@ -149,16 +150,14 @@ class _CreateProjectInvestmentSettingsScreenState
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20.w),
                       child: AppButton(
-                        text: widget.isEditMode
-                            ? AppStrings.btnSaveChanges
-                            : AppStrings.btnNext,
+                        text: AppStrings.btnNext,
                         useGradient: false,
                         hasShadow: false,
                         color: AppColors.neutral1200,
                         borderRadius: 10.r,
                         onPressed: () {
                           if (!cubit.validateInvestmentOptionalRoi()) return;
-                          if (widget.isEditMode) {
+                          if (widget.entryMode.isEditFlow) {
                             context.pop();
                             context.pop();
                             return;
