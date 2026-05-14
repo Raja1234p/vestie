@@ -28,15 +28,23 @@ import '../widgets/discover_search_bar.dart';
 /// Discover tab. [activate] true when selected — loads API only then (see [DashboardScreen]).
 class DiscoverScreen extends StatefulWidget {
   final bool activate;
+  /// From [DashboardShellArgs] — forces a fresh discover list the next time the tab loads.
+  final bool reloadDiscoverProjectList;
 
-  const DiscoverScreen({super.key, required this.activate});
+  const DiscoverScreen({
+    super.key,
+    required this.activate,
+    this.reloadDiscoverProjectList = false,
+  });
 
   @override
   State<DiscoverScreen> createState() => _DiscoverScreenState();
 }
 
 class _DiscoverScreenState extends State<DiscoverScreen> {
-  late final DiscoverCubit _cubit = DiscoverCubit();
+  late final DiscoverCubit _cubit = DiscoverCubit(
+    reloadDiscoverProjectList: widget.reloadDiscoverProjectList,
+  );
 
   @override
   void dispose() {
@@ -214,8 +222,13 @@ class _DiscoverBody extends StatelessWidget {
             final hasProjects = state.allProjects.isNotEmpty;
             final filteredEmpty = state.filtered.isEmpty;
             final loadFailed = state.errorMessage != null;
+            final emptyIdle =
+                !state.loading && !loadFailed && !hasProjects;
 
             return CustomScrollView(
+              physics: emptyIdle
+                  ? const NeverScrollableScrollPhysics()
+                  : null,
               slivers: [
                 // No [DiscoverHeader] when there are zero projects — full-screen empty state only.
                 if (state.loading || hasProjects)
@@ -377,7 +390,8 @@ class _DiscoverBody extends StatelessWidget {
                     ),
                 ],
 
-                SliverToBoxAdapter(child: SizedBox(height: 16.h)),
+                if (!emptyIdle)
+                  SliverToBoxAdapter(child: SizedBox(height: 16.h)),
               ],
             );
           },

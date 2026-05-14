@@ -1,7 +1,5 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../features/profile/presentation/cubit/profile_cubit.dart';
 import '../../../features/profile/presentation/pages/add_card_screen.dart';
 import '../../../features/profile/presentation/pages/edit_profile_screen.dart';
 import '../../../features/profile/presentation/pages/key_guidelines_screen.dart';
@@ -17,10 +15,7 @@ List<RouteBase> buildProfileWalletRoutes() {
   return [
     GoRoute(
       path: AppRoutes.editProfile,
-      builder: (context, _) => BlocProvider(
-        create: (_) => ProfileCubit(),
-        child: const EditProfileScreen(),
-      ),
+      builder: (context, _) => const EditProfileScreen(),
     ),
     GoRoute(
       path: AppRoutes.paymentMethods,

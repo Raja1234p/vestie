@@ -5,6 +5,9 @@ class User extends Equatable {
   final String id;
   final String name;
   final String email;
+  /// Handle from `GET/PUT /users/me` (`userName` in JSON).
+  final String userName;
+  final String? photoUrl;
   final bool isVerified;
   final String? accessToken;
   final String? refreshToken;
@@ -13,11 +16,13 @@ class User extends Equatable {
     required this.id,
     required this.name,
     required this.email,
+    this.userName = '',
+    this.photoUrl,
     this.isVerified = false,
     this.accessToken,
     this.refreshToken,
   });
 
   @override
-  List<Object?> get props => [id, name, email, isVerified];
+  List<Object?> get props => [id, name, email, userName, photoUrl, isVerified];
 }

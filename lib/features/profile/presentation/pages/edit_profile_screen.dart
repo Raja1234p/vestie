@@ -5,31 +5,130 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/constants/storage_keys.dart';
+import '../../../../core/di/service_locator.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/utils/person_name_input_formatter.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/common/app_loader.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
+import '../../domain/entities/user_profile.dart';
 import '../cubit/edit_profile_cubit.dart';
-import '../cubit/profile_cubit.dart';
 import '../widgets/profile_sub_header.dart';
 
-class EditProfileScreen extends StatelessWidget {
+/// Loads `GET /users/me` (with prefs fallback) so fields match the API, then
+/// saves via `PUT /users/me` and shows the returned profile on this screen.
+class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
 
   @override
+  State<EditProfileScreen> createState() => _EditProfileScreenState();
+}
+
+class _EditProfileScreenState extends State<EditProfileScreen> {
+  UserProfile? _profile;
+  String _photoUrl = '';
+  bool _loading = true;
+  String? _loadWarning;
+
+  @override
+  void initState() {
+    super.initState();
+    _bootstrap();
+  }
+
+  Future<void> _bootstrap() async {
+    setState(() {
+      _loading = true;
+      _loadWarning = null;
+    });
+
+    final prefs = ServiceLocator.instance.sharedPrefs;
+    final name = await prefs.getString(StorageKeys.userName) ?? '';
+    final email = await prefs.getString(StorageKeys.userEmail) ?? '';
+    final storedHandle = await prefs.getString(StorageKeys.userUsername) ?? '';
+    final fallbackUsername = storedHandle.isNotEmpty
+        ? storedHandle
+        : (email.contains('@') ? email.split('@').first : '');
+
+    final result = await ServiceLocator.instance.authRepository.getMe();
+    if (!mounted) return;
+
+    result.fold(
+      (failure) {
+        setState(() {
+          _loading = false;
+          _loadWarning = failure.message;
+          _profile = UserProfile(
+            fullName: name,
+            username: fallbackUsername,
+            email: email,
+          );
+          _photoUrl = '';
+        });
+      },
+      (user) {
+        final userName = user.userName.isNotEmpty
+            ? user.userName
+            : (user.email.contains('@')
+                ? user.email.split('@').first
+                : '');
+        setState(() {
+          _loading = false;
+          _loadWarning = null;
+          _profile = UserProfile(
+            fullName: user.name,
+            username: userName,
+            email: user.email,
+          );
+          _photoUrl = user.photoUrl ?? '';
+        });
+        prefs.saveString(StorageKeys.userName, user.name);
+        prefs.saveString(StorageKeys.userEmail, user.email);
+        prefs.saveString(StorageKeys.userUsername, userName);
+      },
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final profile = context.read<ProfileCubit>().state.profile;
+    if (_loading || _profile == null) {
+      return Scaffold(
+        backgroundColor: Colors.transparent,
+        body: PostAuthGradientBackground(
+          child: Column(
+            children: [
+              ProfileSubHeader(title: AppStrings.editProfileTitle),
+              const Expanded(child: Center(child: AppLoader())),
+            ],
+          ),
+        ),
+      );
+    }
+
     return BlocProvider(
-      create: (_) => EditProfileCubit(profile),
-      child: const _EditProfileBody(),
+      create: (_) => EditProfileCubit(
+        _profile!,
+        photoUrlForApi: _photoUrl,
+      ),
+      child: _EditProfileBody(
+        loadWarning: _loadWarning,
+        onRetryLoad: _bootstrap,
+      ),
     );
   }
 }
 
 class _EditProfileBody extends StatefulWidget {
-  const _EditProfileBody();
+  const _EditProfileBody({
+    required this.loadWarning,
+    required this.onRetryLoad,
+  });
+
+  final String? loadWarning;
+  final VoidCallback onRetryLoad;
+
   @override
   State<_EditProfileBody> createState() => _EditProfileBodyState();
 }
@@ -43,25 +142,32 @@ class _EditProfileBodyState extends State<_EditProfileBody> {
   void initState() {
     super.initState();
     final s = context.read<EditProfileCubit>().state;
-    _nameCtrl  = TextEditingController(text: s.fullName);
-    _userCtrl  = TextEditingController(text: s.username);
+    _nameCtrl = TextEditingController(text: s.fullName);
+    _userCtrl = TextEditingController(text: s.username);
     _emailCtrl = TextEditingController(text: s.email);
   }
 
   @override
   void dispose() {
-    _nameCtrl.dispose(); _userCtrl.dispose(); _emailCtrl.dispose();
+    _nameCtrl.dispose();
+    _userCtrl.dispose();
+    _emailCtrl.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<EditProfileCubit, EditProfileState>(
+      listenWhen: (prev, curr) =>
+          prev.lastSavedFromServer == null &&
+          curr.lastSavedFromServer != null,
       listener: (context, state) {
-        if (state.saved) {
-          AppSnackBar.showSuccess(context, AppStrings.profileUpdatedSuccess);
-          Navigator.of(context).pop();
-        }
+        final p = state.lastSavedFromServer;
+        if (p == null) return;
+        _nameCtrl.text = state.fullName;
+        _userCtrl.text = state.username;
+        _emailCtrl.text = state.email;
+        AppSnackBar.showSuccess(context, AppStrings.profileUpdatedSuccess);
       },
       builder: (context, state) {
         final cubit = context.read<EditProfileCubit>();
@@ -77,53 +183,63 @@ class _EditProfileBodyState extends State<_EditProfileBody> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                      _FieldLabel(AppStrings.labelFullName2),
-                      _ProfileField(
+                        if (widget.loadWarning != null) ...[
+                          _LoadWarningBanner(
+                            message: widget.loadWarning!,
+                            onRetry: widget.onRetryLoad,
+                          ),
+                          SizedBox(height: 16.h),
+                        ],
+                        if (state.lastSavedFromServer != null) ...[
+                          _UpdatedProfileBanner(profile: state.lastSavedFromServer!),
+                          SizedBox(height: 16.h),
+                        ],
+                        _FieldLabel(AppStrings.labelFullName2),
+                        _ProfileField(
                           controller: _nameCtrl,
                           hint: AppStrings.hintCardHolder,
                           inputFormatters: [
                             PersonNameInputFormatter(allowSpaces: true),
                           ],
-                          onChanged: cubit.setFullName),
-                      SizedBox(height: 16.h),
-                      _FieldLabel(AppStrings.labelUsername),
-                      _ProfileField(
+                          onChanged: cubit.setFullName,
+                        ),
+                        SizedBox(height: 16.h),
+                        _FieldLabel(AppStrings.labelUsername),
+                        _ProfileField(
                           controller: _userCtrl,
                           hint: AppStrings.hintUsername,
                           inputFormatters: [
                             PersonNameInputFormatter(allowSpaces: false),
                           ],
-                          onChanged: cubit.setUsername),
-                      SizedBox(height: 16.h),
-                      _FieldLabel(AppStrings.labelEmail),
-                      _ProfileField(
+                          onChanged: cubit.setUsername,
+                        ),
+                        SizedBox(height: 16.h),
+                        _FieldLabel(AppStrings.labelEmail),
+                        _ProfileField(
                           controller: _emailCtrl,
                           hint: AppStrings.hintEmail,
                           keyboardType: TextInputType.emailAddress,
-                          onChanged: cubit.setEmail),
-                      SizedBox(height: 32.h),
-                      if (state.isSaving)
-                        const AppLoader()
-                      else
-                        AppButton(
-                          text: AppStrings.btnSaveChanges,
-                          onPressed: () async {
-                            final updated = await cubit.save();
-                            if (updated != null && context.mounted) {
-                              context.read<ProfileCubit>().updateProfile(updated);
-                            }
-                          },
+                          readOnly: true,
+                          onChanged: (_) {},
                         ),
-                      if (state.error != null && state.error!.isNotEmpty) ...[
-                        SizedBox(height: 12.h),
-                        Text(
-                          state.error!,
-                          style: GoogleFonts.lato(
-                            fontSize: 12.sp,
-                            color: AppColors.error,
+                        SizedBox(height: 32.h),
+                        if (state.isSaving)
+                          const AppLoader()
+                        else
+                          AppButton(
+                            text: AppStrings.btnSaveChanges,
+                            onPressed: () => cubit.save(),
                           ),
-                        ),
-                      ],
+                        if (state.error != null && state.error!.isNotEmpty) ...[
+                          SizedBox(height: 12.h),
+                          Text(
+                            state.error!,
+                            style: GoogleFonts.lato(
+                              fontSize: 12.sp,
+                              color: AppColors.error,
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -137,6 +253,108 @@ class _EditProfileBodyState extends State<_EditProfileBody> {
   }
 }
 
+class _LoadWarningBanner extends StatelessWidget {
+  const _LoadWarningBanner({
+    required this.message,
+    required this.onRetry,
+  });
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(12.w),
+      decoration: BoxDecoration(
+        color: AppColors.error.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: AppColors.error.withValues(alpha: 0.35)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            message,
+            style: GoogleFonts.lato(
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.error,
+            ),
+          ),
+          SizedBox(height: 8.h),
+          AppButton(
+            text: AppStrings.btnRetry,
+            onPressed: onRetry,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _UpdatedProfileBanner extends StatelessWidget {
+  const _UpdatedProfileBanner({required this.profile});
+
+  final UserProfile profile;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(14.w),
+      decoration: BoxDecoration(
+        color: AppColors.success.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: AppColors.success.withValues(alpha: 0.45)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            AppStrings.profileUpdatedSuccess,
+            style: GoogleFonts.lato(
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w800,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          SizedBox(height: 8.h),
+          Text(
+            profile.fullName,
+            style: GoogleFonts.lato(
+              fontSize: 15.sp,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          if (profile.username.isNotEmpty) ...[
+            SizedBox(height: 4.h),
+            Text(
+              '@${profile.username}',
+              style: GoogleFonts.lato(
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textBody,
+              ),
+            ),
+          ],
+          SizedBox(height: 4.h),
+          Text(
+            profile.email,
+            style: GoogleFonts.lato(
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textBody,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _FieldLabel extends StatelessWidget {
   final String text;
   const _FieldLabel(this.text);
@@ -144,11 +362,14 @@ class _FieldLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(bottom: 8.h),
-      child: Text(text,
-          style: GoogleFonts.lato(
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textBody)),
+      child: Text(
+        text,
+        style: GoogleFonts.lato(
+          fontSize: 16.sp,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textBody,
+        ),
+      ),
     );
   }
 }
@@ -159,6 +380,7 @@ class _ProfileField extends StatelessWidget {
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? inputFormatters;
   final ValueChanged<String> onChanged;
+  final bool readOnly;
 
   const _ProfileField({
     required this.controller,
@@ -166,18 +388,20 @@ class _ProfileField extends StatelessWidget {
     required this.onChanged,
     this.keyboardType,
     this.inputFormatters,
+    this.readOnly = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: readOnly ? AppColors.appBgBottom : Colors.white,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(color: AppColors.inputFieldBorder),
       ),
       child: TextField(
         controller: controller,
+        readOnly: readOnly,
         keyboardType: keyboardType,
         inputFormatters: inputFormatters,
         onChanged: onChanged,

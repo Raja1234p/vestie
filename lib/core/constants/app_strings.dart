@@ -157,6 +157,8 @@ class AppStrings {
   static const String projectEndEnded   = 'Ended';
   static const String projectEndToday   = 'Ends today';
   static const String projectEndLessThanOneDay = 'Less than a day';
+  /// Shown when deadline is under one minute away (ISO deadline path).
+  static const String projectEndLessThanOneMinute = 'Less than a minute';
   static const String projectEndOneDay  = '1 day';
   static const String projectEndOneMonth = '1 month';
 

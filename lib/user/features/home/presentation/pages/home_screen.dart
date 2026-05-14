@@ -20,27 +20,30 @@ import '../cubit/home_sections_cubit.dart';
 import '../widgets/home_empty_view.dart';
 import '../widgets/home_gradient_background.dart';
 import '../widgets/home_header.dart';
-import 'package:vestie/features/dashboard/domain/pending_dashboard_refresh.dart';
 import '../widgets/projects_section.dart';
 
 /// Shell — provides HomeBloc + HomeSectionsCubit.
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  /// When true (from [DashboardShellArgs]), runs the same load as pull-to-refresh
+  /// so `GET /projects?scope=mine` runs once with a fresh list after create-project.
+  final bool reloadHomeProjectList;
+
+  const HomeScreen({
+    super.key,
+    this.reloadHomeProjectList = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (_) {
-            final bloc = HomeBloc();
-            if (PendingDashboardRefresh.consumeHomeProjectList()) {
-              bloc.add(const HomeRefreshRequested());
-            } else {
-              bloc.add(const HomeFetchStarted());
-            }
-            return bloc;
-          },
+          create: (_) => HomeBloc()
+            ..add(
+              reloadHomeProjectList
+                  ? const HomeRefreshRequested()
+                  : const HomeFetchStarted(),
+            ),
         ),
         BlocProvider(create: (_) => HomeSectionsCubit()),
       ],

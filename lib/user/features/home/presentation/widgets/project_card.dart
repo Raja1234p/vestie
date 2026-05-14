@@ -1,3 +1,4 @@
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -72,9 +73,28 @@ class ProjectCard extends StatelessWidget {
             ),
             if (project.description != null) ...[
               SizedBox(height: 2.h),
-              Text(project.description!,
-                  style: GoogleFonts.lato(
-                      fontSize: 11.sp, color: AppColors.textBody)),
+              SizedBox(
+                width: double.infinity,
+                child: DottedBorder(
+                  options: RoundedRectDottedBorderOptions(
+                    radius: Radius.circular(8.r),
+                    color: const Color(0xFFD9D9D9),
+                    strokeWidth: 1,
+                    dashPattern: const [2, 4],
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                      vertical: 8.h,
+                    ),
+                  ),
+                  child: Text(
+                    project.description!,
+                    style: GoogleFonts.lato(
+                      fontSize: 11.sp,
+                      color: AppColors.textBody,
+                    ),
+                  ),
+                ),
+              ),
             ],
             if (project.goalAmount != null) ...[
               SizedBox(height: 8.h),

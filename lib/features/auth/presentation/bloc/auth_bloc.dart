@@ -27,7 +27,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(const AuthLoading());
     await Future.delayed(const Duration(milliseconds: 1200)); // Stub API delay
     // TODO: Replace with real AuthRepository.login()
-    const mockUser = User(id: '1', name: 'Vestie User', email: 'user@vestie.app');
+    const mockUser = User(
+      id: '1',
+      name: 'Vestie User',
+      email: 'user@vestie.app',
+      userName: 'vestieuser',
+    );
     emit(const AuthLoginSuccess(user: mockUser));
   }
 

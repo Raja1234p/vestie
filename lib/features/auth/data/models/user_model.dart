@@ -7,6 +7,8 @@ class UserModel extends User {
     required super.id,
     required super.name,
     required super.email,
+    super.userName,
+    super.photoUrl,
     super.isVerified,
     super.accessToken,
     super.refreshToken,
@@ -17,12 +19,19 @@ class UserModel extends User {
     final lastName  = (json['lastName']  as String?) ?? '';
     final fullName  = (json['fullName']  as String?)
         ?? '$firstName $lastName'.trim();
+    final email = (json['email'] as String?) ?? '';
+    final handle = (json['userName'] as String?)?.trim() ?? '';
+    final rawPhoto = (json['photoUrl'] as String?)?.trim();
 
     return UserModel(
       id:           (json['id']       as String?) ?? '',
       name:         fullName,
-      email:        (json['email']    as String?) ?? '',
-      isVerified:   (json['emailConfirmed'] as bool?) ?? false,
+      email:        email,
+      userName:     handle,
+      photoUrl:     rawPhoto != null && rawPhoto.isNotEmpty ? rawPhoto : null,
+      isVerified:   (json['isEmailVerified'] as bool?) ??
+          (json['emailConfirmed'] as bool?) ??
+          false,
     );
   }
 

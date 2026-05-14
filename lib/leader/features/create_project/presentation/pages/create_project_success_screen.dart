@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vestie/app/router/app_routes.dart';
+import 'package:vestie/features/dashboard/presentation/models/dashboard_shell_args.dart';
 import 'package:vestie/core/utils/whatsapp_launch.dart';
-import 'package:vestie/features/dashboard/domain/pending_dashboard_refresh.dart';
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
@@ -109,9 +109,14 @@ class _CreateProjectSuccessScreenState extends State<CreateProjectSuccessScreen>
           buttonText: AppStrings.btnGoToMyProject,
           onButtonPressed: () {
             context.read<CreateProjectCubit>().reset();
-            PendingDashboardRefresh.markHomeProjectList();
-            PendingDashboardRefresh.markDiscoverProjectList();
-            context.go(AppRoutes.dashboard);
+            context.go(
+              AppRoutes.dashboard,
+              extra: DashboardShellArgs(
+                reloadHomeProjectList: true,
+                reloadDiscoverProjectList: true,
+                navigationMark: DateTime.now().microsecondsSinceEpoch,
+              ),
+            );
           },
           customContent: Column(
             children: [

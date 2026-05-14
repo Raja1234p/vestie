@@ -23,7 +23,24 @@ class ProjectEndRelativeLabel {
     return DateTime.utc(y, m, day);
   }
 
-  /// Bold segment after "Ends in " (or full phrase for today / ended).
+  /// When less than 24h remain: `5h 30m`, or `45m` if under an hour.
+  static String _hoursMinutesFrom(Duration remaining) {
+    if (remaining <= Duration.zero) {
+      return AppStrings.projectEndEnded;
+    }
+    final totalMinutes = remaining.inMinutes;
+    if (totalMinutes < 1) {
+      return AppStrings.projectEndLessThanOneMinute;
+    }
+    final hours = totalMinutes ~/ 60;
+    final minutes = totalMinutes % 60;
+    if (hours <= 0) {
+      return '${minutes}m';
+    }
+    return '${hours}h ${minutes}m';
+  }
+
+  /// Bold segment after "Ends in " (or full phrase for ended).
   static String emphasis(String? endsInIsoUtc) {
     if (endsInIsoUtc == null || endsInIsoUtc.trim().isEmpty) {
       return '';
@@ -34,16 +51,20 @@ class ProjectEndRelativeLabel {
       return raw.isEmpty ? '' : raw;
     }
 
+    final endUtc = end.isUtc ? end : end.toUtc();
     final now = DateTime.now().toUtc();
-    final endDay = _dateOnlyUtc(end);
-    final nowDay = _dateOnlyUtc(now);
 
-    if (endDay.isBefore(nowDay)) {
+    if (!endUtc.isAfter(now)) {
       return AppStrings.projectEndEnded;
     }
-    if (endDay == nowDay) {
-      return AppStrings.projectEndToday;
+
+    final remaining = endUtc.difference(now);
+    if (remaining < const Duration(hours: 24)) {
+      return _hoursMinutesFrom(remaining);
     }
+
+    final endDay = _dateOnlyUtc(endUtc);
+    final nowDay = _dateOnlyUtc(now);
 
     var cursor = nowDay;
     var months = 0;
@@ -58,7 +79,7 @@ class ProjectEndRelativeLabel {
 
     if (months == 0) {
       if (days <= 0) {
-        return AppStrings.projectEndLessThanOneDay;
+        return _hoursMinutesFrom(remaining);
       }
       return AppStrings.projectEndDaysOnly(days);
     }
@@ -84,8 +105,8 @@ class ProjectEndRelativeLabel {
     final raw = endsInIsoUtc.trim();
     final end = DateTime.tryParse(raw);
     if (end == null) return false;
-    final endDay = _dateOnlyUtc(end);
-    final nowDay = _dateOnlyUtc(DateTime.now().toUtc());
-    return endDay.isBefore(nowDay) || endDay == nowDay;
+    final endUtc = end.isUtc ? end : end.toUtc();
+    final now = DateTime.now().toUtc();
+    return !endUtc.isAfter(now);
   }
 }

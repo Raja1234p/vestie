@@ -43,10 +43,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     meResult.fold(
       (_) {},
       (User user) {
+        final userName = user.userName.isNotEmpty
+            ? user.userName
+            : (user.email.contains('@')
+                ? user.email.split('@').first
+                : '');
         ServiceLocator.instance.sharedPrefs
             .saveString(StorageKeys.userName, user.name);
         ServiceLocator.instance.sharedPrefs
             .saveString(StorageKeys.userEmail, user.email);
+        ServiceLocator.instance.sharedPrefs
+            .saveString(StorageKeys.userUsername, userName);
         DashboardPrefetch.markUserMeLoaded();
       },
     );

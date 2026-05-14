@@ -11,11 +11,17 @@ import 'package:vestie/user/features/home/presentation/pages/home_screen.dart';
 import '../../../profile/presentation/pages/profile_screen.dart';
 import '../../../wallet/presentation/pages/wallet_screen.dart';
 import '../cubit/nav_cubit.dart';
+import '../models/dashboard_shell_args.dart';
 import '../widgets/app_bottom_nav_bar.dart';
 
 /// Root shell for the main app — holds all bottom-nav tabs via IndexedStack.
 class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({super.key});
+  final DashboardShellArgs shellArgs;
+
+  const DashboardScreen({
+    super.key,
+    this.shellArgs = const DashboardShellArgs(),
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +35,20 @@ class DashboardScreen extends StatelessWidget {
               child: IndexedStack(
                 index: index,
                 children: [
-                  const HomeScreen(),
-                  DiscoverScreen(activate: index == 1),
+                  HomeScreen(
+                    key: ValueKey(
+                      'home-${shellArgs.reloadHomeProjectList}-${shellArgs.navigationMark}',
+                    ),
+                    reloadHomeProjectList: shellArgs.reloadHomeProjectList,
+                  ),
+                  DiscoverScreen(
+                    key: ValueKey(
+                      'discover-${shellArgs.reloadDiscoverProjectList}-${shellArgs.navigationMark}',
+                    ),
+                    activate: index == 1,
+                    reloadDiscoverProjectList:
+                        shellArgs.reloadDiscoverProjectList,
+                  ),
                   const _PlaceholderTab(),
                   const WalletScreen(),
                   ProfileScreen(activate: index == 4),

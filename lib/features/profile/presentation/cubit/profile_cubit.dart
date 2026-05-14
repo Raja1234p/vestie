@@ -66,18 +66,18 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   Future<void> _hydrateFromPrefsOnly() async {
-    final name = await ServiceLocator.instance.sharedPrefs
-            .getString(StorageKeys.userName) ??
-        '';
-    final email = await ServiceLocator.instance.sharedPrefs
-            .getString(StorageKeys.userEmail) ??
-        '';
+    final prefs = ServiceLocator.instance.sharedPrefs;
+    final name = await prefs.getString(StorageKeys.userName) ?? '';
+    final email = await prefs.getString(StorageKeys.userEmail) ?? '';
+    final handle = await prefs.getString(StorageKeys.userUsername) ?? '';
     emit(state.copyWith(
       isLoading: false,
       profile: UserProfile(
         fullName: name,
         email: email,
-        username: email.split('@').first,
+        username: handle.isNotEmpty
+            ? handle
+            : (email.contains('@') ? email.split('@').first : ''),
       ),
     ));
   }
@@ -91,12 +91,18 @@ class ProfileCubit extends Cubit<ProfileState> {
             .getString(StorageKeys.userEmail) ??
         '';
 
+    final handle = await ServiceLocator.instance.sharedPrefs
+            .getString(StorageKeys.userUsername) ??
+        '';
+
     if (name.isNotEmpty || email.isNotEmpty) {
       emit(state.copyWith(
         profile: UserProfile(
           fullName: name,
           email: email,
-          username: email.split('@').first,
+          username: handle.isNotEmpty
+              ? handle
+              : (email.contains('@') ? email.split('@').first : ''),
         ),
       ));
     }
@@ -110,10 +116,15 @@ class ProfileCubit extends Cubit<ProfileState> {
         emit(state.copyWith(isLoading: false, error: failure.message));
       },
       (user) {
+        final userName = user.userName.isNotEmpty
+            ? user.userName
+            : (user.email.contains('@')
+                ? user.email.split('@').first
+                : '');
         final updatedProfile = UserProfile(
           fullName: user.name,
           email: user.email,
-          username: user.email.split('@').first,
+          username: userName,
         );
         emit(state.copyWith(
           isLoading: false,
@@ -125,6 +136,8 @@ class ProfileCubit extends Cubit<ProfileState> {
             .saveString(StorageKeys.userName, user.name);
         ServiceLocator.instance.sharedPrefs
             .saveString(StorageKeys.userEmail, user.email);
+        ServiceLocator.instance.sharedPrefs
+            .saveString(StorageKeys.userUsername, userName);
       },
     );
   }

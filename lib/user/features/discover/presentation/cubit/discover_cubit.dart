@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/error/failures.dart';
-import 'package:vestie/features/dashboard/domain/pending_dashboard_refresh.dart';
 import '../../../home/domain/entities/project.dart';
 import 'package:vestie/features/projects/domain/usecases/list_projects_use_case.dart';
 
@@ -52,16 +51,22 @@ class DiscoverState extends Equatable {
 
 class DiscoverCubit extends Cubit<DiscoverState> {
   final ListProjectsUseCase _listProjectsUseCase;
+  final bool _reloadDiscoverRequested;
+  bool _consumedShellReload = false;
 
-  DiscoverCubit({ListProjectsUseCase? listProjectsUseCase})
-      : _listProjectsUseCase =
+  DiscoverCubit({
+    ListProjectsUseCase? listProjectsUseCase,
+    bool reloadDiscoverProjectList = false,
+  })  : _listProjectsUseCase =
             listProjectsUseCase ?? ServiceLocator.instance.listProjectsUseCase,
+        _reloadDiscoverRequested = reloadDiscoverProjectList,
         super(const DiscoverState());
 
   bool _loadStarted = false;
 
   void loadIfNeeded() {
-    if (PendingDashboardRefresh.consumeDiscoverProjectList()) {
+    if (_reloadDiscoverRequested && !_consumedShellReload) {
+      _consumedShellReload = true;
       _loadStarted = false;
     }
     if (_loadStarted) return;

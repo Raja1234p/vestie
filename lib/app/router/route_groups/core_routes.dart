@@ -36,6 +36,7 @@ import 'package:vestie/leader/features/create_project/presentation/pages/create_
 
 import 'package:vestie/leader/features/create_project/presentation/pages/create_project_success_screen.dart';
 
+import '../../../features/dashboard/presentation/models/dashboard_shell_args.dart';
 import '../../../features/dashboard/presentation/pages/dashboard_screen.dart';
 
 import '../../../features/notifications/presentation/cubit/notifications_cubit.dart';
@@ -160,7 +161,13 @@ List<RouteBase> buildCoreRoutes() {
 
       path: AppRoutes.dashboard,
 
-      builder: (context, _) => const DashboardScreen(),
+      builder: (context, state) {
+        final extra = state.extra;
+        final args = extra is DashboardShellArgs
+            ? extra
+            : const DashboardShellArgs();
+        return DashboardScreen(shellArgs: args);
+      },
 
     ),
 
