@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../app/router/app_routes.dart';
@@ -132,9 +133,7 @@ class _ProfileBody extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _ProfileHeader(
-                  onSettings: () => context.push(AppRoutes.editProfile),
-                ),
+                const _ProfileHeader(),
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(20.w, 14.h, 20.w, 12.h),
@@ -164,18 +163,11 @@ class _ProfileBody extends StatelessWidget {
                                   Positioned(
                                     bottom: 0,
                                     right: 0,
-                                    child: Container(
+                                    child: SvgPicture.asset(
+                                      AppAssets.profileAvatarEditBadge,
                                       width: 22.w,
                                       height: 22.w,
-                                      decoration: const BoxDecoration(
-                                        color: AppColors.primary,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: AppSvgIcon(
-                                        assetPath: AppAssets.iconAdd,
-                                        size: 15.w,
-                                        color: Colors.white,
-                                      ),
+                                      fit: BoxFit.contain,
                                     ),
                                   ),
                                 ]),
@@ -191,7 +183,7 @@ class _ProfileBody extends StatelessWidget {
                                     style: GoogleFonts.lato(
                                       fontSize: 18.sp,
                                       fontWeight: FontWeight.w600,
-                                      color: AppColors.textPrimary,
+                                      color: const Color(0xFF141414),
                                     ),
                                   ),
                                   AppText(
@@ -211,29 +203,29 @@ class _ProfileBody extends StatelessWidget {
                         AppStrings.settingsLabel,
                         style: GoogleFonts.lato(
                           fontSize: 24.sp,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF141414),
                         ),
                       ),
                       SizedBox(height: 8.h),
                       SettingsSection(items: [
                         SettingsItem(
-                          svgPath: AppAssets.iconEditProfile,
+                          assetPath: AppAssets.iconPerson,
                           label: AppStrings.menuEditProfile,
                           onTap: () => context.push(AppRoutes.editProfile),
                         ),
                         SettingsItem(
-                          svgPath: AppAssets.iconPaymentMethods,
+                          assetPath: AppAssets.iconPaymentMethods,
                           label: AppStrings.menuPaymentMethods,
                           onTap: () => context.push(AppRoutes.paymentMethods),
                         ),
                         SettingsItem(
-                          svgPath: AppAssets.iconTransactionHistory,
+                          assetPath: AppAssets.iconDollarCircle,
                           label: AppStrings.menuTransactionHistory,
                           onTap: () => context.push(AppRoutes.transactionHistory),
                         ),
                         SettingsItem(
-                          svgPath: AppAssets.iconKeyGuidelines,
+                          assetPath: AppAssets.iconKeyGuidelines,
                           label: AppStrings.menuKeyGuidelines,
                           onTap: () => context.push(AppRoutes.keyGuidelines),
                         ),
@@ -258,19 +250,17 @@ class _ProfileBody extends StatelessWidget {
 }
 
 class _ProfileHeader extends StatelessWidget {
-  final VoidCallback onSettings;
-  const _ProfileHeader({required this.onSettings});
+  const _ProfileHeader();
 
   @override
   Widget build(BuildContext context) {
     return PostAuthHeader(
       title: AppStrings.profileTitle,
-      trailing: GestureDetector(
-        onTap: onSettings,
-        child: AppSvgIcon(
-            assetPath: AppAssets.iconSettings,
-            size: 22.w,
-            color: AppColors.textBody),
+      titleStyle: GoogleFonts.lato(
+        fontSize: 28.sp,
+        fontWeight: FontWeight.w600,
+        color: const Color(0xFF141414),
+        letterSpacing: -0.5,
       ),
     );
   }

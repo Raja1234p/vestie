@@ -238,7 +238,8 @@ class AppColors {
 
   // ── Profile / Payment ────────────────────────────────────────────────────────
   static const Color logoutBtn      = red700;     // #E03F3F
-  static const Color settingsCardBg = grey100;    // #F8F7FA
+  /// Profile settings menu card fill (Figma — white).
+  static const Color settingsCardBg = neutral100;
 
   // Payment card gradient — vivid purple
   static const Color payCardGradientStart = purple700;  // #7A3FE0
