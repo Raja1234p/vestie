@@ -5,6 +5,7 @@ import '../../../../core/error/exceptions.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/utils/logger.dart';
 import '../models/create_project_request_model.dart';
+import '../models/create_project_response_model.dart';
 import '../models/project_summary_model.dart';
 import 'projects_remote_data_source.dart';
 
@@ -81,7 +82,7 @@ class ProjectsRemoteDataSourceImpl implements ProjectsRemoteDataSource {
   }
 
   @override
-  Future<ProjectSummaryModel> createProject({
+  Future<CreateProjectResponseModel> createProject({
     required CreateProjectRequestModel request,
   }) async {
     try {
@@ -93,7 +94,7 @@ class ProjectsRemoteDataSourceImpl implements ProjectsRemoteDataSource {
       if (data is! Map) {
         throw ServerException('Invalid create project response');
       }
-      return ProjectSummaryModel.fromJson(
+      return CreateProjectResponseModel.fromJson(
         data.map((k, v) => MapEntry(k.toString(), v)),
       );
     } on DioException catch (e) {

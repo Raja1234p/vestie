@@ -25,6 +25,14 @@ extension SafeJsonParsing on Map<String, dynamic> {
     return defaultValue;
   }
 
+  double? safeDoubleNullable(String key) {
+    if (this[key] == null) return null;
+    if (this[key] is double) return this[key] as double;
+    if (this[key] is int) return (this[key] as int).toDouble();
+    if (this[key] is String) return double.tryParse(this[key] as String);
+    return null;
+  }
+
   bool safeBool(String key, {bool defaultValue = false}) {
     if (this[key] == null) return defaultValue;
     if (this[key] is bool) return this[key] as bool;

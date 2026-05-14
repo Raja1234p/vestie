@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:vestie/core/di/service_locator.dart';
+import 'package:vestie/features/projects/domain/entities/created_project_entity.dart';
 import 'package:vestie/features/projects/domain/usecases/create_project_use_case.dart';
 import '../../domain/create_project_form.dart';
 
@@ -9,32 +10,32 @@ class CreateProjectSubmitState extends Equatable {
   final bool loading;
   final String? error;
   final String? errorTitle;
-  final String? createdProjectId;
+  final CreatedProjectEntity? createdProject;
 
   const CreateProjectSubmitState({
     this.loading = false,
     this.error,
     this.errorTitle,
-    this.createdProjectId,
+    this.createdProject,
   });
 
   CreateProjectSubmitState copyWith({
     bool? loading,
     String? error,
     String? errorTitle,
-    String? createdProjectId,
+    CreatedProjectEntity? createdProject,
     bool clearError = false,
   }) {
     return CreateProjectSubmitState(
       loading: loading ?? this.loading,
       error: clearError ? null : (error ?? this.error),
       errorTitle: clearError ? null : (errorTitle ?? this.errorTitle),
-      createdProjectId: createdProjectId ?? this.createdProjectId,
+      createdProject: createdProject ?? this.createdProject,
     );
   }
 
   @override
-  List<Object?> get props => [loading, error, errorTitle, createdProjectId];
+  List<Object?> get props => [loading, error, errorTitle, createdProject];
 }
 
 class CreateProjectSubmitCubit extends Cubit<CreateProjectSubmitState> {
@@ -53,9 +54,9 @@ class CreateProjectSubmitCubit extends Cubit<CreateProjectSubmitState> {
             error: failure.message,
             errorTitle: failure.title,
           )),
-      (id) => emit(CreateProjectSubmitState(
+      (project) => emit(CreateProjectSubmitState(
             loading: false,
-            createdProjectId: id,
+            createdProject: project,
           )),
     );
   }

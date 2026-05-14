@@ -29,16 +29,16 @@ class CreateProjectReviewScreen extends StatelessWidget {
         builder: (context, form) {
           return BlocListener<CreateProjectSubmitCubit, CreateProjectSubmitState>(
             listenWhen: (previous, current) {
-              final idReady = (current.createdProjectId ?? '').isNotEmpty &&
-                  current.createdProjectId != previous.createdProjectId;
+              final idReady = (current.createdProject?.id ?? '').isNotEmpty &&
+                  current.createdProject?.id != previous.createdProject?.id;
               final errReady = (current.error ?? '').isNotEmpty &&
                   current.error != previous.error &&
                   !current.loading;
               return idReady || errReady;
             },
             listener: (context, state) async {
-              if (state.createdProjectId != null &&
-                  state.createdProjectId!.isNotEmpty) {
+              if (state.createdProject != null &&
+                  state.createdProject!.id.isNotEmpty) {
                 if (!context.mounted) return;
                 context.push(AppRoutes.createProjectSuccess);
                 return;

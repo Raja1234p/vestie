@@ -3,6 +3,7 @@ import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/leader/features/create_project/domain/create_project_form.dart';
+import '../../domain/entities/created_project_entity.dart';
 import '../../domain/repositories/projects_repository.dart';
 import '../datasources/projects_remote_data_source.dart';
 import '../models/create_project_request_model.dart';
@@ -35,12 +36,12 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
   }
 
   @override
-  Future<Either<Failure, String>> createProject({required CreateProjectForm form}) async {
+  Future<Either<Failure, CreatedProjectEntity>> createProject({required CreateProjectForm form}) async {
     try {
       final response = await remoteDataSource.createProject(
         request: CreateProjectRequestModel.fromForm(form),
       );
-      return Right(response.id);
+      return Right(response.entity);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message, e.title));
     } on UnauthorizedException catch (e) {

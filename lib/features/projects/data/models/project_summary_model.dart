@@ -1,5 +1,6 @@
 import '../../../../core/utils/safe_parser.dart';
 import '../../domain/entities/project_summary_entity.dart';
+import 'project_list_json_parsing.dart';
 
 class ProjectSummaryModel extends ProjectSummaryEntity {
   const ProjectSummaryModel({
@@ -24,15 +25,16 @@ class ProjectSummaryModel extends ProjectSummaryEntity {
       id: json.safeString('id'),
       name: json.safeString('name'),
       description: json.safeString('description'),
-      type: json.safeString('type'),
-      visibility: json.safeString('visibility'),
-      state: json.safeString('state'),
+      type: projectTypeApiValueToSummaryString(json['type']),
+      visibility: projectVisibilityApiValueToSummaryString(json['visibility']),
+      state: projectStateApiValueToSummaryString(json['state']),
       targetAmount: json.safeDouble('targetAmount'),
       maxMembers: json.safeInt('maxMembers'),
       endsAtUtc: json.safeDateTimeUtc('endsAtUtc') ?? DateTime.now().toUtc(),
       launchedAtUtc: json.safeDateTimeUtc('launchedAtUtc'),
       borrowingEnabled: json.safeBool('borrowingEnabled'),
-      suggestedContributionAmount: json.safeDouble('suggestedContributionAmount'),
+      suggestedContributionAmount:
+          json.safeDoubleNullable('suggestedContributionAmount') ?? 0.0,
       createdUtc: json.safeDateTimeUtc('createdUtc') ?? DateTime.now().toUtc(),
       viewerRole: _parseViewerRole(json),
     );
