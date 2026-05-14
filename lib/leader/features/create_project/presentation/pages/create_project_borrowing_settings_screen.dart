@@ -92,25 +92,8 @@ class _CreateProjectBorrowingSettingsScreenState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                AppStrings.labelEnableBorrowProject,
-                                style: settingsLabelStyle,
-                              ),
-                            ),
-                            AppTickSwitch(
-                              value: form.borrowingEnabled,
-                              onChanged: cubit.toggleBorrowing,
-                            ),
-                          ],
-                        ),
+
                         if (form.borrowingEnabled) ...[
-                          SizedBox(height: 16.h),
-                          const CPDashedDivider(),
-                          SizedBox(height: 16.h),
                           AppTextField(
                             label: AppStrings.labelRepaymentWindowDays,
                             hint: AppStrings.hintRepaymentDays,

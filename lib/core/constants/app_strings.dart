@@ -496,8 +496,6 @@ class AppStrings {
 
   // Borrowing path (Vacation / Emergency — production frames)
   static const String createFundsBorrowingTitle = 'Funds Borrowing';
-  static const String labelEnableBorrowProject =
-      'Enable borrowing for members?';
   static const String labelAnnualInterest      = 'Interest rate (Annual %)';
   static const String hintAnnualInterest       = '5';
   static const String labelRepaymentWindowDays   = 'Repayment window (days)';
