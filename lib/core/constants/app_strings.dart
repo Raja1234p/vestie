@@ -18,6 +18,12 @@ class AppStrings {
   static const String btnRetry         = 'Try Again';
   static const String btnDismiss       = 'Dismiss';
   static const String noInternet = 'No internet connection detected.';
+  /// Play/Credential Manager often returns "canceled" for SHA-1 / package / OAuth misconfiguration, not only when the user backs out.
+  static const String errorGoogleSignInCanceledLikelyConfig =
+      'Google sign-in did not finish. If you did not cancel, open Google Cloud Console: '
+      'create an Android OAuth client with package name com.example.vestie and the SHA-1 for this build '
+      '(debug keystore for flutter run / debug APK; release keystore for store builds). '
+      'Ensure the Web application client ID matches the app serverClientId.';
 
   // Auth Flow
   static const String loginTitle         = 'Welcome Back';

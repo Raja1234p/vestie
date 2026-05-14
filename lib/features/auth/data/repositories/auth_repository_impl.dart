@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:google_sign_in/google_sign_in.dart';
+
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/utils/logger.dart';
@@ -237,34 +238,27 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, User>> loginWithGoogle() async {
     try {
+      // Google Cloud Console OAuth (Web client ID set as [GoogleSignIn] serverClientId in main.dart).
+      // No Firebase — backend verifies `idToken` via Google's tokeninfo / libraries.
       final googleUser = await GoogleSignIn.instance.authenticate();
-      
-      // In this version, authentication is a getter, not a Future
-      final googleAuth = googleUser.authentication;
-      final idToken = googleAuth.idToken;
-
-
-      if (idToken == null) {
+      await googleUser.authorizationClient
+          .authorizeScopes(['email', 'profile']);
+      final idToken = googleUser.authentication.idToken;
+      if (idToken == null || idToken.isEmpty) {
         return const Left(ServerFailure('Failed to get Google ID token'));
       }
 
-      // For the accessToken, we must now explicitly authorize scopes
-      final authClient = await googleUser.authorizationClient.authorizeScopes(['email', 'profile']);
-      final accessToken = authClient.accessToken;
-      
-      // Sign in to Firebase to keep everything in sync
-      final credential = firebase_auth.GoogleAuthProvider.credential(
-        accessToken: accessToken,
-        idToken: idToken,
-      );
-      await firebase_auth.FirebaseAuth.instance.signInWithCredential(credential);
-
-      // Call backend with the ID token
       final userModel = await _remoteDataSource.loginWithGoogle(
         idToken: idToken,
       );
 
       return Right(userModel);
+    } on GoogleSignInException catch (e, stack) {
+      AppLogger.error('Google Sign-In platform error: ${e.code}', error: e, stackTrace: stack);
+      if (e.code == GoogleSignInExceptionCode.canceled) {
+        return Left(ServerFailure(AppStrings.errorGoogleSignInCanceledLikelyConfig));
+      }
+      return Left(ServerFailure(e.description ?? e.toString()));
     } on UnauthorizedException catch (e, stack) {
       AppLogger.error('Google Sign-In Unauthorized', error: e, stackTrace: stack);
       return Left(ServerFailure(e.message, e.title));
