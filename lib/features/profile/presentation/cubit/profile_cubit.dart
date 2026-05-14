@@ -143,6 +143,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   Future<void> _clearLocalData() async {
+    await ServiceLocator.instance.authRepository.clearRiskDisclaimerLocalCache();
     await ServiceLocator.instance.secureStorage.remove(StorageKeys.accessToken);
     await ServiceLocator.instance.secureStorage.remove(StorageKeys.refreshToken);
     await ServiceLocator.instance.sharedPrefs.saveBool(StorageKeys.isLoggedIn, false);

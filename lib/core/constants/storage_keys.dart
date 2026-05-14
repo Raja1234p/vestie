@@ -13,4 +13,9 @@ class StorageKeys {
   static const String userEmail            = 'user_email';
   static const String hasSeenOnboarding    = 'has_seen_onboarding';
   static const String disclaimerAccepted   = 'disclaimer_accepted';
+
+  /// Last successful risk-disclaimer snapshot (non-sensitive; speeds cold start).
+  static const String riskDisclaimerCachedAt = 'risk_disclaimer_cached_at';
+  static const String riskDisclaimerVersion = 'risk_disclaimer_version';
+  static const String riskDisclaimerGuidelinesJson = 'risk_disclaimer_guidelines_json';
 }

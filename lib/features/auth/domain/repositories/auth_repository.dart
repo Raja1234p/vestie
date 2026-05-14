@@ -55,6 +55,9 @@ abstract class AuthRepository {
 
   Future<Either<Failure, RiskDisclaimer>> getRiskDisclaimer();
 
+  /// Clears cached disclaimer flags (call on logout / local sign-out).
+  Future<void> clearRiskDisclaimerLocalCache();
+
   Future<Either<Failure, String>> acceptRiskDisclaimer({
     required String version,
     required String ipAddress,

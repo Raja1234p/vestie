@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:dartz/dartz.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/constants/storage_keys.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
+import '../../../../core/storage/local_storage.dart';
 import '../../../../core/utils/logger.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/entities/register_result.dart';
@@ -13,8 +17,13 @@ import '../datasources/auth_remote_data_source.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource _remoteDataSource;
+  final LocalStorage _prefs;
 
-  AuthRepositoryImpl(this._remoteDataSource);
+  /// Last GET result this process when [accepted] is not yet persisted as `true`
+  /// on disk — avoids duplicate GETs (e.g. splash + agreement) in one launch.
+  RiskDisclaimer? _sessionDisclaimer;
+
+  AuthRepositoryImpl(this._remoteDataSource, this._prefs);
 
   @override
   Future<Either<Failure, User>> login({
@@ -156,6 +165,8 @@ class AuthRepositoryImpl implements AuthRepository {
     } catch (e, stack) {
       AppLogger.error('Logout Unexpected Exception', error: e, stackTrace: stack);
       return const Left(ServerFailure('An unexpected error occurred during logout'));
+    } finally {
+      await clearRiskDisclaimerLocalCache();
     }
   }
 
@@ -200,12 +211,25 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, RiskDisclaimer>> getRiskDisclaimer() async {
     try {
+      final fromDisk = await _readAcceptedDisclaimerFromDisk();
+      if (fromDisk != null) {
+        _sessionDisclaimer = fromDisk;
+        return Right(fromDisk);
+      }
+
+      if (_sessionDisclaimer != null) {
+        return Right(_sessionDisclaimer!);
+      }
+
       final model = await _remoteDataSource.getRiskDisclaimer();
-      return Right(RiskDisclaimer(
+      final entity = RiskDisclaimer(
         version: model.version,
         guidelines: model.guidelines,
         accepted: model.accepted,
-      ));
+      );
+      await _persistDisclaimerSnapshot(entity);
+      _sessionDisclaimer = entity;
+      return Right(entity);
     } on ServerException catch (e, stack) {
       AppLogger.error('Get Risk Disclaimer Server Exception', error: e, stackTrace: stack);
       return Left(ServerFailure(e.message, e.title));
@@ -213,6 +237,46 @@ class AuthRepositoryImpl implements AuthRepository {
       AppLogger.error('Get Risk Disclaimer Unexpected Exception', error: e, stackTrace: stack);
       return const Left(ServerFailure('An unexpected error occurred while checking risk disclaimer status'));
     }
+  }
+
+  @override
+  Future<void> clearRiskDisclaimerLocalCache() async {
+    _sessionDisclaimer = null;
+    await _prefs.remove(StorageKeys.disclaimerAccepted);
+    await _prefs.remove(StorageKeys.riskDisclaimerCachedAt);
+    await _prefs.remove(StorageKeys.riskDisclaimerVersion);
+    await _prefs.remove(StorageKeys.riskDisclaimerGuidelinesJson);
+  }
+
+  Future<void> _persistDisclaimerSnapshot(RiskDisclaimer d) async {
+    await _prefs.saveBool(StorageKeys.disclaimerAccepted, d.accepted);
+    await _prefs.saveString(
+      StorageKeys.riskDisclaimerCachedAt,
+      DateTime.now().toUtc().toIso8601String(),
+    );
+    await _prefs.saveString(StorageKeys.riskDisclaimerVersion, d.version);
+    await _prefs.saveString(
+      StorageKeys.riskDisclaimerGuidelinesJson,
+      jsonEncode(d.guidelines),
+    );
+  }
+
+  Future<RiskDisclaimer?> _readAcceptedDisclaimerFromDisk() async {
+    final accepted = await _prefs.getBool(StorageKeys.disclaimerAccepted);
+    if (!accepted) return null;
+
+    final version = await _prefs.getString(StorageKeys.riskDisclaimerVersion) ?? '1.0';
+    final raw = await _prefs.getString(StorageKeys.riskDisclaimerGuidelinesJson);
+    var guidelines = <String>[];
+    if (raw != null && raw.isNotEmpty) {
+      try {
+        final decoded = jsonDecode(raw);
+        if (decoded is List) {
+          guidelines = decoded.map((e) => e.toString()).toList();
+        }
+      } catch (_) {}
+    }
+    return RiskDisclaimer(version: version, guidelines: guidelines, accepted: true);
   }
 
   @override
@@ -225,6 +289,14 @@ class AuthRepositoryImpl implements AuthRepository {
         version: version,
         ipAddress: ipAddress,
       );
+      final guidelines = _sessionDisclaimer?.guidelines ?? const <String>[];
+      final accepted = RiskDisclaimer(
+        version: version,
+        guidelines: guidelines,
+        accepted: true,
+      );
+      await _persistDisclaimerSnapshot(accepted);
+      _sessionDisclaimer = accepted;
       return Right(model.message);
     } on ServerException catch (e, stack) {
       AppLogger.error('Accept Risk Disclaimer Server Exception', error: e, stackTrace: stack);

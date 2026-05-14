@@ -164,7 +164,7 @@ class ServiceLocator {
 
     // ── Auth Feature ───────────────────────────────────────────────────────
     authRemoteDataSource = AuthRemoteDataSourceImpl(dioClient);
-    authRepository = AuthRepositoryImpl(authRemoteDataSource);
+    authRepository = AuthRepositoryImpl(authRemoteDataSource, sharedPrefs);
 
     loginUseCase = LoginUseCase(authRepository);
     registerUseCase = RegisterUseCase(authRepository);
