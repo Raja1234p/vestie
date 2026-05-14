@@ -6,18 +6,12 @@ class CreateProjectRequestModel {
   final String type;
   final String visibility;
   final double targetAmount;
-  final int maxMembers;
   final String endsAtUtc;
-  final String contributionDeadlineUtc;
   final bool borrowingEnabled;
-  final double suggestedContributionAmount;
   final bool joinApprovalRequired;
-  final double roiPercentage;
+  final double? roiPercentage;
   final int repaymentWindowDays;
-  final int repaymentGraceDays;
-  final double penaltyPercentage;
-  final double minimumContributionAmount;
-  final bool contributionsAreNonRefundable;
+  final double? penaltyPercentage;
 
   const CreateProjectRequestModel({
     required this.name,
@@ -25,18 +19,12 @@ class CreateProjectRequestModel {
     required this.type,
     required this.visibility,
     required this.targetAmount,
-    required this.maxMembers,
     required this.endsAtUtc,
-    required this.contributionDeadlineUtc,
     required this.borrowingEnabled,
-    required this.suggestedContributionAmount,
     required this.joinApprovalRequired,
     required this.roiPercentage,
     required this.repaymentWindowDays,
-    required this.repaymentGraceDays,
     required this.penaltyPercentage,
-    required this.minimumContributionAmount,
-    required this.contributionsAreNonRefundable,
   });
 
   factory CreateProjectRequestModel.fromForm(CreateProjectForm form) {
@@ -58,37 +46,35 @@ class CreateProjectRequestModel {
     double parseDouble(String s) => double.tryParse(s.trim()) ?? 0.0;
     int parseInt(String s) => int.tryParse(s.trim()) ?? 0;
 
+    double? parseOptionalDouble(String s) {
+      final t = s.trim();
+      if (t.isEmpty) return null;
+      return double.tryParse(t);
+    }
+
     final investmentRoiOnly =
         form.flowType == ProjectCreationFlowType.investmentOptionalRoi;
 
-    // Backend requires fields not present in UI today. We send safe defaults
-    // until those inputs are added to the wizard.
     return CreateProjectRequestModel(
       name: form.projectName.trim(),
       description: form.description.trim(),
       type: mapType(form.category),
       visibility: mapVisibility(form.visibility),
       targetAmount: form.displayAmount,
-      maxMembers: 20,
       endsAtUtc: ends,
-      contributionDeadlineUtc: ends,
       borrowingEnabled: investmentRoiOnly ? false : form.borrowingEnabled,
-      suggestedContributionAmount: 0,
       joinApprovalRequired: form.visibility != ProjectVisibility.public,
       roiPercentage: investmentRoiOnly
-          ? parseDouble(form.roi.replaceAll('%', ''))
-          : 0.0,
+          ? parseOptionalDouble(form.roi.replaceAll('%', ''))
+          : null,
       repaymentWindowDays: investmentRoiOnly
-          ? 0
+          ? 30
           : (form.borrowingEnabled ? parseInt(form.repaymentWindow) : 0),
-      repaymentGraceDays: 0,
       penaltyPercentage: investmentRoiOnly
-          ? 0.0
+          ? null
           : (form.borrowingEnabled
               ? parseDouble(form.penalty.replaceAll('%', ''))
-              : 0.0),
-      minimumContributionAmount: 0.0,
-      contributionsAreNonRefundable: false,
+              : null),
     );
   }
 
@@ -98,18 +84,11 @@ class CreateProjectRequestModel {
         'type': type,
         'visibility': visibility,
         'targetAmount': targetAmount,
-        'maxMembers': maxMembers,
         'endsAtUtc': endsAtUtc,
-        'contributionDeadlineUtc': contributionDeadlineUtc,
         'borrowingEnabled': borrowingEnabled,
-        'suggestedContributionAmount': suggestedContributionAmount,
         'joinApprovalRequired': joinApprovalRequired,
         'roiPercentage': roiPercentage,
         'repaymentWindowDays': repaymentWindowDays,
-        'repaymentGraceDays': repaymentGraceDays,
         'penaltyPercentage': penaltyPercentage,
-        'minimumContributionAmount': minimumContributionAmount,
-        'contributionsAreNonRefundable': contributionsAreNonRefundable,
       };
 }
-
