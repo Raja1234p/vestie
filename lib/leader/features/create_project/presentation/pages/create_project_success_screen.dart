@@ -8,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/utils/app_snackbar.dart';
 import 'package:vestie/core/widgets/common/app_success_screen.dart';
@@ -16,24 +17,92 @@ import 'package:vestie/core/widgets/text/app_text.dart';
 import '../../domain/create_project_form.dart';
 import '../cubit/create_project_cubit.dart';
 
-/// Success step — uses shared [AppSuccessScreen] + invite link row.
-class CreateProjectSuccessScreen extends StatelessWidget {
-  const CreateProjectSuccessScreen({super.key});
+/// Success step — fetches invite via `POST /projects/{id}/invites`, then copy / WhatsApp.
+class CreateProjectSuccessScreen extends StatefulWidget {
+  final String projectId;
 
-  String _buildShareLink(CreateProjectForm form) {
+  const CreateProjectSuccessScreen({
+    super.key,
+    required this.projectId,
+  });
+
+  @override
+  State<CreateProjectSuccessScreen> createState() =>
+      _CreateProjectSuccessScreenState();
+}
+
+class _CreateProjectSuccessScreenState extends State<CreateProjectSuccessScreen> {
+  bool _loadingInvite = true;
+  String? _shareText;
+
+  static String _fallbackShareLink(CreateProjectForm form) {
     final slug = form.projectName
         .trim()
         .toLowerCase()
         .replaceAll(RegExp(r'[^a-z0-9 ]'), '')
         .replaceAll(' ', '-');
-    return '${AppStrings.shareBaseDomain}/$slug-${DateTime.now().year}';
+    return 'https://${AppStrings.shareBaseDomain}/$slug-${DateTime.now().year}';
+  }
+
+  static String _inviteUrlFromCode(String code) =>
+      'https://${AppStrings.shareBaseDomain}/$code';
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _fetchInvite());
+  }
+
+  Future<void> _fetchInvite() async {
+    if (!mounted) return;
+
+    if (widget.projectId.isEmpty) {
+      final form = context.read<CreateProjectCubit>().state;
+      setState(() {
+        _loadingInvite = false;
+        _shareText = _fallbackShareLink(form);
+      });
+      return;
+    }
+
+    final form = context.read<CreateProjectCubit>().state;
+    final result = await ServiceLocator.instance.createInviteUseCase(
+      projectId: widget.projectId,
+      requiresApproval: form.visibility != ProjectVisibility.public,
+      expiresInDays: 30,
+      maxUses: 25,
+    );
+
+    if (!mounted) return;
+
+    result.fold(
+      (failure) {
+        AppSnackBar.showError(context, failure.message);
+        setState(() {
+          _loadingInvite = false;
+          _shareText = _fallbackShareLink(form);
+        });
+      },
+      (inviteCode) {
+        final trimmed = inviteCode.trim();
+        setState(() {
+          _loadingInvite = false;
+          _shareText = trimmed.isEmpty
+              ? _fallbackShareLink(form)
+              : _inviteUrlFromCode(trimmed);
+        });
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CreateProjectCubit, CreateProjectForm>(
       builder: (context, form) {
-        final shareLink = _buildShareLink(form);
+        final shareLink =
+            _shareText ?? (_loadingInvite ? '' : _fallbackShareLink(form));
+        final canShare = shareLink.isNotEmpty && !_loadingInvite;
+
         return AppSuccessScreen(
           svgAssetPath: AppAssets.projectCreatedImage,
           title: AppStrings.projectCreatedTitle,
@@ -52,50 +121,74 @@ class CreateProjectSuccessScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.r),
                   border: Border.all(color: AppColors.cardBorder),
                 ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: AppText(
-                        shareLink,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              fontSize: 15.sp,
-                              color: Colors.black,
+                child: _loadingInvite
+                    ? SizedBox(
+                        height: 24.h,
+                        child: const Center(
+                          child: SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        ),
+                      )
+                    : Row(
+                        children: [
+                          Expanded(
+                            child: AppText(
+                              shareLink,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(
+                                    fontSize: 15.sp,
+                                    color: Colors.black,
+                                  ),
+                              overflow: TextOverflow.ellipsis,
                             ),
-                        overflow: TextOverflow.ellipsis,
+                          ),
+                          SizedBox(width: 8.w),
+                          GestureDetector(
+                            onTap: canShare
+                                ? () {
+                                    Clipboard.setData(
+                                        ClipboardData(text: shareLink));
+                                    AppSnackBar.showSuccess(
+                                        context, AppStrings.linkCopied);
+                                  }
+                                : null,
+                            child: AppSvgIcon(
+                              assetPath: AppAssets.iconCopy,
+                              size: 20.w,
+                              color: canShare
+                                  ? AppColors.primary
+                                  : AppColors.grey500,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    SizedBox(width: 8.w),
-                    GestureDetector(
-                      onTap: () {
-                        Clipboard.setData(ClipboardData(text: shareLink));
-                        AppSnackBar.showSuccess(
-                            context, AppStrings.linkCopied);
-                      },
-                      child: AppSvgIcon(
-                          assetPath: AppAssets.iconCopy,
-                          size: 20.w,
-                          color: AppColors.primary),
-                    ),
-                  ],
-                ),
               ),
             ],
           ),
           bottomContent: GestureDetector(
-            onTap: () async {
-              final msg = '${AppStrings.shareWhatsappPrefix}$shareLink';
-              final uri =
-                  Uri.parse('https://wa.me/?text=${Uri.encodeComponent(msg)}');
-              if (await canLaunchUrl(uri)) {
-                await launchUrl(uri, mode: LaunchMode.externalApplication);
-              }
-            },
+            onTap: canShare
+                ? () async {
+                    final msg = AppStrings.shareWhatsappMessage(shareLink);
+                    final uri = Uri.parse(
+                      'https://wa.me/?text=${Uri.encodeComponent(msg)}',
+                    );
+                    if (await canLaunchUrl(uri)) {
+                      await launchUrl(uri,
+                          mode: LaunchMode.externalApplication);
+                    }
+                  }
+                : null,
             child: AppText(
               AppStrings.shareViaWhatsapp,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     fontSize: 17.sp,
                     fontWeight: FontWeight.w800,
-                    color: Colors.black,
+                    color: canShare ? Colors.black : AppColors.grey500,
                   ),
             ),
           ),

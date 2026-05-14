@@ -246,7 +246,11 @@ List<RouteBase> buildCoreRoutes() {
 
       path: AppRoutes.createProjectSuccess,
 
-      builder: (context, _) => const CreateProjectSuccessScreen(),
+      builder: (context, state) {
+        final projectId =
+            state.extra is String ? state.extra! as String : '';
+        return CreateProjectSuccessScreen(projectId: projectId);
+      },
 
     ),
 

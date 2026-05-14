@@ -6,7 +6,10 @@ import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/utils/app_snackbar.dart';
+import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_shimmer.dart';
+import 'package:vestie/core/widgets/text/app_text.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../home/domain/entities/project.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart';
 import 'package:vestie/leader/features/create_project/presentation/widgets/create_project_amount_sheet.dart';
@@ -72,7 +75,43 @@ class _HomeBody extends StatelessWidget {
           return Scaffold(
             backgroundColor: Colors.transparent,
             body: HomeGradientBackground(
-              child: Center(child: Text(state.message)),
+              child: CustomScrollView(
+                physics: const NeverScrollableScrollPhysics(),
+                slivers: [
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: SafeArea(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 28.w),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            AppText(
+                              state.message,
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.lato(
+                                fontSize: 15.sp,
+                                height: 1.45,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.textBody,
+                              ),
+                            ),
+                            SizedBox(height: 20.h),
+                            AppButton(
+                              text: AppStrings.btnRetry,
+                              width: 280.w,
+                              onPressed: () => context
+                                  .read<HomeBloc>()
+                                  .add(const HomeFetchStarted()),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
         }

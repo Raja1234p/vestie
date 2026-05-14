@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/constants/storage_keys.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/error/failures.dart';
@@ -53,7 +54,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final mine = mineResult.fold((_) => null, (List<Project> v) => v);
     if (mine == null) {
       final failure = mineResult.fold((f) => f, (_) => null);
-      emit(HomeError(message: failure?.message ?? 'Failed to load projects'));
+      emit(HomeError(
+        message: failure == null
+            ? 'Failed to load projects'
+            : _userFacingFailureMessage(failure),
+      ));
       return;
     }
 
@@ -69,5 +74,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       myProjects: myProjects,
       joinedProjects: joinedProjects,
     ));
+  }
+
+  String _userFacingFailureMessage(Failure failure) {
+    if (failure is NetworkFailure || failure is TimeoutFailure) {
+      return AppStrings.errorNetwork;
+    }
+    return failure.message;
   }
 }

@@ -28,10 +28,14 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
         description: m.description,
         endsIn: m.endsAtUtc.toIso8601String(),
       )).toList());
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message, e.title));
+    } on UnauthorizedException catch (e) {
+      return Left(UnauthorizedFailure(e.message, e.title));
     } on Failure catch (f) {
       return Left(f);
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
+    } catch (_) {
+      return const Left(ServerFailure('Failed to load projects'));
     }
   }
 

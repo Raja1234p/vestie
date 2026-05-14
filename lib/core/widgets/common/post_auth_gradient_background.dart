@@ -26,7 +26,7 @@ class PostAuthGradientBackground extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-        child,
+        Positioned.fill(child: child),
       ],
     );
   }

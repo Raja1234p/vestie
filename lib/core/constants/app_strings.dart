@@ -532,7 +532,18 @@ class AppStrings {
   static const String btnGoToMyProject       = 'Go to my Project';
   static const String linkCopied             = 'Link copied!';
   static const String shareBaseDomain        = 'vestie.app/join';
-  static const String shareWhatsappPrefix    = 'Join my project: https://';
+  /// Text before the invite URL in WhatsApp (URL may already include `https://`).
+  static const String shareWhatsappPrefix    = 'Join my project: ';
+
+  /// Full message for `wa.me` — avoids `https://https://` when [link] already has a scheme.
+  static String shareWhatsappMessage(String link) {
+    final t = link.trim();
+    if (t.isEmpty) return shareWhatsappPrefix.trimRight();
+    final normalized = t.startsWith('http://') || t.startsWith('https://')
+        ? t
+        : 'https://$t';
+    return '$shareWhatsappPrefix$normalized';
+  }
 
   // ── Review screen row labels ──────────────────────────────────────────────
   static const String reviewLabelName        = 'Name';

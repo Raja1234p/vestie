@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/utils/app_snackbar.dart';
 
+import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_shimmer.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
@@ -212,6 +213,7 @@ class _DiscoverBody extends StatelessWidget {
           builder: (context, state) {
             final hasProjects = state.allProjects.isNotEmpty;
             final filteredEmpty = state.filtered.isEmpty;
+            final loadFailed = state.errorMessage != null;
 
             return CustomScrollView(
               slivers: [
@@ -226,6 +228,38 @@ class _DiscoverBody extends StatelessWidget {
                       delegate: SliverChildBuilderDelegate(
                         (context, index) => const ProjectCardShimmer(),
                         childCount: 3,
+                      ),
+                    ),
+                  )
+                else if (loadFailed)
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: SafeArea(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 28.w),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            AppText(
+                              state.errorMessage!,
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.lato(
+                                fontSize: 15.sp,
+                                height: 1.45,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.textBody,
+                              ),
+                            ),
+                            SizedBox(height: 20.h),
+                            AppButton(
+                              text: AppStrings.btnRetry,
+                              width: 280.w,
+                              onPressed: () =>
+                                  context.read<DiscoverCubit>().retry(),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   )

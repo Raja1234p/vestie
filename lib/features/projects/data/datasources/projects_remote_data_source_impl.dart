@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 
 import '../../../../core/constants/api_constants.dart';
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/utils/logger.dart';
@@ -14,7 +15,27 @@ class ProjectsRemoteDataSourceImpl implements ProjectsRemoteDataSource {
 
   ProjectsRemoteDataSourceImpl(this._client);
 
+  bool _isConnectivityIssue(DioException e) {
+    switch (e.type) {
+      case DioExceptionType.connectionError:
+      case DioExceptionType.connectionTimeout:
+      case DioExceptionType.sendTimeout:
+      case DioExceptionType.receiveTimeout:
+      case DioExceptionType.badCertificate:
+        return true;
+      case DioExceptionType.unknown:
+        return e.response == null;
+      case DioExceptionType.badResponse:
+      case DioExceptionType.cancel:
+        return false;
+    }
+  }
+
   Never _handleError(DioException e, String defaultMessage) {
+    if (_isConnectivityIssue(e)) {
+      throw ServerException(AppStrings.errorNetwork);
+    }
+
     String message = defaultMessage;
     String? title;
 

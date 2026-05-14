@@ -41,7 +41,7 @@ class HomeGradientBackground extends StatelessWidget {
             ),
           ),
         ),
-        child,
+        Positioned.fill(child: child),
       ],
     );
   }

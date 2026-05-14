@@ -40,7 +40,10 @@ class CreateProjectReviewScreen extends StatelessWidget {
               if (state.createdProject != null &&
                   state.createdProject!.id.isNotEmpty) {
                 if (!context.mounted) return;
-                context.push(AppRoutes.createProjectSuccess);
+                context.push(
+                  AppRoutes.createProjectSuccess,
+                  extra: state.createdProject!.id,
+                );
                 return;
               }
               final err = state.error;

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
+import 'package:vestie/core/error/failures.dart';
 import '../../../home/domain/entities/project.dart';
 import 'package:vestie/features/projects/domain/usecases/list_projects_use_case.dart';
 
@@ -12,6 +13,7 @@ class DiscoverState extends Equatable {
   final String selectedFilter;
   final String searchQuery;
   final bool loading;
+  final String? errorMessage;
 
   const DiscoverState({
     this.allProjects = const [],
@@ -19,6 +21,7 @@ class DiscoverState extends Equatable {
     this.selectedFilter = AppStrings.filterAll,
     this.searchQuery = '',
     this.loading = false,
+    this.errorMessage,
   });
 
   DiscoverState copyWith({
@@ -27,6 +30,8 @@ class DiscoverState extends Equatable {
     String? selectedFilter,
     String? searchQuery,
     bool? loading,
+    String? errorMessage,
+    bool clearErrorMessage = false,
   }) {
     return DiscoverState(
       allProjects: allProjects ?? this.allProjects,
@@ -34,12 +39,14 @@ class DiscoverState extends Equatable {
       selectedFilter: selectedFilter ?? this.selectedFilter,
       searchQuery: searchQuery ?? this.searchQuery,
       loading: loading ?? this.loading,
+      errorMessage:
+          clearErrorMessage ? null : (errorMessage ?? this.errorMessage),
     );
   }
 
   @override
-  List<Object> get props =>
-      [allProjects, filtered, selectedFilter, searchQuery, loading];
+  List<Object?> get props =>
+      [allProjects, filtered, selectedFilter, searchQuery, loading, errorMessage];
 }
 
 class DiscoverCubit extends Cubit<DiscoverState> {
@@ -59,19 +66,35 @@ class DiscoverCubit extends Cubit<DiscoverState> {
   }
 
   Future<void> _load() async {
-    emit(state.copyWith(loading: true));
+    emit(state.copyWith(loading: true, clearErrorMessage: true));
     final result = await _listProjectsUseCase(scope: 'discover');
     result.fold(
-      (failure) => emit(state.copyWith(loading: false, allProjects: const [], filtered: const [])),
+      (failure) => emit(state.copyWith(
+        loading: false,
+        allProjects: const [],
+        filtered: const [],
+        errorMessage: _userFacingFailureMessage(failure),
+      )),
       (projects) => emit(state.copyWith(
         loading: false,
         allProjects: projects,
         filtered: projects,
+        clearErrorMessage: true,
       )),
     );
   }
 
+  String _userFacingFailureMessage(Failure failure) {
+    if (failure is NetworkFailure || failure is TimeoutFailure) {
+      return AppStrings.errorNetwork;
+    }
+    return failure.message;
+  }
+
   Future<void> refresh() => _load();
+
+  /// Retries after a failed load (same as [refresh]).
+  Future<void> retry() => _load();
 
   void selectFilter(String filter) {
     final projects = state.allProjects;

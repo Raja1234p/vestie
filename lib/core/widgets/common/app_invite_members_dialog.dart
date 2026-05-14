@@ -40,7 +40,7 @@ class AppInviteMembersDialog extends StatelessWidget {
   }
 
   Future<void> _shareWhatsapp(BuildContext context) async {
-    final msg = '${AppStrings.shareWhatsappPrefix}$inviteLink';
+    final msg = AppStrings.shareWhatsappMessage(inviteLink);
     final uri = Uri.parse(
       'https://wa.me/?text=${Uri.encodeComponent(msg)}',
     );
