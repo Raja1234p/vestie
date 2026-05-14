@@ -7,9 +7,10 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import 'package:vestie/core/utils/app_snackbar.dart';
+import 'package:vestie/core/utils/whatsapp_launch.dart';
 import 'package:vestie/core/widgets/common/app_avatar_circle.dart';
+import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 
 import '../models/user_investment_ui_snapshot.dart';
@@ -125,13 +126,14 @@ Future<void> showUserProjectMembersModal(
                         assetPath: AppAssets.iconChat,
                         label: 'WA',
                         onTap: () async {
-                          final uri = Uri.parse(
-                            'https://wa.me/?text=${Uri.encodeComponent('${snapshot.projectName} — ${snapshot.inviteShareLink}')}',
+                          final text =
+                              '${snapshot.projectName} — ${snapshot.inviteShareLink}';
+                          final ok = await launchWhatsAppShareText(text);
+                          if (!sheetContext.mounted || ok) return;
+                          AppSnackBar.showError(
+                            sheetContext,
+                            AppStrings.errorGeneric,
                           );
-                          if (await canLaunchUrl(uri)) {
-                            await launchUrl(uri,
-                                mode: LaunchMode.externalApplication);
-                          }
                         },
                       ),
                       _ShareCircle(
@@ -156,10 +158,12 @@ Future<void> showUserProjectMembersModal(
                           final uri = Uri.parse(
                             'https://www.facebook.com/sharer/sharer.php?u=${Uri.encodeComponent(snapshot.inviteShareLink)}',
                           );
-                          if (await canLaunchUrl(uri)) {
-                            await launchUrl(uri,
-                                mode: LaunchMode.externalApplication);
-                          }
+                          try {
+                            await launchUrl(
+                              uri,
+                              mode: LaunchMode.externalApplication,
+                            );
+                          } catch (_) {}
                         },
                       ),
                       _ShareCircle(

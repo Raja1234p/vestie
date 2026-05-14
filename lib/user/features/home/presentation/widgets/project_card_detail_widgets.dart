@@ -6,6 +6,7 @@ import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_svg_icon.dart';
+import 'package:vestie/core/utils/project_end_relative_label.dart';
 import '../../domain/entities/project.dart';
 import 'project_card_formatters.dart';
 
@@ -77,31 +78,53 @@ class ProjectProgressBar extends StatelessWidget {
 }
 
 class ProjectDateRow extends StatelessWidget {
-  final String endsIn;
+  final String endsInRaw;
 
-  const ProjectDateRow({super.key, required this.endsIn});
+  const ProjectDateRow({super.key, required this.endsInRaw});
 
   @override
   Widget build(BuildContext context) {
+    final emphasis = ProjectEndRelativeLabel.emphasis(endsInRaw);
+    if (emphasis.isEmpty) return const SizedBox.shrink();
+
+    final full = ProjectEndRelativeLabel.isFullSentence(endsInRaw);
+
+    const endsInColor = AppColors.grey800; // #5E5783
+    const durationColor = Color(0xFF000000);
+    final labelStyle = GoogleFonts.lato(
+      fontSize: 16.sp,
+      fontWeight: FontWeight.w500,
+      color: endsInColor,
+      height: 1.2,
+    );
+    final durationStyle = GoogleFonts.lato(
+      fontSize: 16.sp,
+      fontWeight: FontWeight.w600,
+      color: durationColor,
+      height: 1.2,
+    );
+
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         AppSvgIcon(
-            assetPath: AppAssets.iconSchedule,
-            size: 12.w,
-            color: AppColors.textBody),
-        SizedBox(width: 4.w),
-        Text(
-          '${AppStrings.labelEndsIn} ',
-          style: GoogleFonts.lato(fontSize: 13.sp, color: AppColors.textBody),
+          assetPath: AppAssets.iconCalendar02,
+          size: 12,
+          color: endsInColor,
         ),
-        Text(
-          endsIn,
-          style: GoogleFonts.lato(
-            fontSize: 13.sp,
-            color: AppColors.textBody,
-            fontWeight: FontWeight.w800,
+        SizedBox(width: 6.w),
+        if (full)
+          Text(emphasis, style: durationStyle)
+        else
+          Text.rich(
+            TextSpan(
+              style: labelStyle,
+              children: [
+                TextSpan(text: '${AppStrings.labelEndsIn} '),
+                TextSpan(text: emphasis, style: durationStyle),
+              ],
+            ),
           ),
-        ),
       ],
     );
   }

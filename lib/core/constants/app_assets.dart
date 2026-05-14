@@ -124,6 +124,8 @@ class AppAssets {
   static const String iconPasswordHiddenEye = '$_iconPath/password_eye_hidden.png';
   static const String iconBackspace = '$_iconPath/icon_backspace.svg';
   static const String iconCalendar = '$_iconPath/icon_calendar.svg';
+  /// Project card “Ends in” row — `calendar-02` (12×12 in UI).
+  static const String iconCalendar02 = '$_iconPath/calendar_02.svg';
   static const String iconSchedule = '$_iconPath/icon_schedule.svg';
   static const String iconGroups = '$_iconPath/icon_groups.svg';
   static const String iconShield = '$_iconPath/icon_shield.svg';

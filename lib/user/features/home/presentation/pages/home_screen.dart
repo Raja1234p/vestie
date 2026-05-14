@@ -20,9 +20,10 @@ import '../cubit/home_sections_cubit.dart';
 import '../widgets/home_empty_view.dart';
 import '../widgets/home_gradient_background.dart';
 import '../widgets/home_header.dart';
+import 'package:vestie/features/dashboard/domain/pending_dashboard_refresh.dart';
 import '../widgets/projects_section.dart';
 
-/// Shell — provides HomeBloc + HomeSectionsCubit. Stateless.
+/// Shell — provides HomeBloc + HomeSectionsCubit.
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -31,7 +32,16 @@ class HomeScreen extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-            create: (_) => HomeBloc()..add(const HomeFetchStarted())),
+          create: (_) {
+            final bloc = HomeBloc();
+            if (PendingDashboardRefresh.consumeHomeProjectList()) {
+              bloc.add(const HomeRefreshRequested());
+            } else {
+              bloc.add(const HomeFetchStarted());
+            }
+            return bloc;
+          },
+        ),
         BlocProvider(create: (_) => HomeSectionsCubit()),
       ],
       child: const _HomeBody(),

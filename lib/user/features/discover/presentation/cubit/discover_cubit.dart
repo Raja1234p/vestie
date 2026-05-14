@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/error/failures.dart';
+import 'package:vestie/features/dashboard/domain/pending_dashboard_refresh.dart';
 import '../../../home/domain/entities/project.dart';
 import 'package:vestie/features/projects/domain/usecases/list_projects_use_case.dart';
 
@@ -60,6 +61,9 @@ class DiscoverCubit extends Cubit<DiscoverState> {
   bool _loadStarted = false;
 
   void loadIfNeeded() {
+    if (PendingDashboardRefresh.consumeDiscoverProjectList()) {
+      _loadStarted = false;
+    }
     if (_loadStarted) return;
     _loadStarted = true;
     _load();

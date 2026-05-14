@@ -45,6 +45,7 @@ dependencies:
   flutter_bloc: ^9.1.1
   image_picker: ^1.2.1
   url_launcher: ^6.3.2
+  share_plus: ^10.1.4
   flutter_secure_storage: ^10.0.0
   shared_preferences: ^2.5.5
   dartz: ^0.10.1

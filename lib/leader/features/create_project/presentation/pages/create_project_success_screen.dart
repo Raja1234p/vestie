@@ -3,9 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
-
 import 'package:vestie/app/router/app_routes.dart';
+import 'package:vestie/core/utils/whatsapp_launch.dart';
+import 'package:vestie/features/dashboard/domain/pending_dashboard_refresh.dart';
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
@@ -109,6 +109,8 @@ class _CreateProjectSuccessScreenState extends State<CreateProjectSuccessScreen>
           buttonText: AppStrings.btnGoToMyProject,
           onButtonPressed: () {
             context.read<CreateProjectCubit>().reset();
+            PendingDashboardRefresh.markHomeProjectList();
+            PendingDashboardRefresh.markDiscoverProjectList();
             context.go(AppRoutes.dashboard);
           },
           customContent: Column(
@@ -173,14 +175,11 @@ class _CreateProjectSuccessScreenState extends State<CreateProjectSuccessScreen>
           bottomContent: GestureDetector(
             onTap: canShare
                 ? () async {
+                    final ctx = context;
                     final msg = AppStrings.shareWhatsappMessage(shareLink);
-                    final uri = Uri.parse(
-                      'https://wa.me/?text=${Uri.encodeComponent(msg)}',
-                    );
-                    if (await canLaunchUrl(uri)) {
-                      await launchUrl(uri,
-                          mode: LaunchMode.externalApplication);
-                    }
+                    final ok = await launchWhatsAppShareText(msg);
+                    if (!ctx.mounted || ok) return;
+                    AppSnackBar.showError(ctx, AppStrings.errorGeneric);
                   }
                 : null,
             child: AppText(

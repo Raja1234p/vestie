@@ -154,6 +154,28 @@ class AppStrings {
   static const String labelRaised       = 'Raised';
   static const String labelTotal        = 'Total';
   static const String labelEndsIn       = 'Ends in';
+  static const String projectEndEnded   = 'Ended';
+  static const String projectEndToday   = 'Ends today';
+  static const String projectEndLessThanOneDay = 'Less than a day';
+  static const String projectEndOneDay  = '1 day';
+  static const String projectEndOneMonth = '1 month';
+
+  static String projectEndMonthsOnly(int months) =>
+      months == 1 ? projectEndOneMonth : '$months months';
+
+  static String projectEndDaysOnly(int days) =>
+      days == 1 ? projectEndOneDay : '$days days';
+
+  static const String projectEndOneMonthOneDay = '1 month, 1 day';
+
+  static String projectEndOneMonthDays(int days) => '1 month, ${projectEndDaysOnly(days)}';
+
+  static String projectEndMonthsOneDay(int months) =>
+      '${projectEndMonthsOnly(months)}, 1 day';
+
+  static String projectEndMonthsDays(int months, int days) =>
+      '${projectEndMonthsOnly(months)}, ${projectEndDaysOnly(days)}';
+
   static const String statusOnGoing     = 'On Going';
   static const String statusCompleted   = 'Completed';
 

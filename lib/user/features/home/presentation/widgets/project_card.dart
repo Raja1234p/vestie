@@ -82,7 +82,7 @@ class ProjectCard extends StatelessWidget {
               SizedBox(height: 6.h),
               ProjectProgressBar(progress: project.progress),
               SizedBox(height: 6.h),
-              ProjectDateRow(endsIn: project.endsIn ?? ''),
+              ProjectDateRow(endsInRaw: project.endsIn ?? ''),
             ],
           ] else ...[
             // Completed — project name + raised/total amount

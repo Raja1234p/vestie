@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:url_launcher/url_launcher.dart';
-
 import '../../constants/app_assets.dart';
+import '../../utils/whatsapp_launch.dart';
 import '../../constants/app_strings.dart';
 import '../../theme/app_colors.dart';
 import '../../utils/app_snackbar.dart';
@@ -41,14 +40,8 @@ class AppInviteMembersDialog extends StatelessWidget {
 
   Future<void> _shareWhatsapp(BuildContext context) async {
     final msg = AppStrings.shareWhatsappMessage(inviteLink);
-    final uri = Uri.parse(
-      'https://wa.me/?text=${Uri.encodeComponent(msg)}',
-    );
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-      return;
-    }
-    if (context.mounted) {
+    final ok = await launchWhatsAppShareText(msg);
+    if (!ok && context.mounted) {
       AppSnackBar.showError(context, AppStrings.errorGeneric);
     }
   }
