@@ -19,13 +19,49 @@ import '../cubit/profile_cubit.dart';
 import '../widgets/profile_logout_button.dart';
 import '../widgets/settings_section.dart';
 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+class ProfileScreen extends StatefulWidget {
+  final bool activate;
+
+  const ProfileScreen({super.key, required this.activate});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  late final ProfileCubit _cubit = ProfileCubit();
+
+  @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.activate) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _cubit.ensureTabVisible();
+      });
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant ProfileScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.activate && !oldWidget.activate) {
+      _cubit.ensureTabVisible();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => ProfileCubit(),
+    if (!widget.activate) {
+      return const SizedBox.shrink();
+    }
+    return BlocProvider.value(
+      value: _cubit,
       child: BlocListener<ProfileCubit, ProfileState>(
         listener: (context, state) {
           if (state.isLogoutSuccess) {

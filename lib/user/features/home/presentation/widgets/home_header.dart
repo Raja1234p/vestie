@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:vestie/app/router/app_routes.dart';
-import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/core/widgets/common/app_svg_icon.dart';
+import 'package:vestie/core/widgets/common/notification_favourite_header_actions.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 
@@ -29,37 +25,9 @@ class HomeHeader extends StatelessWidget {
           titleStyle: GoogleFonts.lato(
             fontSize: 16.sp,
             fontWeight: FontWeight.w400,
-            color: AppColors.textPrimary,
+            color: Colors.black,
           ),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              GestureDetector(
-                onTap: () => context.push(AppRoutes.notifications),
-                child: Padding(
-                  padding: EdgeInsets.all(4.w),
-                  child: SvgPicture.asset(
-                    AppAssets.iconNotification,
-                    width: 24.w,
-                    height: 24.w,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ),
-              SizedBox(width: 4.w),
-              GestureDetector(
-                onTap: () => context.push(AppRoutes.userVffMain),
-                child: Padding(
-                  padding: EdgeInsets.all(4.w),
-                  child: AppSvgIcon(
-                    assetPath: AppAssets.iconHeart,
-                    size: 26.r,
-                    color: AppColors.primaryDark,
-                  ),
-                ),
-              ),
-            ],
-          ),
+          trailing: const NotificationFavouriteHeaderActions(),
         ),  
         Padding(
           padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 24.h),

@@ -14,10 +14,17 @@ class AppAssets {
   /// Risk / agreement screen hero (`agreement_icon.svg` — triangle + “i” on soft circle).
   static const String agreementIcon = '$_imagePath/agreement_icon.svg';
 
-  // Home empty-state illustration
-  static const String homeEmptyState       = '$_imagePath/dashboard_empty_state_image.svg';
-  /// Discover tab when there are no public projects (same illustration as home empty).
-  static const String discoverEmptyIllustration = homeEmptyState;
+  /// Home + Discover empty state — full-screen purple→white gradient background.
+  static const String emptyStateBackground =
+      '$_imagePath/empty_state_background.png';
+  /// Home + Discover empty state — 3D target / dart (PNG).
+  static const String homeDiscoverEmptyState =
+      '$_imagePath/home_discover_empty_state.png';
+  /// Legacy SVG empty illustration (unused in UI; kept for reference).
+  static const String dashboardEmptyStateSvg =
+      '$_imagePath/dashboard_empty_state_image.svg';
+  static const String homeEmptyState = homeDiscoverEmptyState;
+  static const String discoverEmptyIllustration = homeDiscoverEmptyState;
   static const String emptyNotification    = '$_imagePath/emptynotification.png';
 
   // Project created success illustration (PNG — reliable rendering across devices).
@@ -41,6 +48,8 @@ class AppAssets {
 
   // Header / system
   static const String iconNotification = '$_iconPath/notification-01.svg';
+  /// Home / Discover header — favourite (VFF hub), design `favourite.svg`.
+  static const String iconFavourite = '$_iconPath/favourite.svg';
   /// List row graphic (notification item, design export “Frame 258”).
   static const String notificationRowIcon = '$_iconPath/Frame 258.png';
 
@@ -103,6 +112,7 @@ class AppAssets {
   static const String iconClose = '$_iconPath/icon_close.svg';
   /// Create project amount sheet — dismiss (design `cross-icon.svg`).
   static const String iconCreateProjectSheetClose = '$_iconPath/cross_icon.svg';
+  /// Generic heart glyph (lists, empty states); headers use [iconFavourite].
   static const String iconHeart = '$_iconPath/icon_heart.svg';
   static const String iconChevronDown = '$_iconPath/icon_chevron_down.svg';
   static const String iconCopy = '$_iconPath/icon_copy.svg';

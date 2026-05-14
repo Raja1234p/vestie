@@ -144,48 +144,6 @@ class ProjectDetailShimmer extends StatelessWidget {
   }
 }
 
-/// A high-fidelity premium Home Screen skeleton shimmer.
-class HomeShimmer extends StatelessWidget {
-  const HomeShimmer({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return AppShimmer(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AppShimmer.box(width: 120, height: 16, borderRadius: 4),
-                    const SizedBox(height: 8),
-                    AppShimmer.box(width: 180, height: 28, borderRadius: 4),
-                  ],
-                ),
-                AppShimmer.box(width: 40, height: 40, borderRadius: 20),
-              ],
-            ),
-            const SizedBox(height: 32),
-            AppShimmer.box(width: 130, height: 20, borderRadius: 4),
-            const SizedBox(height: 16),
-            const ProjectCardShimmer(),
-            const SizedBox(height: 16),
-            AppShimmer.box(width: 130, height: 20, borderRadius: 4),
-            const SizedBox(height: 16),
-            const ProjectCardShimmer(),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 /// A premium user profile header skeleton shimmer.
 class ProfileHeaderShimmer extends StatelessWidget {
   const ProfileHeaderShimmer({super.key});

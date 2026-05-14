@@ -10,7 +10,6 @@ import 'package:vestie/core/widgets/common/app_shimmer.dart';
 import '../../../home/domain/entities/project.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart';
 import 'package:vestie/leader/features/create_project/presentation/widgets/create_project_amount_sheet.dart';
-import 'package:vestie/user/features/create_project_member_fund/presentation/widgets/create_project_member_walkthrough_sheet.dart';
 import '../bloc/home_bloc.dart';
 import '../bloc/home_event.dart';
 import '../bloc/home_state.dart';
@@ -45,10 +44,26 @@ class _HomeBody extends StatelessWidget {
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (context, state) {
         if (state is HomeLoading || state is HomeInitial) {
-          return const Scaffold(
+          return Scaffold(
             backgroundColor: Colors.transparent,
             body: HomeGradientBackground(
-              child: HomeShimmer(),
+              child: CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: HomeHeader(totalContributed: 0),
+                  ),
+                  SliverPadding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) => const ProjectCardShimmer(),
+                        childCount: 3,
+                      ),
+                    ),
+                  ),
+                  SliverToBoxAdapter(child: SizedBox(height: 16.h)),
+                ],
+              ),
             ),
           );
         }
@@ -67,10 +82,8 @@ class _HomeBody extends StatelessWidget {
               state.myProjects.isEmpty && state.joinedProjects.isEmpty;
 
           if (isEmpty) {
-            return HomeEmptyView(
+            return HomeEmptyView.forHome(
               onCreateProject: () => showCreateProjectAmountSheet(context),
-              onMemberFundWalkthrough: () =>
-                  showCreateProjectMemberWalkthroughSheet(context),
             );
           }
 

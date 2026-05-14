@@ -19,26 +19,61 @@ import 'package:vestie/features/project_detail/presentation/navigation/open_proj
 import 'package:vestie/user/features/create_project_member_fund/presentation/widgets/create_project_member_walkthrough_sheet.dart';
 import 'package:vestie/user/features/investment/presentation/models/user_investment_ui_snapshot.dart';
 import '../cubit/discover_cubit.dart';
-import '../widgets/discover_empty_view.dart';
+import 'package:vestie/user/features/home/presentation/widgets/home_empty_view.dart';
 import '../widgets/discover_filter_row.dart';
 import '../widgets/discover_header.dart';
 import '../widgets/discover_search_bar.dart';
 
-/// Shell — provides DiscoverCubit. Stateless.
-class DiscoverScreen extends StatelessWidget {
-  const DiscoverScreen({super.key});
+/// Discover tab. [activate] true when selected — loads API only then (see [DashboardScreen]).
+class DiscoverScreen extends StatefulWidget {
+  final bool activate;
+
+  const DiscoverScreen({super.key, required this.activate});
+
+  @override
+  State<DiscoverScreen> createState() => _DiscoverScreenState();
+}
+
+class _DiscoverScreenState extends State<DiscoverScreen> {
+  late final DiscoverCubit _cubit = DiscoverCubit();
+
+  @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.activate) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _cubit.loadIfNeeded();
+      });
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant DiscoverScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.activate && !oldWidget.activate) {
+      _cubit.loadIfNeeded();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => DiscoverCubit(),
-      child: const _DiscoverBody(),
+    return BlocProvider.value(
+      value: _cubit,
+      child: _DiscoverBody(visible: widget.activate),
     );
   }
 }
 
 class _DiscoverBody extends StatelessWidget {
-  const _DiscoverBody();
+  final bool visible;
+
+  const _DiscoverBody({required this.visible});
 
   Future<void> _handleJoinAction(BuildContext context, Project p) async {
     final inviteCode = await _askInviteCode(context);
@@ -167,6 +202,9 @@ class _DiscoverBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!visible) {
+      return const SizedBox.shrink();
+    }
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: PostAuthGradientBackground(
@@ -177,7 +215,9 @@ class _DiscoverBody extends StatelessWidget {
 
             return CustomScrollView(
               slivers: [
-                const SliverToBoxAdapter(child: DiscoverHeader()),
+                // No [DiscoverHeader] when there are zero projects — full-screen empty state only.
+                if (state.loading || hasProjects)
+                  const SliverToBoxAdapter(child: DiscoverHeader()),
 
                 if (state.loading)
                   SliverPadding(
@@ -192,7 +232,7 @@ class _DiscoverBody extends StatelessWidget {
                 else if (!hasProjects)
                   SliverFillRemaining(
                     hasScrollBody: false,
-                    child: const DiscoverEmptyView(),
+                    child: HomeEmptyView.forDiscover(),
                   )
                 else ...[
                   SliverPadding(

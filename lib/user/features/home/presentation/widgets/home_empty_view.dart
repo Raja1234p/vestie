@@ -1,135 +1,132 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
-import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
-import 'package:vestie/core/widgets/common/app_svg_icon.dart';
+import 'package:vestie/core/widgets/common/notification_favourite_header_actions.dart';
 
-/// Full-screen empty state shown when the user has no projects yet.
+/// Full-screen empty state (Home or Discover): gradient background, optional CTA.
+///
+/// **Discover:** On empty Discover, the parent omits [DiscoverHeader]; this view
+/// includes notification + favourite and normal top [SafeArea] like Home.
 class HomeEmptyView extends StatelessWidget {
-  final VoidCallback onCreateProject;
-  final VoidCallback? onMemberFundWalkthrough;
-
   const HomeEmptyView({
     super.key,
-    required this.onCreateProject,
-    this.onMemberFundWalkthrough,
-  });
+    required this.title,
+    required this.subtitle,
+    this.showCreateProjectButton = false,
+    this.onCreateProject,
+    this.showNotificationFavouriteRow = true,
+    this.applyTopSafeArea = true,
+  }) : assert(
+          !showCreateProjectButton || onCreateProject != null,
+          'onCreateProject is required when showCreateProjectButton is true',
+        );
+
+  /// Home tab — default copy + Create project.
+  factory HomeEmptyView.forHome({Key? key, required VoidCallback onCreateProject}) {
+    return HomeEmptyView(
+      key: key,
+      title: AppStrings.homeEmptyTitle,
+      subtitle: AppStrings.homeEmptySubtitle,
+      showCreateProjectButton: true,
+      onCreateProject: onCreateProject,
+      showNotificationFavouriteRow: true,
+      applyTopSafeArea: true,
+    );
+  }
+
+  /// Discover tab — discover copy, no CTA (parent hides [DiscoverHeader] when empty).
+  factory HomeEmptyView.forDiscover({Key? key}) {
+    return HomeEmptyView(
+      key: key,
+      title: AppStrings.discoverEmptyTitle,
+      subtitle: AppStrings.discoverEmptySubtitle,
+      showCreateProjectButton: false,
+      showNotificationFavouriteRow: true,
+      applyTopSafeArea: true,
+    );
+  }
+
+  final String title;
+  final String subtitle;
+  final bool showCreateProjectButton;
+  final VoidCallback? onCreateProject;
+  /// When true, shows notification + favourite (required when Discover hides [DiscoverHeader]).
+  final bool showNotificationFavouriteRow;
+  /// Top [SafeArea] inset (use true when this view is the top of the screen).
+  final bool applyTopSafeArea;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: const BoxDecoration(
-        gradient: AppColors.appBackgroundGradient,
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(AppAssets.emptyStateBackground),
+          fit: BoxFit.cover,
+        ),
       ),
       child: SafeArea(
+        top: applyTopSafeArea,
         child: Column(
           children: [
-            // Notifications + VFF hub (storyboard: heart to the right of bell)
-            Padding(
-              padding: EdgeInsets.only(top: 8.h, right: 20.w),
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    GestureDetector(
-                      onTap: () => context.push(AppRoutes.notifications),
-                      child: Padding(
-                        padding: EdgeInsets.all(4.w),
-                        child: SvgPicture.asset(
-                          AppAssets.iconNotification,
-                          width: 24.w,
-                          height: 24.w,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 8.w),
-                    GestureDetector(
-                      onTap: () => context.push(AppRoutes.userVffMain),
-                      child: Padding(
-                        padding: EdgeInsets.all(4.w),
-                        child: AppSvgIcon(
-                          assetPath: AppAssets.iconHeart,
-                          size: 26.r,
-                          color: AppColors.primaryDark,
-                        ),
-                      ),
-                    ),
-                  ],
+            if (showNotificationFavouriteRow)
+              Padding(
+                padding: EdgeInsets.only(top: 8.h, right: 20.w),
+                child: const Align(
+                  alignment: Alignment.centerRight,
+                  child: NotificationFavouriteHeaderActions(),
                 ),
               ),
-            ),
-
             const Spacer(),
-
-            // Illustration
-            SvgPicture.asset(
-              AppAssets.homeEmptyState,
-              width: 220.w,
-              height: 220.w,
-              fit: BoxFit.contain,
-            ),
-            SizedBox(height: 28.h),
-
-            // Title
-            Text(
-              AppStrings.homeEmptyTitle,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.lato(
-                fontSize: 22.sp,
-                fontWeight: FontWeight.w800,
-                color: AppColors.textPrimary,
-              ),
-            ),
-            SizedBox(height: 8.h),
-
-            // Subtitle
-            Text(
-              AppStrings.homeEmptySubtitle,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.lato(
-                fontSize: 13.5.sp,
-                color: AppColors.textBody,
-                height: 1.5,
-              ),
-            ),
-            SizedBox(height: 32.h),
-
-            // CTA button
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 40.w),
-              child: AppButton(
-                text: AppStrings.btnCreateProject,
-                height: 48.h,
-                onPressed: onCreateProject,
-              ),
-            ),
-            if (onMemberFundWalkthrough != null) ...[
-              SizedBox(height: 12.h),
-              TextButton(
-                onPressed: onMemberFundWalkthrough,
-                child: Text(
-                  AppStrings.createProjectMemberWalkthroughLink,
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset(
+                  AppAssets.homeDiscoverEmptyState,
+                  width: 220.w,
+                  height: 220.w,
+                  fit: BoxFit.contain,
+                ),
+                SizedBox(height: 24.h),
+                Text(
+                  title,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.lato(
-                    fontSize: 13.sp,
+                    fontSize: 26.sp,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.primary,
-                    decoration: TextDecoration.underline,
+                    color: const Color(0xFF140930),
                   ),
                 ),
-              ),
-            ],
-
+                SizedBox(height: 12.h),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  child: Text(
+                    subtitle,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.lato(
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w400,
+                      color: const Color(0xFF443F63),
+                      height: 1.5,
+                    ),
+                  ),
+                ),
+                if (showCreateProjectButton) ...[
+                  SizedBox(height: 34.h),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 40.w),
+                    child: AppButton(
+                      text: AppStrings.btnCreateProject,
+                      height: 48.h,
+                      onPressed: onCreateProject!,
+                    ),
+                  ),
+                ],
+              ],
+            ),
             const Spacer(flex: 2),
           ],
         ),

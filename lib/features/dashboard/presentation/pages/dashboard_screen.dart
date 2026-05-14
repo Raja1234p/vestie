@@ -17,14 +17,6 @@ import '../widgets/app_bottom_nav_bar.dart';
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
-  static const _tabs = [
-    HomeScreen(),
-    DiscoverScreen(),
-    _PlaceholderTab(),
-    WalletScreen(),
-    ProfileScreen(),
-  ];
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -34,7 +26,16 @@ class DashboardScreen extends StatelessWidget {
           return Scaffold(
             backgroundColor: Colors.transparent,
             body: PostAuthGradientBackground(
-              child: IndexedStack(index: index, children: _tabs),
+              child: IndexedStack(
+                index: index,
+                children: [
+                  const HomeScreen(),
+                  DiscoverScreen(activate: index == 1),
+                  const _PlaceholderTab(),
+                  const WalletScreen(),
+                  ProfileScreen(activate: index == 4),
+                ],
+              ),
             ),
             bottomNavigationBar: AppBottomNavBar(
               currentIndex: index,

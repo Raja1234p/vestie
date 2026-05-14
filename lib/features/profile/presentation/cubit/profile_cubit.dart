@@ -6,6 +6,7 @@ import '../../domain/entities/user_profile.dart';
 import '../../../auth/domain/usecases/logout_use_case.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/constants/storage_keys.dart';
+import 'package:vestie/features/dashboard/domain/dashboard_prefetch.dart';
 
 class ProfileState extends Equatable {
   final UserProfile profile;
@@ -48,11 +49,38 @@ class ProfileCubit extends Cubit<ProfileState> {
       : _logoutUseCase = logoutUseCase ?? ServiceLocator.instance.logoutUseCase,
         super(const ProfileState(
           profile: UserProfile(fullName: '', username: '', email: ''),
-        )) {
-    loadProfile();
-  }
+        ));
 
   final _picker = ImagePicker();
+  bool _tabBootstrapped = false;
+
+  /// Called when the Profile tab is first shown. Skips `GET /users/me` if [HomeBloc] already loaded it.
+  Future<void> ensureTabVisible() async {
+    if (_tabBootstrapped) return;
+    _tabBootstrapped = true;
+    if (DashboardPrefetch.userMeLoadedOnDashboard) {
+      await _hydrateFromPrefsOnly();
+      return;
+    }
+    await loadProfile();
+  }
+
+  Future<void> _hydrateFromPrefsOnly() async {
+    final name = await ServiceLocator.instance.sharedPrefs
+            .getString(StorageKeys.userName) ??
+        '';
+    final email = await ServiceLocator.instance.sharedPrefs
+            .getString(StorageKeys.userEmail) ??
+        '';
+    emit(state.copyWith(
+      isLoading: false,
+      profile: UserProfile(
+        fullName: name,
+        email: email,
+        username: email.split('@').first,
+      ),
+    ));
+  }
 
   Future<void> loadProfile() async {
     // 1. Try to load from SharedPreferences first for instant UI
@@ -143,6 +171,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   Future<void> _clearLocalData() async {
+    DashboardPrefetch.reset();
     await ServiceLocator.instance.authRepository.clearRiskDisclaimerLocalCache();
     await ServiceLocator.instance.secureStorage.remove(StorageKeys.accessToken);
     await ServiceLocator.instance.secureStorage.remove(StorageKeys.refreshToken);

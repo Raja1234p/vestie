@@ -48,7 +48,13 @@ class DiscoverCubit extends Cubit<DiscoverState> {
   DiscoverCubit({ListProjectsUseCase? listProjectsUseCase})
       : _listProjectsUseCase =
             listProjectsUseCase ?? ServiceLocator.instance.listProjectsUseCase,
-        super(const DiscoverState()) {
+        super(const DiscoverState());
+
+  bool _loadStarted = false;
+
+  void loadIfNeeded() {
+    if (_loadStarted) return;
+    _loadStarted = true;
     _load();
   }
 
