@@ -51,6 +51,7 @@ class CreateProjectSavingSettingsScreen extends StatelessWidget {
 
         return Scaffold(
           backgroundColor: Colors.transparent,
+          resizeToAvoidBottomInset: false,
           body: PostAuthGradientBackground(
             child: Column(
               children: [
@@ -64,7 +65,12 @@ class CreateProjectSavingSettingsScreen extends StatelessWidget {
                 ),
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 16.h),
+                    padding: EdgeInsets.fromLTRB(
+                      20.w,
+                      20.h,
+                      20.w,
+                      16.h + MediaQuery.viewInsetsOf(context).bottom,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -92,29 +98,24 @@ class CreateProjectSavingSettingsScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    bottom: MediaQuery.viewInsetsOf(context).bottom,
-                  ),
-                  child: SafeArea(
-                    top: false,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20.w),
-                      child: AppButton(
-                        text: AppStrings.btnNext,
-                        useGradient: false,
-                        hasShadow: false,
-                        color: AppColors.neutral1200,
-                        borderRadius: 10.r,
-                        onPressed: () {
-                          if (entryMode.isEditFlow) {
-                            context.pop();
-                            context.pop();
-                            return;
-                          }
-                          context.push(AppRoutes.createProjectReview);
-                        },
-                      ),
+                SafeArea(
+                  top: false,
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 20.h),
+                    child: AppButton(
+                      text: AppStrings.btnNext,
+                      useGradient: false,
+                      hasShadow: false,
+                      color: AppColors.neutral1200,
+                      borderRadius: 10.r,
+                      onPressed: () {
+                        if (entryMode.isEditFlow) {
+                          context.pop();
+                          context.pop();
+                          return;
+                        }
+                        context.push(AppRoutes.createProjectReview);
+                      },
                     ),
                   ),
                 ),

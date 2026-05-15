@@ -82,6 +82,7 @@ class _CreateProjectInvestmentSettingsScreenState
 
         return Scaffold(
           backgroundColor: Colors.transparent,
+          resizeToAvoidBottomInset: false,
           body: PostAuthGradientBackground(
             child: Column(
               children: [
@@ -95,77 +96,83 @@ class _CreateProjectInvestmentSettingsScreenState
                 ),
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 16.h),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        AppTextField(
-                          label: AppStrings.labelRoiOptional,
-                          hint: AppStrings.hintAnnualInterest,
-                          controller: _roiCtrl,
-                          keyboardType: TextInputType.number,
-                          textInputAction: TextInputAction.done,
-                          maxLength: 3,
-                          errorText: form.roiError,
-                          onChanged: cubit.setRoi,
-                          labelStyle: roiLabelStyle,
-                          fillColor: AppColors.purple100, // #F5F0FE
-                          hintStyle: roiHintStyle,
-                          suffixIconConstraints: BoxConstraints(
-                            minWidth: 0,
-                            minHeight: 0,
-                            maxWidth: 8.w + 20.w + 8.w,
-                            maxHeight: 28.h,
-                          ),
-                          suffixIcon: Padding(
-                            padding: EdgeInsets.only(right: 8.w),
-                            child: SizedBox(
-                              width: 20.w,
-                              height: 20.h,
-                              child: SvgPicture.asset(
-                                AppAssets.iconInformationCircle,
-                                fit: BoxFit.contain,
-                                colorFilter: ColorFilter.mode(
-                                  AppColors.inputFieldIcon,
-                                  BlendMode.srcIn,
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
+                    padding: EdgeInsets.fromLTRB(
+                      20.w,
+                      20.h,
+                      20.w,
+                      16.h + MediaQuery.viewInsetsOf(context).bottom,
+                    ),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          AppTextField(
+                            label: AppStrings.labelRoiOptional,
+                            hint: AppStrings.hintAnnualInterest,
+                            controller: _roiCtrl,
+                            keyboardType: TextInputType.number,
+                            textInputAction: TextInputAction.done,
+                            maxLength: 3,
+                            errorText: form.roiError,
+                            onChanged: cubit.setRoi,
+                            labelStyle: roiLabelStyle,
+                            fillColor: AppColors.purple100, // #F5F0FE
+                            hintStyle: roiHintStyle,
+                            suffixIconConstraints: BoxConstraints(
+                              minWidth: 0,
+                              minHeight: 0,
+                              maxWidth: 8.w + 20.w + 8.w,
+                              maxHeight: 28.h,
+                            ),
+                            suffixIcon: Padding(
+                              padding: EdgeInsets.only(right: 8.w),
+                              child: SizedBox(
+                                width: 20.w,
+                                height: 20.h,
+                                child: SvgPicture.asset(
+                                  AppAssets.iconInformationCircle,
+                                  fit: BoxFit.contain,
+                                  colorFilter: ColorFilter.mode(
+                                    AppColors.inputFieldIcon,
+                                    BlendMode.srcIn,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(height: 16.h),
-                        Text(
-                          AppStrings.roiOptionalHelper,
-                          style: roiHelperStyle,
-                        ),
-                      ],
+                          SizedBox(height: 16.h),
+                          Text(
+                            AppStrings.roiOptionalHelper,
+                            style: roiHelperStyle,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    bottom: MediaQuery.viewInsetsOf(context).bottom,
-                  ),
-                  child: SafeArea(
-                    top: false,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20.w),
-                      child: AppButton(
-                        text: AppStrings.btnNext,
-                        useGradient: false,
-                        hasShadow: false,
-                        color: AppColors.neutral1200,
-                        borderRadius: 10.r,
-                        onPressed: () {
-                          if (!cubit.validateInvestmentOptionalRoi()) return;
-                          if (widget.entryMode.isEditFlow) {
-                            context.pop();
-                            context.pop();
-                            return;
-                          }
-                          context.push(AppRoutes.createProjectReview);
-                        },
-                      ),
+                SafeArea(
+                  top: false,
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 20.h),
+                    child: AppButton(
+                      text: AppStrings.btnNext,
+                      useGradient: false,
+                      hasShadow: false,
+                      color: AppColors.neutral1200,
+                      borderRadius: 10.r,
+                      onPressed: () {
+                        if (!cubit.validateInvestmentOptionalRoi()) return;
+                        if (widget.entryMode.isEditFlow) {
+                          context.pop();
+                          context.pop();
+                          return;
+                        }
+                        context.push(AppRoutes.createProjectReview);
+                      },
                     ),
                   ),
                 ),

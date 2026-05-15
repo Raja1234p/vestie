@@ -17,6 +17,11 @@ import '../widgets/create_project_header.dart';
 import 'create_project_details_fields.dart';
 import 'create_project_form_widgets.dart';
 
+// ── Keyboard / release layout (same pattern on details, saving, ROI, borrow, review) ──
+// Scaffold: resizeToAvoidBottomInset: false so the footer Next button is not shifted twice.
+// Do NOT add MediaQuery.viewInsets.bottom padding on the footer row when using that flag.
+// Form area: SingleChildScrollView bottom padding += viewInsets.bottom so fields can scroll above the IME.
+
 /// Project metadata — category selects the wizard (investment ROI vs vacation/emergency borrow).
 class CreateProjectDetailsScreen extends StatefulWidget {
   final CreateProjectEntryMode entryMode;
@@ -109,6 +114,7 @@ class _CreateProjectDetailsScreenState extends State<CreateProjectDetailsScreen>
                 );
         return Scaffold(
           backgroundColor: Colors.transparent,
+          resizeToAvoidBottomInset: false,
           body: PostAuthGradientBackground(
             child: Column(
               children: [
@@ -121,7 +127,12 @@ class _CreateProjectDetailsScreenState extends State<CreateProjectDetailsScreen>
                 ),
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 16.h),
+                    padding: EdgeInsets.fromLTRB(
+                      20.w,
+                      20.h,
+                      20.w,
+                      16.h + MediaQuery.viewInsetsOf(context).bottom,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -180,26 +191,21 @@ class _CreateProjectDetailsScreenState extends State<CreateProjectDetailsScreen>
                     ),
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    bottom: MediaQuery.viewInsetsOf(context).bottom,
-                  ),
-                  child: SafeArea(
-                    top: false,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20.w),
-                      child: AppButton(
-                        text: AppStrings.btnNext,
-                        useGradient: false,
-                        hasShadow: false,
-                        color: AppColors.neutral1200,
-                        borderRadius: 10.r,
-                        onPressed: () => pushNextAfterDetailsStep(
-                              context,
-                              cubit,
-                              entryMode: widget.entryMode,
-                            ),
-                      ),
+                SafeArea(
+                  top: false,
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 20.h),
+                    child: AppButton(
+                      text: AppStrings.btnNext,
+                      useGradient: false,
+                      hasShadow: false,
+                      color: AppColors.neutral1200,
+                      borderRadius: 10.r,
+                      onPressed: () => pushNextAfterDetailsStep(
+                            context,
+                            cubit,
+                            entryMode: widget.entryMode,
+                          ),
                     ),
                   ),
                 ),

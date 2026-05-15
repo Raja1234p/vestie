@@ -60,6 +60,7 @@ class CreateProjectReviewScreen extends StatelessWidget {
             },
             child: Scaffold(
               backgroundColor: Colors.transparent,
+              resizeToAvoidBottomInset: false,
               body: PostAuthGradientBackground(
                 child: Column(
                   children: [
@@ -70,7 +71,12 @@ class CreateProjectReviewScreen extends StatelessWidget {
                     ),
                     Expanded(
                       child: SingleChildScrollView(
-                        padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 10.h),
+                        padding: EdgeInsets.fromLTRB(
+                          16.w,
+                          16.h,
+                          16.w,
+                          10.h + MediaQuery.viewInsetsOf(context).bottom,
+                        ),
                         child: Column(
                           children: [
                             CreateProjectReviewSectionCard(
@@ -92,33 +98,28 @@ class CreateProjectReviewScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        bottom: MediaQuery.viewInsetsOf(context).bottom,
-                      ),
-                      child: SafeArea(
-                        top: false,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20.w),
-                          child: BlocBuilder<CreateProjectSubmitCubit,
-                              CreateProjectSubmitState>(
-                            buildWhen: (p, c) => p.loading != c.loading,
-                            builder: (context, submit) {
-                              return AppButton(
-                                text: AppStrings.btnNext,
-                                useGradient: false,
-                                hasShadow: false,
-                                color: AppColors.neutral1200,
-                                borderRadius: 10.r,
-                                isLoading: submit.loading,
-                                onPressed: submit.loading
-                                    ? () {}
-                                    : () => context
-                                        .read<CreateProjectSubmitCubit>()
-                                        .submit(form),
-                              );
-                            },
-                          ),
+                    SafeArea(
+                      top: false,
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 20.h),
+                        child: BlocBuilder<CreateProjectSubmitCubit,
+                            CreateProjectSubmitState>(
+                          buildWhen: (p, c) => p.loading != c.loading,
+                          builder: (context, submit) {
+                            return AppButton(
+                              text: AppStrings.btnNext,
+                              useGradient: false,
+                              hasShadow: false,
+                              color: AppColors.neutral1200,
+                              borderRadius: 10.r,
+                              isLoading: submit.loading,
+                              onPressed: submit.loading
+                                  ? () {}
+                                  : () => context
+                                      .read<CreateProjectSubmitCubit>()
+                                      .submit(form),
+                            );
+                          },
                         ),
                       ),
                     ),
