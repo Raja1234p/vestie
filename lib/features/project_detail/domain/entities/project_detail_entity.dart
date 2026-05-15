@@ -1,7 +1,8 @@
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
-import 'member_entity.dart';
 import 'borrow_request_entity.dart';
+import 'member_entity.dart';
+import 'viewer_membership_role.dart';
 
 /// Full project detail entity extending the base Project card data.
 class ProjectDetailEntity {
@@ -15,10 +16,8 @@ class ProjectDetailEntity {
   final String announcement;
   final List<MemberEntity> members;
   final List<BorrowRequestEntity> borrowRequests;
-  /// Primary project owner (API role `leader`).
-  final bool isLeader;
-  /// Co-leader / moderator (API role `co-leader`). Has approval + member tools, not ownership actions.
-  final bool isCoLeader;
+  /// From `viewerMembership.role` — drives leader / co-leader / member UI.
+  final ViewerMembershipRole viewerRole;
   final String membershipId;
   final double borrowLimitAmount;
   final int repaymentWindowDays;
@@ -36,8 +35,7 @@ class ProjectDetailEntity {
     required this.announcement,
     required this.members,
     required this.borrowRequests,
-    this.isLeader = false,
-    this.isCoLeader = false,
+    this.viewerRole = ViewerMembershipRole.member,
     this.membershipId = '',
     this.borrowLimitAmount = 0,
     this.repaymentWindowDays = 0,
@@ -48,8 +46,12 @@ class ProjectDetailEntity {
   double get progress =>
       goalAmount > 0 ? (currentAmount / goalAmount).clamp(0.0, 1.0) : 0.0;
 
+  bool get isLeader => viewerRole.isPrimaryLeader;
+
+  bool get isCoLeader => viewerRole.isCoLeader;
+
   /// Leader or co-leader: borrow approvals, member list management, announcements, invites.
-  bool get hasManagementPrivileges => isLeader || isCoLeader;
+  bool get hasManagementPrivileges => viewerRole.hasManagementPrivileges;
 
   int get pendingJoinRequestCount =>
       members.where((m) => m.status.toLowerCase().contains('pending')).length;

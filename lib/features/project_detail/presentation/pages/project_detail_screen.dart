@@ -22,9 +22,10 @@ import '../navigation/project_detail_navigation_helpers.dart';
 import '../widgets/announcement_card.dart';
 import '../widgets/project_detail_tab_panels.dart';
 import 'package:vestie/user/features/project_detail/presentation/widgets/project_detail_user_completed_content.dart';
+import '../widgets/project_detail_load_error.dart';
 import '../widgets/project_info_card.dart';
 
-/// Shell — provides ProjectDetailBloc. Route extra = [ProjectDetailEntity].
+/// Loads `GET /projects/{id}` via [ProjectDetailBloc] on open.
 class ProjectDetailScreen extends StatelessWidget {
   final String projectId;
 
@@ -33,15 +34,18 @@ class ProjectDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ServiceLocator.instance.projectDetailBloc..add(LoadProjectDetailEvent(projectId: projectId)),
-      child: const _ProjectDetailBody(),
+      create: (_) => ServiceLocator.instance.createProjectDetailBloc()
+        ..add(LoadProjectDetailEvent(projectId: projectId)),
+      child: _ProjectDetailBody(projectId: projectId),
     );
   }
 }
 
 // ── Body ──────────────────────────────────────────────────────────────────────
 class _ProjectDetailBody extends StatelessWidget {
-  const _ProjectDetailBody();
+  const _ProjectDetailBody({required this.projectId});
+
+  final String projectId;
 
   @override
   Widget build(BuildContext context) {
@@ -51,13 +55,11 @@ class _ProjectDetailBody extends StatelessWidget {
         child: BlocBuilder<ProjectDetailBloc, ProjectDetailState>(
           builder: (context, state) {
             if (state is ProjectDetailError) {
-              return Center(
-                child: AppText(
-                  state.message,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: AppColors.textBody,
-                      ),
-                ),
+              return ProjectDetailLoadError(
+                message: state.message,
+                onRetry: () => context.read<ProjectDetailBloc>().add(
+                      LoadProjectDetailEvent(projectId: projectId),
+                    ),
               );
             }
 
@@ -67,11 +69,25 @@ class _ProjectDetailBody extends StatelessWidget {
 
             if (state is ProjectDetailLoaded) {
               final project = state.project;
+              final pendingCount = state.pendingJoinRequestCount;
               final isMemberCompletedView = !project.hasManagementPrivileges &&
                   project.status == ProjectStatus.completed;
 
-              return CustomScrollView(
-                slivers: [
+              return RefreshIndicator(
+                color: AppColors.primary,
+                onRefresh: () async {
+                  context.read<ProjectDetailBloc>().add(
+                        LoadProjectDetailEvent(projectId: projectId),
+                      );
+                  await context.read<ProjectDetailBloc>().stream.firstWhere(
+                        (s) =>
+                            s is ProjectDetailLoaded ||
+                            s is ProjectDetailError,
+                      );
+                },
+                child: CustomScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  slivers: [
                   // ── Header ──────────────────────────────────────────
                   SliverToBoxAdapter(
                     child: PostAuthHeader(
@@ -85,7 +101,7 @@ class _ProjectDetailBody extends StatelessWidget {
                               audience: project.isLeader
                                   ? LeaderMenuAudience.primaryLeader
                                   : LeaderMenuAudience.coLeader,
-                              joinRequestCount: project.pendingJoinRequestCount,
+                              joinRequestCount: pendingCount,
                               onSelected: (action) => ProjectDetailNavigationHelpers
                                   .handleLeaderAction(
                                 context,
@@ -159,7 +175,8 @@ class _ProjectDetailBody extends StatelessWidget {
                             ),
                     ),
                   ),
-                ],
+                  ],
+                ),
               );
             }
 

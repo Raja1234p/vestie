@@ -20,7 +20,8 @@ import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.d
 import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/announcement_card.dart';
 import '../widgets/project_detail_user_completed_content.dart';
-import 'package:vestie/features/project_detail/presentation/widgets/members_list.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_detail_tab_panels.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_detail_load_error.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_info_card.dart';
 
 class InvestmentProjectDetailScreen extends StatelessWidget {
@@ -31,8 +32,21 @@ class InvestmentProjectDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ServiceLocator.instance.projectDetailBloc..add(LoadProjectDetailEvent(projectId: projectId)),
-      child: BlocBuilder<ProjectDetailBloc, ProjectDetailState>(
+      create: (_) => ServiceLocator.instance.createProjectDetailBloc()
+        ..add(LoadProjectDetailEvent(projectId: projectId)),
+      child: _InvestmentProjectDetailBody(projectId: projectId),
+    );
+  }
+}
+
+class _InvestmentProjectDetailBody extends StatelessWidget {
+  const _InvestmentProjectDetailBody({required this.projectId});
+
+  final String projectId;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ProjectDetailBloc, ProjectDetailState>(
         builder: (context, state) {
           if (state is ProjectDetailLoading || state is ProjectDetailInitial) {
             return const Scaffold(
@@ -47,13 +61,11 @@ class InvestmentProjectDetailScreen extends StatelessWidget {
             return Scaffold(
               backgroundColor: Colors.transparent,
               body: PostAuthGradientBackground(
-                child: Center(
-                  child: AppText(
-                    state.message,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: AppColors.textBody,
-                        ),
-                  ),
+                child: ProjectDetailLoadError(
+                  message: state.message,
+                  onRetry: () => context.read<ProjectDetailBloc>().add(
+                        LoadProjectDetailEvent(projectId: projectId),
+                      ),
                 ),
               ),
             );
@@ -61,6 +73,7 @@ class InvestmentProjectDetailScreen extends StatelessWidget {
 
           if (state is ProjectDetailLoaded) {
             final project = state.project;
+            final pendingCount = state.pendingJoinRequestCount;
             final isCompleted = project.status == ProjectStatus.completed;
 
             void openMemberDetail(MemberEntity member) {
@@ -76,8 +89,21 @@ class InvestmentProjectDetailScreen extends StatelessWidget {
             return Scaffold(
               backgroundColor: Colors.transparent,
               body: PostAuthGradientBackground(
-                child: CustomScrollView(
-                  slivers: [
+                child: RefreshIndicator(
+                  color: AppColors.primary,
+                  onRefresh: () async {
+                    context.read<ProjectDetailBloc>().add(
+                          LoadProjectDetailEvent(projectId: projectId),
+                        );
+                    await context.read<ProjectDetailBloc>().stream.firstWhere(
+                          (s) =>
+                              s is ProjectDetailLoaded ||
+                              s is ProjectDetailError,
+                        );
+                  },
+                  child: CustomScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    slivers: [
                     SliverToBoxAdapter(
                       child: PostAuthHeader(
                         title: project.name,
@@ -87,8 +113,7 @@ class InvestmentProjectDetailScreen extends StatelessWidget {
                                 audience: project.isLeader
                                     ? LeaderMenuAudience.primaryLeader
                                     : LeaderMenuAudience.coLeader,
-                                joinRequestCount:
-                                    project.pendingJoinRequestCount,
+                                joinRequestCount: pendingCount,
                                 onSelected: (action) =>
                                     ProjectDetailNavigationHelpers.handleLeaderAction(
                                   context,
@@ -138,7 +163,9 @@ class InvestmentProjectDetailScreen extends StatelessWidget {
                                   ),
                                   SizedBox(height: 16.h),
                                   AppText(
-                                    AppStrings.tabMembers,
+                                    project.hasManagementPrivileges
+                                        ? AppStrings.tabManageMembers
+                                        : AppStrings.tabMembers,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyLarge
@@ -149,16 +176,22 @@ class InvestmentProjectDetailScreen extends StatelessWidget {
                                         ),
                                   ),
                                   SizedBox(height: 14.h),
-                                  MembersList(
-                                    members: project.members,
-                                    onMemberTap: (m) => openMemberDetail(m),
-                                  ),
+                                  project.hasManagementPrivileges
+                                      ? LeaderMembersPanel(
+                                          members: project.members,
+                                          onMemberTap: openMemberDetail,
+                                        )
+                                      : UserMembersPanel(
+                                          members: project.members,
+                                          onMemberTap: openMemberDetail,
+                                        ),
                                   SizedBox(height: 32.h),
                                 ],
                               ),
                       ),
                     ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             );
@@ -171,7 +204,6 @@ class InvestmentProjectDetailScreen extends StatelessWidget {
             ),
           );
         },
-      ),
     );
   }
 }

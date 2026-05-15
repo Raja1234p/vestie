@@ -47,7 +47,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     if (cubit.isLastPage) {
       context.go(AppRoutes.login);
     } else {
-      _pageController.nextPage(
+      final next = cubit.state + 1;
+      cubit.goToPage(next);
+      _pageController.animateToPage(
+        next,
         duration: const Duration(milliseconds: 350),
         curve: Curves.easeInOut,
       );

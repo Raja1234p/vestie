@@ -3,19 +3,14 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/app_routes.dart';
 import '../../../../app/router/route_args/project_detail_flow_args.dart';
-import 'package:vestie/user/features/home/domain/entities/project.dart' show Project, UserFlowOnOpen;
+import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
 import '../../domain/entities/project_detail_route_args.dart';
 
-/// Single entry for Home / Discover when a project card is tapped. Handles
-/// optional [Project.userFlow] (member test flows) without coupling cards to
-/// specific screens beyond this map.
-void openProjectFromCard(
-  BuildContext context,
-  Project p, {
-  required bool isLeaderView,
-}) {
-  if (!isLeaderView && p.userFlow != null) {
+/// Opens project detail for any viewer role. UI is driven by
+/// `GET /projects/{id}` → `viewerMembership.role` (Leader / CoLeader / Member).
+void openProjectFromCard(BuildContext context, Project p) {
+  if (p.relation == ProjectRelation.joined && p.userFlow != null) {
     final name = p.name;
     switch (p.userFlow!) {
       case UserFlowOnOpen.showJoinApproved:

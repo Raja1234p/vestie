@@ -1,9 +1,14 @@
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/network/base_api_client.dart';
 
+import '../models/pending_membership_model.dart';
+
 abstract class ProjectActionsRemoteDataSource {
-  Future<void> approveJoinRequest(String projectId, String userId);
-  Future<void> rejectJoinRequest(String projectId, String userId);
+  /// Week 3 — `GET /projects/{id}/memberships/pending`
+  Future<List<PendingMembershipModel>> listPendingJoinRequests(String projectId);
+
+  Future<void> approveJoinRequest(String projectId, String membershipId);
+  Future<void> rejectJoinRequest(String projectId, String membershipId);
   Future<void> removeMember(String projectId, String userId);
   Future<void> promoteToCoLeader(String projectId, String userId);
   Future<void> demoteCoLeader(String projectId, String userId);
@@ -46,13 +51,30 @@ class ProjectActionsRemoteDataSourceImpl implements ProjectActionsRemoteDataSour
   ProjectActionsRemoteDataSourceImpl({required this.apiClient});
 
   @override
-  Future<void> approveJoinRequest(String projectId, String userId) async {
-    await apiClient.post('${ApiConstants.projects}/$projectId/memberships/$userId/approve');
+  Future<List<PendingMembershipModel>> listPendingJoinRequests(
+    String projectId,
+  ) async {
+    final response = await apiClient.get<List<dynamic>>(
+      '${ApiConstants.projects}/$projectId/memberships/pending',
+    );
+    return response
+        .whereType<Map>()
+        .map((m) => PendingMembershipModel.fromJson(m.cast<String, dynamic>()))
+        .toList(growable: false);
   }
 
   @override
-  Future<void> rejectJoinRequest(String projectId, String userId) async {
-    await apiClient.post('${ApiConstants.projects}/$projectId/memberships/$userId/reject');
+  Future<void> approveJoinRequest(String projectId, String membershipId) async {
+    await apiClient.post(
+      '${ApiConstants.projects}/$projectId/memberships/$membershipId/approve',
+    );
+  }
+
+  @override
+  Future<void> rejectJoinRequest(String projectId, String membershipId) async {
+    await apiClient.post(
+      '${ApiConstants.projects}/$projectId/memberships/$membershipId/reject',
+    );
   }
 
   @override

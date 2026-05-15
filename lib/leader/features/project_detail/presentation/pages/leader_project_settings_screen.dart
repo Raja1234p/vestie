@@ -16,6 +16,7 @@ import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_detail_load_error.dart';
 import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
 
 /// Storyboard “Project settings” list for primary leaders and co-leaders.
@@ -27,9 +28,8 @@ class LeaderProjectSettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ProjectDetailBloc(
-        repository: ServiceLocator.instance.projectDetailRepository,
-      )..add(LoadProjectDetailEvent(projectId: projectId)),
+      create: (_) => ServiceLocator.instance.createProjectDetailBloc()
+        ..add(LoadProjectDetailEvent(projectId: projectId)),
       child: BlocBuilder<ProjectDetailBloc, ProjectDetailState>(
         builder: (context, state) {
           return Scaffold(
@@ -48,11 +48,11 @@ class LeaderProjectSettingsScreen extends StatelessWidget {
                     const SliverFillRemaining(child: ProjectDetailShimmer()),
                   if (state is ProjectDetailError)
                     SliverFillRemaining(
-                      child: Center(
-                        child: AppText(
-                          state.message,
-                          style: GoogleFonts.lato(color: AppColors.textBody),
-                        ),
+                      child: ProjectDetailLoadError(
+                        message: state.message,
+                        onRetry: () => context.read<ProjectDetailBloc>().add(
+                              LoadProjectDetailEvent(projectId: projectId),
+                            ),
                       ),
                     ),
                   if (state is ProjectDetailLoaded)
@@ -61,6 +61,8 @@ class LeaderProjectSettingsScreen extends StatelessWidget {
                       sliver: SliverToBoxAdapter(
                         child: _LeaderProjectSettingsBody(
                           project: state.project,
+                          pendingJoinRequestCount:
+                              state.pendingJoinRequestCount,
                         ),
                       ),
                     ),
@@ -76,13 +78,17 @@ class LeaderProjectSettingsScreen extends StatelessWidget {
 
 class _LeaderProjectSettingsBody extends StatelessWidget {
   final ProjectDetailEntity project;
+  final int pendingJoinRequestCount;
 
-  const _LeaderProjectSettingsBody({required this.project});
+  const _LeaderProjectSettingsBody({
+    required this.project,
+    required this.pendingJoinRequestCount,
+  });
 
   @override
   Widget build(BuildContext context) {
     final primary = project.isLeader;
-    final pending = project.pendingJoinRequestCount;
+    final pending = pendingJoinRequestCount;
 
     void onAction(LeaderMenuAction action) {
       ProjectDetailNavigationHelpers.handleLeaderAction(

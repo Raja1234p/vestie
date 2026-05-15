@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/theme/app_colors.dart';
 
-/// Page indicator for Figma light-background onboarding.
-/// Active  : wide dark-purple pill.
-/// Inactive: short semi-transparent dark-purple pill.
+/// Progress-style dots: pages up to and including [currentIndex] use active color.
 class OnboardingPageIndicator extends StatelessWidget {
   final int pageCount;
   final int currentIndex;
@@ -20,17 +18,18 @@ class OnboardingPageIndicator extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: List.generate(pageCount, (index) {
-        final bool isActive = index == currentIndex;
+        final isReached = index <= currentIndex;
+        final isCurrent = index == currentIndex;
         return AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           margin: EdgeInsets.symmetric(horizontal: 3.w),
-          width: isActive ? 64.67.w : 64.67.w,
+          width: isCurrent ? 64.67.w : 64.67.w,
           height: 4.h,
           decoration: BoxDecoration(
-            color: isActive
-                ? AppColors.purple800   // #4519A0
-                : AppColors.appBgTop, // 33% primary
+            color: isReached
+                ? AppColors.onboardingIndicatorActive
+                : AppColors.onboardingIndicatorInactive,
             borderRadius: BorderRadius.circular(24.r),
           ),
         );

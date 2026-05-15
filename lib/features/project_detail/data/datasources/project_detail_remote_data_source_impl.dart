@@ -24,8 +24,18 @@ class ProjectDetailRemoteDataSourceImpl implements ProjectDetailRemoteDataSource
       title = data['title']?.toString();
     }
 
-    if (e.response?.statusCode == 401) {
+    final code = e.response?.statusCode;
+    if (code == 401) {
       throw UnauthorizedException(message, title);
+    }
+    if (code == 403) {
+      throw ServerException(message, title ?? 'Forbidden');
+    }
+    if (code == 404) {
+      throw ServerException(
+        message.isNotEmpty ? message : 'Project not found',
+        title ?? 'Not found',
+      );
     }
     throw ServerException(message, title);
   }

@@ -1,6 +1,7 @@
 import '../../domain/entities/borrow_request_entity.dart';
 import '../../domain/entities/member_entity.dart';
 import '../../domain/entities/project_detail_entity.dart';
+import '../../domain/entities/viewer_membership_role.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 
 class ProjectDetailResponseModel {
@@ -35,8 +36,7 @@ class ProjectDetailResponseModel {
   }
 
   ProjectDetailEntity toEntity() {
-    final isPrimaryLeader = _viewerMembership.isPrimaryLeader;
-    final isCoLeader = _viewerMembership.isCoLeaderRole;
+    final viewerRole = ViewerMembershipRole.parse(_viewerMembership.role);
 
     final mappedMembers = _members.map(_mapMember).toList(growable: false);
 
@@ -46,14 +46,13 @@ class ProjectDetailResponseModel {
       category: _mapCategory(_project.type),
       status: _mapStatus(_project.state),
       goalAmount: _project.targetAmount,
-      // Week4 detail response doesn't include pot balance yet in this endpoint.
+      // Pot balance not in `GET /projects/{id}` aggregate yet.
       currentAmount: 0.0,
-      endsIn: _endsInLabel(_project.endsAtUtc),
-      announcement: '',
+      endsIn: _project.endsAtUtc,
+      announcement: _project.description,
       members: mappedMembers,
       borrowRequests: const <BorrowRequestEntity>[],
-      isLeader: isPrimaryLeader,
-      isCoLeader: isCoLeader,
+      viewerRole: viewerRole,
       membershipId: _viewerMembership.membershipId,
       borrowLimitAmount: _viewerMembership.borrowLimitAmount,
       repaymentWindowDays: _rules.repaymentWindowDays,
@@ -102,12 +101,6 @@ class ProjectDetailResponseModel {
     return '$first$last';
   }
 
-  static String _endsInLabel(String? endsAtUtc) {
-    if (endsAtUtc == null || endsAtUtc.isEmpty) return '';
-    // Keep simple label for now; can be improved with real time-ago logic.
-    return endsAtUtc;
-  }
-
   static ProjectCategory _mapCategory(String type) {
     final t = type.toLowerCase().trim();
     if (t.contains('invest')) return ProjectCategory.investment;
@@ -117,7 +110,9 @@ class ProjectDetailResponseModel {
 
   static ProjectStatus _mapStatus(String state) {
     final s = state.toLowerCase().trim();
-    if (s.contains('complete') || s.contains('cancel')) return ProjectStatus.completed;
+    if (s.contains('complete') || s.contains('cancel')) {
+      return ProjectStatus.completed;
+    }
     return ProjectStatus.ongoing;
   }
 }
@@ -125,6 +120,7 @@ class ProjectDetailResponseModel {
 class _ProjectPayload {
   final String id;
   final String name;
+  final String description;
   final String type;
   final String state;
   final double targetAmount;
@@ -133,6 +129,7 @@ class _ProjectPayload {
   const _ProjectPayload({
     required this.id,
     required this.name,
+    required this.description,
     required this.type,
     required this.state,
     required this.targetAmount,
@@ -142,6 +139,7 @@ class _ProjectPayload {
   factory _ProjectPayload.fromJson(Map<String, dynamic> json) => _ProjectPayload(
         id: (json['id'] as String?) ?? '',
         name: (json['name'] as String?) ?? '',
+        description: (json['description'] as String?) ?? '',
         type: (json['type'] as String?) ?? '',
         state: (json['state'] as String?) ?? '',
         targetAmount: (json['targetAmount'] as num?)?.toDouble() ?? 0.0,
@@ -185,16 +183,6 @@ class _ViewerMembershipPayload {
         borrowLimitAmount: (json['borrowLimitAmount'] as num?)?.toDouble() ?? 0.0,
       );
 
-  /// Primary owner — never treat `co-leader` as primary (`co-leader`.contains('leader') bug).
-  bool get isPrimaryLeader {
-    final compact = role.toLowerCase().replaceAll(RegExp(r'[\s_-]'), '');
-    return compact == 'leader' || compact == 'owner';
-  }
-
-  bool get isCoLeaderRole {
-    final compact = role.toLowerCase().replaceAll(RegExp(r'[\s_-]'), '');
-    return compact == 'coleader';
-  }
 }
 
 class _MemberPayload {

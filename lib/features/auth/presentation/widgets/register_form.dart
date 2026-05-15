@@ -48,20 +48,21 @@ class _RegisterFormState extends State<RegisterForm> {
 
   void _submit(BuildContext context) {
     FocusScope.of(context).unfocus();
-    final valid = context.read<RegisterFormCubit>().validate(
-          _nameCtrl.text,
-          _emailCtrl.text,
-          _passCtrl.text,
-          _confirmCtrl.text,
-        );
-    if (valid) {
-      context.read<RegisterBloc>().add(RegisterSubmitted(
-            name: _nameCtrl.text.trim(),
-            email: _emailCtrl.text.trim(),
-            password: _passCtrl.text,
-            confirmPassword: _confirmCtrl.text,
-          ));
-    }
+    final formCubit = context.read<RegisterFormCubit>();
+    final isValid = formCubit.validate(
+      _nameCtrl.text,
+      _emailCtrl.text,
+      _passCtrl.text,
+      _confirmCtrl.text,
+    );
+    if (!isValid) return;
+
+    context.read<RegisterBloc>().add(RegisterSubmitted(
+          name: _nameCtrl.text.trim(),
+          email: _emailCtrl.text.trim(),
+          password: _passCtrl.text,
+          confirmPassword: _confirmCtrl.text,
+        ));
   }
 
   @override
@@ -179,7 +180,7 @@ class _RegisterFormState extends State<RegisterForm> {
               AppButton(
                 text: AppStrings.btnContinue,
                 isLoading: isLoading,
-                onPressed: form.isValid ? () => _submit(context) : null,
+                onPressed: isLoading ? null : () => _submit(context),
               ),
               SizedBox(height: 12.h),
               const OrDivider(),

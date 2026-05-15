@@ -26,6 +26,9 @@ class ApiConstants {
   // ── Projects ─────────────────────────────────────────────────────────────
   static const String projects = '/projects';
 
+  /// `POST /projects/{id}/launch` — Draft → Active after create (Week 3/4).
+  static String projectLaunch(String projectId) => '$projects/$projectId/launch';
+
   // ── Contributions ────────────────────────────────────────────────────────
   static const String contributions = '/contributions';
 

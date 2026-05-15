@@ -39,7 +39,7 @@ class ProjectRemoteDataSourceImpl implements ProjectRemoteDataSource {
 
   @override
   Future<void> launchProject(String projectId) async {
-    await apiClient.post('${ApiConstants.projects}/$projectId/launch');
+    await apiClient.post(ApiConstants.projectLaunch(projectId));
   }
 
   @override

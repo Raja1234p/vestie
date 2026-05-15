@@ -95,8 +95,11 @@ class UserMembersPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final activeMembers = members
+        .where((m) => !m.status.toLowerCase().contains('pending'))
+        .toList(growable: false);
     return MembersList(
-      members: members,
+      members: activeMembers,
       onMemberTap: onMemberTap,
     );
   }
@@ -114,8 +117,11 @@ class LeaderMembersPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final activeMembers = members
+        .where((m) => !m.status.toLowerCase().contains('pending'))
+        .toList(growable: false);
     return LeaderManageMembersList(
-      members: members,
+      members: activeMembers,
       onMemberTap: onMemberTap,
     );
   }

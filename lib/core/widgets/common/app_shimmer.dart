@@ -80,64 +80,183 @@ class ProjectCardShimmer extends StatelessWidget {
   }
 }
 
-/// A high-fidelity full-page Project Detail skeleton shimmer.
+/// Full-page skeleton for project detail (`GET /projects/{id}`).
 class ProjectDetailShimmer extends StatelessWidget {
   const ProjectDetailShimmer({super.key});
 
   @override
   Widget build(BuildContext context) {
     return AppShimmer(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                AppShimmer.box(width: 40, height: 40, borderRadius: 20),
-                const SizedBox(width: 16),
-                AppShimmer.box(width: 150, height: 24, borderRadius: 4),
-              ],
+      child: CustomScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        slivers: [
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(8, 12, 16, 0),
+              child: Row(
+                children: [
+                  AppShimmer.box(width: 40, height: 40, borderRadius: 20),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: AppShimmer.box(
+                      width: double.infinity,
+                      height: 22,
+                      borderRadius: 6,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 32),
-            AppShimmer.box(width: double.infinity, height: 180, borderRadius: 16),
-            const SizedBox(height: 24),
-            AppShimmer.box(width: double.infinity, height: 50, borderRadius: 25),
-            const SizedBox(height: 12),
-            AppShimmer.box(width: double.infinity, height: 50, borderRadius: 25),
-            const SizedBox(height: 32),
-            Row(
-              children: [
-                AppShimmer.box(width: 100, height: 20, borderRadius: 4),
-                const Spacer(),
-                AppShimmer.box(width: 100, height: 20, borderRadius: 4),
-              ],
-            ),
-            const SizedBox(height: 16),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: 3,
-              itemBuilder: (context, index) => Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Row(
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
+                AppShimmer.box(
+                  width: double.infinity,
+                  height: 72,
+                  borderRadius: 14,
+                ),
+                const SizedBox(height: 12),
+                AppShimmer.box(
+                  width: double.infinity,
+                  height: 120,
+                  borderRadius: 16,
+                ),
+                const SizedBox(height: 16),
+                AppShimmer.box(
+                  width: double.infinity,
+                  height: 48,
+                  borderRadius: 10,
+                ),
+                const SizedBox(height: 12),
+                AppShimmer.box(
+                  width: double.infinity,
+                  height: 48,
+                  borderRadius: 10,
+                ),
+                const SizedBox(height: 20),
+                Row(
                   children: [
-                    AppShimmer.box(width: 44, height: 44, borderRadius: 22),
-                    const SizedBox(width: 12),
-                    Column(
+                    Expanded(
+                      child: AppShimmer.box(
+                        width: double.infinity,
+                        height: 36,
+                        borderRadius: 8,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: AppShimmer.box(
+                        width: double.infinity,
+                        height: 36,
+                        borderRadius: 8,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                ...List.generate(
+                  3,
+                  (_) => Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Row(
+                      children: [
+                        AppShimmer.box(width: 48, height: 48, borderRadius: 24),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AppShimmer.box(
+                                width: 140,
+                                height: 14,
+                                borderRadius: 4,
+                              ),
+                              const SizedBox(height: 6),
+                              AppShimmer.box(
+                                width: 90,
+                                height: 12,
+                                borderRadius: 4,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ]),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Join requests list skeleton (Week 3 pending memberships).
+class JoinRequestsListShimmer extends StatelessWidget {
+  const JoinRequestsListShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppShimmer(
+      child: ListView.separated(
+        physics: const NeverScrollableScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+        itemCount: 4,
+        separatorBuilder: (_, _) => const SizedBox(height: 2),
+        itemBuilder: (_, _) => Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.4),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  AppShimmer.box(width: 52, height: 52, borderRadius: 26),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        AppShimmer.box(width: 120, height: 16, borderRadius: 4),
+                        AppShimmer.box(
+                          width: 120,
+                          height: 16,
+                          borderRadius: 4,
+                        ),
                         const SizedBox(height: 6),
                         AppShimmer.box(width: 80, height: 12, borderRadius: 4),
                       ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ),
-          ],
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: AppShimmer.box(
+                      width: double.infinity,
+                      height: 40,
+                      borderRadius: 8,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: AppShimmer.box(
+                      width: double.infinity,
+                      height: 40,
+                      borderRadius: 8,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

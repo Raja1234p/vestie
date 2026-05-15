@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/service_locator.dart';
+import '../../../../core/utils/validation_utils.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/usecases/register_use_case.dart';
 import '../../domain/usecases/google_login_use_case.dart';
@@ -31,6 +32,16 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     RegisterSubmitted event,
     Emitter<RegisterState> emit,
   ) async {
+    final hasErrors = ValidationUtils.validateFullName(event.name) != null ||
+        ValidationUtils.validateEmail(event.email) != null ||
+        ValidationUtils.validatePassword(event.password) != null ||
+        ValidationUtils.validateConfirmPassword(
+              event.confirmPassword,
+              event.password,
+            ) !=
+            null;
+    if (hasErrors) return;
+
     emit(const RegisterLoading());
 
     final result = await _registerUseCase(

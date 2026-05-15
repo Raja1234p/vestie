@@ -126,5 +126,18 @@ class ProjectsRemoteDataSourceImpl implements ProjectsRemoteDataSource {
       _handleError(e, 'Failed to create project');
     }
   }
+
+  @override
+  Future<void> launchProject(String projectId) async {
+    try {
+      await _client.post(ApiConstants.projectLaunch(projectId));
+    } on DioException catch (e) {
+      AppLogger.error(
+        'API LaunchProject Error: ${e.response?.statusCode}',
+        error: e.response?.data,
+      );
+      _handleError(e, AppStrings.errorLaunchProject);
+    }
+  }
 }
 

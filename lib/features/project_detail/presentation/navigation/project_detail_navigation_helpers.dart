@@ -6,6 +6,7 @@ import 'package:vestie/leader/features/create_project/presentation/create_projec
 import '../../../../app/router/app_routes.dart';
 import '../../../../app/router/route_args/project_detail_flow_args.dart';
 import '../../../../app/router/route_args/project_wallet_flow_args.dart';
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/widgets/common/app_invite_members_dialog.dart';
@@ -59,6 +60,11 @@ class ProjectDetailNavigationHelpers {
     required ProjectDetailEntity project,
     required LeaderMenuAction action,
   }) {
+    if (_requiresPrimaryLeader(action) && !project.isLeader) {
+      AppSnackBar.showError(context, AppStrings.errorForbidden);
+      return;
+    }
+
     switch (action) {
       case LeaderMenuAction.projectSettings:
         context.push(
@@ -122,5 +128,9 @@ class ProjectDetailNavigationHelpers {
         break;
     }
   }
+
+  static bool _requiresPrimaryLeader(LeaderMenuAction action) =>
+      action == LeaderMenuAction.markSuccessful ||
+      action == LeaderMenuAction.cancelProject;
 }
 

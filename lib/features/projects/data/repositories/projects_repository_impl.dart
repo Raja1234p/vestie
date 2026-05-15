@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
+import 'package:vestie/features/project_detail/domain/entities/viewer_membership_role.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/leader/features/create_project/domain/create_project_form.dart';
 import '../../domain/entities/created_project_entity.dart';
@@ -57,6 +59,45 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
     }
   }
 
+  @override
+  Future<Either<Failure, void>> launchProject(String projectId) async {
+    if (projectId.isEmpty) {
+      return const Left(ServerFailure(AppStrings.errorGeneric));
+    }
+    try {
+      await remoteDataSource.launchProject(projectId);
+      return const Right(null);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message, e.title));
+    } on UnauthorizedException catch (e) {
+      return Left(UnauthorizedFailure(e.message, e.title));
+    } on Failure catch (f) {
+      return Left(f);
+    } catch (_) {
+      return const Left(ServerFailure(AppStrings.errorLaunchProject));
+    }
+  }
+
+  @override
+  Future<Either<Failure, CreatedProjectEntity>> createAndLaunchProject({
+    required CreateProjectForm form,
+  }) async {
+    final created = await createProject(form: form);
+    return created.fold(
+      Left.new,
+      (entity) async {
+        if (entity.id.isEmpty) {
+          return const Left(ServerFailure(AppStrings.errorGeneric));
+        }
+        final launched = await launchProject(entity.id);
+        return launched.fold(
+          (failure) => Left(failure),
+          (_) => Right(entity),
+        );
+      },
+    );
+  }
+
   ProjectCategory _mapCategory(String type) {
     final normalized = type.toLowerCase();
     if (normalized.contains('invest')) return ProjectCategory.investment;
@@ -81,9 +122,9 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
       return ProjectRelation.joined;
     }
 
-    final role = viewerRole.toLowerCase();
-    if (role.contains('leader')) return ProjectRelation.owned;
-    if (role.contains('member')) return ProjectRelation.joined;
+    final parsed = ViewerMembershipRole.parse(viewerRole);
+    if (parsed.isOwnedListRelation) return ProjectRelation.owned;
+    if (parsed == ViewerMembershipRole.member) return ProjectRelation.joined;
 
     // Backward-safe fallback when backend omits role in list payload.
     return ProjectRelation.owned;

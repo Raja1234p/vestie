@@ -68,31 +68,41 @@ class RegisterFormCubit extends Cubit<RegisterFormState> {
   void clearConfirmError()  => emit(state.copyWith(clearConfirm: true));
 
   void onFieldsChanged(String name, String email, String password, String confirm) {
-    final nameErr    = ValidationUtils.validateFullName(name);
-    final emailErr   = ValidationUtils.validateEmail(email);
-    final passErr    = ValidationUtils.validatePassword(password);
-    final confirmErr = ValidationUtils.validateConfirmPassword(confirm, password);
     emit(state.copyWith(
-      isValid: nameErr == null && emailErr == null && passErr == null && confirmErr == null,
+      clearName: state.nameError != null &&
+          ValidationUtils.validateFullName(name) == null,
+      clearEmail: state.emailError != null &&
+          ValidationUtils.validateEmail(email) == null,
+      clearPassword: state.passwordError != null &&
+          ValidationUtils.validatePassword(password) == null,
+      clearConfirm: state.confirmError != null &&
+          ValidationUtils.validateConfirmPassword(confirm, password) == null,
     ));
   }
 
+  /// Runs all field rules, shows errors on the form, returns whether submit may proceed.
   bool validate(String name, String email, String password, String confirm) {
-    final nameErr    = ValidationUtils.validateFullName(name);
-    final emailErr   = ValidationUtils.validateEmail(email);
-    final passErr    = ValidationUtils.validatePassword(password);
-    final confirmErr = ValidationUtils.validateConfirmPassword(confirm, password);
-    emit(state.copyWith(
+    final nameErr = ValidationUtils.validateFullName(name);
+    final emailErr = ValidationUtils.validateEmail(email);
+    final passErr = ValidationUtils.validatePassword(password);
+    final confirmErr =
+        ValidationUtils.validateConfirmPassword(confirm, password);
+    final allValid = nameErr == null &&
+        emailErr == null &&
+        passErr == null &&
+        confirmErr == null;
+
+    // Full emit so null errors clear previous messages (copyWith cannot set null).
+    emit(RegisterFormState(
+      passwordVisible: state.passwordVisible,
+      confirmVisible: state.confirmVisible,
       nameError: nameErr,
       emailError: emailErr,
       passwordError: passErr,
       confirmError: confirmErr,
-      isValid: nameErr == null && emailErr == null && passErr == null && confirmErr == null,
+      isValid: allValid,
     ));
-    return nameErr == null &&
-        emailErr == null &&
-        passErr == null &&
-        confirmErr == null;
+    return allValid;
   }
 
   /// Fresh register form (e.g. after route returns); pair with clearing controllers.

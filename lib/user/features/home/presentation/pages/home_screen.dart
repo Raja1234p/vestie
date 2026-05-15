@@ -152,23 +152,8 @@ class _HomeContent extends StatelessWidget {
   final HomeLoaded data;
   const _HomeContent({required this.data});
 
-  /// Builds mock detail data from the card project and navigates.
-  void _navigateToLeaderDetail(BuildContext context, Project p) {
-    _navigateToDetail(context, p, isLeaderView: true);
-  }
-
-  /// Builds mock detail data from the card project and navigates.
-  void _navigateToUserDetail(BuildContext context, Project p) {
-    _navigateToDetail(context, p, isLeaderView: false);
-  }
-
-  void _navigateToDetail(BuildContext context, Project p,
-      {required bool isLeaderView}) {
-    openProjectFromCard(
-      context,
-      p,
-      isLeaderView: isLeaderView,
-    );
+  void _openProjectDetail(BuildContext context, Project p) {
+    openProjectFromCard(context, p);
   }
 
   Future<void> _handleJoinAction(BuildContext context, Project p) async {
@@ -266,7 +251,7 @@ class _HomeContent extends StatelessWidget {
                             projects: data.myProjects,
                             expanded: sections.myProjectsExpanded,
                             onToggle: cubit.toggleMyProjects,
-                            onProjectAction: (p) => _navigateToLeaderDetail(context, p),
+                            onProjectAction: (p) => _openProjectDetail(context, p),
                           ),
                           ProjectsSection(
                             title: AppStrings.joinedProjects,
@@ -281,7 +266,7 @@ class _HomeContent extends StatelessWidget {
                                 _handleJoinAction(context, p);
                                 return;
                               }
-                              _navigateToUserDetail(context, p);
+                              _openProjectDetail(context, p);
                             },
                           ),
                           SizedBox(height: 16.h),

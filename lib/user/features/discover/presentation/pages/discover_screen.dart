@@ -147,7 +147,7 @@ class _DiscoverBody extends StatelessWidget {
   }
 
   void _navigateToDetail(BuildContext context, Project p) {
-    openProjectFromCard(context, p, isLeaderView: false);
+    openProjectFromCard(context, p);
   }
 
   void _showUserInvestmentChooser(BuildContext context) {

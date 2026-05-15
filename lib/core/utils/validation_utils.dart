@@ -11,6 +11,12 @@ class ValidationUtils {
     r'^[\w.+\-]+@[\w\-]+\.[a-zA-Z]{2,}$',
   );
 
+  static final RegExp _passwordLowercase = RegExp(r'[a-z]');
+  static final RegExp _passwordUppercase = RegExp(r'[A-Z]');
+  static final RegExp _passwordDigit = RegExp(r'[0-9]');
+  /// At least one non-alphanumeric (special) character.
+  static final RegExp _passwordSpecial = RegExp(r'[^a-zA-Z0-9]');
+
   // ── Email ──────────────────────────────────────────────────────────────────
 
   static String? validateEmail(String? value) {
@@ -26,8 +32,10 @@ class ValidationUtils {
     final v = value ?? '';
     if (v.isEmpty) return AppStrings.errorPasswordRequired;
     if (v.length < 8) return AppStrings.errorPasswordWeak;
-    if (!v.contains(RegExp(r'[a-zA-Z]'))) return AppStrings.errorPasswordWeak;
-    if (!v.contains(RegExp(r'[0-9]'))) return AppStrings.errorPasswordWeak;
+    if (!_passwordLowercase.hasMatch(v)) return AppStrings.errorPasswordWeak;
+    if (!_passwordUppercase.hasMatch(v)) return AppStrings.errorPasswordWeak;
+    if (!_passwordDigit.hasMatch(v)) return AppStrings.errorPasswordWeak;
+    if (!_passwordSpecial.hasMatch(v)) return AppStrings.errorPasswordWeak;
     return null;
   }
 

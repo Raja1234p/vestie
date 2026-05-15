@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/features/projects/domain/entities/created_project_entity.dart';
-import 'package:vestie/features/projects/domain/usecases/create_project_use_case.dart';
+import 'package:vestie/features/projects/domain/usecases/create_and_launch_project_use_case.dart';
 import '../../domain/create_project_form.dart';
 
 class CreateProjectSubmitState extends Equatable {
@@ -39,10 +39,11 @@ class CreateProjectSubmitState extends Equatable {
 }
 
 class CreateProjectSubmitCubit extends Cubit<CreateProjectSubmitState> {
-  final CreateProjectUseCase _useCase;
+  final CreateAndLaunchProjectUseCase _useCase;
 
-  CreateProjectSubmitCubit({CreateProjectUseCase? useCase})
-      : _useCase = useCase ?? ServiceLocator.instance.createProjectUseCase,
+  CreateProjectSubmitCubit({CreateAndLaunchProjectUseCase? useCase})
+      : _useCase =
+            useCase ?? ServiceLocator.instance.createAndLaunchProjectUseCase,
         super(const CreateProjectSubmitState());
 
   Future<void> submit(CreateProjectForm form) async {

@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/constants/app_assets.dart';
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/project_end_relative_label.dart';
 import '../../../../core/widgets/common/app_svg_icon.dart';
 import '../../../../core/widgets/text/app_text.dart';
 
@@ -91,25 +92,37 @@ class ProjectInfoDeadlineRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final emphasis = ProjectEndRelativeLabel.emphasis(endsIn);
+    if (emphasis.isEmpty) return const SizedBox.shrink();
+
+    final full = ProjectEndRelativeLabel.isFullSentence(endsIn);
+    final labelStyle = GoogleFonts.lato(fontSize: 13.sp, color: AppColors.textBody);
+    final durationStyle = GoogleFonts.lato(
+      fontSize: 13.sp,
+      fontWeight: FontWeight.w800,
+      color: AppColors.textPrimary,
+    );
+
     return Row(
       children: [
         AppSvgIcon(
-            assetPath: AppAssets.iconCalendar,
-            size: 14.w,
-            color: AppColors.textBody),
+          assetPath: AppAssets.iconCalendar02,
+          size: 12,
+          color: AppColors.grey800,
+        ),
         SizedBox(width: 6.w),
-        AppText(
-          '${AppStrings.labelEndsIn} ',
-          style: GoogleFonts.lato(fontSize: 13.sp, color: AppColors.textBody),
-        ),
-        AppText(
-          endsIn,
-          style: GoogleFonts.lato(
-            fontSize: 13.sp,
-            fontWeight: FontWeight.w800,
-            color: AppColors.textPrimary,
+        if (full)
+          AppText(emphasis, style: durationStyle)
+        else
+          Text.rich(
+            TextSpan(
+              style: labelStyle,
+              children: [
+                TextSpan(text: '${AppStrings.labelEndsIn} '),
+                TextSpan(text: emphasis, style: durationStyle),
+              ],
+            ),
           ),
-        ),
       ],
     );
   }

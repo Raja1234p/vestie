@@ -29,6 +29,7 @@ import '../../features/projects/data/repositories/projects_repository_impl.dart'
 import '../../features/projects/domain/repositories/project_repository.dart';
 import '../../features/projects/domain/repositories/projects_repository.dart';
 import '../../features/projects/domain/usecases/list_projects_use_case.dart';
+import '../../features/projects/domain/usecases/create_and_launch_project_use_case.dart';
 import '../../features/projects/domain/usecases/create_project_use_case.dart';
 import '../../features/projects/domain/usecases/preview_invite_usecase.dart';
 import '../../features/projects/domain/usecases/join_project_usecase.dart';
@@ -40,6 +41,7 @@ import '../../features/project_detail/data/repositories/project_actions_reposito
 import '../../features/project_detail/domain/repositories/project_detail_repository.dart';
 import '../../features/project_detail/domain/repositories/project_actions_repository.dart';
 import '../../features/projects/domain/usecases/get_project_detail_usecase.dart';
+import '../../features/project_detail/domain/usecases/list_pending_join_requests_usecase.dart';
 import '../../features/project_detail/domain/usecases/project_actions_usecases.dart';
 import 'package:vestie/user/features/contributions/data/datasources/contribution_remote_data_source.dart';
 import 'package:vestie/user/features/contributions/data/repositories/contribution_repository_impl.dart';
@@ -100,6 +102,7 @@ class ServiceLocator {
   late final ProjectRepository projectRepository;
   late final ListProjectsUseCase listProjectsUseCase;
   late final CreateProjectUseCase createProjectUseCase;
+  late final CreateAndLaunchProjectUseCase createAndLaunchProjectUseCase;
   late final PreviewInviteUseCase previewInviteUseCase;
   late final JoinProjectUseCase joinProjectUseCase;
 
@@ -111,6 +114,7 @@ class ServiceLocator {
   late final ProjectActionsRepository projectActionsRepository;
   late final OpenClosureVotingUseCase openClosureVotingUseCase;
   late final CancelProjectUseCase cancelProjectUseCase;
+  late final ListPendingJoinRequestsUseCase listPendingJoinRequestsUseCase;
   late final ApproveMembershipUseCase approveMembershipUseCase;
   late final RejectMembershipUseCase rejectMembershipUseCase;
   late final CreateInviteUseCase createInviteUseCase;
@@ -146,7 +150,6 @@ class ServiceLocator {
   late final SubmitVoteUseCase submitVoteUseCase;
   late final ModerateMemberUseCase moderateMemberUseCase;
 
-  late final ProjectDetailBloc projectDetailBloc;
   late final ModerationBloc moderationBloc;
   late final VotingBloc votingBloc;
   late final ContributeBloc contributeBloc;
@@ -190,6 +193,8 @@ class ServiceLocator {
     );
     listProjectsUseCase = ListProjectsUseCase(projectsRepository);
     createProjectUseCase = CreateProjectUseCase(projectsRepository);
+    createAndLaunchProjectUseCase =
+        CreateAndLaunchProjectUseCase(projectsRepository);
     previewInviteUseCase = PreviewInviteUseCase(projectRepository);
     joinProjectUseCase = JoinProjectUseCase(projectRepository);
 
@@ -201,6 +206,8 @@ class ServiceLocator {
     projectActionsRepository = ProjectActionsRepositoryImpl(remoteDataSource: projectActionsRemoteDataSource);
     openClosureVotingUseCase = OpenClosureVotingUseCase(projectActionsRepository);
     cancelProjectUseCase = CancelProjectUseCase(projectActionsRepository);
+    listPendingJoinRequestsUseCase =
+        ListPendingJoinRequestsUseCase(projectActionsRepository);
     approveMembershipUseCase = ApproveMembershipUseCase(projectActionsRepository);
     rejectMembershipUseCase = RejectMembershipUseCase(projectActionsRepository);
     createInviteUseCase = CreateInviteUseCase(projectActionsRepository);
@@ -237,7 +244,6 @@ class ServiceLocator {
     moderateMemberUseCase = ModerateMemberUseCase(repository: projectActionsRepository);
 
     // ── New Enterprise Blocs ────────────────────────────────────────────────
-    projectDetailBloc = ProjectDetailBloc(repository: projectDetailRepository);
     moderationBloc = ModerationBloc(moderateMemberUseCase: moderateMemberUseCase);
     votingBloc = VotingBloc(submitVoteUseCase: submitVoteUseCase);
     contributeBloc = ContributeBloc(
@@ -246,4 +252,10 @@ class ServiceLocator {
       confirmUseCase: confirmContributionUseCase,
     );
   }
+
+  /// Fresh bloc per detail route — avoids stale project state from a shared instance.
+  ProjectDetailBloc createProjectDetailBloc() => ProjectDetailBloc(
+        repository: projectDetailRepository,
+        listPendingJoinRequests: listPendingJoinRequestsUseCase,
+      );
 }

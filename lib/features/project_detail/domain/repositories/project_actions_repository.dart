@@ -1,9 +1,20 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/error/failures.dart';
+import '../entities/pending_join_request_entity.dart';
 
 abstract class ProjectActionsRepository {
-  Future<Either<Failure, void>> approveJoinRequest(String projectId, String userId);
-  Future<Either<Failure, void>> rejectJoinRequest(String projectId, String userId);
+  Future<Either<Failure, List<PendingJoinRequestEntity>>> listPendingJoinRequests(
+    String projectId,
+  );
+
+  Future<Either<Failure, void>> approveJoinRequest(
+    String projectId,
+    String membershipId,
+  );
+  Future<Either<Failure, void>> rejectJoinRequest(
+    String projectId,
+    String membershipId,
+  );
   Future<Either<Failure, void>> removeMember(String projectId, String userId);
   Future<Either<Failure, void>> promoteToCoLeader(String projectId, String userId);
   Future<Either<Failure, void>> demoteCoLeader(String projectId, String userId);

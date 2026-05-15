@@ -18,6 +18,7 @@ import '../widgets/create_project_header.dart';
 import '../widgets/create_project_review_sections.dart';
 
 /// Summary before submit — sections depend on the chosen [ProjectCreationFlowType].
+/// Final wizard step: `POST /projects` then `POST /projects/{id}/launch` (Week 3/4).
 class CreateProjectReviewScreen extends StatelessWidget {
   const CreateProjectReviewScreen({super.key});
 

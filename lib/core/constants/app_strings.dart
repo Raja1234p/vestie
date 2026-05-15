@@ -7,6 +7,11 @@ class AppStrings {
   // General
   static const String errorGeneric      = 'Something went wrong. Please try again.';
   static const String errorNetwork      = 'No internet connection. Please check your network.';
+  static const String errorLaunchProject =
+      'Project was saved but could not be launched. Please try again.';
+  static const String errorForbidden    = 'You do not have permission to view this.';
+  static const String projectNotFound   = 'Project not found or is no longer available.';
+  static const String joinRequestsEmpty = 'No pending join requests.';
   static const String errorUnauthorized = 'Session expired. Please log in again.';
   static const String errorServer       = 'Server error. Please try again later.';
   static const String errorTimeout      = 'Request timed out. Please try again.';
@@ -45,7 +50,7 @@ class AppStrings {
   static const String hintPassword        = 'Enter password';
   static const String hintCreatePassword  = 'Create a strong password';
   static const String hintFullName        = 'As per your official ID';
-  static const String hintConfirmPassword = 're-enter your password';
+  static const String hintConfirmPassword = 'Re-enter your password';
   static const String hintVerifyCode      = 'Enter 6-digit code';
 
   // Buttons & Links
@@ -63,7 +68,8 @@ class AppStrings {
   static const String orDivider           = 'or';
 
   // Validation hints
-  static const String passwordHint = '8+ characters with letters and numbers';
+  static const String passwordHint =
+      '8+ chars: uppercase, lowercase, number & symbol';
 
   // Forgot Password
   static const String forgotTitle          = 'Forgot your password?';
@@ -111,8 +117,8 @@ class AppStrings {
   static const String errorEmailRequired    = 'Email is required.';
   static const String errorEmailInvalid     = 'Enter a valid email address.';
   static const String errorPasswordRequired = 'Password is required.';
-  static const String errorPasswordWeak     =
-      'Use 8+ characters with at least one letter and one number. Special characters are allowed.';
+  static const String errorPasswordWeak =
+      'Use 8+ characters with uppercase, lowercase, a number, and a symbol.';
   static const String errorPasswordMismatch = 'Passwords do not match.';
   static const String errorNameRequired     = 'Full name is required.';
   static const String errorPersonNameInvalidChars =

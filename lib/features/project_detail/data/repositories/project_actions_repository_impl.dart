@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/error/failures.dart';
+import '../../domain/entities/pending_join_request_entity.dart';
 import '../../domain/repositories/project_actions_repository.dart';
 import '../datasources/project_actions_remote_data_source.dart';
 
@@ -9,13 +10,39 @@ class ProjectActionsRepositoryImpl implements ProjectActionsRepository {
   ProjectActionsRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<Either<Failure, void>> approveJoinRequest(String projectId, String userId) async {
-    return _execute(() => remoteDataSource.approveJoinRequest(projectId, userId));
+  Future<Either<Failure, List<PendingJoinRequestEntity>>> listPendingJoinRequests(
+    String projectId,
+  ) async {
+    try {
+      final models = await remoteDataSource.listPendingJoinRequests(projectId);
+      return Right(
+        models.map((m) => m.toEntity()).toList(growable: false),
+      );
+    } on Failure catch (f) {
+      return Left(f);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
   }
 
   @override
-  Future<Either<Failure, void>> rejectJoinRequest(String projectId, String userId) async {
-    return _execute(() => remoteDataSource.rejectJoinRequest(projectId, userId));
+  Future<Either<Failure, void>> approveJoinRequest(
+    String projectId,
+    String membershipId,
+  ) async {
+    return _execute(
+      () => remoteDataSource.approveJoinRequest(projectId, membershipId),
+    );
+  }
+
+  @override
+  Future<Either<Failure, void>> rejectJoinRequest(
+    String projectId,
+    String membershipId,
+  ) async {
+    return _execute(
+      () => remoteDataSource.rejectJoinRequest(projectId, membershipId),
+    );
   }
 
   @override
