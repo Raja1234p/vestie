@@ -23,9 +23,12 @@ class MyBorrowHistoryRow extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 10.h),
       padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: AppColors.projectFundsLedgerCardBg,
         borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(color: AppColors.projectFundsLedgerBorder),
+        border: Border.all(
+          color: AppColors.projectFundsLedgerBorder,
+          width: 1,
+        ),
       ),
       child: Row(
         children: [
@@ -69,9 +72,12 @@ class _BorrowHistoryIcon extends StatelessWidget {
       width: 44.w,
       height: 44.w,
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: AppColors.projectFundsLedgerIconTileBg,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: AppColors.projectFundsLedgerBorder),
+        border: Border.all(
+          color: AppColors.purple300,
+          width: 1,
+        ),
       ),
       alignment: Alignment.center,
       child: SvgPicture.asset(

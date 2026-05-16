@@ -36,21 +36,14 @@ Future<void> showJoinRequestApprovedDialog(
   BuildContext context, {
   required String memberName,
 }) {
-  return AppActionDialog.show(
+  return AppActionDialog.showSuccessOk(
     context,
     title: AppStrings.joinRequestApprovedTitle,
-    description: '',
     descriptionWidget: _descriptionWithHighlightedName(
       context,
       prefix: AppStrings.joinRequestApprovedPrefix,
       memberName: memberName,
     ),
-    primaryLabel: AppStrings.btnOk,
-    showSecondary: false,
-    primaryColor: Colors.transparent,
-    primaryTextColor: AppColors.neutral1200,
-    primaryBorderColor: AppColors.neutral1200,
-    iconAsset: AppAssets.projectCreatedImage,
     onPrimary: () => Navigator.of(context).pop(),
   );
 }

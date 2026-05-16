@@ -8,13 +8,12 @@ class MyBorrowRequestArgsBuilder {
   MyBorrowRequestArgsBuilder._();
 
   static MyBorrowRequestRouteArgs fromProject(ProjectDetailEntity project) {
-    // Replace with viewer's active request + history when API is available.
-    final active = _activeRequestFromProject(project);
+    final active = _activeRequestFromProject(project) ?? _previewActiveRequest();
     return MyBorrowRequestRouteArgs(
       projectId: project.id,
       walletFlowArgs: ProjectDetailNavigationHelpers.walletArgs(project),
       activeRequest: active,
-      history: active != null ? _previewHistory() : const [],
+      history: _previewHistory(),
     );
   }
 
@@ -23,6 +22,19 @@ class MyBorrowRequestArgsBuilder {
   ) {
     // TODO: map viewer's pending borrow request from project detail API.
     return null;
+  }
+
+  /// Figma active state preview until my-borrow-request API is wired.
+  static BorrowRequestEntity _previewActiveRequest() {
+    return const BorrowRequestEntity(
+      id: 'preview-active',
+      initials: 'ME',
+      memberName: 'You',
+      loanType: 'Education Loan',
+      requestedAmount: 300,
+      upvotes: 4,
+      downvotes: 2,
+    );
   }
 
   /// Figma preview history until my-borrow-history API is wired.

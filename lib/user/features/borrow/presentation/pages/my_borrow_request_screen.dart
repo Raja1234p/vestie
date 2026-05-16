@@ -11,6 +11,7 @@ import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 
+import '../widgets/cancel_borrow_request_dialog.dart';
 import '../widgets/my_borrow_request_active_body.dart';
 import '../widgets/my_borrow_request_empty_body.dart';
 
@@ -72,7 +73,12 @@ class MyBorrowRequestScreen extends StatelessWidget {
 
   void _onPrimaryAction(BuildContext context) {
     if (_hasActiveRequest) {
-      context.pop();
+      showCancelBorrowRequestDialog(
+        context,
+        onConfirm: () {
+          if (context.mounted) context.pop();
+        },
+      );
       return;
     }
     context.push(AppRoutes.borrowFlow, extra: args.walletFlowArgs);

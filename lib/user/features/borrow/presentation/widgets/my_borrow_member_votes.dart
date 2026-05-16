@@ -27,9 +27,9 @@ class MyBorrowMemberVotes extends StatelessWidget {
         AppText(
           AppStrings.myBorrowMemberVotesLabel,
           style: GoogleFonts.lato(
-            fontSize: 14.sp,
+            fontSize: 18.sp,
             fontWeight: FontWeight.w600,
-            color: AppColors.grey800,
+            color: AppColors.projectDetailText,
           ),
         ),
         SizedBox(height: 10.h),

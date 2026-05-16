@@ -33,16 +33,16 @@ class MyBorrowRequestActiveBody extends StatelessWidget {
           AppText(
             AppStrings.myBorrowAmountLabel,
             style: GoogleFonts.lato(
-              fontSize: 14.sp,
+              fontSize: 18.sp,
               fontWeight: FontWeight.w600,
-              color: AppColors.grey800,
+              color: AppColors.projectDetailText,
             ),
           ),
-          SizedBox(height: 4.h),
+          SizedBox(height: 10.h),
           AppText(
             AppFormatters.formatCurrency(activeRequest.requestedAmount),
             style: GoogleFonts.lato(
-              fontSize: 32.sp,
+              fontSize: 30.sp,
               fontWeight: FontWeight.w900,
               color: AppColors.projectDetailText,
               height: 1.1,
@@ -57,9 +57,9 @@ class MyBorrowRequestActiveBody extends StatelessWidget {
           AppText(
             AppStrings.myBorrowHistoryLabel,
             style: GoogleFonts.lato(
-              fontSize: 14.sp,
+              fontSize: 18.sp,
               fontWeight: FontWeight.w600,
-              color: AppColors.grey800,
+              color: AppColors.projectDetailText,
             ),
           ),
           SizedBox(height: 10.h),

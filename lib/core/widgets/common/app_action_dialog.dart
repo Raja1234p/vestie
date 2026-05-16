@@ -64,7 +64,7 @@ class AppActionDialog extends StatelessWidget {
       barrierDismissible: true,
       builder: (_) => Dialog(
         backgroundColor: Colors.transparent,
-        insetPadding: EdgeInsets.symmetric(horizontal: 26.w),
+        insetPadding: EdgeInsets.symmetric(horizontal: 15.w),
         child: AppActionDialog(
           title: title,
           description: description,
@@ -85,10 +85,33 @@ class AppActionDialog extends StatelessWidget {
     );
   }
 
+  /// Single **Ok** result dialog with [AppAssets.projectCreatedImage].
+  static Future<void> showSuccessOk(
+    BuildContext context, {
+    required String title,
+    String description = '',
+    Widget? descriptionWidget,
+    required VoidCallback onPrimary,
+  }) {
+    return show(
+      context,
+      title: title,
+      description: description,
+      descriptionWidget: descriptionWidget,
+      primaryLabel: AppStrings.btnOk,
+      showSecondary: false,
+      primaryColor: Colors.transparent,
+      primaryTextColor: AppColors.neutral1200,
+      primaryBorderColor: AppColors.neutral1200,
+      iconAsset: AppAssets.projectCreatedImage,
+      onPrimary: onPrimary,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(12.w, 20.h, 12.w, 18.h),
+      padding: EdgeInsets.fromLTRB(18.w, 35.h, 18.w, 14.h),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(28.r),
@@ -119,12 +142,13 @@ class AppActionDialog extends StatelessWidget {
                 description,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontSize: 16.sp,
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w400,
                       color: AppColors.grey900,
                       height: 1.5,
                     ),
               ),
-          SizedBox(height: 22.h),
+          SizedBox(height: 35.h),
           _DialogButton(
             label: primaryLabel,
             onTap: onPrimary,
@@ -217,7 +241,7 @@ class _DialogButton extends StatelessWidget {
           child: AppText(
             label,
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  fontSize: 16.sp,
+                  fontSize: 18.sp,
                   fontWeight: FontWeight.w600,
                   color: textColor,
                 ),

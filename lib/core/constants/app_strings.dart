@@ -784,6 +784,14 @@ class AppStrings {
   static const String myBorrowHistoryLabel      = 'Borrow History';
   static const String btnMakeBorrowRequest      = 'Make Request';
   static const String btnCancelBorrowRequest    = 'Cancel Request';
+  static const String cancelBorrowRequestDialogTitle = 'Are You Sure?';
+  static const String cancelBorrowRequestDialogBody =
+      'Are you sure you want to cancel this request?';
+  static const String btnYesLeave               = 'Yes leave';
+  static const String borrowRequestCancelledTitle =
+      'Your request has been cancelled';
+  static const String borrowRequestCancelledBody =
+      'You\'ve cancelled your on going borrow request';
   static const String borrowHistoryApproved     = 'Approved';
   static const String borrowHistoryRejected     = 'Rejected';
   static const String upvoteLabel               = 'Upvote';

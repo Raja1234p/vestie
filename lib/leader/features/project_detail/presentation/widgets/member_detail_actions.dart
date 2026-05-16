@@ -98,16 +98,10 @@ Future<void> showMakeCoLeaderFlow(
     },
   );
   if (!context.mounted || !shouldShowSuccess) return;
-  await AppActionDialog.show(
+  await AppActionDialog.showSuccessOk(
     context,
     title: AppStrings.coLeaderAssignedTitle,
     description: AppStrings.coLeaderAssignedDescription(memberName, projectName),
-    primaryLabel: AppStrings.btnOk,
-    showSecondary: false,
-    primaryColor: Colors.transparent,
-    primaryTextColor: AppColors.neutral1200,
-    primaryBorderColor: AppColors.neutral1200,
-    iconAsset: AppAssets.projectCreatedImage,
     onPrimary: () => Navigator.of(context).pop(),
   );
 }
