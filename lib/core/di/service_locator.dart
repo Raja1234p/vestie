@@ -152,7 +152,6 @@ class ServiceLocator {
 
   late final ModerationBloc moderationBloc;
   late final VotingBloc votingBloc;
-  late final ContributeBloc contributeBloc;
 
   Future<void> init() async {
     // ── Core ───────────────────────────────────────────────────────────────
@@ -246,12 +245,14 @@ class ServiceLocator {
     // ── New Enterprise Blocs ────────────────────────────────────────────────
     moderationBloc = ModerationBloc(moderateMemberUseCase: moderateMemberUseCase);
     votingBloc = VotingBloc(submitVoteUseCase: submitVoteUseCase);
-    contributeBloc = ContributeBloc(
-      configUseCase: fetchContributionConfigUseCase,
-      previewUseCase: previewContributionUseCase,
-      confirmUseCase: confirmContributionUseCase,
-    );
   }
+
+  /// Fresh bloc per contribute flow — [BlocProvider] closes it on pop.
+  ContributeBloc createContributeBloc() => ContributeBloc(
+        configUseCase: fetchContributionConfigUseCase,
+        previewUseCase: previewContributionUseCase,
+        confirmUseCase: confirmContributionUseCase,
+      );
 
   /// Fresh bloc per detail route — avoids stale project state from a shared instance.
   ProjectDetailBloc createProjectDetailBloc() => ProjectDetailBloc(

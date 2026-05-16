@@ -68,7 +68,8 @@ List<RouteBase> buildProjectRoutes({
         final extra = state.extra;
         if (extra is! ProjectWalletFlowArgs) return invalidRouteScreen();
         return BlocProvider(
-          create: (_) => ServiceLocator.instance.contributeBloc..add(InitArgsEvent(args: extra)),
+          create: (_) => ServiceLocator.instance.createContributeBloc()
+            ..add(InitArgsEvent(args: extra)),
           child: const ContributeFlowScreen(),
         );
       },

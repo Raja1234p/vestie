@@ -9,12 +9,11 @@ import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/utils/app_snackbar.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
-import 'package:vestie/core/widgets/common/app_purple_dashed_line.dart';
 import 'package:vestie/core/widgets/common/app_stacked_currency_field.dart';
 import 'package:vestie/core/widgets/common/app_success_screen.dart';
 import 'package:vestie/core/widgets/common/app_text.dart';
 import 'package:vestie/core/widgets/common/app_tick_switch.dart';
-import 'package:vestie/core/widgets/common/app_wallet_pill.dart';
+import 'package:vestie/core/widgets/common/app_wallet_balance_chip.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import '../../../contributions/presentation/bloc/contribute_bloc.dart';
@@ -27,9 +26,12 @@ class ContributeFlowScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<ContributeBloc, ContributeState>(
-      listenWhen: (p, c) => p.submitFailure != c.submitFailure || p.previewFailure != c.previewFailure,
+      listenWhen: (p, c) =>
+          p.submitFailure != c.submitFailure ||
+          p.previewFailure != c.previewFailure,
       listener: (context, state) {
-        final msg = state.submitFailure?.message ?? state.previewFailure?.message;
+        final msg =
+            state.submitFailure?.message ?? state.previewFailure?.message;
         if (msg != null && msg.isNotEmpty) {
           AppSnackBar.showError(context, msg);
         }
@@ -58,36 +60,38 @@ class _ContributeAmountView extends StatefulWidget {
 }
 
 class _ContributeAmountViewState extends State<_ContributeAmountView> {
-  final FocusNode _amountFocus = FocusNode();
+  final FocusNode _amountFieldFocus = FocusNode();
+  final ScrollController _scrollController = ScrollController();
   late final TextEditingController _amountDigitsController;
 
   @override
   void initState() {
     super.initState();
     _amountDigitsController = TextEditingController();
-    _amountFocus.addListener(() {
-      if (mounted) setState(() {});
-    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      _amountDigitsController.text =
-          context.read<ContributeBloc>().state.amountDigits;
+      final digits = context.read<ContributeBloc>().state.amountDigits;
+      if (_amountDigitsController.text != digits) {
+        _amountDigitsController.text = digits;
+      }
+      _amountFieldFocus.requestFocus();
     });
   }
 
   @override
   void dispose() {
-    _amountFocus.dispose();
+    _amountFieldFocus.dispose();
     _amountDigitsController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
-  void _syncAmountField(ContributeState state) {
-    if (!_amountFocus.hasFocus &&
-        _amountDigitsController.text != state.amountDigits) {
+  void _syncAmountFieldFromState(String digits) {
+    if (!_amountFieldFocus.hasFocus &&
+        _amountDigitsController.text != digits) {
       _amountDigitsController.value = TextEditingValue(
-        text: state.amountDigits,
-        selection: TextSelection.collapsed(offset: state.amountDigits.length),
+        text: digits,
+        selection: TextSelection.collapsed(offset: digits.length),
       );
     }
   }
@@ -97,9 +101,9 @@ class _ContributeAmountViewState extends State<_ContributeAmountView> {
     return BlocBuilder<ContributeBloc, ContributeState>(
       builder: (context, state) {
         final bloc = context.read<ContributeBloc>();
-        _syncAmountField(state);
+        _syncAmountFieldFromState(state.amountDigits);
         final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
-        final args = state.args;
+        final walletFormatted = state.args?.walletAmountFormatted ?? '0';
 
         return Scaffold(
           resizeToAvoidBottomInset: true,
@@ -119,34 +123,35 @@ class _ContributeAmountViewState extends State<_ContributeAmountView> {
                   child: LayoutBuilder(
                     builder: (context, constraints) {
                       return SingleChildScrollView(
-                        padding: EdgeInsets.only(bottom: 8.h + bottomInset),
+                        controller: _scrollController,
+                        padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 8.h),
                         child: ConstrainedBox(
                           constraints: BoxConstraints(
                             minHeight: constraints.maxHeight,
                           ),
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: bottomInset > 0
+                                ? MainAxisAlignment.start
+                                : MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              AppText(
-                                AppStrings.addAmount,
-                                style: GoogleFonts.lato(
-                                  fontSize: 14.sp,
-                                  color: AppColors.textBody,
+                              GestureDetector(
+                                onTap: () => _amountFieldFocus.requestFocus(),
+                                behavior: HitTestBehavior.opaque,
+                                child: AppStackedCurrencyField(
+                                  displayDollar: state.amountDigits.isEmpty
+                                      ? r'$0.00'
+                                      : state.displayAmountDollar,
+                                  controller: _amountDigitsController,
+                                  focusNode: _amountFieldFocus,
+                                  onDigitsChanged: (raw) => bloc.add(
+                                    DigitsChangedEvent(digits: raw),
+                                  ),
                                 ),
                               ),
-                              SizedBox(height: 10.h),
-                              AppStackedCurrencyField(
-                                displayDollar: state.amountDigits.isEmpty
-                                    ? r'$0.00'
-                                    : state.displayAmountDollar,
-                                controller: _amountDigitsController,
-                                focusNode: _amountFocus,
-                                onDigitsChanged: (raw) => bloc.add(DigitsChangedEvent(digits: raw)),
-                              ),
-                              SizedBox(height: 20.h),
-                              AppWalletPill(
-                                formattedBalance: args?.walletAmountFormatted ?? '0.00',
-                                onTap: () {},
+                              SizedBox(height: 12.h),
+                              AppWalletBalanceChip(
+                                formattedBalance: walletFormatted,
                               ),
                             ],
                           ),
@@ -155,17 +160,20 @@ class _ContributeAmountViewState extends State<_ContributeAmountView> {
                     },
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w),
-                  child: AppButton(
-                    text: AppStrings.btnConfirm,
-                    isLoading: state.isPreviewLoading,
-                    onPressed: state.amountValue <= 0 || state.selectedWalletId.isEmpty
-                        ? null
-                        : () => bloc.add(GoToConfirmEvent()),
+                SafeArea(
+                  top: false,
+                  minimum: EdgeInsets.fromLTRB(16.w, 0, 16.w, 24.h),
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: bottomInset),
+                    child: AppButton(
+                      text: AppStrings.btnConfirm,
+                      isLoading: state.isPreviewLoading,
+                      onPressed: state.amountValue <= 0
+                          ? null
+                          : () => bloc.add(GoToConfirmEvent()),
+                    ),
                   ),
                 ),
-                SizedBox(height: 12.h),
               ],
             ),
           ),
@@ -183,6 +191,7 @@ class _ContributeConfirmView extends StatelessWidget {
   Widget build(BuildContext context) {
     final bloc = context.read<ContributeBloc>();
     final args = state.args;
+    final walletFormatted = args?.walletAmountFormatted ?? '0';
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -202,74 +211,59 @@ class _ContributeConfirmView extends StatelessWidget {
               child: ListView(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                 children: [
-                  SizedBox(height: 6.h),
-                  _sectionLabel(AppStrings.labelPaymentMethod),
-                  SizedBox(height: 8.h),
-                  _borderCard(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          AppText(
-                            AppStrings.labelPaymentFrom,
-                            style: GoogleFonts.lato(
-                              fontSize: 14.sp,
-                              color: AppColors.textBody,
-                            ),
-                          ),
-                          AppWalletPill(
-                            formattedBalance: args?.walletAmountFormatted ?? '0.00',
-                            onTap: () {},
-                            backgroundColor: AppColors.cardBg,
-                            borderColor: AppColors.cardBorder,
-                          ),
-                        ],
+                  _label(AppStrings.labelPaymentMethod),
+                  SizedBox(height: 12.h),
+                  _card(
+                    _paymentRow(
+                      '${AppStrings.labelPaymentFrom}:',
+                      AppWalletBalanceChip(
+                        formattedBalance: walletFormatted,
+                        backgroundColor: Colors.white,
+                        borderColor: AppColors.neutral400,
+                        showChevron: true,
                       ),
                     ),
                   ),
                   SizedBox(height: 20.h),
-                  _sectionLabel(AppStrings.labelBreakdown),
-                  SizedBox(height: 8.h),
-                  _borderCard(
-                    child: Column(
+                  _label(AppStrings.labelBreakdown),
+                  SizedBox(height: 12.h),
+                  _card(
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        _paddedRow(
-                          AppStrings.labelContributionAmount,
+                        _row(
+                          '${AppStrings.labelContributionAmount}:',
                           state.displayAmountDollar,
                         ),
-                        const AppPurpleDashedLine(),
-                        _paddedRow(
+                        _row(
                           AppStrings.labelVestieFee3,
                           '-\$${state.vestieFeeFormatted}',
                         ),
-                        const AppPurpleDashedLine(),
-                        _paddedRow(
+                        const _BreakdownDivider(),
+                        _row(
                           AppStrings.labelTotalDeduction,
                           '\$${state.totalDeductionFormatted}',
-                          bold: true,
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: 24.h),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       AppTickSwitch(
                         value: state.nonRefundableAccepted,
-                        onChanged: (v) => bloc.add(SetNonRefundableEvent(accepted: v)),
+                        onChanged: (v) =>
+                            bloc.add(SetNonRefundableEvent(accepted: v)),
                       ),
                       SizedBox(width: 6.w),
-                      SizedBox(width: 4.w),
-                      SizedBox(width: 4.w),
                       Expanded(
                         child: AppText(
                           AppStrings.contributeNonRefundable,
                           style: GoogleFonts.lato(
-                            fontSize: 13.sp,
-                            color: AppColors.textBody,
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.neutral700,
                             height: 1.4,
                           ),
                         ),
@@ -300,53 +294,89 @@ class _ContributeConfirmView extends StatelessWidget {
     );
   }
 
-  Widget _sectionLabel(String t) {
+  Widget _label(String t) {
     return AppText(
       t,
       style: GoogleFonts.lato(
-        fontSize: 17.sp,
-        fontWeight: FontWeight.w600,
-        color: AppColors.neutral1100,
+        fontSize: 16.sp,
+        fontWeight: FontWeight.w700,
+        color: AppColors.grey1100,
       ),
     );
   }
 
-  Widget _borderCard({required Widget child}) {
+  Widget _card(Widget child) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: AppColors.appBgBottom,
+        color: AppColors.searchBarBg,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: AppColors.cardBorder, width: 1),
+        border: Border.all(color: AppColors.neutral400),
       ),
       child: child,
     );
   }
 
-  Widget _paddedRow(String left, String right, {bool bold = false}) {
+  Widget _row(String left, String right) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AppText(
-            left,
-            style: GoogleFonts.lato(
-              fontSize: 14.sp,
-              fontWeight: bold ? FontWeight.w700 : FontWeight.w500,
-              color: AppColors.grey1100,
+          Expanded(
+            child: AppText(
+              left,
+              style: GoogleFonts.lato(
+                fontSize: 14.sp,
+                color: AppColors.neutral700,
+              ),
             ),
           ),
           AppText(
             right,
             style: GoogleFonts.lato(
-              fontSize: 14.sp,
-              fontWeight: bold ? FontWeight.w800 : FontWeight.w600,
-              color: AppColors.grey1100,
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.neutral1200,
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _paymentRow(String left, Widget trailing) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 20.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: AppText(
+              left,
+              style: GoogleFonts.lato(
+                fontSize: 14.sp,
+                color: AppColors.neutral700,
+              ),
+            ),
+          ),
+          trailing,
+        ],
+      ),
+    );
+  }
+}
+
+class _BreakdownDivider extends StatelessWidget {
+  const _BreakdownDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 1,
+      color: AppColors.neutral400,
     );
   }
 }
@@ -357,18 +387,34 @@ class _ContributeSuccessView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final args = state.args;
+    final projectName = state.args?.projectName ?? '';
     return AppSuccessScreen(
       title: AppStrings.contributionSuccessTitle,
-      subtitleWidget: AppText(
-        '\$${state.amountFormatted} added to ${args?.projectName ?? ""}',
-        textAlign: TextAlign.center,
-        style: GoogleFonts.lato(
-          fontSize: 18.sp,
-          color: AppColors.textBody,
+      subtitleWidget: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        child: Text.rich(
+          TextSpan(
+            style: GoogleFonts.lato(
+              fontSize: 20.sp,
+              fontWeight: FontWeight.w400,
+              color: AppColors.textBody,
+              height: 1.35,
+            ),
+            children: [
+              const TextSpan(text: 'Your '),
+              TextSpan(
+                text: state.displayAmountDollar,
+                style: const TextStyle(fontWeight: FontWeight.w700),
+              ),
+              TextSpan(
+                text: ' contribution has been added to $projectName.',
+              ),
+            ],
+          ),
+          textAlign: TextAlign.center,
         ),
       ),
-      buttonText: AppStrings.btnDone,
+      buttonText: AppStrings.btnBackToProject,
       onButtonPressed: () => context.pop(),
     );
   }

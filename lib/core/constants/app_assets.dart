@@ -91,6 +91,7 @@ class AppAssets {
   // ── Arrow Direction Icons ────────────────────────────────────────────────
   static const String iconArrowUpBig   = '$_iconPath/arrow-up-big.svg';
   static const String iconArrowDownBig = '$_iconPath/arrow-down-big.svg';
+  static const String iconArrowDown01 = '$_iconPath/arrow-down-01.svg';
   static const String iconPopMenu      = '$_iconPath/popmenuicon.svg';
   /// Member “Project Actions” — funds history & leave project rows.
   static const String iconProjectFundHistory = '$_iconPath/project_fund_history.svg';
