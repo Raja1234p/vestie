@@ -7,7 +7,6 @@ import '../../../../app/router/app_routes.dart';
 import '../../../../app/router/route_args/project_detail_flow_args.dart';
 import '../../../../app/router/route_args/project_wallet_flow_args.dart';
 import '../../../../core/constants/app_strings.dart';
-import '../../../../core/di/service_locator.dart';
 import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/widgets/common/app_invite_members_dialog.dart';
 import '../../../../core/widgets/common/leader_action_menu.dart';
@@ -77,11 +76,32 @@ class ProjectDetailNavigationHelpers {
     );
   }
 
+  static void openInviteMembers(
+    BuildContext context, {
+    required ProjectDetailEntity project,
+  }) {
+    if (!project.canInviteMembers) {
+      AppSnackBar.showError(context, AppStrings.errorForbidden);
+      return;
+    }
+    // TODO(api): restore POST /projects/{id}/invites via createInviteUseCase.
+    AppInviteMembersDialog.show(
+      context,
+      projectName: project.name,
+      inviteLink: AppStrings.inviteLinkSample,
+    );
+  }
+
   static void handleLeaderAction(
     BuildContext context, {
     required ProjectDetailEntity project,
     required LeaderMenuAction action,
   }) {
+    if (action == LeaderMenuAction.inviteMembers) {
+      openInviteMembers(context, project: project);
+      return;
+    }
+
     if (!project.isModeratorView) {
       AppSnackBar.showError(context, AppStrings.errorForbidden);
       return;
@@ -121,21 +141,6 @@ class ProjectDetailNavigationHelpers {
         );
         break;
       case LeaderMenuAction.inviteMembers:
-        ServiceLocator.instance.createInviteUseCase(
-          projectId: project.id,
-          requiresApproval: true,
-          expiresInDays: 30,
-          maxUses: 10,
-        ).then((result) {
-          if (!context.mounted) return;
-          result.fold(
-            (failure) => AppSnackBar.showError(context, failure.message),
-            (inviteCode) => AppInviteMembersDialog.show(
-              context,
-              inviteLink: inviteCode,
-            ),
-          );
-        });
         break;
       case LeaderMenuAction.markSuccessful:
         context.push(
@@ -187,11 +192,7 @@ class ProjectDetailNavigationHelpers {
         );
         break;
       case MemberProjectMenuAction.inviteMembers:
-        handleLeaderAction(
-          context,
-          project: project,
-          action: LeaderMenuAction.inviteMembers,
-        );
+        openInviteMembers(context, project: project);
         break;
       case MemberProjectMenuAction.leaveProject:
         context.push(

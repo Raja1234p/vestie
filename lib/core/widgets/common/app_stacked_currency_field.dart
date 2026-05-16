@@ -14,24 +14,28 @@ class AppStackedCurrencyField extends StatelessWidget {
     required this.controller,
     required this.focusNode,
     required this.onDigitsChanged,
+    this.amountFontSize,
   });
 
   final String displayDollar;
   final TextEditingController controller;
   final FocusNode focusNode;
   final ValueChanged<String> onDigitsChanged;
+  final double? amountFontSize;
 
   @override
   Widget build(BuildContext context) {
+    final fontSize = amountFontSize ?? 50.sp;
+
     return SizedBox(
-      height: 64.h,
+      height: (fontSize * 1.35).h,
       child: Stack(
         alignment: Alignment.center,
         children: [
           Text(
             displayDollar,
             style: GoogleFonts.lato(
-              fontSize: 50.sp,
+              fontSize: fontSize,
               fontWeight: FontWeight.w700,
               color: AppColors.grey1100,
             ),
@@ -42,14 +46,17 @@ class AppStackedCurrencyField extends StatelessWidget {
             onChanged: onDigitsChanged,
             showCursor: false,
             textAlign: TextAlign.center,
-            keyboardType: TextInputType.number,
+            keyboardType: const TextInputType.numberWithOptions(
+              signed: false,
+              decimal: false,
+            ),
             inputFormatters: <TextInputFormatter>[
               FilteringTextInputFormatter.digitsOnly,
               LengthLimitingTextInputFormatter(8),
             ],
             style: GoogleFonts.lato(
               color: Colors.transparent,
-              fontSize: 50.sp,
+              fontSize: fontSize,
               fontWeight: FontWeight.w700,
               height: 1,
             ),

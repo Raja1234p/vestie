@@ -963,6 +963,14 @@ class AppStrings {
   static const String shareQrCode               = 'Share QR Code';
   static const String copyCodeFromBelow         = 'Or copy code from below';
   static const String inviteLinkSample          = 'vestie.app/join/family-vacation-2025';
+  static String inviteMembersTitle(String projectName) =>
+      'Invite to $projectName';
+  static const String inviteMembersSelectVffHint = 'Tap to select VFFs';
+  static const String inviteMembersOrShareVia = 'or share Via';
+  static const String inviteShareWhatsapp = 'WhatsApp';
+  static const String inviteShareCopyLink = 'Copy Link';
+  static const String inviteShareMessages = 'Messages';
+  static const String inviteShareMore = 'More';
 
   static String removeMemberTitle(String memberName) => 'Remove $memberName';
 

@@ -66,10 +66,19 @@
 	<string>We need access to your camera to take a profile picture.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>We save photos to your photo library.</string>
-	<!-- url_launcher / canOpenURL: WhatsApp invite share -->
+	<!-- share_plus / url_launcher: apps visible in the iOS share sheet -->
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>whatsapp</string>
+		<string>instagram</string>
+		<string>instagram-stories</string>
+		<string>fb</string>
+		<string>fbapi</string>
+		<string>fb-messenger-share-api</string>
+		<string>twitter</string>
+		<string>tg</string>
+		<string>sms</string>
+		<string>mailto</string>
 	</array>
 
 	<key>UISupportedInterfaceOrientations~ipad</key>

@@ -140,6 +140,9 @@ class ProjectDetailEntity {
 
   bool get showsProjectDetailOverflowMenu => isMemberView || isModeratorView;
 
+  /// GroupLeader, CoLeader, and Member can open the invite-members sheet.
+  bool get canInviteMembers => showsProjectDetailOverflowMenu;
+
   /// Vacation / emergency members: 4 items; investment members: 3 (no My Borrows).
   bool get memberProjectMenuIncludesMyBorrows => isVacationOrEmergency;
 }

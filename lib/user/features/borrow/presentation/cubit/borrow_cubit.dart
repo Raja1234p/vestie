@@ -1,8 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:vestie/app/router/route_args/project_wallet_flow_args.dart';
-import 'package:vestie/core/di/service_locator.dart';
-import '../../../borrow/domain/usecases/create_borrow_request_use_case.dart';
 
 enum BorrowStep { amount, confirm, success }
 
@@ -62,30 +60,9 @@ class BorrowState {
 }
 
 class BorrowCubit extends Cubit<BorrowState> {
-  final CreateBorrowRequestUseCase _createBorrowRequestUseCase;
+  BorrowCubit(ProjectWalletFlowArgs args) : super(BorrowState(args: args));
 
-  BorrowCubit(
-    ProjectWalletFlowArgs args, {
-    CreateBorrowRequestUseCase? createBorrowRequestUseCase,
-  })  : _createBorrowRequestUseCase = createBorrowRequestUseCase ??
-            ServiceLocator.instance.createBorrowRequestUseCase,
-        super(BorrowState(args: args));
-
-  void appendDigit(String d) {
-    if (state.amountDigits.length >= 8) return;
-    if (state.amountDigits.isEmpty && d == '0') return;
-    emit(state.copyWith(amountDigits: state.amountDigits + d));
-  }
-
-  void removeDigit() {
-    if (state.amountDigits.isEmpty) return;
-    emit(state.copyWith(
-      amountDigits:
-          state.amountDigits.substring(0, state.amountDigits.length - 1),
-    ));
-  }
-
-  /// Raw cent digits (same as [appendDigit] chain) — used for Android system keyboard.
+  /// Cent digits from the system numeric keyboard ([AppStackedCurrencyField]).
   void setAmountDigits(String raw) {
     var d = raw.replaceAll(RegExp(r'[^0-9]'), '');
     if (d.length > 8) d = d.substring(0, 8);
@@ -119,31 +96,11 @@ class BorrowCubit extends Cubit<BorrowState> {
     _submitBorrowRequest();
   }
 
+  /// UI-only submit — skips `POST /projects/{id}/borrow-requests` until API is wired.
   Future<void> _submitBorrowRequest() async {
-    final membershipId = state.args.membershipId;
-    if (membershipId == null || membershipId.isEmpty) {
-      emit(state.copyWith(
-        errorMessage: 'Missing membership id. Please reopen project.',
-      ));
-      return;
-    }
-
     emit(state.copyWith(loading: true, clearError: true));
-    final result = await _createBorrowRequestUseCase(
-      projectId: state.args.projectId,
-      amount: state.amountValue,
-      reason: state.note.trim(),
-    );
-
-    result.fold(
-      (failure) => emit(state.copyWith(
-        loading: false,
-        errorMessage: failure.message,
-      )),
-      (_) => emit(state.copyWith(
-        loading: false,
-        step: BorrowStep.success,
-      )),
-    );
+    await Future<void>.delayed(const Duration(milliseconds: 400));
+    if (isClosed) return;
+    emit(state.copyWith(loading: false, step: BorrowStep.success));
   }
 }

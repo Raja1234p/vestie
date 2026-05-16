@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/utils/app_snackbar.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_stacked_currency_field.dart';
@@ -22,17 +23,26 @@ class BorrowFlowScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BorrowCubit, BorrowState>(
-      builder: (context, s) {
-        switch (s.step) {
-          case BorrowStep.amount:
-            return const _BorrowAmountView();
-          case BorrowStep.confirm:
-            return _BorrowConfirmView(state: s);
-          case BorrowStep.success:
-            return _BorrowSuccessView(state: s);
+    return BlocListener<BorrowCubit, BorrowState>(
+      listenWhen: (prev, curr) => prev.errorMessage != curr.errorMessage,
+      listener: (context, state) {
+        final msg = state.errorMessage;
+        if (msg != null && msg.isNotEmpty) {
+          AppSnackBar.showError(context, msg);
         }
       },
+      child: BlocBuilder<BorrowCubit, BorrowState>(
+        builder: (context, s) {
+          switch (s.step) {
+            case BorrowStep.amount:
+              return const _BorrowAmountView();
+            case BorrowStep.confirm:
+              return _BorrowConfirmView(state: s);
+            case BorrowStep.success:
+              return _BorrowSuccessView(state: s);
+          }
+        },
+      ),
     );
   }
 }
@@ -54,29 +64,18 @@ class _BorrowAmountViewState extends State<_BorrowAmountView> {
   void initState() {
     super.initState();
     _amountDigitsController = TextEditingController();
-    _noteFocus.addListener(_onNoteFocus);
-    _amountFieldFocus.addListener(_onAnyFocus);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       final digits = context.read<BorrowCubit>().state.amountDigits;
       if (_amountDigitsController.text != digits) {
         _amountDigitsController.text = digits;
       }
+      _amountFieldFocus.requestFocus();
     });
-  }
-
-  void _onNoteFocus() {
-    if (mounted) setState(() {});
-  }
-
-  void _onAnyFocus() {
-    if (mounted) setState(() {});
   }
 
   @override
   void dispose() {
-    _noteFocus.removeListener(_onNoteFocus);
-    _amountFieldFocus.removeListener(_onAnyFocus);
     _noteFocus.dispose();
     _amountFieldFocus.dispose();
     _amountDigitsController.dispose();
@@ -102,6 +101,9 @@ class _BorrowAmountViewState extends State<_BorrowAmountView> {
         _syncAmountFieldFromState(state.amountDigits);
         final over = state.amountValue > state.args.borrowLimit;
         final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
+        final confirmBottomPadding = bottomInset > 0
+            ? bottomInset + 12.h
+            : 12.h + MediaQuery.paddingOf(context).bottom;
 
         return Scaffold(
           resizeToAvoidBottomInset: true,
@@ -118,112 +120,121 @@ class _BorrowAmountViewState extends State<_BorrowAmountView> {
                   ),
                 ),
                 Expanded(
-                  child: SingleChildScrollView(
-                    controller: _scrollController,
-                    padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 8.h + bottomInset),
-                    child: Column(
-                      children: [
-                        AppStackedCurrencyField(
-                          displayDollar: state.amountDigits.isEmpty
-                              ? r'$0.00'
-                              : state.displayDollar,
-                          controller: _amountDigitsController,
-                          focusNode: _amountFieldFocus,
-                          onDigitsChanged: c.setAmountDigits,
-                        ),
-                        SizedBox(height: 12.h),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 12.w, vertical: 8.h,
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      return SingleChildScrollView(
+                        controller: _scrollController,
+                        padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 8.h),
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minHeight: constraints.maxHeight,
                           ),
-                          decoration: BoxDecoration(
-                            color: AppColors.searchBarBg,
-                            borderRadius: BorderRadius.circular(999.r),
-                          ),
-                          child: AppText(
-                            '${AppStrings.labelBorrowLimitChip}: '
-                            '\$${state.borrowLimitFormatted} '
-                            '(set by leader)',
-                            style: GoogleFonts.lato(
-                              fontSize: 13.sp,
-                              color: AppColors.grey800,
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 20.h),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: AppText(
-                            AppStrings.labelNote,
-                            style: GoogleFonts.lato(
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.grey1100,
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 8.h),
-                        TextField(
-                          focusNode: _noteFocus,
-                          onChanged: c.setNote,
-                          maxLines: 3,
-                          keyboardType: TextInputType.multiline,
-                          textCapitalization: TextCapitalization.sentences,
-                          style: GoogleFonts.lato(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.inputFieldText,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: AppStrings.hintBorrowNote,
-                            hintStyle: GoogleFonts.lato(
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.authHint,
-                            ),
-                            filled: true,
-                            fillColor: AppColors.searchBarBg,
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: 14.w,
-                              vertical: 12.h,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.r),
-                              borderSide: const BorderSide(
-                                color: AppColors.inputFieldBorder,
+                          child: Column(
+                            mainAxisAlignment: bottomInset > 0
+                                ? MainAxisAlignment.start
+                                : MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              GestureDetector(
+                                onTap: () => _amountFieldFocus.requestFocus(),
+                                behavior: HitTestBehavior.opaque,
+                                child: AppStackedCurrencyField(
+                                  displayDollar: state.amountDigits.isEmpty
+                                      ? r'$0.00'
+                                      : state.displayDollar,
+                                  controller: _amountDigitsController,
+                                  focusNode: _amountFieldFocus,
+                                  onDigitsChanged: c.setAmountDigits,
+                                ),
                               ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.r),
-                              borderSide: const BorderSide(
-                                color: AppColors.inputFieldBorder,
+                              SizedBox(height: 12.h),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 12.w,
+                                  vertical: 8.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.searchBarBg,
+                                  borderRadius: BorderRadius.circular(999.r),
+                                ),
+                                child: AppText(
+                                  '${AppStrings.labelBorrowLimitChip}: '
+                                  '\$${state.borrowLimitFormatted} '
+                                  '(set by leader)',
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.lato(
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w400,
+                                    color: AppColors.neutral1200,
+                                  ),
+                                ),
                               ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.r),
-                              borderSide: const BorderSide(
-                                color: AppColors.inputFieldBorder,
-                                width: 1.5,
+                              SizedBox(height: 42.h),
+                              TextField(
+                                focusNode: _noteFocus,
+                                onChanged: c.setNote,
+                                maxLines: 3,
+                                keyboardType: TextInputType.multiline,
+                                textCapitalization:
+                                    TextCapitalization.sentences,
+                                style: GoogleFonts.lato(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors.inputFieldText,
+                                ),
+                                decoration: InputDecoration(
+                                  hintText: AppStrings.labelNote,
+                                  hintStyle: GoogleFonts.lato(
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColors.authHint,
+                                  ),
+                                  filled: true,
+                                  fillColor: AppColors.searchBarBg,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 14.w,
+                                    vertical: 12.h,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12.r),
+                                    borderSide: const BorderSide(
+                                      color: AppColors.searchBarBg,
+                                    ),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12.r),
+                                    borderSide: const BorderSide(
+                                      color: AppColors.searchBarBg,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12.r),
+                                    borderSide: const BorderSide(
+                                      color: AppColors.searchBarBg,
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
+                              if (over) ...[
+                                SizedBox(height: 8.h),
+                                AppText(
+                                  AppStrings.borrowAmountExceedsLimit,
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.lato(
+                                    fontSize: 12.sp,
+                                    color: AppColors.error,
+                                  ),
+                                ),
+                              ],
+                            ],
                           ),
                         ),
-                        if (over) ...[
-                          SizedBox(height: 8.h),
-                          AppText(
-                            AppStrings.borrowAmountExceedsLimit,
-                            style: GoogleFonts.lato(
-                              fontSize: 12.sp,
-                              color: AppColors.error,
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
+                      );
+                    },
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  padding: EdgeInsets.fromLTRB(24.w, 0, 24.w, confirmBottomPadding),
                   child: AppButton(
                     text: AppStrings.btnConfirm,
                     onPressed: (state.amountValue <= 0 || over)
@@ -231,7 +242,6 @@ class _BorrowAmountViewState extends State<_BorrowAmountView> {
                         : c.toConfirm,
                   ),
                 ),
-                SizedBox(height: 12.h),
               ],
             ),
           ),
@@ -344,8 +354,10 @@ class _BorrowConfirmView extends StatelessWidget {
               minimum: EdgeInsets.fromLTRB(16.w, 0, 16.w, 24.h),
               child: AppButton(
                 text: AppStrings.btnSubmitBorrowRequest,
-                onPressed:
-                    !state.termsAccepted ? null : c.submit,
+                isLoading: state.loading,
+                onPressed: !state.termsAccepted || state.loading
+                    ? null
+                    : c.submit,
               ),
             ),
           ],
