@@ -13,8 +13,14 @@ class RegisterInitial extends RegisterState {
   const RegisterInitial() : super(status: FormSubmissionStatus.initial);
 }
 
+/// Email/password register submit only (Continue button loader).
 class RegisterLoading extends RegisterState {
   const RegisterLoading() : super(status: FormSubmissionStatus.submitting);
+}
+
+/// Google sign-up in progress ([AppLoadingDialog] on register screen).
+class RegisterGoogleLoading extends RegisterState {
+  const RegisterGoogleLoading() : super(status: FormSubmissionStatus.submitting);
 }
 
 class RegisterSuccess extends RegisterState {

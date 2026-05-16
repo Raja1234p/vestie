@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/router/app_routes.dart';
 import '../models/auth_route_extras.dart';
 import '../../../../core/widgets/common/app_failure_dialog.dart';
+import '../../../../core/widgets/common/app_loading_dialog.dart';
 import '../bloc/register_bloc.dart';
 import '../bloc/register_event.dart';
 import '../bloc/register_state.dart';
@@ -23,28 +24,50 @@ class RegisterScreen extends StatelessWidget {
         BlocProvider(create: (_) => RegisterBloc()),
         BlocProvider(create: (_) => RegisterFormCubit()),
       ],
-      child: BlocListener<RegisterBloc, RegisterState>(
-        listener: (context, state) {
-          if (state is RegisterSuccess) {
-            context.go(
-              AppRoutes.verify,
-              extra: VerifyScreenExtra(email: state.user.email),
-            );
-          } else if (state is RegisterGoogleSuccess) {
-            if (state.isDisclaimerAccepted) {
-              context.go(AppRoutes.dashboard);
-            } else {
-              context.go(AppRoutes.agreement);
-            }
-          } else if (state is RegisterError) {
-            AppFailureDialog.show(
-              context,
-              title: state.title,
-              message: state.message,
-            );
-            context.read<RegisterBloc>().add(const RegisterReset());
-          }
-        },
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<RegisterBloc, RegisterState>(
+            listenWhen: (prev, curr) => curr is RegisterGoogleLoading,
+            listener: (context, _) {
+              AppLoadingDialog.show(context);
+            },
+          ),
+          BlocListener<RegisterBloc, RegisterState>(
+            listenWhen: (prev, curr) =>
+                prev is RegisterGoogleLoading && curr is! RegisterGoogleLoading,
+            listener: (context, _) {
+              final nav = Navigator.of(context, rootNavigator: true);
+              if (nav.canPop()) nav.pop();
+            },
+          ),
+          BlocListener<RegisterBloc, RegisterState>(
+            listenWhen: (prev, curr) =>
+                curr is RegisterSuccess ||
+                curr is RegisterGoogleSuccess ||
+                curr is RegisterError,
+            listener: (context, state) {
+              if (state is RegisterSuccess) {
+                context.go(
+                  AppRoutes.verify,
+                  extra: VerifyScreenExtra(email: state.user.email),
+                );
+              } else if (state is RegisterGoogleSuccess) {
+                if (state.isDisclaimerAccepted) {
+                  context.go(AppRoutes.dashboard);
+                } else {
+                  context.go(AppRoutes.agreement);
+                }
+              } else if (state is RegisterError) {
+                AppFailureDialog.show(
+                  context,
+                  title: state.title,
+                  message: state.message,
+                );
+                context.read<RegisterBloc>().add(const RegisterReset());
+              }
+            },
+          ),
+        ],
         child: const AuthBackground(child: RegisterForm()),
       ),
     );

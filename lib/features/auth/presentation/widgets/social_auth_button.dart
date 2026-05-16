@@ -12,12 +12,12 @@ enum SocialProvider { google, apple }
 /// White card, 12px corners, #DDD0FC border ([AppColors.authSocialBorder]).
 class SocialAuthButton extends StatelessWidget {
   final SocialProvider provider;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   const SocialAuthButton({
     super.key,
     required this.provider,
-    required this.onPressed,
+    this.onPressed,
   });
 
   @override

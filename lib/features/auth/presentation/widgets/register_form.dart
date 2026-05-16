@@ -69,8 +69,9 @@ class _RegisterFormState extends State<RegisterForm> {
   Widget build(BuildContext context) {
     return BlocBuilder<RegisterFormCubit, RegisterFormState>(
       builder: (context, form) {
-        final isLoading =
-            context.watch<RegisterBloc>().state is RegisterLoading;
+        final registerState = context.watch<RegisterBloc>().state;
+        final isEmailLoading = registerState is RegisterLoading;
+        final isGoogleLoading = registerState is RegisterGoogleLoading;
         final bottomInset = MediaQuery.paddingOf(context).bottom;
         return CustomScrollView(
           slivers: [
@@ -179,15 +180,22 @@ class _RegisterFormState extends State<RegisterForm> {
               SizedBox(height: 24.h),
               AppButton(
                 text: AppStrings.btnContinue,
-                isLoading: isLoading,
-                onPressed: isLoading ? null : () => _submit(context),
+                isLoading: isEmailLoading,
+                onPressed: isEmailLoading || isGoogleLoading
+                    ? null
+                    : () => _submit(context),
               ),
               SizedBox(height: 12.h),
               const OrDivider(),
               SizedBox(height: 12.h),
               SocialAuthButton(
-                  provider: SocialProvider.google,
-                  onPressed: () => context.read<RegisterBloc>().add(const GoogleRegisterRequested())),
+                provider: SocialProvider.google,
+                onPressed: isEmailLoading || isGoogleLoading
+                    ? null
+                    : () => context
+                        .read<RegisterBloc>()
+                        .add(const GoogleRegisterRequested()),
+              ),
               SizedBox(height: 12.h),
               SocialAuthButton(
                   provider: SocialProvider.apple,

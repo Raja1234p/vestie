@@ -68,7 +68,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     GoogleRegisterRequested event,
     Emitter<RegisterState> emit,
   ) async {
-    emit(const RegisterLoading());
+    emit(const RegisterGoogleLoading());
 
     final result = await _googleLoginUseCase();
 

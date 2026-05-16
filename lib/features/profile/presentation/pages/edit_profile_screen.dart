@@ -194,30 +194,33 @@ class _EditProfileBodyState extends State<_EditProfileBody> {
                           _UpdatedProfileBanner(profile: state.lastSavedFromServer!),
                           SizedBox(height: 16.h),
                         ],
-                        _FieldLabel(AppStrings.labelFullName2),
-                        _ProfileField(
+                        _ProfileFieldGroup(
+                          label: AppStrings.labelFullName2,
                           controller: _nameCtrl,
                           hint: AppStrings.hintCardHolder,
+                          errorText: state.fullNameError,
                           inputFormatters: [
                             PersonNameInputFormatter(allowSpaces: true),
                           ],
                           onChanged: cubit.setFullName,
                         ),
                         SizedBox(height: 16.h),
-                        _FieldLabel(AppStrings.labelUsername),
-                        _ProfileField(
+                        _ProfileFieldGroup(
+                          label: AppStrings.labelUsername,
                           controller: _userCtrl,
                           hint: AppStrings.hintUsername,
+                          errorText: state.usernameError,
                           inputFormatters: [
                             PersonNameInputFormatter(allowSpaces: false),
                           ],
                           onChanged: cubit.setUsername,
                         ),
                         SizedBox(height: 16.h),
-                        _FieldLabel(AppStrings.labelEmail),
-                        _ProfileField(
+                        _ProfileFieldGroup(
+                          label: AppStrings.labelEmail,
                           controller: _emailCtrl,
                           hint: AppStrings.hintEmail,
+                          errorText: state.emailError,
                           keyboardType: TextInputType.emailAddress,
                           readOnly: true,
                           onChanged: (_) {},
@@ -355,37 +358,22 @@ class _UpdatedProfileBanner extends StatelessWidget {
   }
 }
 
-class _FieldLabel extends StatelessWidget {
-  final String text;
-  const _FieldLabel(this.text);
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 8.h),
-      child: Text(
-        text,
-        style: GoogleFonts.lato(
-          fontSize: 16.sp,
-          fontWeight: FontWeight.w600,
-          color: AppColors.textBody,
-        ),
-      ),
-    );
-  }
-}
-
-class _ProfileField extends StatelessWidget {
+class _ProfileFieldGroup extends StatelessWidget {
+  final String label;
   final TextEditingController controller;
   final String hint;
+  final String? errorText;
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? inputFormatters;
   final ValueChanged<String> onChanged;
   final bool readOnly;
 
-  const _ProfileField({
+  const _ProfileFieldGroup({
+    required this.label,
     required this.controller,
     required this.hint,
     required this.onChanged,
+    this.errorText,
     this.keyboardType,
     this.inputFormatters,
     this.readOnly = false,
@@ -393,38 +381,67 @@ class _ProfileField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: readOnly ? AppColors.appBgBottom : Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: AppColors.inputFieldBorder),
-      ),
-      child: TextField(
-        controller: controller,
-        readOnly: readOnly,
-        keyboardType: keyboardType,
-        inputFormatters: inputFormatters,
-        onChanged: onChanged,
-        onTapOutside: (_) {
-          FocusManager.instance.primaryFocus?.unfocus();
-        },
-        style: GoogleFonts.lato(
-          fontSize: 16.sp,
-          fontWeight: FontWeight.w500,
-          color: AppColors.inputFieldText,
-        ),
-        decoration: InputDecoration(
-          hintText: hint,
-          hintStyle: GoogleFonts.lato(
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w500,
-            color: AppColors.authHint,
+    final hasError = errorText != null && errorText!.isNotEmpty;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(bottom: 8.h),
+          child: Text(
+            label,
+            style: GoogleFonts.lato(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textBody,
+            ),
           ),
-          border: InputBorder.none,
-          contentPadding:
-              EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
         ),
-      ),
+        Container(
+          decoration: BoxDecoration(
+            color: readOnly ? AppColors.appBgBottom : Colors.white,
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(
+              color: hasError ? AppColors.error : AppColors.inputFieldBorder,
+            ),
+          ),
+          child: TextField(
+            controller: controller,
+            readOnly: readOnly,
+            keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
+            onChanged: onChanged,
+            onTapOutside: (_) {
+              FocusManager.instance.primaryFocus?.unfocus();
+            },
+            style: GoogleFonts.lato(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w500,
+              color: AppColors.inputFieldText,
+            ),
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: GoogleFonts.lato(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w500,
+                color: AppColors.authHint,
+              ),
+              border: InputBorder.none,
+              contentPadding:
+                  EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+            ),
+          ),
+        ),
+        if (hasError) ...[
+          SizedBox(height: 4.h),
+          Text(
+            errorText!,
+            style: GoogleFonts.lato(
+              fontSize: 12.sp,
+              color: AppColors.error,
+            ),
+          ),
+        ],
+      ],
     );
   }
 }

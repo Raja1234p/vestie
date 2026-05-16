@@ -72,42 +72,75 @@ class ProfileCubit extends Cubit<ProfileState> {
     final handle = await prefs.getString(StorageKeys.userUsername) ?? '';
     emit(state.copyWith(
       isLoading: false,
-      profile: UserProfile(
-        fullName: name,
-        email: email,
-        username: handle.isNotEmpty
-            ? handle
-            : (email.contains('@') ? email.split('@').first : ''),
-      ),
+      profile: _profileFromLocal(name: name, email: email, handle: handle),
     ));
   }
 
-  Future<void> loadProfile() async {
-    // 1. Try to load from SharedPreferences first for instant UI
-    final name = await ServiceLocator.instance.sharedPrefs
-            .getString(StorageKeys.userName) ??
-        '';
-    final email = await ServiceLocator.instance.sharedPrefs
-            .getString(StorageKeys.userEmail) ??
-        '';
+  static UserProfile _profileFromLocal({
+    required String name,
+    required String email,
+    required String handle,
+  }) {
+    return UserProfile(
+      fullName: name,
+      email: email,
+      username: handle.isNotEmpty
+          ? handle
+          : (email.contains('@') ? email.split('@').first : ''),
+    );
+  }
 
-    final handle = await ServiceLocator.instance.sharedPrefs
-            .getString(StorageKeys.userUsername) ??
-        '';
+  static Future<void> _persistUserToPrefs({
+    required String name,
+    required String email,
+    required String userName,
+  }) async {
+    final prefs = ServiceLocator.instance.sharedPrefs;
+    await prefs.saveString(StorageKeys.userName, name);
+    await prefs.saveString(StorageKeys.userEmail, email);
+    await prefs.saveString(StorageKeys.userUsername, userName);
+  }
+
+  /// After edit profile — show saved name immediately, then sync `GET /users/me`.
+  Future<void> refreshProfile() async {
+    await _hydrateFromPrefsOnly();
+
+    final result = await ServiceLocator.instance.authRepository.getMe();
+    result.fold(
+      (_) {},
+      (user) {
+        final userName = user.userName.isNotEmpty
+            ? user.userName
+            : (user.email.contains('@') ? user.email.split('@').first : '');
+        emit(state.copyWith(
+          isLoading: false,
+          profile: UserProfile(
+            fullName: user.name,
+            email: user.email,
+            username: userName,
+          ),
+        ));
+        _persistUserToPrefs(
+          name: user.name,
+          email: user.email,
+          userName: userName,
+        );
+      },
+    );
+  }
+
+  Future<void> loadProfile() async {
+    final prefs = ServiceLocator.instance.sharedPrefs;
+    final name = await prefs.getString(StorageKeys.userName) ?? '';
+    final email = await prefs.getString(StorageKeys.userEmail) ?? '';
+    final handle = await prefs.getString(StorageKeys.userUsername) ?? '';
 
     if (name.isNotEmpty || email.isNotEmpty) {
       emit(state.copyWith(
-        profile: UserProfile(
-          fullName: name,
-          email: email,
-          username: handle.isNotEmpty
-              ? handle
-              : (email.contains('@') ? email.split('@').first : ''),
-        ),
+        profile: _profileFromLocal(name: name, email: email, handle: handle),
       ));
     }
 
-    // 2. Refresh from API to ensure data is up to date
     emit(state.copyWith(isLoading: true));
     final result = await ServiceLocator.instance.authRepository.getMe();
 
@@ -121,23 +154,19 @@ class ProfileCubit extends Cubit<ProfileState> {
             : (user.email.contains('@')
                 ? user.email.split('@').first
                 : '');
-        final updatedProfile = UserProfile(
-          fullName: user.name,
-          email: user.email,
-          username: userName,
-        );
         emit(state.copyWith(
           isLoading: false,
-          profile: updatedProfile,
+          profile: UserProfile(
+            fullName: user.name,
+            email: user.email,
+            username: userName,
+          ),
         ));
-
-        // Update local storage with fresh data
-        ServiceLocator.instance.sharedPrefs
-            .saveString(StorageKeys.userName, user.name);
-        ServiceLocator.instance.sharedPrefs
-            .saveString(StorageKeys.userEmail, user.email);
-        ServiceLocator.instance.sharedPrefs
-            .saveString(StorageKeys.userUsername, userName);
+        _persistUserToPrefs(
+          name: user.name,
+          email: user.email,
+          userName: userName,
+        );
       },
     );
   }

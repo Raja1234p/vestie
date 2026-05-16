@@ -12,17 +12,23 @@ class EditProfileState extends Equatable {
   final String username;
   final String email;
   final bool isSaving;
-  /// Non-null after a successful `PUT /users/me` — drives the “updated profile” panel.
-  final UserProfile? lastSavedFromServer;
+  final String? fullNameError;
+  final String? usernameError;
+  final String? emailError;
+  /// API / server failures only (not field validation).
   final String? error;
+  final UserProfile? lastSavedFromServer;
 
   const EditProfileState({
     required this.fullName,
     required this.username,
     required this.email,
     this.isSaving = false,
-    this.lastSavedFromServer,
+    this.fullNameError,
+    this.usernameError,
+    this.emailError,
     this.error,
+    this.lastSavedFromServer,
   });
 
   EditProfileState copyWith({
@@ -30,26 +36,51 @@ class EditProfileState extends Equatable {
     String? username,
     String? email,
     bool? isSaving,
-    UserProfile? lastSavedFromServer,
+    String? fullNameError,
+    String? usernameError,
+    String? emailError,
     String? error,
+    UserProfile? lastSavedFromServer,
+    bool clearFullNameError = false,
+    bool clearUsernameError = false,
+    bool clearEmailError = false,
     bool clearError = false,
     bool clearLastSaved = false,
+    bool clearAllFieldErrors = false,
   }) {
     return EditProfileState(
       fullName: fullName ?? this.fullName,
       username: username ?? this.username,
       email: email ?? this.email,
       isSaving: isSaving ?? this.isSaving,
+      fullNameError: clearAllFieldErrors || clearFullNameError
+          ? null
+          : (fullNameError ?? this.fullNameError),
+      usernameError: clearAllFieldErrors || clearUsernameError
+          ? null
+          : (usernameError ?? this.usernameError),
+      emailError: clearAllFieldErrors || clearEmailError
+          ? null
+          : (emailError ?? this.emailError),
+      error: clearError ? null : (error ?? this.error),
       lastSavedFromServer: clearLastSaved
           ? null
           : (lastSavedFromServer ?? this.lastSavedFromServer),
-      error: clearError ? null : (error ?? this.error),
     );
   }
 
   @override
-  List<Object?> get props =>
-      [fullName, username, email, isSaving, lastSavedFromServer, error];
+  List<Object?> get props => [
+        fullName,
+        username,
+        email,
+        isSaving,
+        fullNameError,
+        usernameError,
+        emailError,
+        error,
+        lastSavedFromServer,
+      ];
 }
 
 class EditProfileCubit extends Cubit<EditProfileState> {
@@ -67,12 +98,26 @@ class EditProfileCubit extends Cubit<EditProfileState> {
           email: initial.email,
         ));
 
-  void setFullName(String v) =>
-      emit(state.copyWith(fullName: v, clearLastSaved: true));
-  void setUsername(String v) =>
-      emit(state.copyWith(username: v, clearLastSaved: true));
-  void setEmail(String v) =>
-      emit(state.copyWith(email: v, clearLastSaved: true));
+  void setFullName(String v) => emit(state.copyWith(
+        fullName: v,
+        clearLastSaved: true,
+        clearFullNameError: true,
+        clearError: true,
+      ));
+
+  void setUsername(String v) => emit(state.copyWith(
+        username: v,
+        clearLastSaved: true,
+        clearUsernameError: true,
+        clearError: true,
+      ));
+
+  void setEmail(String v) => emit(state.copyWith(
+        email: v,
+        clearLastSaved: true,
+        clearEmailError: true,
+        clearError: true,
+      ));
 
   Future<void> _persistLocal(UserProfile p) async {
     final prefs = ServiceLocator.instance.sharedPrefs;
@@ -83,19 +128,21 @@ class EditProfileCubit extends Cubit<EditProfileState> {
 
   Future<UserProfile?> save() async {
     final nameErr = ValidationUtils.validateFullName(state.fullName);
-    if (nameErr != null) {
-      emit(state.copyWith(isSaving: false, error: nameErr));
-      return null;
-    }
     final userErr =
         ValidationUtils.validateProfileUsernameHandle(state.username);
-    if (userErr != null) {
-      emit(state.copyWith(isSaving: false, error: userErr));
-      return null;
-    }
     final emailErr = ValidationUtils.validateEmail(state.email);
-    if (emailErr != null) {
-      emit(state.copyWith(isSaving: false, error: emailErr));
+
+    if (nameErr != null || userErr != null || emailErr != null) {
+      emit(EditProfileState(
+        fullName: state.fullName,
+        username: state.username,
+        email: state.email,
+        isSaving: false,
+        fullNameError: nameErr,
+        usernameError: userErr,
+        emailError: emailErr,
+        lastSavedFromServer: state.lastSavedFromServer,
+      ));
       return null;
     }
 
@@ -103,6 +150,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
       isSaving: true,
       clearError: true,
       clearLastSaved: true,
+      clearAllFieldErrors: true,
     ));
 
     final parts = state.fullName.trim().split(RegExp(r'\s+'));
@@ -137,6 +185,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
           email: updated.email,
           isSaving: false,
           lastSavedFromServer: updated,
+          clearAllFieldErrors: true,
         ));
         _persistLocal(updated);
         return updated;

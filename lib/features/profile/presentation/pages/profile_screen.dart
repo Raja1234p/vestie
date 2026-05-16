@@ -212,7 +212,11 @@ class _ProfileBody extends StatelessWidget {
                         SettingsItem(
                           assetPath: AppAssets.iconPerson,
                           label: AppStrings.menuEditProfile,
-                          onTap: () => context.push(AppRoutes.editProfile),
+                          onTap: () async {
+                            await context.push(AppRoutes.editProfile);
+                            if (!context.mounted) return;
+                            await context.read<ProfileCubit>().refreshProfile();
+                          },
                         ),
                         SettingsItem(
                           assetPath: AppAssets.iconPaymentMethods,
