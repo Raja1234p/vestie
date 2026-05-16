@@ -12,6 +12,8 @@ class CenteredHeroStatusBlock extends StatelessWidget {
   final String headline;
   final String body;
   final double imageHeight;
+  final double? bodyFontSize;
+  final Color? bodyColor;
 
   const CenteredHeroStatusBlock({
     super.key,
@@ -19,6 +21,8 @@ class CenteredHeroStatusBlock extends StatelessWidget {
     required this.headline,
     required this.body,
     this.imageHeight = 160,
+    this.bodyFontSize,
+    this.bodyColor,
   });
 
   @override
@@ -55,9 +59,9 @@ class CenteredHeroStatusBlock extends StatelessWidget {
                     body,
                     textAlign: TextAlign.center,
                     style: theme.textTheme.bodyLarge?.copyWith(
-                      fontSize: 16.sp,
+                      fontSize: (bodyFontSize ?? 16).sp,
                       height: 1.5,
-                      color: AppColors.grey800,
+                      color: bodyColor ?? AppColors.grey800,
                       fontWeight: FontWeight.w400,
                     ),
                   ),

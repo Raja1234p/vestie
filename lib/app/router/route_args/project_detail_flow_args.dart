@@ -141,6 +141,17 @@ class CancelProjectRouteArgs {
   });
 }
 
+/// Member leave-project warning screen (Figma).
+class LeaveProjectRouteArgs {
+  final String projectId;
+  final String projectName;
+
+  const LeaveProjectRouteArgs({
+    required this.projectId,
+    required this.projectName,
+  });
+}
+
 class ProjectCancelledRouteArgs {
   final String projectName;
 

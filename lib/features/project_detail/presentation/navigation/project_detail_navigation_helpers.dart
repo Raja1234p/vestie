@@ -12,7 +12,6 @@ import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/widgets/common/app_invite_members_dialog.dart';
 import '../../../../core/widgets/common/leader_action_menu.dart';
 import '../../../../core/widgets/common/member_project_action_menu.dart';
-import 'package:vestie/user/features/investment/presentation/widgets/user_leave_project_dialog.dart';
 import 'package:vestie/app/router/route_args/user_vff_flow_args.dart';
 import 'package:vestie/user/features/vff/presentation/models/user_vff_profile_lookup.dart';
 
@@ -195,22 +194,15 @@ class ProjectDetailNavigationHelpers {
         );
         break;
       case MemberProjectMenuAction.leaveProject:
-        _confirmLeaveProject(context, project);
+        context.push(
+          AppRoutes.leaveProjectWarning,
+          extra: LeaveProjectRouteArgs(
+            projectId: project.id,
+            projectName: project.name,
+          ),
+        );
         break;
     }
-  }
-
-  static Future<void> _confirmLeaveProject(
-    BuildContext context,
-    ProjectDetailEntity project,
-  ) async {
-    final confirmed = await showUserLeaveProjectDialog(context);
-    if (!confirmed || !context.mounted) return;
-    AppSnackBar.showSuccess(
-      context,
-      AppStrings.userLeaveSuccessfulTitle,
-    );
-    if (context.mounted) context.pop();
   }
 }
 

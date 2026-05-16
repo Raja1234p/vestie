@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
+import 'package:vestie/app/router/route_args/project_detail_flow_args.dart';
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
@@ -18,7 +19,6 @@ import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/announcement_card.dart';
 
 import '../models/user_investment_ui_snapshot.dart';
-import '../widgets/user_leave_project_dialog.dart';
 import '../widgets/user_project_members_modal.dart';
 
 /// User-facing project detail for investment-style pots (Vacation / Emergency).
@@ -48,10 +48,13 @@ class _UserProjectDetailScreenState extends State<UserProjectDetailScreen> {
         await showUserProjectMembersModal(context, snapshot: _s);
         return;
       case 'leave':
-        final router = GoRouter.of(context);
-        final confirmed = await showUserLeaveProjectDialog(context);
-        if (!confirmed) return;
-        router.push(AppRoutes.userInvestmentLeaveWarning, extra: _s);
+        context.push(
+          AppRoutes.leaveProjectWarning,
+          extra: LeaveProjectRouteArgs(
+            projectId: _s.projectName,
+            projectName: _s.projectName,
+          ),
+        );
         return;
     }
   }

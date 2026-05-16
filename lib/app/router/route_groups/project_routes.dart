@@ -23,8 +23,7 @@ import 'package:vestie/user/features/contributions/presentation/bloc/contribute_
 import 'package:vestie/user/features/project_detail/presentation/pages/investment_project_detail_screen.dart';
 import 'package:vestie/user/features/investment/presentation/models/user_investment_ui_snapshot.dart';
 import 'package:vestie/user/features/investment/presentation/pages/user_investment_returns_screen.dart';
-import 'package:vestie/user/features/investment/presentation/pages/user_leave_project_success_screen.dart';
-import 'package:vestie/user/features/investment/presentation/pages/user_leave_project_warning_screen.dart';
+import 'package:vestie/features/project_detail/presentation/pages/leave_project_warning_screen.dart';
 import 'package:vestie/user/features/investment/presentation/pages/user_project_detail_screen.dart';
 import 'package:vestie/user/features/investment/presentation/pages/user_project_funds_history_screen.dart';
 import 'package:vestie/user/features/project_detail/presentation/pages/project_cancelled_screen.dart';
@@ -242,17 +241,22 @@ List<RouteBase> buildProjectRoutes({
       },
     ),
     GoRoute(
-      path: AppRoutes.userInvestmentLeaveWarning,
+      path: AppRoutes.leaveProjectWarning,
       builder: (context, state) {
         final extra = state.extra;
-        if (extra is! UserInvestmentUiSnapshot) return invalidRouteScreen();
-        return UserLeaveProjectWarningScreen(snapshot: extra);
+        if (extra is LeaveProjectRouteArgs) {
+          return LeaveProjectWarningScreen(args: extra);
+        }
+        if (extra is UserInvestmentUiSnapshot) {
+          return LeaveProjectWarningScreen(
+            args: LeaveProjectRouteArgs(
+              projectId: extra.projectName,
+              projectName: extra.projectName,
+            ),
+          );
+        }
+        return invalidRouteScreen();
       },
-    ),
-    GoRoute(
-      path: AppRoutes.userInvestmentLeaveSuccess,
-      builder: (context, state) =>
-          const UserLeaveProjectSuccessScreen(),
     ),
   ];
 }

@@ -310,21 +310,18 @@ class AppStrings {
       'Project Funds History';
   static const String userInvestmentMenuViewMembers = 'View Members';
   static const String userInvestmentMenuLeave = 'Leave Project';
-  static const String userLeaveProjectDialogTitle = 'Are you sure?';
-  static const String userLeaveProjectDialogBody =
-      'You can leave or stay on this project.';
   static const String userLeaveStayHere = 'Stay Here';
   static const String userLeaveConfirmYes = 'Yes';
-  static const String userLeaveWarningTitle = 'Leaving project';
-  static const String userLeaveWarningBody =
-      'By leaving this project, you will lose all your previous contributions. '
-      'This action may be irreversible for this prototype.';
-  static const String userLeaveConfirmLeave = 'Leave Project';
-  static const String userLeaveSuccessfulTitle =
-      'You\'re no longer part of this project.';
-  static const String userLeaveSuccessfulSubtitle =
-      'You can rejoin later if invitations open again.';
-  static const String userLeaveBrowseOther = 'Back to Discover';
+  static const String leaveProjectWarningTitle = 'Leave Project';
+  static const String leaveProjectWarningBody =
+      'You\'re leaving this project and will not receive any amount back '
+      'that you\'ve deposit in this project.';
+  static const String leaveProjectConfirmDialogBody =
+      'Are you sure you want to leave this project?';
+  static const String leaveProjectSuccessTitle =
+      'You\'re no longer a part of this project';
+  static const String leaveProjectSuccessBody =
+      'You\'ve left this project and cant contribute anymore';
 
   // ── VFF (Verified Friends & Family — UI model, ready for API wiring)
   static const String userVffHubTitle = 'My VFFs & Requests';

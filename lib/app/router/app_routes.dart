@@ -84,10 +84,9 @@ class AppRoutes {
       '/user/investment/my-returns';
   static const String userInvestmentFundsHistory =
       '/user/investment/funds-history';
-  static const String userInvestmentLeaveWarning =
-      '/user/investment/leave-warning';
-  static const String userInvestmentLeaveSuccess =
-      '/user/investment/leave-success';
+  static const String leaveProjectWarning = '/project/leave-warning';
+  /// @deprecated Use [leaveProjectWarning].
+  static const String userInvestmentLeaveWarning = leaveProjectWarning;
 
   // ── VFF (Verified Friends & Family) ───────────────────────────────────────
   static const String userVffMain = '/user/vff';
