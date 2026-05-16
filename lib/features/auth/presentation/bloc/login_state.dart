@@ -13,8 +13,14 @@ class LoginInitial extends LoginState {
   const LoginInitial() : super(status: FormSubmissionStatus.initial);
 }
 
+/// Email/password login submit only (Continue button loader).
 class LoginLoading extends LoginState {
   const LoginLoading() : super(status: FormSubmissionStatus.submitting);
+}
+
+/// Google sign-in in progress ([AppLoadingDialog] on login screen).
+class LoginGoogleLoading extends LoginState {
+  const LoginGoogleLoading() : super(status: FormSubmissionStatus.submitting);
 }
 
 class LoginSuccess extends LoginState {
@@ -28,6 +34,16 @@ class LoginSuccess extends LoginState {
 
   @override
   List<Object?> get props => [status, errorMessage, validationErrors, user, isDisclaimerAccepted];
+}
+
+class LoginGoogleSuccess extends LoginState {
+  final bool isDisclaimerAccepted;
+
+  const LoginGoogleSuccess({required this.isDisclaimerAccepted})
+      : super(status: FormSubmissionStatus.success);
+
+  @override
+  List<Object?> get props => [status, errorMessage, validationErrors, isDisclaimerAccepted];
 }
 
 class LoginError extends LoginState {

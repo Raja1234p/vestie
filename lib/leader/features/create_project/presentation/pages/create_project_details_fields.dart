@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,6 +10,8 @@ import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import '../../domain/create_project_form.dart';
+
+final _categoryDropdownRadius = BorderRadius.circular(AppRadius.r12);
 
 /// Tappable deadline field with optional inline error message.
 class CPDeadlinePicker extends StatelessWidget {
@@ -76,148 +80,127 @@ class CPDeadlinePicker extends StatelessWidget {
   }
 }
 
-/// Category selector — opens a bottom sheet so users can dismiss with Cancel
-/// or by tapping outside (avoids Dropdown overlay that can feel impossible to close).
-class CPCategoryDropdown extends StatelessWidget {
+/// Category selector — inline expandable panel (Figma Project Details).
+class CPCategoryDropdown extends StatefulWidget {
   final NewProjectCategory value;
   final ValueChanged<NewProjectCategory> onChanged;
-  const CPCategoryDropdown({super.key, required this.value, required this.onChanged});
 
-  Future<void> _openPicker(BuildContext context) async {
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      barrierColor: AppColors.modalBarrier,
-      backgroundColor: Colors.transparent,
-      builder: (sheetContext) {
-        return Padding(
-          padding: EdgeInsets.fromLTRB(
-            16.w,
-            0,
-            16.w,
-            16.h + MediaQuery.viewPaddingOf(sheetContext).bottom,
-          ),
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(AppRadius.r12),
-              ),
+  const CPCategoryDropdown({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
+
+  @override
+  State<CPCategoryDropdown> createState() => _CPCategoryDropdownState();
+}
+
+class _CPCategoryDropdownState extends State<CPCategoryDropdown> {
+  bool _expanded = false;
+
+  BoxDecoration _boxDecoration(Color fill) => BoxDecoration(
+        color: fill,
+        borderRadius: _categoryDropdownRadius,
+        border: Border.all(color: AppColors.inputFieldBorder),
+      );
+
+  TextStyle get _optionTextStyle => GoogleFonts.lato(
+        fontSize: 16.sp,
+        fontWeight: FontWeight.w500,
+        color: AppColors.inputFieldText,
+      );
+
+  void _toggleExpanded() => setState(() => _expanded = !_expanded);
+
+  void _select(NewProjectCategory category) {
+    widget.onChanged(category);
+    setState(() => _expanded = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        GestureDetector(
+          onTap: _toggleExpanded,
+          behavior: HitTestBehavior.opaque,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: AppDimens.p16, vertical: 14.h),
+            decoration: _boxDecoration(
+              AppColors.purple400.withValues(alpha: 0.35),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+            child: Row(
               children: [
-                SizedBox(height: 10.h),
-                Container(
-                  width: 36.w,
-                  height: 4.h,
-                  decoration: BoxDecoration(
-                    color: AppColors.grey400,
-                    borderRadius: BorderRadius.circular(2.r),
+                Expanded(
+                  child: Text(
+                    widget.value.label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: _optionTextStyle,
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 8.h),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      AppStrings.labelCategory,
-                      style: GoogleFonts.lato(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.inputFieldText,
-                      ),
-                    ),
-                  ),
-                ),
-                for (final c in NewProjectCategory.values)
-                  ListTile(
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 20.w, vertical: 4.h),
-                    title: Text(
-                      c.label,
-                      style: GoogleFonts.lato(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.inputFieldText,
-                      ),
-                    ),
-                    trailing: c == value
-                        ? Icon(
-                            Icons.check,
-                            color: AppColors.inputFieldIcon,
-                            size: 22.w,
-                          )
-                        : null,
-                    onTap: () {
-                      onChanged(c);
-                      Navigator.of(sheetContext).pop();
-                    },
-                  ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(12.w, 4.h, 12.w, 8.h),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: TextButton(
-                      onPressed: () => Navigator.of(sheetContext).pop(),
-                      child: Text(
-                        AppStrings.btnCancel,
-                        style: GoogleFonts.lato(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.inputFieldIcon,
-                        ),
-                      ),
-                    ),
+                Transform.rotate(
+                  angle: _expanded ? math.pi : 0,
+                  child: AppSvgIcon(
+                    assetPath: AppAssets.iconChevronDown,
+                    size: 22.w,
+                    color: AppColors.inputFieldIcon,
                   ),
                 ),
               ],
             ),
           ),
-        );
-      },
+        ),
+        if (_expanded) ...[
+          SizedBox(height: AppDimens.v8),
+          Container(
+            decoration: _boxDecoration(AppColors.surface),
+            padding: EdgeInsets.symmetric(vertical: AppDimens.v8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (final category in NewProjectCategory.values)
+                  _CategoryOptionTile(
+                    label: category.label,
+                    style: _optionTextStyle,
+                    onTap: () => _select(category),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ],
     );
   }
+}
+
+class _CategoryOptionTile extends StatelessWidget {
+  final String label;
+  final TextStyle style;
+  final VoidCallback onTap;
+
+  const _CategoryOptionTile({
+    required this.label,
+    required this.style,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () => _openPicker(context),
-        borderRadius: BorderRadius.circular(12.r),
-        child: Ink(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-          decoration: BoxDecoration(
-            color: AppColors.searchBarBg,
-            borderRadius: BorderRadius.circular(12.r),
-            border: Border.all(color: AppColors.inputFieldBorder),
+        onTap: onTap,
+        borderRadius: _categoryDropdownRadius,
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: AppDimens.p16,
+            vertical: 14.h,
           ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    value.label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.lato(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.inputFieldText,
-                    ),
-                  ),
-                ),
-              ),
-              AppSvgIcon(
-                assetPath: AppAssets.iconChevronDown,
-                size: 22.w,
-                color: AppColors.inputFieldIcon,
-              ),
-            ],
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(label, style: style),
           ),
         ),
       ),

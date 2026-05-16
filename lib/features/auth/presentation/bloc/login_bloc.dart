@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/constants/storage_keys.dart';
+import '../../../../core/storage/onboarding_prefs.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/bloc/form_submission_state.dart';
 import '../../../../core/bloc/base_form_bloc.dart';
@@ -82,7 +83,7 @@ class LoginBloc extends BaseFormBloc<LoginEvent, LoginState> {
             user.accessToken!,
           );
         }
-        if (user.refreshToken != null) {
+        if (user.refreshToken != null && user.refreshToken!.isNotEmpty) {
           await ServiceLocator.instance.secureStorage.saveString(
             StorageKeys.refreshToken,
             user.refreshToken!,
@@ -108,6 +109,7 @@ class LoginBloc extends BaseFormBloc<LoginEvent, LoginState> {
             (disclaimer) => disclaimer.accepted,
           );
 
+          await OnboardingPrefs.markCompleted();
           emit(LoginSuccess(user: user, isDisclaimerAccepted: isDisclaimerAccepted));
         },
       );
@@ -117,7 +119,7 @@ class LoginBloc extends BaseFormBloc<LoginEvent, LoginState> {
     GoogleLoginRequested event,
     Emitter<LoginState> emit,
   ) async {
-    emit(const LoginLoading());
+    emit(const LoginGoogleLoading());
 
     final result = await _googleLoginUseCase();
 
@@ -126,33 +128,32 @@ class LoginBloc extends BaseFormBloc<LoginEvent, LoginState> {
         emit(LoginError(message: failure.message, title: failure.title));
       },
       (user) async {
-        // Save tokens
         if (user.accessToken != null) {
           await ServiceLocator.instance.secureStorage.saveString(
             StorageKeys.accessToken,
             user.accessToken!,
           );
         }
-        if (user.refreshToken != null) {
+        if (user.refreshToken != null && user.refreshToken!.isNotEmpty) {
           await ServiceLocator.instance.secureStorage.saveString(
             StorageKeys.refreshToken,
             user.refreshToken!,
           );
         }
-          await ServiceLocator.instance.sharedPrefs.saveBool(
-            StorageKeys.isLoggedIn,
-            true,
-          );
+        await ServiceLocator.instance.sharedPrefs.saveBool(
+          StorageKeys.isLoggedIn,
+          true,
+        );
 
-          // Check Risk Disclaimer status
-          final disclaimerResult = await _getRiskDisclaimerUseCase();
-          final isDisclaimerAccepted = disclaimerResult.fold(
-            (_) => false,
-            (disclaimer) => disclaimer.accepted,
-          );
+        final disclaimerResult = await _getRiskDisclaimerUseCase();
+        final isDisclaimerAccepted = disclaimerResult.fold(
+          (_) => false,
+          (disclaimer) => disclaimer.accepted,
+        );
 
-          emit(LoginSuccess(user: user, isDisclaimerAccepted: isDisclaimerAccepted));
-        },
-      );
-    }
+        await OnboardingPrefs.markCompleted();
+        emit(LoginGoogleSuccess(isDisclaimerAccepted: isDisclaimerAccepted));
+      },
+    );
   }
+}

@@ -6,6 +6,7 @@ import '../../domain/usecases/register_use_case.dart';
 import '../../domain/usecases/google_login_use_case.dart';
 import '../../domain/usecases/get_risk_disclaimer_use_case.dart';
 import '../../../../core/constants/storage_keys.dart';
+import '../../../../core/storage/onboarding_prefs.dart';
 import 'register_event.dart';
 import 'register_state.dart';
 
@@ -84,7 +85,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
             user.accessToken!,
           );
         }
-        if (user.refreshToken != null) {
+        if (user.refreshToken != null && user.refreshToken!.isNotEmpty) {
           await ServiceLocator.instance.secureStorage.saveString(
             StorageKeys.refreshToken,
             user.refreshToken!,
@@ -102,6 +103,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
           (disclaimer) => disclaimer.accepted,
         );
 
+        await OnboardingPrefs.markCompleted();
         emit(RegisterGoogleSuccess(isDisclaimerAccepted: isDisclaimerAccepted));
       },
     );

@@ -6,6 +6,7 @@ import '../../domain/entities/user_profile.dart';
 import '../../../auth/domain/usecases/logout_use_case.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/constants/storage_keys.dart';
+import '../../../../core/storage/onboarding_prefs.dart';
 import 'package:vestie/features/dashboard/domain/dashboard_prefetch.dart';
 
 class ProfileState extends Equatable {
@@ -218,5 +219,6 @@ class ProfileCubit extends Cubit<ProfileState> {
     await ServiceLocator.instance.secureStorage.remove(StorageKeys.accessToken);
     await ServiceLocator.instance.secureStorage.remove(StorageKeys.refreshToken);
     await ServiceLocator.instance.sharedPrefs.saveBool(StorageKeys.isLoggedIn, false);
+    await OnboardingPrefs.markCompleted();
   }
 }

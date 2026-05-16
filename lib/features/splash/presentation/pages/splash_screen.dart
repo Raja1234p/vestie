@@ -43,6 +43,8 @@ class _SplashScreenState extends State<SplashScreen> {
               } else {
                 context.go(AppRoutes.agreement);
               }
+            } else if (state.hasSeenOnboarding) {
+              context.go(AppRoutes.login);
             } else {
               context.go(AppRoutes.onboarding);
             }

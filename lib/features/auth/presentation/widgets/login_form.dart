@@ -56,8 +56,9 @@ class _LoginFormState extends State<LoginForm> {
   Widget build(BuildContext context) {
     return BlocBuilder<LoginFormCubit, LoginFormState>(
       builder: (context, form) {
-        final isLoading =
-            context.watch<LoginBloc>().state is LoginLoading;
+        final loginState = context.watch<LoginBloc>().state;
+        final isEmailLoading = loginState is LoginLoading;
+        final isGoogleLoading = loginState is LoginGoogleLoading;
         final bottomInset = MediaQuery.paddingOf(context).bottom;
         return CustomScrollView(
           slivers: [
@@ -154,17 +155,21 @@ class _LoginFormState extends State<LoginForm> {
                   SizedBox(height: 12.h),
                   AppButton(
                     text: AppStrings.btnContinue,
-                    isLoading: isLoading,
-                    onPressed: form.isValid ? () => _submit(context) : null,
+                    isLoading: isEmailLoading,
+                    onPressed: isEmailLoading || isGoogleLoading || !form.isValid
+                        ? null
+                        : () => _submit(context),
                   ),
                   SizedBox(height: 12.h),
                   const OrDivider(),
                   SizedBox(height: 12.h),
                   SocialAuthButton(
                     provider: SocialProvider.google,
-                    onPressed: () => context
-                        .read<LoginBloc>()
-                        .add(const GoogleLoginRequested()),
+                    onPressed: isEmailLoading || isGoogleLoading
+                        ? null
+                        : () => context
+                            .read<LoginBloc>()
+                            .add(const GoogleLoginRequested()),
                   ),
                   SizedBox(height: 12.h),
                   SocialAuthButton(

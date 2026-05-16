@@ -175,6 +175,9 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final userModel = await _remoteDataSource.getMe();
       return Right(userModel);
+    } on UnauthorizedException catch (e, stack) {
+      AppLogger.error('GetMe Unauthorized', error: e, stackTrace: stack);
+      return Left(ServerFailure(e.message, e.title));
     } on ServerException catch (e, stack) {
       AppLogger.error('GetMe Server Exception', error: e, stackTrace: stack);
       return Left(ServerFailure(e.message, e.title));

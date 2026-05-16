@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/storage/onboarding_prefs.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import '../bloc/onboarding_cubit.dart';
@@ -43,8 +44,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     super.dispose();
   }
 
-  void _onContinue(BuildContext context, OnboardingCubit cubit) {
+  Future<void> _onContinue(BuildContext context, OnboardingCubit cubit) async {
     if (cubit.isLastPage) {
+      await OnboardingPrefs.markCompleted();
+      if (!context.mounted) return;
       context.go(AppRoutes.login);
     } else {
       final next = cubit.state + 1;
