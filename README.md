@@ -34,10 +34,7 @@ flutter run
 
 ## Docs
 
-- Flow map (grouped, clickable): `DOCS/ui_flow_grouped_clickable_map.md`
-- Full user vs leader flow (all screens): `DOCS/user_leader_flow_all_screens.md`
-- User flow + API map: `DOCS/user_view_flow_api_map.md`
-- Leader flow + API map: `DOCS/leader_view_flow_api_map.md`
+- **Group Vacation & Emergency member flows** (screens, routes, UI-only vs API, integration checklist): [`DOCS/group_vacation_emergency_member_flow.md`](DOCS/group_vacation_emergency_member_flow.md)
 
 ---
 
