@@ -29,7 +29,7 @@ class MemberMetricCard extends StatelessWidget {
             label,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   fontSize: 12.sp,
-                  color: AppColors.grey900,
+                  color: AppColors.projectDetailText,
                 ),
           ),
           SizedBox(height: 2.h),
@@ -38,7 +38,7 @@ class MemberMetricCard extends StatelessWidget {
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   fontSize: 22.sp,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.grey1100,
+                  color: AppColors.projectDetailText,
                 ),
           ),
         ],

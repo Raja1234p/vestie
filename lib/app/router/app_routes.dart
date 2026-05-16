@@ -67,6 +67,8 @@ class AppRoutes {
   static const String leaderProjectSettings = '/project/leader-settings';
   static const String joinRequests     = '/project/join-requests';
   static const String borrowRequests   = '/project/borrow-requests';
+  static const String myBorrowRequest  = '/project/my-borrow-request';
+  static const String projectFundsHistory = '/project/funds-history';
   static const String markProjectSuccessful = '/project/mark-successful';
   static const String cancelProject        = '/project/cancel';
   static const String projectCancelled     = '/project/cancelled';

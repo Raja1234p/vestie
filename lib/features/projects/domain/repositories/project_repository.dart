@@ -13,6 +13,6 @@ abstract class ProjectRepository {
   Future<Either<Failure, InvitePreviewEntity>> previewInvite(String inviteCode);
   Future<Either<Failure, JoinProjectResultEntity>> joinProject({
     required String projectId,
-    required String inviteCode,
+    String? inviteCode,
   });
 }

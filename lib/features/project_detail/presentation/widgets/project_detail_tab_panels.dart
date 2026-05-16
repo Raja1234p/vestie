@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../core/constants/app_strings.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/widgets/text/app_text.dart';
 import '../../domain/entities/borrow_request_entity.dart';
 import '../../domain/entities/member_entity.dart';
 import 'package:vestie/leader/features/project_detail/presentation/widgets/borrow_requests_tab.dart';
@@ -12,6 +7,7 @@ import 'package:vestie/leader/features/project_detail/presentation/widgets/borro
 import 'package:vestie/leader/features/project_detail/presentation/widgets/borrow_request_decision_dialogs.dart';
 import 'package:vestie/leader/features/project_detail/presentation/widgets/leader_manage_members_list.dart';
 import 'members_list.dart';
+import 'project_members_section.dart';
 
 class UserBorrowRequestsPanel extends StatelessWidget {
   final List<BorrowRequestEntity> requests;
@@ -44,41 +40,12 @@ class LeaderBorrowRequestsPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final preview = requests.take(2).toList();
-    return Column(
-      children: [
-        ...preview.map(
-          (r) => BorrowRequestCard(
-            request: r,
-            actionMode: BorrowRequestActionMode.decision,
-            onAccept: () => showApproveBorrowRequestFlow(context, r),
-            onReject: () => showRejectBorrowRequestFlow(context, r),
-          ),
-        ),
-        if (requests.length > 2) ...[
-          SizedBox(height: 10.h),
-          GestureDetector(
-            onTap: onViewAll,
-            behavior: HitTestBehavior.opaque,
-            child: Center(
-              child: Container(
-                width: double.infinity,
-                color: AppColors.grey100,
-                padding: EdgeInsets.symmetric(vertical: 14.h),
-                alignment: Alignment.center,
-                child: AppText(
-                  AppStrings.viewAllRequests,
-                  style: GoogleFonts.lato(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.neutral1200,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ],
+    return BorrowRequestsTab(
+      requests: requests,
+      onViewAll: onViewAll,
+      actionMode: BorrowRequestActionMode.decision,
+      onAccept: (r) => showApproveBorrowRequestFlow(context, r),
+      onReject: (r) => showRejectBorrowRequestFlow(context, r),
     );
   }
 }
@@ -86,11 +53,15 @@ class LeaderBorrowRequestsPanel extends StatelessWidget {
 class UserMembersPanel extends StatelessWidget {
   final List<MemberEntity> members;
   final ValueChanged<MemberEntity>? onMemberTap;
+  final ValueChanged<MemberEntity>? onAddFriend;
+  final bool useFigmaLayout;
 
   const UserMembersPanel({
     super.key,
     required this.members,
     this.onMemberTap,
+    this.onAddFriend,
+    this.useFigmaLayout = false,
   });
 
   @override
@@ -98,6 +69,15 @@ class UserMembersPanel extends StatelessWidget {
     final activeMembers = members
         .where((m) => !m.status.toLowerCase().contains('pending'))
         .toList(growable: false);
+
+    if (useFigmaLayout) {
+      return ProjectMembersSection(
+        members: activeMembers,
+        onMemberTap: onMemberTap,
+        onAddFriend: onAddFriend,
+      );
+    }
+
     return MembersList(
       members: activeMembers,
       onMemberTap: onMemberTap,

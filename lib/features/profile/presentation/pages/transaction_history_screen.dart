@@ -55,10 +55,9 @@ class _TxBody extends StatelessWidget {
                 Expanded(
                   child: state.loading
                       ? const AppLoader()
-                      : ListView.separated(
+                      : ListView.builder(
                           padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 16.h),
                           itemCount: state.filtered.length,
-                          separatorBuilder: (context, _) => SizedBox(height: 10.h),
                           itemBuilder: (_, i) {
                             final tx = state.filtered[i];
                             return AppTransactionItem(

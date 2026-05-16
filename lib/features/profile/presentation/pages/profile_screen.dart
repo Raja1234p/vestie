@@ -236,7 +236,7 @@ class _ProfileBody extends StatelessWidget {
                       ]),
                       const Spacer(),
                       ProfileLogoutButton(
-                        isLoading: state.isLoading,
+                        isLoading: state.isLoggingOut,
                         onTap: () => context.read<ProfileCubit>().logout(),
                       ),
                       SizedBox(height: 10.h),

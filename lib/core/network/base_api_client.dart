@@ -60,6 +60,8 @@ class BaseApiClient {
          throw const TimeoutFailure();
       }
       throw const NetworkFailure();
+    } on Failure {
+      rethrow;
     } catch (e) {
       throw UnknownFailure(e.toString());
     }

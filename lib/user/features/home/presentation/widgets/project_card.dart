@@ -17,14 +17,19 @@ class ProjectCard extends StatelessWidget {
   final Project project;
   final VoidCallback onAction;
 
-  const ProjectCard({super.key, required this.project, required this.onAction});
+  /// Discover tab — public/private join labels at 18 / w500 (Figma).
+  final bool discoverCtaStyle;
 
-  /// Ongoing: always. Completed: “View” is shown only for **Joined** (no button on
-  /// My Projects for completed — Figma: leader sees card without a CTA here).
-  bool get _showActionButton =>
-      project.status == ProjectStatus.ongoing ||
-      (project.status == ProjectStatus.completed &&
-          project.relation == ProjectRelation.joined);
+  const ProjectCard({
+    super.key,
+    required this.project,
+    required this.onAction,
+    this.discoverCtaStyle = false,
+  });
+
+  /// My Projects: View while ongoing. Joined: View only when `displayStatus` is
+  /// On Going; no CTA for Waiting for Approval (see [Project.showsHomeActionButton]).
+  bool get _showActionButton => project.showsHomeActionButton;
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +60,11 @@ class ProjectCard extends StatelessWidget {
             children: [
               ProjectCategoryChip(project: project),
               const Spacer(),
-              ProjectStatusBadge(status: project.status),
+              ProjectStatusBadge(
+                status: project.status,
+                label: project.statusLabel,
+                isDraft: project.isDraft,
+              ),
             ],
           ),
           SizedBox(height: 8.h),
@@ -127,7 +136,11 @@ class ProjectCard extends StatelessWidget {
 
           if (_showActionButton) ...[
             SizedBox(height: 12.h),
-            ProjectActionButton(project: project, onTap: onAction),
+            ProjectActionButton(
+              project: project,
+              onTap: onAction,
+              discoverCtaStyle: discoverCtaStyle,
+            ),
           ],
         ],
       ),

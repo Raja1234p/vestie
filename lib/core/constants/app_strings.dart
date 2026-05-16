@@ -155,7 +155,9 @@ class AppStrings {
   static const String btnCreateProject  = 'Create a project';
   static const String btnView           = 'View';
   static const String btnJoin           = 'Join';
+  static const String btnRequestToJoin  = 'Request to join';
   static const String btnSendRequest    = 'Send Request';
+  static const String projectJoinRequestSubmitted = 'Request Submitted';
   static const String labelGoal         = 'Goal';
   static const String labelRaised       = 'Raised';
   static const String labelTotal        = 'Total';
@@ -349,6 +351,8 @@ class AppStrings {
   /// Profile
   static const String userVffBadgeMember = 'Member';
   static const String userVffBadgeVff = 'VFF Badge';
+  static const String btnAddFriend = 'Add Friend';
+  static const String projectMemberLeaderBadge = 'Leader';
   static const String userVffProfileTitleSuffix = ' Profile';
   static const String userVffContributed = 'Contributed';
   static const String userVffContributions = 'Contributions';
@@ -768,7 +772,20 @@ class AppStrings {
   static const String overdueLabel              = 'Overdue';
   static const String requestedAmount           = 'Requested Amount';
   static const String viewAllRequests           = 'View All Requests';
+  static const String borrowRequestsEmpty       = 'No Borrow Request';
+  static const String borrowRequestsEmptySubtitle =
+      'Great, you don\'t have any borrow requests.';
   static const String borrowRequestsTitle       = 'Borrow Requests';
+  static const String myBorrowRequestTitle      = 'My Borrow Request';
+  static const String myBorrowAmountLabel       = 'Borrow Amount';
+  static const String myBorrowMemberVotesLabel  = 'Member Votes';
+  static const String myBorrowPendingBanner     =
+      'Pending — waiting for decision';
+  static const String myBorrowHistoryLabel      = 'Borrow History';
+  static const String btnMakeBorrowRequest      = 'Make Request';
+  static const String btnCancelBorrowRequest    = 'Cancel Request';
+  static const String borrowHistoryApproved     = 'Approved';
+  static const String borrowHistoryRejected     = 'Rejected';
   static const String upvoteLabel               = 'Upvote';
   static const String downvoteLabel             = 'Downvote';
   static const String upvotedStatusLabel        = 'You’ve Upvoted this Requested';
@@ -841,6 +858,17 @@ class AppStrings {
   static const String menuInviteMembers         = 'Invite Members';
   static const String menuMarkSuccessful        = 'Mark as Successful';
   static const String menuCancelProject         = 'Cancel Project';
+
+  // ── Member project actions (Vacation / Emergency detail header)
+  static const String menuProjectFundsHistory = 'Project Funds History';
+  static const String menuMyBorrows = 'My Borrows';
+  static const String menuLeaveProject = 'Leave Project';
+  static const String projectFundsHistoryEmpty =
+      'No contributions recorded yet.';
+  static const String projectFundsCurrentPotBalance = 'Current Pot Balance';
+  static const String projectFundsTotalContribution = 'Total Contribution';
+  static const String projectFundsActiveBorrows = 'Active Borrows';
+  static const String projectFundsContributionHistory = 'Contribution History';
   static const String markSuccessfulIntro1 =
       'Marking the project as successful will notify all members to vote. '
       'A majority must agree before funds are released to your wallet.';

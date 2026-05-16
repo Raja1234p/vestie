@@ -80,14 +80,12 @@ class CreateProjectCubit extends Cubit<CreateProjectForm> {
         ValidationUtils.validateProjectName(state.projectName);
     final descErr =
         ValidationUtils.validateProjectDescription(state.description);
-    final deadlineErr =
-        ValidationUtils.validateProjectDeadline(state.deadline);
     emit(state.copyWith(
       nameError: nameErr,
       descError: descErr,
-      deadlineError: deadlineErr,
+      deadlineError: null,
     ));
-    return nameErr == null && descErr == null && deadlineErr == null;
+    return nameErr == null && descErr == null;
   }
 
   bool validateFundsBorrowing() {

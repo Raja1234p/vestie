@@ -49,4 +49,17 @@ class AppTextStyles {
         fontWeight: FontWeight.w800,
         color: AppColors.grey1100,
       );
+
+  /// Project detail member row — name (Figma 16 / w600 / black).
+  static TextStyle get projectMemberName => GoogleFonts.lato(
+        fontSize: 16.sp,
+        fontWeight: FontWeight.w600,
+        color: AppColors.projectMemberAvatarInitials,
+      );
+
+  static TextStyle get projectMemberAddFriend => GoogleFonts.lato(
+        fontSize: 12.sp,
+        fontWeight: FontWeight.w600,
+        color: AppColors.blue700,
+      );
 }

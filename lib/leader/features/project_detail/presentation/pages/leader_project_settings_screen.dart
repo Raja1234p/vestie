@@ -2,21 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_navigation_row_tile.dart';
-import 'package:vestie/core/widgets/common/app_shimmer.dart';
 import 'package:vestie/core/widgets/common/leader_action_menu.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
-import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_load_error.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_detail_loading_body.dart';
 import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
 
 /// Storyboard “Project settings” list for primary leaders and co-leaders.
@@ -35,7 +33,12 @@ class LeaderProjectSettingsScreen extends StatelessWidget {
           return Scaffold(
             backgroundColor: Colors.transparent,
             body: PostAuthGradientBackground(
-              child: CustomScrollView(
+              child: state is ProjectDetailLoading ||
+                      state is ProjectDetailInitial
+                  ? ProjectDetailLoadingBody(
+                      onBack: () => context.pop(),
+                    )
+                  : CustomScrollView(
                 slivers: [
                   SliverToBoxAdapter(
                     child: PostAuthHeader(
@@ -43,9 +46,6 @@ class LeaderProjectSettingsScreen extends StatelessWidget {
                       leading: AppBackButton(onPressed: () => context.pop()),
                     ),
                   ),
-                  if (state is ProjectDetailLoading ||
-                      state is ProjectDetailInitial)
-                    const SliverFillRemaining(child: ProjectDetailShimmer()),
                   if (state is ProjectDetailError)
                     SliverFillRemaining(
                       child: ProjectDetailLoadError(
@@ -61,8 +61,6 @@ class LeaderProjectSettingsScreen extends StatelessWidget {
                       sliver: SliverToBoxAdapter(
                         child: _LeaderProjectSettingsBody(
                           project: state.project,
-                          pendingJoinRequestCount:
-                              state.pendingJoinRequestCount,
                         ),
                       ),
                     ),
@@ -78,18 +76,11 @@ class LeaderProjectSettingsScreen extends StatelessWidget {
 
 class _LeaderProjectSettingsBody extends StatelessWidget {
   final ProjectDetailEntity project;
-  final int pendingJoinRequestCount;
 
-  const _LeaderProjectSettingsBody({
-    required this.project,
-    required this.pendingJoinRequestCount,
-  });
+  const _LeaderProjectSettingsBody({required this.project});
 
   @override
   Widget build(BuildContext context) {
-    final primary = project.isLeader;
-    final pending = pendingJoinRequestCount;
-
     void onAction(LeaderMenuAction action) {
       ProjectDetailNavigationHelpers.handleLeaderAction(
         context,
@@ -102,12 +93,6 @@ class _LeaderProjectSettingsBody extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         AppNavigationRowTile(
-          title: AppStrings.menuJoinRequests,
-          badgeCount: pending,
-          onTap: () => onAction(LeaderMenuAction.joinRequests),
-        ),
-        SizedBox(height: 10.h),
-        AppNavigationRowTile(
           title: AppStrings.menuAddAnnouncement,
           onTap: () => onAction(LeaderMenuAction.addAnnouncement),
         ),
@@ -118,23 +103,35 @@ class _LeaderProjectSettingsBody extends StatelessWidget {
         ),
         SizedBox(height: 10.h),
         AppNavigationRowTile(
+          title: AppStrings.menuProjectFundsHistory,
+          onTap: () => onAction(LeaderMenuAction.projectFundsHistory),
+        ),
+        if (project.isVacationOrEmergency) ...[
+          SizedBox(height: 10.h),
+          AppNavigationRowTile(
+            title: AppStrings.menuMyBorrows,
+            onTap: () => onAction(LeaderMenuAction.myBorrows),
+          ),
+        ],
+        SizedBox(height: 10.h),
+        AppNavigationRowTile(
           title: AppStrings.menuInviteMembers,
           onTap: () => onAction(LeaderMenuAction.inviteMembers),
         ),
-        if (primary) ...[
+        if (project.canMarkProjectSuccessful) ...[
           SizedBox(height: 10.h),
           AppNavigationRowTile(
             title: AppStrings.menuMarkSuccessful,
             titleColor: AppColors.badgeCompletedText,
             onTap: () => onAction(LeaderMenuAction.markSuccessful),
           ),
-          SizedBox(height: 10.h),
-          AppNavigationRowTile(
-            title: AppStrings.menuCancelProject,
-            titleColor: AppColors.red900,
-            onTap: () => onAction(LeaderMenuAction.cancelProject),
-          ),
         ],
+        SizedBox(height: 10.h),
+        AppNavigationRowTile(
+          title: AppStrings.menuCancelProject,
+          titleColor: AppColors.red900,
+          onTap: () => onAction(LeaderMenuAction.cancelProject),
+        ),
       ],
     );
   }

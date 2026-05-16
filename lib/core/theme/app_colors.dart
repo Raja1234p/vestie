@@ -191,6 +191,28 @@ class AppColors {
   static const Color textPrimary   = grey900;  // #443F63
   static const Color textBody      = grey900;  // #443F63
   static const Color textSecondary = grey900;  // #443F63
+
+  /// Project detail — chip labels, goal copy, body (#000000 Figma).
+  static const Color projectDetailText = neutral1200;
+
+  /// Project funds history — summary metric values (#141414).
+  static const Color projectFundsMetricValue = neutral1100;
+  /// Ledger list row fill (#F8F7FA).
+  static const Color projectFundsLedgerCardBg = grey100;
+  /// Ledger row + icon tile outline (#BFBFBF).
+  static const Color projectFundsLedgerBorder = neutral500;
+  /// Icon tile fill behind the inner circle.
+  static const Color projectFundsLedgerIconTileBg = surface;
+  /// Contribution ledger glyph (#4C24A0).
+  static const Color projectFundsLedgerContributionIcon = primary;
+  /// Borrow ledger glyph (#A02222).
+  static const Color projectFundsLedgerBorrowIcon = red900;
+  /// Ledger date (#5E5783).
+  static const Color projectFundsLedgerDate = grey800;
+  /// Ledger + amount (#0F7C52).
+  static const Color projectFundsLedgerAmountPositive = green900;
+  /// Ledger − amount (#A02222).
+  static const Color projectFundsLedgerAmountNegative = red900;
   static const Color textHint      = grey500;  // #B8B2D1
 
   // ── Borders & Dividers ────────────────────────────────────────────────────────
@@ -207,6 +229,11 @@ class AppColors {
   static const Color badgeOnGoingText  = purple900;   // #4C24A0
   static const Color badgeCompletedBg  = green200;    // #D8F5EA
   static const Color badgeCompletedText = green900;   // #0F7C52
+  /// My Borrow Request — pending banner (Figma).
+  static const Color borrowPendingBannerBg = Color(0xFFFFF8E6);
+  static const Color borrowPendingBannerText = Color(0xFFB8860B);
+  /// Member vote summary — downvote tile.
+  static const Color borrowVoteDownBg = Color(0xFFFCE8E8);
 
   // Progress bar
   static const Color progressBg   = grey300;    // #E4E0EE
@@ -229,6 +256,26 @@ class AppColors {
 
   // Search / input bg
   static const Color searchBarBg = grey100;    // #F8F7FA
+
+  /// Project detail — member list row card + avatar (Figma).
+  static const Color projectMemberCardBg = grey100;
+  static const Color projectMemberAvatarBg = purple300;
+  static const Color projectMemberAvatarInitials = neutral1200;
+
+  /// Add Friend on project member row (Figma border #DDD0FC).
+  static const Color projectMemberAddFriendBorder = purple300;
+
+  /// VFF badge — Action/Primary/Pressed (Figma).
+  static const Color actionPrimaryPressed = purple800; // #6230C2
+  static const Color actionPrimaryBorderLight = grey100; // #F8F7FA
+  static const Color actionPrimaryBorderDark = purple600; // #9268EC
+  static const Color actionPrimaryInnerShadow = Color(0xFFCABEE5);
+
+  /// Leader badge — Action/Information (Figma).
+  static const Color actionInformationPressed = blue800; // #2E62C2
+  static const Color actionInformationBorderLight = Color(0xFFF4F5F7);
+  static const Color actionInformationBorderDark = blue900; // #204CA0
+  static const Color actionInformationInnerShadow = Color(0xFFC3CEE2);
 
   // Dark pill action button (inside cards)
   static const Color cardActionBtn = grey1100; // #1A1630

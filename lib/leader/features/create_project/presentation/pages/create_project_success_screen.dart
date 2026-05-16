@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:vestie/app/router/app_routes.dart';
-import 'package:vestie/features/dashboard/presentation/models/dashboard_shell_args.dart';
 import 'package:vestie/core/utils/whatsapp_launch.dart';
+import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart';
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
@@ -21,9 +19,13 @@ import '../cubit/create_project_cubit.dart';
 class CreateProjectSuccessScreen extends StatefulWidget {
   final String projectId;
 
+  /// From `POST /projects` response — used for detail header if form is reset.
+  final String? projectName;
+
   const CreateProjectSuccessScreen({
     super.key,
     required this.projectId,
+    this.projectName,
   });
 
   @override
@@ -108,14 +110,17 @@ class _CreateProjectSuccessScreenState extends State<CreateProjectSuccessScreen>
           title: AppStrings.projectCreatedTitle,
           buttonText: AppStrings.btnGoToMyProject,
           onButtonPressed: () {
+            final category = form.category;
+            final apiName = widget.projectName?.trim() ?? '';
+            final formName = form.projectName.trim();
+            final detailName =
+                apiName.isNotEmpty ? apiName : formName;
             context.read<CreateProjectCubit>().reset();
-            context.go(
-              AppRoutes.dashboard,
-              extra: DashboardShellArgs(
-                reloadHomeProjectList: true,
-                reloadDiscoverProjectList: true,
-                navigationMark: DateTime.now().microsecondsSinceEpoch,
-              ),
+            openProjectDetailAfterCreateSuccess(
+              context,
+              projectId: widget.projectId,
+              category: category,
+              projectName: detailName.isEmpty ? null : detailName,
             );
           },
           customContent: Column(

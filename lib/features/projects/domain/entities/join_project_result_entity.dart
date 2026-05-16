@@ -13,6 +13,14 @@ class JoinProjectResultEntity extends Equatable {
     required this.role,
   });
 
+  String get normalizedStatus => status.toLowerCase();
+
+  /// Leader approval required — user stays on discover.
+  bool get isPendingMembership => normalizedStatus.contains('pending');
+
+  /// Immediate join (`active`, etc.) — open project detail.
+  bool get isImmediateMembership => !isPendingMembership;
+
   @override
   List<Object?> get props => [projectId, membershipId, status, role];
 }

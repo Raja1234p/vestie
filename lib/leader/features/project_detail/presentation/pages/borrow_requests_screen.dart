@@ -4,13 +4,12 @@ import 'package:go_router/go_router.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/utils/app_snackbar.dart';
 import 'package:vestie/core/constants/app_strings.dart';
-import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
-import 'package:vestie/core/widgets/text/app_text.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/borrow_requests_empty_state.dart';
+
 import '../widgets/borrow_request_card.dart';
 import '../widgets/borrow_request_decision_dialogs.dart';
 
@@ -20,12 +19,14 @@ class BorrowRequestsScreen extends StatelessWidget {
   final List<BorrowRequestEntity> requests;
   final bool isLeaderMode;
   final String projectId;
+  final String? screenTitle;
 
   const BorrowRequestsScreen({
     super.key,
     required this.requests,
     required this.projectId,
     this.isLeaderMode = false,
+    this.screenTitle,
   });
 
   Future<bool> _approve(
@@ -66,7 +67,7 @@ class BorrowRequestsScreen extends StatelessWidget {
             // ── Header ──────────────────────────────────────
             SliverToBoxAdapter(
               child: PostAuthHeader(
-                title: AppStrings.borrowRequestsTitle,
+                title: screenTitle ?? AppStrings.borrowRequestsTitle,
                 leading: AppBackButton(onPressed: () => context.pop()),
               ),
             ),
@@ -75,20 +76,8 @@ class BorrowRequestsScreen extends StatelessWidget {
             SliverPadding(
               padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 32.h),
               sliver: requests.isEmpty
-                  ? SliverToBoxAdapter(
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 24.h),
-                        child: Center(
-                          child: AppText(
-                            AppStrings.emptyData,
-                            style: GoogleFonts.lato(
-                              fontSize: 15.sp,
-                              color: AppColors.textBody,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
+                  ? const SliverToBoxAdapter(
+                      child: BorrowRequestsEmptyState(),
                     )
                   : SliverList(
                       delegate: SliverChildBuilderDelegate(

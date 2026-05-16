@@ -3,12 +3,143 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/app_routes.dart';
 import '../../../../app/router/route_args/project_detail_flow_args.dart';
+import 'package:vestie/features/dashboard/presentation/models/dashboard_shell_args.dart';
+import 'package:vestie/features/projects/domain/entities/created_project_entity.dart';
+import 'package:vestie/features/projects/domain/entities/invite_preview_entity.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
+import 'package:vestie/leader/features/create_project/domain/create_project_form.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
 import '../../domain/entities/project_detail_route_args.dart';
 
+/// Pops detail or returns to dashboard with a fresh project list.
+void popProjectDetailNavigation(
+  BuildContext context, {
+  required bool refreshHomeOnPop,
+}) {
+  if (refreshHomeOnPop) {
+    context.go(
+      AppRoutes.dashboard,
+      extra: DashboardShellArgs(
+        reloadHomeProjectList: true,
+        reloadDiscoverProjectList: true,
+        navigationMark: DateTime.now().microsecondsSinceEpoch,
+      ),
+    );
+    return;
+  }
+  context.pop();
+}
+
+ProjectDetailRouteArgs _routeArgs({
+  required String projectId,
+  String? initialProjectName,
+  bool refreshHomeOnPop = false,
+}) {
+  return ProjectDetailRouteArgs(
+    projectId: projectId,
+    initialProjectName: ProjectDetailRouteArgs.normalizedName(initialProjectName),
+    refreshHomeOnPop: refreshHomeOnPop,
+  );
+}
+
+/// Home / Discover list card.
+ProjectDetailRouteArgs projectDetailRouteArgsForProject(
+  Project project, {
+  bool refreshHomeOnPop = false,
+}) {
+  return _routeArgs(
+    projectId: project.id,
+    initialProjectName: project.name,
+    refreshHomeOnPop: refreshHomeOnPop,
+  );
+}
+
+/// After `POST /projects` (create wizard).
+ProjectDetailRouteArgs projectDetailRouteArgsForCreated(
+  CreatedProjectEntity created, {
+  bool refreshHomeOnPop = false,
+}) {
+  return _routeArgs(
+    projectId: created.id,
+    initialProjectName: created.name,
+    refreshHomeOnPop: refreshHomeOnPop,
+  );
+}
+
+/// Invite-code preview before join (name available before detail GET).
+ProjectDetailRouteArgs projectDetailRouteArgsForInvitePreview(
+  InvitePreviewEntity preview, {
+  bool refreshHomeOnPop = false,
+}) {
+  return _routeArgs(
+    projectId: preview.projectId,
+    initialProjectName: preview.projectName,
+    refreshHomeOnPop: refreshHomeOnPop,
+  );
+}
+
+/// When navigating from an already-loaded detail screen.
+ProjectDetailRouteArgs projectDetailRouteArgsForDetail(
+  ProjectDetailEntity project, {
+  bool refreshHomeOnPop = false,
+}) {
+  return _routeArgs(
+    projectId: project.id,
+    initialProjectName: project.name,
+    refreshHomeOnPop: refreshHomeOnPop,
+  );
+}
+
+void _pushProjectDetail(
+  BuildContext context, {
+  required ProjectDetailRouteArgs args,
+  required bool isInvestment,
+}) {
+  final route = isInvestment
+      ? AppRoutes.investmentProjectDetail
+      : AppRoutes.projectDetail;
+  context.push(route, extra: args);
+}
+
+/// Opens detail when only id (and optional name) are known — e.g. notifications later.
+void openProjectDetailById(
+  BuildContext context, {
+  required String projectId,
+  required bool isInvestment,
+  String? initialProjectName,
+  bool refreshHomeOnPop = false,
+}) {
+  _pushProjectDetail(
+    context,
+    args: _routeArgs(
+      projectId: projectId,
+      initialProjectName: initialProjectName,
+      refreshHomeOnPop: refreshHomeOnPop,
+    ),
+    isInvestment: isInvestment,
+  );
+}
+
+/// After create-project success — home is the root; detail opens on top; back refreshes home.
+void openProjectDetailAfterCreateSuccess(
+  BuildContext context, {
+  required String projectId,
+  required NewProjectCategory category,
+  String? projectName,
+}) {
+  context.go(AppRoutes.dashboard);
+  openProjectDetailById(
+    context,
+    projectId: projectId,
+    isInvestment: category == NewProjectCategory.investment,
+    initialProjectName: projectName,
+    refreshHomeOnPop: true,
+  );
+}
+
 /// Opens project detail for any viewer role. UI is driven by
-/// `GET /projects/{id}` → `viewerMembership.role` (Leader / CoLeader / Member).
+/// `GET /projects/{id}` → `project.viewerRole` (`GroupLeader` / `Member`, …).
 void openProjectFromCard(BuildContext context, Project p) {
   if (p.relation == ProjectRelation.joined && p.userFlow != null) {
     final name = p.name;
@@ -66,8 +197,39 @@ void openProjectFromCard(BuildContext context, Project p) {
     }
   }
 
-  final route = p.category.isInvestment
-      ? AppRoutes.investmentProjectDetail
-      : AppRoutes.projectDetail;
-  context.push(route, extra: ProjectDetailRouteArgs(projectId: p.id));
+  _pushProjectDetail(
+    context,
+    args: projectDetailRouteArgsForProject(p),
+    isInvestment: p.category.isInvestment,
+  );
+}
+
+/// Discover (or home) — immediate join (`status: active`).
+void openProjectDetailAfterJoinSuccess(
+  BuildContext context, {
+  required String projectId,
+  required String projectName,
+  required bool isInvestment,
+}) {
+  openProjectDetailById(
+    context,
+    projectId: projectId,
+    isInvestment: isInvestment,
+    initialProjectName: projectName,
+    refreshHomeOnPop: true,
+  );
+}
+
+/// Use after a successful invite join when opening detail immediately.
+void openProjectDetailFromInvitePreview(
+  BuildContext context,
+  InvitePreviewEntity preview,
+) {
+  final type = preview.projectType.toLowerCase();
+  final isInvestment = type.contains('invest');
+  _pushProjectDetail(
+    context,
+    args: projectDetailRouteArgsForInvitePreview(preview),
+    isInvestment: isInvestment,
+  );
 }

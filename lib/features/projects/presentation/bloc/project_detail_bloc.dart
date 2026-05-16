@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/error/failures.dart';
 import '../../../project_detail/domain/entities/project_detail_entity.dart';
+import '../../../project_detail/domain/entities/viewer_membership_role.dart';
 import '../../../project_detail/domain/repositories/project_detail_repository.dart';
 import '../../../project_detail/domain/usecases/list_pending_join_requests_usecase.dart';
 
@@ -42,7 +43,7 @@ class ProjectDetailLoading extends ProjectDetailState {}
 
 class ProjectDetailLoaded extends ProjectDetailState {
   final ProjectDetailEntity project;
-  final bool isLeader;
+  final ViewerMembershipRole viewerRole;
   final ProjectDetailTab activeTab;
   /// From Week 3 `GET /projects/{id}/memberships/pending` when viewer can manage.
   final int pendingJoinRequestCount;
@@ -51,9 +52,11 @@ class ProjectDetailLoaded extends ProjectDetailState {
     required this.project,
     this.activeTab = ProjectDetailTab.borrowRequests,
     int? pendingJoinRequestCount,
-  })  : isLeader = project.isLeader,
+  })  : viewerRole = project.viewerRole,
         pendingJoinRequestCount =
             pendingJoinRequestCount ?? project.pendingJoinRequestCount;
+
+  bool get isGroupLeader => viewerRole.isGroupLeader;
 
   ProjectDetailLoaded copyWith({
     ProjectDetailEntity? project,
@@ -70,7 +73,7 @@ class ProjectDetailLoaded extends ProjectDetailState {
 
   @override
   List<Object?> get props =>
-      [project, isLeader, activeTab, pendingJoinRequestCount];
+      [project, viewerRole, activeTab, pendingJoinRequestCount];
 }
 
 class ProjectDetailError extends ProjectDetailState {
@@ -98,7 +101,10 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
     LoadProjectDetailEvent event,
     Emitter<ProjectDetailState> emit,
   ) async {
-    emit(ProjectDetailLoading());
+    final isSilentRefresh = state is ProjectDetailLoaded;
+    if (!isSilentRefresh) {
+      emit(ProjectDetailLoading());
+    }
     final result = await repository.getProjectDetail(projectId: event.projectId);
 
     await result.fold(
@@ -108,7 +114,7 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
       (project) async {
         var pendingCount = project.pendingJoinRequestCount;
         final listPending = _listPendingJoinRequests;
-        if (project.hasManagementPrivileges && listPending != null) {
+        if (project.showsJoinRequestsHeaderChip && listPending != null) {
           final pendingResult = await listPending(event.projectId);
           pendingResult.fold(
             (_) {},

@@ -80,117 +80,118 @@ class ProjectCardShimmer extends StatelessWidget {
   }
 }
 
-/// Full-page skeleton for project detail (`GET /projects/{id}`).
+/// Skeleton blocks below project-detail header (info card, actions, members).
+class ProjectDetailContentShimmer extends StatelessWidget {
+  const ProjectDetailContentShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverPadding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+      sliver: SliverToBoxAdapter(
+        child: AppShimmer(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: _projectDetailShimmerChildren(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+List<Widget> _projectDetailShimmerChildren() => [
+  AppShimmer.box(
+                  width: double.infinity,
+                  height: 72,
+    borderRadius: 14,
+  ),
+  const SizedBox(height: 12),
+  AppShimmer.box(
+    width: double.infinity,
+    height: 120,
+    borderRadius: 16,
+  ),
+  const SizedBox(height: 16),
+  AppShimmer.box(
+    width: double.infinity,
+    height: 48,
+    borderRadius: 10,
+  ),
+  const SizedBox(height: 12),
+  AppShimmer.box(
+    width: double.infinity,
+    height: 48,
+    borderRadius: 10,
+  ),
+  const SizedBox(height: 20),
+  Row(
+    children: [
+      Expanded(
+        child: AppShimmer.box(
+          width: double.infinity,
+          height: 36,
+          borderRadius: 8,
+        ),
+      ),
+      const SizedBox(width: 8),
+      Expanded(
+        child: AppShimmer.box(
+          width: double.infinity,
+          height: 36,
+          borderRadius: 8,
+        ),
+      ),
+    ],
+  ),
+  const SizedBox(height: 16),
+  ...List.generate(
+    3,
+    (_) => Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        children: [
+          AppShimmer.box(width: 48, height: 48, borderRadius: 24),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AppShimmer.box(
+                  width: 140,
+                  height: 14,
+                  borderRadius: 4,
+                ),
+                const SizedBox(height: 6),
+                AppShimmer.box(
+                  width: 90,
+                  height: 12,
+                  borderRadius: 4,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  ),
+];
+
+/// Full-page skeleton when no header title is available yet.
 class ProjectDetailShimmer extends StatelessWidget {
   const ProjectDetailShimmer({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return AppShimmer(
-      child: CustomScrollView(
-        physics: const NeverScrollableScrollPhysics(),
-        slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(8, 12, 16, 0),
-              child: Row(
-                children: [
-                  AppShimmer.box(width: 40, height: 40, borderRadius: 20),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: AppShimmer.box(
-                      width: double.infinity,
-                      height: 22,
-                      borderRadius: 6,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                AppShimmer.box(
-                  width: double.infinity,
-                  height: 72,
-                  borderRadius: 14,
-                ),
-                const SizedBox(height: 12),
-                AppShimmer.box(
-                  width: double.infinity,
-                  height: 120,
-                  borderRadius: 16,
-                ),
-                const SizedBox(height: 16),
-                AppShimmer.box(
-                  width: double.infinity,
-                  height: 48,
-                  borderRadius: 10,
-                ),
-                const SizedBox(height: 12),
-                AppShimmer.box(
-                  width: double.infinity,
-                  height: 48,
-                  borderRadius: 10,
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      child: AppShimmer.box(
-                        width: double.infinity,
-                        height: 36,
-                        borderRadius: 8,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: AppShimmer.box(
-                        width: double.infinity,
-                        height: 36,
-                        borderRadius: 8,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                ...List.generate(
-                  3,
-                  (_) => Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Row(
-                      children: [
-                        AppShimmer.box(width: 48, height: 48, borderRadius: 24),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              AppShimmer.box(
-                                width: 140,
-                                height: 14,
-                                borderRadius: 4,
-                              ),
-                              const SizedBox(height: 6),
-                              AppShimmer.box(
-                                width: 90,
-                                height: 12,
-                                borderRadius: 4,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ]),
-            ),
-          ),
-        ],
-      ),
+    return CustomScrollView(
+      physics: const NeverScrollableScrollPhysics(),
+      slivers: const [
+        SliverSafeArea(
+          bottom: false,
+          sliver: ProjectDetailContentShimmer(),
+        ),
+      ],
     );
   }
 }

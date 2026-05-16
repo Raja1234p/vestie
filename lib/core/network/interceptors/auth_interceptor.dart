@@ -98,7 +98,8 @@ class AuthInterceptor extends QueuedInterceptor {
         path == ApiConstants.login ||
         path == ApiConstants.googleLogin ||
         path == ApiConstants.appleLogin ||
-        path == ApiConstants.verifyEmail;
+        path == ApiConstants.verifyEmail ||
+        path == ApiConstants.logout;
   }
 
   /// Returns (accessToken, refreshToken) from flat or `tokens`-wrapped JSON.
@@ -121,8 +122,9 @@ class AuthInterceptor extends QueuedInterceptor {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        connectTimeout: const Duration(seconds: 30),
-        receiveTimeout: const Duration(seconds: 30),
+        connectTimeout: ApiConstants.requestTimeout,
+        sendTimeout: ApiConstants.requestTimeout,
+        receiveTimeout: ApiConstants.requestTimeout,
       ),
     );
 

@@ -13,7 +13,7 @@ abstract class ProjectRemoteDataSource {
   Future<InvitePreviewModel> previewInvite(String inviteCode);
   Future<JoinProjectResultModel> joinProject({
     required String projectId,
-    required String inviteCode,
+    String? inviteCode,
   });
 }
 
@@ -58,14 +58,16 @@ class ProjectRemoteDataSourceImpl implements ProjectRemoteDataSource {
   @override
   Future<JoinProjectResultModel> joinProject({
     required String projectId,
-    required String inviteCode,
+    String? inviteCode,
   }) async {
+    final data = <String, dynamic>{'projectId': projectId};
+    final code = inviteCode?.trim();
+    if (code != null && code.isNotEmpty) {
+      data['inviteCode'] = code;
+    }
     final response = await apiClient.post<Map<String, dynamic>>(
       '${ApiConstants.projects}/join',
-      data: {
-        'projectId': projectId,
-        'inviteCode': inviteCode,
-      },
+      data: data,
     );
     return JoinProjectResultModel.fromJson(response);
   }

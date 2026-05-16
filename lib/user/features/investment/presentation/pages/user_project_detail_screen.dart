@@ -95,7 +95,7 @@ class _UserProjectDetailScreenState extends State<UserProjectDetailScreen> {
                     child: AppSvgIcon(
                       assetPath: AppAssets.iconPopMenu,
                       color: AppColors.textPrimary,
-                      size: 26.r,
+                      size: 30.r,
                     ),
                   ),
                 ),
@@ -108,8 +108,7 @@ class _UserProjectDetailScreenState extends State<UserProjectDetailScreen> {
                   [
                     AnnouncementCard(
                       text: _s.announcementOverride,
-                      isLeader: false,
-                      onDelete: null,
+                      canDeleteAnnouncement: false,
                     ),
                     SizedBox(height: 12.h),
                     _UserInvestmentGoalCard(

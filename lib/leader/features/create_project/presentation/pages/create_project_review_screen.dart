@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
+import 'package:vestie/app/router/route_args/create_project_success_route_args.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_failure_dialog.dart';
@@ -41,9 +42,13 @@ class CreateProjectReviewScreen extends StatelessWidget {
               if (state.createdProject != null &&
                   state.createdProject!.id.isNotEmpty) {
                 if (!context.mounted) return;
+                final created = state.createdProject!;
                 context.push(
                   AppRoutes.createProjectSuccess,
-                  extra: state.createdProject!.id,
+                  extra: CreateProjectSuccessRouteArgs(
+                    projectId: created.id,
+                    projectName: created.name,
+                  ),
                 );
                 return;
               }

@@ -26,6 +26,7 @@ class AppDimens {
 
   /// Vertical rhythm (ScreenUtil heights).
   static double get v4 => 4.0.h;
+  static double get v6 => 6.0.h;
   static double get v8 => 8.0.h;
   static double get v10 => 10.0.h;
   static double get v12 => 12.0.h;
@@ -84,6 +85,25 @@ class AppDimens {
 
   /// Error icon medallion diameter in dialogs.
   static double get dialogErrorIconDiameter => 72.0.r;
+
+  /// Project detail member row — avatar circle (equal width & height).
+  static double get projectMemberAvatarSize => 48.0.r;
+
+  /// Gap between avatar and member name in member row (Figma 14).
+  static double get projectMemberAvatarNameGap => 14.0.w;
+
+  /// Gap between member name and Leader / VFF badges (Figma 8).
+  static double get projectMemberNameBadgeGap => 8.0.h;
+
+  static EdgeInsets get projectMemberCardPadding =>
+      EdgeInsets.symmetric(horizontal: p14, vertical: p14);
+
+  /// Vacation / Emergency detail — Borrow requests | Manage members toggle (Figma).
+  static double get projectDetailToggleBarOuterHeight => 49.0.h;
+  static double get projectDetailToggleTabInnerHeight => 33.0.h;
+  static double get projectDetailToggleBarOuterRadius => 16.0.r;
+  static double get projectDetailToggleTabInnerRadius => 12.0.r;
+  static double get projectDetailToggleLabelFontSize => 14.0.sp;
 }
 
 class AppRadius {

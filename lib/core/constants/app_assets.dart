@@ -27,6 +27,10 @@ class AppAssets {
   static const String discoverEmptyIllustration = homeDiscoverEmptyState;
   static const String emptyNotification    = '$_imagePath/emptynotification.png';
 
+  /// Project detail — no borrow requests (Figma 3D person + $).
+  static const String borrowRequestsEmptyState =
+      '$_imagePath/borrow_requests_empty_state.png';
+
   // Project created success illustration (PNG — reliable rendering across devices).
   static const String projectCreatedImage = '$_imagePath/project_created_image.png';
   /// 3D purple “success” badge (member flows: join approved, vote yes, mark complete).
@@ -78,6 +82,7 @@ class AppAssets {
   static const String iconDeposit      = '$_iconPath/deposit_icon.svg';
   static const String iconContribution = '$_iconPath/contribution_icon.svg';
   static const String iconDollarCircle = '$_iconPath/dollar-circle.svg';
+  static const String iconCircleArrowUp02 = '$_iconPath/circle-arrow-up-02.svg';
 
   // ── Voting Icons ─────────────────────────────────────────────────────────
   static const String iconThumbsUp   = '$_iconPath/thumbs-up.svg';
@@ -87,6 +92,9 @@ class AppAssets {
   static const String iconArrowUpBig   = '$_iconPath/arrow-up-big.svg';
   static const String iconArrowDownBig = '$_iconPath/arrow-down-big.svg';
   static const String iconPopMenu      = '$_iconPath/popmenuicon.svg';
+  /// Member “Project Actions” — funds history & leave project rows.
+  static const String iconProjectFundHistory = '$_iconPath/project_fund_history.svg';
+  static const String iconLeaveGroup = '$_iconPath/leave-group.svg';
   static const String iconEmergencyFund = '$_iconPath/emergency fund.svg';
   static const String iconInvestmentFund = '$_iconPath/investment  icon.svg';
 
@@ -96,7 +104,8 @@ class AppAssets {
   static const String iconEditProject      = '$_iconPath/edit project.svg';
   static const String iconMarkSuccessful   = '$_iconPath/mark successfull.svg';
   static const String iconCancelProject    = '$_iconPath/cancel project.svg';
-  static const String plusSign    = '$_iconPath/plus-sign.svg';
+  /// Invite members / empty-state “add” — simple + (24×24, tints with primary).
+  static const String plusSign = '$_iconPath/plus-sign.svg';
   static const String checkMarkSuccessful    = '$_iconPath/checkmark-circle-02.svg'; //
   /// [AppTickSwitch] selected state — purple tile + white check (design PNG).
   static const String iconTickSwitchOn = '$_iconPath/tick_switch_on.png';
@@ -131,6 +140,10 @@ class AppAssets {
   static const String iconShield = '$_iconPath/icon_shield.svg';
   static const String iconPeople = '$_iconPath/icon_people.svg';
   static const String iconPerson = '$_iconPath/icon_person.svg';
+  /// Leader badge on project member rows (Figma `user-02.svg`).
+  static const String iconLeaderUser = '$_iconPath/user-02.svg';
+  /// My Borrows — project overflow menu (`user-dollar.svg`).
+  static const String iconMyBorrows = '$_iconPath/user-dollar.svg';
   static const String iconSettings = '$_iconPath/icon_settings.svg';
   static const String iconDelete = '$_iconPath/icon_delete.svg';
   static const String iconInfo = '$_iconPath/icon_info.svg';

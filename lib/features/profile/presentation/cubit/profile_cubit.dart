@@ -13,6 +13,7 @@ class ProfileState extends Equatable {
   final UserProfile profile;
   final File? avatarFile;
   final bool isLoading;
+  final bool isLoggingOut;
   final bool isLogoutSuccess;
   final String? error;
 
@@ -20,6 +21,7 @@ class ProfileState extends Equatable {
     required this.profile,
     this.avatarFile,
     this.isLoading = false,
+    this.isLoggingOut = false,
     this.isLogoutSuccess = false,
     this.error,
   });
@@ -28,6 +30,7 @@ class ProfileState extends Equatable {
     UserProfile? profile,
     File? avatarFile,
     bool? isLoading,
+    bool? isLoggingOut,
     bool? isLogoutSuccess,
     String? error,
   }) =>
@@ -35,12 +38,14 @@ class ProfileState extends Equatable {
         profile: profile ?? this.profile,
         avatarFile: avatarFile ?? this.avatarFile,
         isLoading: isLoading ?? this.isLoading,
+        isLoggingOut: isLoggingOut ?? this.isLoggingOut,
         isLogoutSuccess: isLogoutSuccess ?? this.isLogoutSuccess,
         error: error,
       );
 
   @override
-  List<Object?> get props => [profile, avatarFile, isLoading, isLogoutSuccess, error];
+  List<Object?> get props =>
+      [profile, avatarFile, isLoading, isLoggingOut, isLogoutSuccess, error];
 }
 
 class ProfileCubit extends Cubit<ProfileState> {
@@ -187,14 +192,14 @@ class ProfileCubit extends Cubit<ProfileState> {
       emit(state.copyWith(profile: updated));
 
   Future<void> logout() async {
-    emit(state.copyWith(isLoading: true));
+    emit(state.copyWith(isLoggingOut: true));
 
     final refreshToken = await ServiceLocator.instance.secureStorage
         .getString(StorageKeys.refreshToken);
 
-    if (refreshToken == null) {
+    if (refreshToken == null || refreshToken.isEmpty) {
       await _clearLocalData();
-      emit(state.copyWith(isLoading: false, isLogoutSuccess: true));
+      emit(state.copyWith(isLoggingOut: false, isLogoutSuccess: true));
       return;
     }
 
@@ -202,13 +207,12 @@ class ProfileCubit extends Cubit<ProfileState> {
 
     await result.fold(
       (failure) async {
-        // Even if API fails, we clear local data for safety
         await _clearLocalData();
-        emit(state.copyWith(isLoading: false, isLogoutSuccess: true));
+        emit(state.copyWith(isLoggingOut: false, isLogoutSuccess: true));
       },
       (_) async {
         await _clearLocalData();
-        emit(state.copyWith(isLoading: false, isLogoutSuccess: true));
+        emit(state.copyWith(isLoggingOut: false, isLogoutSuccess: true));
       },
     );
   }

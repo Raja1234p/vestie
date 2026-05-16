@@ -100,7 +100,7 @@ class ProjectRepositoryImpl implements ProjectRepository {
   @override
   Future<Either<Failure, JoinProjectResultEntity>> joinProject({
     required String projectId,
-    required String inviteCode,
+    String? inviteCode,
   }) async {
     if (!await networkInfo.isConnected) return const Left(NetworkFailure());
     try {

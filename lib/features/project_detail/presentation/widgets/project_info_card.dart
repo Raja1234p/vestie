@@ -31,7 +31,7 @@ class ProjectInfoCard extends StatelessWidget {
             children: [
               ProjectInfoCategoryChip(project: project),
               const Spacer(),
-              ProjectInfoStatusBadge(status: project.status),
+              ProjectInfoStatusBadge(project: project),
             ],
           ),
           SizedBox(height: 10.h),

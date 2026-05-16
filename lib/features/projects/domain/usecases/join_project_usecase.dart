@@ -11,7 +11,7 @@ class JoinProjectUseCase {
 
   Future<Either<Failure, JoinProjectResultEntity>> call({
     required String projectId,
-    required String inviteCode,
+    String? inviteCode,
   }) async {
     return repository.joinProject(
       projectId: projectId,

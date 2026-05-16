@@ -70,22 +70,25 @@ class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
+      resizeToAvoidBottomInset: false,
       body: PostAuthGradientBackground(
-        child: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) => GestureDetector(
-              onTap: _unfocusKeyboard,
-              behavior: HitTestBehavior.deferToChild,
-              child: SingleChildScrollView(
-                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                padding: EdgeInsets.only(
-                  left: 16.w,
-                  right: 16.w,
-                  bottom: MediaQuery.of(context).viewInsets.bottom + 16.h,
-                ),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+        child: Column(
+          children: [
+            Expanded(
+              child: GestureDetector(
+                onTap: _unfocusKeyboard,
+                behavior: HitTestBehavior.deferToChild,
+                child: SingleChildScrollView(
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
+                  padding: EdgeInsets.fromLTRB(
+                    16.w,
+                    0,
+                    16.w,
+                    16.h + MediaQuery.viewInsetsOf(context).bottom,
+                  ),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       PostAuthHeader(
                         title: AppStrings.createAnnouncementTitle,
@@ -103,6 +106,7 @@ class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
                         label: AppStrings.announcementHeadingLabel,
                         hint: AppStrings.announcementHeadingHint,
                         controller: _headingController,
+                        fillColor: AppColors.searchBarBg,
                         textInputAction: TextInputAction.next,
                         errorText: _headingError,
                         onChanged: (_) {
@@ -118,6 +122,7 @@ class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
                         label: AppStrings.announcementContentLabel,
                         hint: AppStrings.announcementContentHint,
                         controller: _contentController,
+                        fillColor: AppColors.searchBarBg,
                         textInputAction: TextInputAction.done,
                         minLines: 5,
                         maxLines: 5,
@@ -130,21 +135,29 @@ class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
                         onSubmitted: (_) => _unfocusKeyboard(),
                       ),
                       SizedBox(height: 22.h),
-                      const AppInfoNotice(text: AppStrings.announcementAutoRemoveNote),
-                      SizedBox(height: 32.h),
-                      AppButton(
-                        text: AppStrings.btnCreateAnnouncement,
-                        onPressed: _onSubmit,
-                        useGradient: false,
-                        hasShadow: false,
-                        color: AppColors.grey1200,
+                      const AppInfoNotice(
+                        text: AppStrings.announcementAutoRemoveNote,
                       ),
                     ],
                   ),
                 ),
               ),
             ),
-          ),
+            SafeArea(
+              top: false,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 15.h),
+                child: AppButton(
+                  text: AppStrings.btnCreateAnnouncement,
+                  onPressed: _onSubmit,
+                  useGradient: false,
+                  hasShadow: false,
+                  color: AppColors.grey1200,
+                  borderRadius: 12.r,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

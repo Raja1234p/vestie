@@ -11,8 +11,15 @@ import '../../../../core/di/service_locator.dart';
 import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/widgets/common/app_invite_members_dialog.dart';
 import '../../../../core/widgets/common/leader_action_menu.dart';
+import '../../../../core/widgets/common/member_project_action_menu.dart';
+import 'package:vestie/user/features/investment/presentation/widgets/user_leave_project_dialog.dart';
+import 'package:vestie/app/router/route_args/user_vff_flow_args.dart';
+import 'package:vestie/user/features/vff/presentation/models/user_vff_profile_lookup.dart';
+
 import '../../domain/entities/member_entity.dart';
 import '../../domain/entities/project_detail_entity.dart';
+import '../data/project_funds_history_ledger_builder.dart';
+import 'package:vestie/user/features/borrow/presentation/data/my_borrow_request_args_builder.dart';
 
 /// Shared navigation/route-arg helpers for project detail screens.
 /// Keeps screen widgets focused on layout while preserving identical behavior.
@@ -39,19 +46,35 @@ class ProjectDetailNavigationHelpers {
       member: member,
       projectId: project.id,
       projectName: project.name,
-      isLeaderView: project.hasManagementPrivileges,
-      isPrimaryLeaderView: project.isLeader,
+      isLeaderView: project.usesLeaderDetailPanels,
+      isPrimaryLeaderView: project.isModeratorView,
+    );
+  }
+
+  /// VFF peer profile — prototype lookup until project-member VFF API exists.
+  static void openAddFriendFlow(BuildContext context, MemberEntity member) {
+    final key = member.userId.isNotEmpty ? member.userId : member.username;
+    context.push(
+      AppRoutes.userVffProfile,
+      extra: UserVffProfileRouteArgs(
+        profile: lookupUserVffProfileForConnection(
+          key,
+          outboundRequestPending: true,
+        ),
+      ),
     );
   }
 
   static BorrowRequestsRouteArgs borrowRequestsArgs(
     ProjectDetailEntity project, {
     required bool isLeaderMode,
+    String? screenTitle,
   }) {
     return BorrowRequestsRouteArgs(
       requests: project.borrowRequests,
       projectId: project.id,
       isLeaderMode: isLeaderMode,
+      screenTitle: screenTitle,
     );
   }
 
@@ -60,18 +83,17 @@ class ProjectDetailNavigationHelpers {
     required ProjectDetailEntity project,
     required LeaderMenuAction action,
   }) {
-    if (_requiresPrimaryLeader(action) && !project.isLeader) {
+    if (!project.isModeratorView) {
+      AppSnackBar.showError(context, AppStrings.errorForbidden);
+      return;
+    }
+    if (action == LeaderMenuAction.markSuccessful &&
+        !project.canMarkProjectSuccessful) {
       AppSnackBar.showError(context, AppStrings.errorForbidden);
       return;
     }
 
     switch (action) {
-      case LeaderMenuAction.projectSettings:
-        context.push(
-          AppRoutes.leaderProjectSettings,
-          extra: LeaderProjectSettingsRouteArgs(projectId: project.id),
-        );
-        break;
       case LeaderMenuAction.joinRequests:
         context.push(
           AppRoutes.joinRequests,
@@ -85,6 +107,18 @@ class ProjectDetailNavigationHelpers {
         context.push(
           AppRoutes.createProjectDetails,
           extra: CreateProjectEntryMode.editFromProjectDetail,
+        );
+        break;
+      case LeaderMenuAction.projectFundsHistory:
+        context.push(
+          AppRoutes.projectFundsHistory,
+          extra: fundsHistoryArgs(project),
+        );
+        break;
+      case LeaderMenuAction.myBorrows:
+        context.push(
+          AppRoutes.myBorrowRequest,
+          extra: MyBorrowRequestArgsBuilder.fromProject(project),
         );
         break;
       case LeaderMenuAction.inviteMembers:
@@ -129,8 +163,54 @@ class ProjectDetailNavigationHelpers {
     }
   }
 
-  static bool _requiresPrimaryLeader(LeaderMenuAction action) =>
-      action == LeaderMenuAction.markSuccessful ||
-      action == LeaderMenuAction.cancelProject;
+  static ProjectFundsHistoryRouteArgs fundsHistoryArgs(
+    ProjectDetailEntity project,
+  ) {
+    return ProjectFundsHistoryLedgerBuilder.fromProject(project);
+  }
+
+  static void handleMemberAction(
+    BuildContext context, {
+    required ProjectDetailEntity project,
+    required MemberProjectMenuAction action,
+  }) {
+    switch (action) {
+      case MemberProjectMenuAction.projectFundsHistory:
+        context.push(
+          AppRoutes.projectFundsHistory,
+          extra: fundsHistoryArgs(project),
+        );
+        break;
+      case MemberProjectMenuAction.myBorrows:
+        context.push(
+          AppRoutes.myBorrowRequest,
+          extra: MyBorrowRequestArgsBuilder.fromProject(project),
+        );
+        break;
+      case MemberProjectMenuAction.inviteMembers:
+        handleLeaderAction(
+          context,
+          project: project,
+          action: LeaderMenuAction.inviteMembers,
+        );
+        break;
+      case MemberProjectMenuAction.leaveProject:
+        _confirmLeaveProject(context, project);
+        break;
+    }
+  }
+
+  static Future<void> _confirmLeaveProject(
+    BuildContext context,
+    ProjectDetailEntity project,
+  ) async {
+    final confirmed = await showUserLeaveProjectDialog(context);
+    if (!confirmed || !context.mounted) return;
+    AppSnackBar.showSuccess(
+      context,
+      AppStrings.userLeaveSuccessfulTitle,
+    );
+    if (context.mounted) context.pop();
+  }
 }
 

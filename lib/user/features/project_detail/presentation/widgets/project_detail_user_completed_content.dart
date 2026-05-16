@@ -36,9 +36,8 @@ class ProjectDetailUserCompletedContent extends StatelessWidget {
         SizedBox(height: 12.h),
         AnnouncementCard(
           text: project.announcement,
-          isLeader: project.isLeader,
-          onDelete:
-              project.isLeader ? onDeleteAnnouncement : null,
+          canDeleteAnnouncement: project.isModeratorView,
+          onDelete: project.isModeratorView ? onDeleteAnnouncement : null,
         ),
         SizedBox(height: 12.h),
         ProjectInfoCard(project: project),

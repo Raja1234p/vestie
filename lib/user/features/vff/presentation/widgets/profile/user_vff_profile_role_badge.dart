@@ -21,7 +21,7 @@ final class UserVffProfileRoleBadge extends StatelessWidget {
         profile.footerMode == UserVffProfileFooterMode.followingSheet;
     final isVffBadge =
         profile.badgeMode == UserVffProfileBadgeMode.vffVerified;
-    final showShield = isFollowingUi || isVffBadge;
+    final showCrown = isFollowingUi || isVffBadge;
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
@@ -33,9 +33,9 @@ final class UserVffProfileRoleBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (showShield) ...[
+          if (showCrown) ...[
             AppSvgIcon(
-              assetPath: AppAssets.iconShield,
+              assetPath: AppAssets.crown,
               size: 14.r,
               color: AppColors.primaryDark,
             ),

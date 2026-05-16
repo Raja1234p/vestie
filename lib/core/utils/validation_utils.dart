@@ -93,8 +93,9 @@ class ValidationUtils {
     return null;
   }
 
+  /// Optional on create — only validates past dates when a value is set.
   static String? validateProjectDeadline(DateTime? value) {
-    if (value == null) return AppStrings.errDeadlineRequired;
+    if (value == null) return null;
     final v = DateTime(value.year, value.month, value.day);
     final n = DateTime.now();
     final today = DateTime(n.year, n.month, n.day);

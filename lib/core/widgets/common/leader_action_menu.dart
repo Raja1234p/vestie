@@ -7,12 +7,14 @@ import '../../constants/app_strings.dart';
 import '../../theme/app_colors.dart';
 import '../text/app_text.dart';
 
-/// Action enum for leader / co-leader overflow menu items.
+/// Leader / co-leader actions. [joinRequests] is not in [LeaderActionMenu] — use the
+/// header chip on project detail instead.
 enum LeaderMenuAction {
-  projectSettings,
   joinRequests,
   addAnnouncement,
   editProject,
+  projectFundsHistory,
+  myBorrows,
   inviteMembers,
   markSuccessful,
   cancelProject,
@@ -27,14 +29,14 @@ enum LeaderMenuAudience {
 /// Reusable "..." popup for project moderators (`LeaderMenuAudience`).
 class LeaderActionMenu extends StatelessWidget {
   final LeaderMenuAudience audience;
-  final int joinRequestCount;
+  final bool includeMyBorrows;
   final void Function(LeaderMenuAction) onSelected;
 
   const LeaderActionMenu({
     super.key,
     required this.onSelected,
     this.audience = LeaderMenuAudience.primaryLeader,
-    this.joinRequestCount = 0,
+    this.includeMyBorrows = false,
   });
 
   @override
@@ -42,7 +44,7 @@ class LeaderActionMenu extends StatelessWidget {
     return PopupMenuButton<LeaderMenuAction>(
       offset: Offset(0, 34.h),
       constraints: BoxConstraints(minWidth: 282.w),
-      color: AppColors.background,
+      color: AppColors.surface,
       elevation: 6,
       shadowColor: AppColors.grey900.withValues(alpha: 0.12),
       shape: RoundedRectangleBorder(
@@ -57,8 +59,8 @@ class LeaderActionMenu extends StatelessWidget {
         alignment: Alignment.center,
         child: SvgPicture.asset(
           AppAssets.iconPopMenu,
-          width: 22.w,
-          height: 22.w,
+          width: 30.w,
+          height: 30.w,
           colorFilter: ColorFilter.mode(
             AppColors.grey1000,
             BlendMode.srcIn,
@@ -78,30 +80,11 @@ class LeaderActionMenu extends StatelessWidget {
 
     push(
       _buildItem(
-        value: LeaderMenuAction.projectSettings,
-        iconPath: AppAssets.iconEditProject,
-        label: AppStrings.menuLeaderProjectSettings,
-        iconColor: AppColors.primary,
-        labelColor: AppColors.grey1100,
-      ),
-    );
-    push(
-      _buildItem(
-        value: LeaderMenuAction.joinRequests,
-        iconPath: AppAssets.iconJoinRequest,
-        label: AppStrings.menuJoinRequests,
-        badge: joinRequestCount > 0 ? joinRequestCount : null,
-        iconColor: AppColors.primary,
-        labelColor: AppColors.grey1100,
-      ),
-    );
-    push(
-      _buildItem(
         value: LeaderMenuAction.addAnnouncement,
         iconPath: AppAssets.iconAddAnnouncement,
         label: AppStrings.menuAddAnnouncement,
         iconColor: AppColors.primary,
-        labelColor: AppColors.grey1100,
+        labelColor: AppColors.grey900,
       ),
     );
     push(
@@ -110,19 +93,40 @@ class LeaderActionMenu extends StatelessWidget {
         iconPath: AppAssets.iconEditProject,
         label: AppStrings.menuEditProject,
         iconColor: AppColors.primary,
-        labelColor: AppColors.grey1100,
+        labelColor: AppColors.grey900,
       ),
     );
+    push(
+      _buildItem(
+        value: LeaderMenuAction.projectFundsHistory,
+        iconPath: AppAssets.iconProjectFundHistory,
+        label: AppStrings.menuProjectFundsHistory,
+        iconColor: AppColors.primary,
+        labelColor: AppColors.grey900,
+      ),
+    );
+    if (includeMyBorrows) {
+      push(
+        _buildItem(
+          value: LeaderMenuAction.myBorrows,
+          iconPath: AppAssets.iconMyBorrows,
+          label: AppStrings.menuMyBorrows,
+          iconColor: AppColors.primary,
+          labelColor: AppColors.grey900,
+        ),
+      );
+    }
     push(
       _buildItem(
         value: LeaderMenuAction.inviteMembers,
         iconPath: AppAssets.plusSign,
         label: AppStrings.menuInviteMembers,
         iconColor: AppColors.primary,
-        labelColor: AppColors.grey1100,
+        labelColor: AppColors.grey900,
       ),
     );
 
+    // GroupLeader only — CoLeader cannot mark successful / start success vote.
     if (audience == LeaderMenuAudience.primaryLeader) {
       push(
         _buildItem(
@@ -133,16 +137,16 @@ class LeaderActionMenu extends StatelessWidget {
           labelColor: AppColors.badgeCompletedText,
         ),
       );
-      push(
-        _buildItem(
-          value: LeaderMenuAction.cancelProject,
-          iconPath: AppAssets.iconCancelProject,
-          label: AppStrings.menuCancelProject,
-          iconColor: AppColors.red900,
-          labelColor: AppColors.red900,
-        ),
-      );
     }
+    push(
+      _buildItem(
+        value: LeaderMenuAction.cancelProject,
+        iconPath: AppAssets.iconCancelProject,
+        label: AppStrings.menuCancelProject,
+        iconColor: AppColors.red900,
+        labelColor: AppColors.red900,
+      ),
+    );
 
     return out;
   }
@@ -153,7 +157,6 @@ class LeaderActionMenu extends StatelessWidget {
     required String label,
     required Color iconColor,
     required Color labelColor,
-    int? badge,
   }) {
     return PopupMenuItem<LeaderMenuAction>(
       value: value,
@@ -161,41 +164,24 @@ class LeaderActionMenu extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(
-            width: 50.w,
-            height: 24.w,
-            child: SvgPicture.asset(
-              iconPath!,
-              colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
-            ),
+          SvgPicture.asset(
+            iconPath!,
+            width: 30.w,
+            height: 30.w,
+            fit: BoxFit.contain,
+            colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
           ),
-          SizedBox(width: 3.w),
+          SizedBox(width: 8.w),
           Expanded(
             child: AppText(
               label,
               style: GoogleFonts.lato(
-                fontSize: 19.sp,
-                fontWeight: FontWeight.w600,
+                fontSize: 20.sp,
+                fontWeight: FontWeight.w500,
                 color: labelColor,
               ),
             ),
           ),
-          if (badge != null)
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
-              decoration: BoxDecoration(
-                color: AppColors.grey200,
-                borderRadius: BorderRadius.circular(100.r),
-              ),
-              child: AppText(
-                '$badge',
-                style: GoogleFonts.lato(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textBody,
-                ),
-              ),
-            ),
         ],
       ),
     );

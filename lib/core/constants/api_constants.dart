@@ -34,6 +34,10 @@ class ApiConstants {
 
   static const String googleServerClientId = '531408349211-pfs5okgjus8t8iecl9arrt782mo4ppob.apps.googleusercontent.com';
 
+  // ── Network ──────────────────────────────────────────────────────────────
+  /// Max time for connect / send / receive on every API call (1 minute).
+  static const Duration requestTimeout = Duration(minutes: 1);
+
   // ── Static values ────────────────────────────────────────────────────────
   static const String disclaimerVersion = '1.0';
   static const String defaultDeviceName = 'Flutter';

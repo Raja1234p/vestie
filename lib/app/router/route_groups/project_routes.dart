@@ -7,6 +7,7 @@ import 'package:vestie/features/project_detail/domain/entities/member_entity.dar
 import 'package:vestie/features/project_detail/domain/entities/project_detail_route_args.dart';
 import 'package:vestie/features/project_detail/presentation/pages/member_detail_screen.dart';
 import 'package:vestie/features/project_detail/presentation/pages/project_detail_screen.dart';
+import 'package:vestie/features/project_detail/presentation/pages/project_funds_history_screen.dart';
 import 'package:vestie/leader/features/project_detail/presentation/pages/borrow_requests_screen.dart';
 import 'package:vestie/leader/features/project_detail/presentation/pages/cancel_project_screen.dart';
 import 'package:vestie/leader/features/project_detail/presentation/pages/leader_project_settings_screen.dart';
@@ -16,6 +17,7 @@ import 'package:vestie/leader/features/project_detail/presentation/pages/mark_pr
 import 'package:vestie/leader/features/project_detail/presentation/pages/member_penalty_action_screen.dart';
 import 'package:vestie/user/features/borrow/presentation/cubit/borrow_cubit.dart';
 import 'package:vestie/user/features/borrow/presentation/pages/borrow_flow_screen.dart';
+import 'package:vestie/user/features/borrow/presentation/pages/my_borrow_request_screen.dart';
 import 'package:vestie/user/features/contribute/presentation/pages/contribute_flow_screen.dart';
 import 'package:vestie/user/features/contributions/presentation/bloc/contribute_event.dart';
 import 'package:vestie/user/features/project_detail/presentation/pages/investment_project_detail_screen.dart';
@@ -42,7 +44,11 @@ List<RouteBase> buildProjectRoutes({
       builder: (context, state) {
         final extra = state.extra;
         if (extra is! ProjectDetailRouteArgs) return invalidRouteScreen();
-        return ProjectDetailScreen(projectId: extra.projectId);
+        return ProjectDetailScreen(
+          projectId: extra.projectId,
+          initialProjectName: extra.initialProjectName,
+          refreshHomeOnPop: extra.refreshHomeOnPop,
+        );
       },
     ),
     GoRoute(
@@ -50,7 +56,11 @@ List<RouteBase> buildProjectRoutes({
       builder: (context, state) {
         final extra = state.extra;
         if (extra is! ProjectDetailRouteArgs) return invalidRouteScreen();
-        return InvestmentProjectDetailScreen(projectId: extra.projectId);
+        return InvestmentProjectDetailScreen(
+          projectId: extra.projectId,
+          initialProjectName: extra.initialProjectName,
+          refreshHomeOnPop: extra.refreshHomeOnPop,
+        );
       },
     ),
     GoRoute(
@@ -137,7 +147,24 @@ List<RouteBase> buildProjectRoutes({
           requests: requests.cast<BorrowRequestEntity>(),
           projectId: extra.projectId,
           isLeaderMode: extra.isLeaderMode,
+          screenTitle: extra.screenTitle,
         );
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.myBorrowRequest,
+      builder: (context, state) {
+        final extra = state.extra;
+        if (extra is! MyBorrowRequestRouteArgs) return invalidRouteScreen();
+        return MyBorrowRequestScreen(args: extra);
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.projectFundsHistory,
+      builder: (context, state) {
+        final extra = state.extra;
+        if (extra is! ProjectFundsHistoryRouteArgs) return invalidRouteScreen();
+        return ProjectFundsHistoryScreen(args: extra);
       },
     ),
     GoRoute(

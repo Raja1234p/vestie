@@ -6,7 +6,7 @@ class CreateProjectRequestModel {
   final String type;
   final String visibility;
   final double targetAmount;
-  final String endsAtUtc;
+  final String? endsAtUtc;
   final bool borrowingEnabled;
   final bool joinApprovalRequired;
   final double? roiPercentage;
@@ -19,7 +19,7 @@ class CreateProjectRequestModel {
     required this.type,
     required this.visibility,
     required this.targetAmount,
-    required this.endsAtUtc,
+    this.endsAtUtc,
     required this.borrowingEnabled,
     required this.joinApprovalRequired,
     required this.roiPercentage,
@@ -28,9 +28,7 @@ class CreateProjectRequestModel {
   });
 
   factory CreateProjectRequestModel.fromForm(CreateProjectForm form) {
-    final ends = (form.deadline ?? DateTime.now().add(const Duration(days: 30)))
-        .toUtc()
-        .toIso8601String();
+    final ends = form.deadline?.toUtc().toIso8601String();
 
     String mapType(NewProjectCategory c) => switch (c) {
           NewProjectCategory.vacation => 'Vacation',

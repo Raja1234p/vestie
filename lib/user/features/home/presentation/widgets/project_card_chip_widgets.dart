@@ -4,7 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/core/constants/app_assets.dart';
-import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import '../../domain/entities/project.dart';
@@ -63,26 +62,39 @@ class ProjectCategoryChip extends StatelessWidget {
 
 class ProjectStatusBadge extends StatelessWidget {
   final ProjectStatus status;
+  final String label;
+  final bool isDraft;
 
-  const ProjectStatusBadge({super.key, required this.status});
+  const ProjectStatusBadge({
+    super.key,
+    required this.status,
+    required this.label,
+    this.isDraft = false,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final ongoing = status == ProjectStatus.ongoing;
+    final completed = status == ProjectStatus.completed;
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: ongoing
-              ? const [AppColors.blue600, AppColors.blue800]
-              : const [AppColors.green600, AppColors.green800],
+          colors: completed
+              ? const [AppColors.green600, AppColors.green800]
+              : isDraft
+                  ? const [AppColors.grey500, AppColors.grey700]
+                  : const [AppColors.blue600, AppColors.blue800],
         ),
         borderRadius: BorderRadius.circular(100.r),
         boxShadow: [
           BoxShadow(
-            color: (ongoing ? AppColors.blue800 : AppColors.green800)
+            color: (completed
+                    ? AppColors.green800
+                    : isDraft
+                        ? AppColors.grey700
+                        : AppColors.blue800)
                 .withValues(alpha: 0.24),
             blurRadius: 8,
             offset: const Offset(0, 2),
@@ -92,7 +104,7 @@ class ProjectStatusBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (!ongoing) ...[
+          if (completed) ...[
             AppSvgIcon(
                 assetPath: AppAssets.checkMarkSuccessful,
                 size: 11.w,
@@ -100,7 +112,7 @@ class ProjectStatusBadge extends StatelessWidget {
             SizedBox(width: 3.w),
           ],
           Text(
-            ongoing ? AppStrings.statusOnGoing : AppStrings.statusCompleted,
+            label,
             style: GoogleFonts.lato(
               fontSize: 11.sp,
               fontWeight: FontWeight.w600,

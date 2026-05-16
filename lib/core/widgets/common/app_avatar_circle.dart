@@ -11,6 +11,7 @@ class AppAvatarCircle extends StatelessWidget {
   final Color? backgroundColor;
   final Color? textColor;
   final double? fontSize;
+  final FontWeight? fontWeight;
 
   const AppAvatarCircle({
     super.key,
@@ -19,6 +20,7 @@ class AppAvatarCircle extends StatelessWidget {
     this.backgroundColor,
     this.textColor,
     this.fontSize,
+    this.fontWeight,
   });
 
   @override
@@ -36,7 +38,7 @@ class AppAvatarCircle extends StatelessWidget {
         initials.toUpperCase(),
         style: GoogleFonts.lato(
           fontSize: fontSize ?? 16.sp,
-          fontWeight: FontWeight.w800,
+          fontWeight: fontWeight ?? FontWeight.w800,
           color: textColor ?? AppColors.neutral1100,
         ),
       ),

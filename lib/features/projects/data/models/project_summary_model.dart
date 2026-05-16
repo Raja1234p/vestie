@@ -11,13 +11,17 @@ class ProjectSummaryModel extends ProjectSummaryEntity {
     required super.visibility,
     required super.state,
     required super.targetAmount,
-    required super.maxMembers,
+    super.raisedAmount,
+    super.maxMembers,
     required super.endsAtUtc,
     super.launchedAtUtc,
     required super.borrowingEnabled,
-    required super.suggestedContributionAmount,
+    super.suggestedContributionAmount,
     required super.createdUtc,
     super.viewerRole,
+    super.displayStatus,
+    super.projectInviteCode,
+    super.pendingRequestCount,
   });
 
   factory ProjectSummaryModel.fromJson(Map<String, dynamic> json) {
@@ -27,16 +31,20 @@ class ProjectSummaryModel extends ProjectSummaryEntity {
       description: json.safeString('description'),
       type: projectTypeApiValueToSummaryString(json['type']),
       visibility: projectVisibilityApiValueToSummaryString(json['visibility']),
-      state: projectStateApiValueToSummaryString(json['state']),
+      state: projectListStateLabel(json),
       targetAmount: json.safeDouble('targetAmount'),
+      raisedAmount: json.safeDouble('raisedAmount'),
       maxMembers: json.safeInt('maxMembers'),
       endsAtUtc: json.safeDateTimeUtc('endsAtUtc') ?? DateTime.now().toUtc(),
       launchedAtUtc: json.safeDateTimeUtc('launchedAtUtc'),
       borrowingEnabled: json.safeBool('borrowingEnabled'),
       suggestedContributionAmount:
-          json.safeDoubleNullable('suggestedContributionAmount') ?? 0.0,
+          json.safeDoubleNullable('suggestedContributionAmount'),
       createdUtc: json.safeDateTimeUtc('createdUtc') ?? DateTime.now().toUtc(),
-      viewerRole: _parseViewerRole(json),
+      viewerRole: projectListItemViewerRole(json),
+      displayStatus: json.safeString('displayStatus'),
+      projectInviteCode: json.safeStringNullable('projectInviteCode'),
+      pendingRequestCount: json.safeInt('pendingRequestCount'),
     );
   }
 
@@ -49,6 +57,7 @@ class ProjectSummaryModel extends ProjectSummaryEntity {
       'visibility': visibility,
       'state': state,
       'targetAmount': targetAmount,
+      'raisedAmount': raisedAmount,
       'maxMembers': maxMembers,
       'endsAtUtc': endsAtUtc.toIso8601String(),
       'launchedAtUtc': launchedAtUtc?.toIso8601String(),
@@ -56,18 +65,9 @@ class ProjectSummaryModel extends ProjectSummaryEntity {
       'suggestedContributionAmount': suggestedContributionAmount,
       'createdUtc': createdUtc.toIso8601String(),
       'viewerRole': viewerRole,
+      'displayStatus': displayStatus,
+      'projectInviteCode': projectInviteCode,
+      'pendingRequestCount': pendingRequestCount,
     };
-  }
-
-  static String _parseViewerRole(Map<String, dynamic> json) {
-    final viewerMembership = json['viewerMembership'];
-    if (viewerMembership is Map<String, dynamic>) {
-      return viewerMembership.safeString('role');
-    }
-    if (viewerMembership is Map) {
-      final role = viewerMembership['role'];
-      return role?.toString() ?? '';
-    }
-    return json.safeString('viewerRole');
   }
 }

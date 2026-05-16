@@ -45,7 +45,7 @@ class CompletedProjectNoticeBar extends StatelessWidget {
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         fontSize: 17.sp,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.grey900,
+                        color: AppColors.projectDetailText,
                       ),
                 ),
                 SizedBox(height: 4.h),
@@ -55,7 +55,7 @@ class CompletedProjectNoticeBar extends StatelessWidget {
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w500,
                         height: 1.45,
-                        color: AppColors.grey900,
+                        color: AppColors.projectDetailText,
                       ),
                 ),
               ],

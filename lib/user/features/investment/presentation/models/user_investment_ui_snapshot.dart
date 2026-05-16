@@ -91,9 +91,8 @@ class UserInvestmentUiSnapshot {
       ],
       totalProjectFundsUsd: 8240,
       fundsHistory: const [
-        UserInvestmentFundsRowUi(memberName: 'Omair', dateLabel: '12 Oct 2024', amount: 500),
-        UserInvestmentFundsRowUi(memberName: 'Pawan', dateLabel: '3 Oct 2024', amount: 320),
-        UserInvestmentFundsRowUi(memberName: 'Nitin', dateLabel: '28 Sep 2024', amount: 200),
+        UserInvestmentFundsRowUi(memberName: 'Lien', dateLabel: 'Mar 12', amount: 500),
+        UserInvestmentFundsRowUi(memberName: 'John', dateLabel: 'Mar 12', amount: 650),
       ],
       inviteShareLink: 'https://vestie.app-invite/mock/ocean-trip',
     );

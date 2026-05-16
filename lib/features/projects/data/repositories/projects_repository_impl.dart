@@ -19,17 +19,27 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
   Future<Either<Failure, List<Project>>> listProjects({required String scope}) async {
     try {
       final models = await remoteDataSource.listProjects(scope: scope);
-      return Right(models.map((m) => Project(
-        id: m.id,
-        name: m.name,
-        category: _mapCategory(m.type),
-        status: _mapStatus(m.state),
-        relation: _mapRelation(scope: scope, viewerRole: m.viewerRole),
-        goalAmount: m.targetAmount,
-        currentAmount: 0.0,
-        description: m.description,
-        endsIn: m.endsAtUtc.toIso8601String(),
-      )).toList());
+      return Right(models.map((m) {
+        final statusLabel =
+            m.displayStatus.isNotEmpty ? m.displayStatus : m.state;
+        return Project(
+          id: m.id,
+          name: m.name,
+          category: _mapCategory(m.type),
+          status: _mapStatus(statusLabel),
+          relation: _mapRelation(
+            scope: scope,
+            viewerRole: m.viewerRole,
+          ),
+          goalAmount: m.targetAmount,
+          currentAmount: m.raisedAmount,
+          description: m.description,
+          endsIn: m.endsAtUtc.toIso8601String(),
+          displayStatus: m.displayStatus.isNotEmpty ? m.displayStatus : null,
+          projectInviteCode: m.projectInviteCode,
+          isPublic: _isPublicVisibility(m.visibility),
+        );
+      }).toList());
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message, e.title));
     } on UnauthorizedException catch (e) {
@@ -98,6 +108,12 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
     );
   }
 
+  bool _isPublicVisibility(String visibility) {
+    final v = visibility.toLowerCase().trim();
+    if (v == 'private' || v == '2') return false;
+    return true;
+  }
+
   ProjectCategory _mapCategory(String type) {
     final normalized = type.toLowerCase();
     if (normalized.contains('invest')) return ProjectCategory.investment;
@@ -107,6 +123,9 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
 
   ProjectStatus _mapStatus(String state) {
     final normalized = state.toLowerCase();
+    if (normalized.contains('draft') || normalized.contains('active')) {
+      return ProjectStatus.ongoing;
+    }
     if (normalized.contains('complete') || normalized.contains('cancel')) {
       return ProjectStatus.completed;
     }
@@ -123,10 +142,11 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
     }
 
     final parsed = ViewerMembershipRole.parse(viewerRole);
-    if (parsed.isOwnedListRelation) return ProjectRelation.owned;
-    if (parsed == ViewerMembershipRole.member) return ProjectRelation.joined;
+    if (parsed.isGroupLeader || parsed.isCoLeader) {
+      return ProjectRelation.owned;
+    }
+    if (parsed.isMember) return ProjectRelation.joined;
 
-    // Backward-safe fallback when backend omits role in list payload.
     return ProjectRelation.owned;
   }
 }

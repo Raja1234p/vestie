@@ -1,3 +1,5 @@
+import '../../../../core/utils/safe_parser.dart';
+
 /// Maps API enum integers to the string labels used in [ProjectSummaryEntity]
 /// and home [Project] mapping (see [ProjectsRepositoryImpl._mapCategory]).
 String projectTypeApiValueToSummaryString(dynamic raw) {
@@ -41,7 +43,10 @@ String projectStateApiValueToSummaryString(dynamic raw) {
   if (raw is int) {
     return switch (raw) {
       0 => 'Draft',
-      1 => 'Active',
+      1 => 'Draft',
+      2 => 'Active',
+      3 => 'Completed',
+      4 => 'Cancelled',
       _ => 'State$raw',
     };
   }
@@ -50,6 +55,13 @@ String projectStateApiValueToSummaryString(dynamic raw) {
   final asInt = int.tryParse(s);
   if (asInt != null) return projectStateApiValueToSummaryString(asInt);
   return s;
+}
+
+/// Prefers [displayStatus] from list payloads; falls back to [state] int/string.
+String projectListStateLabel(Map<String, dynamic> json) {
+  final display = json.safeString('displayStatus');
+  if (display.isNotEmpty) return display;
+  return projectStateApiValueToSummaryString(json['state']);
 }
 
 int? projectTypeToApiInt(dynamic raw) {
@@ -94,4 +106,55 @@ int? projectStateToApiInt(dynamic raw) {
   if (raw is double) return raw.toInt();
   final s = raw.toString().trim();
   return int.tryParse(s);
+}
+
+/// `GET /projects?scope=` — `viewerRole` on the project object (preferred).
+String projectListItemViewerRole(Map<String, dynamic> json) {
+  final onProject = json['viewerRole'];
+  if (onProject != null && onProject.toString().trim().isNotEmpty) {
+    return membershipRoleApiValueToString(onProject);
+  }
+  final viewerMembership = json['viewerMembership'];
+  if (viewerMembership is Map) {
+    final role = viewerMembership['role'];
+    if (role != null && role.toString().trim().isNotEmpty) {
+      return membershipRoleApiValueToString(role);
+    }
+  }
+  return '';
+}
+
+/// `viewerMembership.role` / `members[].role` — int or string from API.
+String membershipRoleApiValueToString(dynamic raw) {
+  if (raw == null) return '';
+  if (raw is int) {
+    return switch (raw) {
+      1 => 'GroupLeader',
+      2 => 'CoLeader',
+      3 => 'Member',
+      _ => raw.toString(),
+    };
+  }
+  final compact =
+      raw.toString().trim().toLowerCase().replaceAll(RegExp(r'[\s_-]'), '');
+  return switch (compact) {
+    '1' || 'groupleader' || 'grouplead' || 'lead' || 'leader' => 'GroupLeader',
+    '2' || 'coleader' => 'CoLeader',
+    '3' || 'member' => 'Member',
+    _ => raw.toString().trim(),
+  };
+}
+
+/// `viewerMembership.status` / `members[].status` — int or string from API.
+String membershipStatusApiValueToString(dynamic raw) {
+  if (raw == null) return '';
+  if (raw is int) {
+    return switch (raw) {
+      1 => 'Pending',
+      2 => 'Active',
+      3 => 'Inactive',
+      _ => raw.toString(),
+    };
+  }
+  return raw.toString().trim();
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../constants/app_assets.dart';
 import '../../theme/app_colors.dart';
@@ -8,8 +9,7 @@ import '../text/app_text.dart';
 
 enum AppTransactionType { deposit, contribution, borrow, withdrawal, lend }
 
-/// Unified Transaction List Item for use in Wallet and Profile features.
-/// Adheres to Figma node 6506:4709 specifications.
+/// Transaction / ledger list tile — matches project funds contribution history row.
 class AppTransactionItem extends StatelessWidget {
   final AppTransactionType type;
   final String title;
@@ -26,112 +26,96 @@ class AppTransactionItem extends StatelessWidget {
     required this.isNegative,
   });
 
+  bool get _isPositive => !isNegative;
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 6.h),
-      padding: EdgeInsets.all(16.r),
+      margin: EdgeInsets.only(bottom: 10.h),
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
       decoration: BoxDecoration(
-        color: AppColors.appBgBottom,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: AppColors.neutral500),
+        color: AppColors.projectFundsLedgerCardBg,
+        borderRadius: BorderRadius.circular(14.r),
+        border: Border.all(
+          color: AppColors.projectFundsLedgerBorder,
+          width: 1,
+        ),
       ),
       child: Row(
         children: [
-          // ── Icon ────────────────────────────────────────────────────────
-          Container(
-            width: 40.w,
-            height: 40.h,
-            decoration: BoxDecoration(
-              color: _getBgColor(),
-              borderRadius: BorderRadius.circular(8.r),
-            ),
-            padding: EdgeInsets.all(8.r),
-            child: SvgPicture.asset(
-              _getIconPath(),
-              colorFilter: ColorFilter.mode(_getIconColor(), BlendMode.srcIn),
-            ),
-          ),
+          _TransactionIcon(isPositive: _isPositive),
           SizedBox(width: 12.w),
-
-          // ── Title & Date ────────────────────────────────────────────────
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
               children: [
                 AppText(
                   title,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
-                      ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.lato(
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.projectDetailText,
+                    height: 1.25,
+                  ),
                 ),
                 SizedBox(height: 2.h),
                 AppText(
                   date,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontSize: 13.sp,
-                        color: AppColors.textPrimary.withValues(alpha: 0.5),
-                      ),
+                  style: GoogleFonts.lato(
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.projectFundsLedgerDate,
+                    height: 1.3,
+                  ),
                 ),
               ],
             ),
           ),
-
-          // ── Amount ──────────────────────────────────────────────────────
           AppText(
-            '${isNegative ? '-' : '+'}\$$amount',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w700,
-                  color: isNegative ? AppColors.red900 : AppColors.green900,
-                ),
+            '${_isPositive ? '+' : '-'}\$$amount',
+            style: GoogleFonts.lato(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w800,
+              color: _isPositive
+                  ? AppColors.projectFundsLedgerAmountPositive
+                  : AppColors.projectFundsLedgerAmountNegative,
+            ),
           ),
         ],
       ),
     );
   }
+}
 
-  Color _getBgColor() {
-    switch (type) {
-      case AppTransactionType.deposit:
-        return AppColors.txDepositBg;
-      case AppTransactionType.contribution:
-        return AppColors.txContribBg;
-      case AppTransactionType.borrow:
-      case AppTransactionType.withdrawal:
-      case AppTransactionType.lend:
-        return AppColors.txBorrowBg;
-    }
-  }
+class _TransactionIcon extends StatelessWidget {
+  final bool isPositive;
 
-  Color _getIconColor() {
-    switch (type) {
-      case AppTransactionType.deposit:
-        return AppColors.txDepositIcon;
-      case AppTransactionType.contribution:
-        return AppColors.txContribIcon;
-      case AppTransactionType.borrow:
-      case AppTransactionType.withdrawal:
-      case AppTransactionType.lend:
-        return AppColors.txBorrowIcon;
-    }
-  }
+  const _TransactionIcon({required this.isPositive});
 
-  String _getIconPath() {
-    switch (type) {
-      case AppTransactionType.deposit:
-        return AppAssets.iconDeposit;
-      case AppTransactionType.contribution:
-        return AppAssets.iconContribution;
-      case AppTransactionType.borrow:
-      case AppTransactionType.lend:
-      case AppTransactionType.withdrawal:
-        return AppAssets.iconDollarCircle;
-    }
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 44.w,
+      height: 44.w,
+      decoration: BoxDecoration(
+        color: AppColors.projectFundsLedgerIconTileBg,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(
+          color: AppColors.projectFundsLedgerBorder,
+          width: 1,
+        ),
+      ),
+      alignment: Alignment.center,
+      child: SvgPicture.asset(
+        isPositive
+            ? AppAssets.iconDollarCircle
+            : AppAssets.iconCircleArrowUp02,
+        width: 24.w,
+        height: 24.h,
+        fit: BoxFit.contain,
+      ),
+    );
   }
 }

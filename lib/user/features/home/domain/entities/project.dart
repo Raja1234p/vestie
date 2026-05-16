@@ -20,7 +20,11 @@ class Project {
   final double? currentAmount;
   final String? endsIn;
   final String? description;
+  final String? displayStatus;
+  final String? projectInviteCode;
   final bool requestPending;
+  /// Discover join CTA — `true` when API visibility is Public (1).
+  final bool isPublic;
   /// Mock: member-only — which full-screen flow opens instead of project detail.
   final UserFlowOnOpen? userFlow;
 
@@ -34,7 +38,10 @@ class Project {
     this.currentAmount,
     this.endsIn,
     this.description,
+    this.displayStatus,
+    this.projectInviteCode,
     this.requestPending = false,
+    this.isPublic = true,
     this.userFlow,
   });
 
@@ -42,8 +49,47 @@ class Project {
     return category.label;
   }
 
-  String get statusLabel =>
-      status == ProjectStatus.ongoing ? AppStrings.statusOnGoing : AppStrings.statusCompleted;
+  String get statusLabel {
+    if (displayStatus != null && displayStatus!.trim().isNotEmpty) {
+      return displayStatus!.trim();
+    }
+    return status == ProjectStatus.ongoing
+        ? AppStrings.statusOnGoing
+        : AppStrings.statusCompleted;
+  }
+
+  bool get isDraft => displayStatus?.toLowerCase() == 'draft';
+
+  /// API `displayStatus` e.g. "Waiting for Approval" (joined member, pending).
+  bool get isWaitingForApproval {
+    final normalized = _normalizedDisplayStatus;
+    return normalized.contains('waiting') && normalized.contains('approval');
+  }
+
+  /// API `displayStatus` e.g. "On Going" — member may open project detail.
+  bool get isDisplayOnGoing {
+    final normalized = _normalizedDisplayStatus;
+    if (normalized.isEmpty) {
+      return status == ProjectStatus.ongoing && !isWaitingForApproval;
+    }
+    return normalized == 'on going' || normalized == 'ongoing';
+  }
+
+  String get _normalizedDisplayStatus =>
+      (displayStatus ?? '').trim().toLowerCase();
+
+  /// Home / mine list card CTA (not Discover join).
+  bool get showsHomeActionButton {
+    if (isWaitingForApproval) return false;
+    if (status == ProjectStatus.completed) {
+      return relation == ProjectRelation.joined;
+    }
+    if (status == ProjectStatus.ongoing) {
+      if (relation == ProjectRelation.joined) return isDisplayOnGoing;
+      return true;
+    }
+    return false;
+  }
 
   double get progress =>
       (goalAmount != null && currentAmount != null && goalAmount! > 0)

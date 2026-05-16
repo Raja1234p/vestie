@@ -33,7 +33,10 @@ class ProjectInfoGoalRow extends StatelessWidget {
 
     return RichText(
       text: TextSpan(
-        style: GoogleFonts.lato(fontSize: 28.sp, color: AppColors.textPrimary),
+        style: GoogleFonts.lato(
+          fontSize: 28.sp,
+          color: AppColors.projectDetailText,
+        ),
         children: [
           TextSpan(
             text: AppStrings.goalPrefix,
@@ -48,7 +51,7 @@ class ProjectInfoGoalRow extends StatelessWidget {
             style: GoogleFonts.lato(
               fontSize: 16.sp,
               fontWeight: FontWeight.w600,
-              color: AppColors.textBody,
+              color: AppColors.projectDetailText,
             ),
           ),
         ],
@@ -68,7 +71,10 @@ class ProjectInfoRaisedTotalRow extends StatelessWidget {
     final v = formatProjectInfoAmount(current);
     return RichText(
       text: TextSpan(
-        style: GoogleFonts.lato(fontSize: 28.sp, color: AppColors.textPrimary),
+        style: GoogleFonts.lato(
+          fontSize: 28.sp,
+          color: AppColors.projectDetailText,
+        ),
         children: [
           TextSpan(
             text: AppStrings.labelRaised,
@@ -96,11 +102,14 @@ class ProjectInfoDeadlineRow extends StatelessWidget {
     if (emphasis.isEmpty) return const SizedBox.shrink();
 
     final full = ProjectEndRelativeLabel.isFullSentence(endsIn);
-    final labelStyle = GoogleFonts.lato(fontSize: 13.sp, color: AppColors.textBody);
+    final labelStyle = GoogleFonts.lato(
+      fontSize: 13.sp,
+      color: AppColors.projectDetailText,
+    );
     final durationStyle = GoogleFonts.lato(
       fontSize: 13.sp,
       fontWeight: FontWeight.w800,
-      color: AppColors.textPrimary,
+      color: AppColors.projectDetailText,
     );
 
     return Row(

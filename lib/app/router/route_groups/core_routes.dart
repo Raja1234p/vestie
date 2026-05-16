@@ -34,6 +34,7 @@ import 'package:vestie/leader/features/create_project/presentation/pages/create_
 
 import 'package:vestie/leader/features/create_project/presentation/pages/create_project_saving_settings_screen.dart';
 
+import 'package:vestie/app/router/route_args/create_project_success_route_args.dart';
 import 'package:vestie/leader/features/create_project/presentation/pages/create_project_success_screen.dart';
 
 import '../../../features/dashboard/presentation/models/dashboard_shell_args.dart';
@@ -254,8 +255,14 @@ List<RouteBase> buildCoreRoutes() {
       path: AppRoutes.createProjectSuccess,
 
       builder: (context, state) {
-        final projectId =
-            state.extra is String ? state.extra! as String : '';
+        final extra = state.extra;
+        if (extra is CreateProjectSuccessRouteArgs) {
+          return CreateProjectSuccessScreen(
+            projectId: extra.projectId,
+            projectName: extra.projectName,
+          );
+        }
+        final projectId = extra is String ? extra : '';
         return CreateProjectSuccessScreen(projectId: projectId);
       },
 

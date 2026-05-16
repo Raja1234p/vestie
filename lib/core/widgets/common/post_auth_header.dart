@@ -40,7 +40,7 @@ class PostAuthHeader extends StatelessWidget {
                 Expanded(
                   child: AppText(
                     title,
-                    maxLines: 2,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: titleStyle ??
                         GoogleFonts.lato(

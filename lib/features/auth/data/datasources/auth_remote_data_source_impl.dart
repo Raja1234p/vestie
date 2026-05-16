@@ -187,7 +187,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final response = await _client.post(
         ApiConstants.logout,
-        data: refreshToken,
+        data: {'refreshToken': refreshToken},
       );
       return MessageResponseModel.fromJson(response.data);
     } on DioException catch (e) {
