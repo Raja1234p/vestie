@@ -59,7 +59,11 @@ class CreateProjectCubit extends Cubit<CreateProjectForm> {
   void setAutoSaveEnabled(bool v) => emit(state.copyWith(autoSaveEnabled: v));
 
   // ── Funds borrowing ─────────────────────────────────────────────────────
-  void setRoi(String v) => emit(state.copyWith(roi: v, roiError: null));
+  /// Digits only — `%` is appended in the field for display, not sent to the API.
+  void setRoi(String v) {
+    final digits = v.replaceAll(RegExp(r'[^0-9]'), '');
+    emit(state.copyWith(roi: digits, roiError: null));
+  }
   void toggleBorrowing(bool v) => emit(state.copyWith(
         borrowingEnabled: v,
         repaymentWindowError: null,

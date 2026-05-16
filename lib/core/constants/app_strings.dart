@@ -527,7 +527,9 @@ class AppStrings {
   // Borrowing path (Vacation / Emergency — production frames)
   static const String createFundsBorrowingTitle = 'Funds Borrowing';
   static const String labelAnnualInterest      = 'Interest rate (Annual %)';
-  static const String hintAnnualInterest       = '5';
+  static const String hintAnnualInterest       = '5%';
+  /// Shown beside ROI / percent inputs (not stored in form state or API).
+  static const String percentSign              = '%';
   static const String labelRepaymentWindowDays   = 'Repayment window (days)';
   static const String hintRepaymentDays         = '30';
   static const String labelBorrowPenaltyPercent = 'Penalty (%)';

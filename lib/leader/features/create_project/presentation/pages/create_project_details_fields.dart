@@ -127,9 +127,7 @@ class _CPCategoryDropdownState extends State<CPCategoryDropdown> {
           behavior: HitTestBehavior.opaque,
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: AppDimens.p16, vertical: 14.h),
-            decoration: _boxDecoration(
-              AppColors.purple400.withValues(alpha: 0.35),
-            ),
+            decoration: _boxDecoration(AppColors.searchBarBg),
             child: Row(
               children: [
                 Expanded(
@@ -155,7 +153,7 @@ class _CPCategoryDropdownState extends State<CPCategoryDropdown> {
         if (_expanded) ...[
           SizedBox(height: AppDimens.v8),
           Container(
-            decoration: _boxDecoration(AppColors.surface),
+            decoration: _boxDecoration(AppColors.searchBarBg),
             padding: EdgeInsets.symmetric(vertical: AppDimens.v8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -8,6 +8,7 @@ import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/utils/percent_digits_input_formatter.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_text_field.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
@@ -39,7 +40,12 @@ class _CreateProjectInvestmentSettingsScreenState
   void initState() {
     super.initState();
     final f = context.read<CreateProjectCubit>().state;
-    _roiCtrl = TextEditingController(text: f.roi);
+    final roiDigits = f.roi.replaceAll(RegExp(r'[^0-9]'), '');
+    _roiCtrl = TextEditingController(
+      text: roiDigits.isEmpty
+          ? ''
+          : '$roiDigits${AppStrings.percentSign}',
+    );
   }
 
   @override
@@ -116,9 +122,11 @@ class _CreateProjectInvestmentSettingsScreenState
                             controller: _roiCtrl,
                             keyboardType: TextInputType.number,
                             textInputAction: TextInputAction.done,
-                            maxLength: 3,
+                            inputFormatters: [
+                              PercentDigitsInputFormatter(),
+                            ],
                             errorText: form.roiError,
-                            onChanged: cubit.setRoi,
+                            onChanged: (value) => cubit.setRoi(value),
                             labelStyle: roiLabelStyle,
                             fillColor: AppColors.purple100, // #F5F0FE
                             hintStyle: roiHintStyle,
