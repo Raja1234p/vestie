@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/utils/app_snackbar.dart';
@@ -101,9 +100,6 @@ class _BorrowAmountViewState extends State<_BorrowAmountView> {
         _syncAmountFieldFromState(state.amountDigits);
         final over = state.amountValue > state.args.borrowLimit;
         final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
-        final confirmBottomPadding = bottomInset > 0
-            ? bottomInset + 12.h
-            : 12.h + MediaQuery.paddingOf(context).bottom;
 
         return Scaffold(
           resizeToAvoidBottomInset: true,
@@ -233,13 +229,17 @@ class _BorrowAmountViewState extends State<_BorrowAmountView> {
                     },
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(24.w, 0, 24.w, confirmBottomPadding),
-                  child: AppButton(
-                    text: AppStrings.btnConfirm,
-                    onPressed: (state.amountValue <= 0 || over)
-                        ? null
-                        : c.toConfirm,
+                SafeArea(
+                  top: false,
+                  minimum: EdgeInsets.fromLTRB(16.w, 0, 16.w, 24.h),
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: bottomInset),
+                    child: AppButton(
+                      text: AppStrings.btnConfirm,
+                      onPressed: (state.amountValue <= 0 || over)
+                          ? null
+                          : c.toConfirm,
+                    ),
                   ),
                 ),
               ],
@@ -277,7 +277,7 @@ class _BorrowConfirmView extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                 children: [
                   _label(AppStrings.sectionBorrowAmount),
-                  SizedBox(height: 8.h),
+                  SizedBox(height: 12.h),
                   _card(
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -293,7 +293,7 @@ class _BorrowConfirmView extends StatelessWidget {
                   ),
                   SizedBox(height: 20.h),
                   _label(AppStrings.sectionPenalty),
-                  SizedBox(height: 8.h),
+                  SizedBox(height: 12.h),
                   _card(
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -310,7 +310,7 @@ class _BorrowConfirmView extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: 24.h),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -319,14 +319,13 @@ class _BorrowConfirmView extends StatelessWidget {
                         onChanged: (v) => c.setTermsAccepted(v),
                       ),
                       SizedBox(width: 6.w),
-                      SizedBox(width: 4.w),
-                      SizedBox(width: 4.w),
                       Expanded(
                         child: Text.rich(
                           TextSpan(
                             style: GoogleFonts.lato(
-                              fontSize: 13.sp,
-                              color: AppColors.textBody,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.neutral700,
                               height: 1.4,
                             ),
                             children: [
@@ -334,7 +333,8 @@ class _BorrowConfirmView extends StatelessWidget {
                               TextSpan(
                                 text: state.displayDollar,
                                 style: const TextStyle(
-                                    fontWeight: FontWeight.w700),
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                               TextSpan(
                                 text:
@@ -381,9 +381,9 @@ class _BorrowConfirmView extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: AppColors.appBgBottom,
+        color: AppColors.searchBarBg,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: AppColors.cardBorder),
+        border: Border.all(color: AppColors.neutral400),
       ),
       child: child,
     );
@@ -401,16 +401,16 @@ class _BorrowConfirmView extends StatelessWidget {
               left,
               style: GoogleFonts.lato(
                 fontSize: 14.sp,
-                color: AppColors.grey800,
+                color: AppColors.neutral700,
               ),
             ),
           ),
           AppText(
             right,
             style: GoogleFonts.lato(
-              fontSize: 14.sp,
+              fontSize: 16.sp,
               fontWeight: FontWeight.w600,
-              color: AppColors.grey1100,
+              color: AppColors.neutral1200,
             ),
           ),
         ],
@@ -426,29 +426,31 @@ class _BorrowSuccessView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppSuccessScreen(
-      backgroundImagePath: AppAssets.contributionSuccessBg,
-      svgAssetPath: AppAssets.projectCreatedImage,
       title: AppStrings.borrowRequestSubmitted,
-      subtitleWidget: Text.rich(
-        TextSpan(
-          style: GoogleFonts.lato(
-            fontSize: 18.sp,
-            color: AppColors.textBody,
-            height: 1.35,
+      subtitleWidget: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        child: Text.rich(
+          TextSpan(
+            style: GoogleFonts.lato(
+              fontSize: 20.sp,
+              fontWeight: FontWeight.w400,
+              color: AppColors.textBody,
+              height: 1.35,
+            ),
+            children: [
+              const TextSpan(text: 'Your '),
+              TextSpan(
+                text: state.displayDollar,
+                style: const TextStyle(fontWeight: FontWeight.w700),
+              ),
+              const TextSpan(
+                text:
+                    ' borrow request has been sent to the group for voting and leader review.',
+              ),
+            ],
           ),
-          children: [
-            const TextSpan(text: 'Your '),
-            TextSpan(
-              text: state.displayDollar,
-              style: const TextStyle(fontWeight: FontWeight.w700),
-            ),
-            const TextSpan(
-              text:
-                  ' borrow request has been sent to the group for voting and leader review.',
-            ),
-          ],
+          textAlign: TextAlign.center,
         ),
-        textAlign: TextAlign.center,
       ),
       buttonText: AppStrings.btnBackToProject,
       onButtonPressed: () => context.pop(),

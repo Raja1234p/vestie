@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
-import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_success_screen.dart';
@@ -25,12 +24,7 @@ class TransactionSuccessScreen extends StatelessWidget {
         final isDeposit =
             state.transactionType == WalletTransactionType.deposit;
         final amountText = state.formattedAmount;
-        final heroAsset = isDeposit
-            ? AppAssets.projectCreatedImage
-            : AppAssets.markSuccessfullProject;
-
         return AppSuccessScreen(
-          svgAssetPath: heroAsset,
           title: isDeposit
               ? AppStrings.depositSuccessTitle
               : AppStrings.withdrawSuccessTitle,

@@ -28,7 +28,6 @@ class CreateProjectStatusScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     if (args.success) {
       return AppSuccessScreen(
-        svgAssetPath: AppAssets.checkMarkSuccessful,
         title: AppStrings.transactionStatusSuccessTitle,
         subtitle: AppStrings.transactionStatusSuccessSubtitle,
         buttonText: AppStrings.btnDone,

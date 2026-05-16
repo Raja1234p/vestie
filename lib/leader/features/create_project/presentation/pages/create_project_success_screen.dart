@@ -106,7 +106,6 @@ class _CreateProjectSuccessScreenState extends State<CreateProjectSuccessScreen>
         final canShare = shareLink.isNotEmpty && !_loadingInvite;
 
         return AppSuccessScreen(
-          svgAssetPath: AppAssets.projectCreatedImage,
           title: AppStrings.projectCreatedTitle,
           buttonText: AppStrings.btnGoToMyProject,
           onButtonPressed: () {

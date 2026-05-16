@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/utils/app_snackbar.dart';
@@ -360,8 +359,6 @@ class _ContributeSuccessView extends StatelessWidget {
   Widget build(BuildContext context) {
     final args = state.args;
     return AppSuccessScreen(
-      backgroundImagePath: AppAssets.contributionSuccessBg,
-      svgAssetPath: AppAssets.projectCreatedImage,
       title: AppStrings.contributionSuccessTitle,
       subtitleWidget: AppText(
         '\$${state.amountFormatted} added to ${args?.projectName ?? ""}',
