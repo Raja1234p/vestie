@@ -935,10 +935,23 @@ class AppStrings {
   static const String userSuccessVoteQuestion  =
       'Do you agree this project was successful?';
   static const String userSuccessVoteYes       = 'Yes, It was';
-  static const String userSuccessVoteNotYet    = 'No, not yet';
+  static const String userSuccessVoteNotYet    = 'No,Not Yet';
   static const String userSuccessVoteFooter   =
       'Your vote is anonymous. A majority \'Yes\' releases funds to all members. '
       '\'No\' majority refunds contributions.';
+  static const String userSuccessVoteMemberVotesLabel = 'Member Votes';
+  static const String userSuccessVoteThumbsUp         = 'Thumbs Up';
+  static const String userSuccessVoteThumbsDown       = 'Thumbs Down';
+  static const String userSuccessVoteNotVoted         = 'Not voted';
+  static const String userSuccessVoteAgreedTitle      = 'You\'ve agreed on this';
+  static const String userSuccessVoteAgreedBody       =
+      'You\'ve marked the project as complete. If the majority agrees, all '
+      'contributions will be sent to the leader.';
+  static const String userSuccessVoteDisagreedTitle   = 'You\'ve disagreed on this';
+  static const String userSuccessVoteDisagreedBody    =
+      'You\'ve marked the project as incomplete. If the majority agrees, all '
+      'money will be refunded to wallet.';
+  static const String btnPreviewSuccessVote           = 'Preview success vote UI';
 
   // ── Member: immediate feedback after voting (mark complete) ────────────
   static const String markUserVotedSuccessTitle  = 'Approved';
