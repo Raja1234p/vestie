@@ -18,35 +18,6 @@ import '../navigation/open_project_from_card.dart';
 import '../widgets/leave_project_destructive_button.dart';
 import '../widgets/leave_project_dialogs.dart';
 
-Future<void> _executeLeaveProject(
-  BuildContext context, {
-  required String projectId,
-}) async {
-  if (!context.mounted) return;
-
-  final result = await ServiceLocator.instance.leaveProjectUseCase(
-    projectId: projectId,
-  );
-
-  if (!context.mounted) return;
-
-  await result.fold(
-    (failure) async {
-      AppFailureDialog.show(
-        context,
-        message: failure.message.isNotEmpty
-            ? failure.message
-            : AppStrings.errorGeneric,
-      );
-    },
-    (_) async {
-      await showLeaveProjectSuccessDialog(context);
-      if (!context.mounted) return;
-      popProjectDetailNavigation(context, refreshHomeOnPop: true);
-    },
-  );
-}
-
 /// Leave project warning — failure hero, confirm dialog, API, then success dialog.
 class LeaveProjectWarningScreen extends StatefulWidget {
   final LeaveProjectRouteArgs args;
@@ -68,11 +39,27 @@ class _LeaveProjectWarningScreenState extends State<LeaveProjectWarningScreen> {
       onConfirm: () async {
         if (!mounted) return;
         setState(() => _isLeaving = true);
-        await _executeLeaveProject(
-          context,
+        final result = await ServiceLocator.instance.leaveProjectUseCase(
           projectId: widget.args.projectId,
         );
-        if (mounted) setState(() => _isLeaving = false);
+        if (!mounted) return;
+        setState(() => _isLeaving = false);
+        if (!mounted) return;
+        await result.fold(
+          (failure) async {
+            AppFailureDialog.show(
+              context,
+              message: failure.message.isNotEmpty
+                  ? failure.message
+                  : AppStrings.errorGeneric,
+            );
+          },
+          (_) async {
+            await showLeaveProjectSuccessDialog(context);
+            if (!context.mounted) return;
+            popProjectDetailNavigation(context, refreshHomeOnPop: true);
+          },
+        );
       },
     );
   }
@@ -112,7 +99,7 @@ class _LeaveProjectWarningScreenState extends State<LeaveProjectWarningScreen> {
                   LeaveProjectDestructiveButton(
                     label: AppStrings.leaveProjectWarningTitle,
                     isLoading: _isLeaving,
-                    onPressed: _isLeaving ? null : _onLeaveProjectPressed,
+                    onPressed: _onLeaveProjectPressed,
                   ),
                   SizedBox(height: 12.h),
                   AppOutlineNeutralButton(

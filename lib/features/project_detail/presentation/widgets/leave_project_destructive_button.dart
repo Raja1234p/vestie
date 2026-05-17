@@ -24,30 +24,35 @@ class LeaveProjectDestructiveButton extends StatelessWidget {
     return Material(
       color: AppColors.red200,
       borderRadius: BorderRadius.circular(AppRadius.r8),
-      child: InkWell(
-        onTap: isLoading ? null : onPressed,
-        borderRadius: BorderRadius.circular(AppRadius.r8),
-        child: SizedBox(
-          width: double.infinity,
-          height: 56.h,
-          child: Center(
-            child: isLoading
-                ? SizedBox(
-                    width: 24.w,
-                    height: 24.w,
-                    child: const CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: AppColors.red900,
+      child: IgnorePointer(
+        ignoring: isLoading,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(AppRadius.r8),
+          splashColor: AppColors.red900.withValues(alpha: 0.12),
+          highlightColor: AppColors.red900.withValues(alpha: 0.08),
+          child: SizedBox(
+            width: double.infinity,
+            height: 56.h,
+            child: Center(
+              child: isLoading
+                  ? SizedBox(
+                      width: 24.w,
+                      height: 24.w,
+                      child: const CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.red900,
+                      ),
+                    )
+                  : AppText(
+                      label,
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.red900,
+                      ),
                     ),
-                  )
-                : AppText(
-                    label,
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.red900,
-                    ),
-                  ),
+            ),
           ),
         ),
       ),
