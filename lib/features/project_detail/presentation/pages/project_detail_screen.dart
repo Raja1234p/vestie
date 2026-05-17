@@ -9,6 +9,8 @@ import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../../core/widgets/common/post_auth_header.dart';
 import '../../../../core/di/service_locator.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
+import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
 import '../navigation/open_project_from_card.dart';
 import '../navigation/project_detail_navigation_helpers.dart';
@@ -145,13 +147,11 @@ class _ProjectDetailBody extends StatelessWidget {
                         sliver: SliverToBoxAdapter(
                           child: ProjectDetailUserCompletedContent(
                             project: project,
-                            onMemberTap: (member) {
-                              ProjectDetailNavigationHelpers.openMemberProfile(
-                                context,
-                                project: project,
-                                member: member,
-                              );
-                            },
+                            onMemberTap: (member) => _openMemberProfile(
+                              context,
+                              project: project,
+                              member: member,
+                            ),
                           ),
                         ),
                       ),
@@ -166,13 +166,11 @@ class _ProjectDetailBody extends StatelessWidget {
                   pendingJoinRequestCount: pendingCount,
                   refreshHomeOnPop: refreshHomeOnPop,
                   refreshDiscoverOnPop: refreshDiscoverOnPop,
-                  onMemberTap: (member) {
-                    ProjectDetailNavigationHelpers.openMemberProfile(
-                      context,
-                      project: project,
-                      member: member,
-                    );
-                  },
+                  onMemberTap: (member) => _openMemberProfile(
+                    context,
+                    project: project,
+                    member: member,
+                  ),
                   onRefresh: onRefresh,
                 );
               }
@@ -239,13 +237,11 @@ class _ProjectDetailBody extends StatelessWidget {
                             SizedBox(height: 20.h),
                             ProjectDetailTabSection(
                               project: project,
-                              onMemberTap: (member) {
-                                ProjectDetailNavigationHelpers.openMemberProfile(
-                                  context,
-                                  project: project,
-                                  member: member,
-                                );
-                              },
+                              onMemberTap: (member) => _openMemberProfile(
+                                context,
+                                project: project,
+                                member: member,
+                              ),
                             ),
                             SizedBox(height: 32.h),
                           ],
@@ -269,5 +265,22 @@ class _ProjectDetailBody extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+Future<void> _openMemberProfile(
+  BuildContext context, {
+  required ProjectDetailEntity project,
+  required MemberEntity member,
+}) async {
+  final refreshed = await ProjectDetailNavigationHelpers.openMemberProfile(
+    context,
+    project: project,
+    member: member,
+  );
+  if (refreshed == true && context.mounted) {
+    context.read<ProjectDetailBloc>().add(
+          LoadProjectDetailEvent(projectId: project.id),
+        );
   }
 }

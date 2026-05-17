@@ -468,6 +468,8 @@ class AppStrings {
 
   // ── Transaction History ───────────────────────────────────────────────────
   static const String transactionHistoryTitle = 'Transaction History';
+  static const String memberActivityEmptyTransactions =
+      'No transactions yet for this member.';
   static const String filterAllTx            = 'All';
   static const String filterDeposits         = 'Deposits';
   static const String filterWithdrawals       = 'Withdrawals';
@@ -600,6 +602,8 @@ class AppStrings {
 
   // ── Form placeholders & hints ─────────────────────────────────────────────
   static const String deadlinePlaceholder    = 'MM/DD/YYYY';
+  /// Picker / field action — drops optional project end date (no `endsAtUtc` on create).
+  static const String btnRemoveDeadline      = 'Remove deadline';
   static const String hintBorrowLimit        = '250';
   static const String hintRepaymentWindow    = '30';
   static const String hintPenalty            = '20';
@@ -647,6 +651,7 @@ class AppStrings {
   // ── Wallet ───────────────────────────────────────────────────────────────
   static const String walletTitle              = 'Wallet';
   static const String walletAmountLabel        = 'Wallet Amount';
+  static const String walletBalanceLabel       = 'Wallet Balance:';
   static const String btnDepositFunds          = 'Deposit funds';
   static const String btnWithdrawFunds          = 'Withdraw funds';
   static const String depositFundsTitle         = 'Deposit';
@@ -818,8 +823,13 @@ class AppStrings {
   static const String markAsDefaulted           = 'Mark as Defaulted';
   static const String removeMemberConfirmTitle  = 'Remove Member?';
   static const String removeMemberConfirmBody   = 'Are you sure you want to remove this member? This action cannot be undone.';
+  static const String removeMemberSuccessTitle  = 'Member Removed';
+  static const String removeMemberSuccessBody   = 'This member has been removed from the project.';
   static const String markDefaultedConfirmTitle = 'Mark as Defaulted';
   static const String markDefaultedConfirmBody  = 'Marking a user as defaulted blocks them from contributing or borrowing in any group until all dues are cleared.';
+  static const String markDefaultedSuccessTitle   = 'Member Marked as Defaulted';
+  static const String markDefaultedSuccessBody    =
+      'This member can no longer contribute or borrow in any group until all dues are cleared.';
   static const String makeCoLeaderConfirmTitle  = 'Make Co-Leader?';
   static const String makeCoLeaderConfirmBody   = 'This user will be able to approve borrow requests, post announcements, and manage members. You will remain the main leader.';
   static const String removeCoLeaderConfirmTitle = 'Remove Co-Leader?';
@@ -837,11 +847,11 @@ class AppStrings {
   static const String penaltyOverdueLabel       = 'Overdue';
   static const String penaltyPenaltyLabel       = 'Penalty';
   static const String penaltyTotalOwedLabel     = 'Total owed';
-  static const String penaltyBorrowedAmount     = '\$250';
-  static const String penaltyDueDateValue       = 'Apr 1, 2025';
-  static const String penaltyOverdueValue       = '15 days';
+  static const String penaltyBorrowedAmount     = '\$250.00';
+  static const String penaltyDueAmount          = '\$250';
+  static const String penaltyOverdueDateValue   = 'Apr 1, 2025';
   static const String penaltyChargeValue        = '\$20.00';
-  static const String penaltyTotalOwedValue     = '\$220.00';
+  static const String penaltyTotalOwedValue     = '\$270.00';
   static const String memberTxDateMar11         = 'Mar 11';
   static const String memberTxDateMar12         = 'Mar 12';
   static const String approveBorrowRequestTitle = 'Approve Borrow Request?';

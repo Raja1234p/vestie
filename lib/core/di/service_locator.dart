@@ -41,6 +41,7 @@ import '../../features/project_detail/data/repositories/project_actions_reposito
 import '../../features/project_detail/domain/repositories/project_detail_repository.dart';
 import '../../features/project_detail/domain/repositories/project_actions_repository.dart';
 import '../../features/projects/domain/usecases/get_project_detail_usecase.dart';
+import '../../features/project_detail/domain/usecases/get_member_activity_usecase.dart';
 import '../../features/project_detail/domain/usecases/list_pending_join_requests_usecase.dart';
 import '../../features/project_detail/domain/usecases/project_actions_usecases.dart';
 import 'package:vestie/user/features/contributions/data/datasources/contribution_remote_data_source.dart';
@@ -122,6 +123,7 @@ class ServiceLocator {
   late final AssignCoLeaderUseCase assignCoLeaderUseCase;
   late final RemoveCoLeaderUseCase removeCoLeaderUseCase;
   late final RemoveMemberUseCase removeMemberUseCase;
+  late final GetMemberActivityUseCase getMemberActivityUseCase;
   late final MarkDefaultedUseCase markDefaultedUseCase;
   late final RemoveForNonRepaymentUseCase removeForNonRepaymentUseCase;
   late final CastClosureVoteUseCase castClosureVoteUseCase;
@@ -215,6 +217,7 @@ class ServiceLocator {
     assignCoLeaderUseCase = AssignCoLeaderUseCase(projectActionsRepository);
     removeCoLeaderUseCase = RemoveCoLeaderUseCase(projectActionsRepository);
     removeMemberUseCase = RemoveMemberUseCase(projectActionsRepository);
+    getMemberActivityUseCase = GetMemberActivityUseCase(projectActionsRepository);
     markDefaultedUseCase = MarkDefaultedUseCase(projectActionsRepository);
     removeForNonRepaymentUseCase = RemoveForNonRepaymentUseCase(projectActionsRepository);
     castClosureVoteUseCase = CastClosureVoteUseCase(projectActionsRepository);

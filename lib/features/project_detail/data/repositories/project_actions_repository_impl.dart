@@ -1,5 +1,8 @@
 import 'package:dartz/dartz.dart';
+
+import '../../../../core/error/failure_mapper.dart';
 import '../../../../core/error/failures.dart';
+import '../../domain/entities/member_activity_entity.dart';
 import '../../domain/entities/pending_join_request_entity.dart';
 import '../../domain/repositories/project_actions_repository.dart';
 import '../datasources/project_actions_remote_data_source.dart';
@@ -21,7 +24,27 @@ class ProjectActionsRepositoryImpl implements ProjectActionsRepository {
     } on Failure catch (f) {
       return Left(f);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(FailureMapper.fromException(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, MemberActivityEntity>> getMemberActivity({
+    required String projectId,
+    required String userId,
+    required String projectName,
+  }) async {
+    try {
+      final model = await remoteDataSource.getMemberActivity(
+        projectId: projectId,
+        userId: userId,
+        projectName: projectName,
+      );
+      return Right(model.toEntity());
+    } on Failure catch (f) {
+      return Left(f);
+    } catch (e) {
+      return Left(FailureMapper.fromException(e));
     }
   }
 
@@ -101,7 +124,7 @@ class ProjectActionsRepositoryImpl implements ProjectActionsRepository {
     } on Failure catch (f) {
       return Left(f);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(FailureMapper.fromException(e));
     }
   }
 
@@ -184,7 +207,7 @@ class ProjectActionsRepositoryImpl implements ProjectActionsRepository {
     } on Failure catch (f) {
       return Left(f);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(FailureMapper.fromException(e));
     }
   }
 }

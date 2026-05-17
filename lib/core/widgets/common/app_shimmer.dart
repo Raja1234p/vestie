@@ -264,6 +264,78 @@ class JoinRequestsListShimmer extends StatelessWidget {
   }
 }
 
+/// Member detail body skeleton (`GET …/members/{userId}/activity`).
+class MemberDetailShimmer extends StatelessWidget {
+  const MemberDetailShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppShimmer(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              AppShimmer.box(width: 54, height: 54, borderRadius: 27),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppShimmer.box(width: 140, height: 18, borderRadius: 4),
+                    const SizedBox(height: 8),
+                    AppShimmer.box(width: 100, height: 14, borderRadius: 4),
+                  ],
+                ),
+              ),
+              AppShimmer.box(width: 120, height: 44, borderRadius: 22),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: AppShimmer.box(
+                  width: double.infinity,
+                  height: 72,
+                  borderRadius: 12,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: AppShimmer.box(
+                  width: double.infinity,
+                  height: 72,
+                  borderRadius: 12,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: AppShimmer.box(
+                  width: double.infinity,
+                  height: 72,
+                  borderRadius: 12,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          AppShimmer.box(width: 180, height: 20, borderRadius: 4),
+          const SizedBox(height: 14),
+          for (var i = 0; i < 3; i++) ...[
+            AppShimmer.box(
+              width: double.infinity,
+              height: 64,
+              borderRadius: 14,
+            ),
+            const SizedBox(height: 10),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
 /// A premium user profile header skeleton shimmer.
 class ProfileHeaderShimmer extends StatelessWidget {
   const ProfileHeaderShimmer({super.key});

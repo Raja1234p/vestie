@@ -29,6 +29,18 @@ class ApiConstants {
   /// `POST /projects/{id}/launch` — Draft → Active after create (Week 3/4).
   static String projectLaunch(String projectId) => '$projects/$projectId/launch';
 
+  /// `GET /projects/{projectId}/members/{userId}/activity` — member profile metrics + ledger.
+  static String projectMemberActivity(String projectId, String userId) =>
+      '$projects/$projectId/members/$userId/activity';
+
+  /// `POST /projects/{projectId}/members/{userId}/defaulted` — mark member defaulted.
+  static String projectMemberDefaulted(String projectId, String userId) =>
+      '$projects/$projectId/members/$userId/defaulted';
+
+  /// `POST /projects/{projectId}/members/{userId}/remove-non-repayment`
+  static String projectMemberRemoveNonRepayment(String projectId, String userId) =>
+      '$projects/$projectId/members/$userId/remove-non-repayment';
+
   // ── Contributions ────────────────────────────────────────────────────────
   static const String contributions = '/contributions';
 

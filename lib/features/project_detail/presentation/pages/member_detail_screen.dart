@@ -1,166 +1,803 @@
 import 'package:flutter/material.dart';
+
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:go_router/go_router.dart';
 
+
+
+import '../../../../app/router/app_routes.dart';
+import '../../../../app/router/route_args/project_detail_flow_args.dart';
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/error/failures.dart';
+
 import '../../../../core/di/service_locator.dart';
-import '../../../../core/utils/app_snackbar.dart';
+
 import '../../../../core/widgets/common/app_back_button.dart';
+
+import '../../../../core/widgets/common/app_shimmer.dart';
+
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
+
 import '../../../../core/widgets/common/post_auth_header.dart';
+
+import '../../domain/entities/member_activity_entity.dart';
+
 import '../../domain/entities/member_entity.dart';
+
+import '../../domain/entities/member_entity_extensions.dart';
+
+import '../../domain/entities/project_detail_entity.dart';
+
 import 'package:vestie/leader/features/project_detail/presentation/widgets/member_detail_actions.dart';
+
+import 'package:vestie/leader/features/project_detail/presentation/widgets/member_detail_result_dialogs.dart';
+
+import '../cubit/member_detail_cubit.dart';
+
+import '../navigation/project_detail_navigation_helpers.dart';
+
+import '../widgets/member_detail_actions_visibility.dart';
+
 import '../widgets/member_detail_footer.dart';
+
 import '../widgets/member_detail_sections.dart';
 
+import '../widgets/project_detail_load_error.dart';
+
+
+
 class MemberDetailScreen extends StatelessWidget {
+
   final MemberEntity member;
+
   final String projectId;
+
   final String projectName;
-  /// Leader or co-leader moderation context (borrow / overdue tooling).
+
+  final ProjectDetailEntity? project;
+
   final bool isLeaderView;
-  /// Primary owner only — remove member, promote / demote co-leader.
-  final bool isPrimaryLeaderView;
+
+
 
   const MemberDetailScreen({
+
     super.key,
+
     required this.member,
+
     required this.projectId,
+
     required this.projectName,
+
+    this.project,
+
     this.isLeaderView = false,
-    this.isPrimaryLeaderView = false,
+
   });
 
-  int get _contributionsCount => member.contributedAmount >= 0 ? 3 : 2;
-  bool get _hasOverdue => member.overdueAmount != null && member.overdueAmount! > 0;
-  bool get _isCoLeader => member.role == MemberRole.coLeader;
 
-  double get _contributedTotal =>
-      member.contributedAmount >= 0 ? member.contributedAmount * 10 : 1200;
-
-  double get _borrowedTotal {
-    if (_hasOverdue) return member.overdueAmount!;
-    return member.contributedAmount < 0 ? member.contributedAmount.abs() : 115;
-  }
-
-  String _formatAmount(double value) =>
-      value.toStringAsFixed(0).replaceAllMapped(
-            RegExp(r'\B(?=(\d{3})+(?!\d))'),
-            (_) => ',',
-          );
-
-  String get _username => '@${member.name.toLowerCase().replaceAll(' ', '-')}';
-
-  Future<bool> _assignCoLeader(BuildContext context) async {
-    final result = await ServiceLocator.instance.assignCoLeaderUseCase(
-      projectId: projectId,
-      userId: member.id,
-    );
-    if (!context.mounted) return false;
-    return result.fold(
-      (failure) {
-        AppSnackBar.showError(context, failure.message);
-        return false;
-      },
-      (_) => true,
-    );
-  }
-
-  Future<bool> _removeCoLeader(BuildContext context) async {
-    final result = await ServiceLocator.instance.removeCoLeaderUseCase(
-      projectId: projectId,
-      userId: member.id,
-    );
-    if (!context.mounted) return false;
-    return result.fold(
-      (failure) {
-        AppSnackBar.showError(context, failure.message);
-        return false;
-      },
-      (_) => true,
-    );
-  }
-
-  Future<void> _removeMember(BuildContext context) async {
-    final result = await ServiceLocator.instance.removeMemberUseCase(
-      projectId: projectId,
-      userId: member.id,
-    );
-    if (!context.mounted) return;
-    result.fold(
-      (failure) => AppSnackBar.showError(context, failure.message),
-      (_) => AppSnackBar.showSuccess(context, 'Member removed successfully'),
-    );
-  }
 
   @override
+
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: PostAuthGradientBackground(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            PostAuthHeader(
-              title: '${member.name}${AppStrings.memberProfileSuffix}',
-              leading: AppBackButton(
-                onPressed: () => context.pop(),
-              ),
-            ),
-            Expanded(
-              child: CustomScrollView(
-                slivers: [
-                  SliverPadding(
-                    padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
-                    sliver: SliverToBoxAdapter(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          MemberIdentitySection(
-                            member: member,
-                            username: _username,
-                            projectName: projectName,
-                            showCoLeaderRoleControls: isPrimaryLeaderView,
-                            isCoLeader: _isCoLeader,
-                            onAssignCoLeader: () => _assignCoLeader(context),
-                            onRemoveCoLeader: () => _removeCoLeader(context),
-                          ),
-                          SizedBox(height: 16.h),
-                          MemberMetricsSection(
-                            contributed: '\$${_formatAmount(_contributedTotal)}',
-                            contributions: '$_contributionsCount',
-                            borrowed: '\$${_formatAmount(_borrowedTotal)}',
-                          ),
-                          SizedBox(height: 24.h),
-                          MemberTransactionsSection(
-                            projectName: projectName,
-                            borrowedAmount: _formatAmount(_borrowedTotal),
-                          ),
-                          if (isLeaderView && _hasOverdue) ...[
-                            SizedBox(height: 12.h),
-                            MemberOverdueBanner(
-                              member: member,
-                              projectId: projectId,
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (isPrimaryLeaderView)
-              MemberDetailRemoveMemberFooter(
-                onRemoveMember: () => showRemoveMemberConfirm(
-                  context,
-                  memberName: member.name,
-                  onConfirmed: () => _removeMember(context),
-                ),
-              ),
-          ],
+
+    return BlocProvider(
+
+      create: (_) => MemberDetailCubit(
+
+        getMemberActivityUseCase: ServiceLocator.instance.getMemberActivityUseCase,
+
+        assignCoLeaderUseCase: ServiceLocator.instance.assignCoLeaderUseCase,
+
+        removeCoLeaderUseCase: ServiceLocator.instance.removeCoLeaderUseCase,
+
+        removeMemberUseCase: ServiceLocator.instance.removeMemberUseCase,
+
+      )..load(
+
+          projectId: projectId,
+
+          userId: member.apiUserId,
+
+          projectName: projectName,
+
         ),
+
+      child: _MemberDetailView(
+
+        member: member,
+
+        projectId: projectId,
+
+        projectName: projectName,
+
+        project: project,
+
+        isLeaderView: isLeaderView,
+
+      ),
+
+    );
+
+  }
+
+}
+
+
+
+class _MemberDetailView extends StatelessWidget {
+
+  const _MemberDetailView({
+
+    required this.member,
+
+    required this.projectId,
+
+    required this.projectName,
+
+    required this.project,
+
+    required this.isLeaderView,
+
+  });
+
+
+
+  final MemberEntity member;
+
+  final String projectId;
+
+  final String projectName;
+
+  final ProjectDetailEntity? project;
+
+  final bool isLeaderView;
+
+
+
+  String get _userId => member.apiUserId;
+
+
+
+  MemberEntity _displayMember(MemberDetailState state) {
+    final loaded = state.activity?.member;
+    if (loaded == null) return member;
+    return member.mergedWithActivity(loaded);
+  }
+
+
+
+  void _onStateChanged(BuildContext context, MemberDetailState state) {
+
+    if (state.isActionLoading) return;
+
+
+
+    final failure = state.failure;
+
+    if (failure != null) {
+
+      showMemberDetailErrorDialog(
+        context,
+        failure: failure,
+      );
+
+      context.read<MemberDetailCubit>().clearStatus();
+
+      return;
+
+    }
+
+
+
+    final completed = state.completedAction;
+
+    if (completed == null) return;
+
+
+
+    final displayName = _displayMember(state).name;
+
+
+
+    switch (completed) {
+
+      case MemberDetailAction.assignCoLeader:
+
+        showCoLeaderAssignedSuccess(
+
+          context,
+
+          memberName: displayName,
+
+          projectName: projectName,
+
+          onOk: () {
+
+            Navigator.of(context).pop();
+
+            context.pop(true);
+
+          },
+
+        );
+
+      case MemberDetailAction.removeCoLeader:
+
+        showCoLeaderRemovedSuccess(
+
+          context,
+
+          memberName: displayName,
+
+          projectName: projectName,
+
+          onOk: () {
+
+            Navigator.of(context).pop();
+
+            context.pop(true);
+
+          },
+
+        );
+
+      case MemberDetailAction.removeMember:
+
+        showMemberRemovedSuccess(
+
+          context,
+
+          onOk: () {
+
+            Navigator.of(context).pop();
+
+            context.pop(true);
+
+          },
+
+        );
+
+    }
+
+
+
+    context.read<MemberDetailCubit>().clearStatus();
+
+  }
+
+
+
+  void _promptAssignCoLeader(BuildContext context) {
+
+    showMakeCoLeaderConfirm(
+
+      context,
+
+      memberName: _displayMember(context.read<MemberDetailCubit>().state).name,
+
+      onConfirmed: () => context.read<MemberDetailCubit>().assignCoLeader(
+
+            projectId: projectId,
+
+            userId: _userId,
+
+          ),
+
+    );
+
+  }
+
+
+
+  void _promptRemoveCoLeader(BuildContext context) {
+
+    showRemoveCoLeaderConfirm(
+
+      context,
+
+      memberName: _displayMember(context.read<MemberDetailCubit>().state).name,
+
+      onConfirmed: () => context.read<MemberDetailCubit>().removeCoLeader(
+
+            projectId: projectId,
+
+            userId: _userId,
+
+          ),
+
+    );
+
+  }
+
+
+
+  Future<void> _openPenaltyAction(BuildContext context) async {
+    final p = project;
+    if (p == null) return;
+
+    final outcome = await context.push<MemberPenaltyActionOutcome>(
+      AppRoutes.memberPenaltyAction,
+      extra: MemberPenaltyActionRouteArgs(
+        member: _displayMember(context.read<MemberDetailCubit>().state),
+        projectId: projectId,
+        project: p,
       ),
     );
+
+    if (!context.mounted || outcome == null) return;
+
+    if (outcome == MemberPenaltyActionOutcome.memberRemoved) {
+      context.pop(true);
+      return;
+    }
+
+    final refreshed = await context.read<MemberDetailCubit>().refresh();
+    if (!context.mounted) return;
+    if (!refreshed) {
+      showMemberDetailErrorDialog(
+        context,
+        failure: const ServerFailure(AppStrings.errorGeneric),
+      );
+    }
   }
+
+  void _promptRemoveMember(BuildContext context) {
+
+    showRemoveMemberConfirm(
+
+      context,
+
+      memberName: _displayMember(context.read<MemberDetailCubit>().state).name,
+
+      onConfirmed: () => context.read<MemberDetailCubit>().removeMember(
+
+            projectId: projectId,
+
+            userId: _userId,
+
+          ),
+
+    );
+
+  }
+
+
+
+  @override
+
+  Widget build(BuildContext context) {
+
+    final p = project;
+
+
+
+    return BlocListener<MemberDetailCubit, MemberDetailState>(
+
+      listenWhen: (prev, curr) =>
+
+          prev.isActionLoading != curr.isActionLoading ||
+
+          prev.failure != curr.failure ||
+
+          prev.completedAction != curr.completedAction,
+
+      listener: _onStateChanged,
+
+      child: BlocBuilder<MemberDetailCubit, MemberDetailState>(
+
+        builder: (context, state) {
+
+          final displayMember = _displayMember(state);
+
+          final activity = state.activity;
+
+          final isCoLeader = displayMember.role == MemberRole.coLeader;
+
+
+
+          final showCoLeaderControls = p != null &&
+
+              MemberDetailActionsVisibility.showCoLeaderControls(
+
+                project: p,
+
+                member: displayMember,
+
+              );
+
+          final showSendVff = p != null &&
+
+              MemberDetailActionsVisibility.showSendVffRequest(
+
+                project: p,
+
+                member: displayMember,
+
+              );
+
+          final showRemoveMember = p != null &&
+
+              MemberDetailActionsVisibility.showRemoveMember(
+
+                project: p,
+
+                member: displayMember,
+
+              );
+
+          final showFooter = p != null &&
+
+              MemberDetailActionsVisibility.showFooter(
+
+                project: p,
+
+                member: displayMember,
+
+              );
+
+
+
+          final coLeaderLoading = state.isLoadingAction(
+
+                MemberDetailAction.assignCoLeader,
+
+              ) ||
+
+              state.isLoadingAction(MemberDetailAction.removeCoLeader);
+
+
+
+          return Scaffold(
+
+            backgroundColor: Colors.transparent,
+
+            body: PostAuthGradientBackground(
+
+              child: Column(
+
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+
+                children: [
+
+                  PostAuthHeader(
+
+                    title:
+
+                        '${displayMember.name}${AppStrings.memberProfileSuffix}',
+
+                    leading: AppBackButton(
+
+                      onPressed: () => context.pop(),
+
+                    ),
+
+                  ),
+
+                  Expanded(
+
+                    child: _buildBody(
+
+                      context,
+
+                      state: state,
+
+                      activity: activity,
+
+                      displayMember: displayMember,
+
+                      project: p,
+
+                      isCoLeader: isCoLeader,
+
+                      showCoLeaderControls: showCoLeaderControls,
+
+                      coLeaderLoading: coLeaderLoading,
+
+                    ),
+
+                  ),
+
+                  if (showFooter && state.loadStatus == MemberDetailLoadStatus.loaded)
+
+                    MemberDetailFooter(
+
+                      showSendVffRequest: showSendVff,
+
+                      showRemoveMember: showRemoveMember,
+
+                      isRemoveMemberLoading: state.isLoadingAction(
+
+                        MemberDetailAction.removeMember,
+
+                      ),
+
+                      onSendVffRequest: () =>
+
+                          ProjectDetailNavigationHelpers.openAddFriendFlow(
+
+                        context,
+
+                        displayMember,
+
+                      ),
+
+                      onRemoveMember: () => _promptRemoveMember(context),
+
+                    ),
+
+                ],
+
+              ),
+
+            ),
+
+          );
+
+        },
+
+      ),
+
+    );
+
+  }
+
+
+
+  Widget _buildBody(
+
+    BuildContext context, {
+
+    required MemberDetailState state,
+
+    required MemberActivityEntity? activity,
+
+    required MemberEntity displayMember,
+
+    required ProjectDetailEntity? project,
+
+    required bool isCoLeader,
+
+    required bool showCoLeaderControls,
+
+    required bool coLeaderLoading,
+
+  }) {
+
+    switch (state.loadStatus) {
+
+      case MemberDetailLoadStatus.initial:
+
+      case MemberDetailLoadStatus.loading:
+
+        return CustomScrollView(
+
+          slivers: [
+
+            SliverPadding(
+
+              padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
+
+              sliver: const SliverToBoxAdapter(child: MemberDetailShimmer()),
+
+            ),
+
+          ],
+
+        );
+
+      case MemberDetailLoadStatus.error:
+
+        return ProjectDetailLoadError(
+
+          message: state.loadErrorMessage ?? AppStrings.errorGeneric,
+
+          onRetry: () => context.read<MemberDetailCubit>().load(
+
+                projectId: projectId,
+
+                userId: _userId,
+
+                projectName: projectName,
+
+              ),
+
+        );
+
+      case MemberDetailLoadStatus.loaded:
+
+        final loaded = activity!;
+
+        return CustomScrollView(
+
+          slivers: [
+
+            SliverPadding(
+
+              padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
+
+              sliver: SliverToBoxAdapter(
+
+                child: _MemberDetailBody(
+
+                  member: displayMember,
+
+                  activity: loaded,
+
+                  projectId: projectId,
+
+                  project: project,
+
+                  isLeaderView: isLeaderView,
+
+                  showCoLeaderControls: showCoLeaderControls,
+
+                  isCoLeader: isCoLeader,
+
+                  isCoLeaderActionLoading: coLeaderLoading,
+
+                  onAssignCoLeader: showCoLeaderControls
+
+                      ? () => _promptAssignCoLeader(context)
+
+                      : null,
+
+                  onRemoveCoLeader: showCoLeaderControls
+
+                      ? () => _promptRemoveCoLeader(context)
+
+                      : null,
+
+                  onTakeAction: () => _openPenaltyAction(context),
+
+                ),
+
+              ),
+
+            ),
+
+          ],
+
+        );
+
+    }
+
+  }
+
 }
+
+
+
+/// Temporary — show overdue banner in leader view for UI / navigation review.
+const _kPreviewMemberOverdueBanner = true;
+
+class _MemberDetailBody extends StatelessWidget {
+
+  const _MemberDetailBody({
+
+    required this.member,
+
+    required this.activity,
+
+    required this.projectId,
+
+    this.project,
+
+    required this.isLeaderView,
+
+    required this.showCoLeaderControls,
+
+    required this.isCoLeader,
+
+    required this.isCoLeaderActionLoading,
+
+    this.onAssignCoLeader,
+
+    this.onRemoveCoLeader,
+
+    this.onTakeAction,
+
+  });
+
+
+
+  final MemberEntity member;
+
+  final MemberActivityEntity activity;
+
+  final String projectId;
+
+  final ProjectDetailEntity? project;
+
+  final bool isLeaderView;
+
+  final bool showCoLeaderControls;
+
+  final bool isCoLeader;
+
+  final bool isCoLeaderActionLoading;
+
+  final VoidCallback? onAssignCoLeader;
+
+  final VoidCallback? onRemoveCoLeader;
+
+  final VoidCallback? onTakeAction;
+
+  @override
+
+  Widget build(BuildContext context) {
+
+    return Column(
+
+      crossAxisAlignment: CrossAxisAlignment.start,
+
+      children: [
+
+        MemberIdentitySection(
+
+          member: member,
+
+          username: MemberActivityDisplay.formatUsername(member),
+
+          projectName: '',
+
+          showCoLeaderRoleControls: showCoLeaderControls,
+
+          isCoLeader: isCoLeader,
+
+          isCoLeaderActionLoading: isCoLeaderActionLoading,
+
+          onAssignCoLeader: onAssignCoLeader,
+
+          onRemoveCoLeader: onRemoveCoLeader,
+
+        ),
+
+        SizedBox(height: 16.h),
+
+        MemberMetricsSection(
+
+          contributed: MemberActivityDisplay.formatCurrencyMetric(
+
+            activity.totalContributed,
+
+          ),
+
+          contributions: '${activity.contributionCount}',
+
+          borrowed: MemberActivityDisplay.formatCurrencyMetric(
+
+            activity.totalBorrowed,
+
+          ),
+
+        ),
+
+        SizedBox(height: 24.h),
+
+        MemberTransactionsSection(transactions: activity.transactions),
+
+        if (isLeaderView &&
+            (_kPreviewMemberOverdueBanner || activity.hasOverdue)) ...[
+          SizedBox(height: 12.h),
+          MemberOverdueBanner(
+            member: member,
+            projectId: projectId,
+            project: project,
+            onTakeAction: onTakeAction,
+          ),
+        ],
+
+      ],
+
+    );
+
+  }
+
+}
+
+

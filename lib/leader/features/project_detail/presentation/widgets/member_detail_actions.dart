@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_action_dialog.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 
+/// Full-width red-outline row action (penalty / legacy leader screens).
 class LeaderActionOutlineButton extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
@@ -47,7 +47,7 @@ class LeaderActionOutlineButton extends StatelessWidget {
 Future<void> showRemoveMemberConfirm(
   BuildContext context, {
   required String memberName,
-  Future<void> Function()? onConfirmed,
+  required VoidCallback onConfirmed,
 }) {
   return AppActionDialog.show(
     context,
@@ -55,16 +55,16 @@ Future<void> showRemoveMemberConfirm(
     description: AppStrings.removeMemberBody(memberName),
     primaryLabel: AppStrings.btnRemove,
     primaryColor: AppColors.red800,
-    onPrimary: () async {
+    onPrimary: () {
       Navigator.of(context).pop();
-      await onConfirmed?.call();
+      onConfirmed();
     },
   );
 }
 
 Future<void> showMarkDefaultedConfirm(
   BuildContext context, {
-  Future<void> Function()? onConfirmed,
+  required VoidCallback onConfirmed,
 }) {
   return AppActionDialog.show(
     context,
@@ -72,70 +72,47 @@ Future<void> showMarkDefaultedConfirm(
     description: AppStrings.markDefaultedConfirmBody,
     primaryLabel: AppStrings.markAsDefaulted,
     primaryColor: AppColors.red800,
-    onPrimary: () async {
+    onPrimary: () {
       Navigator.of(context).pop();
-      await onConfirmed?.call();
+      onConfirmed();
     },
   );
 }
 
-Future<void> showMakeCoLeaderFlow(
+Future<void> showMakeCoLeaderConfirm(
   BuildContext context, {
   required String memberName,
-  required String projectName,
-  Future<bool> Function()? onConfirmed,
-}) async {
-  var shouldShowSuccess = true;
-  await AppActionDialog.show(
+  required VoidCallback onConfirmed,
+}) {
+  return AppActionDialog.show(
     context,
     title: AppStrings.makeCoLeaderConfirmTitle,
     description: AppStrings.makeCoLeaderDescription(memberName),
     primaryLabel: AppStrings.btnMakeCoLeader,
-    primaryColor: AppColors.purple800,
-    onPrimary: () async {
+    primaryColor: AppColors.makeCoLeaderDialogButton,
+    primaryBorderColor: AppColors.makeCoLeaderDialogButton,
+    onPrimary: () {
       Navigator.of(context).pop();
-      shouldShowSuccess = await onConfirmed?.call() ?? true;
+      onConfirmed();
     },
-  );
-  if (!context.mounted || !shouldShowSuccess) return;
-  await AppActionDialog.showSuccessOk(
-    context,
-    title: AppStrings.coLeaderAssignedTitle,
-    description: AppStrings.coLeaderAssignedDescription(memberName, projectName),
-    onPrimary: () => Navigator.of(context).pop(),
   );
 }
 
-Future<void> showRemoveCoLeaderFlow(
+Future<void> showRemoveCoLeaderConfirm(
   BuildContext context, {
   required String memberName,
-  required String projectName,
-  Future<bool> Function()? onConfirmed,
-}) async {
-  var shouldShowSuccess = true;
-  await AppActionDialog.show(
+  required VoidCallback onConfirmed,
+}) {
+  return AppActionDialog.show(
     context,
     title: AppStrings.removeCoLeaderConfirmTitle,
     description: AppStrings.removeCoLeaderDescription(memberName),
     primaryLabel: AppStrings.btnRemoveCoLeader,
     secondaryLabel: AppStrings.btnCancel,
     primaryColor: AppColors.red800,
-    onPrimary: () async {
+    onPrimary: () {
       Navigator.of(context).pop();
-      shouldShowSuccess = await onConfirmed?.call() ?? true;
+      onConfirmed();
     },
-  );
-  if (!context.mounted || !shouldShowSuccess) return;
-  await AppActionDialog.show(
-    context,
-    title: AppStrings.coLeaderRemovedTitle,
-    description: AppStrings.coLeaderRemovedDescription(memberName, projectName),
-    primaryLabel: AppStrings.btnOk,
-    showSecondary: false,
-    primaryColor: Colors.transparent,
-    primaryTextColor: AppColors.neutral1200,
-    primaryBorderColor: AppColors.neutral1200,
-    iconAsset: AppAssets.failureIcon,
-    onPrimary: () => Navigator.of(context).pop(),
   );
 }

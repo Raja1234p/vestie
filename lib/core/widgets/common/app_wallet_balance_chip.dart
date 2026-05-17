@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../constants/app_assets.dart';
+import '../../constants/app_strings.dart';
 import '../../theme/app_colors.dart';
-import 'app_svg_icon.dart';
-
-/// "Wallet: \$2,400" pill for contribute amount / confirm payment rows.
+/// "Wallet Balance: \$2,400" pill for contribute amount / confirm payment rows.
 class AppWalletBalanceChip extends StatelessWidget {
   const AppWalletBalanceChip({
     super.key,
@@ -14,21 +12,19 @@ class AppWalletBalanceChip extends StatelessWidget {
     this.minWidth,
     this.backgroundColor,
     this.borderColor,
-    this.showChevron = false,
     this.onTap,
   });
 
-  /// Digits with grouping only, e.g. `2,400` — `\$` is prepended in the label.
+  /// Digits with grouping only, e.g. `2,400` — `\$` is prepended after the label.
   final String formattedBalance;
 
-  /// Minimum pill width; grows with text + chevron. Defaults to `140.w`.
+  /// Minimum pill width; grows with text. Defaults to `140.w`.
   final double? minWidth;
 
   /// Defaults to [AppColors.searchBarBg] (`#F8F7FA`).
   final Color? backgroundColor;
 
   final Color? borderColor;
-  final bool showChevron;
   final VoidCallback? onTap;
 
   @override
@@ -39,39 +35,24 @@ class AppWalletBalanceChip extends StatelessWidget {
     );
 
     final textStyle = base.copyWith(height: 1.0);
-    final content = Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text.rich(
+    final content = Text.rich(
+      TextSpan(
+        style: textStyle,
+        children: [
           TextSpan(
-            style: textStyle,
-            children: [
-              TextSpan(
-                text: 'Wallet: ',
-                style: textStyle.copyWith(fontWeight: FontWeight.w400),
-              ),
-              TextSpan(
-                text: '\$$formattedBalance',
-                style: textStyle.copyWith(fontWeight: FontWeight.w600),
-              ),
-            ],
+            text: '${AppStrings.walletBalanceLabel} ',
+            style: textStyle.copyWith(fontWeight: FontWeight.w400),
           ),
-          textHeightBehavior: const TextHeightBehavior(
-            applyHeightToFirstAscent: false,
-            applyHeightToLastDescent: false,
-          ),
-        ),
-        if (showChevron) ...[
-          SizedBox(width: 4.w),
-          AppSvgIcon(
-            assetPath: AppAssets.iconArrowDown01,
-            size: 20.sp,
-            color: AppColors.neutral1200,
+          TextSpan(
+            text: '\$$formattedBalance',
+            style: textStyle.copyWith(fontWeight: FontWeight.w600),
           ),
         ],
-      ],
+      ),
+      textHeightBehavior: const TextHeightBehavior(
+        applyHeightToFirstAscent: false,
+        applyHeightToLastDescent: false,
+      ),
     );
 
     final radius = BorderRadius.circular(999.r);

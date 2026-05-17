@@ -1,11 +1,19 @@
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/network/base_api_client.dart';
 
+import '../models/member_activity_response_model.dart';
 import '../models/pending_membership_model.dart';
 
 abstract class ProjectActionsRemoteDataSource {
   /// Week 3 — `GET /projects/{id}/memberships/pending`
   Future<List<PendingMembershipModel>> listPendingJoinRequests(String projectId);
+
+  /// `GET /projects/{projectId}/members/{userId}/activity`
+  Future<MemberActivityResponseModel> getMemberActivity({
+    required String projectId,
+    required String userId,
+    required String projectName,
+  });
 
   Future<void> approveJoinRequest(String projectId, String membershipId);
   Future<void> rejectJoinRequest(String projectId, String membershipId);
@@ -65,6 +73,25 @@ class ProjectActionsRemoteDataSourceImpl implements ProjectActionsRemoteDataSour
         .whereType<Map>()
         .map((m) => PendingMembershipModel.fromJson(m.cast<String, dynamic>()))
         .toList(growable: false);
+  }
+
+  @override
+  Future<MemberActivityResponseModel> getMemberActivity({
+    required String projectId,
+    required String userId,
+    required String projectName,
+  }) async {
+    final response = await apiClient.get<dynamic>(
+      ApiConstants.projectMemberActivity(projectId, userId),
+    );
+    final map = switch (response) {
+      final Map m => m.cast<String, dynamic>(),
+      _ => <String, dynamic>{},
+    };
+    return MemberActivityResponseModel.fromJson(
+      map,
+      projectName: projectName,
+    );
   }
 
   @override
@@ -140,7 +167,9 @@ class ProjectActionsRemoteDataSourceImpl implements ProjectActionsRemoteDataSour
     required String projectId,
     required String userId,
   }) async {
-    await apiClient.post('${ApiConstants.projects}/$projectId/members/$userId/defaulted');
+    await apiClient.post(
+      ApiConstants.projectMemberDefaulted(projectId, userId),
+    );
   }
 
   @override
@@ -148,7 +177,9 @@ class ProjectActionsRemoteDataSourceImpl implements ProjectActionsRemoteDataSour
     required String projectId,
     required String userId,
   }) async {
-    await apiClient.post('${ApiConstants.projects}/$projectId/members/$userId/remove-non-repayment');
+    await apiClient.post(
+      ApiConstants.projectMemberRemoveNonRepayment(projectId, userId),
+    );
   }
 
   @override

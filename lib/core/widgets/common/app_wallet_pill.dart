@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../constants/app_assets.dart';
+import '../../constants/app_strings.dart';
 import '../../theme/app_colors.dart';
-import 'app_svg_icon.dart';
+import '../text/app_text.dart';
 
-/// Reusable "Wallet: $X" pill with optional tap (e.g. future payment method picker).
-/// Uses [Ink] so the fill is one rounded surface — avoids rectangular [Material] color
-/// bleeding past the pill corners.
+/// Reusable "Wallet Balance: $X" pill with optional tap.
 class AppWalletPill extends StatelessWidget {
   const AppWalletPill({
     super.key,
@@ -18,7 +16,7 @@ class AppWalletPill extends StatelessWidget {
     this.borderColor,
   });
 
-  /// Display string with currency, e.g. "2,400" — "Wallet: \$" is prepended.
+  /// Display string with currency, e.g. "2,400" — label + `\$` are prepended.
   final String formattedBalance;
   final VoidCallback? onTap;
 
@@ -48,24 +46,13 @@ class AppWalletPill extends StatelessWidget {
           ),
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Wallet: \$$formattedBalance',
-                  style: GoogleFonts.lato(
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.grey1100,
-                  ),
-                ),
-                SizedBox(width: 4.w),
-                AppSvgIcon(
-                  assetPath: AppAssets.iconChevronDown,
-                  size: 20.sp,
-                  color: AppColors.grey1100,
-                ),
-              ],
+            child: AppText(
+              '${AppStrings.walletBalanceLabel} \$$formattedBalance',
+              style: GoogleFonts.lato(
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w600,
+                color: AppColors.grey1100,
+              ),
             ),
           ),
         ),

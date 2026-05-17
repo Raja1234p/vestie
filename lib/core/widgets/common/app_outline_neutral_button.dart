@@ -14,6 +14,7 @@ class AppOutlineNeutralButton extends StatelessWidget {
   final Widget? leading;
   /// When null, uses [AppColors.neutral1200] for the label.
   final Color? labelColor;
+  final bool isLoading;
 
   const AppOutlineNeutralButton({
     super.key,
@@ -23,6 +24,7 @@ class AppOutlineNeutralButton extends StatelessWidget {
     this.borderColor,
     this.leading,
     this.labelColor,
+    this.isLoading = false,
   });
 
   @override
@@ -35,7 +37,7 @@ class AppOutlineNeutralButton extends StatelessWidget {
       color: AppColors.surface,
       borderRadius: BorderRadius.circular(radius),
       child: InkWell(
-        onTap: onPressed,
+        onTap: isLoading ? null : onPressed,
         borderRadius: BorderRadius.circular(radius),
         child: Container(
           width: double.infinity,
@@ -45,7 +47,16 @@ class AppOutlineNeutralButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(radius),
             border: Border.all(color: border, width: 1.5.w),
           ),
-          child: leading == null
+          child: isLoading
+              ? SizedBox(
+                  width: 22.w,
+                  height: 22.h,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: textColor,
+                  ),
+                )
+              : leading == null
               ? AppText(
                   label,
                   style: theme.textTheme.labelLarge?.copyWith(

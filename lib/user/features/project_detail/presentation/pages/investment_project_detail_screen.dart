@@ -109,12 +109,18 @@ class _InvestmentProjectDetailBody extends StatelessWidget {
               final pendingCount = state.pendingJoinRequestCount;
               final isCompleted = project.status == ProjectStatus.completed;
 
-              void openMemberDetail(MemberEntity member) {
-                ProjectDetailNavigationHelpers.openMemberProfile(
+              Future<void> openMemberDetail(MemberEntity member) async {
+                final refreshed =
+                    await ProjectDetailNavigationHelpers.openMemberProfile(
                   context,
                   project: project,
                   member: member,
                 );
+                if (refreshed == true && context.mounted) {
+                  context.read<ProjectDetailBloc>().add(
+                        LoadProjectDetailEvent(projectId: projectId),
+                      );
+                }
               }
 
               return RefreshIndicator(

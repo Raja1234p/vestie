@@ -1,4 +1,5 @@
 import '../../domain/entities/member_entity.dart';
+import '../../domain/entities/member_entity_extensions.dart';
 import '../../domain/entities/project_detail_entity.dart';
 
 /// When [ProjectMemberRow] shows the Add Friend CTA.
@@ -33,9 +34,9 @@ abstract final class ProjectMemberAddFriendVisibility {
 
     final viewerUserId = _viewerUserId(project, member);
     if (viewerUserId == null) return false;
-    final memberUserId = member.userId.trim();
+    final memberUserId = member.apiUserId;
     if (memberUserId.isNotEmpty && memberUserId == viewerUserId) return true;
-    return member.id.trim().isNotEmpty && member.id.trim() == viewerUserId;
+    return false;
   }
 
   static String? _viewerUserId(

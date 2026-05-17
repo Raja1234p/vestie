@@ -1,11 +1,18 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/error/failures.dart';
+import '../entities/member_activity_entity.dart';
 import '../entities/pending_join_request_entity.dart';
 
 abstract class ProjectActionsRepository {
   Future<Either<Failure, List<PendingJoinRequestEntity>>> listPendingJoinRequests(
     String projectId,
   );
+
+  Future<Either<Failure, MemberActivityEntity>> getMemberActivity({
+    required String projectId,
+    required String userId,
+    required String projectName,
+  });
 
   Future<Either<Failure, void>> approveJoinRequest(
     String projectId,

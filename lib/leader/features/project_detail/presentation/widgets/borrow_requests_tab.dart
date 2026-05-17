@@ -30,10 +30,10 @@ class BorrowRequestsTab extends StatelessWidget {
   Widget build(BuildContext context) {
     if (requests.isEmpty) {
       return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const BorrowRequestsEmptyState(),
-          SizedBox(height: 10.h),
           _ViewAllRequestsLink(onTap: onViewAll),
+          const BorrowRequestsEmptyState(compactTop: true),
         ],
       );
     }
@@ -65,20 +65,20 @@ class _ViewAllRequestsLink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: Container(
-        width: double.infinity,
-        color: AppColors.surface,
-        padding: EdgeInsets.symmetric(vertical: 14.h),
-        alignment: Alignment.center,
-        child: AppText(
-          AppStrings.viewAllRequests,
-          style: GoogleFonts.lato(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w500,
-            color: AppColors.neutral1200,
+    return Align(
+      alignment: Alignment.centerRight,
+      child: GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: Padding(
+          padding: EdgeInsets.only(bottom: 8.h),
+          child: AppText(
+            AppStrings.viewAllRequests,
+            style: GoogleFonts.lato(
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w500,
+              color: AppColors.neutral1200,
+            ),
           ),
         ),
       ),

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
+
+import '../error/failure_mapper.dart';
 import '../error/failures.dart';
-import '../models/api_error_response_model.dart';
 
 class BaseApiClient {
   final Dio dio;
@@ -32,38 +33,11 @@ class BaseApiClient {
         throw ServerFailure();
       }
     } on DioException catch (e) {
-      if (e.response != null && e.response!.data is Map<String, dynamic>) {
-        final apiError = ApiErrorResponseModel.fromJson(e.response!.data as Map<String, dynamic>);
-        if (e.response!.statusCode == 400) {
-          throw ValidationFailure(
-            apiError.detail ?? apiError.title,
-            apiError.title,
-            apiError.errors,
-          );
-        } else if (e.response!.statusCode == 401) {
-          throw UnauthorizedFailure(
-            apiError.detail ?? apiError.title,
-            apiError.title,
-          );
-        } else if (e.response!.statusCode == 403) {
-          throw ForbiddenFailure(
-            apiError.detail ?? apiError.title,
-            apiError.title,
-          );
-        }
-        throw ServerFailure(
-          apiError.detail ?? apiError.title,
-          apiError.title,
-        );
-      }
-      if (e.type == DioExceptionType.connectionTimeout || e.type == DioExceptionType.receiveTimeout) {
-         throw const TimeoutFailure();
-      }
-      throw const NetworkFailure();
+      throw FailureMapper.fromDioException(e);
     } on Failure {
       rethrow;
     } catch (e) {
-      throw UnknownFailure(e.toString());
+      throw FailureMapper.fromException(e);
     }
   }
 }

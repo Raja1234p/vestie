@@ -1,4 +1,6 @@
 import 'package:dartz/dartz.dart';
+
+import '../../../../core/error/failure_mapper.dart';
 import '../../../../core/error/failures.dart';
 import '../../domain/repositories/voting_repository.dart';
 import '../datasources/voting_remote_data_source.dart';
@@ -35,7 +37,7 @@ class VotingRepositoryImpl implements VotingRepository {
     } on Failure catch (f) {
       return Left(f);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(FailureMapper.fromException(e));
     }
   }
 }

@@ -11,11 +11,14 @@ import 'package:vestie/core/widgets/text/app_text.dart';
 class BorrowRequestsEmptyState extends StatelessWidget {
   /// Full-screen lists — vertically centered under the header.
   final bool centered;
+  /// Tab preview with "View All" above — less top inset.
+  final bool compactTop;
   final String title;
 
   const BorrowRequestsEmptyState({
     super.key,
     this.centered = false,
+    this.compactTop = false,
     this.title = AppStrings.borrowRequestsEmpty,
   });
 
@@ -54,7 +57,12 @@ class BorrowRequestsEmptyState extends StatelessWidget {
     }
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(24.w, 56.h, 24.w, 48.h),
+      padding: EdgeInsets.fromLTRB(
+        24.w,
+        compactTop ? 16.h : 56.h,
+        24.w,
+        48.h,
+      ),
       child: content,
     );
   }

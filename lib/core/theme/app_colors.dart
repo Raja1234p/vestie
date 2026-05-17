@@ -267,6 +267,9 @@ class AppColors {
 
   /// VFF badge — Action/Primary/Pressed (Figma).
   static const Color actionPrimaryPressed = purple800; // #6230C2
+
+  /// Make Co-Leader confirmation dialog primary CTA (Figma #6230C2).
+  static const Color makeCoLeaderDialogButton = purple800;
   static const Color actionPrimaryBorderLight = grey100; // #F8F7FA
   static const Color actionPrimaryBorderDark = purple600; // #9268EC
   static const Color actionPrimaryInnerShadow = Color(0xFFCABEE5);

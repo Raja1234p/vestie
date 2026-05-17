@@ -49,22 +49,23 @@ class ProjectDetailNavigationHelpers {
       member: member,
       projectId: project.id,
       projectName: project.name,
+      project: project,
       isLeaderView: project.isModeratorView,
-      isPrimaryLeaderView: project.isGroupLeader,
     );
   }
 
   /// Member / CoLeader / GroupLeader — opens project member profile.
-  static void openMemberProfile(
+  /// Returns `true` when co-leader / remove-member / penalty-remove succeeded (caller may reload).
+  static Future<bool?> openMemberProfile(
     BuildContext context, {
     required ProjectDetailEntity project,
     required MemberEntity member,
-  }) {
+  }) async {
     if (!project.canReviewMemberProfiles) {
       AppSnackBar.showError(context, AppStrings.errorForbidden);
-      return;
+      return null;
     }
-    context.push(
+    return context.push<bool>(
       AppRoutes.memberDetail,
       extra: memberDetailArgs(project, member),
     );

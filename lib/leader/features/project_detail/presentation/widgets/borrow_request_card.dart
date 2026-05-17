@@ -7,7 +7,6 @@ import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_avatar_circle.dart';
-import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import 'package:vestie/core/widgets/common/app_vote_buttons.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
@@ -20,7 +19,6 @@ enum BorrowRequestActionMode { vote, decision }
 /// Each card manages its own BorrowVoteCubit internally.
 class BorrowRequestCard extends StatelessWidget {
   final BorrowRequestEntity request;
-  final VoidCallback? onArrowTap;
   final BorrowRequestActionMode actionMode;
   final VoidCallback? onAccept;
   final VoidCallback? onReject;
@@ -28,7 +26,6 @@ class BorrowRequestCard extends StatelessWidget {
   const BorrowRequestCard({
     super.key,
     required this.request,
-    this.onArrowTap,
     this.actionMode = BorrowRequestActionMode.vote,
     this.onAccept,
     this.onReject,
@@ -43,7 +40,6 @@ class BorrowRequestCard extends StatelessWidget {
       ),
       child: _BorrowRequestCardBody(
         request: request,
-        onArrowTap: onArrowTap,
         actionMode: actionMode,
         onAccept: onAccept,
         onReject: onReject,
@@ -55,14 +51,12 @@ class BorrowRequestCard extends StatelessWidget {
 // ── Card body ─────────────────────────────────────────────────────────────────
 class _BorrowRequestCardBody extends StatelessWidget {
   final BorrowRequestEntity request;
-  final VoidCallback? onArrowTap;
   final BorrowRequestActionMode actionMode;
   final VoidCallback? onAccept;
   final VoidCallback? onReject;
 
   const _BorrowRequestCardBody({
     required this.request,
-    this.onArrowTap,
     required this.actionMode,
     this.onAccept,
     this.onReject,
@@ -84,10 +78,10 @@ class _BorrowRequestCardBody extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Header: avatar + name + loan type + arrow ──────
+          // ── Header: avatar + name + loan type ───────────────
           Row(
             children: [
-              AppAvatarCircle(initials: request.initials,size: 55.h,),
+              AppAvatarCircle(initials: request.initials, size: 55.h),
               SizedBox(width: 12.w),
               Expanded(
                 child: Column(
@@ -109,14 +103,6 @@ class _BorrowRequestCardBody extends StatelessWidget {
                       ),
                     ),
                   ],
-                ),
-              ),
-              GestureDetector(
-                onTap: onArrowTap,
-                child: AppSvgIcon(
-                  assetPath: AppAssets.iconChevronRight,
-                  color: AppColors.textBody,
-                  size: 22.w,
                 ),
               ),
             ],

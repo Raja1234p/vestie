@@ -221,7 +221,6 @@ class _ContributeConfirmView extends StatelessWidget {
                         formattedBalance: walletFormatted,
                         backgroundColor: Colors.white,
                         borderColor: AppColors.neutral400,
-                        showChevron: true,
                       ),
                     ),
                   ),

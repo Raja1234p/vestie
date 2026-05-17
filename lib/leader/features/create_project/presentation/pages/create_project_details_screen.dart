@@ -72,20 +72,27 @@ class _CreateProjectDetailsScreenState extends State<CreateProjectDetailsScreen>
     }
     if (initial.isAfter(lastDay)) initial = lastDay;
 
-    final picked = await showProjectDeadlinePicker(
+    final result = await showProjectDeadlinePicker(
       ctx,
       initial: initial,
       firstDate: today,
       lastDate: lastDay,
+      allowClear: stored != null,
     );
 
     if (!ctx.mounted) return;
-    // Cancel — leave existing deadline unchanged.
-    if (picked == null) return;
 
-    final chosen = CreateProjectCubit.calendarDate(picked);
-    if (chosen.isBefore(today) || chosen.isAfter(lastDay)) return;
-    cubit.setDeadline(chosen);
+    switch (result.action) {
+      case ProjectDeadlinePickerAction.cancelled:
+        return;
+      case ProjectDeadlinePickerAction.cleared:
+        cubit.clearDeadline();
+        return;
+      case ProjectDeadlinePickerAction.confirmed:
+        final chosen = CreateProjectCubit.calendarDate(result.date!);
+        if (chosen.isBefore(today) || chosen.isAfter(lastDay)) return;
+        cubit.setDeadline(chosen);
+    }
   }
 
   @override
@@ -167,6 +174,9 @@ class _CreateProjectDetailsScreenState extends State<CreateProjectDetailsScreen>
                           isEmpty: form.deadline == null,
                           errorText: form.deadlineError,
                           onTap: () => _pickDate(context),
+                          onClear: form.deadline != null
+                              ? cubit.clearDeadline
+                              : null,
                         ),
                         SizedBox(height: 16.h),
                         CPFieldLabel(AppStrings.labelVisibility),

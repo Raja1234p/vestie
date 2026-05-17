@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../constants/app_assets.dart';
 import '../../constants/app_strings.dart';
+import '../../error/failure_mapper.dart';
+import '../../error/failures.dart';
 import '../../theme/app_colors.dart';
 import '../text/app_text.dart';
 import 'app_svg_icon.dart';
@@ -31,6 +33,20 @@ class AppFailureDialog {
         message: message,
         onRetry: onRetry,
       ),
+    );
+  }
+
+  /// Shows API-aware copy from [failure] (`detail` / `title` from problem+json).
+  static Future<void> showFailure(
+    BuildContext context, {
+    required Failure failure,
+    VoidCallback? onRetry,
+  }) {
+    return show(
+      context,
+      title: FailureMapper.dialogTitle(failure),
+      message: FailureMapper.userMessage(failure),
+      onRetry: onRetry,
     );
   }
 }

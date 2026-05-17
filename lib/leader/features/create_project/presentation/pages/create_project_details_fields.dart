@@ -14,32 +14,52 @@ import '../cubit/create_project_cubit.dart';
 
 final _categoryDropdownRadius = BorderRadius.circular(AppRadius.r12);
 
-/// Project deadline picker — explicit OK/Cancel so today-on-OK is saved and cancel keeps prior value.
-Future<DateTime?> showProjectDeadlinePicker(
+enum ProjectDeadlinePickerAction { cancelled, cleared, confirmed }
+
+class ProjectDeadlinePickerResult {
+  const ProjectDeadlinePickerResult._(this.action, [this.date]);
+
+  final ProjectDeadlinePickerAction action;
+  final DateTime? date;
+
+  static const cancelled =
+      ProjectDeadlinePickerResult._(ProjectDeadlinePickerAction.cancelled);
+  static const cleared =
+      ProjectDeadlinePickerResult._(ProjectDeadlinePickerAction.cleared);
+  static ProjectDeadlinePickerResult confirmed(DateTime date) =>
+      ProjectDeadlinePickerResult._(ProjectDeadlinePickerAction.confirmed, date);
+}
+
+/// OK saves the picked day; Cancel dismisses without changing form/API; Remove deadline clears it.
+Future<ProjectDeadlinePickerResult> showProjectDeadlinePicker(
   BuildContext context, {
   required DateTime initial,
   required DateTime firstDate,
   required DateTime lastDate,
+  bool allowClear = false,
 }) {
-  return showDialog<DateTime?>(
+  return showDialog<ProjectDeadlinePickerResult>(
     context: context,
     builder: (dialogContext) => _ProjectDeadlinePickerDialog(
       initial: CreateProjectCubit.calendarDate(initial),
       firstDate: CreateProjectCubit.calendarDate(firstDate),
       lastDate: CreateProjectCubit.calendarDate(lastDate),
+      allowClear: allowClear,
     ),
-  );
+  ).then((value) => value ?? ProjectDeadlinePickerResult.cancelled);
 }
 
 class _ProjectDeadlinePickerDialog extends StatefulWidget {
   final DateTime initial;
   final DateTime firstDate;
   final DateTime lastDate;
+  final bool allowClear;
 
   const _ProjectDeadlinePickerDialog({
     required this.initial,
     required this.firstDate,
     required this.lastDate,
+    this.allowClear = false,
   });
 
   @override
@@ -60,10 +80,12 @@ class _ProjectDeadlinePickerDialogState
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      insetPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       contentPadding: EdgeInsets.zero,
+      actionsPadding: EdgeInsets.only(right: 4.w, bottom: 2.h),
       content: SizedBox(
-        width: 328.w,
-        height: 360.h,
+        width: double.maxFinite,
+        height: 430.h,
         child: CalendarDatePicker(
           initialDate: _selected,
           firstDate: widget.firstDate,
@@ -80,12 +102,23 @@ class _ProjectDeadlinePickerDialogState
         ),
       ),
       actions: [
+        if (widget.allowClear)
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(
+              ProjectDeadlinePickerResult.cleared,
+            ),
+            child: Text(AppStrings.btnRemoveDeadline),
+          ),
         TextButton(
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => Navigator.of(context).pop(
+            ProjectDeadlinePickerResult.cancelled,
+          ),
           child: Text(AppStrings.btnCancel),
         ),
         TextButton(
-          onPressed: () => Navigator.of(context).pop(_selected),
+          onPressed: () => Navigator.of(context).pop(
+            ProjectDeadlinePickerResult.confirmed(_selected),
+          ),
           child: Text(AppStrings.btnOk),
         ),
       ],
@@ -99,6 +132,7 @@ class CPDeadlinePicker extends StatelessWidget {
   final bool isEmpty;
   final String? errorText;
   final VoidCallback onTap;
+  final VoidCallback? onClear;
 
   const CPDeadlinePicker({
     super.key,
@@ -106,6 +140,7 @@ class CPDeadlinePicker extends StatelessWidget {
     required this.isEmpty,
     required this.onTap,
     this.errorText,
+    this.onClear,
   });
 
   @override
@@ -138,6 +173,27 @@ class CPDeadlinePicker extends StatelessWidget {
                     ),
                   ),
                 ),
+                if (!isEmpty && onClear != null) ...[
+                  Tooltip(
+                    message: AppStrings.btnRemoveDeadline,
+                    child: GestureDetector(
+                      onTap: onClear,
+                      behavior: HitTestBehavior.opaque,
+                      child: Padding(
+                        padding: EdgeInsets.only(right: 8.w),
+                        child: Semantics(
+                          label: AppStrings.btnRemoveDeadline,
+                          button: true,
+                          child: Icon(
+                            Icons.close,
+                            size: 20.w,
+                            color: AppColors.inputFieldIcon,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
                 AppSvgIcon(
                   assetPath: AppAssets.iconCalendar,
                   size: 20.w,

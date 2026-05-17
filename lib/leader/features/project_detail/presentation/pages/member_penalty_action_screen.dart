@@ -2,150 +2,167 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:vestie/app/router/route_args/project_detail_flow_args.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
-import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/core/utils/app_snackbar.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
-import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
+import 'package:vestie/features/project_detail/domain/entities/member_entity_extensions.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/member_detail_actions_visibility.dart';
 import '../widgets/member_detail_actions.dart';
+import '../widgets/member_detail_result_dialogs.dart';
+import '../widgets/penalty_action_content.dart';
+import '../widgets/penalty_action_footer.dart';
 
-class MemberPenaltyActionScreen extends StatelessWidget {
+class MemberPenaltyActionScreen extends StatefulWidget {
   final MemberEntity member;
   final String projectId;
+  final ProjectDetailEntity? project;
 
   const MemberPenaltyActionScreen({
     super.key,
     required this.member,
     required this.projectId,
+    this.project,
   });
 
-  Future<void> _removeMember(BuildContext context) async {
-    final result = await ServiceLocator.instance.removeForNonRepaymentUseCase(
-      projectId: projectId,
-      userId: member.id,
-    );
-    if (!context.mounted) return;
-    result.fold(
-      (failure) => AppSnackBar.showError(context, failure.message),
-      (_) => AppSnackBar.showSuccess(context, 'Member removed successfully'),
+  @override
+  State<MemberPenaltyActionScreen> createState() =>
+      _MemberPenaltyActionScreenState();
+}
+
+class _MemberPenaltyActionScreenState extends State<MemberPenaltyActionScreen> {
+  bool _isRemoving = false;
+  bool _isMarkingDefaulted = false;
+
+  String get _userId => widget.member.apiUserId;
+
+  bool get _showRemoveMember {
+    final p = widget.project;
+    if (p == null) return false;
+    return MemberDetailActionsVisibility.showRemoveMember(
+      project: p,
+      member: widget.member,
     );
   }
 
-  Future<void> _markDefaulted(BuildContext context) async {
-    final result = await ServiceLocator.instance.markDefaultedUseCase(
-      projectId: projectId,
-      userId: member.id,
+  bool get _showMarkAsDefaulted {
+    final p = widget.project;
+    if (p == null) return false;
+    return MemberDetailActionsVisibility.showMarkAsDefaulted(
+      project: p,
+      member: widget.member,
     );
-    if (!context.mounted) return;
+  }
+
+  Future<void> _removeMember() async {
+    if (_isRemoving || _isMarkingDefaulted) return;
+    setState(() => _isRemoving = true);
+
+    final result =
+        await ServiceLocator.instance.removeForNonRepaymentUseCase(
+      projectId: widget.projectId,
+      userId: _userId,
+    );
+
+    if (!mounted) return;
+    setState(() => _isRemoving = false);
+
     result.fold(
-      (failure) => AppSnackBar.showError(context, failure.message),
-      (_) => AppSnackBar.showSuccess(context, 'Member marked as defaulted'),
+      (failure) => showMemberDetailErrorDialog(
+        context,
+        failure: failure,
+      ),
+      (_) {
+        showMemberRemovedSuccess(
+          context,
+          onOk: () {
+            Navigator.of(context).pop();
+            context.pop(MemberPenaltyActionOutcome.memberRemoved);
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _markDefaulted() async {
+    if (_isRemoving || _isMarkingDefaulted) return;
+    setState(() => _isMarkingDefaulted = true);
+
+    final result = await ServiceLocator.instance.markDefaultedUseCase(
+      projectId: widget.projectId,
+      userId: _userId,
+    );
+
+    if (!mounted) return;
+    setState(() => _isMarkingDefaulted = false);
+
+    result.fold(
+      (failure) => showMemberDetailErrorDialog(
+        context,
+        failure: failure,
+      ),
+      (_) {
+        showMemberMarkedDefaultedSuccess(
+          context,
+          onOk: () {
+            Navigator.of(context).pop();
+            context.pop(MemberPenaltyActionOutcome.memberUpdated);
+          },
+        );
+      },
+    );
+  }
+
+  void _promptRemoveMember() {
+    showRemoveMemberConfirm(
+      context,
+      memberName: widget.member.name,
+      onConfirmed: _removeMember,
+    );
+  }
+
+  void _promptMarkDefaulted() {
+    showMarkDefaultedConfirm(
+      context,
+      onConfirmed: _markDefaulted,
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final showFooter = _showRemoveMember || _showMarkAsDefaulted;
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: PostAuthGradientBackground(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              PostAuthHeader(
-                title: AppStrings.penaltyActionTitle,
-                leading: AppBackButton(
-                  onPressed: () => context.pop(),
-                ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            PostAuthHeader(
+              title: AppStrings.penaltyActionTitle,
+              leading: AppBackButton(onPressed: () => context.pop()),
+            ),
+            SizedBox(height: 8.h),
+            const Expanded(
+              child: SingleChildScrollView(
+                child: PenaltyActionContent(),
               ),
-              SizedBox(height: 14.h),
-              const _PenaltyOverviewCard(),
-              SizedBox(height: 22.h),
-              LeaderActionOutlineButton(
-                label: AppStrings.btnRemoveMember,
-                onTap: () => showRemoveMemberConfirm(
-                  context,
-                  memberName: member.name,
-                  onConfirmed: () => _removeMember(context),
-                ),
+            ),
+            if (showFooter)
+              PenaltyActionFooter(
+                showRemoveMember: _showRemoveMember,
+                showMarkAsDefaulted: _showMarkAsDefaulted,
+                onRemoveMember: _promptRemoveMember,
+                onMarkDefaulted: _promptMarkDefaulted,
+                isRemoveMemberLoading: _isRemoving,
+                isMarkDefaultedLoading: _isMarkingDefaulted,
               ),
-              SizedBox(height: 14.h),
-              LeaderActionOutlineButton(
-                label: AppStrings.markAsDefaulted,
-                onTap: () => showMarkDefaultedConfirm(
-                  context,
-                  onConfirmed: () => _markDefaulted(context),
-                ),
-              ),
-            ],
-          ),
+          ],
         ),
-      ),
-    );
-  }
-}
-
-class _PenaltyOverviewCard extends StatelessWidget {
-  const _PenaltyOverviewCard();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(14.w),
-      decoration: BoxDecoration(
-        color: AppColors.grey100,
-        borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(color: AppColors.grey400),
-      ),
-      child: Column(
-        children: [
-          _row(AppStrings.penaltyBorrowedLabel, AppStrings.penaltyBorrowedAmount),
-          SizedBox(height: 10.h),
-          _row(AppStrings.penaltyDueLabel, AppStrings.penaltyDueDateValue),
-          SizedBox(height: 10.h),
-          _row(AppStrings.penaltyOverdueLabel, AppStrings.penaltyOverdueValue),
-          SizedBox(height: 10.h),
-          _row(AppStrings.penaltyPenaltyLabel, AppStrings.penaltyChargeValue),
-          SizedBox(height: 12.h),
-          Divider(height: 1.h, color: AppColors.grey400),
-          SizedBox(height: 12.h),
-          _row(
-            AppStrings.penaltyTotalOwedLabel,
-            AppStrings.penaltyTotalOwedValue,
-            strong: true,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _row(String label, String value, {bool strong = false}) {
-    return Builder(
-      builder: (context) => Row(
-        children: [
-          AppText(
-            label,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontSize: 16.sp,
-                  color: strong ? AppColors.grey1100 : AppColors.grey700,
-                ),
-          ),
-          const Spacer(),
-          AppText(
-            value,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontSize: 16.sp,
-                  fontWeight: strong ? FontWeight.w700 : FontWeight.w600,
-                  color: AppColors.grey1100,
-                ),
-          ),
-        ],
       ),
     );
   }

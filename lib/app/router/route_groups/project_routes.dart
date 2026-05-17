@@ -98,8 +98,8 @@ List<RouteBase> buildProjectRoutes({
           member: extra.member as MemberEntity,
           projectId: extra.projectId,
           projectName: extra.projectName,
+          project: extra.project,
           isLeaderView: extra.isLeaderView,
-          isPrimaryLeaderView: extra.isPrimaryLeaderView,
         );
       },
     ),
@@ -112,6 +112,7 @@ List<RouteBase> buildProjectRoutes({
         return MemberPenaltyActionScreen(
           member: extra.member as MemberEntity,
           projectId: extra.projectId,
+          project: extra.project,
         );
       },
     ),

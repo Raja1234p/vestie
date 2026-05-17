@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 
 import 'project_wallet_flow_args.dart';
 
@@ -101,28 +102,39 @@ class MemberDetailRouteArgs<T> {
   final T member;
   final String projectId;
   final String projectName;
+  /// Viewer project context — leader actions & VFF CTA visibility.
+  final ProjectDetailEntity? project;
   /// Leader or co-leader: moderation tools (overdue, borrow context).
   final bool isLeaderView;
-  /// Primary owner only: remove member, assign / remove co-leader.
-  final bool isPrimaryLeaderView;
 
   const MemberDetailRouteArgs({
     required this.member,
     required this.projectId,
     required this.projectName,
+    this.project,
     this.isLeaderView = false,
-    this.isPrimaryLeaderView = false,
   });
 }
 
 class MemberPenaltyActionRouteArgs<T> {
   final T member;
   final String projectId;
+  /// Viewer project context — same action visibility as [MemberDetailScreen].
+  final ProjectDetailEntity? project;
 
   const MemberPenaltyActionRouteArgs({
     required this.member,
     required this.projectId,
+    this.project,
   });
+}
+
+/// Popped from penalty screen after a successful remove / mark-defaulted action.
+enum MemberPenaltyActionOutcome {
+  /// Member remains in the project — caller should reload member activity.
+  memberUpdated,
+  /// Member was removed — caller should pop member profile and refresh project.
+  memberRemoved,
 }
 
 class MarkSuccessfulRouteArgs {
