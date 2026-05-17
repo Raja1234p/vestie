@@ -7,15 +7,21 @@ import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 
-/// Figma empty state when the borrow-requests list is empty.
+/// Figma empty state when a project requests list is empty (borrow or join).
 class BorrowRequestsEmptyState extends StatelessWidget {
-  const BorrowRequestsEmptyState({super.key});
+  /// Full-screen lists — vertically centered under the header.
+  final bool centered;
+  final String title;
+
+  const BorrowRequestsEmptyState({
+    super.key,
+    this.centered = false,
+    this.title = AppStrings.borrowRequestsEmpty,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(24.w, 56.h, 24.w, 48.h),
-      child: Column(
+    final content = Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Image.asset(
@@ -26,7 +32,7 @@ class BorrowRequestsEmptyState extends StatelessWidget {
           ),
           SizedBox(height: 20.h),
           AppText(
-            AppStrings.borrowRequestsEmpty,
+            title,
             textAlign: TextAlign.center,
             style: GoogleFonts.lato(
               fontSize: 20.sp,
@@ -36,7 +42,20 @@ class BorrowRequestsEmptyState extends StatelessWidget {
             ),
           ),
         ],
-      ),
+      );
+
+    if (centered) {
+      return Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24.w),
+          child: content,
+        ),
+      );
+    }
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(24.w, 56.h, 24.w, 48.h),
+      child: content,
     );
   }
 }

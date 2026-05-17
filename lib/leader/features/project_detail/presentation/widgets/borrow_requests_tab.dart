@@ -29,7 +29,13 @@ class BorrowRequestsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (requests.isEmpty) {
-      return const BorrowRequestsEmptyState();
+      return Column(
+        children: [
+          const BorrowRequestsEmptyState(),
+          SizedBox(height: 10.h),
+          _ViewAllRequestsLink(onTap: onViewAll),
+        ],
+      );
     }
 
     final preview = requests.take(2).toList();
@@ -45,26 +51,37 @@ class BorrowRequestsTab extends StatelessWidget {
         ),
         if (requests.length > 2) ...[
           SizedBox(height: 10.h),
-          GestureDetector(
-            onTap: onViewAll,
-            behavior: HitTestBehavior.opaque,
-            child: Container(
-              width: double.infinity,
-              color: AppColors.surface,
-              padding: EdgeInsets.symmetric(vertical: 14.h),
-              alignment: Alignment.center,
-              child: AppText(
-                AppStrings.viewAllRequests,
-                style: GoogleFonts.lato(
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.neutral1200,
-                ),
-              ),
-            ),
-          ),
+          _ViewAllRequestsLink(onTap: onViewAll),
         ],
       ],
+    );
+  }
+}
+
+class _ViewAllRequestsLink extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const _ViewAllRequestsLink({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        width: double.infinity,
+        color: AppColors.surface,
+        padding: EdgeInsets.symmetric(vertical: 14.h),
+        alignment: Alignment.center,
+        child: AppText(
+          AppStrings.viewAllRequests,
+          style: GoogleFonts.lato(
+            fontSize: 18.sp,
+            fontWeight: FontWeight.w500,
+            color: AppColors.neutral1200,
+          ),
+        ),
+      ),
     );
   }
 }

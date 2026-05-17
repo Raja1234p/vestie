@@ -12,6 +12,7 @@ class AppStrings {
   static const String errorForbidden    = 'You do not have permission to view this.';
   static const String projectNotFound   = 'Project not found or is no longer available.';
   static const String joinRequestsEmpty = 'No pending join requests.';
+  static const String joinRequestsEmptyTitle = 'No Join Request';
   static const String errorUnauthorized = 'Session expired. Please log in again.';
   static const String errorServer       = 'Server error. Please try again later.';
   static const String errorTimeout      = 'Request timed out. Please try again.';

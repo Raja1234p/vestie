@@ -29,7 +29,6 @@ class ProjectDetailTrailingActions extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    // TODO(ui): hide chip when count == 0 once join-requests header is signed off.
     final showJoinChip = project.showsJoinRequestsHeaderChip;
 
     final Widget menu = switch (project.overflowMenuKind) {

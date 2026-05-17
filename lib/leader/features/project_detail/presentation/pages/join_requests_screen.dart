@@ -5,19 +5,17 @@ import 'package:go_router/go_router.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
-import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/utils/app_snackbar.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_shimmer.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
-import 'package:vestie/core/widgets/text/app_text.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:vestie/features/project_detail/domain/usecases/moderate_member_usecase.dart';
 import 'package:vestie/features/project_detail/presentation/bloc/moderation_bloc.dart';
 import 'package:vestie/features/project_detail/presentation/bloc/moderation_event.dart';
 import 'package:vestie/features/project_detail/presentation/bloc/moderation_state.dart';
 import 'package:vestie/features/project_detail/presentation/cubit/join_requests_cubit.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/borrow_requests_empty_state.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_load_error.dart';
 import '../widgets/join_request_card.dart';
 import '../widgets/join_request_result_dialogs.dart';
@@ -102,20 +100,11 @@ class _JoinRequestsScreenState extends State<JoinRequestsScreen> {
                       );
                     }
                     if (state is JoinRequestsLoaded && state.requests.isEmpty) {
-                      return SliverFillRemaining(
+                      return const SliverFillRemaining(
                         hasScrollBody: false,
-                        child: Center(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 24.w),
-                            child: AppText(
-                              AppStrings.joinRequestsEmpty,
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.lato(
-                                fontSize: 15.sp,
-                                color: AppColors.textBody,
-                              ),
-                            ),
-                          ),
+                        child: BorrowRequestsEmptyState(
+                          centered: true,
+                          title: AppStrings.joinRequestsEmptyTitle,
                         ),
                       );
                     }

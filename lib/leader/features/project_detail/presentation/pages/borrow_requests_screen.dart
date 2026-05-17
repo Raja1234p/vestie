@@ -76,8 +76,9 @@ class BorrowRequestsScreen extends StatelessWidget {
             SliverPadding(
               padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 32.h),
               sliver: requests.isEmpty
-                  ? const SliverToBoxAdapter(
-                      child: BorrowRequestsEmptyState(),
+                  ? const SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: BorrowRequestsEmptyState(centered: true),
                     )
                   : SliverList(
                       delegate: SliverChildBuilderDelegate(

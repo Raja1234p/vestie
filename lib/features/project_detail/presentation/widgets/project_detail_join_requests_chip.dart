@@ -7,7 +7,7 @@ import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 
-/// Header chip — [join-request.svg] + pending count (Figma, left of ⋯ menu).
+/// Header chip — [join-request.svg] + pending count when count > 0 (Figma, left of ⋯ menu).
 class ProjectDetailJoinRequestsChip extends StatelessWidget {
   final int count;
   final VoidCallback onTap;
@@ -17,6 +17,8 @@ class ProjectDetailJoinRequestsChip extends StatelessWidget {
     required this.count,
     required this.onTap,
   });
+
+  bool get _showsCount => count > 0;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +34,9 @@ class ProjectDetailJoinRequestsChip extends StatelessWidget {
         child: SizedBox(
           height: 32.h,
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.w),
+            padding: EdgeInsets.symmetric(
+              horizontal: _showsCount ? 10.w : 6.w,
+            ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -47,15 +51,17 @@ class ProjectDetailJoinRequestsChip extends StatelessWidget {
                     BlendMode.srcIn,
                   ),
                 ),
-                SizedBox(width: 8.w),
-                AppText(
-                  '$count',
-                  style: GoogleFonts.lato(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.projectDetailText,
+                if (_showsCount) ...[
+                  SizedBox(width: 8.w),
+                  AppText(
+                    '$count',
+                    style: GoogleFonts.lato(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.projectDetailText,
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
           ),

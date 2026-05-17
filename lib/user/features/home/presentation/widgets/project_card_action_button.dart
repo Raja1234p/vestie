@@ -60,26 +60,23 @@ class ProjectActionButton extends StatelessWidget {
     return Material(
       color: AppColors.cardActionBtn,
       borderRadius: BorderRadius.circular(10.r),
-      child: IgnorePointer(
-        ignoring: isLoading,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(10.r),
-          child: SizedBox(
-            width: double.infinity,
-            height: 44.h,
-            child: Center(
-              child: isLoading
-                  ? SizedBox(
-                      width: 24.w,
-                      height: 24.w,
-                      child: const CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: AppColors.surface,
-                      ),
-                    )
-                  : Text(_label, style: _textStyle),
-            ),
+      child: InkWell(
+        onTap: isLoading ? null : onTap,
+        borderRadius: BorderRadius.circular(10.r),
+        child: SizedBox(
+          width: double.infinity,
+          height: 44.h,
+          child: Center(
+            child: isLoading
+                ? SizedBox(
+                    width: 22.w,
+                    height: 22.h,
+                    child: const CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors.surface,
+                    ),
+                  )
+                : Text(_label, style: _textStyle),
           ),
         ),
       ),
