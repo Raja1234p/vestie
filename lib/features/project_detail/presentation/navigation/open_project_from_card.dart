@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/app_routes.dart';
@@ -7,7 +8,6 @@ import 'package:vestie/features/dashboard/presentation/models/dashboard_shell_ar
 import 'package:vestie/features/projects/domain/entities/created_project_entity.dart';
 import 'package:vestie/features/projects/domain/entities/invite_preview_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
-import 'package:vestie/leader/features/create_project/domain/create_project_form.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
 import '../../domain/entities/project_detail_route_args.dart';
@@ -121,21 +121,32 @@ void openProjectDetailById(
   );
 }
 
-/// After create-project success — home is the root; detail opens on top; back refreshes home.
+/// After create-project success — dashboard is root; detail opens on top; back refreshes home.
 void openProjectDetailAfterCreateSuccess(
   BuildContext context, {
   required String projectId,
-  required NewProjectCategory category,
+  required bool isInvestment,
   String? projectName,
 }) {
-  context.go(AppRoutes.dashboard);
-  openProjectDetailById(
-    context,
-    projectId: projectId,
-    isInvestment: category == NewProjectCategory.investment,
-    initialProjectName: projectName,
-    refreshHomeOnPop: true,
+  context.go(
+    AppRoutes.dashboard,
+    extra: DashboardShellArgs(
+      reloadHomeProjectList: true,
+      reloadDiscoverProjectList: true,
+      navigationMark: DateTime.now().microsecondsSinceEpoch,
+    ),
   );
+  // Push after [go] settles — synchronous push is dropped and leaves only home.
+  SchedulerBinding.instance.addPostFrameCallback((_) {
+    if (!context.mounted) return;
+    openProjectDetailById(
+      context,
+      projectId: projectId,
+      isInvestment: isInvestment,
+      initialProjectName: projectName,
+      refreshHomeOnPop: true,
+    );
+  });
 }
 
 /// Opens project detail for any viewer role. UI is driven by

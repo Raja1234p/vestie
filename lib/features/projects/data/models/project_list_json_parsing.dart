@@ -2,6 +2,10 @@ import '../../../../core/utils/safe_parser.dart';
 
 /// Maps API enum integers to the string labels used in [ProjectSummaryEntity]
 /// and home [Project] mapping (see [ProjectsRepositoryImpl._mapCategory]).
+/// True when API project type is Investment (int `3` or string label).
+bool projectTypeIsInvestment(dynamic type) =>
+    projectTypeApiValueToSummaryString(type).toLowerCase().contains('invest');
+
 String projectTypeApiValueToSummaryString(dynamic raw) {
   if (raw == null) return '';
   if (raw is double) return projectTypeApiValueToSummaryString(raw.toInt());

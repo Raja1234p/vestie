@@ -2,9 +2,11 @@
 class CreateProjectSuccessRouteArgs {
   final String projectId;
   final String? projectName;
+  final bool isInvestment;
 
   const CreateProjectSuccessRouteArgs({
     required this.projectId,
     this.projectName,
+    this.isInvestment = false,
   });
 }

@@ -627,7 +627,7 @@ class AppStrings {
   static const String errVotingWindowRequired =
       'Voting window is required';
   static const String errVotingWindowInvalid =
-      'Enter a number between 1 and 30';
+      'Enter a number between 1 and 365';
   static const String errPenaltyRequired     = 'Penalty is required';
   static const String errPenaltyInvalid      = 'Enter a value between 0–100';
 

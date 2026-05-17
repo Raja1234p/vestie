@@ -163,12 +163,12 @@ class ValidationUtils {
     return null;
   }
 
-  /// Leader closure vote — whole days (1–30, max 3 digits in UI).
+  /// Leader closure vote — whole days (1–365, max 3 digits in UI).
   static String? validateVotingWindowDays(String? value) {
     final raw = value?.trim() ?? '';
     if (raw.isEmpty) return AppStrings.errVotingWindowRequired;
     final n = int.tryParse(raw);
-    if (n == null || n < 1 || n > 30) {
+    if (n == null || n < 1 || n > 365) {
       return AppStrings.errVotingWindowInvalid;
     }
     return null;

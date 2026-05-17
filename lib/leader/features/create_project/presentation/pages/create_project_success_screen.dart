@@ -22,10 +22,14 @@ class CreateProjectSuccessScreen extends StatefulWidget {
   /// From `POST /projects` response — used for detail header if form is reset.
   final String? projectName;
 
+  /// From API project type — used when opening detail (form may reset before tap).
+  final bool isInvestment;
+
   const CreateProjectSuccessScreen({
     super.key,
     required this.projectId,
     this.projectName,
+    this.isInvestment = false,
   });
 
   @override
@@ -109,16 +113,17 @@ class _CreateProjectSuccessScreenState extends State<CreateProjectSuccessScreen>
           title: AppStrings.projectCreatedTitle,
           buttonText: AppStrings.btnGoToMyProject,
           onButtonPressed: () {
-            final category = form.category;
             final apiName = widget.projectName?.trim() ?? '';
             final formName = form.projectName.trim();
             final detailName =
                 apiName.isNotEmpty ? apiName : formName;
+            final isInvestment = widget.isInvestment ||
+                form.category == NewProjectCategory.investment;
             context.read<CreateProjectCubit>().reset();
             openProjectDetailAfterCreateSuccess(
               context,
               projectId: widget.projectId,
-              category: category,
+              isInvestment: isInvestment,
               projectName: detailName.isEmpty ? null : detailName,
             );
           },

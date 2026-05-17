@@ -260,6 +260,7 @@ List<RouteBase> buildCoreRoutes() {
           return CreateProjectSuccessScreen(
             projectId: extra.projectId,
             projectName: extra.projectName,
+            isInvestment: extra.isInvestment,
           );
         }
         final projectId = extra is String ? extra : '';
