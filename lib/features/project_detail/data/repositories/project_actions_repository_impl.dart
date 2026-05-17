@@ -71,6 +71,11 @@ class ProjectActionsRepositoryImpl implements ProjectActionsRepository {
   }
 
   @override
+  Future<Either<Failure, void>> leaveProject({required String projectId}) async {
+    return _execute(() => remoteDataSource.leaveProject(projectId: projectId));
+  }
+
+  @override
   Future<Either<Failure, String>> createInvite({
     required String projectId,
     required bool requiresApproval,

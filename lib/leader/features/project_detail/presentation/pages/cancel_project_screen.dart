@@ -8,15 +8,54 @@ import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/core/utils/app_snackbar.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
+import 'package:vestie/core/widgets/common/app_failure_dialog.dart';
+import 'package:vestie/core/widgets/common/app_loading_dialog.dart';
 import 'package:vestie/core/widgets/common/app_outline_neutral_button.dart';
 import 'package:vestie/core/widgets/common/flow_hero_image_card.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/app/router/route_args/project_detail_flow_args.dart';
 import '../widgets/cancel_project_confirm_dialog.dart';
 
-class CancelProjectScreen extends StatelessWidget {
+Future<void> _executeProjectCancel(
+  BuildContext context, {
+  required String projectId,
+  required String projectName,
+}) async {
+  if (!context.mounted) return;
+  final rootNav = Navigator.of(context, rootNavigator: true);
+
+  AppLoadingDialog.show(context);
+
+  final result = await ServiceLocator.instance.cancelProjectUseCase(
+    projectId: projectId,
+  );
+
+  if (context.mounted && rootNav.canPop()) {
+    rootNav.pop();
+  }
+
+  if (!context.mounted) return;
+
+  result.fold(
+    (failure) {
+      AppFailureDialog.show(
+        context,
+        message: failure.message.isNotEmpty
+            ? failure.message
+            : AppStrings.errorGeneric,
+      );
+    },
+    (_) {
+      context.pushReplacement(
+        AppRoutes.projectCancelled,
+        extra: ProjectCancelledRouteArgs(projectName: projectName),
+      );
+    },
+  );
+}
+
+class CancelProjectScreen extends StatefulWidget {
   final String projectId;
   final String projectName;
   final int membersWithUnpaidBorrows;
@@ -29,15 +68,41 @@ class CancelProjectScreen extends StatelessWidget {
   });
 
   @override
+  State<CancelProjectScreen> createState() => _CancelProjectScreenState();
+}
+
+class _CancelProjectScreenState extends State<CancelProjectScreen> {
+  bool _isCancelling = false;
+
+  void _onCancelProjectPressed() {
+    if (_isCancelling) return;
+    showCancelProjectConfirmDialog(
+      context,
+      projectName: widget.projectName,
+      onConfirm: () async {
+        if (!mounted) return;
+        setState(() => _isCancelling = true);
+        await _executeProjectCancel(
+          context,
+          projectId: widget.projectId,
+          projectName: widget.projectName,
+        );
+        if (mounted) setState(() => _isCancelling = false);
+      },
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: AppColors.surface,
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: SafeArea(
+              bottom: false,
               child: SingleChildScrollView(
                 padding: EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 24.h),
                 child: Column(
@@ -45,7 +110,8 @@ class CancelProjectScreen extends StatelessWidget {
                   children: [
                     FlowHeroImageCard(
                       imageAsset: AppAssets.markCancel,
-                      backgroundColor: AppColors.red200,
+                      backgroundColor: AppColors.red100,
+                      borderRadius: 10.r,
                       caption: AppStrings.cancelProjectHeroWarning,
                       captionColor: AppColors.red1000,
                       imageHeight: 200,
@@ -60,7 +126,7 @@ class CancelProjectScreen extends StatelessWidget {
                     SizedBox(height: 22.h),
                     AppText(
                       AppStrings.cancelProjectUnpaidBorrowsLine(
-                        membersWithUnpaidBorrows,
+                        widget.membersWithUnpaidBorrows,
                       ),
                       style: theme.textTheme.bodyLarge?.copyWith(
                         fontSize: 16.sp,
@@ -83,59 +149,36 @@ class CancelProjectScreen extends StatelessWidget {
                 ),
               ),
             ),
-            SafeArea(
-              top: false,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    AppButton(
-                      text: AppStrings.menuCancelProject,
-                      onPressed: () {
-                        showCancelProjectConfirmDialog(
-                          context,
-                          projectName: projectName,
-                          onConfirm: () {
-                            if (!context.mounted) return;
-                            final useCase =
-                                ServiceLocator.instance.cancelProjectUseCase;
-                            useCase(projectId: projectId).then((result) {
-                              if (!context.mounted) return;
-                              result.fold(
-                                (failure) => AppSnackBar.showError(
-                                  context,
-                                  failure.message,
-                                ),
-                                (_) => context.pushReplacement(
-                                  AppRoutes.projectCancelled,
-                                  extra: ProjectCancelledRouteArgs(
-                                    projectName: projectName,
-                                  ),
-                                ),
-                              );
-                            });
-                          },
-                        );
-                      },
-                      useGradient: false,
-                      hasShadow: false,
-                      color: AppColors.red800,
-                      borderRadius: AppRadius.r8,
-                    ),
-                    SizedBox(height: 12.h),
-                    AppOutlineNeutralButton(
-                      label: AppStrings.btnNo,
-                      onPressed: () => context.pop(),
-                      borderRadius: AppRadius.r8,
-                      borderColor: AppColors.grey700,
-                    ),
-                  ],
+          ),
+          SafeArea(
+            top: false,
+            minimum: EdgeInsets.fromLTRB(16.w, 0, 16.w, 24.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                AppButton(
+                  text: AppStrings.menuCancelProject,
+                  isLoading: _isCancelling,
+                  onPressed: _isCancelling ? null : _onCancelProjectPressed,
+                  useGradient: false,
+                  hasShadow: false,
+                  color: AppColors.red800,
+                  borderRadius: AppRadius.r8,
                 ),
-              ),
+                SizedBox(height: 12.h),
+                AppOutlineNeutralButton(
+                  label: AppStrings.btnNo,
+                  onPressed: () {
+                    if (_isCancelling) return;
+                    context.pop();
+                  },
+                  borderRadius: AppRadius.r8,
+                  borderColor: AppColors.grey700,
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

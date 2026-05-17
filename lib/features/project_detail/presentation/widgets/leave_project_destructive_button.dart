@@ -8,12 +8,14 @@ import 'package:vestie/core/widgets/text/app_text.dart';
 /// Pale red “Leave Project” CTA on the leave warning screen (Figma).
 class LeaveProjectDestructiveButton extends StatelessWidget {
   final String label;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
+  final bool isLoading;
 
   const LeaveProjectDestructiveButton({
     super.key,
     required this.label,
     required this.onPressed,
+    this.isLoading = false,
   });
 
   @override
@@ -23,20 +25,29 @@ class LeaveProjectDestructiveButton extends StatelessWidget {
       color: AppColors.red200,
       borderRadius: BorderRadius.circular(AppRadius.r8),
       child: InkWell(
-        onTap: onPressed,
+        onTap: isLoading ? null : onPressed,
         borderRadius: BorderRadius.circular(AppRadius.r8),
         child: SizedBox(
           width: double.infinity,
           height: 56.h,
           child: Center(
-            child: AppText(
-              label,
-              style: theme.textTheme.labelLarge?.copyWith(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.w600,
-                color: AppColors.red900,
-              ),
-            ),
+            child: isLoading
+                ? SizedBox(
+                    width: 24.w,
+                    height: 24.w,
+                    child: const CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors.red900,
+                    ),
+                  )
+                : AppText(
+                    label,
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.red900,
+                    ),
+                  ),
           ),
         ),
       ),

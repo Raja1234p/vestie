@@ -128,6 +128,15 @@ class CancelProjectUseCase {
   }
 }
 
+class LeaveProjectUseCase {
+  final ProjectActionsRepository repository;
+  LeaveProjectUseCase(this.repository);
+
+  Future<Either<Failure, void>> call({required String projectId}) async {
+    return repository.leaveProject(projectId: projectId);
+  }
+}
+
 class ApproveMembershipUseCase {
   final ProjectActionsRepository repository;
   ApproveMembershipUseCase(this.repository);

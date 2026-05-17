@@ -6,30 +6,73 @@ import 'package:vestie/app/router/route_args/project_detail_flow_args.dart';
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
+import 'package:vestie/core/widgets/common/app_failure_dialog.dart';
 import 'package:vestie/core/widgets/common/app_outline_neutral_button.dart';
 import 'package:vestie/core/widgets/common/centered_hero_status_block.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
+import '../navigation/open_project_from_card.dart';
 import '../widgets/leave_project_destructive_button.dart';
 import '../widgets/leave_project_dialogs.dart';
 
-/// Leave project warning — failure hero, then confirm + success [AppActionDialog]s.
-class LeaveProjectWarningScreen extends StatelessWidget {
+Future<void> _executeLeaveProject(
+  BuildContext context, {
+  required String projectId,
+}) async {
+  if (!context.mounted) return;
+
+  final result = await ServiceLocator.instance.leaveProjectUseCase(
+    projectId: projectId,
+  );
+
+  if (!context.mounted) return;
+
+  await result.fold(
+    (failure) async {
+      AppFailureDialog.show(
+        context,
+        message: failure.message.isNotEmpty
+            ? failure.message
+            : AppStrings.errorGeneric,
+      );
+    },
+    (_) async {
+      await showLeaveProjectSuccessDialog(context);
+      if (!context.mounted) return;
+      popProjectDetailNavigation(context, refreshHomeOnPop: true);
+    },
+  );
+}
+
+/// Leave project warning — failure hero, confirm dialog, API, then success dialog.
+class LeaveProjectWarningScreen extends StatefulWidget {
   final LeaveProjectRouteArgs args;
 
   const LeaveProjectWarningScreen({super.key, required this.args});
 
-  void _onLeaveProject(BuildContext context) {
+  @override
+  State<LeaveProjectWarningScreen> createState() =>
+      _LeaveProjectWarningScreenState();
+}
+
+class _LeaveProjectWarningScreenState extends State<LeaveProjectWarningScreen> {
+  bool _isLeaving = false;
+
+  void _onLeaveProjectPressed() {
+    if (_isLeaving) return;
     showLeaveProjectConfirmDialog(
       context,
-      onConfirm: () {
-        if (!context.mounted) return;
-        context.pop();
-        if (context.mounted && context.canPop()) {
-          context.pop();
-        }
+      onConfirm: () async {
+        if (!mounted) return;
+        setState(() => _isLeaving = true);
+        await _executeLeaveProject(
+          context,
+          projectId: widget.args.projectId,
+        );
+        if (mounted) setState(() => _isLeaving = false);
       },
     );
   }
@@ -43,8 +86,12 @@ class LeaveProjectWarningScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             PostAuthHeader(
-              title: args.projectName,
-              leading: AppBackButton(onPressed: () => context.pop()),
+              title: widget.args.projectName,
+              leading: AppBackButton(
+                onPressed: () {
+                  if (!_isLeaving) context.pop();
+                },
+              ),
             ),
             Expanded(
               child: CenteredHeroStatusBlock(
@@ -58,23 +105,24 @@ class LeaveProjectWarningScreen extends StatelessWidget {
             ),
             SafeArea(
               top: false,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    LeaveProjectDestructiveButton(
-                      label: AppStrings.leaveProjectWarningTitle,
-                      onPressed: () => _onLeaveProject(context),
-                    ),
-                    SizedBox(height: 12.h),
-                    AppOutlineNeutralButton(
-                      label: AppStrings.btnCancel,
-                      onPressed: () => context.pop(),
-                      borderRadius: AppRadius.r8,
-                    ),
-                  ],
-                ),
+              minimum: EdgeInsets.fromLTRB(16.w, 0, 16.w, 24.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  LeaveProjectDestructiveButton(
+                    label: AppStrings.leaveProjectWarningTitle,
+                    isLoading: _isLeaving,
+                    onPressed: _isLeaving ? null : _onLeaveProjectPressed,
+                  ),
+                  SizedBox(height: 12.h),
+                  AppOutlineNeutralButton(
+                    label: AppStrings.btnCancel,
+                    onPressed: () {
+                      if (!_isLeaving) context.pop();
+                    },
+                    borderRadius: AppRadius.r8,
+                  ),
+                ],
               ),
             ),
           ],

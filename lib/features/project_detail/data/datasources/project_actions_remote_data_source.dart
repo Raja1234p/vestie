@@ -14,6 +14,7 @@ abstract class ProjectActionsRemoteDataSource {
   Future<void> demoteCoLeader(String projectId, String userId);
   Future<void> openClosureVoting({required String projectId});
   Future<void> cancelProject({required String projectId});
+  Future<void> leaveProject({required String projectId});
   Future<String> createInvite({
     required String projectId,
     required bool requiresApproval,
@@ -100,6 +101,11 @@ class ProjectActionsRemoteDataSourceImpl implements ProjectActionsRemoteDataSour
   @override
   Future<void> cancelProject({required String projectId}) async {
     await apiClient.post('${ApiConstants.projects}/$projectId/cancel');
+  }
+
+  @override
+  Future<void> leaveProject({required String projectId}) async {
+    await apiClient.post('${ApiConstants.projects}/$projectId/members/leave');
   }
 
   @override

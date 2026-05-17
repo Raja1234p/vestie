@@ -114,6 +114,7 @@ class ServiceLocator {
   late final ProjectActionsRepository projectActionsRepository;
   late final OpenClosureVotingUseCase openClosureVotingUseCase;
   late final CancelProjectUseCase cancelProjectUseCase;
+  late final LeaveProjectUseCase leaveProjectUseCase;
   late final ListPendingJoinRequestsUseCase listPendingJoinRequestsUseCase;
   late final ApproveMembershipUseCase approveMembershipUseCase;
   late final RejectMembershipUseCase rejectMembershipUseCase;
@@ -205,6 +206,7 @@ class ServiceLocator {
     projectActionsRepository = ProjectActionsRepositoryImpl(remoteDataSource: projectActionsRemoteDataSource);
     openClosureVotingUseCase = OpenClosureVotingUseCase(projectActionsRepository);
     cancelProjectUseCase = CancelProjectUseCase(projectActionsRepository);
+    leaveProjectUseCase = LeaveProjectUseCase(projectActionsRepository);
     listPendingJoinRequestsUseCase =
         ListPendingJoinRequestsUseCase(projectActionsRepository);
     approveMembershipUseCase = ApproveMembershipUseCase(projectActionsRepository);

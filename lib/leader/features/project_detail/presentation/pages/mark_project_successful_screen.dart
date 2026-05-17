@@ -28,11 +28,12 @@ class MarkProjectSuccessfulScreen extends StatelessWidget {
     final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: AppColors.surface,
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: SafeArea(
+              bottom: false,
               child: SingleChildScrollView(
                 padding: EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 24.h),
                 child: Column(
@@ -63,55 +64,56 @@ class MarkProjectSuccessfulScreen extends StatelessWidget {
                 ),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  AppButton(
-                    text: AppStrings.btnInitiateSuccessVote,
-                    onPressed: () {
-                      showStartSuccessVoteDialog(
-                        context,
-                        memberCount: memberCount,
-                        onStarted: () {
+          ),
+          SafeArea(
+            top: false,
+            minimum: EdgeInsets.fromLTRB(16.w, 0, 16.w, 24.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                AppButton(
+                  text: AppStrings.btnInitiateSuccessVote,
+                  onPressed: () {
+                    showStartSuccessVoteDialog(
+                      context,
+                      memberCount: memberCount,
+                      onStarted: () {
+                        if (!context.mounted) return;
+                        final useCase =
+                            ServiceLocator.instance.openClosureVotingUseCase;
+                        useCase(projectId: projectId).then((result) {
                           if (!context.mounted) return;
-                          final useCase =
-                              ServiceLocator.instance.openClosureVotingUseCase;
-                          useCase(projectId: projectId).then((result) {
-                            if (!context.mounted) return;
-                            result.fold(
-                              (failure) =>
-                                  AppSnackBar.showError(context, failure.message),
-                              (_) {
-                                context.pop();
-                                AppSnackBar.showSuccess(
-                                  context,
-                                  AppStrings.successVoteStartedMessage,
-                                );
-                              },
-                            );
-                          });
-                        },
-                      );
-                    },
-                    useGradient: false,
-                    hasShadow: false,
-                    color: AppColors.green800,
-                    borderRadius: AppRadius.r8,
-                    ),
-                    SizedBox(height: 12.h),
-                    AppOutlineNeutralButton(
-                      label: AppStrings.btnNo,
-                      onPressed: () => context.pop(),
-                      borderRadius: AppRadius.r8,
-                      borderColor: AppColors.grey700,
-                    ),
-                ],
-              ),
+                          result.fold(
+                            (failure) =>
+                                AppSnackBar.showError(context, failure.message),
+                            (_) {
+                              context.pop();
+                              AppSnackBar.showSuccess(
+                                context,
+                                AppStrings.successVoteStartedMessage,
+                              );
+                            },
+                          );
+                        });
+                      },
+                    );
+                  },
+                  useGradient: false,
+                  hasShadow: false,
+                  color: AppColors.green800,
+                  borderRadius: AppRadius.r8,
+                ),
+                SizedBox(height: 12.h),
+                AppOutlineNeutralButton(
+                  label: AppStrings.btnNo,
+                  onPressed: () => context.pop(),
+                  borderRadius: AppRadius.r8,
+                  borderColor: AppColors.grey700,
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

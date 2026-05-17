@@ -13,6 +13,7 @@ class FlowHeroImageCard extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final TextStyle? captionStyle;
   final FontWeight captionFontWeight;
+  final double? borderRadius;
 
   const FlowHeroImageCard({
     super.key,
@@ -24,6 +25,7 @@ class FlowHeroImageCard extends StatelessWidget {
     this.padding,
     this.captionStyle,
     this.captionFontWeight = FontWeight.w500,
+    this.borderRadius,
   });
 
   @override
@@ -35,7 +37,7 @@ class FlowHeroImageCard extends StatelessWidget {
           padding ?? EdgeInsets.fromLTRB(12.w, 20.h, 12.w, 20.h),
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: BorderRadius.circular(24.r),
+        borderRadius: BorderRadius.circular(borderRadius ?? 24.r),
       ),
       child: Column(
         children: [

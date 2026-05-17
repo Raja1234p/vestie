@@ -16,17 +16,14 @@ Future<void> showLeaveProjectConfirmDialog(
     primaryLabel: AppStrings.btnYesLeave,
     secondaryLabel: AppStrings.btnNo,
     primaryColor: AppColors.green800,
-    onPrimary: () async {
+    onPrimary: () {
       Navigator.of(context).pop();
-      if (!context.mounted) return;
-      await showLeaveProjectSuccessDialog(context);
-      if (!context.mounted) return;
       onConfirm();
     },
   );
 }
 
-/// Shown after user confirms leave (Figma — [AppAssets.projectCreatedImage] via [AppActionDialog.showSuccessOk]).
+/// Shown after leave API succeeds (Figma — [AppAssets.projectCreatedImage] via [AppActionDialog.showSuccessOk]).
 Future<void> showLeaveProjectSuccessDialog(BuildContext context) {
   return AppActionDialog.showSuccessOk(
     context,

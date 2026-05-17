@@ -21,6 +21,7 @@ abstract class ProjectActionsRepository {
 
   Future<Either<Failure, void>> openClosureVoting({required String projectId});
   Future<Either<Failure, void>> cancelProject({required String projectId});
+  Future<Either<Failure, void>> leaveProject({required String projectId});
   Future<Either<Failure, String>> createInvite({
     required String projectId,
     required bool requiresApproval,
