@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
+import 'package:vestie/features/dashboard/presentation/models/dashboard_shell_args.dart';
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
@@ -10,7 +12,6 @@ import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_failure_dialog.dart';
-import 'package:vestie/core/widgets/common/app_loading_dialog.dart';
 import 'package:vestie/core/widgets/common/app_outline_neutral_button.dart';
 import 'package:vestie/core/widgets/common/flow_hero_image_card.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
@@ -23,17 +24,10 @@ Future<void> _executeProjectCancel(
   required String projectName,
 }) async {
   if (!context.mounted) return;
-  final rootNav = Navigator.of(context, rootNavigator: true);
-
-  AppLoadingDialog.show(context);
 
   final result = await ServiceLocator.instance.cancelProjectUseCase(
     projectId: projectId,
   );
-
-  if (context.mounted && rootNav.canPop()) {
-    rootNav.pop();
-  }
 
   if (!context.mounted) return;
 
@@ -47,10 +41,21 @@ Future<void> _executeProjectCancel(
       );
     },
     (_) {
-      context.pushReplacement(
-        AppRoutes.projectCancelled,
-        extra: ProjectCancelledRouteArgs(projectName: projectName),
+      context.go(
+        AppRoutes.dashboard,
+        extra: DashboardShellArgs(
+          reloadHomeProjectList: true,
+          reloadDiscoverProjectList: true,
+          navigationMark: DateTime.now().microsecondsSinceEpoch,
+        ),
       );
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        if (!context.mounted) return;
+        context.push(
+          AppRoutes.projectCancelled,
+          extra: ProjectCancelledRouteArgs(projectName: projectName),
+        );
+      });
     },
   );
 }

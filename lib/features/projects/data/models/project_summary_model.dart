@@ -35,7 +35,7 @@ class ProjectSummaryModel extends ProjectSummaryEntity {
       targetAmount: json.safeDouble('targetAmount'),
       raisedAmount: json.safeDouble('raisedAmount'),
       maxMembers: json.safeInt('maxMembers'),
-      endsAtUtc: json.safeDateTimeUtc('endsAtUtc') ?? DateTime.now().toUtc(),
+      endsAtUtc: json.safeDateTimeUtc('endsAtUtc'),
       launchedAtUtc: json.safeDateTimeUtc('launchedAtUtc'),
       borrowingEnabled: json.safeBool('borrowingEnabled'),
       suggestedContributionAmount:
@@ -59,7 +59,7 @@ class ProjectSummaryModel extends ProjectSummaryEntity {
       'targetAmount': targetAmount,
       'raisedAmount': raisedAmount,
       'maxMembers': maxMembers,
-      'endsAtUtc': endsAtUtc.toIso8601String(),
+      if (endsAtUtc != null) 'endsAtUtc': endsAtUtc!.toIso8601String(),
       'launchedAtUtc': launchedAtUtc?.toIso8601String(),
       'borrowingEnabled': borrowingEnabled,
       'suggestedContributionAmount': suggestedContributionAmount,

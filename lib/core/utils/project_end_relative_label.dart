@@ -40,6 +40,10 @@ class ProjectEndRelativeLabel {
     return '${hours}h ${minutes}m';
   }
 
+  /// True when the list/card should show the "Ends in …" row.
+  static bool hasDisplayableEnd(String? endsInIsoUtc) =>
+      emphasis(endsInIsoUtc).isNotEmpty;
+
   /// Bold segment after "Ends in " (or full phrase for ended).
   static String emphasis(String? endsInIsoUtc) {
     if (endsInIsoUtc == null || endsInIsoUtc.trim().isEmpty) {

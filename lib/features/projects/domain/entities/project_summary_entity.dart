@@ -14,7 +14,7 @@ class ProjectSummaryEntity extends Equatable {
   final double targetAmount;
   final double raisedAmount;
   final int maxMembers;
-  final DateTime endsAtUtc;
+  final DateTime? endsAtUtc;
   final DateTime? launchedAtUtc;
   final bool borrowingEnabled;
   final double? suggestedContributionAmount;
@@ -35,7 +35,7 @@ class ProjectSummaryEntity extends Equatable {
     required this.targetAmount,
     this.raisedAmount = 0,
     this.maxMembers = 0,
-    required this.endsAtUtc,
+    this.endsAtUtc,
     this.launchedAtUtc,
     required this.borrowingEnabled,
     this.suggestedContributionAmount,
