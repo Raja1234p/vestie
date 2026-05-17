@@ -7,14 +7,17 @@ import 'package:vestie/core/theme/app_text_styles.dart';
 import 'package:vestie/core/widgets/common/app_avatar_circle.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import '../../domain/entities/member_entity.dart';
-import 'package:vestie/core/widgets/common/app_role_badge.dart';
-
+import '../../domain/entities/project_detail_entity.dart';
 import 'project_member_add_friend_button.dart';
-import 'project_member_badges.dart';
+import 'project_member_add_friend_visibility.dart';
+import 'project_member_co_leader_badge.dart';
+import 'project_member_leader_badge.dart';
+import 'project_member_vff_badge.dart';
 
 /// Single member row — avatar, name, role badges, Add Friend (Figma).
 class ProjectMemberRow extends StatelessWidget {
   final MemberEntity member;
+  final ProjectDetailEntity? project;
   final ValueChanged<MemberEntity>? onTap;
   final VoidCallback? onAddFriend;
   final bool showVffBadge;
@@ -22,19 +25,25 @@ class ProjectMemberRow extends StatelessWidget {
   const ProjectMemberRow({
     super.key,
     required this.member,
+    this.project,
     this.onTap,
     this.onAddFriend,
     this.showVffBadge = false,
   });
 
-  AppRoleType? get _roleBadgeType => switch (member.role) {
-        MemberRole.leader => AppRoleType.leader,
-        MemberRole.coLeader => AppRoleType.coLeader,
-        MemberRole.member => null,
-      };
+  bool get _showRoleBadge =>
+      member.role == MemberRole.leader || member.role == MemberRole.coLeader;
 
-  bool get _showAddFriend =>
-      onAddFriend != null && member.role == MemberRole.member;
+  bool get _showAddFriend {
+    if (onAddFriend == null) return false;
+    if (project != null) {
+      return ProjectMemberAddFriendVisibility.shouldShow(
+        project: project!,
+        member: member,
+      );
+    }
+    return member.role == MemberRole.member;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,14 +82,16 @@ class ProjectMemberRow extends StatelessWidget {
                     member.name,
                     style: AppTextStyles.projectMemberName,
                   ),
-                  if (_roleBadgeType != null || showVffBadge) ...[
+                  if (_showRoleBadge || showVffBadge) ...[
                     SizedBox(height: AppDimens.projectMemberNameBadgeGap),
                     Wrap(
                       spacing: AppDimens.p8,
                       runSpacing: AppDimens.v4,
                       children: [
-                        if (_roleBadgeType != null)
-                          AppRoleBadge(role: _roleBadgeType!),
+                        if (member.role == MemberRole.leader)
+                          const ProjectMemberLeaderBadge()
+                        else if (member.role == MemberRole.coLeader)
+                          const ProjectMemberCoLeaderBadge(),
                         if (showVffBadge) const ProjectMemberVffBadge(),
                       ],
                     ),

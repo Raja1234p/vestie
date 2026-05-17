@@ -35,6 +35,7 @@ Widget _descriptionWithHighlightedName(
 Future<void> showJoinRequestApprovedDialog(
   BuildContext context, {
   required String memberName,
+  required VoidCallback onOk,
 }) {
   return AppActionDialog.showSuccessOk(
     context,
@@ -44,13 +45,14 @@ Future<void> showJoinRequestApprovedDialog(
       prefix: AppStrings.joinRequestApprovedPrefix,
       memberName: memberName,
     ),
-    onPrimary: () => Navigator.of(context).pop(),
+    onPrimary: onOk,
   );
 }
 
 Future<void> showJoinRequestDeclinedDialog(
   BuildContext context, {
   required String memberName,
+  required VoidCallback onOk,
 }) {
   return AppActionDialog.show(
     context,
@@ -67,6 +69,6 @@ Future<void> showJoinRequestDeclinedDialog(
     primaryTextColor: AppColors.neutral1200,
     primaryBorderColor: AppColors.neutral1200,
     iconAsset: AppAssets.failureIcon,
-    onPrimary: () => Navigator.of(context).pop(),
+    onPrimary: onOk,
   );
 }

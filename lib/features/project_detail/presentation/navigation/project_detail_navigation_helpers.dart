@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:vestie/leader/features/create_project/presentation/create_project_entry_mode.dart';
@@ -16,6 +17,7 @@ import 'package:vestie/user/features/vff/presentation/models/user_vff_profile_lo
 
 import '../../domain/entities/member_entity.dart';
 import '../../domain/entities/project_detail_entity.dart';
+import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
 import '../data/project_funds_history_ledger_builder.dart';
 import 'package:vestie/user/features/borrow/presentation/data/my_borrow_request_args_builder.dart';
 
@@ -135,7 +137,15 @@ class ProjectDetailNavigationHelpers {
       case LeaderMenuAction.joinRequests:
         context.push(
           AppRoutes.joinRequests,
-          extra: JoinRequestsRouteArgs(projectId: project.id),
+          extra: JoinRequestsRouteArgs(
+            projectId: project.id,
+            onRefreshProjectDetail: () {
+              if (!context.mounted) return;
+              context.read<ProjectDetailBloc>().add(
+                    LoadProjectDetailEvent(projectId: project.id),
+                  );
+            },
+          ),
         );
         break;
       case LeaderMenuAction.addAnnouncement:

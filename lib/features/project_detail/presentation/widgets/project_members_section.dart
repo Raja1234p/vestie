@@ -6,6 +6,7 @@ import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import '../../domain/entities/member_entity.dart';
+import '../../domain/entities/project_detail_entity.dart';
 import 'project_member_row.dart';
 import 'project_members_empty_state.dart';
 
@@ -13,17 +14,21 @@ import 'project_members_empty_state.dart';
 class ProjectMembersSection extends StatelessWidget {
   final String title;
   final List<MemberEntity> members;
+  final ProjectDetailEntity? project;
   final ValueChanged<MemberEntity>? onMemberTap;
   final ValueChanged<MemberEntity>? onAddFriend;
   final bool Function(MemberEntity member)? showVffBadgeFor;
+  final bool showTitle;
 
   const ProjectMembersSection({
     super.key,
     this.title = AppStrings.tabMembers,
     required this.members,
+    this.project,
     this.onMemberTap,
     this.onAddFriend,
     this.showVffBadgeFor,
+    this.showTitle = true,
   });
 
   List<MemberEntity> get _activeMembers => members
@@ -37,15 +42,17 @@ class ProjectMembersSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AppText(
-          title,
-          style: GoogleFonts.lato(
-            fontSize: 20.sp,
-            fontWeight: FontWeight.w600,
-            color: AppColors.neutral1200,
+        if (showTitle) ...[
+          AppText(
+            title,
+            style: GoogleFonts.lato(
+              fontSize: 20.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.neutral1200,
+            ),
           ),
-        ),
-        SizedBox(height: 14.h),
+          SizedBox(height: 14.h),
+        ],
         if (active.isEmpty)
           const ProjectMembersEmptyState()
         else
@@ -54,6 +61,7 @@ class ProjectMembersSection extends StatelessWidget {
               padding: EdgeInsets.only(bottom: 12.h),
               child: ProjectMemberRow(
                 member: member,
+                project: project,
                 onTap: onMemberTap,
                 onAddFriend:
                     onAddFriend == null ? null : () => onAddFriend!(member),

@@ -8,12 +8,13 @@ class ModerationBloc extends Bloc<ModerationEvent, ModerationState> {
 
   ModerationBloc({required this.moderateMemberUseCase}) : super(const ModerationState()) {
     on<SubmitModerationActionEvent>(_onSubmitAction);
+    on<ResetModerationStateEvent>((_, emit) => emit(const ModerationState()));
   }
 
   Future<void> _onSubmitAction(SubmitModerationActionEvent event, Emitter<ModerationState> emit) async {
     if (state.isLoading) return; // Prevent double submit
 
-    emit(state.copyWith(isLoading: true, clearFailure: true));
+    emit(state.copyWith(isLoading: true, isSuccess: false, clearFailure: true));
 
     final result = await moderateMemberUseCase(ModerateMemberParams(
       projectId: event.projectId,

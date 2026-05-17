@@ -191,6 +191,7 @@ class _InvestmentProjectDetailBody extends StatelessWidget {
                                   SizedBox(height: 16.h),
                                   ProjectMembersSection(
                                     title: AppStrings.tabMembers,
+                                    project: project,
                                     members: project.members,
                                     onMemberTap: openMemberDetail,
                                     onAddFriend: (member) =>

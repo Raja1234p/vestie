@@ -7,6 +7,7 @@ import '../../../../app/router/route_args/project_detail_flow_args.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/common/app_avatar_circle.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/common/app_svg_icon.dart';
@@ -20,7 +21,6 @@ class MemberIdentitySection extends StatelessWidget {
   final MemberEntity member;
   final String username;
   final String projectName;
-  /// Primary leader only — promote / demote co-leader chip.
   final bool showCoLeaderRoleControls;
   final bool isCoLeader;
   final Future<bool> Function()? onAssignCoLeader;
@@ -93,6 +93,66 @@ class MemberIdentitySection extends StatelessWidget {
           ),
         ],
       ],
+    );
+  }
+}
+
+class MemberLeaderRoleButton extends StatelessWidget {
+  final bool isCoLeader;
+  final VoidCallback onTap;
+
+  const MemberLeaderRoleButton({
+    super.key,
+    required this.isCoLeader,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (isCoLeader) {
+      return AppButton(
+        text: AppStrings.btnRemoveCoLeader,
+        onPressed: onTap,
+        width: 145.w,
+        height: 44.h,
+        hasShadow: false,
+        color: AppColors.red800,
+        useGradient: false,
+      );
+    }
+
+    return _MakeCoLeaderButton(onTap: onTap);
+  }
+}
+
+/// Figma — fill #4C24A0, white label 14 / w600, padding 12×14.
+class _MakeCoLeaderButton extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const _MakeCoLeaderButton({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final radius = BorderRadius.circular(100.r);
+
+    return Material(
+      color: AppColors.purple900,
+      borderRadius: radius,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: radius,
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 14.w),
+          child: AppText(
+            AppStrings.btnMakeCoLeader,
+            style: AppTextStyles.labelLarge.copyWith(
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.surface,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -241,30 +301,6 @@ class MemberOverdueBanner extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class MemberLeaderRoleButton extends StatelessWidget {
-  final bool isCoLeader;
-  final VoidCallback onTap;
-
-  const MemberLeaderRoleButton({
-    super.key,
-    required this.isCoLeader,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return AppButton(
-      text: isCoLeader ? AppStrings.btnRemoveCoLeader : AppStrings.btnMakeCoLeader,
-      onPressed: onTap,
-      width: 145.w,
-      height: 44.h,
-      hasShadow: false,
-      color: isCoLeader ? AppColors.red800 : null,
-      useGradient: !isCoLeader,
     );
   }
 }

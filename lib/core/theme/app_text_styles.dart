@@ -60,6 +60,6 @@ class AppTextStyles {
   static TextStyle get projectMemberAddFriend => GoogleFonts.lato(
         fontSize: 12.sp,
         fontWeight: FontWeight.w600,
-        color: AppColors.blue700,
+        color: AppColors.neutral1200,
       );
 }

@@ -143,6 +143,8 @@ class AppAssets {
   static const String iconPerson = '$_iconPath/icon_person.svg';
   /// Leader badge on project member rows (Figma `user-02.svg`).
   static const String iconLeaderUser = '$_iconPath/user-02.svg';
+  /// Co-leader badge on project member rows (Figma `user-multiple-03.svg`).
+  static const String iconCoLeaderUsers = '$_iconPath/user-multiple-03.svg';
   /// My Borrows — project overflow menu (`user-dollar.svg`).
   static const String iconMyBorrows = '$_iconPath/user-dollar.svg';
   static const String iconSettings = '$_iconPath/icon_settings.svg';

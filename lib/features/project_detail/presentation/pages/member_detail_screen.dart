@@ -10,6 +10,7 @@ import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../../core/widgets/common/post_auth_header.dart';
 import '../../domain/entities/member_entity.dart';
 import 'package:vestie/leader/features/project_detail/presentation/widgets/member_detail_actions.dart';
+import '../widgets/member_detail_footer.dart';
 import '../widgets/member_detail_sections.dart';
 
 class MemberDetailScreen extends StatelessWidget {
@@ -97,62 +98,66 @@ class MemberDetailScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: PostAuthGradientBackground(
-        child: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: PostAuthHeader(
-                title: '${member.name}${AppStrings.memberProfileSuffix}',
-                leading: AppBackButton(
-                  onPressed: () => context.pop(),
-                ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            PostAuthHeader(
+              title: '${member.name}${AppStrings.memberProfileSuffix}',
+              leading: AppBackButton(
+                onPressed: () => context.pop(),
               ),
             ),
-            SliverPadding(
-              padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
-              sliver: SliverToBoxAdapter(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    MemberIdentitySection(
-                      member: member,
-                      username: _username,
-                      projectName: projectName,
-                      showCoLeaderRoleControls:
-                          isPrimaryLeaderView,
-                      isCoLeader: _isCoLeader,
-                      onAssignCoLeader: () => _assignCoLeader(context),
-                      onRemoveCoLeader: () => _removeCoLeader(context),
-                    ),
-                    SizedBox(height: 16.h),
-                    MemberMetricsSection(
-                      contributed: '\$${_formatAmount(_contributedTotal)}',
-                      contributions: '$_contributionsCount',
-                      borrowed: '\$${_formatAmount(_borrowedTotal)}',
-                    ),
-                    SizedBox(height: 24.h),
-                    MemberTransactionsSection(
-                      projectName: projectName,
-                      borrowedAmount: _formatAmount(_borrowedTotal),
-                    ),
-                    if (isLeaderView && _hasOverdue) ...[
-                      SizedBox(height: 12.h),
-                      MemberOverdueBanner(member: member, projectId: projectId),
-                    ],
-                    if (isPrimaryLeaderView) ...[
-                      SizedBox(height: 70.h),
-                      LeaderActionOutlineButton(
-                        label: AppStrings.btnRemoveMember,
-                        onTap: () => showRemoveMemberConfirm(
-                          context,
-                          memberName: member.name,
-                          onConfirmed: () => _removeMember(context),
-                        ),
+            Expanded(
+              child: CustomScrollView(
+                slivers: [
+                  SliverPadding(
+                    padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
+                    sliver: SliverToBoxAdapter(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          MemberIdentitySection(
+                            member: member,
+                            username: _username,
+                            projectName: projectName,
+                            showCoLeaderRoleControls: isPrimaryLeaderView,
+                            isCoLeader: _isCoLeader,
+                            onAssignCoLeader: () => _assignCoLeader(context),
+                            onRemoveCoLeader: () => _removeCoLeader(context),
+                          ),
+                          SizedBox(height: 16.h),
+                          MemberMetricsSection(
+                            contributed: '\$${_formatAmount(_contributedTotal)}',
+                            contributions: '$_contributionsCount',
+                            borrowed: '\$${_formatAmount(_borrowedTotal)}',
+                          ),
+                          SizedBox(height: 24.h),
+                          MemberTransactionsSection(
+                            projectName: projectName,
+                            borrowedAmount: _formatAmount(_borrowedTotal),
+                          ),
+                          if (isLeaderView && _hasOverdue) ...[
+                            SizedBox(height: 12.h),
+                            MemberOverdueBanner(
+                              member: member,
+                              projectId: projectId,
+                            ),
+                          ],
+                        ],
                       ),
-                    ],
-                  ],
-                ),
+                    ),
+                  ),
+                ],
               ),
             ),
+            if (isPrimaryLeaderView)
+              MemberDetailRemoveMemberFooter(
+                onRemoveMember: () => showRemoveMemberConfirm(
+                  context,
+                  memberName: member.name,
+                  onConfirmed: () => _removeMember(context),
+                ),
+              ),
           ],
         ),
       ),

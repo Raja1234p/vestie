@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../../domain/entities/borrow_request_entity.dart';
 import '../../domain/entities/member_entity.dart';
+import '../../domain/entities/project_detail_entity.dart';
 import 'package:vestie/leader/features/project_detail/presentation/widgets/borrow_requests_tab.dart';
 import 'package:vestie/leader/features/project_detail/presentation/widgets/borrow_request_card.dart';
 import 'package:vestie/leader/features/project_detail/presentation/widgets/borrow_request_decision_dialogs.dart';
-import 'package:vestie/leader/features/project_detail/presentation/widgets/leader_manage_members_list.dart';
-import 'members_list.dart';
 import 'project_members_section.dart';
 
 class UserBorrowRequestsPanel extends StatelessWidget {
@@ -51,17 +50,17 @@ class LeaderBorrowRequestsPanel extends StatelessWidget {
 }
 
 class UserMembersPanel extends StatelessWidget {
+  final ProjectDetailEntity project;
   final List<MemberEntity> members;
   final ValueChanged<MemberEntity>? onMemberTap;
   final ValueChanged<MemberEntity>? onAddFriend;
-  final bool useFigmaLayout;
 
   const UserMembersPanel({
     super.key,
+    required this.project,
     required this.members,
     this.onMemberTap,
     this.onAddFriend,
-    this.useFigmaLayout = false,
   });
 
   @override
@@ -70,29 +69,28 @@ class UserMembersPanel extends StatelessWidget {
         .where((m) => !m.status.toLowerCase().contains('pending'))
         .toList(growable: false);
 
-    if (useFigmaLayout) {
-      return ProjectMembersSection(
-        members: activeMembers,
-        onMemberTap: onMemberTap,
-        onAddFriend: onAddFriend,
-      );
-    }
-
-    return MembersList(
+    return ProjectMembersSection(
+      showTitle: false,
+      project: project,
       members: activeMembers,
       onMemberTap: onMemberTap,
+      onAddFriend: onAddFriend,
     );
   }
 }
 
 class LeaderMembersPanel extends StatelessWidget {
+  final ProjectDetailEntity project;
   final List<MemberEntity> members;
   final ValueChanged<MemberEntity>? onMemberTap;
+  final ValueChanged<MemberEntity>? onAddFriend;
 
   const LeaderMembersPanel({
     super.key,
+    required this.project,
     required this.members,
     this.onMemberTap,
+    this.onAddFriend,
   });
 
   @override
@@ -100,9 +98,12 @@ class LeaderMembersPanel extends StatelessWidget {
     final activeMembers = members
         .where((m) => !m.status.toLowerCase().contains('pending'))
         .toList(growable: false);
-    return LeaderManageMembersList(
+    return ProjectMembersSection(
+      showTitle: false,
+      project: project,
       members: activeMembers,
       onMemberTap: onMemberTap,
+      onAddFriend: onAddFriend,
     );
   }
 }

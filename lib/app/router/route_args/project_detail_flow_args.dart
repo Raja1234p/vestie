@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
 
 import 'project_wallet_flow_args.dart';
@@ -80,8 +82,12 @@ class ProjectFundsHistoryEntryArgs {
 
 class JoinRequestsRouteArgs {
   final String projectId;
+  final VoidCallback? onRefreshProjectDetail;
 
-  const JoinRequestsRouteArgs({required this.projectId});
+  const JoinRequestsRouteArgs({
+    required this.projectId,
+    this.onRefreshProjectDetail,
+  });
 }
 
 /// Storyboard “Project settings” hub (leader + co-leader; rows vary by role).

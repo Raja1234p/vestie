@@ -10,8 +10,10 @@ class JoinRequestCard extends StatelessWidget {
   final String initials;
   final String name;
   final String username;
-  final VoidCallback onAccept;
-  final VoidCallback onDecline;
+  final VoidCallback? onAccept;
+  final VoidCallback? onDecline;
+  final bool isAcceptLoading;
+  final bool isDeclineLoading;
 
   const JoinRequestCard({
     super.key,
@@ -20,6 +22,8 @@ class JoinRequestCard extends StatelessWidget {
     required this.username,
     required this.onAccept,
     required this.onDecline,
+    this.isAcceptLoading = false,
+    this.isDeclineLoading = false,
   });
 
   @override
@@ -65,6 +69,7 @@ class JoinRequestCard extends StatelessWidget {
               Expanded(
                 child: _ActionOutlineButton(
                   label: AppStrings.joinRequestDeclineLabel,
+                  isLoading: isDeclineLoading,
                   onTap: onDecline,
                 ),
               ),
@@ -72,6 +77,7 @@ class JoinRequestCard extends StatelessWidget {
               Expanded(
                 child: _ActionPrimaryButton(
                   label: AppStrings.joinRequestApproveLabel,
+                  isLoading: isAcceptLoading,
                   onTap: onAccept,
                 ),
               ),
@@ -85,17 +91,19 @@ class JoinRequestCard extends StatelessWidget {
 
 class _ActionOutlineButton extends StatelessWidget {
   final String label;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
+  final bool isLoading;
 
   const _ActionOutlineButton({
     required this.label,
     required this.onTap,
+    this.isLoading = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap,
+      onTap: isLoading ? null : onTap,
       borderRadius: BorderRadius.circular(999.r),
       child: Container(
         height: 48.h,
@@ -104,14 +112,23 @@ class _ActionOutlineButton extends StatelessWidget {
           border: Border.all(color: AppColors.grey400),
         ),
         child: Center(
-          child: AppText(
-            label,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.grey700,
+          child: isLoading
+              ? SizedBox(
+                  width: 22.w,
+                  height: 22.h,
+                  child: const CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.grey700,
+                  ),
+                )
+              : AppText(
+                  label,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.grey700,
+                      ),
                 ),
-          ),
         ),
       ),
     );
@@ -120,17 +137,19 @@ class _ActionOutlineButton extends StatelessWidget {
 
 class _ActionPrimaryButton extends StatelessWidget {
   final String label;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
+  final bool isLoading;
 
   const _ActionPrimaryButton({
     required this.label,
     required this.onTap,
+    this.isLoading = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap,
+      onTap: isLoading ? null : onTap,
       borderRadius: BorderRadius.circular(999.r),
       child: Container(
         height: 48.h,
@@ -139,14 +158,23 @@ class _ActionPrimaryButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(999.r),
         ),
         child: Center(
-          child: AppText(
-            label,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.surface,
+          child: isLoading
+              ? SizedBox(
+                  width: 22.w,
+                  height: 22.h,
+                  child: const CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.surface,
+                  ),
+                )
+              : AppText(
+                  label,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.surface,
+                      ),
                 ),
-          ),
         ),
       ),
     );

@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:vestie/core/constants/app_strings.dart';
-import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/project_detail/presentation/models/completed_project_notice_copy.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/announcement_card.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/completed_project_notice_bar.dart';
-import 'package:vestie/features/project_detail/presentation/widgets/members_list.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_info_card.dart';
+import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_members_section.dart';
 
 /// Shared layout: member (or any read-only) view when the project is **completed** —
 /// announcement, info card, notice, and members only (no contribute / borrow / tabs).
@@ -47,18 +45,14 @@ class ProjectDetailUserCompletedContent extends StatelessWidget {
           body: notice.body,
         ),
         SizedBox(height: 16.h),
-        AppText(
-          AppStrings.tabMembers,
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontSize: 32.sp,
-                fontWeight: FontWeight.w600,
-                color: AppColors.grey1100,
-              ),
-        ),
-        SizedBox(height: 14.h),
-        MembersList(
+        ProjectMembersSection(
+          project: project,
           members: project.members,
           onMemberTap: onMemberTap,
+          onAddFriend: (member) => ProjectDetailNavigationHelpers.openAddFriendFlow(
+            context,
+            member,
+          ),
         ),
         SizedBox(height: 32.h),
       ],

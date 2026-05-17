@@ -277,6 +277,12 @@ class AppColors {
   static const Color actionInformationBorderDark = blue900; // #204CA0
   static const Color actionInformationInnerShadow = Color(0xFFC3CEE2);
 
+  /// Co-leader badge — Action/Success/Pressed (Figma).
+  static const Color actionSuccessPressed = green800; // #159A68
+  static const Color actionSuccessBorderLight = green100; // #F0FBF7
+  static const Color actionSuccessBorderDark = green900; // #0F7C52
+  static const Color actionSuccessInnerShadow = Color(0xFF58D4A4);
+
   // Dark pill action button (inside cards)
   static const Color cardActionBtn = grey1100; // #1A1630
 

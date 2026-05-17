@@ -3,9 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_avatar_circle.dart';
-import '../../../../core/widgets/common/app_role_badge.dart';
 import '../../../../core/widgets/text/app_text.dart';
 import '../../domain/entities/member_entity.dart';
+import 'project_member_co_leader_badge.dart';
+import 'project_member_leader_badge.dart';
 
 /// Scrollable member list displayed under the Members tab.
 class MembersList extends StatelessWidget {
@@ -48,13 +49,8 @@ class _MemberRow extends StatelessWidget {
   bool get _showOverdueBadge =>
       member.overdueAmount != null && member.overdueAmount! > 0;
 
-  AppRoleType? get _roleType {
-    switch (member.role) {
-      case MemberRole.leader:   return AppRoleType.leader;
-      case MemberRole.coLeader: return AppRoleType.coLeader;
-      case MemberRole.member:   return null;
-    }
-  }
+  bool get _showsRoleBadge =>
+      member.role == MemberRole.leader || member.role == MemberRole.coLeader;
 
   String _fmt(double v) =>
       '\$${v.toStringAsFixed(0).replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (_) => ',')}';
@@ -88,9 +84,12 @@ class _MemberRow extends StatelessWidget {
                       color: AppColors.neutral1100,
                     ),
                   ),
-                  if (_roleType != null) ...[
+                  if (_showsRoleBadge) ...[
                     SizedBox(width: 8.w),
-                    AppRoleBadge(role: _roleType!),
+                    if (member.role == MemberRole.leader)
+                      const ProjectMemberLeaderBadge()
+                    else
+                      const ProjectMemberCoLeaderBadge(),
                   ],
                   if (_showOverdueBadge) ...[
                     SizedBox(width: 8.w),

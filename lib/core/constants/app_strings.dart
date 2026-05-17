@@ -351,6 +351,7 @@ class AppStrings {
   static const String userVffBadgeVff = 'VFF Badge';
   static const String btnAddFriend = 'Add Friend';
   static const String projectMemberLeaderBadge = 'Leader';
+  static const String projectMemberCoLeaderBadge = 'Co Leader';
   static const String userVffProfileTitleSuffix = ' Profile';
   static const String userVffContributed = 'Contributed';
   static const String userVffContributions = 'Contributions';

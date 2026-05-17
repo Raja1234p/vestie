@@ -86,18 +86,29 @@ class ProjectDetailTabSection extends StatelessWidget {
                   : project.usesLeaderDetailPanels
                       ? LeaderMembersPanel(
                           key: const ValueKey('leader-members'),
+                          project: project,
                           members: project.members,
                           onMemberTap: project.canReviewMemberProfiles
                               ? onMemberTap
+                              : null,
+                          onAddFriend: project.canReviewMemberProfiles
+                              ? (member) =>
+                                  ProjectDetailNavigationHelpers
+                                      .openAddFriendFlow(context, member)
                               : null,
                         )
                       : UserMembersPanel(
                           key: const ValueKey('user-members'),
+                          project: project,
                           members: project.members,
                           onMemberTap: project.canReviewMemberProfiles
                               ? onMemberTap
                               : null,
-                          useFigmaLayout: true,
+                          onAddFriend: project.canReviewMemberProfiles
+                              ? (member) =>
+                                  ProjectDetailNavigationHelpers
+                                      .openAddFriendFlow(context, member)
+                              : null,
                         ),
             ),
           ],

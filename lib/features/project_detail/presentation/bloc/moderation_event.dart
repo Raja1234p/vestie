@@ -22,3 +22,7 @@ class SubmitModerationActionEvent extends ModerationEvent {
   @override
   List<Object?> get props => [projectId, userId, action];
 }
+
+class ResetModerationStateEvent extends ModerationEvent {
+  const ResetModerationStateEvent();
+}

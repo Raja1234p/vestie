@@ -134,7 +134,10 @@ List<RouteBase> buildProjectRoutes({
       builder: (context, state) {
         final extra = state.extra;
         if (extra is! JoinRequestsRouteArgs) return invalidRouteScreen();
-        return JoinRequestsScreen(projectId: extra.projectId);
+        return JoinRequestsScreen(
+          projectId: extra.projectId,
+          onRefreshProjectDetail: extra.onRefreshProjectDetail,
+        );
       },
     ),
     GoRoute(
