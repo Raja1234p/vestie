@@ -19,6 +19,7 @@ class Project {
   final double? goalAmount;
   final double? currentAmount;
   final String? endsIn;
+  final double? roiPercentage;
   final String? description;
   final String? displayStatus;
   final String? projectInviteCode;
@@ -37,6 +38,7 @@ class Project {
     this.goalAmount,
     this.currentAmount,
     this.endsIn,
+    this.roiPercentage,
     this.description,
     this.displayStatus,
     this.projectInviteCode,

@@ -163,6 +163,7 @@ class AppStrings {
   static const String labelRaised       = 'Raised';
   static const String labelTotal        = 'Total';
   static const String labelEndsIn       = 'Ends in';
+  static const String labelRoiColon     = 'ROI:';
   static const String projectEndEnded   = 'Ended';
   static const String projectEndToday   = 'Ends today';
   static const String projectEndLessThanOneDay = 'Less than a day';
@@ -818,7 +819,15 @@ class AppStrings {
   static const String btnRemoveCoLeader         = 'Remove Role';
   static const String btnTakeAction             = 'Take Action';
   static const String btnRemoveMember           = 'Remove Member';
-  static const String overdueBorrowNotice       = 'This User has 1 overdue borrow.';
+  static String memberOverdueBorrowNotice(int overdueBorrowCount) {
+    if (overdueBorrowCount <= 0) {
+      return 'This user has overdue borrow(s).';
+    }
+    if (overdueBorrowCount == 1) {
+      return 'This user has 1 overdue borrow.';
+    }
+    return 'This user has $overdueBorrowCount overdue borrows.';
+  }
   static const String penaltyActionTitle        = 'Penalty Action';
   static const String markAsDefaulted           = 'Mark as Defaulted';
   static const String removeMemberConfirmTitle  = 'Remove Member?';

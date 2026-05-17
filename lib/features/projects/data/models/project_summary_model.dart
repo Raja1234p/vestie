@@ -22,6 +22,7 @@ class ProjectSummaryModel extends ProjectSummaryEntity {
     super.displayStatus,
     super.projectInviteCode,
     super.pendingRequestCount,
+    super.roiPercentage,
   });
 
   factory ProjectSummaryModel.fromJson(Map<String, dynamic> json) {
@@ -45,7 +46,19 @@ class ProjectSummaryModel extends ProjectSummaryEntity {
       displayStatus: json.safeString('displayStatus'),
       projectInviteCode: json.safeStringNullable('projectInviteCode'),
       pendingRequestCount: json.safeInt('pendingRequestCount'),
+      roiPercentage: _parseRoiPercentage(json),
     );
+  }
+
+  static double? _parseRoiPercentage(Map<String, dynamic> json) {
+    final direct = json.safeDoubleNullable('roiPercentage');
+    if (direct != null) return direct;
+    final rules = json['projectRules'];
+    if (rules is Map) {
+      final nested = rules.map((k, v) => MapEntry(k.toString(), v));
+      return nested.safeDoubleNullable('roiPercentage');
+    }
+    return null;
   }
 
   Map<String, dynamic> toJson() {

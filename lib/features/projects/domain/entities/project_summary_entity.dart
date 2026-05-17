@@ -24,6 +24,7 @@ class ProjectSummaryEntity extends Equatable {
   final String displayStatus;
   final String? projectInviteCode;
   final int pendingRequestCount;
+  final double? roiPercentage;
 
   const ProjectSummaryEntity({
     required this.id,
@@ -44,6 +45,7 @@ class ProjectSummaryEntity extends Equatable {
     this.displayStatus = '',
     this.projectInviteCode,
     this.pendingRequestCount = 0,
+    this.roiPercentage,
   });
 
   ViewerMembershipRole get viewerMembershipRole =>
@@ -75,5 +77,6 @@ class ProjectSummaryEntity extends Equatable {
         displayStatus,
         projectInviteCode,
         pendingRequestCount,
+        roiPercentage,
       ];
 }

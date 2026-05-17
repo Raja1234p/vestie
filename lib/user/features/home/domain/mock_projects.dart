@@ -33,14 +33,16 @@ class MockProjects {
     ),
     Project(
       id: 'p8',
-      name: 'Investment',
+      name: 'Investment Fund',
       category: ProjectCategory.investment,
       status: ProjectStatus.ongoing,
       relation: ProjectRelation.owned,
-      goalAmount: 8000,
-      currentAmount: 3200,
-      endsIn: '4 months',
-      description: 'e.g. Long-term growth contribution pot',
+      goalAmount: 5000,
+      currentAmount: 2700,
+      endsIn: '2 months',
+      roiPercentage: 2.5,
+      description:
+          'e.g. for financial freedom (after goal pot will be close and there will only be return)',
     ),
   ];
 
@@ -77,13 +79,14 @@ class MockProjects {
     ),
     Project(
       id: 'p9',
-      name: 'Investment',
+      name: 'Investment Fund',
       category: ProjectCategory.investment,
       status: ProjectStatus.ongoing,
       relation: ProjectRelation.joined,
-      goalAmount: 7000,
-      currentAmount: 2800,
-      endsIn: '5 months',
+      goalAmount: 5000,
+      currentAmount: 2700,
+      endsIn: '2 months',
+      roiPercentage: 2.5,
       description: 'e.g. Community investment savings goal',
     ),
     Project(

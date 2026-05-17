@@ -672,9 +672,6 @@ class _MemberDetailView extends StatelessWidget {
 
 
 
-/// Temporary — show overdue banner in leader view for UI / navigation review.
-const _kPreviewMemberOverdueBanner = true;
-
 class _MemberDetailBody extends StatelessWidget {
 
   const _MemberDetailBody({
@@ -781,13 +778,13 @@ class _MemberDetailBody extends StatelessWidget {
 
         MemberTransactionsSection(transactions: activity.transactions),
 
-        if (isLeaderView &&
-            (_kPreviewMemberOverdueBanner || activity.hasOverdue)) ...[
+        if (isLeaderView && activity.hasOverdue) ...[
           SizedBox(height: 12.h),
           MemberOverdueBanner(
             member: member,
             projectId: projectId,
             project: project,
+            overdueBorrowCount: activity.overdueBorrowCount,
             onTakeAction: onTakeAction,
           ),
         ],

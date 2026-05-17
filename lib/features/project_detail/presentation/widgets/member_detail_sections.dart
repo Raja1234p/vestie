@@ -297,6 +297,7 @@ class MemberOverdueBanner extends StatelessWidget {
   final MemberEntity member;
   final String? projectId;
   final ProjectDetailEntity? project;
+  final int overdueBorrowCount;
   final VoidCallback? onTakeAction;
 
   const MemberOverdueBanner({
@@ -304,6 +305,7 @@ class MemberOverdueBanner extends StatelessWidget {
     required this.member,
     this.projectId,
     this.project,
+    this.overdueBorrowCount = 0,
     this.onTakeAction,
   });
 
@@ -334,7 +336,7 @@ class MemberOverdueBanner extends StatelessWidget {
           SizedBox(width: 8.w),
           Expanded(
             child: AppText(
-              AppStrings.overdueBorrowNotice,
+              AppStrings.memberOverdueBorrowNotice(overdueBorrowCount),
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontSize: 15.sp,
                     color: AppColors.red900,

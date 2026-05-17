@@ -35,6 +35,7 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
           currentAmount: m.raisedAmount,
           description: m.description,
           endsIn: m.endsAtUtc?.toIso8601String(),
+          roiPercentage: m.roiPercentage,
           displayStatus: m.displayStatus.isNotEmpty ? m.displayStatus : null,
           projectInviteCode: m.projectInviteCode,
           isPublic: _isPublicVisibility(m.visibility),

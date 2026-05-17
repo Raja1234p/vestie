@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/core/utils/project_end_relative_label.dart';
 import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/widgets/common/project_end_and_roi_row.dart';
+import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import '../../domain/entities/project.dart';
 import 'project_card_components.dart';
@@ -114,8 +116,12 @@ class ProjectCard extends StatelessWidget {
               SizedBox(height: 6.h),
               ProjectProgressBar(progress: project.progress),
               SizedBox(height: 6.h),
-              if (ProjectEndRelativeLabel.hasDisplayableEnd(project.endsIn))
-                ProjectDateRow(endsInRaw: project.endsIn!),
+              if (_showEndOrRoiRow(project))
+                ProjectEndAndRoiRow(
+                  endsInRaw: project.endsIn ?? '',
+                  roiPercentage: project.roiPercentage,
+                  showRoi: project.category.isInvestment,
+                ),
             ],
           ] else ...[
             // Completed — project name + raised/total amount
@@ -151,4 +157,9 @@ class ProjectCard extends StatelessWidget {
       ),
     );
   }
+}
+
+bool _showEndOrRoiRow(Project project) {
+  if (ProjectEndRelativeLabel.hasDisplayableEnd(project.endsIn)) return true;
+  return project.category.isInvestment && project.roiPercentage != null;
 }
