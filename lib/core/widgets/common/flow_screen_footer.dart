@@ -1,7 +1,9 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-/// Pinned footer with home-indicator padding — matches announcement / flow screens.
+/// Pinned footer inset for flow screens (Android nav bar + iOS home indicator).
 class FlowScreenFooter extends StatelessWidget {
   final Widget child;
 
@@ -9,9 +11,11 @@ class FlowScreenFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      minimum: EdgeInsets.fromLTRB(16.w, 0, 16.w, 24.h),
+    final viewBottom = MediaQuery.viewPaddingOf(context).bottom;
+    final bottom = math.max(24.h, viewBottom + 8.h);
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, bottom),
       child: child,
     );
   }

@@ -163,7 +163,7 @@ class _CancelProjectScreenState extends State<CancelProjectScreen> {
                 AppButton(
                   text: AppStrings.menuCancelProject,
                   isLoading: _isCancelling,
-                  onPressed: _isCancelling ? null : _onCancelProjectPressed,
+                  onPressed: _onCancelProjectPressed,
                   useGradient: false,
                   hasShadow: false,
                   color: AppColors.red800,

@@ -30,43 +30,55 @@ class ProjectCancelledScreen extends StatelessWidget {
           Expanded(
             child: SafeArea(
               bottom: false,
-              child: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(16.w, 32.h, 16.w, 16.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      AppAssets.failureIcon,
-                      height: 140.h,
-                      fit: BoxFit.contain,
-                    ),
-                    SizedBox(height: 24.h),
-                    AppText(
-                      AppStrings.projectCancelledTitle,
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontSize: 24.sp,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.grey1100,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight,
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            AppAssets.failureIcon,
+                            height: 140.h,
+                            fit: BoxFit.contain,
+                          ),
+                          SizedBox(height: 24.h),
+                          AppText(
+                            AppStrings.projectCancelledTitle,
+                            textAlign: TextAlign.center,
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontSize: 24.sp,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.grey1100,
+                            ),
+                          ),
+                          SizedBox(height: 12.h),
+                          AppText(
+                            AppStrings.projectCancelledDescription(
+                              projectName,
+                            ),
+                            textAlign: TextAlign.center,
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              fontSize: 16.sp,
+                              height: 1.5,
+                              color: AppColors.grey800,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          SizedBox(height: 20.h),
+                          AppDestructiveNoticeBar(
+                            text: AppStrings.defaultedNoRefundShort,
+                          ),
+                        ],
                       ),
                     ),
-                    SizedBox(height: 12.h),
-                    AppText(
-                      AppStrings.projectCancelledDescription(projectName),
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        fontSize: 16.sp,
-                        height: 1.5,
-                        color: AppColors.grey800,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    SizedBox(height: 20.h),
-                    AppDestructiveNoticeBar(
-                      text: AppStrings.defaultedNoRefundShort,
-                    ),
-                  ],
-                ),
+                  );
+                },
               ),
             ),
           ),
