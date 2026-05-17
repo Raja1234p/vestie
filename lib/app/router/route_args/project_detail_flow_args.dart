@@ -129,6 +129,12 @@ class MarkSuccessfulRouteArgs {
   });
 }
 
+class VotingWindowRouteArgs {
+  final String projectId;
+
+  const VotingWindowRouteArgs({required this.projectId});
+}
+
 class CancelProjectRouteArgs {
   final String projectId;
   final String projectName;

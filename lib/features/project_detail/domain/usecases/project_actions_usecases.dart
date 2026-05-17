@@ -184,7 +184,13 @@ class OpenClosureVotingUseCase {
   final ProjectActionsRepository repository;
   OpenClosureVotingUseCase(this.repository);
 
-  Future<Either<Failure, void>> call({required String projectId}) async {
-    return repository.openClosureVoting(projectId: projectId);
+  Future<Either<Failure, void>> call({
+    required String projectId,
+    required int votingWindowDays,
+  }) async {
+    return repository.openClosureVoting(
+      projectId: projectId,
+      votingWindowDays: votingWindowDays,
+    );
   }
 }

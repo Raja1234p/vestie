@@ -12,7 +12,10 @@ abstract class ProjectActionsRemoteDataSource {
   Future<void> removeMember(String projectId, String userId);
   Future<void> promoteToCoLeader(String projectId, String userId);
   Future<void> demoteCoLeader(String projectId, String userId);
-  Future<void> openClosureVoting({required String projectId});
+  Future<void> openClosureVoting({
+    required String projectId,
+    required int votingWindowDays,
+  });
   Future<void> cancelProject({required String projectId});
   Future<void> leaveProject({required String projectId});
   Future<String> createInvite({
@@ -94,8 +97,14 @@ class ProjectActionsRemoteDataSourceImpl implements ProjectActionsRemoteDataSour
   }
 
   @override
-  Future<void> openClosureVoting({required String projectId}) async {
-    await apiClient.post('${ApiConstants.projects}/$projectId/closure-voting/open');
+  Future<void> openClosureVoting({
+    required String projectId,
+    required int votingWindowDays,
+  }) async {
+    await apiClient.post(
+      '${ApiConstants.projects}/$projectId/closure-voting/open',
+      data: {'successVoteWindowHours': votingWindowDays * 24},
+    );
   }
 
   @override

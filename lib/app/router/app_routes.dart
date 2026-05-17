@@ -70,6 +70,7 @@ class AppRoutes {
   static const String myBorrowRequest  = '/project/my-borrow-request';
   static const String projectFundsHistory = '/project/funds-history';
   static const String markProjectSuccessful = '/project/mark-successful';
+  static const String votingWindow = '/project/voting-window';
   static const String cancelProject        = '/project/cancel';
   static const String projectCancelled     = '/project/cancelled';
 

@@ -624,6 +624,10 @@ class AppStrings {
       'Repayment window is required';
   static const String errRepaymentDaysInvalid =
       'Enter days between 1 and 3650';
+  static const String errVotingWindowRequired =
+      'Voting window is required';
+  static const String errVotingWindowInvalid =
+      'Enter a number between 1 and 30';
   static const String errPenaltyRequired     = 'Penalty is required';
   static const String errPenaltyInvalid      = 'Enter a value between 0–100';
 
@@ -882,6 +886,12 @@ class AppStrings {
   static const String btnInitiateSuccessVote   = 'Initiate Success Vote';
   static const String startSuccessVoteDialogTitle = 'Start the success vote?';
   static const String btnStartVoting            = 'Start Voting';
+  static const String votingWindowTitle         = 'Voting window';
+  static const String labelEnterVotingWindowDays  =
+      'Enter voting window(in days)';
+  static const String hintVotingWindowDays      = '1-30';
+  static const String votingWindowDaysInfo      =
+      'Members can vote to approve marking the project successful during this window.';
   static const String successVoteStartedMessage =
       'Success vote started. Members have been notified.';
   static const String cancelProjectHeroWarning =

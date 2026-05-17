@@ -37,6 +37,7 @@ class AppTextField extends StatelessWidget {
   final TextStyle? hintStyle;
   /// When set with [suffixIcon], overrides M3’s default 48×48 suffix slot (shrinks small glyphs).
   final BoxConstraints? suffixIconConstraints;
+  final bool readOnly;
 
   const AppTextField({
     super.key,
@@ -62,6 +63,7 @@ class AppTextField extends StatelessWidget {
     this.fillColor,
     this.hintStyle,
     this.suffixIconConstraints,
+    this.readOnly = false,
   });
 
   @override
@@ -106,6 +108,8 @@ class AppTextField extends StatelessWidget {
         TextField(
           focusNode: focusNode,
           controller: controller,
+          readOnly: readOnly,
+          showCursor: true,
           obscureText: obscureText,
           keyboardType: effectiveKeyboardType,
           textInputAction: effectiveTextInputAction,

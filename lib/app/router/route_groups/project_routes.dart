@@ -14,6 +14,7 @@ import 'package:vestie/leader/features/project_detail/presentation/pages/leader_
 import 'package:vestie/leader/features/project_detail/presentation/pages/create_announcement_screen.dart';
 import 'package:vestie/leader/features/project_detail/presentation/pages/join_requests_screen.dart';
 import 'package:vestie/leader/features/project_detail/presentation/pages/mark_project_successful_screen.dart';
+import 'package:vestie/leader/features/project_detail/presentation/pages/voting_window_screen.dart';
 import 'package:vestie/leader/features/project_detail/presentation/pages/member_penalty_action_screen.dart';
 import 'package:vestie/user/features/borrow/presentation/cubit/borrow_cubit.dart';
 import 'package:vestie/user/features/borrow/presentation/pages/borrow_flow_screen.dart';
@@ -176,6 +177,14 @@ List<RouteBase> buildProjectRoutes({
           projectId: extra.projectId,
           memberCount: extra.memberCount,
         );
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.votingWindow,
+      builder: (context, state) {
+        final extra = state.extra;
+        if (extra is! VotingWindowRouteArgs) return invalidRouteScreen();
+        return VotingWindowScreen(projectId: extra.projectId);
       },
     ),
     GoRoute(

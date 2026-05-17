@@ -61,8 +61,16 @@ class ProjectActionsRepositoryImpl implements ProjectActionsRepository {
   }
 
   @override
-  Future<Either<Failure, void>> openClosureVoting({required String projectId}) async {
-    return _execute(() => remoteDataSource.openClosureVoting(projectId: projectId));
+  Future<Either<Failure, void>> openClosureVoting({
+    required String projectId,
+    required int votingWindowDays,
+  }) async {
+    return _execute(
+      () => remoteDataSource.openClosureVoting(
+        projectId: projectId,
+        votingWindowDays: votingWindowDays,
+      ),
+    );
   }
 
   @override
