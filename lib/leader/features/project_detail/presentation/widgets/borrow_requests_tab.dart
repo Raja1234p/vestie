@@ -2,29 +2,48 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
+import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity_extensions.dart';
+import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/borrow_requests_empty_state.dart';
 import 'borrow_request_card.dart';
 
-/// Inline borrow requests tab: preview cards, empty state, or "View All".
+/// Inline borrow requests tab — preview cards, View All → full list, header tap → member profile.
 class BorrowRequestsTab extends StatelessWidget {
+  final ProjectDetailEntity project;
   final List<BorrowRequestEntity> requests;
   final VoidCallback onViewAll;
   final BorrowRequestActionMode actionMode;
+  final ValueChanged<MemberEntity>? onMemberTap;
   final void Function(BorrowRequestEntity request)? onAccept;
   final void Function(BorrowRequestEntity request)? onReject;
 
   const BorrowRequestsTab({
     super.key,
+    required this.project,
     required this.requests,
     required this.onViewAll,
     this.actionMode = BorrowRequestActionMode.vote,
+    this.onMemberTap,
     this.onAccept,
     this.onReject,
   });
+
+  VoidCallback? _openMemberDetail(BorrowRequestEntity request) {
+    final onTap = onMemberTap;
+    if (onTap == null || !project.canReviewMemberProfiles) return null;
+
+    final member = request.resolveMember(project.members);
+    if (member == null) return null;
+
+    return () => onTap(member);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +64,7 @@ class BorrowRequestsTab extends StatelessWidget {
           (r) => BorrowRequestCard(
             request: r,
             actionMode: actionMode,
+            onOpenMemberDetail: _openMemberDetail(r),
             onAccept: onAccept != null ? () => onAccept!(r) : null,
             onReject: onReject != null ? () => onReject!(r) : null,
           ),
@@ -72,13 +92,24 @@ class _ViewAllRequestsLink extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         child: Padding(
           padding: EdgeInsets.only(bottom: 8.h),
-          child: AppText(
-            AppStrings.viewAllRequests,
-            style: GoogleFonts.lato(
-              fontSize: 18.sp,
-              fontWeight: FontWeight.w500,
-              color: AppColors.neutral1200,
-            ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AppText(
+                AppStrings.viewAllRequests,
+                style: GoogleFonts.lato(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.neutral1200,
+                ),
+              ),
+              SizedBox(width: 4.w),
+              AppSvgIcon(
+                assetPath: AppAssets.iconChevronRight,
+                color: AppColors.grey800,
+                size: 24.r,
+              ),
+            ],
           ),
         ),
       ),

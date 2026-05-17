@@ -20,6 +20,7 @@ enum BorrowRequestActionMode { vote, decision }
 class BorrowRequestCard extends StatelessWidget {
   final BorrowRequestEntity request;
   final BorrowRequestActionMode actionMode;
+  final VoidCallback? onOpenMemberDetail;
   final VoidCallback? onAccept;
   final VoidCallback? onReject;
 
@@ -27,6 +28,7 @@ class BorrowRequestCard extends StatelessWidget {
     super.key,
     required this.request,
     this.actionMode = BorrowRequestActionMode.vote,
+    this.onOpenMemberDetail,
     this.onAccept,
     this.onReject,
   });
@@ -41,6 +43,7 @@ class BorrowRequestCard extends StatelessWidget {
       child: _BorrowRequestCardBody(
         request: request,
         actionMode: actionMode,
+        onOpenMemberDetail: onOpenMemberDetail,
         onAccept: onAccept,
         onReject: onReject,
       ),
@@ -52,12 +55,14 @@ class BorrowRequestCard extends StatelessWidget {
 class _BorrowRequestCardBody extends StatelessWidget {
   final BorrowRequestEntity request;
   final BorrowRequestActionMode actionMode;
+  final VoidCallback? onOpenMemberDetail;
   final VoidCallback? onAccept;
   final VoidCallback? onReject;
 
   const _BorrowRequestCardBody({
     required this.request,
     required this.actionMode,
+    this.onOpenMemberDetail,
     this.onAccept,
     this.onReject,
   });
@@ -78,34 +83,44 @@ class _BorrowRequestCardBody extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Header: avatar + name + loan type ───────────────
-          Row(
-            children: [
-              AppAvatarCircle(initials: request.initials, size: 55.h),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          // ── Header: tap → member detail (vote / decision buttons stay separate)
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onOpenMemberDetail,
+              borderRadius: BorderRadius.circular(12.r),
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 2.h),
+                child: Row(
                   children: [
-                    AppText(
-                      request.memberName,
-                      style: GoogleFonts.lato(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.grey1100,
-                      ),
-                    ),
-                    AppText(
-                      request.loanType,
-                      style: GoogleFonts.lato(
-                        fontSize: 13.sp,
-                        color: AppColors.textBody,
+                    AppAvatarCircle(initials: request.initials, size: 55.h),
+                    SizedBox(width: 12.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AppText(
+                            request.memberName,
+                            style: GoogleFonts.lato(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.grey1100,
+                            ),
+                          ),
+                          AppText(
+                            request.loanType,
+                            style: GoogleFonts.lato(
+                              fontSize: 13.sp,
+                              color: AppColors.textBody,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
               ),
-            ],
+            ),
           ),
           SizedBox(height: 12.h),
 

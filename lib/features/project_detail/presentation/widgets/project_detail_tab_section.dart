@@ -61,6 +61,7 @@ class ProjectDetailTabSection extends StatelessWidget {
                   ? project.usesLeaderDetailPanels
                       ? LeaderBorrowRequestsPanel(
                           key: const ValueKey('leader-borrow'),
+                          project: project,
                           requests: project.borrowRequests,
                           onViewAll: () => context.push(
                             AppRoutes.borrowRequests,
@@ -70,9 +71,13 @@ class ProjectDetailTabSection extends StatelessWidget {
                               isLeaderMode: true,
                             ),
                           ),
+                          onMemberTap: project.canReviewMemberProfiles
+                              ? onMemberTap
+                              : null,
                         )
                       : UserBorrowRequestsPanel(
                           key: const ValueKey('user-borrow'),
+                          project: project,
                           requests: project.borrowRequests,
                           onViewAll: () => context.push(
                             AppRoutes.borrowRequests,
@@ -82,6 +87,9 @@ class ProjectDetailTabSection extends StatelessWidget {
                               isLeaderMode: false,
                             ),
                           ),
+                          onMemberTap: project.canReviewMemberProfiles
+                              ? onMemberTap
+                              : null,
                         )
                   : project.usesLeaderDetailPanels
                       ? LeaderMembersPanel(

@@ -8,6 +8,9 @@ import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
+import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity_extensions.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
+import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/borrow_requests_empty_state.dart';
 
 import '../widgets/borrow_request_card.dart';
@@ -20,6 +23,7 @@ class BorrowRequestsScreen extends StatelessWidget {
   final bool isLeaderMode;
   final String projectId;
   final String? screenTitle;
+  final ProjectDetailEntity? project;
 
   const BorrowRequestsScreen({
     super.key,
@@ -27,7 +31,27 @@ class BorrowRequestsScreen extends StatelessWidget {
     required this.projectId,
     this.isLeaderMode = false,
     this.screenTitle,
+    this.project,
   });
+
+  VoidCallback? _openMemberDetail(
+    BuildContext context,
+    BorrowRequestEntity request,
+  ) {
+    final p = project;
+    if (p == null || !p.canReviewMemberProfiles) return null;
+
+    final member = request.resolveMember(p.members);
+    if (member == null) return null;
+
+    return () {
+      ProjectDetailNavigationHelpers.openMemberProfile(
+        context,
+        project: p,
+        member: member,
+      );
+    };
+  }
 
   Future<bool> _approve(
     BuildContext context,
@@ -87,6 +111,10 @@ class BorrowRequestsScreen extends StatelessWidget {
                           actionMode: isLeaderMode
                               ? BorrowRequestActionMode.decision
                               : BorrowRequestActionMode.vote,
+                          onOpenMemberDetail: _openMemberDetail(
+                            context,
+                            requests[i],
+                          ),
                           onAccept: isLeaderMode
                               ? () => showApproveBorrowRequestFlow(
                                   context,

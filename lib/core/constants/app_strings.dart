@@ -989,10 +989,7 @@ class AppStrings {
       'Invite to $projectName';
   static const String inviteMembersSelectVffHint = 'Tap to select VFFs';
   static const String inviteMembersOrShareVia = 'or share Via';
-  static const String inviteShareWhatsapp = 'WhatsApp';
-  static const String inviteShareCopyLink = 'Copy Link';
-  static const String inviteShareMessages = 'Messages';
-  static const String inviteShareMore = 'More';
+  static const String inviteShareOutsideVestie = 'Share outside Vestie';
 
   static String removeMemberTitle(String memberName) => 'Remove $memberName';
 

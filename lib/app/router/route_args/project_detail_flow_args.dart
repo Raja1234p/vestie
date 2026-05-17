@@ -38,12 +38,15 @@ class BorrowRequestsRouteArgs<T> {
   final bool isLeaderMode;
   final String projectId;
   final String? screenTitle;
+  /// Full project context — member profile navigation from borrow cards.
+  final ProjectDetailEntity? project;
 
   const BorrowRequestsRouteArgs({
     required this.requests,
     required this.projectId,
     this.isLeaderMode = false,
     this.screenTitle,
+    this.project,
   });
 }
 

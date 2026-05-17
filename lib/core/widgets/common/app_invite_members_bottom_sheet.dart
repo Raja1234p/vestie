@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../constants/app_assets.dart';
 import '../../constants/app_strings.dart';
 import '../../theme/app_colors.dart';
 import '../../utils/app_snackbar.dart';
 import '../../utils/invite_share_utils.dart';
 import '../text/app_text.dart';
 import 'app_avatar_circle.dart';
+import 'app_button.dart';
 import 'app_invite_members_dashed_divider.dart';
-import 'app_svg_icon.dart';
 import 'invite_vff_pick_ui.dart';
 
 class AppInviteMembersBottomSheet extends StatefulWidget {
@@ -54,12 +53,12 @@ class _AppInviteMembersBottomSheetState
     AppSnackBar.showError(context, AppStrings.errorGeneric);
   }
 
-  void _openShareFromChip(BuildContext chipContext) {
-    final box = chipContext.findRenderObject() as RenderBox?;
+  void _openShareFromButton(BuildContext buttonContext) {
+    final box = buttonContext.findRenderObject() as RenderBox?;
     final origin = box != null
         ? box.localToGlobal(Offset.zero) & box.size
         : null;
-    _openShareSheet(chipContext, origin: origin);
+    _openShareSheet(buttonContext, origin: origin);
   }
 
   @override
@@ -160,59 +159,23 @@ class _AppInviteMembersBottomSheetState
             ),
           ),
           SizedBox(height: 12.h),
-          SizedBox(
-            height: 76.h,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              children: [
-                _InviteShareChip(
-                  label: AppStrings.inviteShareWhatsapp,
-                  child: AppSvgIcon(
-                    assetPath: AppAssets.iconChat,
-                    size: 24.w,
-                    color: AppColors.primary,
-                  ),
-                  onShareTap: _openShareFromChip,
-                ),
-                SizedBox(width: 16.w),
-                _InviteShareChip(
-                  label: AppStrings.inviteShareCopyLink,
-                  child: AppSvgIcon(
-                    assetPath: AppAssets.iconLink,
-                    size: 24.w,
-                    color: AppColors.primary,
-                  ),
-                  onTap: () async {
-                    await copyInviteLink(widget.inviteLink);
-                    if (!context.mounted) return;
-                    AppSnackBar.showSuccess(context, AppStrings.linkCopied);
-                  },
-                ),
-                SizedBox(width: 16.w),
-                _InviteShareChip(
-                  label: AppStrings.inviteShareMessages,
-                  child: AppSvgIcon(
-                    assetPath: AppAssets.iconGroups,
-                    size: 24.w,
-                    color: AppColors.primary,
-                  ),
-                  onShareTap: _openShareFromChip,
-                ),
-                SizedBox(width: 16.w),
-                _InviteShareChip(
-                  label: AppStrings.inviteShareMore,
-                  child: AppSvgIcon(
-                    assetPath: AppAssets.iconInstagram,
-                    size: 24.w,
-                    color: AppColors.primary,
-                  ),
-                  onShareTap: _openShareFromChip,
-                ),
-              ],
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: Builder(
+              builder: (buttonContext) {
+                return AppButton(
+                  text: AppStrings.inviteShareOutsideVestie,
+                  onPressed: () => _openShareFromButton(buttonContext),
+                  useGradient: false,
+                  hasShadow: false,
+                  color: AppColors.neutral1200,
+                  borderRadius: 10.r,
+                  height: 50.h,
+                );
+              },
             ),
           ),
-          SizedBox(height: 12.h),
+          SizedBox(height: 20.h),
         ],
       ),
     );
@@ -274,55 +237,3 @@ class _VffGridTile extends StatelessWidget {
   }
 }
 
-class _InviteShareChip extends StatelessWidget {
-  final String label;
-  final Widget child;
-  final VoidCallback? onTap;
-  final void Function(BuildContext context)? onShareTap;
-
-  const _InviteShareChip({
-    required this.label,
-    required this.child,
-    this.onTap,
-    this.onShareTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap ?? (onShareTap != null ? () => onShareTap!(context) : null),
-      borderRadius: BorderRadius.circular(999),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 48.w,
-            height: 48.w,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.purple100,
-              border: Border.all(color: AppColors.purple300),
-            ),
-            alignment: Alignment.center,
-            child: child,
-          ),
-          SizedBox(height: 4.h),
-          SizedBox(
-            width: 64.w,
-            child: AppText(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.lato(
-                fontSize: 10.sp,
-                fontWeight: FontWeight.w600,
-                color: AppColors.grey800,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}

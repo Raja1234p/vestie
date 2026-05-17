@@ -9,40 +9,52 @@ import 'package:vestie/leader/features/project_detail/presentation/widgets/borro
 import 'project_members_section.dart';
 
 class UserBorrowRequestsPanel extends StatelessWidget {
+  final ProjectDetailEntity project;
   final List<BorrowRequestEntity> requests;
   final VoidCallback onViewAll;
+  final ValueChanged<MemberEntity>? onMemberTap;
 
   const UserBorrowRequestsPanel({
     super.key,
+    required this.project,
     required this.requests,
     required this.onViewAll,
+    this.onMemberTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return BorrowRequestsTab(
+      project: project,
       requests: requests,
       onViewAll: onViewAll,
+      onMemberTap: onMemberTap,
     );
   }
 }
 
 class LeaderBorrowRequestsPanel extends StatelessWidget {
+  final ProjectDetailEntity project;
   final List<BorrowRequestEntity> requests;
   final VoidCallback onViewAll;
+  final ValueChanged<MemberEntity>? onMemberTap;
 
   const LeaderBorrowRequestsPanel({
     super.key,
+    required this.project,
     required this.requests,
     required this.onViewAll,
+    this.onMemberTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return BorrowRequestsTab(
+      project: project,
       requests: requests,
       onViewAll: onViewAll,
       actionMode: BorrowRequestActionMode.decision,
+      onMemberTap: onMemberTap,
       onAccept: (r) => showApproveBorrowRequestFlow(context, r),
       onReject: (r) => showRejectBorrowRequestFlow(context, r),
     );

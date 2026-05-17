@@ -155,6 +155,7 @@ List<RouteBase> buildProjectRoutes({
           projectId: extra.projectId,
           isLeaderMode: extra.isLeaderMode,
           screenTitle: extra.screenTitle,
+          project: extra.project,
         );
       },
     ),
