@@ -8,6 +8,7 @@ import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_destructive_notice_bar.dart';
 import 'package:vestie/core/widgets/common/app_outline_neutral_button.dart';
+import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 
 class ProjectCancelledScreen extends StatelessWidget {
@@ -23,54 +24,62 @@ class ProjectCancelledScreen extends StatelessWidget {
     final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: AppColors.surface,
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: Column(
-            children: [
-              SizedBox(height: 32.h),
-              Image.asset(
-                AppAssets.failureIcon,
-                height: 140.h,
-                fit: BoxFit.contain,
-              ),
-              SizedBox(height: 24.h),
-              AppText(
-                AppStrings.projectCancelledTitle,
-                textAlign: TextAlign.center,
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontSize: 24.sp,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.grey1100,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: SafeArea(
+              bottom: false,
+              child: SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(16.w, 32.h, 16.w, 16.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      AppAssets.failureIcon,
+                      height: 140.h,
+                      fit: BoxFit.contain,
+                    ),
+                    SizedBox(height: 24.h),
+                    AppText(
+                      AppStrings.projectCancelledTitle,
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontSize: 24.sp,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.grey1100,
+                      ),
+                    ),
+                    SizedBox(height: 12.h),
+                    AppText(
+                      AppStrings.projectCancelledDescription(projectName),
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        fontSize: 16.sp,
+                        height: 1.5,
+                        color: AppColors.grey800,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    SizedBox(height: 20.h),
+                    AppDestructiveNoticeBar(
+                      text: AppStrings.defaultedNoRefundShort,
+                    ),
+                  ],
                 ),
               ),
-              SizedBox(height: 12.h),
-              AppText(
-                AppStrings.projectCancelledDescription(projectName),
-                textAlign: TextAlign.center,
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  fontSize: 16.sp,
-                  height: 1.5,
-                  color: AppColors.grey800,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-              SizedBox(height: 20.h),
-              AppDestructiveNoticeBar(
-                text: AppStrings.defaultedNoRefundShort,
-              ),
-              const Spacer(),
-              AppOutlineNeutralButton(
-                label: AppStrings.btnBackToHome,
-                onPressed: () =>
-                    popProjectDetailNavigation(context, refreshHomeOnPop: true),
-                borderRadius: AppRadius.r8,
-                borderColor: AppColors.backToHomeButtonBorder,
-              ),
-              SizedBox(height: 16.h),
-            ],
+            ),
           ),
-        ),
+          FlowScreenFooter(
+            child: AppOutlineNeutralButton(
+              label: AppStrings.btnBackToHome,
+              onPressed: () =>
+                  popProjectDetailNavigation(context, refreshHomeOnPop: true),
+              borderRadius: AppRadius.r8,
+              borderColor: AppColors.backToHomeButtonBorder,
+            ),
+          ),
+        ],
       ),
     );
   }

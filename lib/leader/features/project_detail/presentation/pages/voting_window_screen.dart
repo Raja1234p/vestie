@@ -13,6 +13,7 @@ import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_action_dialog.dart';
 import 'package:vestie/core/widgets/common/app_text_field.dart';
+import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/core/widgets/common/app_svg_icon.dart';
@@ -86,7 +87,8 @@ class _VotingWindowScreenState extends State<VotingWindowScreen> {
               );
 
           return Scaffold(
-            resizeToAvoidBottomInset: true,
+            // Match create-announcement: avoid shrinking body + scroll inset (release double-count).
+            resizeToAvoidBottomInset: false,
             backgroundColor: Colors.transparent,
             body: PostAuthGradientBackground(
               child: Column(
@@ -104,7 +106,12 @@ class _VotingWindowScreenState extends State<VotingWindowScreen> {
                     child: SingleChildScrollView(
                       keyboardDismissBehavior:
                           ScrollViewKeyboardDismissBehavior.onDrag,
-                      padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 8.h),
+                      padding: EdgeInsets.fromLTRB(
+                        20.w,
+                        12.h,
+                        20.w,
+                        16.h + bottomInset,
+                      ),
                       child: AppTextField(
                         label: AppStrings.labelEnterVotingWindowDays,
                         hint: AppStrings.hintVotingWindowDays,
@@ -138,22 +145,17 @@ class _VotingWindowScreenState extends State<VotingWindowScreen> {
                       ),
                     ),
                   ),
-                  SafeArea(
-                    top: false,
-                    minimum: EdgeInsets.fromLTRB(16.w, 0, 16.w, 24.h),
-                    child: Padding(
-                      padding: EdgeInsets.only(bottom: bottomInset),
-                      child: AppButton(
-                        text: AppStrings.btnStartVoting,
-                        isLoading: state.loading,
-                        useGradient: false,
-                        hasShadow: false,
-                        color: AppColors.green800,
-                        borderRadius: AppRadius.r8,
-                        onPressed: state.canSubmit
-                            ? () => _onStartVoting(cubit)
-                            : null,
-                      ),
+                  FlowScreenFooter(
+                    child: AppButton(
+                      text: AppStrings.btnStartVoting,
+                      isLoading: state.loading,
+                      useGradient: false,
+                      hasShadow: false,
+                      color: AppColors.green800,
+                      borderRadius: AppRadius.r8,
+                      onPressed: state.canSubmit
+                          ? () => _onStartVoting(cubit)
+                          : null,
                     ),
                   ),
                 ],

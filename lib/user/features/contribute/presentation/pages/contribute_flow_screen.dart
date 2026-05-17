@@ -14,6 +14,7 @@ import 'package:vestie/core/widgets/common/app_success_screen.dart';
 import 'package:vestie/core/widgets/common/app_text.dart';
 import 'package:vestie/core/widgets/common/app_tick_switch.dart';
 import 'package:vestie/core/widgets/common/app_wallet_balance_chip.dart';
+import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import '../../../contributions/presentation/bloc/contribute_bloc.dart';
@@ -124,7 +125,12 @@ class _ContributeAmountViewState extends State<_ContributeAmountView> {
                     builder: (context, constraints) {
                       return SingleChildScrollView(
                         controller: _scrollController,
-                        padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 8.h),
+                        padding: EdgeInsets.fromLTRB(
+                          24.w,
+                          8.h,
+                          24.w,
+                          8.h + bottomInset,
+                        ),
                         child: ConstrainedBox(
                           constraints: BoxConstraints(
                             minHeight: constraints.maxHeight,
@@ -160,18 +166,13 @@ class _ContributeAmountViewState extends State<_ContributeAmountView> {
                     },
                   ),
                 ),
-                SafeArea(
-                  top: false,
-                  minimum: EdgeInsets.fromLTRB(16.w, 0, 16.w, 24.h),
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: bottomInset),
-                    child: AppButton(
-                      text: AppStrings.btnConfirm,
-                      isLoading: state.isPreviewLoading,
-                      onPressed: state.amountValue <= 0
-                          ? null
-                          : () => bloc.add(GoToConfirmEvent()),
-                    ),
+                FlowScreenFooter(
+                  child: AppButton(
+                    text: AppStrings.btnConfirm,
+                    isLoading: state.isPreviewLoading,
+                    onPressed: state.amountValue <= 0
+                        ? null
+                        : () => bloc.add(GoToConfirmEvent()),
                   ),
                 ),
               ],
@@ -273,9 +274,7 @@ class _ContributeConfirmView extends StatelessWidget {
                 ],
               ),
             ),
-            SafeArea(
-              top: false,
-              minimum: EdgeInsets.fromLTRB(16.w, 0, 16.w, 24.h),
+            FlowScreenFooter(
               child: AppButton(
                 text: AppStrings.btnConfirm,
                 isLoading: state.isSubmitLoading,

@@ -13,6 +13,7 @@ import 'package:vestie/core/widgets/common/app_tick_switch.dart';
 import 'package:vestie/core/widgets/common/app_purple_dashed_line.dart';
 import 'package:vestie/core/widgets/common/app_success_screen.dart';
 import 'package:vestie/core/widgets/common/app_text.dart';
+import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import '../cubit/borrow_cubit.dart';
@@ -120,7 +121,12 @@ class _BorrowAmountViewState extends State<_BorrowAmountView> {
                     builder: (context, constraints) {
                       return SingleChildScrollView(
                         controller: _scrollController,
-                        padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 8.h),
+                        padding: EdgeInsets.fromLTRB(
+                          24.w,
+                          8.h,
+                          24.w,
+                          8.h + bottomInset,
+                        ),
                         child: ConstrainedBox(
                           constraints: BoxConstraints(
                             minHeight: constraints.maxHeight,
@@ -229,17 +235,12 @@ class _BorrowAmountViewState extends State<_BorrowAmountView> {
                     },
                   ),
                 ),
-                SafeArea(
-                  top: false,
-                  minimum: EdgeInsets.fromLTRB(16.w, 0, 16.w, 24.h),
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: bottomInset),
-                    child: AppButton(
-                      text: AppStrings.btnConfirm,
-                      onPressed: (state.amountValue <= 0 || over)
-                          ? null
-                          : c.toConfirm,
-                    ),
+                FlowScreenFooter(
+                  child: AppButton(
+                    text: AppStrings.btnConfirm,
+                    onPressed: (state.amountValue <= 0 || over)
+                        ? null
+                        : c.toConfirm,
                   ),
                 ),
               ],
@@ -349,9 +350,7 @@ class _BorrowConfirmView extends StatelessWidget {
                 ],
               ),
             ),
-            SafeArea(
-              top: false,
-              minimum: EdgeInsets.fromLTRB(16.w, 0, 16.w, 24.h),
+            FlowScreenFooter(
               child: AppButton(
                 text: AppStrings.btnSubmitBorrowRequest,
                 isLoading: state.loading,

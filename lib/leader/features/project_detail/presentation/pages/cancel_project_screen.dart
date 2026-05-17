@@ -13,6 +13,7 @@ import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_failure_dialog.dart';
 import 'package:vestie/core/widgets/common/app_outline_neutral_button.dart';
+import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/flow_hero_image_card.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/app/router/route_args/project_detail_flow_args.dart';
@@ -155,9 +156,7 @@ class _CancelProjectScreenState extends State<CancelProjectScreen> {
               ),
             ),
           ),
-          SafeArea(
-            top: false,
-            minimum: EdgeInsets.fromLTRB(16.w, 0, 16.w, 24.h),
+          FlowScreenFooter(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [

@@ -12,6 +12,7 @@ import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_failure_dialog.dart';
 import 'package:vestie/core/widgets/common/app_outline_neutral_button.dart';
 import 'package:vestie/core/widgets/common/centered_hero_status_block.dart';
+import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import '../navigation/open_project_from_card.dart';
@@ -90,9 +91,7 @@ class _LeaveProjectWarningScreenState extends State<LeaveProjectWarningScreen> {
                 bodyColor: AppColors.grey900,
               ),
             ),
-            SafeArea(
-              top: false,
-              minimum: EdgeInsets.fromLTRB(16.w, 0, 16.w, 24.h),
+            FlowScreenFooter(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [

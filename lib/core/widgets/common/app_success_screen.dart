@@ -5,6 +5,7 @@ import '../../constants/app_assets.dart';
 import '../../theme/app_colors.dart';
 import '../text/app_text.dart';
 import 'app_button.dart';
+import 'flow_screen_footer.dart';
 
 /// A globally reusable full-page success screen.
 ///
@@ -121,11 +122,7 @@ class AppSuccessScreen extends StatelessWidget {
                   child: b,
                 ),
               ],
-              SafeArea(
-                top: false,
-                minimum: EdgeInsets.fromLTRB(16.w, 0, 16.w, 24.h),
-                child: actionChild,
-              ),
+              FlowScreenFooter(child: actionChild),
             ],
           ),
         ],

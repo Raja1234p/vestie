@@ -10,6 +10,7 @@ import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_info_notice.dart';
 import 'package:vestie/core/widgets/common/app_text_field.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
+import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 
 class CreateAnnouncementScreen extends StatefulWidget {
@@ -143,18 +144,14 @@ class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
                 ),
               ),
             ),
-            SafeArea(
-              top: false,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 15.h),
-                child: AppButton(
-                  text: AppStrings.btnCreateAnnouncement,
-                  onPressed: _onSubmit,
-                  useGradient: false,
-                  hasShadow: false,
-                  color: AppColors.grey1200,
-                  borderRadius: 12.r,
-                ),
+            FlowScreenFooter(
+              child: AppButton(
+                text: AppStrings.btnCreateAnnouncement,
+                onPressed: _onSubmit,
+                useGradient: false,
+                hasShadow: false,
+                color: AppColors.grey1200,
+                borderRadius: 12.r,
               ),
             ),
           ],
