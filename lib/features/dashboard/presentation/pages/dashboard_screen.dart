@@ -23,10 +23,27 @@ class DashboardScreen extends StatelessWidget {
     this.shellArgs = const DashboardShellArgs(),
   });
 
+  /// Only reset a tab subtree when that tab's reload flag is set — avoids an
+  /// extra Home fetch when only [DashboardShellArgs.reloadDiscoverProjectList]
+  /// is true (e.g. leave project after discover join).
+  static Key homeTabKey(DashboardShellArgs args) {
+    if (args.reloadHomeProjectList) {
+      return ValueKey('home-reload-${args.navigationMark}');
+    }
+    return const ValueKey('home');
+  }
+
+  static Key discoverTabKey(DashboardShellArgs args) {
+    if (args.reloadDiscoverProjectList) {
+      return ValueKey('discover-reload-${args.navigationMark}');
+    }
+    return const ValueKey('discover');
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => NavCubit(),
+      create: (_) => NavCubit(initialIndex: shellArgs.initialTabIndex),
       child: BlocBuilder<NavCubit, int>(
         builder: (context, index) {
           return Scaffold(
@@ -36,15 +53,11 @@ class DashboardScreen extends StatelessWidget {
                 index: index,
                 children: [
                   HomeScreen(
-                    key: ValueKey(
-                      'home-${shellArgs.reloadHomeProjectList}-${shellArgs.navigationMark}',
-                    ),
+                    key: homeTabKey(shellArgs),
                     reloadHomeProjectList: shellArgs.reloadHomeProjectList,
                   ),
                   DiscoverScreen(
-                    key: ValueKey(
-                      'discover-${shellArgs.reloadDiscoverProjectList}-${shellArgs.navigationMark}',
-                    ),
+                    key: discoverTabKey(shellArgs),
                     activate: index == 1,
                     reloadDiscoverProjectList:
                         shellArgs.reloadDiscoverProjectList,

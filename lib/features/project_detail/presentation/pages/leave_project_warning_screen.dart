@@ -58,7 +58,11 @@ class _LeaveProjectWarningScreenState extends State<LeaveProjectWarningScreen> {
           (_) async {
             await showLeaveProjectSuccessDialog(context);
             if (!context.mounted) return;
-            popProjectDetailNavigation(context, refreshHomeOnPop: true);
+            popAfterLeaveProjectSuccess(
+              context,
+              refreshHomeOnPop: widget.args.refreshHomeOnPop,
+              refreshDiscoverOnPop: widget.args.refreshDiscoverOnPop,
+            );
           },
         );
       },

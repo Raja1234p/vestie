@@ -10,12 +10,14 @@ class ProjectActionButton extends StatelessWidget {
   final Project project;
   final VoidCallback onTap;
   final bool discoverCtaStyle;
+  final bool isLoading;
 
   const ProjectActionButton({
     super.key,
     required this.project,
     required this.onTap,
     this.discoverCtaStyle = false,
+    this.isLoading = false,
   });
 
   String get _label {
@@ -55,20 +57,31 @@ class ProjectActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: 44.h,
-      child: ElevatedButton(
-        onPressed: onTap,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.cardActionBtn,
-          foregroundColor: AppColors.surface,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.r),
+    return Material(
+      color: AppColors.cardActionBtn,
+      borderRadius: BorderRadius.circular(10.r),
+      child: IgnorePointer(
+        ignoring: isLoading,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(10.r),
+          child: SizedBox(
+            width: double.infinity,
+            height: 44.h,
+            child: Center(
+              child: isLoading
+                  ? SizedBox(
+                      width: 24.w,
+                      height: 24.w,
+                      child: const CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.surface,
+                      ),
+                    )
+                  : Text(_label, style: _textStyle),
+            ),
           ),
         ),
-        child: Text(_label, style: _textStyle),
       ),
     );
   }

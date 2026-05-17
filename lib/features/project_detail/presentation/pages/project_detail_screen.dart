@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_back_button.dart';
@@ -29,21 +27,28 @@ class ProjectDetailScreen extends StatelessWidget {
   final String projectId;
   final String? initialProjectName;
   final bool refreshHomeOnPop;
+  final bool refreshDiscoverOnPop;
 
   const ProjectDetailScreen({
     super.key,
     required this.projectId,
     this.initialProjectName,
     this.refreshHomeOnPop = false,
+    this.refreshDiscoverOnPop = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    final refreshShellOnPop = refreshHomeOnPop || refreshDiscoverOnPop;
     return PopScope(
-      canPop: !refreshHomeOnPop,
+      canPop: !refreshShellOnPop,
       onPopInvokedWithResult: (didPop, _) {
-        if (didPop || !refreshHomeOnPop) return;
-        popProjectDetailNavigation(context, refreshHomeOnPop: true);
+        if (didPop || !refreshShellOnPop) return;
+        popProjectDetailNavigation(
+          context,
+          refreshHomeOnPop: refreshHomeOnPop,
+          refreshDiscoverOnPop: refreshDiscoverOnPop,
+        );
       },
       child: BlocProvider(
         create: (_) => ServiceLocator.instance.createProjectDetailBloc()
@@ -52,6 +57,7 @@ class ProjectDetailScreen extends StatelessWidget {
           projectId: projectId,
           initialProjectName: initialProjectName,
           refreshHomeOnPop: refreshHomeOnPop,
+          refreshDiscoverOnPop: refreshDiscoverOnPop,
         ),
       ),
     );
@@ -64,11 +70,13 @@ class _ProjectDetailBody extends StatelessWidget {
     required this.projectId,
     required this.initialProjectName,
     required this.refreshHomeOnPop,
+    required this.refreshDiscoverOnPop,
   });
 
   final String projectId;
   final String? initialProjectName;
   final bool refreshHomeOnPop;
+  final bool refreshDiscoverOnPop;
 
   @override
   Widget build(BuildContext context) {
@@ -92,6 +100,7 @@ class _ProjectDetailBody extends StatelessWidget {
                 onBack: () => popProjectDetailNavigation(
                   context,
                   refreshHomeOnPop: refreshHomeOnPop,
+                  refreshDiscoverOnPop: refreshDiscoverOnPop,
                 ),
               );
             }
@@ -126,6 +135,7 @@ class _ProjectDetailBody extends StatelessWidget {
                             onPressed: () => popProjectDetailNavigation(
                               context,
                               refreshHomeOnPop: refreshHomeOnPop,
+                              refreshDiscoverOnPop: refreshDiscoverOnPop,
                             ),
                           ),
                         ),
@@ -136,10 +146,10 @@ class _ProjectDetailBody extends StatelessWidget {
                           child: ProjectDetailUserCompletedContent(
                             project: project,
                             onMemberTap: (member) {
-                              context.push(
-                                AppRoutes.memberDetail,
-                                extra: ProjectDetailNavigationHelpers
-                                    .memberDetailArgs(project, member),
+                              ProjectDetailNavigationHelpers.openMemberProfile(
+                                context,
+                                project: project,
+                                member: member,
                               );
                             },
                           ),
@@ -155,13 +165,12 @@ class _ProjectDetailBody extends StatelessWidget {
                   project: project,
                   pendingJoinRequestCount: pendingCount,
                   refreshHomeOnPop: refreshHomeOnPop,
+                  refreshDiscoverOnPop: refreshDiscoverOnPop,
                   onMemberTap: (member) {
-                    context.push(
-                      AppRoutes.memberDetail,
-                      extra: ProjectDetailNavigationHelpers.memberDetailArgs(
-                        project,
-                        member,
-                      ),
+                    ProjectDetailNavigationHelpers.openMemberProfile(
+                      context,
+                      project: project,
+                      member: member,
                     );
                   },
                   onRefresh: onRefresh,
@@ -181,6 +190,7 @@ class _ProjectDetailBody extends StatelessWidget {
                           onPressed: () => popProjectDetailNavigation(
                             context,
                             refreshHomeOnPop: refreshHomeOnPop,
+                            refreshDiscoverOnPop: refreshDiscoverOnPop,
                           ),
                         ),
                         trailing: project.showsProjectDetailOverflowMenu
@@ -200,6 +210,8 @@ class _ProjectDetailBody extends StatelessWidget {
                                   context,
                                   project: project,
                                   action: action,
+                                  refreshHomeOnPop: refreshHomeOnPop,
+                                  refreshDiscoverOnPop: refreshDiscoverOnPop,
                                 ),
                               )
                             : null,
@@ -228,10 +240,10 @@ class _ProjectDetailBody extends StatelessWidget {
                             ProjectDetailTabSection(
                               project: project,
                               onMemberTap: (member) {
-                                context.push(
-                                  AppRoutes.memberDetail,
-                                  extra: ProjectDetailNavigationHelpers
-                                      .memberDetailArgs(project, member),
+                                ProjectDetailNavigationHelpers.openMemberProfile(
+                                  context,
+                                  project: project,
+                                  member: member,
                                 );
                               },
                             ),

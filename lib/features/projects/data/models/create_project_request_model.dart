@@ -28,7 +28,7 @@ class CreateProjectRequestModel {
   });
 
   factory CreateProjectRequestModel.fromForm(CreateProjectForm form) {
-    final ends = form.deadline?.toUtc().toIso8601String();
+    final ends = _endsAtUtcIso(form.deadline);
 
     String mapType(NewProjectCategory c) => switch (c) {
           NewProjectCategory.vacation => 'Vacation',
@@ -74,6 +74,14 @@ class CreateProjectRequestModel {
               ? parseDouble(form.penalty.replaceAll('%', ''))
               : null),
     );
+  }
+
+  /// Sends the calendar day as UTC end-of-day so the API date matches the picker.
+  static String? _endsAtUtcIso(DateTime? deadline) {
+    if (deadline == null) return null;
+    final d = DateTime(deadline.year, deadline.month, deadline.day);
+    return DateTime.utc(d.year, d.month, d.day, 23, 59, 59, 999)
+        .toIso8601String();
   }
 
   Map<String, dynamic> toJson() => {

@@ -7,6 +7,10 @@ import '../../domain/create_project_form.dart';
 class CreateProjectCubit extends Cubit<CreateProjectForm> {
   CreateProjectCubit() : super(const CreateProjectForm());
 
+  /// Calendar date in local time (avoids [DateUtils.dateOnly] UTC shifts on picker days).
+  static DateTime calendarDate(DateTime value) =>
+      DateTime(value.year, value.month, value.day);
+
   // ── Amount ─────────────────────────────────────────────────────────────
   void appendAmountDigit(String d) {
     if (state.amountDigits.isEmpty && d == '0') return;
@@ -48,8 +52,7 @@ class CreateProjectCubit extends Cubit<CreateProjectForm> {
   }
 
   void setDeadline(DateTime d) {
-    final normalized = DateTime(d.year, d.month, d.day);
-    emit(state.copyWith(deadline: normalized, deadlineError: null));
+    emit(state.copyWith(deadline: calendarDate(d), deadlineError: null));
   }
 
   void setVisibility(ProjectVisibility v) =>

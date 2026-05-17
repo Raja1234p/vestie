@@ -18,7 +18,8 @@ class DiscoverState extends Equatable {
   final String searchQuery;
   final bool loading;
   final String? errorMessage;
-  final bool joinInProgress;
+  /// Project id while join / request-to-join API is in flight (button spinner).
+  final String? joiningProjectId;
   final DiscoverJoinEffect? joinEffect;
 
   const DiscoverState({
@@ -28,7 +29,7 @@ class DiscoverState extends Equatable {
     this.searchQuery = '',
     this.loading = false,
     this.errorMessage,
-    this.joinInProgress = false,
+    this.joiningProjectId,
     this.joinEffect,
   });
 
@@ -39,10 +40,11 @@ class DiscoverState extends Equatable {
     String? searchQuery,
     bool? loading,
     String? errorMessage,
-    bool? joinInProgress,
+    String? joiningProjectId,
     DiscoverJoinEffect? joinEffect,
     bool clearErrorMessage = false,
     bool clearJoinEffect = false,
+    bool clearJoiningProjectId = false,
   }) {
     return DiscoverState(
       allProjects: allProjects ?? this.allProjects,
@@ -52,7 +54,9 @@ class DiscoverState extends Equatable {
       loading: loading ?? this.loading,
       errorMessage:
           clearErrorMessage ? null : (errorMessage ?? this.errorMessage),
-      joinInProgress: joinInProgress ?? this.joinInProgress,
+      joiningProjectId: clearJoiningProjectId
+          ? null
+          : (joiningProjectId ?? this.joiningProjectId),
       joinEffect: clearJoinEffect ? null : (joinEffect ?? this.joinEffect),
     );
   }
@@ -65,7 +69,7 @@ class DiscoverState extends Equatable {
         searchQuery,
         loading,
         errorMessage,
-        joinInProgress,
+        joiningProjectId,
         joinEffect,
       ];
 }
@@ -190,14 +194,17 @@ class DiscoverCubit extends Cubit<DiscoverState> {
   }
 
   Future<void> joinProject(Project project) async {
-    if (state.joinInProgress) return;
-    emit(state.copyWith(joinInProgress: true, clearJoinEffect: true));
+    if (state.joiningProjectId != null) return;
+    emit(state.copyWith(
+      joiningProjectId: project.id,
+      clearJoinEffect: true,
+    ));
 
     final result = await _joinProjectUseCase(projectId: project.id);
 
     result.fold(
       (failure) => emit(state.copyWith(
-        joinInProgress: false,
+        clearJoiningProjectId: true,
         joinEffect: DiscoverJoinShowError(
           _userFacingFailureMessage(failure),
           title: failure.title,
@@ -206,7 +213,7 @@ class DiscoverCubit extends Cubit<DiscoverState> {
       (joinResult) async {
         if (joinResult.isPendingMembership) {
           emit(state.copyWith(
-            joinInProgress: false,
+            clearJoiningProjectId: true,
             joinEffect: const DiscoverJoinShowRequestSubmitted(),
           ));
           await refresh(silent: true);
@@ -217,7 +224,7 @@ class DiscoverCubit extends Cubit<DiscoverState> {
             ? joinResult.projectId
             : project.id;
         emit(state.copyWith(
-          joinInProgress: false,
+          clearJoiningProjectId: true,
           joinEffect: DiscoverJoinOpenDetail(
             projectId: projectId,
             projectName: project.name,

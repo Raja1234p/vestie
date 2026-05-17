@@ -21,6 +21,7 @@ class ProjectDetailMemberLayout extends StatefulWidget {
   final ProjectDetailEntity project;
   final int pendingJoinRequestCount;
   final bool refreshHomeOnPop;
+  final bool refreshDiscoverOnPop;
   final ValueChanged<MemberEntity> onMemberTap;
   final Future<void> Function() onRefresh;
 
@@ -29,6 +30,7 @@ class ProjectDetailMemberLayout extends StatefulWidget {
     required this.project,
     required this.pendingJoinRequestCount,
     required this.refreshHomeOnPop,
+    this.refreshDiscoverOnPop = false,
     required this.onMemberTap,
     required this.onRefresh,
   });
@@ -50,6 +52,7 @@ class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
         onPressed: () => popProjectDetailNavigation(
           context,
           refreshHomeOnPop: widget.refreshHomeOnPop,
+          refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
         ),
       ),
       trailing: widget.project.showsProjectDetailOverflowMenu
@@ -67,6 +70,8 @@ class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
                 context,
                 project: widget.project,
                 action: action,
+                refreshHomeOnPop: widget.refreshHomeOnPop,
+                refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
               ),
             )
           : null,

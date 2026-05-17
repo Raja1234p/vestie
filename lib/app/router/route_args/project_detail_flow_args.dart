@@ -152,9 +152,17 @@ class LeaveProjectRouteArgs {
   final String projectId;
   final String projectName;
 
+  /// When true, success navigates to dashboard and reloads home/discover lists.
+  final bool refreshHomeOnPop;
+
+  /// When true, success navigates to Discover and reloads the discover list only.
+  final bool refreshDiscoverOnPop;
+
   const LeaveProjectRouteArgs({
     required this.projectId,
     required this.projectName,
+    this.refreshHomeOnPop = false,
+    this.refreshDiscoverOnPop = false,
   });
 }
 

@@ -20,12 +20,14 @@ class ProjectCard extends StatelessWidget {
 
   /// Discover tab — public/private join labels at 18 / w500 (Figma).
   final bool discoverCtaStyle;
+  final bool actionLoading;
 
   const ProjectCard({
     super.key,
     required this.project,
     required this.onAction,
     this.discoverCtaStyle = false,
+    this.actionLoading = false,
   });
 
   /// My Projects: View while ongoing. Joined: View only when `displayStatus` is
@@ -142,6 +144,7 @@ class ProjectCard extends StatelessWidget {
               project: project,
               onTap: onAction,
               discoverCtaStyle: discoverCtaStyle,
+              isLoading: actionLoading,
             ),
           ],
         ],

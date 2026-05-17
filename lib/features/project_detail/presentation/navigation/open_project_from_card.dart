@@ -15,7 +15,8 @@ import '../../domain/entities/project_detail_route_args.dart';
 /// Pops detail or returns to dashboard with a fresh project list.
 void popProjectDetailNavigation(
   BuildContext context, {
-  required bool refreshHomeOnPop,
+  bool refreshHomeOnPop = false,
+  bool refreshDiscoverOnPop = false,
 }) {
   if (refreshHomeOnPop) {
     context.go(
@@ -28,18 +29,49 @@ void popProjectDetailNavigation(
     );
     return;
   }
+  if (refreshDiscoverOnPop) {
+    context.go(
+      AppRoutes.dashboard,
+      extra: DashboardShellArgs(
+        reloadDiscoverProjectList: true,
+        initialTabIndex: 1,
+        navigationMark: DateTime.now().microsecondsSinceEpoch,
+      ),
+    );
+    return;
+  }
   context.pop();
+}
+
+/// After leave-project success — uses the same shell reload flags as detail back.
+void popAfterLeaveProjectSuccess(
+  BuildContext context, {
+  bool refreshHomeOnPop = false,
+  bool refreshDiscoverOnPop = false,
+}) {
+  if (refreshHomeOnPop || refreshDiscoverOnPop) {
+    popProjectDetailNavigation(
+      context,
+      refreshHomeOnPop: refreshHomeOnPop,
+      refreshDiscoverOnPop: refreshDiscoverOnPop,
+    );
+    return;
+  }
+  context.pop();
+  if (context.mounted) context.pop();
 }
 
 ProjectDetailRouteArgs _routeArgs({
   required String projectId,
   String? initialProjectName,
   bool refreshHomeOnPop = false,
+  bool refreshDiscoverOnPop = false,
 }) {
   return ProjectDetailRouteArgs(
     projectId: projectId,
     initialProjectName: ProjectDetailRouteArgs.normalizedName(initialProjectName),
     refreshHomeOnPop: refreshHomeOnPop,
+    refreshDiscoverOnPop: refreshDiscoverOnPop,
   );
 }
 
@@ -109,6 +141,7 @@ void openProjectDetailById(
   required bool isInvestment,
   String? initialProjectName,
   bool refreshHomeOnPop = false,
+  bool refreshDiscoverOnPop = false,
 }) {
   _pushProjectDetail(
     context,
@@ -116,6 +149,7 @@ void openProjectDetailById(
       projectId: projectId,
       initialProjectName: initialProjectName,
       refreshHomeOnPop: refreshHomeOnPop,
+      refreshDiscoverOnPop: refreshDiscoverOnPop,
     ),
     isInvestment: isInvestment,
   );
@@ -227,7 +261,7 @@ void openProjectDetailAfterJoinSuccess(
     projectId: projectId,
     isInvestment: isInvestment,
     initialProjectName: projectName,
-    refreshHomeOnPop: true,
+    refreshDiscoverOnPop: true,
   );
 }
 

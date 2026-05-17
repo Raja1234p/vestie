@@ -7,6 +7,8 @@ import 'package:vestie/core/theme/app_text_styles.dart';
 import 'package:vestie/core/widgets/common/app_avatar_circle.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import '../../domain/entities/member_entity.dart';
+import 'package:vestie/core/widgets/common/app_role_badge.dart';
+
 import 'project_member_add_friend_button.dart';
 import 'project_member_badges.dart';
 
@@ -25,8 +27,11 @@ class ProjectMemberRow extends StatelessWidget {
     this.showVffBadge = false,
   });
 
-  bool get _showLeaderBadge =>
-      member.role == MemberRole.leader || member.role == MemberRole.coLeader;
+  AppRoleType? get _roleBadgeType => switch (member.role) {
+        MemberRole.leader => AppRoleType.leader,
+        MemberRole.coLeader => AppRoleType.coLeader,
+        MemberRole.member => null,
+      };
 
   bool get _showAddFriend =>
       onAddFriend != null && member.role == MemberRole.member;
@@ -68,13 +73,14 @@ class ProjectMemberRow extends StatelessWidget {
                     member.name,
                     style: AppTextStyles.projectMemberName,
                   ),
-                  if (_showLeaderBadge || showVffBadge) ...[
+                  if (_roleBadgeType != null || showVffBadge) ...[
                     SizedBox(height: AppDimens.projectMemberNameBadgeGap),
                     Wrap(
                       spacing: AppDimens.p8,
                       runSpacing: AppDimens.v4,
                       children: [
-                        if (_showLeaderBadge) const ProjectMemberLeaderBadge(),
+                        if (_roleBadgeType != null)
+                          AppRoleBadge(role: _roleBadgeType!),
                         if (showVffBadge) const ProjectMemberVffBadge(),
                       ],
                     ),

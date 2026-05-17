@@ -10,8 +10,88 @@ import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import '../../domain/create_project_form.dart';
+import '../cubit/create_project_cubit.dart';
 
 final _categoryDropdownRadius = BorderRadius.circular(AppRadius.r12);
+
+/// Project deadline picker — explicit OK/Cancel so today-on-OK is saved and cancel keeps prior value.
+Future<DateTime?> showProjectDeadlinePicker(
+  BuildContext context, {
+  required DateTime initial,
+  required DateTime firstDate,
+  required DateTime lastDate,
+}) {
+  return showDialog<DateTime?>(
+    context: context,
+    builder: (dialogContext) => _ProjectDeadlinePickerDialog(
+      initial: CreateProjectCubit.calendarDate(initial),
+      firstDate: CreateProjectCubit.calendarDate(firstDate),
+      lastDate: CreateProjectCubit.calendarDate(lastDate),
+    ),
+  );
+}
+
+class _ProjectDeadlinePickerDialog extends StatefulWidget {
+  final DateTime initial;
+  final DateTime firstDate;
+  final DateTime lastDate;
+
+  const _ProjectDeadlinePickerDialog({
+    required this.initial,
+    required this.firstDate,
+    required this.lastDate,
+  });
+
+  @override
+  State<_ProjectDeadlinePickerDialog> createState() =>
+      _ProjectDeadlinePickerDialogState();
+}
+
+class _ProjectDeadlinePickerDialogState
+    extends State<_ProjectDeadlinePickerDialog> {
+  late DateTime _selected;
+
+  @override
+  void initState() {
+    super.initState();
+    _selected = widget.initial;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      contentPadding: EdgeInsets.zero,
+      content: SizedBox(
+        width: 328.w,
+        height: 360.h,
+        child: CalendarDatePicker(
+          initialDate: _selected,
+          firstDate: widget.firstDate,
+          lastDate: widget.lastDate,
+          onDateChanged: (date) {
+            setState(() {
+              _selected = CreateProjectCubit.calendarDate(date);
+            });
+          },
+          selectableDayPredicate: (day) {
+            final d = CreateProjectCubit.calendarDate(day);
+            return !d.isBefore(widget.firstDate) && !d.isAfter(widget.lastDate);
+          },
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(AppStrings.btnCancel),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(_selected),
+          child: Text(AppStrings.btnOk),
+        ),
+      ],
+    );
+  }
+}
 
 /// Tappable deadline field with optional inline error message.
 class CPDeadlinePicker extends StatelessWidget {

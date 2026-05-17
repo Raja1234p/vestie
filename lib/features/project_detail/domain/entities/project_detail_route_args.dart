@@ -16,13 +16,18 @@ class ProjectDetailRouteArgs {
   /// Shown in [PostAuthHeader] while `GET /projects/{id}` loads.
   final String? initialProjectName;
 
-  /// When true, back navigates to dashboard and reloads home/discover lists.
+  /// When true, back/leave navigates to dashboard and reloads home/discover lists
+  /// (e.g. after create-project).
   final bool refreshHomeOnPop;
+
+  /// When true, back/leave navigates to Discover and reloads the discover list only.
+  final bool refreshDiscoverOnPop;
 
   const ProjectDetailRouteArgs({
     required this.projectId,
     this.initialProjectName,
     this.refreshHomeOnPop = false,
+    this.refreshDiscoverOnPop = false,
   });
 
   /// Prefer non-empty [initialProjectName]; otherwise null (no placeholder title).

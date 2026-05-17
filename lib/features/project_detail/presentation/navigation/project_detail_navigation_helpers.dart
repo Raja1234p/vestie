@@ -39,13 +39,32 @@ class ProjectDetailNavigationHelpers {
     );
   }
 
-  static MemberDetailRouteArgs memberDetailArgs(ProjectDetailEntity project, MemberEntity member) {
+  static MemberDetailRouteArgs memberDetailArgs(
+    ProjectDetailEntity project,
+    MemberEntity member,
+  ) {
     return MemberDetailRouteArgs(
       member: member,
       projectId: project.id,
       projectName: project.name,
-      isLeaderView: project.usesLeaderDetailPanels,
-      isPrimaryLeaderView: project.isModeratorView,
+      isLeaderView: project.isModeratorView,
+      isPrimaryLeaderView: project.isGroupLeader,
+    );
+  }
+
+  /// Member / CoLeader / GroupLeader — opens project member profile.
+  static void openMemberProfile(
+    BuildContext context, {
+    required ProjectDetailEntity project,
+    required MemberEntity member,
+  }) {
+    if (!project.canReviewMemberProfiles) {
+      AppSnackBar.showError(context, AppStrings.errorForbidden);
+      return;
+    }
+    context.push(
+      AppRoutes.memberDetail,
+      extra: memberDetailArgs(project, member),
     );
   }
 
@@ -177,6 +196,8 @@ class ProjectDetailNavigationHelpers {
     BuildContext context, {
     required ProjectDetailEntity project,
     required MemberProjectMenuAction action,
+    bool refreshHomeOnPop = false,
+    bool refreshDiscoverOnPop = false,
   }) {
     switch (action) {
       case MemberProjectMenuAction.projectFundsHistory:
@@ -200,6 +221,8 @@ class ProjectDetailNavigationHelpers {
           extra: LeaveProjectRouteArgs(
             projectId: project.id,
             projectName: project.name,
+            refreshHomeOnPop: refreshHomeOnPop,
+            refreshDiscoverOnPop: refreshDiscoverOnPop,
           ),
         );
         break;

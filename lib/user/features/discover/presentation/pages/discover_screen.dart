@@ -99,10 +99,14 @@ class _DiscoverBody extends StatelessWidget {
             final emptyIdle =
                 !state.loading && !loadFailed && !hasProjects;
 
-            return CustomScrollView(
+            return RefreshIndicator(
+              color: AppColors.primary,
+              onRefresh: () =>
+                  context.read<DiscoverCubit>().refresh(),
+              child: CustomScrollView(
               physics: emptyIdle
                   ? const NeverScrollableScrollPhysics()
-                  : null,
+                  : const AlwaysScrollableScrollPhysics(),
               slivers: [
                 // No [DiscoverHeader] when there are zero projects — full-screen empty state only.
                 if (state.loading || hasProjects)
@@ -214,6 +218,8 @@ class _DiscoverBody extends StatelessWidget {
                           (_, i) => ProjectCard(
                             project: state.filtered[i],
                             discoverCtaStyle: true,
+                            actionLoading:
+                                state.joiningProjectId == state.filtered[i].id,
                             onAction: () {
                               final project = state.filtered[i];
                               final isJoinAction = project.status ==
@@ -236,6 +242,7 @@ class _DiscoverBody extends StatelessWidget {
                 if (!emptyIdle)
                   SliverToBoxAdapter(child: SizedBox(height: 16.h)),
               ],
+            ),
             );
           },
         ),

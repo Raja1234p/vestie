@@ -57,48 +57,35 @@ class _CreateProjectDetailsScreenState extends State<CreateProjectDetailsScreen>
 
   Future<void> _pickDate(BuildContext ctx) async {
     final cubit = ctx.read<CreateProjectCubit>();
-    // Calendar "today" at midnight — past days are not selectable.
-    final today = DateUtils.dateOnly(DateTime.now());
-    // Picker requires a finite lastDate — allow choosing deadlines up to 20 years ahead.
+    final today = CreateProjectCubit.calendarDate(DateTime.now());
     final lastDay = DateTime(today.year + 20, today.month, today.day);
 
     final stored = cubit.state.deadline;
     final storedDay =
-        stored != null ? DateUtils.dateOnly(stored) : null;
+        stored != null ? CreateProjectCubit.calendarDate(stored) : null;
 
     DateTime initial;
     if (storedDay != null) {
       initial = storedDay.isBefore(today) ? today : storedDay;
     } else {
-      // Open on the current month; +30d was scrolling the grid to next month.
       initial = today;
     }
     if (initial.isAfter(lastDay)) initial = lastDay;
 
-    final picked = await showDatePicker(
-      context: ctx,
-      initialDate: initial,
+    final picked = await showProjectDeadlinePicker(
+      ctx,
+      initial: initial,
       firstDate: today,
       lastDate: lastDay,
-      // Input mode can accept dates outside [firstDate, lastDate]; calendar-only + predicate fixes that.
-      initialEntryMode: DatePickerEntryMode.calendarOnly,
-      selectableDayPredicate: (DateTime day) {
-        final d = DateUtils.dateOnly(day);
-        return !d.isBefore(today);
-      },
-      builder: (c, child) => Theme(
-        data: Theme.of(c).copyWith(
-          colorScheme: ColorScheme.light(primary: AppColors.primary),
-        ),
-        child: child!,
-      ),
     );
-    if (picked != null) {
-      final chosen = DateUtils.dateOnly(picked);
-      if (!chosen.isBefore(today)) {
-        cubit.setDeadline(chosen);
-      }
-    }
+
+    if (!ctx.mounted) return;
+    // Cancel — leave existing deadline unchanged.
+    if (picked == null) return;
+
+    final chosen = CreateProjectCubit.calendarDate(picked);
+    if (chosen.isBefore(today) || chosen.isAfter(lastDay)) return;
+    cubit.setDeadline(chosen);
   }
 
   @override

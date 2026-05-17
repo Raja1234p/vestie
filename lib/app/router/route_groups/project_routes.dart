@@ -48,6 +48,7 @@ List<RouteBase> buildProjectRoutes({
           projectId: extra.projectId,
           initialProjectName: extra.initialProjectName,
           refreshHomeOnPop: extra.refreshHomeOnPop,
+          refreshDiscoverOnPop: extra.refreshDiscoverOnPop,
         );
       },
     ),
@@ -60,6 +61,7 @@ List<RouteBase> buildProjectRoutes({
           projectId: extra.projectId,
           initialProjectName: extra.initialProjectName,
           refreshHomeOnPop: extra.refreshHomeOnPop,
+          refreshDiscoverOnPop: extra.refreshDiscoverOnPop,
         );
       },
     ),
