@@ -20,7 +20,7 @@ class MemberIdentitySection extends StatelessWidget {
   final MemberEntity member;
   final String username;
   final String projectName;
-  final bool showCoLeaderRoleControls;
+  final ProjectDetailEntity? project;
   final bool isCoLeader;
   final bool isCoLeaderActionLoading;
   final VoidCallback? onAssignCoLeader;
@@ -31,12 +31,21 @@ class MemberIdentitySection extends StatelessWidget {
     required this.member,
     required this.username,
     required this.projectName,
-    required this.showCoLeaderRoleControls,
+    this.project,
     required this.isCoLeader,
     this.isCoLeaderActionLoading = false,
     this.onAssignCoLeader,
     this.onRemoveCoLeader,
   });
+
+  bool get _showCoLeaderRoleControls {
+    final p = project;
+    if (p == null) return false;
+    return MemberDetailActionsVisibility.showCoLeaderControls(
+      project: p,
+      member: member,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +83,7 @@ class MemberIdentitySection extends StatelessWidget {
             ],
           ),
         ),
-        if (showCoLeaderRoleControls) ...[
+        if (_showCoLeaderRoleControls) ...[
           SizedBox(width: 8.w),
           MemberLeaderRoleButton(
             isCoLeader: isCoLeader,

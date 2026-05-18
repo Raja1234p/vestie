@@ -31,6 +31,10 @@ extension ProjectCategoryX on ProjectCategory {
 
   bool get isInvestment => this == ProjectCategory.investment;
 
+  /// Co-leader role is supported on Vacation and Investment groups only.
+  bool get supportsCoLeader =>
+      this == ProjectCategory.vacations || isInvestment;
+
   /// Label used in project detail chips/content.
   /// Kept explicit to preserve current UI copy exactly.
   String get detailLabel {

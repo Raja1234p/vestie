@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
+import 'package:vestie/features/project_detail/presentation/models/investment_returns_ui_data.dart';
 
 import 'project_wallet_flow_args.dart';
 
@@ -32,6 +33,12 @@ class MyBorrowRequestRouteArgs {
     this.activeRequest,
     this.history = const [],
   });
+}
+
+class InvestmentReturnsRouteArgs {
+  final InvestmentReturnsUiData data;
+
+  const InvestmentReturnsRouteArgs({required this.data});
 }
 
 class GroupMembersRouteArgs {

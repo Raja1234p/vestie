@@ -40,7 +40,7 @@ class ProjectFundsHistorySummary extends StatelessWidget {
         AppText(
           AppStrings.projectFundsCurrentPotBalance,
           style: GoogleFonts.lato(
-            fontSize: 14.sp,
+            fontSize: 18.sp,
             fontWeight: FontWeight.w600,
             color: AppColors.projectFundsMetricValue,
           ),

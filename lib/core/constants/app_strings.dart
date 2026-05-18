@@ -303,6 +303,17 @@ class AppStrings {
   static const String userInvestmentMemberActive = 'Active';
   static const String btnViewMyReturns = 'View My Returns';
   static const String userInvestmentReturnsTitle = 'My Investment Returns';
+  static const String userInvestmentMyContributionLabel = 'My Contribution';
+  static const String userInvestmentReceivedSoFarLabel = 'Received so far';
+  static const String userInvestmentPaymentHistoryTitle = 'Payment History';
+  static const String investmentLeaderDistributionLabel = 'Leader distribution';
+  static const String investmentMyShareLabel = 'My share';
+  static String investmentDistributionTitle(int number) =>
+      'Distribution #$number';
+  static const String btnInvestmentReturns = 'Investment Returns';
+  static const String btnDistributeFunds = 'Distribute Funds';
+  static const String btnPreviewCompletedInvestment =
+      'Preview completed investment UI';
   static const String userInvestmentInvestedAmountLabel = 'Invested Amount';
   static const String userInvestmentReturnsHistoryTitle = 'Returns History';
   static const String userInvestmentFundsHistoryTitle = 'Project Funds History';
@@ -774,7 +785,8 @@ class AppStrings {
   static const String announcementTitle         = 'Announcement';
   static const String announcementPlaceholder   = 'Any announcement will come up here';
   static const String noMoreContributionTitle   = 'No More Contribution';
-  static const String noMoreContributionBody    = 'You can no longer contribute to this investment as leader has closed this project, leader will come back soon to fund your amount and ROI/profit.';
+  static const String noMoreContributionBody    =
+      'You can no longer contribute to this investment as leader has closed this project.';
   /// Member (non-investment) projects completed by the leader — vacations / emergency.
   static const String projectCompletedUserTitle = 'No more contribution';
   static const String projectCompletedUserBody  =

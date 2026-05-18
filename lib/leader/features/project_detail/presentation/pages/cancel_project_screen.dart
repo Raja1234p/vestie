@@ -177,7 +177,7 @@ class _CancelProjectScreenState extends State<CancelProjectScreen> {
                     context.pop();
                   },
                   borderRadius: AppRadius.r8,
-                  borderColor: AppColors.grey700,
+                  borderColor: AppColors.backToHomeButtonBorder,
                 ),
               ],
             ),

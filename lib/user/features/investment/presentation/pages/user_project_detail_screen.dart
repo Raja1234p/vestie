@@ -16,6 +16,7 @@ import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
+import 'package:vestie/features/project_detail/presentation/models/investment_returns_ui_data.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/announcement_card.dart';
 
 import '../models/user_investment_ui_snapshot.dart';
@@ -131,7 +132,9 @@ class _UserProjectDetailScreenState extends State<UserProjectDetailScreen> {
                         }
                         context.push(
                           AppRoutes.userInvestmentReturns,
-                          extra: _s,
+                          extra: InvestmentReturnsRouteArgs(
+                            data: InvestmentReturnsUiData.fromLegacySnapshot(_s),
+                          ),
                         );
                       },
                     ),

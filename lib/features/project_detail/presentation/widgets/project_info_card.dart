@@ -13,7 +13,17 @@ import 'project_info_card_rows.dart';
 class ProjectInfoCard extends StatelessWidget {
   final ProjectDetailEntity project;
 
-  const ProjectInfoCard({super.key, required this.project});
+  /// Completed investment preview / closed project — “Raised $…” layout.
+  final bool displayAsCompleted;
+
+  const ProjectInfoCard({
+    super.key,
+    required this.project,
+    this.displayAsCompleted = false,
+  });
+
+  bool get _showsCompletedAmount =>
+      displayAsCompleted || project.status == ProjectStatus.completed;
 
   @override
   Widget build(BuildContext context) {
@@ -33,14 +43,21 @@ class ProjectInfoCard extends StatelessWidget {
             children: [
               ProjectInfoCategoryChip(project: project),
               const Spacer(),
-              ProjectInfoStatusBadge(project: project),
+              ProjectInfoStatusBadge(
+                project: project,
+                displayAsCompleted: displayAsCompleted,
+              ),
             ],
           ),
           SizedBox(height: 10.h),
 
           // ── Amount: ongoing = goal + deadline; completed = raised total only (Figma)
-          if (project.status == ProjectStatus.completed) ...[
-            ProjectInfoRaisedTotalRow(current: project.currentAmount),
+          if (_showsCompletedAmount) ...[
+            ProjectInfoRaisedTotalRow(
+              current: project.currentAmount > 0
+                  ? project.currentAmount
+                  : project.goalAmount,
+            ),
           ] else ...[
             ProjectInfoGoalRow(
               goal: project.goalAmount,

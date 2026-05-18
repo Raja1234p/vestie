@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_assets.dart';
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_svg_icon.dart';
 import '../../../../core/widgets/text/app_text.dart';
@@ -65,12 +66,18 @@ class ProjectInfoCategoryChip extends StatelessWidget {
 
 class ProjectInfoStatusBadge extends StatelessWidget {
   final ProjectDetailEntity project;
+  final bool displayAsCompleted;
 
-  const ProjectInfoStatusBadge({super.key, required this.project});
+  const ProjectInfoStatusBadge({
+    super.key,
+    required this.project,
+    this.displayAsCompleted = false,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final completed = project.status == ProjectStatus.completed;
+    final completed =
+        displayAsCompleted || project.status == ProjectStatus.completed;
     final isDraft = project.isDraftStatus;
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
@@ -85,7 +92,9 @@ class ProjectInfoStatusBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(100.r),
       ),
       child: AppText(
-        project.statusBadgeLabel,
+        completed && project.status != ProjectStatus.completed
+            ? AppStrings.statusCompleted
+            : project.statusBadgeLabel,
         style: GoogleFonts.lato(
           fontSize: 12.sp,
           fontWeight: FontWeight.w600,

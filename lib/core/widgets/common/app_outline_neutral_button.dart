@@ -41,7 +41,13 @@ class AppOutlineNeutralButton extends StatelessWidget {
     final textColor = labelColor ?? AppColors.neutral1200;
     return Material(
       color: borderless ? Colors.transparent : AppColors.surface,
-      borderRadius: BorderRadius.circular(radius),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(radius),
+        side: borderless
+            ? BorderSide.none
+            : BorderSide(color: border, width: 1.5.w),
+      ),
+      clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: isLoading ? null : onPressed,
         borderRadius: BorderRadius.circular(radius),
@@ -49,12 +55,6 @@ class AppOutlineNeutralButton extends StatelessWidget {
           width: double.infinity,
           height: 56.h,
           alignment: Alignment.center,
-          decoration: borderless
-              ? null
-              : BoxDecoration(
-                  borderRadius: BorderRadius.circular(radius),
-                  border: Border.all(color: border, width: 1.5.w),
-                ),
           child: isLoading
               ? SizedBox(
                   width: 22.w,

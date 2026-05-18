@@ -19,6 +19,7 @@ abstract final class MemberDetailActionsVisibility {
     required ProjectDetailEntity project,
     required MemberEntity member,
   }) {
+    if (!project.supportsCoLeader) return false;
     if (!project.isGroupLeader) return false;
     if (ProjectMemberAddFriendVisibility.isViewerSelf(
       project: project,

@@ -123,6 +123,9 @@ class ProjectDetailEntity {
       category == ProjectCategory.vacations ||
       category == ProjectCategory.emergency;
 
+  /// Promote / demote co-leader — Vacation and Investment only (not Emergency).
+  bool get supportsCoLeader => category.supportsCoLeader;
+
   /// Which ⋯ menu to show — same rules on investment, vacation, and emergency.
   ProjectDetailOverflowMenuKind get overflowMenuKind {
     if (isModeratorView) return ProjectDetailOverflowMenuKind.leader;

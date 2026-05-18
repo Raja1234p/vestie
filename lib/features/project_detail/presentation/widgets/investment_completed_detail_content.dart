@@ -1,26 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/project_detail/presentation/models/completed_project_notice_copy.dart';
+import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/announcement_card.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/completed_project_notice_bar.dart';
-import 'package:vestie/features/project_detail/presentation/widgets/investment_completed_detail_content.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_info_card.dart';
-import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_members_preview_section.dart';
-import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
 
-/// Shared layout: member (or any read-only) view when the project is **completed** —
-/// announcement, info card, notice, and members only (no contribute / borrow / tabs).
-///
-/// Screens own navigation; this widget only composes existing building blocks.
-class ProjectDetailUserCompletedContent extends StatelessWidget {
+/// Completed investment project detail (Figma — raised, returns CTA, notice, members).
+class InvestmentCompletedDetailContent extends StatelessWidget {
   final ProjectDetailEntity project;
   final ValueChanged<MemberEntity> onMemberTap;
   final VoidCallback? onDeleteAnnouncement;
 
-  const ProjectDetailUserCompletedContent({
+  const InvestmentCompletedDetailContent({
     super.key,
     required this.project,
     required this.onMemberTap,
@@ -29,14 +27,6 @@ class ProjectDetailUserCompletedContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (project.category.isInvestment) {
-      return InvestmentCompletedDetailContent(
-        project: project,
-        onMemberTap: onMemberTap,
-        onDeleteAnnouncement: onDeleteAnnouncement,
-      );
-    }
-
     final notice = CompletedProjectNoticeCopy.forCategory(project.category);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,7 +38,20 @@ class ProjectDetailUserCompletedContent extends StatelessWidget {
           onDelete: project.isModeratorView ? onDeleteAnnouncement : null,
         ),
         SizedBox(height: 12.h),
-        ProjectInfoCard(project: project),
+        ProjectInfoCard(
+          project: project,
+          displayAsCompleted: true,
+        ),
+        SizedBox(height: 16.h),
+        AppButton(
+          text: project.isModeratorView
+              ? AppStrings.btnDistributeFunds
+              : AppStrings.btnInvestmentReturns,
+          onPressed: () => ProjectDetailNavigationHelpers.openInvestmentReturns(
+            context,
+            project: project,
+          ),
+        ),
         SizedBox(height: 16.h),
         CompletedProjectNoticeBar(
           title: notice.title,

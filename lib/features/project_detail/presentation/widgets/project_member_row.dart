@@ -90,7 +90,8 @@ class ProjectMemberRow extends StatelessWidget {
                       children: [
                         if (member.role == MemberRole.leader)
                           const ProjectMemberLeaderBadge()
-                        else if (member.role == MemberRole.coLeader)
+                        else if (member.role == MemberRole.coLeader &&
+                            (project == null || project!.supportsCoLeader))
                           const ProjectMemberCoLeaderBadge(),
                         if (showVffBadge) const ProjectMemberVffBadge(),
                       ],

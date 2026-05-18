@@ -8,6 +8,7 @@ import 'package:vestie/features/project_detail/domain/entities/project_detail_ro
 import 'package:vestie/features/project_detail/presentation/pages/member_detail_screen.dart';
 import 'package:vestie/features/project_detail/presentation/pages/project_detail_screen.dart';
 import 'package:vestie/features/project_detail/presentation/pages/project_funds_history_screen.dart';
+import 'package:vestie/features/project_detail/presentation/models/investment_returns_ui_data.dart';
 import 'package:vestie/features/project_detail/presentation/pages/group_members_screen.dart';
 import 'package:vestie/leader/features/project_detail/presentation/pages/borrow_requests_screen.dart';
 import 'package:vestie/leader/features/project_detail/presentation/pages/cancel_project_screen.dart';
@@ -258,8 +259,15 @@ List<RouteBase> buildProjectRoutes({
       path: AppRoutes.userInvestmentReturns,
       builder: (context, state) {
         final extra = state.extra;
-        if (extra is! UserInvestmentUiSnapshot) return invalidRouteScreen();
-        return UserInvestmentReturnsScreen(snapshot: extra);
+        if (extra is InvestmentReturnsRouteArgs) {
+          return UserInvestmentReturnsScreen(data: extra.data);
+        }
+        if (extra is UserInvestmentUiSnapshot) {
+          return UserInvestmentReturnsScreen(
+            data: InvestmentReturnsUiData.fromLegacySnapshot(extra),
+          );
+        }
+        return invalidRouteScreen();
       },
     ),
     GoRoute(

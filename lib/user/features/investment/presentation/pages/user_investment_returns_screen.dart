@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
@@ -10,17 +9,15 @@ import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
+import 'package:vestie/features/project_detail/presentation/models/investment_returns_ui_data.dart';
 
-import '../models/user_investment_ui_snapshot.dart';
+import '../widgets/investment_returns_distribution_card.dart';
 
-/// “My Investment Returns” listing (UI mock).
+/// “My Investment Returns” — contribution summary + payment history (Figma).
 class UserInvestmentReturnsScreen extends StatelessWidget {
-  final UserInvestmentUiSnapshot snapshot;
+  final InvestmentReturnsUiData data;
 
-  const UserInvestmentReturnsScreen({super.key, required this.snapshot});
-
-  static String _money(num n) =>
-      NumberFormat('#,##0.00', 'en_US').format(n);
+  const UserInvestmentReturnsScreen({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -40,34 +37,40 @@ class UserInvestmentReturnsScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AppText(
-                      '\$${_money(snapshot.totalReturnsUsd)}',
-                      style: GoogleFonts.lato(
-                        fontSize: 36.sp,
-                        fontWeight: FontWeight.w900,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    SizedBox(height: 16.h),
-                    AppText(
-                      AppStrings.userInvestmentInvestedAmountLabel,
-                      style: GoogleFonts.lato(
-                        fontSize: 13.sp,
-                        color: AppColors.textBody,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    AppText(
-                      '\$${_money(snapshot.investedAmountUsd)}',
-                      style: GoogleFonts.lato(
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.textPrimary,
-                      ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AppText(
+                                AppStrings.userInvestmentMyContributionLabel,
+                                color: AppColors.neutral1200,
+                                style: GoogleFonts.lato(
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              SizedBox(height: 4.h),
+                              AppText(
+                                '\$${InvestmentReturnsUiData.formatMoney(data.myContributionUsd)}',
+                                color: AppColors.neutral1200,
+                                style: GoogleFonts.lato(
+                                  fontSize: 36.sp,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 12.w),
+                        _ReceivedSoFarCard(amountUsd: data.receivedSoFarUsd),
+                      ],
                     ),
                     SizedBox(height: 28.h),
                     AppText(
-                      AppStrings.userInvestmentReturnsHistoryTitle,
+                      AppStrings.userInvestmentPaymentHistoryTitle,
                       style: GoogleFonts.lato(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w800,
@@ -75,43 +78,9 @@ class UserInvestmentReturnsScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 12.h),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(14.r),
-                        border: Border.all(
-                          color:
-                              AppColors.cardBorder.withValues(alpha: 0.55),
-                        ),
-                      ),
-                      child: Column(
-                        children: [
-                          for (var i = 0; i < snapshot.returnsHistory.length; i++)
-                            Column(
-                              children: [
-                                ListTile(
-                                  title: AppText(
-                                    snapshot.returnsHistory[i].periodLabel,
-                                    style: GoogleFonts.lato(
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  trailing: AppText(
-                                    '+\$${_money(snapshot.returnsHistory[i].amount)}',
-                                    style: GoogleFonts.lato(
-                                      fontWeight: FontWeight.w800,
-                                      color: AppColors.txPositive,
-                                    ),
-                                  ),
-                                ),
-                                if (i < snapshot.returnsHistory.length - 1)
-                                  const Divider(
-                                    height: 1,
-                                    color: AppColors.cardBorder,
-                                  ),
-                              ],
-                            ),
-                        ],
+                    ...data.distributions.map(
+                      (d) => InvestmentReturnsDistributionCard(
+                        distribution: d,
                       ),
                     ),
                     SizedBox(height: 32.h),
@@ -121,6 +90,49 @@ class UserInvestmentReturnsScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _ReceivedSoFarCard extends StatelessWidget {
+  final double amountUsd;
+
+  const _ReceivedSoFarCard({required this.amountUsd});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 132.w,
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+      decoration: BoxDecoration(
+        color: AppColors.grey100,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(
+          color: AppColors.cardBorder.withValues(alpha: 0.55),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AppText(
+            AppStrings.userInvestmentReceivedSoFarLabel,
+            style: GoogleFonts.lato(
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w500,
+              color: AppColors.neutral1200,
+            ),
+          ),
+          SizedBox(height: 4.h),
+          AppText(
+            '\$${InvestmentReturnsUiData.formatMoney(amountUsd)}',
+            style: GoogleFonts.lato(
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w800,
+              color: AppColors.neutral1200,
+            ),
+          ),
+        ],
       ),
     );
   }

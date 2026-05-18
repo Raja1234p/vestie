@@ -15,7 +15,8 @@ import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.d
 import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/announcement_card.dart';
-import '../widgets/project_detail_user_completed_content.dart';
+import '../widgets/investment_detail_preview_button.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/investment_completed_detail_content.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_members_preview_section.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_trailing_actions.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_load_error.dart';
@@ -53,7 +54,7 @@ class InvestmentProjectDetailScreen extends StatelessWidget {
       child: BlocProvider(
         create: (_) => ServiceLocator.instance.createProjectDetailBloc()
           ..add(LoadProjectDetailEvent(projectId: projectId)),
-        child: _InvestmentProjectDetailBody(
+        child: InvestmentProjectDetailBody(
           projectId: projectId,
           initialProjectName: initialProjectName,
           refreshHomeOnPop: refreshHomeOnPop,
@@ -64,8 +65,9 @@ class InvestmentProjectDetailScreen extends StatelessWidget {
   }
 }
 
-class _InvestmentProjectDetailBody extends StatelessWidget {
-  const _InvestmentProjectDetailBody({
+class InvestmentProjectDetailBody extends StatefulWidget {
+  const InvestmentProjectDetailBody({
+    super.key,
     required this.projectId,
     required this.initialProjectName,
     required this.refreshHomeOnPop,
@@ -78,6 +80,15 @@ class _InvestmentProjectDetailBody extends StatelessWidget {
   final bool refreshDiscoverOnPop;
 
   @override
+  State<InvestmentProjectDetailBody> createState() =>
+      _InvestmentProjectDetailBodyState();
+}
+
+class _InvestmentProjectDetailBodyState
+    extends State<InvestmentProjectDetailBody> {
+  bool _previewCompletedInvestment = false;
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -86,11 +97,11 @@ class _InvestmentProjectDetailBody extends StatelessWidget {
           builder: (context, state) {
             if (state is ProjectDetailLoading || state is ProjectDetailInitial) {
               return ProjectDetailLoadingBody(
-                title: initialProjectName,
+                title: widget.initialProjectName,
                 onBack: () => popProjectDetailNavigation(
                   context,
-                  refreshHomeOnPop: refreshHomeOnPop,
-                  refreshDiscoverOnPop: refreshDiscoverOnPop,
+                  refreshHomeOnPop: widget.refreshHomeOnPop,
+                  refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
                 ),
               );
             }
@@ -99,7 +110,7 @@ class _InvestmentProjectDetailBody extends StatelessWidget {
               return ProjectDetailLoadError(
                 message: state.message,
                 onRetry: () => context.read<ProjectDetailBloc>().add(
-                      LoadProjectDetailEvent(projectId: projectId),
+                      LoadProjectDetailEvent(projectId: widget.projectId),
                     ),
               );
             }
@@ -108,6 +119,8 @@ class _InvestmentProjectDetailBody extends StatelessWidget {
               final project = state.project;
               final pendingCount = state.pendingJoinRequestCount;
               final isCompleted = project.status == ProjectStatus.completed;
+              final showCompletedLayout =
+                  isCompleted || _previewCompletedInvestment;
 
               Future<void> openMemberDetail(MemberEntity member) async {
                 final refreshed =
@@ -118,7 +131,7 @@ class _InvestmentProjectDetailBody extends StatelessWidget {
                 );
                 if (refreshed == true && context.mounted) {
                   context.read<ProjectDetailBloc>().add(
-                        LoadProjectDetailEvent(projectId: projectId),
+                        LoadProjectDetailEvent(projectId: widget.projectId),
                       );
                 }
               }
@@ -127,7 +140,7 @@ class _InvestmentProjectDetailBody extends StatelessWidget {
                 color: AppColors.primary,
                 onRefresh: () async {
                   context.read<ProjectDetailBloc>().add(
-                        LoadProjectDetailEvent(projectId: projectId),
+                        LoadProjectDetailEvent(projectId: widget.projectId),
                       );
                   await context.read<ProjectDetailBloc>().stream.firstWhere(
                         (s) =>
@@ -144,8 +157,8 @@ class _InvestmentProjectDetailBody extends StatelessWidget {
                         leading: AppBackButton(
                           onPressed: () => popProjectDetailNavigation(
                                 context,
-                                refreshHomeOnPop: refreshHomeOnPop,
-                                refreshDiscoverOnPop: refreshDiscoverOnPop,
+                                refreshHomeOnPop: widget.refreshHomeOnPop,
+                                refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
                               ),
                         ),
                         trailing: project.showsProjectDetailOverflowMenu
@@ -165,8 +178,8 @@ class _InvestmentProjectDetailBody extends StatelessWidget {
                                   context,
                                   project: project,
                                   action: action,
-                                  refreshHomeOnPop: refreshHomeOnPop,
-                                  refreshDiscoverOnPop: refreshDiscoverOnPop,
+                                  refreshHomeOnPop: widget.refreshHomeOnPop,
+                                  refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
                                 ),
                               )
                             : null,
@@ -175,14 +188,26 @@ class _InvestmentProjectDetailBody extends StatelessWidget {
                     SliverPadding(
                       padding: EdgeInsets.symmetric(horizontal: 16.w),
                       sliver: SliverToBoxAdapter(
-                        child: isCompleted
-                            ? ProjectDetailUserCompletedContent(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            if (!isCompleted)
+                              InvestmentDetailPreviewButton(
+                                onPressed: () => setState(
+                                  () => _previewCompletedInvestment = true,
+                                ),
+                              ),
+                            if (showCompletedLayout)
+                              InvestmentCompletedDetailContent(
                                 project: project,
                                 onMemberTap: (m) => openMemberDetail(m),
-                                onDeleteAnnouncement:
-                                    project.usesLeaderDetailPanels ? () {} : null,
+                                onDeleteAnnouncement: project
+                                        .usesLeaderDetailPanels
+                                    ? () {}
+                                    : null,
                               )
-                            : Column(
+                            else
+                              Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   AnnouncementCard(
@@ -205,6 +230,8 @@ class _InvestmentProjectDetailBody extends StatelessWidget {
                                   SizedBox(height: 32.h),
                                 ],
                               ),
+                          ],
+                        ),
                       ),
                     ),
                   ],

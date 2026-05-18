@@ -273,6 +273,8 @@ class _MemberDetailView extends StatelessWidget {
 
 
   void _promptAssignCoLeader(BuildContext context) {
+    final p = project;
+    if (p == null || !p.supportsCoLeader) return;
 
     showMakeCoLeaderConfirm(
 
@@ -295,6 +297,8 @@ class _MemberDetailView extends StatelessWidget {
 
 
   void _promptRemoveCoLeader(BuildContext context) {
+    final p = project;
+    if (p == null || !p.supportsCoLeader) return;
 
     showRemoveCoLeaderConfirm(
 
@@ -742,7 +746,7 @@ class _MemberDetailBody extends StatelessWidget {
 
           projectName: '',
 
-          showCoLeaderRoleControls: showCoLeaderControls,
+          project: project,
 
           isCoLeader: isCoLeader,
 

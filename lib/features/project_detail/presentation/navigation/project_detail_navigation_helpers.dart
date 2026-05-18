@@ -17,6 +17,7 @@ import 'package:vestie/user/features/vff/presentation/models/user_vff_profile_lo
 
 import '../../domain/entities/member_entity.dart';
 import '../../domain/entities/project_detail_entity.dart';
+import '../models/investment_returns_ui_data.dart';
 import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
 import '../data/project_funds_history_ledger_builder.dart';
 import 'package:vestie/user/features/borrow/presentation/data/my_borrow_request_args_builder.dart';
@@ -114,6 +115,18 @@ class ProjectDetailNavigationHelpers {
     context.push(
       AppRoutes.groupMembers,
       extra: groupMembersArgs(project),
+    );
+  }
+
+  static void openInvestmentReturns(
+    BuildContext context, {
+    required ProjectDetailEntity project,
+  }) {
+    context.push(
+      AppRoutes.userInvestmentReturns,
+      extra: InvestmentReturnsRouteArgs(
+        data: InvestmentReturnsUiData.previewForProject(project),
+      ),
     );
   }
 
