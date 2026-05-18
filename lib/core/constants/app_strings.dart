@@ -315,6 +315,22 @@ class AppStrings {
       'Distribution #$number';
   static const String btnInvestmentReturns = 'Investment Returns';
   static const String btnDistributeFunds = 'Distribute Funds';
+  static const String distributeAmountPrompt =
+      'How much you want to distribute?';
+  static const String investmentDistributionScreenTitle = 'Distribution';
+  static const String investmentDistributingLabel = 'Distributing';
+  static String investmentDistributingToMembers(int count) =>
+      'to all $count members';
+  static String investmentRemainingToDistribute(String formattedAmount) =>
+      'Remaining to distribute: $formattedAmount';
+  static const String btnConfirmAndDistribute = 'Confirm & Distribute';
+  static const String fundsDistributedSuccessTitle = 'Funds Distributed!';
+  static String fundsDistributedSentToMembers(int count) =>
+      'sent to $count members';
+  static const String investmentDistributionColMember = 'MEMBER';
+  static const String investmentDistributionColContributed = 'CONTRIBUTED';
+  static const String investmentDistributionColShare = 'SHARE';
+  static const String investmentDistributionColReceives = 'RECEIVES';
   static const String distributeFundsActionPending =
       'Distribute funds flow coming soon.';
   static const String btnPreviewCompletedInvestment =
@@ -499,11 +515,11 @@ class AppStrings {
   // Amount screen
   static const String projectAmountTitle     = 'Project Amount';
   static const String projectAmountPromptVacation =
-      'How much do you want to save?';
+      "What's your project goal amount?";
   static const String projectAmountPromptInvestment =
-      'How much do you want to invest?';
+      "What's your project goal amount?";
   static const String projectAmountPromptEmergency =
-      'How much do you want to raise?';
+      "What's your project goal amount?";
   static const String projectAmountEmptyDisplay = '\$0.00';
 
   // Step 1 – Details

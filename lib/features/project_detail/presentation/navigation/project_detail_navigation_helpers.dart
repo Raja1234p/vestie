@@ -17,7 +17,10 @@ import 'package:vestie/user/features/vff/presentation/models/user_vff_profile_lo
 
 import '../../domain/entities/member_entity.dart';
 import '../../domain/entities/project_detail_entity.dart';
+import '../../domain/entities/project_detail_route_args.dart';
+import '../models/investment_distribution_ui_data.dart';
 import '../models/investment_returns_ui_data.dart';
+import '../widgets/distribute_funds_amount_sheet.dart';
 import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
 import '../data/project_funds_history_ledger_builder.dart';
 import 'package:vestie/user/features/borrow/presentation/data/my_borrow_request_args_builder.dart';
@@ -115,6 +118,47 @@ class ProjectDetailNavigationHelpers {
     context.push(
       AppRoutes.groupMembers,
       extra: groupMembersArgs(project),
+    );
+  }
+
+  static void popAfterFundsDistributed(
+    BuildContext context, {
+    required String projectId,
+  }) {
+    context.go(
+      AppRoutes.investmentProjectDetail,
+      extra: ProjectDetailRouteArgs(projectId: projectId),
+    );
+  }
+
+  static void openFundsDistributedSuccess(
+    BuildContext context, {
+    required InvestmentDistributionUiData distributionData,
+  }) {
+    context.push(
+      AppRoutes.leaderInvestmentDistributionSuccess,
+      extra: InvestmentDistributionSuccessRouteArgs(
+        projectId: distributionData.projectId,
+        amountUsd: distributionData.distributeAmountUsd,
+        memberCount: distributionData.memberCount,
+      ),
+    );
+  }
+
+  static Future<void> openDistributeFundsFlow(
+    BuildContext context, {
+    required InvestmentReturnsUiData returnsData,
+  }) async {
+    final amountUsd = await showDistributeFundsAmountSheet(context);
+    if (!context.mounted || amountUsd == null || amountUsd <= 0) return;
+    context.push(
+      AppRoutes.leaderInvestmentDistribution,
+      extra: InvestmentDistributionRouteArgs(
+        data: InvestmentDistributionUiData.preview(
+          projectId: returnsData.projectId,
+          distributeAmountUsd: amountUsd,
+        ),
+      ),
     );
   }
 
