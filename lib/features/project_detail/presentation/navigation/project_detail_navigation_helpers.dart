@@ -122,6 +122,15 @@ class ProjectDetailNavigationHelpers {
     BuildContext context, {
     required ProjectDetailEntity project,
   }) {
+    if (project.isModeratorView) {
+      context.push(
+        AppRoutes.leaderDistributeFunds,
+        extra: InvestmentReturnsRouteArgs(
+          data: InvestmentReturnsUiData.previewLeaderForProject(project),
+        ),
+      );
+      return;
+    }
     context.push(
       AppRoutes.userInvestmentReturns,
       extra: InvestmentReturnsRouteArgs(

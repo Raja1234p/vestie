@@ -10,10 +10,12 @@ import 'package:vestie/features/project_detail/presentation/models/investment_re
 /// Payment history card — header + divider + two-column amounts (Figma).
 class InvestmentReturnsDistributionCard extends StatelessWidget {
   final InvestmentDistributionUi distribution;
+  final String defaultLeftColumnLabel;
 
   const InvestmentReturnsDistributionCard({
     super.key,
     required this.distribution,
+    required this.defaultLeftColumnLabel,
   });
 
   @override
@@ -23,8 +25,7 @@ class InvestmentReturnsDistributionCard extends StatelessWidget {
         '+\$${InvestmentReturnsUiData.formatMoney(d.leaderDistributionUsd)}';
     final shareFormatted =
         '\$${InvestmentReturnsUiData.formatMoney(d.myShareUsd)}';
-    final leftCaption =
-        d.leftColumnCaption ?? AppStrings.investmentLeaderDistributionLabel;
+    final leftCaption = d.leftColumnCaption ?? defaultLeftColumnLabel;
 
     return Container(
       width: double.infinity,

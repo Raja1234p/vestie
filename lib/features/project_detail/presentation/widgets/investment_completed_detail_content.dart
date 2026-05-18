@@ -27,7 +27,9 @@ class InvestmentCompletedDetailContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final notice = CompletedProjectNoticeCopy.forCategory(project.category);
+    final memberNotice = !project.isModeratorView
+        ? CompletedProjectNoticeCopy.forCategory(project.category)
+        : null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -52,11 +54,13 @@ class InvestmentCompletedDetailContent extends StatelessWidget {
             project: project,
           ),
         ),
-        SizedBox(height: 16.h),
-        CompletedProjectNoticeBar(
-          title: notice.title,
-          body: notice.body,
-        ),
+        if (memberNotice != null) ...[
+          SizedBox(height: 16.h),
+          CompletedProjectNoticeBar(
+            title: memberNotice.title,
+            body: memberNotice.body,
+          ),
+        ],
         SizedBox(height: 16.h),
         ProjectMembersPreviewSection(
           project: project,

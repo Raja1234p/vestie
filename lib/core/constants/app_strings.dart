@@ -307,11 +307,16 @@ class AppStrings {
   static const String userInvestmentReceivedSoFarLabel = 'Received so far';
   static const String userInvestmentPaymentHistoryTitle = 'Payment History';
   static const String investmentLeaderDistributionLabel = 'Leader distribution';
+  static const String investmentDistributionAmountLabel = 'Distribution Amount';
+  static const String investmentTotalDistributionsLabel = 'Total Distributions';
+  static const String investmentReceivedShareLabel = 'Received share';
   static const String investmentMyShareLabel = 'My share';
   static String investmentDistributionTitle(int number) =>
       'Distribution #$number';
   static const String btnInvestmentReturns = 'Investment Returns';
   static const String btnDistributeFunds = 'Distribute Funds';
+  static const String distributeFundsActionPending =
+      'Distribute funds flow coming soon.';
   static const String btnPreviewCompletedInvestment =
       'Preview completed investment UI';
   static const String userInvestmentInvestedAmountLabel = 'Invested Amount';

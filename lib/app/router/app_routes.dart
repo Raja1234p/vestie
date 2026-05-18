@@ -84,6 +84,8 @@ class AppRoutes {
       '/user/investment/project-detail';
   static const String userInvestmentReturns =
       '/user/investment/my-returns';
+  static const String leaderDistributeFunds =
+      '/project/investment/distribute-funds';
   static const String userInvestmentFundsHistory =
       '/user/investment/funds-history';
   static const String leaveProjectWarning = '/project/leave-warning';

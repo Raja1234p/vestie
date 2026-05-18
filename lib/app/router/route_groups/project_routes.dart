@@ -25,6 +25,7 @@ import 'package:vestie/user/features/contribute/presentation/pages/contribute_fl
 import 'package:vestie/user/features/contributions/presentation/bloc/contribute_event.dart';
 import 'package:vestie/user/features/project_detail/presentation/pages/investment_project_detail_screen.dart';
 import 'package:vestie/user/features/investment/presentation/models/user_investment_ui_snapshot.dart';
+import 'package:vestie/features/project_detail/presentation/pages/leader_distribute_funds_screen.dart';
 import 'package:vestie/user/features/investment/presentation/pages/user_investment_returns_screen.dart';
 import 'package:vestie/features/project_detail/presentation/pages/leave_project_warning_screen.dart';
 import 'package:vestie/user/features/investment/presentation/pages/user_project_detail_screen.dart';
@@ -266,6 +267,16 @@ List<RouteBase> buildProjectRoutes({
           return UserInvestmentReturnsScreen(
             data: InvestmentReturnsUiData.fromLegacySnapshot(extra),
           );
+        }
+        return invalidRouteScreen();
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.leaderDistributeFunds,
+      builder: (context, state) {
+        final extra = state.extra;
+        if (extra is InvestmentReturnsRouteArgs) {
+          return LeaderDistributeFundsScreen(data: extra.data);
         }
         return invalidRouteScreen();
       },
