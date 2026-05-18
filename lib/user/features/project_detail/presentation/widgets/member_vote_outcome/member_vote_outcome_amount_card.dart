@@ -12,10 +12,16 @@ class MemberVoteOutcomeAmountCard extends StatelessWidget {
 
   const MemberVoteOutcomeAmountCard({super.key, required this.data});
 
-  static BoxDecoration _cardDecoration(BorderRadius radius) => BoxDecoration(
-        color: AppColors.green100,
+  static BoxDecoration _cardDecoration({
+    required BorderRadius radius,
+    required bool isApproved,
+  }) =>
+      BoxDecoration(
+        color: isApproved ? AppColors.green100 : AppColors.red100,
         borderRadius: radius,
-        border: Border.all(color: AppColors.green300),
+        border: Border.all(
+          color: isApproved ? AppColors.green300 : AppColors.red300,
+        ),
       );
 
   @override
@@ -28,7 +34,7 @@ class MemberVoteOutcomeAmountCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-      decoration: _cardDecoration(radius),
+      decoration: _cardDecoration(radius: radius, isApproved: data.isApproved),
       child: Column(
         children: [
           AppText(
