@@ -1,5 +1,6 @@
 import '../constants/app_strings.dart';
 import 'person_name_input_formatter.dart';
+import 'username_input_formatter.dart';
 
 /// All form validation lives here.
 /// UI calls these methods and shows the returned error string.
@@ -58,11 +59,14 @@ class ValidationUtils {
     return null;
   }
 
-  /// Profile `@handle` without digits or symbols (letters only, no spaces).
+  /// Profile handle — letters, numbers, symbols; no spaces; max 50 characters.
   static String? validateProfileUsernameHandle(String? value) {
-    final t = (value ?? '').trim().replaceFirst(RegExp(r'^@+'), '');
+    final t = UsernameInputFormatter.normalize(value ?? '');
     if (t.isEmpty) return AppStrings.errUsernameRequired;
-    if (!PersonNameInputFormatter.isValidTrimmed(t, allowSpaces: false)) {
+    if (t.length > UsernameInputFormatter.maxLength) {
+      return AppStrings.errUsernameTooLong;
+    }
+    if (RegExp(r'\s').hasMatch(t)) {
       return AppStrings.errorUsernameInvalidChars;
     }
     return null;

@@ -10,8 +10,10 @@ import '../../../../core/di/service_locator.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/utils/person_name_input_formatter.dart';
+import '../../../../core/utils/username_input_formatter.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/common/app_loader.dart';
+import '../../../../core/widgets/common/flow_screen_footer.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../domain/entities/user_profile.dart';
 import '../cubit/edit_profile_cubit.dart';
@@ -179,7 +181,7 @@ class _EditProfileBodyState extends State<_EditProfileBody> {
                 ProfileSubHeader(title: AppStrings.editProfileTitle),
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 24.h),
+                    padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 16.h),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -210,9 +212,7 @@ class _EditProfileBodyState extends State<_EditProfileBody> {
                           controller: _userCtrl,
                           hint: AppStrings.hintUsername,
                           errorText: state.usernameError,
-                          inputFormatters: [
-                            PersonNameInputFormatter(allowSpaces: false),
-                          ],
+                          inputFormatters: const [UsernameInputFormatter()],
                           onChanged: cubit.setUsername,
                         ),
                         SizedBox(height: 16.h),
@@ -225,16 +225,8 @@ class _EditProfileBodyState extends State<_EditProfileBody> {
                           readOnly: true,
                           onChanged: (_) {},
                         ),
-                        SizedBox(height: 32.h),
-                        if (state.isSaving)
-                          const AppLoader()
-                        else
-                          AppButton(
-                            text: AppStrings.btnSaveChanges,
-                            onPressed: () => cubit.save(),
-                          ),
                         if (state.error != null && state.error!.isNotEmpty) ...[
-                          SizedBox(height: 12.h),
+                          SizedBox(height: 16.h),
                           Text(
                             state.error!,
                             style: GoogleFonts.lato(
@@ -245,6 +237,16 @@ class _EditProfileBodyState extends State<_EditProfileBody> {
                         ],
                       ],
                     ),
+                  ),
+                ),
+                FlowScreenFooter(
+                  child: AppButton(
+                    text: AppStrings.btnSaveChanges,
+                    useGradient: false,
+                    hasShadow: false,
+                    color: AppColors.neutral1200,
+                    isLoading: state.isSaving,
+                    onPressed: state.isSaving ? null : () => cubit.save(),
                   ),
                 ),
               ],

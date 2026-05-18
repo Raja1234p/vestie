@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/storage_keys.dart';
 import '../../../../core/di/service_locator.dart';
+import '../../../../core/utils/username_input_formatter.dart';
 import '../../../../core/utils/validation_utils.dart';
 import '../../../auth/domain/usecases/update_me_use_case.dart';
 import '../../domain/entities/user_profile.dart';
@@ -160,7 +161,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     final result = await _updateMeUseCase(
       firstName: firstName,
       lastName: lastName,
-      userName: state.username.trim().replaceFirst(RegExp(r'^@+'), ''),
+      userName: UsernameInputFormatter.normalize(state.username),
       photoUrl: _photoUrlForApi,
     );
 
@@ -173,7 +174,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
         _photoUrlForApi = user.photoUrl ?? _photoUrlForApi;
         final userName = user.userName.isNotEmpty
             ? user.userName
-            : state.username.trim().replaceFirst(RegExp(r'^@+'), '');
+            : UsernameInputFormatter.normalize(state.username);
         final updated = UserProfile(
           fullName: user.name,
           username: userName,

@@ -125,8 +125,10 @@ class AppStrings {
   static const String errorPersonNameInvalidChars =
       'Use letters and spaces only. Numbers and symbols are not allowed.';
   static const String errUsernameRequired   = 'Username is required.';
+  static const String errUsernameTooLong    =
+      'Username must be 50 characters or fewer.';
   static const String errorUsernameInvalidChars =
-      'Use letters only. Numbers, spaces, and symbols are not allowed.';
+      'Username cannot contain spaces.';
   static const String errorOtpInvalid       = 'Please enter a valid 6-digit code.';
 
   // Onboarding Flow
