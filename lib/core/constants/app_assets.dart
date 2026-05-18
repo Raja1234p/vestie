@@ -108,6 +108,8 @@ class AppAssets {
   /// Invite members / empty-state “add” — simple + (24×24, tints with primary).
   static const String plusSign = '$_iconPath/plus-sign.svg';
   static const String checkMarkSuccessful    = '$_iconPath/checkmark-circle-02.svg'; //
+  /// Invite VFF grid — selected avatar badge (Figma `friendselected.svg`).
+  static const String iconFriendSelected = '$_iconPath/friendselected.svg';
   /// [AppTickSwitch] selected state — purple tile + white check (design PNG).
   static const String iconTickSwitchOn = '$_iconPath/tick_switch_on.png';
   static const String infoIcon    = '$_iconPath/alert-01.svg';

@@ -131,10 +131,10 @@ class LeaderActionMenu extends StatelessWidget {
       push(
         _buildItem(
           value: LeaderMenuAction.markSuccessful,
-          iconPath: AppAssets.checkMarkSuccessful,
+          iconPath: AppAssets.iconMarkSuccessful,
           label: AppStrings.menuMarkSuccessful,
-          iconColor: AppColors.green1000,
-          labelColor: AppColors.badgeCompletedText,
+          iconColor: AppColors.green900,
+          labelColor: AppColors.green900,
         ),
       );
     }

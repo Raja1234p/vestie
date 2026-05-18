@@ -39,7 +39,12 @@ class AppDimens {
   static double get v22 => 22.0.h;
   static double get v24 => 24.0.h;
   static double get v28 => 28.0.h;
+  static double get v34 => 34.0.h;
   static double get v48 => 48.0.h;
+
+  /// Invite members sheet — gap above/below dashed dividers; hint-to-first-divider.
+  static double get inviteMembersDividerGutter => v24;
+  static double get inviteMembersHintToDivider => v34;
 
   /// Room for stacked primary footer on dense profile layouts.
   static double get v92 => 92.0.h;

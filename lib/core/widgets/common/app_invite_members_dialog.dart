@@ -24,7 +24,7 @@ class AppInviteMembersDialog {
       backgroundColor: Colors.transparent,
       builder: (sheetContext) {
         return Padding(
-          padding: EdgeInsets.fromLTRB(12.w, 0, 12.w, 12.h),
+          padding: EdgeInsets.fromLTRB(12.w, 0, 12.w, 0),
           child: DecoratedBox(
             decoration: BoxDecoration(
               color: AppColors.surface,
@@ -39,6 +39,8 @@ class AppInviteMembersDialog {
             ),
             child: SafeArea(
               top: false,
+              bottom: false,
+              minimum: EdgeInsets.zero,
               child: AppInviteMembersBottomSheet(
                 projectName: projectName,
                 inviteLink: inviteLink,

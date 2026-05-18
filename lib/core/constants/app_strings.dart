@@ -1065,6 +1065,9 @@ class AppStrings {
   static const String inviteMembersOrShareVia = 'or share Via';
   static const String inviteShareOutsideVestie = 'Share outside Vestie';
 
+  static String inviteMembersInviteSelected(int count) =>
+      'Invite ($count selected)';
+
   static String removeMemberTitle(String memberName) => 'Remove $memberName';
 
   static String removeMemberBody(String memberName) =>
