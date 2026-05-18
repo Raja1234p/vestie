@@ -40,7 +40,11 @@ void popProjectDetailNavigation(
     );
     return;
   }
-  context.pop();
+  if (context.canPop()) {
+    context.pop();
+    return;
+  }
+  context.go(AppRoutes.dashboard);
 }
 
 /// After leave-project success — uses the same shell reload flags as detail back.

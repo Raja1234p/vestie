@@ -50,11 +50,13 @@ class InvestmentDistributionRouteArgs {
 
 class InvestmentDistributionSuccessRouteArgs {
   final String projectId;
+  final String? projectName;
   final double amountUsd;
   final int memberCount;
 
   const InvestmentDistributionSuccessRouteArgs({
     required this.projectId,
+    this.projectName,
     required this.amountUsd,
     required this.memberCount,
   });

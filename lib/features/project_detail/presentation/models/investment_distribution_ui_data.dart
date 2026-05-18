@@ -20,12 +20,14 @@ class DistributionMemberRowUi {
 /// Leader distribution confirmation screen payload (dummy until API).
 class InvestmentDistributionUiData {
   final String projectId;
+  final String? projectName;
   final double distributeAmountUsd;
   final double remainingUsd;
   final List<DistributionMemberRowUi> members;
 
   const InvestmentDistributionUiData({
     required this.projectId,
+    this.projectName,
     required this.distributeAmountUsd,
     required this.remainingUsd,
     required this.members,
@@ -58,6 +60,7 @@ class InvestmentDistributionUiData {
   /// Preview breakdown — proportional to contribution share of [distributeAmountUsd].
   factory InvestmentDistributionUiData.preview({
     required String projectId,
+    String? projectName,
     required double distributeAmountUsd,
     double undistributedPoolUsd = 9500,
   }) {
@@ -83,6 +86,7 @@ class InvestmentDistributionUiData {
     }
     return InvestmentDistributionUiData(
       projectId: projectId,
+      projectName: projectName,
       distributeAmountUsd: distributeAmountUsd,
       remainingUsd: undistributedPoolUsd - distributeAmountUsd,
       members: rows,

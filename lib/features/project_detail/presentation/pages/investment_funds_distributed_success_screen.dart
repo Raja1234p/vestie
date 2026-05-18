@@ -53,6 +53,7 @@ class InvestmentFundsDistributedSuccessScreen extends StatelessWidget {
           ProjectDetailNavigationHelpers.popAfterFundsDistributed(
         context,
         projectId: args.projectId,
+        projectName: args.projectName,
       ),
     );
   }

@@ -121,14 +121,39 @@ class ProjectDetailNavigationHelpers {
     );
   }
 
+  /// Pops success → distribution → distribute funds so the existing detail
+  /// screen (and its bloc) is restored — avoids a full reload shimmer.
+  ///
+  /// Uses a fixed pop count (not [uri.path] matching) so we never pop past
+  /// detail or replace the stack with [GoRouter.go] (which would leave nothing
+  /// to pop when the user taps back on detail).
   static void popAfterFundsDistributed(
     BuildContext context, {
     required String projectId,
+    String? projectName,
   }) {
-    context.go(
-      AppRoutes.investmentProjectDetail,
-      extra: ProjectDetailRouteArgs(projectId: projectId),
-    );
+    final router = GoRouter.of(context);
+    // detail → distribute funds → distribution → success
+    const routesAboveDetail = 3;
+    for (var i = 0; i < routesAboveDetail; i++) {
+      if (!router.canPop()) break;
+      router.pop();
+      if (!context.mounted) return;
+    }
+    if (!context.mounted) return;
+
+    // Deep link / unexpected stack: still on success with nothing left to pop.
+    if (GoRouterState.of(context).matchedLocation ==
+        AppRoutes.leaderInvestmentDistributionSuccess) {
+      router.go(
+        AppRoutes.investmentProjectDetail,
+        extra: ProjectDetailRouteArgs(
+          projectId: projectId,
+          initialProjectName:
+              ProjectDetailRouteArgs.normalizedName(projectName),
+        ),
+      );
+    }
   }
 
   static void openFundsDistributedSuccess(
@@ -139,6 +164,7 @@ class ProjectDetailNavigationHelpers {
       AppRoutes.leaderInvestmentDistributionSuccess,
       extra: InvestmentDistributionSuccessRouteArgs(
         projectId: distributionData.projectId,
+        projectName: distributionData.projectName,
         amountUsd: distributionData.distributeAmountUsd,
         memberCount: distributionData.memberCount,
       ),
@@ -156,6 +182,7 @@ class ProjectDetailNavigationHelpers {
       extra: InvestmentDistributionRouteArgs(
         data: InvestmentDistributionUiData.preview(
           projectId: returnsData.projectId,
+          projectName: returnsData.projectName,
           distributeAmountUsd: amountUsd,
         ),
       ),
