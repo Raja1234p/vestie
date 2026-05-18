@@ -109,6 +109,7 @@ class AppStrings {
   // State
   static const String loading = 'Loading...';
   static const String loadingResendOtp = 'Sending code...';
+  static const String otpSentSuccessToast = 'OTP Send Successfully';
   static const String emptyData = 'No data available';
 
   // ── Social Auth ────────────────────────────────────────────────────────────
@@ -481,7 +482,12 @@ class AppStrings {
   // ── Create Project Wizard ─────────────────────────────────────────────────
   // Amount screen
   static const String projectAmountTitle     = 'Project Amount';
-  static const String projectAmountSubtitle  = 'How much you want to save?';
+  static const String projectAmountPromptVacation =
+      'How much do you want to save?';
+  static const String projectAmountPromptInvestment =
+      'How much do you want to invest?';
+  static const String projectAmountPromptEmergency =
+      'How much do you want to raise?';
   static const String projectAmountEmptyDisplay = '\$0.00';
 
   // Step 1 – Details

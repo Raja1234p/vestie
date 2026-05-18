@@ -1,3 +1,4 @@
+import '../../../../core/utils/roi_display_format.dart';
 import '../../../../core/utils/safe_parser.dart';
 
 /// Maps API enum integers to the string labels used in [ProjectSummaryEntity]
@@ -110,6 +111,13 @@ int? projectStateToApiInt(dynamic raw) {
   if (raw is double) return raw.toInt();
   final s = raw.toString().trim();
   return int.tryParse(s);
+}
+
+/// Investment ROI from list/detail payloads (`roiPercentage` or `roi`).
+double? parseApiRoiPercent(Map<String, dynamic> json) {
+  final roiPercentage = json.safeDoubleNullable('roiPercentage');
+  final roi = json.safeDoubleNullable('roi');
+  return normalizeDisplayableRoi(roiPercentage ?? roi);
 }
 
 /// `GET /projects?scope=` — `viewerRole` on the project object (preferred).

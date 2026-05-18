@@ -1,28 +1,16 @@
 import 'package:flutter/material.dart';
 
-import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
-import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/core/error/failures.dart';
-import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_action_dialog.dart';
+import 'package:vestie/core/widgets/common/app_toast.dart';
 
 Future<void> showMemberDetailErrorDialog(
   BuildContext context, {
   required Failure failure,
 }) {
-  return AppActionDialog.show(
-    context,
-    title: FailureMapper.dialogTitle(failure),
-    description: FailureMapper.userMessage(failure),
-    primaryLabel: AppStrings.btnOk,
-    showSecondary: false,
-    primaryColor: Colors.transparent,
-    primaryTextColor: AppColors.neutral1200,
-    primaryBorderColor: AppColors.neutral1200,
-    iconAsset: AppAssets.failureIcon,
-    onPrimary: () => Navigator.of(context).pop(),
-  );
+  AppToast.showApiFailure(context, failure);
+  return Future.value();
 }
 
 Future<void> showCoLeaderAssignedSuccess(

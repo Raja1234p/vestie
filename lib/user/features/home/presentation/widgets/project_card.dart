@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/core/utils/project_end_relative_label.dart';
+import 'package:vestie/core/utils/roi_display_format.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/project_end_and_roi_row.dart';
 import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
@@ -160,6 +161,7 @@ class ProjectCard extends StatelessWidget {
 }
 
 bool _showEndOrRoiRow(Project project) {
-  if (ProjectEndRelativeLabel.hasDisplayableEnd(project.endsIn)) return true;
-  return project.category.isInvestment && project.roiPercentage != null;
+  if (ProjectEndRelativeLabel.hasActiveDeadline(project.endsIn)) return true;
+  return project.category.isInvestment &&
+      isDisplayableRoi(project.roiPercentage);
 }

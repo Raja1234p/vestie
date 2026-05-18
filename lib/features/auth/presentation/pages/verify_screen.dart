@@ -7,9 +7,9 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/widgets/common/app_back_button.dart';
 import '../../../../core/widgets/common/app_failure_dialog.dart';
+import '../../../../core/widgets/common/app_toast.dart';
 import '../../../../core/widgets/common/app_loading_dialog.dart';
 import '../../../../core/widgets/text/app_text.dart';
 import '../bloc/verification_cubit.dart';
@@ -113,7 +113,13 @@ class _VerifyScreenState extends State<VerifyScreen> {
               } else if (state.resendMessage != null) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if (!context.mounted) return;
-                  AppSnackBar.showSuccess(context, state.resendMessage!);
+                  final msg = state.resendMessage!.trim();
+                  AppToast.showSuccess(
+                    context,
+                    msg.isNotEmpty
+                        ? msg
+                        : AppStrings.otpSentSuccessToast,
+                  );
                   context.read<VerificationCubit>().clearResendMessage();
                 });
               }

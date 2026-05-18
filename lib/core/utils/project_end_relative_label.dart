@@ -44,6 +44,16 @@ class ProjectEndRelativeLabel {
   static bool hasDisplayableEnd(String? endsInIsoUtc) =>
       emphasis(endsInIsoUtc).isNotEmpty;
 
+  /// True when [endsInIsoUtc] is a future deadline (show calendar + "Ends in …").
+  /// Missing, invalid, or past dates are excluded — ROI-only rows use this.
+  static bool hasActiveDeadline(String? endsInIsoUtc) {
+    if (endsInIsoUtc == null || endsInIsoUtc.trim().isEmpty) return false;
+    final end = DateTime.tryParse(endsInIsoUtc.trim());
+    if (end == null) return false;
+    final endUtc = end.isUtc ? end : end.toUtc();
+    return endUtc.isAfter(DateTime.now().toUtc());
+  }
+
   /// Bold segment after "Ends in " (or full phrase for ended).
   static String emphasis(String? endsInIsoUtc) {
     if (endsInIsoUtc == null || endsInIsoUtc.trim().isEmpty) {

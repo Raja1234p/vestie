@@ -28,12 +28,19 @@ class ProjectEndAndRoiRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final emphasis = ProjectEndRelativeLabel.emphasis(endsInRaw);
-    if (emphasis.isEmpty && (!showRoi || formatRoiPercentDisplay(roiPercentage).isEmpty)) {
+    final showEndColumn = ProjectEndRelativeLabel.hasActiveDeadline(endsInRaw);
+    final emphasis =
+        showEndColumn ? ProjectEndRelativeLabel.emphasis(endsInRaw) : '';
+
+    final roiValue = formatRoiPercentDisplay(roiPercentage);
+    final showRoiColumn = showRoi && roiValue.isNotEmpty;
+
+    if (!showEndColumn && !showRoiColumn) {
       return const SizedBox.shrink();
     }
 
-    final full = ProjectEndRelativeLabel.isFullSentence(endsInRaw);
+    final full = showEndColumn &&
+        ProjectEndRelativeLabel.isFullSentence(endsInRaw);
     final fontSize = compact ? 13.sp : 16.sp;
     const labelColor = AppColors.grey800;
     const valueColor = Color(0xFF000000);
@@ -51,13 +58,27 @@ class ProjectEndAndRoiRow extends StatelessWidget {
       height: 1.2,
     );
 
-    final roiValue = formatRoiPercentDisplay(roiPercentage);
-    final showRoiColumn = showRoi && roiValue.isNotEmpty;
+    if (!showEndColumn && showRoiColumn) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Text.rich(
+            TextSpan(
+              style: labelStyle,
+              children: [
+                TextSpan(text: AppStrings.labelRoiColon),
+                TextSpan(text: ' $roiValue', style: valueStyle),
+              ],
+            ),
+          ),
+        ],
+      );
+    }
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        if (emphasis.isNotEmpty)
+        if (showEndColumn)
           Expanded(
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -83,11 +104,9 @@ class ProjectEndAndRoiRow extends StatelessWidget {
                 ),
               ],
             ),
-          )
-        else if (showRoiColumn)
-          const Spacer(),
+          ),
         if (showRoiColumn) ...[
-          if (emphasis.isNotEmpty) SizedBox(width: 12.w),
+          if (showEndColumn) SizedBox(width: 12.w),
           Text.rich(
             TextSpan(
               style: labelStyle,

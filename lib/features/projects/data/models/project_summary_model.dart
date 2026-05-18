@@ -51,12 +51,12 @@ class ProjectSummaryModel extends ProjectSummaryEntity {
   }
 
   static double? _parseRoiPercentage(Map<String, dynamic> json) {
-    final direct = json.safeDoubleNullable('roiPercentage');
+    final direct = parseApiRoiPercent(json);
     if (direct != null) return direct;
     final rules = json['projectRules'];
     if (rules is Map) {
       final nested = rules.map((k, v) => MapEntry(k.toString(), v));
-      return nested.safeDoubleNullable('roiPercentage');
+      return parseApiRoiPercent(nested);
     }
     return null;
   }

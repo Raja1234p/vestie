@@ -5,7 +5,6 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/member_entity.dart';
 import '../../domain/entities/pending_join_request_entity.dart';
-import '../../domain/repositories/project_actions_repository.dart';
 import '../../domain/repositories/project_detail_repository.dart';
 import '../../domain/usecases/list_pending_join_requests_usecase.dart';
 

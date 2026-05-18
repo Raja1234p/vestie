@@ -8,8 +8,8 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/constants/storage_keys.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/utils/person_name_input_formatter.dart';
+import '../../../../core/widgets/common/app_toast.dart';
 import '../../../../core/utils/username_input_formatter.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/common/app_loader.dart';
@@ -169,7 +169,7 @@ class _EditProfileBodyState extends State<_EditProfileBody> {
         _nameCtrl.text = state.fullName;
         _userCtrl.text = state.username;
         _emailCtrl.text = state.email;
-        AppSnackBar.showSuccess(context, AppStrings.profileUpdatedSuccess);
+        AppToast.showSuccess(context, AppStrings.profileUpdatedSuccess);
       },
       builder: (context, state) {
         final cubit = context.read<EditProfileCubit>();

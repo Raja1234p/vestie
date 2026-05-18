@@ -13,6 +13,13 @@ import 'package:vestie/core/widgets/common/app_text.dart';
 import 'package:vestie/leader/features/create_project/domain/create_project_form.dart';
 import 'package:vestie/leader/features/create_project/presentation/cubit/create_project_cubit.dart';
 
+String _amountPromptFor(NewProjectCategory category) => switch (category) {
+      NewProjectCategory.vacation => AppStrings.projectAmountPromptVacation,
+      NewProjectCategory.investment =>
+        AppStrings.projectAmountPromptInvestment,
+      NewProjectCategory.emergency => AppStrings.projectAmountPromptEmergency,
+    };
+
 /// Figma “set amount” step — shared by [showCreateProjectAmountSheet] and route.
 class CreateProjectAmountSheetContent extends StatelessWidget {
   const CreateProjectAmountSheetContent({
@@ -60,14 +67,16 @@ class CreateProjectAmountSheetContent extends StatelessWidget {
                           .createProjectAmountSheetIconTitleVerticalGap,
                     ),
                     AppText(
-                      AppStrings.projectAmountSubtitle,
+                      _amountPromptFor(form.category),
                       textAlign: TextAlign.center,
                       style: AppTextStyles.createProjectAmountSheetTitle,
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: AppDimens.v16),
+              SizedBox(
+                height: AppDimens.createProjectAmountSheetTitleValueGap,
+              ),
               AppText(
                 form.amountDigits.isEmpty
                     ? AppStrings.projectAmountEmptyDisplay

@@ -91,7 +91,7 @@ class ProjectDetailResponseModel {
           _project.borrowingEnabled && _rules.borrowingAllowed,
       pendingJoinRequestCount: _project.pendingRequestCount,
       projectInviteCode: _project.projectInviteCode,
-      roiPercentage: _rules.roiPercentage,
+      roiPercentage: _rules.roiPercentage ?? _project.roi,
       joinApprovalRequired: _rules.joinApprovalRequired,
       minimumContributionAmount: _rules.minimumContributionAmount,
       penaltyPercentage: _rules.penaltyPercentage,
@@ -194,6 +194,7 @@ class _ProjectPayload {
   final double? suggestedContributionAmount;
   final String createdUtc;
   final int pendingRequestCount;
+  final double? roi;
 
   const _ProjectPayload({
     required this.id,
@@ -213,6 +214,7 @@ class _ProjectPayload {
     this.suggestedContributionAmount,
     required this.createdUtc,
     required this.pendingRequestCount,
+    this.roi,
   });
 
   factory _ProjectPayload.fromJson(Map<String, dynamic> json) {
@@ -238,6 +240,7 @@ class _ProjectPayload {
       ),
       createdUtc: _jsonString(json['createdUtc']),
       pendingRequestCount: (json['pendingRequestCount'] as num?)?.toInt() ?? 0,
+      roi: parseApiRoiPercent(json),
     );
   }
 }
@@ -272,7 +275,7 @@ class _RulesPayload {
   });
 
   factory _RulesPayload.fromJson(Map<String, dynamic> json) => _RulesPayload(
-        roiPercentage: _jsonDoubleNullable(json['roiPercentage']),
+        roiPercentage: parseApiRoiPercent(json),
         joinApprovalRequired: json['joinApprovalRequired'] == true,
         borrowingAllowed: json['borrowingAllowed'] == true,
         successVoteWindowHours:

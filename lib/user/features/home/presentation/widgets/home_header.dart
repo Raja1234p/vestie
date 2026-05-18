@@ -24,8 +24,8 @@ class HomeHeader extends StatelessWidget {
           bottomGap: 0,
           titleStyle: GoogleFonts.lato(
             fontSize: 16.sp,
-            fontWeight: FontWeight.w400,
-            color: Colors.black,
+            fontWeight: FontWeight.w500,
+            color: AppColors.neutral1200,
           ),
           trailing: const NotificationFavouriteHeaderActions(),
         ),  
