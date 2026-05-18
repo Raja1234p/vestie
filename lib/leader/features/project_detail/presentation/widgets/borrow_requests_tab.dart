@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
-import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/core/widgets/common/app_svg_icon.dart';
-import 'package:vestie/core/widgets/text/app_text.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_detail_view_all_link.dart';
 import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
@@ -51,7 +47,10 @@ class BorrowRequestsTab extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _ViewAllRequestsLink(onTap: onViewAll),
+          ProjectDetailViewAllLink(
+            label: AppStrings.viewAllRequests,
+            onTap: onViewAll,
+          ),
           const BorrowRequestsEmptyState(compactTop: true),
         ],
       );
@@ -71,48 +70,12 @@ class BorrowRequestsTab extends StatelessWidget {
         ),
         if (requests.length > 2) ...[
           SizedBox(height: 10.h),
-          _ViewAllRequestsLink(onTap: onViewAll),
+          ProjectDetailViewAllLink(
+            label: AppStrings.viewAllRequests,
+            onTap: onViewAll,
+          ),
         ],
       ],
-    );
-  }
-}
-
-class _ViewAllRequestsLink extends StatelessWidget {
-  final VoidCallback onTap;
-
-  const _ViewAllRequestsLink({required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: GestureDetector(
-        onTap: onTap,
-        behavior: HitTestBehavior.opaque,
-        child: Padding(
-          padding: EdgeInsets.only(bottom: 8.h),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AppText(
-                AppStrings.viewAllRequests,
-                style: GoogleFonts.lato(
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.neutral1200,
-                ),
-              ),
-              SizedBox(width: 4.w),
-              AppSvgIcon(
-                assetPath: AppAssets.iconChevronRight,
-                color: AppColors.grey800,
-                size: 24.r,
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

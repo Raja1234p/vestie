@@ -16,6 +16,9 @@ class AppOutlineNeutralButton extends StatelessWidget {
   final Color? labelColor;
   final bool isLoading;
 
+  /// No fill or stroke — label only (e.g. Leave Project screen Cancel).
+  final bool borderless;
+
   const AppOutlineNeutralButton({
     super.key,
     required this.label,
@@ -25,16 +28,19 @@ class AppOutlineNeutralButton extends StatelessWidget {
     this.leading,
     this.labelColor,
     this.isLoading = false,
+    this.borderless = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final radius = borderRadius ?? 999.r;
-    final border = borderColor ?? AppColors.neutral1200;
+    final border = borderless
+        ? Colors.transparent
+        : (borderColor ?? AppColors.neutral1200);
     final textColor = labelColor ?? AppColors.neutral1200;
     return Material(
-      color: AppColors.surface,
+      color: borderless ? Colors.transparent : AppColors.surface,
       borderRadius: BorderRadius.circular(radius),
       child: InkWell(
         onTap: isLoading ? null : onPressed,
@@ -43,10 +49,12 @@ class AppOutlineNeutralButton extends StatelessWidget {
           width: double.infinity,
           height: 56.h,
           alignment: Alignment.center,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(radius),
-            border: Border.all(color: border, width: 1.5.w),
-          ),
+          decoration: borderless
+              ? null
+              : BoxDecoration(
+                  borderRadius: BorderRadius.circular(radius),
+                  border: Border.all(color: border, width: 1.5.w),
+                ),
           child: isLoading
               ? SizedBox(
                   width: 22.w,

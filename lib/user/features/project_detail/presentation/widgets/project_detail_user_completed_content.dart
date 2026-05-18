@@ -7,7 +7,7 @@ import 'package:vestie/features/project_detail/presentation/widgets/announcement
 import 'package:vestie/features/project_detail/presentation/widgets/completed_project_notice_bar.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_info_card.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
-import 'package:vestie/features/project_detail/presentation/widgets/project_members_section.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_members_preview_section.dart';
 
 /// Shared layout: member (or any read-only) view when the project is **completed** —
 /// announcement, info card, notice, and members only (no contribute / borrow / tabs).
@@ -45,9 +45,8 @@ class ProjectDetailUserCompletedContent extends StatelessWidget {
           body: notice.body,
         ),
         SizedBox(height: 16.h),
-        ProjectMembersSection(
+        ProjectMembersPreviewSection(
           project: project,
-          members: project.members,
           onMemberTap: onMemberTap,
           onAddFriend: (member) => ProjectDetailNavigationHelpers.openAddFriendFlow(
             context,

@@ -96,6 +96,11 @@ class ProjectDetailTabSection extends StatelessWidget {
                           key: const ValueKey('leader-members'),
                           project: project,
                           members: project.members,
+                          onViewAll: () =>
+                              ProjectDetailNavigationHelpers.openGroupMembers(
+                            context,
+                            project: project,
+                          ),
                           onMemberTap: project.canReviewMemberProfiles
                               ? onMemberTap
                               : null,
@@ -109,6 +114,11 @@ class ProjectDetailTabSection extends StatelessWidget {
                           key: const ValueKey('user-members'),
                           project: project,
                           members: project.members,
+                          onViewAll: () =>
+                              ProjectDetailNavigationHelpers.openGroupMembers(
+                            context,
+                            project: project,
+                          ),
                           onMemberTap: project.canReviewMemberProfiles
                               ? onMemberTap
                               : null,

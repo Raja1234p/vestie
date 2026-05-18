@@ -99,6 +99,24 @@ class ProjectDetailNavigationHelpers {
     );
   }
 
+  static GroupMembersRouteArgs groupMembersArgs(ProjectDetailEntity project) {
+    return GroupMembersRouteArgs(
+      members: project.members,
+      projectId: project.id,
+      project: project,
+    );
+  }
+
+  static void openGroupMembers(
+    BuildContext context, {
+    required ProjectDetailEntity project,
+  }) {
+    context.push(
+      AppRoutes.groupMembers,
+      extra: groupMembersArgs(project),
+    );
+  }
+
   static void openInviteMembers(
     BuildContext context, {
     required ProjectDetailEntity project,

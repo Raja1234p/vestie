@@ -789,6 +789,8 @@ class AppStrings {
   static const String overdueLabel              = 'Overdue';
   static const String requestedAmount           = 'Requested Amount';
   static const String viewAllRequests           = 'View All Requests';
+  static const String viewAllMembers              = 'View All Members';
+  static const String groupMembersTitle           = 'Group Members';
   static const String borrowRequestsEmpty       = 'No Borrow Request';
   static const String borrowRequestsEmptySubtitle =
       'Great, you don\'t have any borrow requests.';

@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 
 import 'package:vestie/app/router/route_args/project_detail_flow_args.dart';
 import 'package:vestie/core/constants/app_assets.dart';
-import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/theme/app_colors.dart';
@@ -107,10 +106,10 @@ class _LeaveProjectWarningScreenState extends State<LeaveProjectWarningScreen> {
                   SizedBox(height: 12.h),
                   AppOutlineNeutralButton(
                     label: AppStrings.btnCancel,
+                    borderless: true,
                     onPressed: () {
                       if (!_isLeaving) context.pop();
                     },
-                    borderRadius: AppRadius.r8,
                   ),
                 ],
               ),

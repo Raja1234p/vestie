@@ -8,6 +8,7 @@ import 'package:vestie/features/project_detail/domain/entities/project_detail_ro
 import 'package:vestie/features/project_detail/presentation/pages/member_detail_screen.dart';
 import 'package:vestie/features/project_detail/presentation/pages/project_detail_screen.dart';
 import 'package:vestie/features/project_detail/presentation/pages/project_funds_history_screen.dart';
+import 'package:vestie/features/project_detail/presentation/pages/group_members_screen.dart';
 import 'package:vestie/leader/features/project_detail/presentation/pages/borrow_requests_screen.dart';
 import 'package:vestie/leader/features/project_detail/presentation/pages/cancel_project_screen.dart';
 import 'package:vestie/leader/features/project_detail/presentation/pages/leader_project_settings_screen.dart';
@@ -155,6 +156,18 @@ List<RouteBase> buildProjectRoutes({
           projectId: extra.projectId,
           isLeaderMode: extra.isLeaderMode,
           screenTitle: extra.screenTitle,
+          project: extra.project,
+        );
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.groupMembers,
+      builder: (context, state) {
+        final extra = state.extra;
+        if (extra is! GroupMembersRouteArgs) return invalidRouteScreen();
+        return GroupMembersScreen(
+          members: extra.members,
+          projectId: extra.projectId,
           project: extra.project,
         );
       },

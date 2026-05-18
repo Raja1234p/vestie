@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
+import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 
 import 'project_wallet_flow_args.dart';
@@ -30,6 +31,18 @@ class MyBorrowRequestRouteArgs {
     required this.walletFlowArgs,
     this.activeRequest,
     this.history = const [],
+  });
+}
+
+class GroupMembersRouteArgs {
+  final List<MemberEntity> members;
+  final String projectId;
+  final ProjectDetailEntity? project;
+
+  const GroupMembersRouteArgs({
+    required this.members,
+    required this.projectId,
+    this.project,
   });
 }
 

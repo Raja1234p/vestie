@@ -6,7 +6,7 @@ import '../../domain/entities/project_detail_entity.dart';
 import 'package:vestie/leader/features/project_detail/presentation/widgets/borrow_requests_tab.dart';
 import 'package:vestie/leader/features/project_detail/presentation/widgets/borrow_request_card.dart';
 import 'package:vestie/leader/features/project_detail/presentation/widgets/borrow_request_decision_dialogs.dart';
-import 'project_members_section.dart';
+import 'members_tab.dart';
 
 class UserBorrowRequestsPanel extends StatelessWidget {
   final ProjectDetailEntity project;
@@ -64,6 +64,7 @@ class LeaderBorrowRequestsPanel extends StatelessWidget {
 class UserMembersPanel extends StatelessWidget {
   final ProjectDetailEntity project;
   final List<MemberEntity> members;
+  final VoidCallback onViewAll;
   final ValueChanged<MemberEntity>? onMemberTap;
   final ValueChanged<MemberEntity>? onAddFriend;
 
@@ -71,20 +72,17 @@ class UserMembersPanel extends StatelessWidget {
     super.key,
     required this.project,
     required this.members,
+    required this.onViewAll,
     this.onMemberTap,
     this.onAddFriend,
   });
 
   @override
   Widget build(BuildContext context) {
-    final activeMembers = members
-        .where((m) => !m.status.toLowerCase().contains('pending'))
-        .toList(growable: false);
-
-    return ProjectMembersSection(
-      showTitle: false,
+    return MembersTab(
       project: project,
-      members: activeMembers,
+      members: members,
+      onViewAll: onViewAll,
       onMemberTap: onMemberTap,
       onAddFriend: onAddFriend,
     );
@@ -94,6 +92,7 @@ class UserMembersPanel extends StatelessWidget {
 class LeaderMembersPanel extends StatelessWidget {
   final ProjectDetailEntity project;
   final List<MemberEntity> members;
+  final VoidCallback onViewAll;
   final ValueChanged<MemberEntity>? onMemberTap;
   final ValueChanged<MemberEntity>? onAddFriend;
 
@@ -101,19 +100,17 @@ class LeaderMembersPanel extends StatelessWidget {
     super.key,
     required this.project,
     required this.members,
+    required this.onViewAll,
     this.onMemberTap,
     this.onAddFriend,
   });
 
   @override
   Widget build(BuildContext context) {
-    final activeMembers = members
-        .where((m) => !m.status.toLowerCase().contains('pending'))
-        .toList(growable: false);
-    return ProjectMembersSection(
-      showTitle: false,
+    return MembersTab(
       project: project,
-      members: activeMembers,
+      members: members,
+      onViewAll: onViewAll,
       onMemberTap: onMemberTap,
       onAddFriend: onAddFriend,
     );

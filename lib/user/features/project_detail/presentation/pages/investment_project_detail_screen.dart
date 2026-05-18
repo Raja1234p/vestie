@@ -16,7 +16,7 @@ import 'package:vestie/features/project_detail/presentation/navigation/open_proj
 import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/announcement_card.dart';
 import '../widgets/project_detail_user_completed_content.dart';
-import 'package:vestie/features/project_detail/presentation/widgets/project_members_section.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_members_preview_section.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_trailing_actions.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_load_error.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_loading_body.dart';
@@ -195,10 +195,8 @@ class _InvestmentProjectDetailBody extends StatelessWidget {
                                   SizedBox(height: 16.h),
                                   ProjectDetailWalletActions(project: project),
                                   SizedBox(height: 16.h),
-                                  ProjectMembersSection(
-                                    title: AppStrings.tabMembers,
+                                  ProjectMembersPreviewSection(
                                     project: project,
-                                    members: project.members,
                                     onMemberTap: openMemberDetail,
                                     onAddFriend: (member) =>
                                         ProjectDetailNavigationHelpers

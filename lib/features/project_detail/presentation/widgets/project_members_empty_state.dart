@@ -10,15 +10,23 @@ import 'package:vestie/core/widgets/text/app_text.dart';
 
 /// Figma empty members — gradient disc + person/plus motif.
 class ProjectMembersEmptyState extends StatelessWidget {
-  const ProjectMembersEmptyState({super.key});
+  /// Full-screen list — vertically centered under the header.
+  final bool centered;
+  /// Tab preview with "View All" above — less top inset.
+  final bool compactTop;
+
+  const ProjectMembersEmptyState({
+    super.key,
+    this.centered = false,
+    this.compactTop = false,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 32.h),
-      child: Column(
-        children: [
-          SizedBox(
+    final content = Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
             width: 120.w,
             height: 120.w,
             child: Stack(
@@ -79,8 +87,26 @@ class ProjectMembersEmptyState extends StatelessWidget {
               color: AppColors.neutral1200,
             ),
           ),
-        ],
+      ],
+    );
+
+    if (centered) {
+      return Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24.w),
+          child: content,
+        ),
+      );
+    }
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        24.w,
+        compactTop ? 16.h : 32.h,
+        24.w,
+        compactTop ? 32.h : 48.h,
       ),
+      child: content,
     );
   }
 }
