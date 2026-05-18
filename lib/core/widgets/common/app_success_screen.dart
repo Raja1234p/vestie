@@ -9,7 +9,7 @@ import 'flow_screen_footer.dart';
 
 /// A globally reusable full-page success screen.
 ///
-/// Uses [AppAssets.authGradientBg] and [AppAssets.projectCreatedImage] for all flows.
+/// Background: white + top [AppAssets.emptyStateBackground] (Home / Discover style).
 /// Bottom action uses 16.w horizontal / 24.h bottom inset (borrow terms footer).
 class AppSuccessScreen extends StatelessWidget {
   final String title;
@@ -21,6 +21,10 @@ class AppSuccessScreen extends StatelessWidget {
   final Widget? footer;
   final String? buttonText;
   final VoidCallback? onButtonPressed;
+  /// Hero image above the title; defaults to [AppAssets.projectCreatedImage].
+  final String? illustrationAsset;
+  /// When set, content aligns to the top with this gap below [SafeArea] before the hero image.
+  final double? illustrationTopSpacing;
 
   const AppSuccessScreen({
     super.key,
@@ -32,6 +36,8 @@ class AppSuccessScreen extends StatelessWidget {
     this.footer,
     this.buttonText,
     this.onButtonPressed,
+    this.illustrationAsset,
+    this.illustrationTopSpacing,
   }) : assert(
           footer != null || (buttonText != null && onButtonPressed != null),
           'Provide footer or both buttonText and onButtonPressed.',
@@ -67,12 +73,7 @@ class AppSuccessScreen extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Positioned.fill(
-            child: Image.asset(
-              AppAssets.authGradientBg,
-              fit: BoxFit.fill,
-            ),
-          ),
+          const _HomeEmptyStateBackground(),
           Column(
             children: [
               Expanded(
@@ -80,37 +81,36 @@ class AppSuccessScreen extends StatelessWidget {
                   bottom: false,
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: Center(
-                      child: SingleChildScrollView(
-                        padding: EdgeInsets.symmetric(vertical: 16.h),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            _SuccessIllustration(
-                              path: AppAssets.projectCreatedImage,
-                            ),
-                            AppText(
-                              title,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyLarge
-                                  ?.copyWith(
-                                    fontSize: 26.sp,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.textPrimary,
-                                  ),
-                              textAlign: TextAlign.center,
-                            ),
-                            if (resolvedSubtitle != null) ...[
-                              SizedBox(height: 8.h),
-                              resolvedSubtitle,
-                            ],
-                            if (customContent case final c?) ...[
-                              SizedBox(height: 20.h),
-                              c,
-                            ],
+                    child: _SuccessScrollBody(
+                      topSpacing: illustrationTopSpacing,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _SuccessIllustration(
+                            path: illustrationAsset ??
+                                AppAssets.projectCreatedImage,
+                          ),
+                          AppText(
+                            title,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyLarge
+                                ?.copyWith(
+                                  fontSize: 26.sp,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textPrimary,
+                                ),
+                            textAlign: TextAlign.center,
+                          ),
+                          if (resolvedSubtitle != null) ...[
+                            SizedBox(height: 8.h),
+                            resolvedSubtitle,
                           ],
-                        ),
+                          if (customContent case final c?) ...[
+                            SizedBox(height: 20.h),
+                            c,
+                          ],
+                        ],
                       ),
                     ),
                   ),
@@ -128,6 +128,60 @@ class AppSuccessScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+/// White screen + top [AppAssets.emptyStateBackground] only (Home / Discover).
+class _HomeEmptyStateBackground extends StatelessWidget {
+  const _HomeEmptyStateBackground();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Stack(
+      fit: StackFit.expand,
+      children: [
+        Positioned.fill(child: ColoredBox(color: Colors.white)),
+        Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          child: Image(
+            image: AssetImage(AppAssets.emptyStateBackground),
+            fit: BoxFit.cover,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SuccessScrollBody extends StatelessWidget {
+  const _SuccessScrollBody({
+    required this.child,
+    this.topSpacing,
+  });
+
+  final Widget child;
+  final double? topSpacing;
+
+  @override
+  Widget build(BuildContext context) {
+    final scrollView = SingleChildScrollView(
+      padding: EdgeInsets.only(
+        top: topSpacing ?? 16.h,
+        bottom: 16.h,
+      ),
+      child: child,
+    );
+
+    if (topSpacing != null) {
+      return Align(
+        alignment: Alignment.topCenter,
+        child: scrollView,
+      );
+    }
+
+    return Center(child: scrollView);
   }
 }
 

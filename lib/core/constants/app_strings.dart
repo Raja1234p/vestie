@@ -1026,6 +1026,28 @@ class AppStrings {
       'You\'ve marked the project as incomplete. If the majority agrees, all '
       'money will be refunded to wallet.';
   static const String btnPreviewSuccessVote           = 'Preview success vote UI';
+  static const String btnPreviewVoteOutcomeApproved   =
+      'Preview vote approved UI';
+  static const String btnPreviewVoteOutcomeRejected   =
+      'Preview vote rejected UI';
+
+  // ── Member: success vote final outcome (majority result) ─────────────
+  static const String projectVoteApprovedTitle = 'Project Approved!';
+  static const String projectVoteApprovedSubtitle =
+      'Majority of members agreed.';
+  static const String projectVoteNotApprovedTitle = 'Project Not Approved';
+  static const String projectVoteNotApprovedSubtitle =
+      'Majority of members disagreed.';
+  static const String projectVoteFundsReleasedToGlWallet =
+      'Funds released to GL wallet';
+  static const String projectVoteContributionsRefunding =
+      'Contributions being refunded';
+  static const String projectVoteSummaryLabel = 'Vote Summary';
+  static const String projectVoteAgreedLabel = 'Agreed';
+  static const String projectVoteDisagreedLabel = 'Disagreed';
+
+  static String projectVoteMembersOfTotal(int voted, int total) =>
+      '$voted of $total members';
 
   // ── Member: immediate feedback after voting (mark complete) ────────────
   static const String markUserVotedSuccessTitle  = 'Approved';

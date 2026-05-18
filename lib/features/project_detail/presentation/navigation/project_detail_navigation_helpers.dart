@@ -20,6 +20,7 @@ import '../../domain/entities/project_detail_entity.dart';
 import '../../domain/entities/project_detail_route_args.dart';
 import '../models/investment_distribution_ui_data.dart';
 import '../models/investment_returns_ui_data.dart';
+import 'package:vestie/user/features/project_detail/presentation/models/member_vote_outcome_ui_data.dart';
 import '../widgets/distribute_funds_amount_sheet.dart';
 import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
 import '../data/project_funds_history_ledger_builder.dart';
@@ -206,6 +207,23 @@ class ProjectDetailNavigationHelpers {
       AppRoutes.userInvestmentReturns,
       extra: InvestmentReturnsRouteArgs(
         data: InvestmentReturnsUiData.previewForProject(project),
+      ),
+    );
+  }
+
+  /// Temporary preview — member vote outcome (approved / rejected).
+  static void openMemberVoteOutcomePreview(
+    BuildContext context, {
+    required ProjectDetailEntity project,
+    required bool approved,
+  }) {
+    context.push(
+      AppRoutes.userVoteOutcome,
+      extra: MemberVoteOutcomeRouteArgs(
+        data: MemberVoteOutcomeUiData.preview(
+          isApproved: approved,
+          project: project,
+        ),
       ),
     );
   }

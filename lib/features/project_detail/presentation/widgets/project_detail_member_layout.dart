@@ -78,13 +78,17 @@ class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
     );
   }
 
-  Widget _previewButton(BuildContext context) {
+  Widget _previewLink(
+    BuildContext context, {
+    required String label,
+    required VoidCallback onPressed,
+  }) {
     return Align(
       alignment: Alignment.centerRight,
       child: TextButton(
-        onPressed: () => setState(() => _previewSuccessVote = true),
+        onPressed: onPressed,
         child: AppText(
-          AppStrings.btnPreviewSuccessVote,
+          label,
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
                 fontSize: 12.sp,
                 fontWeight: FontWeight.w600,
@@ -92,6 +96,37 @@ class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
               ),
         ),
       ),
+    );
+  }
+
+  Widget _previewButtons(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _previewLink(
+          context,
+          label: AppStrings.btnPreviewSuccessVote,
+          onPressed: () => setState(() => _previewSuccessVote = true),
+        ),
+        _previewLink(
+          context,
+          label: AppStrings.btnPreviewVoteOutcomeApproved,
+          onPressed: () => ProjectDetailNavigationHelpers.openMemberVoteOutcomePreview(
+            context,
+            project: widget.project,
+            approved: true,
+          ),
+        ),
+        _previewLink(
+          context,
+          label: AppStrings.btnPreviewVoteOutcomeRejected,
+          onPressed: () => ProjectDetailNavigationHelpers.openMemberVoteOutcomePreview(
+            context,
+            project: widget.project,
+            approved: false,
+          ),
+        ),
+      ],
     );
   }
 
@@ -127,7 +162,7 @@ class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  if (_canPreviewSuccessVote) _previewButton(context),
+                  if (_canPreviewSuccessVote) _previewButtons(context),
                   ProjectDetailMemberScrollContent(
                     project: widget.project,
                     onMemberTap: widget.onMemberTap,

@@ -34,6 +34,7 @@ import 'package:vestie/user/features/investment/presentation/pages/user_project_
 import 'package:vestie/user/features/investment/presentation/pages/user_project_funds_history_screen.dart';
 import 'package:vestie/user/features/project_detail/presentation/pages/project_cancelled_screen.dart';
 import 'package:vestie/user/features/project_detail/presentation/pages/user_status_flow_screen.dart';
+import 'package:vestie/user/features/project_detail/presentation/pages/member_vote_outcome_screen.dart';
 import 'package:vestie/user/features/project_detail/presentation/pages/user_success_vote_screen.dart';
 import '../app_routes.dart';
 import '../route_args/project_detail_flow_args.dart';
@@ -248,6 +249,14 @@ List<RouteBase> buildProjectRoutes({
         final extra = state.extra;
         if (extra is! UserSuccessVoteArgs) return invalidRouteScreen();
         return UserSuccessVoteScreen(args: extra);
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.userVoteOutcome,
+      builder: (context, state) {
+        final extra = state.extra;
+        if (extra is! MemberVoteOutcomeRouteArgs) return invalidRouteScreen();
+        return MemberVoteOutcomeScreen(args: extra);
       },
     ),
     GoRoute(

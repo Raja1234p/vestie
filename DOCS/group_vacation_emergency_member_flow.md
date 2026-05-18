@@ -4,7 +4,16 @@ This document describes how **member-facing** Vacation and Emergency flows work 
 
 **Scope:** `ProjectCategory.vacations` and `ProjectCategory.emergency` only. Investment projects use different detail UI (no borrow, different overflow rules).
 
-**Last aligned with code:** `lib/user/features/create_project_member_fund/`, `lib/features/project_detail/`, `lib/user/features/contribute/`, `lib/user/features/borrow/`, `lib/user/features/project_detail/` (success vote).
+### Recently implemented (member UI)
+
+| Item | Status |
+|------|--------|
+| **Vote outcome screens** | Approved / Not approved (`MemberVoteOutcomeScreen`, Figma styling) |
+| **Dev previews on member detail** | Success vote (inline), vote approved, vote rejected |
+| **`AppSuccessScreen` background** | White + `empty_state_background.png` at top for all success screens (contribute, borrow, vote outcome, etc.) — no full-screen auth gradient |
+| **Detail back navigation** | `popProjectDetailNavigation` uses `canPop()` with dashboard fallback when stack is empty |
+
+**Last aligned with code:** `lib/user/features/create_project_member_fund/`, `lib/features/project_detail/`, `lib/user/features/contribute/`, `lib/user/features/borrow/`, `lib/user/features/project_detail/` (success vote + vote outcome), `lib/core/widgets/common/app_success_screen.dart`.
 
 ---
 
@@ -90,7 +99,7 @@ Both variants use `CreateProjectFundMemberSetupScreen` with `CreateProjectFundKi
 - **Contribution progress:** circular % from `draft.mockPercentTowardGoal` (35% vacation / 42% emergency); mock transaction list.
   - Dev buttons: **Simulate payment success/failure** → status screen.
   - **Done** pops route (does not complete a real payment).
-- **Status:** `AppSuccessScreen` on success; failure uses gradient + `AppAssets.failureIcon`.
+- **Status:** `AppSuccessScreen` on success (empty-state background); failure uses white + `AppAssets.failureIcon` (or status screen pattern).
 
 **Future API:** replace mocks with `GET /projects/{id}/contributions/summary`, payment intent confirm, etc.; keep same route sequence where possible.
 
@@ -114,8 +123,9 @@ Files: `lib/features/project_detail/presentation/navigation/open_project_from_ca
 `lib/features/project_detail/presentation/widgets/project_detail_member_layout.dart`
 
 - **Default body:** `ProjectDetailMemberScrollContent` (announcement, info card, wallet CTAs, tabs).
-- **Success vote preview (dev):** button `AppStrings.btnPreviewSuccessVote` toggles embedded `MemberSuccessVoteContent` with `MemberSuccessVoteUiData.fromProject(project)` — only when `isVacationOrEmergency`.
-- **Production:** when API signals active success vote, replace preview flag with server state and show vote UI instead of (or over) normal scroll body.
+- **Success vote preview (dev):** `AppStrings.btnPreviewSuccessVote` toggles embedded `MemberSuccessVoteContent` with `MemberSuccessVoteUiData.fromProject(project)` — only when `isVacationOrEmergency`.
+- **Vote outcome preview (dev):** `AppStrings.btnPreviewVoteOutcomeApproved` / `btnPreviewVoteOutcomeRejected` → `ProjectDetailNavigationHelpers.openMemberVoteOutcomePreview` → route `AppRoutes.userVoteOutcome` with mock `MemberVoteOutcomeUiData.preview`.
+- **Production:** when API signals active success vote, replace preview flags with server state; navigate to vote outcome when vote closes (majority approved / not approved).
 
 ### 4.3 Detail body composition
 
@@ -158,7 +168,7 @@ Files: `lib/features/project_detail/presentation/navigation/open_project_from_ca
 |------|-----|------------------|
 | `amount` | Amount + `AppWalletBalanceChip` | UI-only; no config/preview API |
 | `confirm` | Payment method card + breakdown + non-refundable checkbox | Fee: 3% local (`vestieFee`); submit UI-only ~400ms delay |
-| `success` | `AppSuccessScreen` | **Back to Project** pops flow |
+| `success` | `AppSuccessScreen` (empty-state top background) | **Back to Project** pops flow |
 
 ### 5.2 Confirm screen rules (keep when wiring API)
 
@@ -193,7 +203,7 @@ Restore implementations in `lib/user/features/contributions/presentation/bloc/co
 |------|-----|------------------|
 | `amount` | `AppStackedCurrencyField`, borrow limit chip, optional note | Local digits; over-limit blocks Confirm |
 | `confirm` | Borrow terms cards + checkbox (`Text.rich` with amount + due date) | UI-only submit ~400ms |
-| `success` | `AppSuccessScreen` + rich subtitle | **Back to Project** |
+| `success` | `AppSuccessScreen` (empty-state top background) + rich subtitle | **Back to Project** |
 
 ### 6.2 Terms UI reference
 
@@ -250,7 +260,46 @@ Handler: `ProjectDetailNavigationHelpers.handleMemberAction`.
 | Cast vote | `SubmitVoteUseCase` / voting repository (already in DI for other flows) |
 | Member tallies | Replace mock counts in `MemberSuccessVoteMemberVotes` |
 
-Remove dev **Preview success vote UI** button when driven by API.
+Remove dev preview buttons (`btnPreviewSuccessVote`, vote outcome previews) when driven by API.
+
+### 8.4 Member vote outcome (majority result — Figma)
+
+Shown after the success vote closes. **Not** the same as casting a vote (`MemberSuccessVoteContent`) or immediate feedback (`UserStatusFlowScreen` after Yes/No).
+
+| Variant | Route | Screen |
+|---------|-------|--------|
+| Approved | `AppRoutes.userVoteOutcome` | `MemberVoteOutcomeScreen` |
+| Not approved | same | same (`MemberVoteOutcomeUiData.isApproved`) |
+
+**Args:** `MemberVoteOutcomeRouteArgs` → `MemberVoteOutcomeUiData` (`isApproved`, `amountUsd`, `agreedCount`, `disagreedCount`, `totalMemberCount`). Preview uses Figma-style mocks (e.g. 5/7, 71%/29%, amount from `project.currentAmount` when available).
+
+**Layout:** `AppSuccessScreen` with:
+- Hero: `AppAssets.projectCreatedImage` (approved) or `AppAssets.failureIcon` (rejected)
+- `illustrationTopSpacing: 40.h` (top gap before hero)
+- Title / subtitle: `AppStrings.projectVoteApprovedTitle` / `projectVoteNotApprovedTitle`, etc.
+- **Amount card:** `MemberVoteOutcomeAmountCard` — caption `projectVoteFundsReleasedToGlWallet` or `projectVoteContributionsRefunding`; bg `#F0FBF7` (`AppColors.green100`), border `#BAEDDA` (`AppColors.green300`); caption `#737373` (`neutral700`) 14sp w600; amount `green900` 32sp w700
+- **Vote summary:** `MemberVoteOutcomeVoteSummary` — rows `MemberVoteOutcomeVoteSummary` / `_VoteRow`; card bg `#F8F7FA` (`grey100`), border `#BFBFBF` (`neutral500`); “N of M members” `neutral700` 14sp w500; Agreed/Disagreed labels green/red; majority row listed first per variant
+- Footer: `AppStrings.btnBackToHome` → `context.go(AppRoutes.dashboard)`
+
+**Widgets / model:**
+
+```
+lib/user/features/project_detail/presentation/
+  pages/member_vote_outcome_screen.dart
+  models/member_vote_outcome_ui_data.dart
+  widgets/member_vote_outcome/
+    member_vote_outcome_amount_card.dart
+    member_vote_outcome_vote_summary.dart
+```
+
+### 8.5 API integration checklist (vote outcome)
+
+| Concern | Suggested mapping |
+|---------|-------------------|
+| Navigate here | After vote deadline + tally from `GET /projects/{id}` or push notification |
+| Amount / refund copy | Server fields for released total vs refund total |
+| Vote breakdown | `agreedCount`, `disagreedCount`, `totalMemberCount`, percents from API |
+| Remove previews | Drop `openMemberVoteOutcomePreview` entry points when production routing exists |
 
 ---
 
@@ -260,9 +309,9 @@ Remove dev **Preview success vote UI** button when driven by API.
 |-----------|------|
 | Member fund header / fields / primary button | `lib/core/widgets/member_project_flow/` |
 | Wallet balance chip | `lib/core/widgets/common/app_wallet_balance_chip.dart` |
-| Success screen | `lib/core/widgets/common/app_success_screen.dart` |
+| Success screen | `lib/core/widgets/common/app_success_screen.dart` — **all** success flows: white base + top `AppAssets.emptyStateBackground` only (no `auth_gradient_bg` full bleed). Optional `illustrationAsset`, `illustrationTopSpacing`. |
 | Invite bottom sheet | `lib/core/widgets/common/app_invite_members_dialog.dart` |
-| Post-auth gradient background | `lib/core/widgets/common/post_auth_gradient_background.dart` |
+| Post-auth gradient background | `lib/core/widgets/common/post_auth_gradient_background.dart` — detail screens still use `appGradient` on white; **not** used on `AppSuccessScreen` |
 
 ---
 
@@ -293,8 +342,11 @@ lib/user/features/borrow/presentation/cubit/borrow_cubit.dart
 
 lib/user/features/project_detail/presentation/
   pages/user_success_vote_screen.dart
+  pages/member_vote_outcome_screen.dart
   widgets/member_success_vote_*.dart
+  widgets/member_vote_outcome/
   models/member_success_vote_ui_data.dart
+  models/member_vote_outcome_ui_data.dart
 
 lib/app/router/route_groups/create_project_member_flow_routes.dart
 lib/app/router/route_groups/project_routes.dart
@@ -323,6 +375,8 @@ lib/app/router/route_args/project_wallet_flow_args.dart
 | Borrow submit | UI delay |
 | Invite members | Sample link string |
 | Success vote on detail | Preview toggle + local vote choice |
+| Vote outcome (approved / rejected) | `userVoteOutcome` route; dev preview from member detail |
+| `AppSuccessScreen` background | White + `empty_state_background.png` at top (Home/Discover style) |
 | Wallet balance on chip | From `ProjectWalletFlowArgs` defaults unless API adds wallet to detail |
 | `borrowRequests` on detail | Often empty in model — My Borrows uses builder preview |
 
