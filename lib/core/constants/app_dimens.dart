@@ -45,6 +45,8 @@ class AppDimens {
   /// Invite members sheet — gap above/below dashed dividers; hint-to-first-divider.
   static double get inviteMembersDividerGutter => v24;
   static double get inviteMembersHintToDivider => v34;
+  /// Space below “Share outside Vestie” inside the sheet card (Figma 34).
+  static double get inviteMembersSheetBottom => v34;
 
   /// Room for stacked primary footer on dense profile layouts.
   static double get v92 => 92.0.h;

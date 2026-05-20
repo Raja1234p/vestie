@@ -21,6 +21,7 @@ class AppInviteMembersDialog {
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: Colors.transparent,
       builder: (sheetContext) {
         return Padding(
@@ -37,15 +38,10 @@ class AppInviteMembersDialog {
                 ),
               ],
             ),
-            child: SafeArea(
-              top: false,
-              bottom: false,
-              minimum: EdgeInsets.zero,
-              child: AppInviteMembersBottomSheet(
-                projectName: projectName,
-                inviteLink: inviteLink,
-                vffs: pickList,
-              ),
+            child: AppInviteMembersBottomSheet(
+              projectName: projectName,
+              inviteLink: inviteLink,
+              vffs: pickList,
             ),
           ),
         );

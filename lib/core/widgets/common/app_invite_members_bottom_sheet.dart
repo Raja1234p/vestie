@@ -82,14 +82,19 @@ class _AppInviteMembersBottomSheetState
 
   @override
   Widget build(BuildContext context) {
-    final maxHeight = MediaQuery.sizeOf(context).height * 0.88;
+    final media = MediaQuery.of(context);
+    // Cap height so a tall sheet never draws under the status bar.
+    final maxBodyHeight = (media.size.height -
+            media.viewPadding.top -
+            media.viewPadding.bottom) *
+        0.88;
     final selectionCount = _selectedIds.length;
     final hasSelection = selectionCount > 0;
     final dividerGutter = AppDimens.inviteMembersDividerGutter;
     final sheetContentInset = AppDimens.p20;
 
     return ConstrainedBox(
-      constraints: BoxConstraints(maxHeight: maxHeight),
+      constraints: BoxConstraints(maxHeight: maxBodyHeight),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -218,6 +223,7 @@ class _AppInviteMembersBottomSheetState
               },
             ),
           ),
+          SizedBox(height: AppDimens.inviteMembersSheetBottom),
         ],
       ),
     );
