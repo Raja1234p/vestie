@@ -461,7 +461,7 @@ class AppStrings {
   static const String menuEditProfile     = 'Edit Profile';
   static const String menuPaymentMethods  = 'Payment Methods';
   static const String menuTransactionHistory = 'Transaction History';
-  static const String menuKeyGuidelines   = 'Key Guidelines';
+  static const String menuKeyGuidelines   = 'Vestie User Guidelines';
   static const String btnLogout           = 'Logout';
 
   // ── Edit Profile ─────────────────────────────────────────────────────────
