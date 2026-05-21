@@ -75,8 +75,8 @@ class AppAssets {
   /// Payment methods empty — 3D card holder (Figma).
   static const String paymentMethodsEmptyIllustration =
       '$_imagePath/payment_methods_empty.png';
-  /// Wallet “Recent Activity” empty — stacked cards motif.
-  static const String walletEmptyActivityIllustration = emptyPaymentMethodIcon;
+  /// Wallet “Recent Activity” empty — same 3D coin as join/borrow requests empty.
+  static const String walletEmptyActivityIllustration = borrowRequestsEmptyState;
   // ── Payment Card Brand Logos ──────────────────────────────────────────────
   static const String iconVisa       = '$_iconPath/visacard_icon.svg';
   static const String iconMastercard = '$_iconPath/mastercard_icon.svg';

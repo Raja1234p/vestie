@@ -821,7 +821,7 @@ class AppStrings {
   static const String recentActivityHeader     = 'Recent Activity';
   static const String walletEmptyActivityTitle = 'No Recent Activity';
   static const String walletEmptyActivitySubtitle =
-      'Your transactions will show here.';
+      'All of your transactions will appear here.';
   static const String txWalletDeposit           = 'Wallet Deposit';
   static const String txContributionPrefix      = 'Contribution: ';
   static const String txBorrowPrefix            = 'Borrow: ';

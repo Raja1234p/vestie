@@ -33,7 +33,7 @@ class WalletOverviewCard extends StatelessWidget {
                   AppStrings.walletBalanceHeading,
                   style: GoogleFonts.lato(
                     fontSize: 14.sp,
-                    color: AppColors.neutral700,
+                    color: AppColors.grey800,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -42,9 +42,9 @@ class WalletOverviewCard extends StatelessWidget {
                   walletAmount,
                   style: GoogleFonts.lato(
                     fontSize: 40.sp,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w800,
                     color: AppColors.neutral1200,
-                    letterSpacing: -1,
+                    letterSpacing: -0.5,
                     height: 1.1,
                   ),
                 ),
@@ -55,8 +55,7 @@ class WalletOverviewCard extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
             decoration: BoxDecoration(
               color: AppColors.grey100,
-              borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: AppColors.neutral300, width: 1),
+              borderRadius: BorderRadius.circular(10.r),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,7 +65,7 @@ class WalletOverviewCard extends StatelessWidget {
                   AppStrings.borrowedLabel,
                   style: GoogleFonts.lato(
                     fontSize: 12.sp,
-                    color: AppColors.neutral700,
+                    color: AppColors.neutral1200,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -75,7 +74,7 @@ class WalletOverviewCard extends StatelessWidget {
                   borrowedAmount,
                   style: GoogleFonts.lato(
                     fontSize: 18.sp,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w800,
                     color: AppColors.neutral1200,
                   ),
                 ),

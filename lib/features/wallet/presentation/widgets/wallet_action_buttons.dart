@@ -6,7 +6,7 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_button.dart';
 
-/// Deposit (filled gradient) + Withdraw (outline #7B73A3) — Figma wallet tab.
+/// Deposit (purple gradient pill) + Withdraw (white outline pill) — Figma wallet tab.
 class WalletActionButtons extends StatelessWidget {
   final VoidCallback onDeposit;
   final VoidCallback onWithdraw;
@@ -46,8 +46,10 @@ class WalletActionButtons extends StatelessWidget {
               useGradient: false,
               borderRadius: radius,
               height: height,
-              secondaryBorderColor: AppColors.grey700,
-              secondaryLabelColor: AppColors.primary,
+              secondaryFillColor: AppColors.surface,
+              secondaryBorderColor: AppColors.primary,
+              secondaryLabelColor: AppColors.grey900,
+              secondaryLabelFontWeight: FontWeight.w600,
             ),
           ),
         ],

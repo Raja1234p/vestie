@@ -24,6 +24,9 @@ class AppButton extends StatelessWidget {
   final Color? color;
   final Color? secondaryBorderColor;
   final Color? secondaryLabelColor;
+  final FontWeight? secondaryLabelFontWeight;
+  /// Outline button fill (e.g. white on gradient backgrounds).
+  final Color? secondaryFillColor;
   final Widget? leading;
 
   const AppButton({
@@ -40,6 +43,8 @@ class AppButton extends StatelessWidget {
     this.color,
     this.secondaryBorderColor,
     this.secondaryLabelColor,
+    this.secondaryLabelFontWeight,
+    this.secondaryFillColor,
     this.leading,
   });
 
@@ -66,14 +71,16 @@ class AppButton extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           gradient: gradient,
-          color: isEnabled 
-              ? (isSecondary ? Colors.transparent : (gradient == null ? (color ?? AppColors.primary) : null))
+          color: isEnabled
+              ? (isSecondary
+                  ? (secondaryFillColor ?? Colors.transparent)
+                  : (gradient == null ? (color ?? AppColors.primary) : null))
               : AppColors.textHint,
           borderRadius: radius,
           border: isSecondary
               ? Border.all(
                   color: secondaryBorderColor ?? AppColors.primary,
-                  width: 1.5.w,
+                  width: 1.w,
                 )
               : !isEnabled
                   ? Border.all(
@@ -126,7 +133,9 @@ class AppButton extends StatelessWidget {
   }) {
     final style = theme.textTheme.labelLarge?.copyWith(
       fontSize: 18.sp,
-      fontWeight: FontWeight.w500,
+      fontWeight: isSecondary
+          ? (secondaryLabelFontWeight ?? FontWeight.w500)
+          : FontWeight.w500,
       color: isSecondary
           ? (secondaryLabelColor ?? AppColors.primary)
           : AppColors.surface,

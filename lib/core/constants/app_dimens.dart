@@ -114,9 +114,9 @@ class AppDimens {
   static double get projectDetailToggleTabInnerRadius => 12.0.r;
   static double get projectDetailToggleLabelFontSize => 14.0.sp;
 
-  /// Wallet tab — deposit/withdraw CTAs (Figma rounded rect, not pill).
-  static double get walletActionButtonHeight => 43.0.h;
-  static double get walletActionButtonRadius => 12.0.r;
+  /// Wallet tab — deposit/withdraw CTAs (Figma pill).
+  static double get walletActionButtonHeight => 48.0.h;
+  static double get walletActionButtonRadius => 999.0.r;
 }
 
 class AppRadius {

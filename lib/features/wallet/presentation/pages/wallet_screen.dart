@@ -41,8 +41,7 @@ class WalletScreen extends StatelessWidget {
             titleStyle: GoogleFonts.lato(
               fontSize: 28.sp,
               fontWeight: FontWeight.w600,
-              color: AppColors.grey1100,
-              letterSpacing: -0.5,
+              color: AppColors.neutral1200,
             ),
           ),
 
@@ -86,8 +85,8 @@ class WalletScreen extends StatelessWidget {
                       AppStrings.recentActivityHeader,
                       style: GoogleFonts.lato(
                         fontSize: 18.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.neutral1200,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.guidelineTitle,
                       ),
                     ),
                   ),
