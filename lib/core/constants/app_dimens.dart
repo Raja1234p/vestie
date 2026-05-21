@@ -117,6 +117,11 @@ class AppDimens {
   /// Wallet tab — deposit/withdraw CTAs (Figma pill).
   static double get walletActionButtonHeight => 48.0.h;
   static double get walletActionButtonRadius => 999.0.r;
+
+  /// Payment method picker row (Visa / Master / Wallet).
+  static double get paymentMethodRowHeight => 72.0.h;
+  /// Gap between payment method rows in a list.
+  static double get paymentMethodRowGap => v8;
 }
 
 class AppRadius {

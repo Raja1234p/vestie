@@ -43,7 +43,7 @@ class PaymentPrimaryButton extends StatelessWidget {
                     label,
                     style: GoogleFonts.lato(
                       fontSize: 15.sp,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w500,
                       color: AppColors.surface,
                     ),
                   ),

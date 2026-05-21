@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/core/constants/app_assets.dart';
+import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
@@ -26,27 +27,30 @@ class PaymentMethodSelectRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.grey100,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: AppColors.neutral400),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
+    return SizedBox(
+      height: AppDimens.paymentMethodRowHeight,
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.grey100,
           borderRadius: BorderRadius.circular(12.r),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-            child: Row(
-              children: [
-                leading,
-                SizedBox(width: 10.w),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(12.r),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  leading,
+                  SizedBox(width: 10.w),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                       AppText(
                         title,
                         style: GoogleFonts.lato(
@@ -75,33 +79,11 @@ class PaymentMethodSelectRow extends StatelessWidget {
                       : AppAssets.iconRadioOff,
                   size: 22.w,
                 ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-/// Purple circle with white dollar icon (Figma wallet row).
-class PaymentMethodWalletIcon extends StatelessWidget {
-  const PaymentMethodWalletIcon({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 28.w,
-      height: 28.w,
-      decoration: const BoxDecoration(
-        color: AppColors.primary,
-        shape: BoxShape.circle,
-      ),
-      alignment: Alignment.center,
-      child: AppSvgIcon(
-        assetPath: AppAssets.iconDollarCircle,
-        size: 16.w,
-        color: AppColors.surface,
       ),
     );
   }

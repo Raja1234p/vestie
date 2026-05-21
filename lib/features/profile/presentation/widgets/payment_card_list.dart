@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/core/constants/app_assets.dart';
+import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_purple_dashed_line.dart';
@@ -85,7 +86,8 @@ class _PaymentCardListState extends State<PaymentCardList> {
           child: ListView.separated(
             padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 0),
             itemCount: widget.cards.length,
-            separatorBuilder: (context, index) => SizedBox(height: 8.h),
+            separatorBuilder: (context, index) =>
+                SizedBox(height: AppDimens.paymentMethodRowGap),
             itemBuilder: (_, i) => _ManageCardItem(
               card: widget.cards[i],
               onTap: () => _selectCard(widget.cards[i]),
@@ -129,15 +131,18 @@ class _SelectionList extends StatelessWidget {
             padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 0),
             children: [
               for (var i = 0; i < cards.length; i++) ...[
-                if (i > 0) SizedBox(height: 8.h),
+                if (i > 0) SizedBox(height: AppDimens.paymentMethodRowGap),
                 PaymentMethodSelectRow(
                   selected: selectedCardId == cards[i].id,
-                  leading: SvgPicture.asset(
-                    cards[i].brand == CardBrand.visa
-                        ? AppAssets.iconVisa
-                        : AppAssets.iconMastercard,
-                    width: 28.w,
-                    height: 15.h,
+                  leading: SizedBox(
+                    width: 32.w,
+                    height: 32.h,
+                    child: SvgPicture.asset(
+                      cards[i].brand == CardBrand.visa
+                          ? AppAssets.iconVisa
+                          : AppAssets.iconMastercard,
+                      fit: BoxFit.contain,
+                    ),
                   ),
                   title: cards[i].brandName,
                   subtitle: cards[i].maskedNumber,
@@ -152,7 +157,14 @@ class _SelectionList extends StatelessWidget {
               SizedBox(height: 16.h),
               PaymentMethodSelectRow(
                 selected: selectedCardId == null,
-                leading: const PaymentMethodWalletIcon(),
+                leading: SizedBox(
+                  width: 32.w,
+                  height: 32.h,
+                  child: SvgPicture.asset(
+                    AppAssets.iconDollarCircle,
+                    fit: BoxFit.contain,
+                  ),
+                ),
                 title: AppStrings.walletTitle,
                 onTap: onSelectWallet,
               ),
@@ -178,32 +190,38 @@ class _ManageCardItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.appBgBottom,
-        borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(color: AppColors.neutral500),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
+    return SizedBox(
+      height: AppDimens.paymentMethodRowHeight,
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.appBgBottom,
           borderRadius: BorderRadius.circular(14.r),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-            child: Row(
-              children: [
-                SvgPicture.asset(
-                  card.brand == CardBrand.visa
-                      ? AppAssets.iconVisa
-                      : AppAssets.iconMastercard,
-                  width: 28.w,
-                  height: 15.h,
-                ),
-                SizedBox(width: 10.w),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(14.r),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 32.w,
+                    height: 32.h,
+                    child: SvgPicture.asset(
+                      card.brand == CardBrand.visa
+                          ? AppAssets.iconVisa
+                          : AppAssets.iconMastercard,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  SizedBox(width: 10.w),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                     AppText(
                       card.brandName,
                       style: GoogleFonts.lato(
@@ -248,7 +266,8 @@ class _ManageCardItem extends StatelessWidget {
                   size: 18.w,
                   color: AppColors.primary,
                 ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
