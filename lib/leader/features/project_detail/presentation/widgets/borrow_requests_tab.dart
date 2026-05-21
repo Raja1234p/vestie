@@ -44,16 +44,7 @@ class BorrowRequestsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (requests.isEmpty) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          ProjectDetailViewAllLink(
-            label: AppStrings.viewAllRequests,
-            onTap: onViewAll,
-          ),
-          const BorrowRequestsEmptyState(compactTop: true),
-        ],
-      );
+      return const BorrowRequestsEmptyState(compactTop: true);
     }
 
     final preview = requests.take(2).toList();

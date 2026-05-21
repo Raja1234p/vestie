@@ -15,7 +15,9 @@ import 'package:vestie/leader/features/project_detail/presentation/pages/cancel_
 import 'package:vestie/leader/features/project_detail/presentation/pages/leader_project_settings_screen.dart';
 import 'package:vestie/leader/features/project_detail/presentation/pages/create_announcement_screen.dart';
 import 'package:vestie/leader/features/project_detail/presentation/pages/join_requests_screen.dart';
+import 'package:vestie/leader/features/project_detail/presentation/pages/leader_vote_started_screen.dart';
 import 'package:vestie/leader/features/project_detail/presentation/pages/mark_project_successful_screen.dart';
+import 'package:vestie/leader/features/project_detail/presentation/pages/stop_contributions_screen.dart';
 import 'package:vestie/leader/features/project_detail/presentation/pages/voting_window_screen.dart';
 import 'package:vestie/leader/features/project_detail/presentation/pages/member_penalty_action_screen.dart';
 import 'package:vestie/user/features/borrow/presentation/cubit/borrow_cubit.dart';
@@ -205,12 +207,27 @@ List<RouteBase> buildProjectRoutes({
       },
     ),
     GoRoute(
+      path: AppRoutes.stopContributions,
+      builder: (context, state) {
+        final extra = state.extra;
+        if (extra is! StopContributionsRouteArgs) return invalidRouteScreen();
+        return StopContributionsScreen(projectId: extra.projectId);
+      },
+    ),
+    GoRoute(
       path: AppRoutes.votingWindow,
       builder: (context, state) {
         final extra = state.extra;
         if (extra is! VotingWindowRouteArgs) return invalidRouteScreen();
-        return VotingWindowScreen(projectId: extra.projectId);
+        return VotingWindowScreen(
+          projectId: extra.projectId,
+          flowKind: extra.flowKind,
+        );
       },
+    ),
+    GoRoute(
+      path: AppRoutes.leaderVoteStarted,
+      builder: (context, state) => const LeaderVoteStartedScreen(),
     ),
     GoRoute(
       path: AppRoutes.cancelProject,

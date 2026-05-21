@@ -30,6 +30,10 @@ abstract class ProjectActionsRepository {
     required String projectId,
     required int votingWindowDays,
   });
+  Future<Either<Failure, void>> openStopContributionsVoting({
+    required String projectId,
+    required int votingWindowDays,
+  });
   Future<Either<Failure, void>> cancelProject({required String projectId});
   Future<Either<Failure, void>> leaveProject({required String projectId});
   Future<Either<Failure, String>> createInvite({

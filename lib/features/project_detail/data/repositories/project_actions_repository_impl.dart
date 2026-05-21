@@ -97,6 +97,19 @@ class ProjectActionsRepositoryImpl implements ProjectActionsRepository {
   }
 
   @override
+  Future<Either<Failure, void>> openStopContributionsVoting({
+    required String projectId,
+    required int votingWindowDays,
+  }) async {
+    return _execute(
+      () => remoteDataSource.openStopContributionsVoting(
+        projectId: projectId,
+        votingWindowDays: votingWindowDays,
+      ),
+    );
+  }
+
+  @override
   Future<Either<Failure, void>> cancelProject({required String projectId}) async {
     return _execute(() => remoteDataSource.cancelProject(projectId: projectId));
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
+import 'package:vestie/features/project_detail/domain/entities/leader_voting_flow_kind.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/project_detail/presentation/models/investment_distribution_ui_data.dart';
@@ -192,11 +193,22 @@ class MarkSuccessfulRouteArgs {
   });
 }
 
-class VotingWindowRouteArgs {
+class StopContributionsRouteArgs {
   final String projectId;
 
-  const VotingWindowRouteArgs({required this.projectId});
+  const StopContributionsRouteArgs({required this.projectId});
 }
+
+class VotingWindowRouteArgs {
+  final String projectId;
+  final LeaderVotingFlowKind flowKind;
+
+  const VotingWindowRouteArgs({
+    required this.projectId,
+    this.flowKind = LeaderVotingFlowKind.markProjectSuccessful,
+  });
+}
+
 
 class CancelProjectRouteArgs {
   final String projectId;

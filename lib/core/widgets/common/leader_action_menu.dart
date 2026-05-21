@@ -17,6 +17,7 @@ enum LeaderMenuAction {
   myBorrows,
   inviteMembers,
   markSuccessful,
+  stopContributions,
   cancelProject,
 }
 
@@ -38,6 +39,9 @@ class LeaderActionMenu extends StatelessWidget {
     this.audience = LeaderMenuAudience.primaryLeader,
     this.includeMyBorrows = false,
   });
+
+  static const _primaryLabelColor = AppColors.grey900;
+  static const _primaryIconColor = AppColors.primary;
 
   @override
   Widget build(BuildContext context) {
@@ -71,81 +75,118 @@ class LeaderActionMenu extends StatelessWidget {
   }
 
   List<PopupMenuEntry<LeaderMenuAction>> _buildEntries() {
+    return audience == LeaderMenuAudience.coLeader
+        ? _coLeaderEntries()
+        : _primaryLeaderEntries();
+  }
+
+  /// Figma “GL Popup - Action Popup 4” (CoLeader).
+  List<PopupMenuEntry<LeaderMenuAction>> _coLeaderEntries() {
     final out = <PopupMenuEntry<LeaderMenuAction>>[];
 
-    void push(PopupMenuItem<LeaderMenuAction> item) {
+    void push(LeaderMenuAction action, String icon, String label) {
       if (out.isNotEmpty) out.add(_divider());
-      out.add(item);
+      out.add(
+        _buildItem(
+          value: action,
+          iconPath: icon,
+          label: label,
+          iconColor: _primaryIconColor,
+          labelColor: _primaryLabelColor,
+        ),
+      );
     }
 
     push(
-      _buildItem(
-        value: LeaderMenuAction.addAnnouncement,
-        iconPath: AppAssets.iconAddAnnouncement,
-        label: AppStrings.menuAddAnnouncement,
-        iconColor: AppColors.primary,
-        labelColor: AppColors.grey900,
-      ),
+      LeaderMenuAction.addAnnouncement,
+      AppAssets.iconAddAnnouncement,
+      AppStrings.menuAddAnnouncement,
     );
     push(
-      _buildItem(
-        value: LeaderMenuAction.editProject,
-        iconPath: AppAssets.iconEditProject,
-        label: AppStrings.menuEditProject,
-        iconColor: AppColors.primary,
-        labelColor: AppColors.grey900,
-      ),
-    );
-    push(
-      _buildItem(
-        value: LeaderMenuAction.projectFundsHistory,
-        iconPath: AppAssets.iconProjectFundHistory,
-        label: AppStrings.menuProjectFundsHistory,
-        iconColor: AppColors.primary,
-        labelColor: AppColors.grey900,
-      ),
+      LeaderMenuAction.projectFundsHistory,
+      AppAssets.iconProjectFundHistory,
+      AppStrings.menuProjectFundsHistory,
     );
     if (includeMyBorrows) {
       push(
-        _buildItem(
-          value: LeaderMenuAction.myBorrows,
-          iconPath: AppAssets.iconMyBorrows,
-          label: AppStrings.menuMyBorrows,
-          iconColor: AppColors.primary,
-          labelColor: AppColors.grey900,
-        ),
+        LeaderMenuAction.myBorrows,
+        AppAssets.iconMyBorrows,
+        AppStrings.menuMyBorrows,
       );
     }
     push(
-      _buildItem(
-        value: LeaderMenuAction.inviteMembers,
-        iconPath: AppAssets.plusSign,
-        label: AppStrings.menuInviteMembers,
-        iconColor: AppColors.primary,
-        labelColor: AppColors.grey900,
-      ),
+      LeaderMenuAction.inviteMembers,
+      AppAssets.plusSign,
+      AppStrings.menuInviteMembers,
     );
 
-    // GroupLeader only — CoLeader cannot mark successful / start success vote.
-    if (audience == LeaderMenuAudience.primaryLeader) {
-      push(
+    return out;
+  }
+
+  List<PopupMenuEntry<LeaderMenuAction>> _primaryLeaderEntries() {
+    final out = <PopupMenuEntry<LeaderMenuAction>>[];
+
+    void push(LeaderMenuAction action, String icon, String label,
+        {Color? iconColor, Color? labelColor}) {
+      if (out.isNotEmpty) out.add(_divider());
+      out.add(
         _buildItem(
-          value: LeaderMenuAction.markSuccessful,
-          iconPath: AppAssets.iconMarkSuccessful,
-          label: AppStrings.menuMarkSuccessful,
-          iconColor: AppColors.green900,
-          labelColor: AppColors.green900,
+          value: action,
+          iconPath: icon,
+          label: label,
+          iconColor: iconColor ?? _primaryIconColor,
+          labelColor: labelColor ?? _primaryLabelColor,
         ),
       );
     }
+
     push(
-      _buildItem(
-        value: LeaderMenuAction.cancelProject,
-        iconPath: AppAssets.iconCancelProject,
-        label: AppStrings.menuCancelProject,
-        iconColor: AppColors.red900,
-        labelColor: AppColors.red900,
-      ),
+      LeaderMenuAction.addAnnouncement,
+      AppAssets.iconAddAnnouncement,
+      AppStrings.menuAddAnnouncement,
+    );
+    push(
+      LeaderMenuAction.editProject,
+      AppAssets.iconEditProject,
+      AppStrings.menuEditProject,
+    );
+    push(
+      LeaderMenuAction.projectFundsHistory,
+      AppAssets.iconProjectFundHistory,
+      AppStrings.menuProjectFundsHistory,
+    );
+    if (includeMyBorrows) {
+      push(
+        LeaderMenuAction.myBorrows,
+        AppAssets.iconMyBorrows,
+        AppStrings.menuMyBorrows,
+      );
+    }
+    push(
+      LeaderMenuAction.inviteMembers,
+      AppAssets.plusSign,
+      AppStrings.menuInviteMembers,
+    );
+    push(
+      LeaderMenuAction.markSuccessful,
+      AppAssets.iconMarkSuccessful,
+      AppStrings.menuMarkSuccessful,
+      iconColor: AppColors.green900,
+      labelColor: AppColors.green900,
+    );
+    push(
+      LeaderMenuAction.stopContributions,
+      AppAssets.iconStopContributions,
+      AppStrings.menuStopContributions,
+      iconColor: AppColors.actionStopContributions,
+      labelColor: AppColors.actionStopContributions,
+    );
+    push(
+      LeaderMenuAction.cancelProject,
+      AppAssets.iconCancelProject,
+      AppStrings.menuCancelProject,
+      iconColor: AppColors.red900,
+      labelColor: AppColors.red900,
     );
 
     return out;

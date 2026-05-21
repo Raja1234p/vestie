@@ -11,7 +11,7 @@ import 'package:vestie/core/widgets/text/app_text.dart';
 class BorrowRequestsEmptyState extends StatelessWidget {
   /// Full-screen lists — vertically centered under the header.
   final bool centered;
-  /// Tab preview with "View All" above — less top inset.
+  /// Inline tab preview — less top inset when list is empty.
   final bool compactTop;
   final String title;
 

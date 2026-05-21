@@ -91,6 +91,7 @@ class _AppInviteMembersBottomSheetState
     final selectionCount = _selectedIds.length;
     final hasSelection = selectionCount > 0;
     final dividerGutter = AppDimens.inviteMembersDividerGutter;
+    final hintToTopDivider = AppDimens.inviteMembersHintToDivider;
     final sheetContentInset = AppDimens.p20;
 
     return ConstrainedBox(
@@ -133,7 +134,7 @@ class _AppInviteMembersBottomSheetState
               ),
             ),
           ),
-          SizedBox(height: dividerGutter),
+          SizedBox(height: hintToTopDivider),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: sheetContentInset),
             child: const AppInviteMembersDashedDivider(),

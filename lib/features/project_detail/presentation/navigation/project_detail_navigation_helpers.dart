@@ -263,6 +263,19 @@ class ProjectDetailNavigationHelpers {
       AppSnackBar.showError(context, AppStrings.errorForbidden);
       return;
     }
+    if (action == LeaderMenuAction.stopContributions &&
+        !project.canStopContributions) {
+      AppSnackBar.showError(context, AppStrings.errorForbidden);
+      return;
+    }
+    if (action == LeaderMenuAction.editProject && !project.canEditProject) {
+      AppSnackBar.showError(context, AppStrings.errorForbidden);
+      return;
+    }
+    if (action == LeaderMenuAction.cancelProject && !project.canCancelProject) {
+      AppSnackBar.showError(context, AppStrings.errorForbidden);
+      return;
+    }
 
     switch (action) {
       case LeaderMenuAction.joinRequests:
@@ -309,6 +322,12 @@ class ProjectDetailNavigationHelpers {
             projectId: project.id,
             memberCount: project.members.length,
           ),
+        );
+        break;
+      case LeaderMenuAction.stopContributions:
+        context.push(
+          AppRoutes.stopContributions,
+          extra: StopContributionsRouteArgs(projectId: project.id),
         );
         break;
       case LeaderMenuAction.cancelProject:

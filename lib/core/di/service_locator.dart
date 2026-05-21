@@ -114,6 +114,7 @@ class ServiceLocator {
   late final ProjectActionsRemoteDataSource projectActionsRemoteDataSource;
   late final ProjectActionsRepository projectActionsRepository;
   late final OpenClosureVotingUseCase openClosureVotingUseCase;
+  late final OpenStopContributionsVotingUseCase openStopContributionsVotingUseCase;
   late final CancelProjectUseCase cancelProjectUseCase;
   late final LeaveProjectUseCase leaveProjectUseCase;
   late final ListPendingJoinRequestsUseCase listPendingJoinRequestsUseCase;
@@ -207,6 +208,8 @@ class ServiceLocator {
     projectActionsRemoteDataSource = ProjectActionsRemoteDataSourceImpl(apiClient: apiClient);
     projectActionsRepository = ProjectActionsRepositoryImpl(remoteDataSource: projectActionsRemoteDataSource);
     openClosureVotingUseCase = OpenClosureVotingUseCase(projectActionsRepository);
+    openStopContributionsVotingUseCase =
+        OpenStopContributionsVotingUseCase(projectActionsRepository);
     cancelProjectUseCase = CancelProjectUseCase(projectActionsRepository);
     leaveProjectUseCase = LeaveProjectUseCase(projectActionsRepository);
     listPendingJoinRequestsUseCase =

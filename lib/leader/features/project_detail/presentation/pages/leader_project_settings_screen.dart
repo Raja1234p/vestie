@@ -89,6 +89,8 @@ class _LeaderProjectSettingsBody extends StatelessWidget {
       );
     }
 
+    final isCoLeader = project.isCoLeader;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -96,11 +98,13 @@ class _LeaderProjectSettingsBody extends StatelessWidget {
           title: AppStrings.menuAddAnnouncement,
           onTap: () => onAction(LeaderMenuAction.addAnnouncement),
         ),
-        SizedBox(height: 10.h),
-        AppNavigationRowTile(
-          title: AppStrings.menuEditProject,
-          onTap: () => onAction(LeaderMenuAction.editProject),
-        ),
+        if (!isCoLeader) ...[
+          SizedBox(height: 10.h),
+          AppNavigationRowTile(
+            title: AppStrings.menuEditProject,
+            onTap: () => onAction(LeaderMenuAction.editProject),
+          ),
+        ],
         SizedBox(height: 10.h),
         AppNavigationRowTile(
           title: AppStrings.menuProjectFundsHistory,
@@ -118,7 +122,7 @@ class _LeaderProjectSettingsBody extends StatelessWidget {
           title: AppStrings.menuInviteMembers,
           onTap: () => onAction(LeaderMenuAction.inviteMembers),
         ),
-        if (project.canMarkProjectSuccessful) ...[
+        if (!isCoLeader && project.canMarkProjectSuccessful) ...[
           SizedBox(height: 10.h),
           AppNavigationRowTile(
             title: AppStrings.menuMarkSuccessful,
@@ -126,12 +130,22 @@ class _LeaderProjectSettingsBody extends StatelessWidget {
             onTap: () => onAction(LeaderMenuAction.markSuccessful),
           ),
         ],
-        SizedBox(height: 10.h),
-        AppNavigationRowTile(
-          title: AppStrings.menuCancelProject,
-          titleColor: AppColors.red900,
-          onTap: () => onAction(LeaderMenuAction.cancelProject),
-        ),
+        if (!isCoLeader && project.canStopContributions) ...[
+          SizedBox(height: 10.h),
+          AppNavigationRowTile(
+            title: AppStrings.menuStopContributions,
+            titleColor: AppColors.actionStopContributions,
+            onTap: () => onAction(LeaderMenuAction.stopContributions),
+          ),
+        ],
+        if (!isCoLeader) ...[
+          SizedBox(height: 10.h),
+          AppNavigationRowTile(
+            title: AppStrings.menuCancelProject,
+            titleColor: AppColors.red900,
+            onTap: () => onAction(LeaderMenuAction.cancelProject),
+          ),
+        ],
       ],
     );
   }

@@ -59,17 +59,17 @@ class _BorrowAmountViewState extends State<_BorrowAmountView> {
   final FocusNode _amountFieldFocus = FocusNode();
   final ScrollController _scrollController = ScrollController();
   late final TextEditingController _amountDigitsController;
+  late final TextEditingController _noteController;
 
   @override
   void initState() {
     super.initState();
-    _amountDigitsController = TextEditingController();
+    final cubitState = context.read<BorrowCubit>().state;
+    _amountDigitsController =
+        TextEditingController(text: cubitState.amountDigits);
+    _noteController = TextEditingController(text: cubitState.note);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      final digits = context.read<BorrowCubit>().state.amountDigits;
-      if (_amountDigitsController.text != digits) {
-        _amountDigitsController.text = digits;
-      }
       _amountFieldFocus.requestFocus();
     });
   }
@@ -79,6 +79,7 @@ class _BorrowAmountViewState extends State<_BorrowAmountView> {
     _noteFocus.dispose();
     _amountFieldFocus.dispose();
     _amountDigitsController.dispose();
+    _noteController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -93,12 +94,22 @@ class _BorrowAmountViewState extends State<_BorrowAmountView> {
     }
   }
 
+  void _syncNoteFromState(String note) {
+    if (!_noteFocus.hasFocus && _noteController.text != note) {
+      _noteController.value = TextEditingValue(
+        text: note,
+        selection: TextSelection.collapsed(offset: note.length),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<BorrowCubit, BorrowState>(
       builder: (context, state) {
         final c = context.read<BorrowCubit>();
         _syncAmountFieldFromState(state.amountDigits);
+        _syncNoteFromState(state.note);
         final over = state.amountValue > state.args.borrowLimit;
         final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
 
@@ -173,6 +184,7 @@ class _BorrowAmountViewState extends State<_BorrowAmountView> {
                               ),
                               SizedBox(height: 42.h),
                               TextField(
+                                controller: _noteController,
                                 focusNode: _noteFocus,
                                 onChanged: c.setNote,
                                 maxLines: 3,
@@ -283,8 +295,7 @@ class _BorrowConfirmView extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        _row('${AppStrings.labelAmount}:', state.displayDollar),
-                        const AppPurpleDashedLine(),
+                        _row(AppStrings.labelAmount, state.displayDollar),
                         _row(
                           AppStrings.labelFullAmountDueBy,
                           state.args.borrowDueByLabel,
@@ -303,7 +314,6 @@ class _BorrowConfirmView extends StatelessWidget {
                           AppStrings.labelPenaltyIfMissed,
                           AppStrings.penaltyValuePercent,
                         ),
-                        const AppPurpleDashedLine(),
                         _row(
                           AppStrings.labelPenaltyApplies,
                           AppStrings.penaltyValueOneTime,
@@ -401,6 +411,7 @@ class _BorrowConfirmView extends StatelessWidget {
               style: GoogleFonts.lato(
                 fontSize: 14.sp,
                 color: AppColors.neutral700,
+                fontWeight: FontWeight.w400
               ),
             ),
           ),

@@ -104,6 +104,7 @@ class AppAssets {
   static const String iconAddAnnouncement  = '$_iconPath/add announcement.svg';
   static const String iconEditProject      = '$_iconPath/edit project.svg';
   static const String iconMarkSuccessful   = '$_iconPath/mark successfull.svg';
+  static const String iconStopContributions = '$_iconPath/stop-contributions.svg';
   static const String iconCancelProject    = '$_iconPath/cancel project.svg';
   /// Invite members / empty-state “add” — simple + (24×24, tints with primary).
   static const String plusSign = '$_iconPath/plus-sign.svg';

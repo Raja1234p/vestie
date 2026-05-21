@@ -97,6 +97,14 @@ class ProjectDetailEntity {
   /// Mark successful / initiate success vote — GroupLeader only.
   bool get canMarkProjectSuccessful => isGroupLeader;
 
+  /// Stop contributions vote — GroupLeader only.
+  bool get canStopContributions => isGroupLeader;
+
+  /// Edit project / cancel project — GroupLeader only (CoLeader popup Figma).
+  bool get canEditProject => isGroupLeader;
+
+  bool get canCancelProject => isGroupLeader;
+
   /// Leader tabs / borrow-management panels (GroupLeader + CoLeader).
   bool get usesLeaderDetailPanels => isModeratorView;
 

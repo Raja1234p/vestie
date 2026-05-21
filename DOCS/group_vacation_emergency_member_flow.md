@@ -12,6 +12,9 @@ This document describes how **member-facing** Vacation and Emergency flows work 
 | **Dev previews on member detail** | Success vote (inline), vote approved, vote rejected |
 | **`AppSuccessScreen` background** | White + `empty_state_background.png` at top for all success screens (contribute, borrow, vote outcome, etc.) — no full-screen auth gradient |
 | **Detail back navigation** | `popProjectDetailNavigation` uses `canPop()` with dashboard fallback when stack is empty |
+| **Invite members sheet** | Figma spacing (`AppDimens` gutters 24 / hint 34 / bottom 34); `useSafeArea: true` so sheet clears status bar + system nav |
+| **Vote outcome (not approved)** | Refund amount card `red100` / `red300` (`#FEF2F2` / `#FBD0D0`) |
+| **Leader menu “Mark as Successful”** | Custom SVG icon; label/icon `#0F7C52` (`green900`) |
 
 **Last aligned with code:** `lib/user/features/create_project_member_fund/`, `lib/features/project_detail/`, `lib/user/features/contribute/`, `lib/user/features/borrow/`, `lib/user/features/project_detail/` (success vote + vote outcome), `lib/core/widgets/common/app_success_screen.dart`.
 

@@ -194,3 +194,18 @@ class OpenClosureVotingUseCase {
     );
   }
 }
+
+class OpenStopContributionsVotingUseCase {
+  final ProjectActionsRepository repository;
+  OpenStopContributionsVotingUseCase(this.repository);
+
+  Future<Either<Failure, void>> call({
+    required String projectId,
+    required int votingWindowDays,
+  }) async {
+    return repository.openStopContributionsVoting(
+      projectId: projectId,
+      votingWindowDays: votingWindowDays,
+    );
+  }
+}

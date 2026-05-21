@@ -232,6 +232,8 @@ class AppColors {
   /// My Borrow Request — pending banner (Figma).
   static const Color borrowPendingBannerBg = Color(0xFFFFF8E6);
   static const Color borrowPendingBannerText = Color(0xFFB8860B);
+  /// Leader menu — “Stop the contribution” (Figma mustard).
+  static const Color actionStopContributions = borrowPendingBannerText;
   /// Member vote summary — downvote tile.
   static const Color borrowVoteDownBg = Color(0xFFFCE8E8);
 
