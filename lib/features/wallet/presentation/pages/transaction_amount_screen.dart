@@ -15,7 +15,7 @@ import '../../../../../core/widgets/common/app_back_button.dart';
 import '../../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../../../core/widgets/common/post_auth_header.dart';
 import '../../../../../core/widgets/text/app_text.dart';
-import 'package:vestie/features/profile/domain/entities/payment_card.dart';
+import 'package:vestie/features/profile/domain/entities/payment_method_selection.dart';
 import '../../domain/wallet_transaction_type.dart';
 import '../cubit/wallet_transaction_cubit.dart';
 
@@ -29,7 +29,9 @@ class TransactionAmountScreen extends StatelessWidget {
         final cubit = context.read<WalletTransactionCubit>();
         final isDeposit = state.transactionType == WalletTransactionType.deposit;
         final title = isDeposit ? AppStrings.depositFundsTitle : AppStrings.withdrawFundsTitle;
-        final subtitle = AppStrings.addAmount;
+        final subtitle = isDeposit
+            ? AppStrings.depositAmountSubtitle
+            : AppStrings.withdrawAmountSubtitle;
 
         return Scaffold(
           backgroundColor: Colors.transparent,
@@ -58,9 +60,11 @@ class TransactionAmountScreen extends StatelessWidget {
                       const Spacer(),
                       AppText(
                         subtitle,
+                        textAlign: TextAlign.center,
                         style: GoogleFonts.lato(
                           fontSize: 14.sp,
-                          color: AppColors.textBody,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.grey700,
                         ),
                       ),
                       SizedBox(height: AppDimens.v10),
@@ -70,7 +74,7 @@ class TransactionAmountScreen extends StatelessWidget {
                             : state.formattedAmount,
                         style: GoogleFonts.lato(
                           fontSize: 50.sp,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w800,
                           color: AppColors.grey1100,
                         ),
                       ),
@@ -89,13 +93,21 @@ class TransactionAmountScreen extends StatelessWidget {
                                   }
                                   context
                                       .push(AppRoutes.selectPaymentMethod)
-                                      .then((selectedCard) {
-                                    if (selectedCard is PaymentCard &&
-                                        context.mounted) {
-                                      cubit.selectCard(selectedCard);
-                                      context.push(
-                                          AppRoutes.transactionConfirmation);
+                                      .then((result) {
+                                    if (!context.mounted || result == null) {
+                                      return;
                                     }
+                                    switch (result) {
+                                      case CardPaymentMethodSelection(
+                                          :final card
+                                        ):
+                                        cubit.selectCard(card);
+                                      case WalletPaymentMethodSelection():
+                                        cubit.selectWallet();
+                                    }
+                                    context.push(
+                                      AppRoutes.transactionConfirmation,
+                                    );
                                   });
                                 },
                         ),

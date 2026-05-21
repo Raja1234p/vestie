@@ -462,6 +462,26 @@ class AppStrings {
   static const String menuPaymentMethods  = 'Payment Methods';
   static const String menuTransactionHistory = 'Transaction History';
   static const String menuKeyGuidelines   = 'Vestie User Guidelines';
+
+  // Vestie User Guidelines (profile screen — Figma)
+  static const String guidelineYourRiskTitle = 'Your Risk';
+  static const String guidelineYourRiskBody =
+      'Users join pots and contribute at their own risk.';
+  static const String guidelineNoGuaranteesTitle = 'No Guarantees';
+  static const String guidelineNoGuaranteesBody =
+      'Vestie does not guarantee the safety or return of any funds.';
+  static const String guidelineKnowYourGroupTitle = 'Know Your Group';
+  static const String guidelineKnowYourGroupBody =
+      'Only send money to people you personally know and trust.';
+  static const String guidelineBorrowingTermsTitle = 'Borrowing Terms';
+  static const String guidelineBorrowingTermsBody =
+      'Repayment terms and penalties are set by group leaders, not Vestie.';
+  static const String guidelineDisputesTitle = 'Disputes';
+  static const String guidelineDisputesBody =
+      'Vestie is not responsible for resolving disputes between members.';
+  static const String guidelineFinalContributionsTitle = 'Final Contributions';
+  static const String guidelineFinalContributionsBody =
+      'Contributions to active projects are final. Refunds are only issued if a project is cancelled.';
   static const String btnLogout           = 'Logout';
 
   // ── Edit Profile ─────────────────────────────────────────────────────────
@@ -474,13 +494,15 @@ class AppStrings {
   // ── Payment Methods ──────────────────────────────────────────────────────
   static const String paymentMethodsTitle   = 'Payment Methods';
   static const String emptyPaymentTitle     = 'Add Payment Method';
-  static const String emptyPaymentSubtitle  = 'No Payment Method Added. Add method to\ndeposit or contribute';
+  static const String emptyPaymentSubtitle  =
+      'No payment method added. Add a payment method to start contributing to projects.';
   static const String btnAddCard            = 'Add Card';
   static const String cardPrimary           = 'Primary';
   static const String setPrimaryLabel       = 'Set as primary payment method';
   static const String setPrimarySubtitle    = 'We will use this payment method for all transactions';
   static const String removeCardLabel       = 'Remove card';
-  static const String removeCardSubtitle    = 'We will remove this card from your account';
+  static const String removeCardSubtitle    =
+      'We will remove this card from your account.';
 
   // ── Add Card ─────────────────────────────────────────────────────────────
   static const String addCardTitle          = 'Add Card';
@@ -692,13 +714,16 @@ class AppStrings {
   // ── Wallet ───────────────────────────────────────────────────────────────
   static const String walletTitle              = 'Wallet';
   static const String walletAmountLabel        = 'Wallet Amount';
+  /// Wallet tab — balance heading (Figma).
+  static const String walletBalanceHeading     = 'Wallet Balance';
   static const String walletBalanceLabel       = 'Wallet Balance:';
-  static const String btnDepositFunds          = 'Deposit funds';
-  static const String btnWithdrawFunds          = 'Withdraw funds';
+  static const String btnDepositFunds          = 'Deposit Funds';
+  static const String btnWithdrawFunds         = 'Withdraw Funds';
   static const String depositFundsTitle         = 'Deposit';
   static const String withdrawFundsTitle        = 'Withdraw';
-  static const String depositAmountSubtitle     = 'Enter amount to deposit';
-  static const String withdrawAmountSubtitle    = 'Enter amount to withdraw';
+  static const String depositAmountSubtitle     = 'Enter Amount';
+  static const String labelDepositAmount        = 'Deposit Amount';
+  static const String withdrawAmountSubtitle    = 'Add Amount';
   static const String confirmDepositTitle       = 'Confirm Deposit';
   static const String confirmWithdrawTitle      = 'Confirm Withdraw';
   static const String walletDepositDetailsTitle = 'Deposit Details';
@@ -707,11 +732,11 @@ class AppStrings {
   static const String walletWithdrawingLabel    = 'Withdrawing';
   static const String walletMethodLabel         = 'Method';
   static const String walletToLabel             = 'To';
-  static const String walletDepositFeeLabel     = 'Deposit fee';
-  static const String walletWithdrawalFeeLabel  = 'Withdrawal fee';
-  static const String walletProcessingTimeLabel = 'Processing time';
+  static const String walletDepositFeeLabel     = 'Deposit Fee';
+  static const String walletWithdrawalFeeLabel  = 'Withdrawal Fee';
+  static const String walletProcessingTimeLabel = 'Processing Time';
   static const String walletProcessingTimeValue = '1-3 business days';
-  static const String walletNewBalanceAfterLabel = 'New balance after';
+  static const String walletNewBalanceAfterLabel = 'New Balance After';
   static const String walletFeeNone             = 'None';
   static const String labelAmount               = 'Amount';
   static const String labelFee                  = 'Fee';
@@ -720,8 +745,8 @@ class AppStrings {
   static const String btnConfirm                = 'Confirm';
   static const String btnDone                   = 'Done';
   static const String depositSuccessTitle       = 'Deposit Successful';
-  static const String depositAddedPrefix        = ' has been added to';
-  static const String depositAddedLineTwo       = 'your wallet.';
+  static String depositSuccessBody(String amount) =>
+      '$amount has been added to your wallet.';
   static const String withdrawSuccessTitle      = 'Withdrawal Requested';
   static const String withdrawEtaPrefix         = 'Your ';
   static const String withdrawEtaSuffix         = ' will arrive in 1-3';
@@ -743,22 +768,22 @@ class AppStrings {
   static const String withdrawFeeDisclaimerPrefix = 'Fee: ';
   static const String withdrawFeeDisclaimerInstant =
       '1.5% of withdraw amount';
-  static const String withdrawFeeDisclaimerLine =
+  static const String withdrawInstantFeeFooter =
       'Fee: 1.5% of withdraw amount';
   static const String badgeInstant = 'Instant';
   static const String labelWithdrawalAmount = 'Withdrawal Amount';
   static const String labelYouWillReceive = 'You will receive';
-  static const String withdrawProcessingInstantValue = 'About 30 minutes';
+  static const String withdrawProcessingInstantValue = '30 Mins';
   static const String btnConfirmInstantWithdraw = 'Confirm Instant Withdraw';
   static const String btnConfirmStandardWithdraw = 'Confirm Standard Withdraw';
 
   static String withdrawFeeInstantRow(double feeDollars) {
-    final v = feeDollars.toStringAsFixed(2);
-    return '1.5% (- \$$v)';
+    final v = feeDollars.toStringAsFixed(0);
+    return '1.5% (-\$$v)';
   }
 
   static String withdrawSuccessBodyInstant(String amountFormatted) =>
-      'Your $amountFormatted will arrive in about 30 minutes.';
+      'Your $amountFormatted will arrive within 30 Mins.';
 
   static String withdrawSuccessBodyStandard(String amountFormatted) =>
       'Your $amountFormatted will arrive in 1-3 business days.';

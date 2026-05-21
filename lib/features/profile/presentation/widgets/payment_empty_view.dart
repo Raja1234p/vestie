@@ -1,70 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../core/constants/app_assets.dart';
-import '../../../../core/constants/app_strings.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/widgets/common/app_text.dart';
-import 'payment_primary_button.dart';
+import 'package:vestie/core/constants/app_assets.dart';
+import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/widgets/text/app_text.dart';
 
+/// Centered empty state for payment methods (Figma — illustration + copy only).
 class PaymentEmptyView extends StatelessWidget {
-  final VoidCallback onAdd;
-
-  const PaymentEmptyView({super.key, required this.onAdd});
+  const PaymentEmptyView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SvgPicture.asset(
-                AppAssets.emptyPaymentMethodIcon,
-                width: 72.w,
-                height: 72.w,
-                colorFilter: const ColorFilter.mode(
-                  AppColors.primary,
-                  BlendMode.srcIn,
-                ),
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 24.w),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              AppAssets.paymentMethodsEmptyIllustration,
+              width: 240.w,
+              height: 200.h,
+              fit: BoxFit.contain,
+            ),
+            SizedBox(height: 24.h),
+            AppText(
+              AppStrings.emptyPaymentTitle,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.lato(
+                fontSize: 20.sp,
+                fontWeight: FontWeight.w800,
+                color: AppColors.grey900,
               ),
-              SizedBox(height: 16.h),
-              AppText(
-                AppStrings.emptyPaymentTitle,
-                style: GoogleFonts.lato(
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
+            ),
+            SizedBox(height: 10.h),
+            AppText(
+              AppStrings.emptyPaymentSubtitle,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.lato(
+                fontSize: 14.sp,
+                height: 1.45,
+                fontWeight: FontWeight.w500,
+                color: AppColors.grey700,
               ),
-              SizedBox(height: 8.h),
-              AppText(
-                AppStrings.emptyPaymentSubtitle,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.lato(
-                  fontSize: 15.sp,
-                  color: AppColors.textBody,
-                  height: 1.5,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
-        Positioned(
-          left: 20.w,
-          right: 20.w,
-          bottom: 32.h,
-          child: PaymentPrimaryButton(
-            label: AppStrings.btnAddCard,
-            onTap: onAdd,
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

@@ -299,9 +299,19 @@ class AppColors {
   /// Profile settings menu card fill (Figma — white).
   static const Color settingsCardBg = neutral100;
 
-  // Payment card gradient — vivid purple
+  // Payment card gradient — vivid purple (legacy list tiles)
   static const Color payCardGradientStart = purple700;  // #7A3FE0
   static const Color payCardGradientEnd   = purple500;  // #B098F5
+  /// Card detail sheet — white surface + monotone noise (Figma).
+  static const Color payCardSurfaceBg  = neutral100;    // #FFFFFF
+  static const Color payCardNoise      = Color(0xFFDFD9ED);
+  static const Color payCardPrimaryBadge = purple600;   // #9268EC
+
+  /// Instant withdraw method card — drop shadow (Figma #A498C0 @ 20%).
+  static const Color withdrawInstantCardShadow = Color(0xFFA498C0);
+
+  /// Vestie User Guidelines — section title (Figma #140930).
+  static const Color guidelineTitle = Color(0xFF140930);
 
   // ── Transactions ─────────────────────────────────────────────────────────────
   static const Color txPositive = green700;    // #1DB87E

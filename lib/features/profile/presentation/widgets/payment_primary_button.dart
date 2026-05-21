@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../core/constants/app_dimens.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_text.dart';
 
@@ -24,9 +25,9 @@ class PaymentPrimaryButton extends StatelessWidget {
       height: 50.h,
       child: Material(
         color: AppColors.cardActionBtn,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(AppRadius.r8),
         child: InkWell(
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(AppRadius.r8),
           onTap: loading ? null : onTap,
           child: Center(
             child: loading

@@ -22,6 +22,8 @@ class AppButton extends StatelessWidget {
   final double? width;
   final double? height;
   final Color? color;
+  final Color? secondaryBorderColor;
+  final Color? secondaryLabelColor;
   final Widget? leading;
 
   const AppButton({
@@ -36,6 +38,8 @@ class AppButton extends StatelessWidget {
     this.width,
     this.height,
     this.color,
+    this.secondaryBorderColor,
+    this.secondaryLabelColor,
     this.leading,
   });
 
@@ -67,7 +71,10 @@ class AppButton extends StatelessWidget {
               : AppColors.textHint,
           borderRadius: radius,
           border: isSecondary
-              ? Border.all(color: AppColors.primary, width: 1.5.w)
+              ? Border.all(
+                  color: secondaryBorderColor ?? AppColors.primary,
+                  width: 1.5.w,
+                )
               : !isEnabled
                   ? Border.all(
                       color: AppColors.grey400,
@@ -120,7 +127,9 @@ class AppButton extends StatelessWidget {
     final style = theme.textTheme.labelLarge?.copyWith(
       fontSize: 18.sp,
       fontWeight: FontWeight.w500,
-      color: isSecondary ? AppColors.primary : AppColors.surface,
+      color: isSecondary
+          ? (secondaryLabelColor ?? AppColors.primary)
+          : AppColors.surface,
     );
     final label = AppText(
       text,

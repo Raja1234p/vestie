@@ -1,33 +1,36 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../core/constants/app_assets.dart';
-import '../../../../core/constants/app_strings.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/utils/app_snackbar.dart';
-import '../../../../core/widgets/common/app_svg_icon.dart';
-import '../../../../core/widgets/common/app_text.dart';
-import '../../../../core/widgets/common/app_tick_switch.dart';
-import '../../domain/entities/payment_card.dart';
-import '../cubit/payment_methods_cubit.dart';
-import 'card_preview.dart';
-import 'payment_primary_button.dart';
+import 'package:vestie/core/constants/app_assets.dart';
+import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/utils/app_snackbar.dart';
+import 'package:vestie/core/widgets/common/app_purple_dashed_line.dart';
+import 'package:vestie/core/widgets/common/app_svg_icon.dart';
+import 'package:vestie/core/widgets/text/app_text.dart';
+import 'package:vestie/features/profile/domain/entities/payment_card.dart';
+import 'package:vestie/features/profile/presentation/cubit/payment_methods_cubit.dart';
+import 'package:vestie/features/profile/presentation/widgets/card_preview.dart';
 
-/// Bottom sheet showing card details: set primary toggle, remove card.
+/// Bottom sheet: card preview, set-primary toggle, remove card (Figma).
 class CardDetailSheet extends StatelessWidget {
   final PaymentCard card;
   const CardDetailSheet({super.key, required this.card});
 
   static Future<void> show(BuildContext context, PaymentCard card) {
-    return showModalBottomSheet(
+    return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: AppColors.surface,
       shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24.r))),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+      ),
       builder: (_) => BlocProvider.value(
         value: context.read<PaymentMethodsCubit>(),
         child: CardDetailSheet(card: card),
@@ -39,129 +42,130 @@ class CardDetailSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<PaymentMethodsCubit, PaymentMethodsState>(
       builder: (context, state) {
-        // Get fresh card from state
         final current = state.cards.firstWhere(
           (c) => c.id == card.id,
           orElse: () => card,
         );
+        final bottomInset = math.max(
+          24.h,
+          MediaQuery.viewPaddingOf(context).bottom + 8.h,
+        );
+
         return Padding(
-          padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w,
-              MediaQuery.of(context).viewInsets.bottom + 24.h),
+          padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, bottomInset),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Close ────────────────────────────────────
               GestureDetector(
                 onTap: context.pop,
                 child: AppSvgIcon(
-                    assetPath: AppAssets.iconClose,
-                    size: 24.w,
-                    color: AppColors.textBody),
+                  assetPath: AppAssets.iconClose,
+                  size: 24.w,
+                  color: AppColors.grey900,
+                ),
               ),
-              SizedBox(height: 16.h),
-
-              // ── Card preview ──────────────────────────────
+              SizedBox(height: 20.h),
               CardPreview(card: current),
-              SizedBox(height: 24.h),
-
-              // ── Set primary toggle ────────────────────────
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        AppText(
-                          AppStrings.setPrimaryLabel,
-                          style: GoogleFonts.lato(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                        SizedBox(height: 2.h),
-                        AppText(
-                          AppStrings.setPrimarySubtitle,
-                          style: GoogleFonts.lato(
-                            fontSize: 11.sp,
-                            color: AppColors.textBody,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  AppTickSwitch(
-                    value: current.isPrimary,
-                    onChanged: current.isPrimary
-                        ? null
-                        : (val) {
-                            if (val) {
-                              context
-                                  .read<PaymentMethodsCubit>()
-                                  .setPrimary(current.id);
-                            }
-                          },
-                  ),
-                ],
+              SizedBox(height: 28.h),
+              _ActionRow(
+                title: AppStrings.setPrimaryLabel,
+                subtitle: AppStrings.setPrimarySubtitle,
+                trailing: Switch.adaptive(
+                  value: current.isPrimary,
+                  onChanged: current.isPrimary
+                      ? null
+                      : (on) {
+                          if (on) {
+                            context
+                                .read<PaymentMethodsCubit>()
+                                .setPrimary(current.id);
+                          }
+                        },
+                  activeThumbColor: AppColors.surface,
+                  activeTrackColor: AppColors.primary,
+                  inactiveThumbColor: AppColors.surface,
+                  inactiveTrackColor: AppColors.grey300,
+                ),
               ),
-              SizedBox(height: 4.h),
-              const Divider(),
-              SizedBox(height: 4.h),
-
-              // ── Remove card ───────────────────────────────
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        AppText(
-                          AppStrings.removeCardLabel,
-                          style: GoogleFonts.lato(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                        SizedBox(height: 2.h),
-                        AppText(
-                          AppStrings.removeCardSubtitle,
-                          style: GoogleFonts.lato(
-                            fontSize: 11.sp,
-                            color: AppColors.textBody,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      context.read<PaymentMethodsCubit>().removeCard(current.id);
-                      context.pop();
-                      AppSnackBar.showSuccess(
-                        context,
-                        AppStrings.cardRemovedSuccess,
-                      );
-                    },
-                    child: AppSvgIcon(
-                        assetPath: AppAssets.iconDelete,
-                        size: 22.w,
-                        color: AppColors.logoutBtn),
-                  ),
-                ],
+              SizedBox(height: 20.h),
+              const AppPurpleDashedLine(
+                color: AppColors.purple300,
+                height: 1,
               ),
-              SizedBox(height: 24.h),
-
-              // ── Add Card button ───────────────────────────
-              PaymentPrimaryButton(
-                label: AppStrings.btnAddCard,
-                onTap: context.pop,
+              SizedBox(height: 20.h),
+              _ActionRow(
+                title: AppStrings.removeCardLabel,
+                subtitle: AppStrings.removeCardSubtitle,
+                trailing: GestureDetector(
+                  onTap: () {
+                    context.read<PaymentMethodsCubit>().removeCard(current.id);
+                    context.pop();
+                    AppSnackBar.showSuccess(
+                      context,
+                      AppStrings.cardRemovedSuccess,
+                    );
+                  },
+                  child: AppSvgIcon(
+                    assetPath: AppAssets.iconDelete,
+                    size: 22.w,
+                    color: AppColors.logoutBtn,
+                  ),
+                ),
               ),
             ],
           ),
         );
       },
+    );
+  }
+}
+
+class _ActionRow extends StatelessWidget {
+  const _ActionRow({
+    required this.title,
+    required this.subtitle,
+    required this.trailing,
+  });
+
+  final String title;
+  final String subtitle;
+  final Widget trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AppText(
+                title,
+                style: GoogleFonts.lato(
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.grey1100,
+                  height: 1.25,
+                ),
+              ),
+              SizedBox(height: 4.h),
+              AppText(
+                subtitle,
+                style: GoogleFonts.lato(
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.grey700,
+                  height: 1.4,
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(width: 12.w),
+        trailing,
+      ],
     );
   }
 }

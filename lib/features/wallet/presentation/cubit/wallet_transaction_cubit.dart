@@ -8,12 +8,14 @@ class WalletTransactionState {
   final WalletTransactionType transactionType;
   final String amountDigits;
   final PaymentCard? selectedCard;
+  final bool payFromWallet;
   final WithdrawDeliveryMethod? withdrawDeliveryMethod;
 
   const WalletTransactionState({
     required this.transactionType,
     this.amountDigits = '',
     this.selectedCard,
+    this.payFromWallet = false,
     this.withdrawDeliveryMethod,
   });
 
@@ -21,12 +23,16 @@ class WalletTransactionState {
     WalletTransactionType? transactionType,
     String? amountDigits,
     PaymentCard? selectedCard,
+    bool? payFromWallet,
     WithdrawDeliveryMethod? withdrawDeliveryMethod,
+    bool clearSelectedCard = false,
   }) {
     return WalletTransactionState(
       transactionType: transactionType ?? this.transactionType,
       amountDigits: amountDigits ?? this.amountDigits,
-      selectedCard: selectedCard ?? this.selectedCard,
+      selectedCard:
+          clearSelectedCard ? null : (selectedCard ?? this.selectedCard),
+      payFromWallet: payFromWallet ?? this.payFromWallet,
       withdrawDeliveryMethod:
           withdrawDeliveryMethod ?? this.withdrawDeliveryMethod,
     );
@@ -67,7 +73,11 @@ class WalletTransactionCubit extends Cubit<WalletTransactionState> {
   }
 
   void selectCard(PaymentCard card) {
-    emit(state.copyWith(selectedCard: card));
+    emit(state.copyWith(selectedCard: card, payFromWallet: false));
+  }
+
+  void selectWallet() {
+    emit(state.copyWith(clearSelectedCard: true, payFromWallet: true));
   }
 
   /// Default instant rail before the user opens the method picker.

@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/widgets/text/app_text.dart';
 
 /// Centered empty state under “Recent Activity” when there are no transactions.
 class WalletRecentActivityEmpty extends StatelessWidget {
@@ -26,24 +27,24 @@ class WalletRecentActivityEmpty extends StatelessWidget {
               fit: BoxFit.contain,
             ),
             SizedBox(height: 24.h),
-            Text(
+            AppText(
               AppStrings.walletEmptyActivityTitle,
               textAlign: TextAlign.center,
               style: GoogleFonts.lato(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.w800,
-                color: AppColors.textPrimary,
+                color: AppColors.grey900,
               ),
             ),
             SizedBox(height: 10.h),
-            Text(
+            AppText(
               AppStrings.walletEmptyActivitySubtitle,
               textAlign: TextAlign.center,
               style: GoogleFonts.lato(
                 fontSize: 14.sp,
                 height: 1.45,
                 fontWeight: FontWeight.w500,
-                color: AppColors.textBody,
+                color: AppColors.grey700,
               ),
             ),
           ],

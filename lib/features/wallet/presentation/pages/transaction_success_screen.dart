@@ -29,7 +29,16 @@ class TransactionSuccessScreen extends StatelessWidget {
               ? AppStrings.depositSuccessTitle
               : AppStrings.withdrawSuccessTitle,
           subtitleWidget: isDeposit
-              ? _DepositSubtitle(amountText: amountText)
+              ? AppText(
+                  AppStrings.depositSuccessBody(amountText),
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.lato(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.grey700,
+                    height: 1.35,
+                  ),
+                )
               : _WithdrawSubtitle(
                   amountText: amountText,
                   method: state.withdrawDeliveryMethod ??
@@ -42,49 +51,6 @@ class TransactionSuccessScreen extends StatelessWidget {
           },
         );
       },
-    );
-  }
-}
-
-class _DepositSubtitle extends StatelessWidget {
-  final String amountText;
-
-  const _DepositSubtitle({required this.amountText});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Wrap(
-          alignment: WrapAlignment.center,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            AppText(
-              amountText,
-              style: GoogleFonts.lato(
-                fontSize: 20.sp,
-                fontWeight: FontWeight.w900,
-                color: AppColors.textPrimary,
-              ),
-            ),
-            AppText(
-              AppStrings.depositAddedPrefix,
-              style: GoogleFonts.lato(
-                fontSize: 18.sp,
-                color: AppColors.textBody,
-              ),
-            ),
-          ],
-        ),
-        AppText(
-          AppStrings.depositAddedLineTwo,
-          style: GoogleFonts.lato(
-            fontSize: 18.sp,
-            color: AppColors.textBody,
-            height: 1.1,
-          ),
-        ),
-      ],
     );
   }
 }
@@ -107,8 +73,9 @@ class _WithdrawSubtitle extends StatelessWidget {
       body,
       textAlign: TextAlign.center,
       style: GoogleFonts.lato(
-        fontSize: 16.sp,
-        color: AppColors.textBody,
+        fontSize: 18.sp,
+        fontWeight: FontWeight.w500,
+        color: AppColors.grey700,
         height: 1.35,
       ),
     );

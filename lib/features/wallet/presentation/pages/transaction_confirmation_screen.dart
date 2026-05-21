@@ -8,6 +8,7 @@ import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
+import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import '../../domain/wallet_transaction_type.dart';
@@ -61,14 +62,7 @@ class TransactionConfirmationScreen extends StatelessWidget {
                       ? WalletDepositConfirmSection(state: state)
                       : WalletWithdrawConfirmSection(state: state),
                 ),
-                SafeArea(
-                  top: false,
-                  minimum: EdgeInsets.fromLTRB(
-                    AppDimens.p16,
-                    0,
-                    AppDimens.p16,
-                    AppDimens.v24,
-                  ),
+                FlowScreenFooter(
                   child: AppButton(
                     text: _confirmCta(state),
                     onPressed: () => context

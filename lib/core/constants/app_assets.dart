@@ -72,6 +72,9 @@ class AppAssets {
   /// Profile avatar — tap to change photo (design `Frame 343.svg`).
   static const String profileAvatarEditBadge = '$_iconPath/Frame 343.svg';
   static const String emptyPaymentMethodIcon     = '$_iconPath/wallet-cards.svg';
+  /// Payment methods empty — 3D card holder (Figma).
+  static const String paymentMethodsEmptyIllustration =
+      '$_imagePath/payment_methods_empty.png';
   /// Wallet “Recent Activity” empty — stacked cards motif.
   static const String walletEmptyActivityIllustration = emptyPaymentMethodIcon;
   // ── Payment Card Brand Logos ──────────────────────────────────────────────

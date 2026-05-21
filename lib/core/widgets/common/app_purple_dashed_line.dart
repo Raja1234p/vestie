@@ -6,19 +6,25 @@ import '../../theme/app_colors.dart';
 /// Dashed line using [AppColors.purple300] — full width of parent, no horizontal
 /// inset (use in cards so only row content has side padding, not the line).
 class AppPurpleDashedLine extends StatelessWidget {
-  const AppPurpleDashedLine({super.key, this.height = 2});
+  const AppPurpleDashedLine({
+    super.key,
+    this.height = 2,
+    this.color = AppColors.purple300,
+  });
 
   final double height;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, c) {
+        final strokeWidth = height <= 1 ? 1.0 : 1.5;
         return CustomPaint(
           size: Size(c.maxWidth, height.h),
-          painter: const _PurpleDashPainter(
-            color: AppColors.purple300,
-            strokeWidth: 1.5,
+          painter: _PurpleDashPainter(
+            color: color,
+            strokeWidth: strokeWidth,
           ),
         );
       },

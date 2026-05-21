@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/text/app_text.dart';
 
+/// Wallet balance + borrowed summary (Figma wallet tab).
 class WalletOverviewCard extends StatelessWidget {
   final String walletAmount;
   final String borrowedAmount;
@@ -22,52 +24,39 @@ class WalletOverviewCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          // ── Wallet Amount Left ──────────────────────────────────────────
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
                 AppText(
-                  AppStrings.walletAmountLabel,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontSize: 14.sp,
-                        color: AppColors.neutral1100,
-                        fontWeight: FontWeight.w500,
-                      ),
+                  AppStrings.walletBalanceHeading,
+                  style: GoogleFonts.lato(
+                    fontSize: 14.sp,
+                    color: AppColors.neutral700,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
                 SizedBox(height: 4.h),
                 AppText(
                   walletAmount,
-                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                        fontSize: 40.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
-                        letterSpacing: -1,
-                        fontFamily: 'SF Pro', // Explicit as per Figma
-                      ),
+                  style: GoogleFonts.lato(
+                    fontSize: 40.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.neutral1200,
+                    letterSpacing: -1,
+                    height: 1.1,
+                  ),
                 ),
               ],
             ),
           ),
-
-          // ── Borrowed Card Right ─────────────────────────────────────────
           Container(
-            padding: EdgeInsets.all(12.r),
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
             decoration: BoxDecoration(
-              color: AppColors.grey100, // Exact from Figma
+              color: AppColors.grey100,
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(
-                color: AppColors.neutral100.withValues(alpha: 0.5),
-                width: 1.w,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.grey1100.withValues(alpha: 0.05),
-                  blurRadius: 4.r,
-                  offset: Offset(0, 2.h),
-                ),
-              ],
+              border: Border.all(color: AppColors.neutral300, width: 1),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,20 +64,20 @@ class WalletOverviewCard extends StatelessWidget {
               children: [
                 AppText(
                   AppStrings.borrowedLabel,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        fontSize: 12.sp,
-                        color: AppColors.neutral1100,
-                        fontWeight: FontWeight.w500,
-                      ),
+                  style: GoogleFonts.lato(
+                    fontSize: 12.sp,
+                    color: AppColors.neutral700,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
                 SizedBox(height: 2.h),
                 AppText(
                   borrowedAmount,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
-                      ),
+                  style: GoogleFonts.lato(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.neutral1200,
+                  ),
                 ),
               ],
             ),

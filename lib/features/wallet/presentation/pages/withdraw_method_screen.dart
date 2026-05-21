@@ -9,7 +9,7 @@ import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
-import 'package:vestie/features/profile/domain/entities/payment_card.dart';
+import 'package:vestie/features/profile/domain/entities/payment_method_selection.dart';
 import 'package:vestie/features/wallet/domain/withdraw_delivery_method.dart';
 import 'package:vestie/features/wallet/presentation/cubit/wallet_transaction_cubit.dart';
 import 'package:vestie/features/wallet/presentation/widgets/withdraw_method_body.dart';
@@ -49,11 +49,15 @@ class WithdrawMethodScreen extends StatelessWidget {
                     selected: selected,
                     onSelect: cubit.setWithdrawDeliveryMethod,
                     onContinue: () {
-                      context.push(AppRoutes.selectPaymentMethod).then((card) {
-                        if (card is PaymentCard && context.mounted) {
-                          cubit.selectCard(card);
-                          context.push(AppRoutes.transactionConfirmation);
+                      context.push(AppRoutes.selectPaymentMethod).then((result) {
+                        if (!context.mounted || result == null) return;
+                        switch (result) {
+                          case CardPaymentMethodSelection(:final card):
+                            cubit.selectCard(card);
+                          case WalletPaymentMethodSelection():
+                            cubit.selectWallet();
                         }
+                        context.push(AppRoutes.transactionConfirmation);
                       });
                     },
                   ),
