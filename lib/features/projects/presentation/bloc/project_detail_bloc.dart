@@ -101,6 +101,10 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
     LoadProjectDetailEvent event,
     Emitter<ProjectDetailState> emit,
   ) async {
+    final preservedTab = switch (state) {
+      ProjectDetailLoaded(:final activeTab) => activeTab,
+      _ => ProjectDetailTab.borrowRequests,
+    };
     final isSilentRefresh = state is ProjectDetailLoaded;
     if (!isSilentRefresh) {
       emit(ProjectDetailLoading());
@@ -123,6 +127,7 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
         }
         emit(ProjectDetailLoaded(
           project: project,
+          activeTab: preservedTab,
           pendingJoinRequestCount: pendingCount,
         ));
       },
