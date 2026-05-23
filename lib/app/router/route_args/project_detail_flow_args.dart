@@ -101,6 +101,8 @@ class ProjectFundsHistoryRouteArgs {
   final List<ProjectFundsHistoryEntryArgs> entries;
   /// Investment projects: balance + Breakdown only (Figma).
   final bool isInvestment;
+  /// Co-leader (and investment) fund history list title — [AppStrings.labelBreakdown].
+  final bool useBreakdownSectionTitle;
 
   const ProjectFundsHistoryRouteArgs({
     required this.projectId,
@@ -109,6 +111,7 @@ class ProjectFundsHistoryRouteArgs {
     required this.activeBorrows,
     this.entries = const [],
     this.isInvestment = false,
+    this.useBreakdownSectionTitle = false,
   });
 
   /// Legacy alias — same as [currentPotBalance].

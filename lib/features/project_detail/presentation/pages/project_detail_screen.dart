@@ -278,6 +278,7 @@ Future<void> _openMemberProfile(
     project: project,
     member: member,
   );
+  if (!context.mounted) return;
   ProjectDetailNavigationHelpers.refreshProjectDetailAfterMemberFlow(
     context,
     projectId: project.id,

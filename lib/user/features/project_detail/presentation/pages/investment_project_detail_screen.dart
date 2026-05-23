@@ -129,6 +129,7 @@ class _InvestmentProjectDetailBodyState
                   project: project,
                   member: member,
                 );
+                if (!context.mounted) return;
                 ProjectDetailNavigationHelpers
                     .refreshProjectDetailAfterMemberFlow(
                   context,

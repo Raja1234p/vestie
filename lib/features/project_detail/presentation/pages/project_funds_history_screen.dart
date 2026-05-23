@@ -45,6 +45,7 @@ class ProjectFundsHistoryScreen extends StatelessWidget {
                           : ProjectFundsHistorySummaryLayout.pooled,
                       totalContribution: args.totalContribution,
                       activeBorrows: args.activeBorrows,
+                      useBreakdownSectionTitle: args.useBreakdownSectionTitle,
                     ),
                     if (args.entries.isEmpty)
                       _EmptyLedgerCard()

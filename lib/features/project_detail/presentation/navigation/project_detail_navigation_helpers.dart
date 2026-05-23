@@ -72,14 +72,7 @@ class ProjectDetailNavigationHelpers {
       return null;
     }
     void reloadProjectDetail() {
-      if (!context.mounted) return;
-      try {
-        context.read<ProjectDetailBloc>().add(
-          LoadProjectDetailEvent(projectId: project.id),
-        );
-      } on ProviderNotFoundException {
-        // Member profile opened outside project detail (no bloc in tree).
-      }
+      _reloadProjectDetailBloc(context, projectId: project.id);
     }
 
     return context.push<MemberDetailPopResult>(
@@ -92,13 +85,21 @@ class ProjectDetailNavigationHelpers {
     );
   }
 
-  /// Reloads project detail when [result] indicates membership changed.
+  /// Reloads `GET /projects/{id}` after member profile changes (remove, co-leader, etc.).
   static void refreshProjectDetailAfterMemberFlow(
     BuildContext context, {
     required String projectId,
     required MemberDetailPopResult? result,
   }) {
     if (result == null) return;
+    if (!context.mounted) return;
+    _reloadProjectDetailBloc(context, projectId: projectId);
+  }
+
+  static void _reloadProjectDetailBloc(
+    BuildContext context, {
+    required String projectId,
+  }) {
     if (!context.mounted) return;
     try {
       context.read<ProjectDetailBloc>().add(
@@ -145,14 +146,16 @@ class ProjectDetailNavigationHelpers {
     );
   }
 
-  static void openGroupMembers(
+  static Future<void> openGroupMembers(
     BuildContext context, {
     required ProjectDetailEntity project,
-  }) {
-    context.push(
+  }) async {
+    await context.push(
       AppRoutes.groupMembers,
       extra: groupMembersArgs(project),
     );
+    if (!context.mounted) return;
+    _reloadProjectDetailBloc(context, projectId: project.id);
   }
 
   /// Pops success → distribution → distribute funds so the existing detail

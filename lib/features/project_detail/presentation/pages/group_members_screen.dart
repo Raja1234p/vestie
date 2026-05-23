@@ -43,13 +43,8 @@ class GroupMembersScreen extends StatelessWidget {
     if (!context.mounted || result == null) return;
 
     if (result == MemberDetailPopResult.memberRemoved) {
-      context.pop();
       if (!context.mounted) return;
-      ProjectDetailNavigationHelpers.refreshProjectDetailAfterMemberFlow(
-        context,
-        projectId: project.id,
-        result: result,
-      );
+      context.pop();
     }
   }
 

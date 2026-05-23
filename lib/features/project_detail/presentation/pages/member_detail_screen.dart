@@ -241,6 +241,8 @@ class _MemberDetailView extends StatelessWidget {
 
       case MemberDetailAction.removeMember:
 
+        onProjectMembersChanged?.call();
+
         showMemberRemovedSuccess(
 
           context,
@@ -323,6 +325,8 @@ class _MemberDetailView extends StatelessWidget {
     if (!context.mounted || outcome == null) return;
 
     if (outcome == MemberPenaltyActionOutcome.memberRemoved) {
+      onProjectMembersChanged?.call();
+      if (!context.mounted) return;
       context.pop(MemberDetailPopResult.memberRemoved);
       return;
     }

@@ -30,6 +30,7 @@ class ProjectFundsHistoryLedgerBuilder {
       activeBorrows: activeBorrows,
       entries: entries.isNotEmpty ? entries : preview,
       isInvestment: isInvestment,
+      useBreakdownSectionTitle: isInvestment || project.isCoLeader,
     );
   }
 
