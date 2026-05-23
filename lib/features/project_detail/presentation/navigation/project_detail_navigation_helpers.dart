@@ -20,6 +20,7 @@ import '../../domain/entities/project_detail_entity.dart';
 import '../../domain/entities/project_detail_route_args.dart';
 import '../models/investment_distribution_ui_data.dart';
 import '../models/investment_returns_ui_data.dart';
+import 'package:vestie/leader/features/project_detail/presentation/models/leader_success_vote_progress_ui_data.dart';
 import 'package:vestie/user/features/project_detail/presentation/models/member_vote_outcome_ui_data.dart';
 import '../widgets/distribute_funds_amount_sheet.dart';
 import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
@@ -247,12 +248,57 @@ class ProjectDetailNavigationHelpers {
     );
   }
 
+  /// Group leader — active success vote monitor (Figma voting window).
+  /// Vacation and emergency projects only.
+  static void openLeaderViewSuccessVotes(
+    BuildContext context, {
+    required ProjectDetailEntity project,
+  }) {
+    if (!project.showsSuccessVoteDevPreviews) return;
+
+    context.push(
+      AppRoutes.leaderViewSuccessVotes,
+      extra: LeaderViewSuccessVotesRouteArgs(
+        projectName: project.name,
+        data: LeaderSuccessVoteProgressUiData.preview(project: project),
+      ),
+    );
+  }
+
+  /// Temporary preview — member success vote screen ([UserSuccessVoteScreen]).
+  static void openSuccessVoteScreenPreview(
+    BuildContext context, {
+    required ProjectDetailEntity project,
+  }) {
+    if (!project.showsMemberSuccessVoteDevPreviews) return;
+
+    final memberCount =
+        project.members.isNotEmpty ? project.members.length : 7;
+    context.push(
+      AppRoutes.userSuccessVote,
+      extra: UserSuccessVoteArgs(
+        projectId: project.id,
+        projectName: project.name,
+        goalAmount: project.goalAmount > 0 ? project.goalAmount : 5000,
+        memberCount: memberCount,
+        totalRaised: project.currentAmount > 0
+            ? project.currentAmount
+            : project.goalAmount * 0.96,
+        deadlineLabel:
+            project.endsIn.trim().isNotEmpty ? project.endsIn : 'May 12, 2025',
+        daysRemaining: 21,
+      ),
+    );
+  }
+
   /// Temporary preview — member vote outcome (approved / rejected).
   static void openMemberVoteOutcomePreview(
     BuildContext context, {
     required ProjectDetailEntity project,
     required bool approved,
   }) {
+    if (!project.showsMemberSuccessVoteDevPreviews) return;
+
     context.push(
       AppRoutes.userVoteOutcome,
       extra: MemberVoteOutcomeRouteArgs(
@@ -260,6 +306,8 @@ class ProjectDetailNavigationHelpers {
           isApproved: approved,
           project: project,
         ),
+        isGroupLeaderView: project.isGroupLeader,
+        project: project.isGroupLeader ? project : null,
       ),
     );
   }

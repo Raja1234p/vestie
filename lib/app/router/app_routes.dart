@@ -82,6 +82,7 @@ class AppRoutes {
   static const String userStatusFlow  = '/user/status-flow';
   static const String userSuccessVote  = '/user/success-vote';
   static const String userVoteOutcome  = '/user/vote-outcome';
+  static const String leaderViewSuccessVotes = '/project/leader-view-success-votes';
 
   /// User investment journey (Vacation/Emergency style — mocks).
   static const String userInvestmentProjectDetail =

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
-import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart';
@@ -14,9 +12,10 @@ import 'package:vestie/user/features/project_detail/presentation/models/member_s
 import 'package:vestie/user/features/project_detail/presentation/widgets/member_success_vote_content.dart';
 
 import 'project_detail_member_scroll_content.dart';
+import 'project_detail_success_vote_dev_previews.dart';
 import 'project_detail_trailing_actions.dart';
 
-/// Member vacation/emergency detail — normal scroll or full-height success vote.
+/// Member project detail — normal scroll or full-height success vote preview.
 class ProjectDetailMemberLayout extends StatefulWidget {
   final ProjectDetailEntity project;
   final int pendingJoinRequestCount;
@@ -43,7 +42,8 @@ class ProjectDetailMemberLayout extends StatefulWidget {
 class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
   bool _previewSuccessVote = false;
 
-  bool get _canPreviewSuccessVote => widget.project.isVacationOrEmergency;
+  bool get _canPreviewSuccessVote =>
+      widget.project.showsMemberSuccessVoteDevPreviews;
 
   Widget _header(BuildContext context) {
     return PostAuthHeader(
@@ -75,58 +75,6 @@ class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
               ),
             )
           : null,
-    );
-  }
-
-  Widget _previewLink(
-    BuildContext context, {
-    required String label,
-    required VoidCallback onPressed,
-  }) {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: TextButton(
-        onPressed: onPressed,
-        child: AppText(
-          label,
-          style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w600,
-                color: AppColors.primary,
-              ),
-        ),
-      ),
-    );
-  }
-
-  Widget _previewButtons(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _previewLink(
-          context,
-          label: AppStrings.btnPreviewSuccessVote,
-          onPressed: () => setState(() => _previewSuccessVote = true),
-        ),
-        _previewLink(
-          context,
-          label: AppStrings.btnPreviewVoteOutcomeApproved,
-          onPressed: () => ProjectDetailNavigationHelpers.openMemberVoteOutcomePreview(
-            context,
-            project: widget.project,
-            approved: true,
-          ),
-        ),
-        _previewLink(
-          context,
-          label: AppStrings.btnPreviewVoteOutcomeRejected,
-          onPressed: () => ProjectDetailNavigationHelpers.openMemberVoteOutcomePreview(
-            context,
-            project: widget.project,
-            approved: false,
-          ),
-        ),
-      ],
     );
   }
 
@@ -162,7 +110,13 @@ class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  if (_canPreviewSuccessVote) _previewButtons(context),
+                  if (_canPreviewSuccessVote)
+                    ProjectDetailSuccessVoteDevPreviews(
+                      project: widget.project,
+                      onPreviewSuccessVoteInPlace: () => setState(
+                        () => _previewSuccessVote = true,
+                      ),
+                    ),
                   ProjectDetailMemberScrollContent(
                     project: widget.project,
                     onMemberTap: widget.onMemberTap,

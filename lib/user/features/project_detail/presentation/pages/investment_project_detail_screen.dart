@@ -21,8 +21,11 @@ import 'package:vestie/features/project_detail/presentation/widgets/project_memb
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_trailing_actions.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_load_error.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_loading_body.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_detail_success_vote_dev_previews.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_wallet_actions.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_info_card.dart';
+import 'package:vestie/user/features/project_detail/presentation/models/member_success_vote_ui_data.dart';
+import 'package:vestie/user/features/project_detail/presentation/widgets/member_success_vote_content.dart';
 
 class InvestmentProjectDetailScreen extends StatelessWidget {
   final String projectId;
@@ -87,6 +90,7 @@ class InvestmentProjectDetailBody extends StatefulWidget {
 class _InvestmentProjectDetailBodyState
     extends State<InvestmentProjectDetailBody> {
   bool _previewCompletedInvestment = false;
+  bool _previewSuccessVote = false;
 
   @override
   Widget build(BuildContext context) {
@@ -121,6 +125,9 @@ class _InvestmentProjectDetailBodyState
               final isCompleted = project.status == ProjectStatus.completed;
               final showCompletedLayout =
                   isCompleted || _previewCompletedInvestment;
+              final showMemberSuccessVotePreview = project.isMemberView &&
+                  !showCompletedLayout &&
+                  _previewSuccessVote;
 
               Future<void> openMemberDetail(MemberEntity member) async {
                 final result =
@@ -135,6 +142,56 @@ class _InvestmentProjectDetailBodyState
                   context,
                   projectId: widget.projectId,
                   result: result,
+                );
+              }
+
+              Widget header() {
+                return PostAuthHeader(
+                  title: project.name,
+                  leading: AppBackButton(
+                    onPressed: () => popProjectDetailNavigation(
+                      context,
+                      refreshHomeOnPop: widget.refreshHomeOnPop,
+                      refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
+                    ),
+                  ),
+                  trailing: project.showsProjectDetailOverflowMenu
+                      ? ProjectDetailTrailingActions(
+                          project: project,
+                          pendingJoinRequestCount: pendingCount,
+                          onLeaderMenuSelected: (action) =>
+                              ProjectDetailNavigationHelpers.handleLeaderAction(
+                            context,
+                            project: project,
+                            action: action,
+                          ),
+                          onMemberMenuSelected: (action) =>
+                              ProjectDetailNavigationHelpers.handleMemberAction(
+                            context,
+                            project: project,
+                            action: action,
+                            refreshHomeOnPop: widget.refreshHomeOnPop,
+                            refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
+                          ),
+                        )
+                      : null,
+                );
+              }
+
+              if (showMemberSuccessVotePreview) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    header(),
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        child: MemberSuccessVoteContent(
+                          data: MemberSuccessVoteUiData.fromProject(project),
+                        ),
+                      ),
+                    ),
+                  ],
                 );
               }
 
@@ -153,40 +210,7 @@ class _InvestmentProjectDetailBodyState
                 child: CustomScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   slivers: [
-                    SliverToBoxAdapter(
-                      child: PostAuthHeader(
-                        title: project.name,
-                        leading: AppBackButton(
-                          onPressed: () => popProjectDetailNavigation(
-                                context,
-                                refreshHomeOnPop: widget.refreshHomeOnPop,
-                                refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
-                              ),
-                        ),
-                        trailing: project.showsProjectDetailOverflowMenu
-                            ? ProjectDetailTrailingActions(
-                                project: project,
-                                pendingJoinRequestCount: pendingCount,
-                                onLeaderMenuSelected: (action) =>
-                                    ProjectDetailNavigationHelpers
-                                        .handleLeaderAction(
-                                  context,
-                                  project: project,
-                                  action: action,
-                                ),
-                                onMemberMenuSelected: (action) =>
-                                    ProjectDetailNavigationHelpers
-                                        .handleMemberAction(
-                                  context,
-                                  project: project,
-                                  action: action,
-                                  refreshHomeOnPop: widget.refreshHomeOnPop,
-                                  refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
-                                ),
-                              )
-                            : null,
-                      ),
-                    ),
+                    SliverToBoxAdapter(child: header()),
                     SliverPadding(
                       padding: EdgeInsets.symmetric(horizontal: 16.w),
                       sliver: SliverToBoxAdapter(
@@ -208,7 +232,14 @@ class _InvestmentProjectDetailBodyState
                                     ? () {}
                                     : null,
                               )
-                            else
+                            else ...[
+                              if (project.isMemberView)
+                                ProjectDetailSuccessVoteDevPreviews(
+                                  project: project,
+                                  onPreviewSuccessVoteInPlace: () => setState(
+                                    () => _previewSuccessVote = true,
+                                  ),
+                                ),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -232,6 +263,7 @@ class _InvestmentProjectDetailBodyState
                                   SizedBox(height: 32.h),
                                 ],
                               ),
+                            ],
                           ],
                         ),
                       ),

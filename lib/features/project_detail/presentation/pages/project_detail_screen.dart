@@ -14,15 +14,11 @@ import 'package:vestie/features/project_detail/domain/entities/project_detail_en
 import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
 import '../navigation/open_project_from_card.dart';
 import '../navigation/project_detail_navigation_helpers.dart';
-import '../widgets/announcement_card.dart';
 import '../widgets/project_detail_member_layout.dart';
-import '../widgets/project_detail_tab_section.dart';
 import 'package:vestie/user/features/project_detail/presentation/widgets/project_detail_user_completed_content.dart';
-import '../widgets/project_detail_trailing_actions.dart';
 import '../widgets/project_detail_load_error.dart';
 import '../widgets/project_detail_loading_body.dart';
-import '../widgets/project_detail_wallet_actions.dart';
-import '../widgets/project_info_card.dart';
+import '../widgets/project_detail_moderator_scroll_content.dart';
 
 /// Loads `GET /projects/{id}` via [ProjectDetailBloc] on open.
 class ProjectDetailScreen extends StatelessWidget {
@@ -175,80 +171,16 @@ class _ProjectDetailBody extends StatelessWidget {
                 );
               }
 
-              return RefreshIndicator(
-                color: AppColors.primary,
+              return ProjectDetailModeratorScrollContent(
+                project: project,
+                pendingJoinRequestCount: pendingCount,
+                refreshHomeOnPop: refreshHomeOnPop,
+                refreshDiscoverOnPop: refreshDiscoverOnPop,
                 onRefresh: onRefresh,
-                child: CustomScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  slivers: [
-                    SliverToBoxAdapter(
-                      child: PostAuthHeader(
-                        title: project.name,
-                        leading: AppBackButton(
-                          onPressed: () => popProjectDetailNavigation(
-                            context,
-                            refreshHomeOnPop: refreshHomeOnPop,
-                            refreshDiscoverOnPop: refreshDiscoverOnPop,
-                          ),
-                        ),
-                        trailing: project.showsProjectDetailOverflowMenu
-                            ? ProjectDetailTrailingActions(
-                                project: project,
-                                pendingJoinRequestCount: pendingCount,
-                                onLeaderMenuSelected: (action) =>
-                                    ProjectDetailNavigationHelpers
-                                        .handleLeaderAction(
-                                  context,
-                                  project: project,
-                                  action: action,
-                                ),
-                                onMemberMenuSelected: (action) =>
-                                    ProjectDetailNavigationHelpers
-                                        .handleMemberAction(
-                                  context,
-                                  project: project,
-                                  action: action,
-                                  refreshHomeOnPop: refreshHomeOnPop,
-                                  refreshDiscoverOnPop: refreshDiscoverOnPop,
-                                ),
-                              )
-                            : null,
-                      ),
-                    ),
-                    SliverPadding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w),
-                      sliver: SliverToBoxAdapter(
-                        child: Column(
-                          children: [
-                            SizedBox(height: 12.h),
-                            AnnouncementCard(
-                              text: project.announcement,
-                              canDeleteAnnouncement: project.isModeratorView,
-                              onDelete: project.isModeratorView
-                                  ? () {
-                                      // TODO: delete announcement via BLoC
-                                    }
-                                  : null,
-                            ),
-                            SizedBox(height: 12.h),
-                            ProjectInfoCard(project: project),
-                            SizedBox(height: 16.h),
-                            ProjectDetailWalletActions(project: project),
-                            SizedBox(height: 20.h),
-                            ProjectDetailTabSection(
-                              project: project,
-                              onMemberTap: (member) => _openMemberProfile(
-                                context,
-                                project: project,
-                                member: member,
-                              ),
-                            ),
-                            SizedBox(height: 32.h),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+                onMemberTap: (member) => _openMemberProfile(
+                  context,
+                  project: project,
+                  member: member,
                 ),
               );
             }

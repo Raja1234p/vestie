@@ -1070,6 +1070,21 @@ class AppStrings {
       'You\'ve marked the project as incomplete. If the majority agrees, all '
       'money will be refunded to wallet.';
   static const String btnPreviewSuccessVote           = 'Preview success vote UI';
+  static const String btnViewSuccessVotes = 'View Success Votes';
+  static const String btnPreviewViewSuccessVotes      =
+      'Preview View Success Votes UI';
+
+  // ── Group leader: active success vote (Figma voting window) ───────────
+  static const String leaderSuccessVoteWindowClosesIn =
+      'Voting window closes in';
+  static const String leaderSuccessVoteTimerHr = 'Hr';
+  static const String leaderSuccessVoteTimerMin = 'Min';
+  static const String leaderSuccessVoteTimerSec = 'Sec';
+  static const String leaderSuccessVoteNotYetVoted = 'Not yet voted';
+  static const String leaderSuccessVoteStatusWaiting = 'Waiting';
+
+  static String leaderSuccessVoteMajorityNeeded(int required, int total) =>
+      'Majority needed: $required of $total members must Agree to release funds.';
   static const String btnPreviewVoteOutcomeApproved   =
       'Preview vote approved UI';
   static const String btnPreviewVoteOutcomeRejected   =
@@ -1089,6 +1104,11 @@ class AppStrings {
   static const String projectVoteSummaryLabel = 'Vote Summary';
   static const String projectVoteAgreedLabel = 'Agreed';
   static const String projectVoteDisagreedLabel = 'Disagreed';
+
+  /// Group leader — vacation / emergency vote approved (Figma).
+  static const String btnStartDistributing = 'Start Distributing';
+  /// Group leader — vacation / emergency vote not approved (Figma).
+  static const String btnResumeContributions = 'Resume Contributions';
 
   static String projectVoteMembersOfTotal(int voted, int total) =>
       '$voted of $total members';

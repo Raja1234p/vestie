@@ -6,6 +6,7 @@ import 'package:vestie/features/project_detail/domain/entities/member_entity.dar
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/project_detail/presentation/models/investment_distribution_ui_data.dart';
 import 'package:vestie/features/project_detail/presentation/models/investment_returns_ui_data.dart';
+import 'package:vestie/leader/features/project_detail/presentation/models/leader_success_vote_progress_ui_data.dart';
 import 'package:vestie/user/features/project_detail/presentation/models/member_vote_outcome_ui_data.dart';
 
 import 'project_wallet_flow_args.dart';
@@ -279,11 +280,32 @@ class UserStatusFlowArgs {
   });
 }
 
-/// Member success-vote outcome (majority approved / not approved).
+/// Group leader monitors active success vote (Figma voting window).
+class LeaderViewSuccessVotesRouteArgs {
+  final String projectName;
+  final LeaderSuccessVoteProgressUiData data;
+
+  const LeaderViewSuccessVotesRouteArgs({
+    required this.projectName,
+    required this.data,
+  });
+}
+
+/// Success-vote outcome (majority approved / not approved).
 class MemberVoteOutcomeRouteArgs {
   final MemberVoteOutcomeUiData data;
 
-  const MemberVoteOutcomeRouteArgs({required this.data});
+  /// Group leader vacation / emergency — Figma CTAs and layout (no amount card).
+  final bool isGroupLeaderView;
+
+  /// When set, leader “Start Distributing” opens the distribute-funds preview flow.
+  final ProjectDetailEntity? project;
+
+  const MemberVoteOutcomeRouteArgs({
+    required this.data,
+    this.isGroupLeaderView = false,
+    this.project,
+  });
 }
 
 /// Member success-vote screen (leader has started a vote).

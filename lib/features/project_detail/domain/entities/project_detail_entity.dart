@@ -42,6 +42,10 @@ class ProjectDetailEntity {
   final double minimumContributionAmount;
   final double? penaltyPercentage;
   final int successVoteWindowHours;
+
+  /// Success vote in progress — hide Contribute/Borrow; show View Success Votes.
+  final bool hasActiveSuccessVote;
+
   final List<ProjectInviteEntity> invites;
 
   const ProjectDetailEntity({
@@ -70,6 +74,7 @@ class ProjectDetailEntity {
     this.minimumContributionAmount = 0,
     this.penaltyPercentage,
     this.successVoteWindowHours = 0,
+    this.hasActiveSuccessVote = false,
     this.invites = const [],
   });
 
@@ -130,6 +135,18 @@ class ProjectDetailEntity {
   bool get isVacationOrEmergency =>
       category == ProjectCategory.vacations ||
       category == ProjectCategory.emergency;
+
+  /// Member success-vote dev previews — all project categories.
+  bool get showsMemberSuccessVoteDevPreviews => true;
+
+  /// Leader / co-leader success-vote dev previews — vacation and emergency only.
+  bool get showsSuccessVoteDevPreviews => isVacationOrEmergency;
+
+  /// Leader / co-leader: replace wallet CTAs while a success vote is open.
+  bool get showsViewSuccessVotesAction =>
+      hasActiveSuccessVote &&
+      usesLeaderDetailPanels &&
+      showsSuccessVoteDevPreviews;
 
   /// Promote / demote co-leader — Vacation and Investment only (not Emergency).
   bool get supportsCoLeader => category.supportsCoLeader;

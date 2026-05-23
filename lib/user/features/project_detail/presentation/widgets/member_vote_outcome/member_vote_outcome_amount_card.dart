@@ -52,7 +52,9 @@ class MemberVoteOutcomeAmountCard extends StatelessWidget {
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontSize: 32.sp,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.green900,
+                  color: data.isApproved
+                      ? AppColors.green900
+                      : AppColors.red900,
                 ),
           ),
         ],
