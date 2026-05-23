@@ -15,6 +15,7 @@ import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import '../../cubit/user_vff_incoming_request_list_cubit.dart';
 import '../../models/user_vff_hub_ui_model.dart';
+import '../user_vff_hub_empty_body.dart';
 import '../user_vff_incoming_request_card.dart';
 /// Full inbound VFF request list scaffold.
 final class UserVffVffRequestsScaffold extends StatelessWidget {
@@ -45,17 +46,8 @@ final class UserVffVffRequestsScaffold extends StatelessWidget {
                     List<UserVffIncomingRequestUi>>(
                   builder: (context, items) {
                     if (items.isEmpty) {
-                      return Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(AppDimens.p24),
-                          child: AppText(
-                            AppStrings.emptyData,
-                            style: GoogleFonts.lato(
-                              fontSize: 15.sp,
-                              color: AppColors.textBody,
-                            ),
-                          ),
-                        ),
+                      return const UserVffHubEmptyBody(
+                        message: AppStrings.userVffEmptyRequests,
                       );
                     }
 

@@ -9,8 +9,13 @@ import 'package:vestie/core/widgets/text/app_text.dart';
 /// VFF hub empty state — parent must be [Expanded] so this column can center.
 class UserVffHubEmptyBody extends StatelessWidget {
   final String message;
+  final String? subtitle;
 
-  const UserVffHubEmptyBody({super.key, required this.message});
+  const UserVffHubEmptyBody({
+    super.key,
+    required this.message,
+    this.subtitle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,15 +32,32 @@ class UserVffHubEmptyBody extends StatelessWidget {
         SizedBox(height: 20.h),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 24.w),
-          child: AppText(
-            message,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.lato(
-              fontSize: 18.sp,
-              fontWeight: FontWeight.w700,
-              color: AppColors.grey1100,
-              height: 1.35,
-            ),
+          child: Column(
+            children: [
+              AppText(
+                message,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.lato(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.grey1100,
+                  height: 1.35,
+                ),
+              ),
+              if (subtitle != null) ...[
+                SizedBox(height: 8.h),
+                AppText(
+                  subtitle!,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.lato(
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.textBody,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ],
           ),
         ),
       ],

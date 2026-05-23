@@ -4,6 +4,12 @@ import 'entities/project.dart';
 class MockProjects {
   MockProjects._();
 
+  /// Profile → Completed Projects UI preview when API returns none.
+  static List<Project> get previewCompletedProjects => [
+        ...myProjects.where((p) => p.status == ProjectStatus.completed),
+        ...joinedProjects.where((p) => p.status == ProjectStatus.completed),
+      ];
+
   static const List<Project> myProjects = [
     Project(
       id: 'p1',

@@ -17,6 +17,7 @@ import '../../cubit/user_vff_group_invitation_list_cubit.dart';
 import '../../models/user_vff_hub_ui_model.dart';
 import '../../models/user_vff_profile_ui_model.dart';
 import '../user_vff_group_invitation_card.dart';
+import '../user_vff_hub_empty_body.dart';
 /// Full group invitation list scaffold.
 final class UserVffGroupInvitationsScaffold extends StatelessWidget {
   const UserVffGroupInvitationsScaffold({super.key});
@@ -46,17 +47,8 @@ final class UserVffGroupInvitationsScaffold extends StatelessWidget {
                     List<UserVffGroupInviteUi>>(
                   builder: (context, items) {
                     if (items.isEmpty) {
-                      return Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(AppDimens.p24),
-                          child: AppText(
-                            AppStrings.emptyData,
-                            style: GoogleFonts.lato(
-                              fontSize: 15.sp,
-                              color: AppColors.textBody,
-                            ),
-                          ),
-                        ),
+                      return const UserVffHubEmptyBody(
+                        message: AppStrings.userVffEmptyRequests,
                       );
                     }
 

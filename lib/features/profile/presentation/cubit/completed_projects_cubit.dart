@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/features/projects/domain/usecases/list_projects_use_case.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
+import 'package:vestie/user/features/home/domain/mock_projects.dart';
 
 class CompletedProjectsState extends Equatable {
   final List<Project> projects;
@@ -34,6 +35,9 @@ class CompletedProjectsState extends Equatable {
 }
 
 class CompletedProjectsCubit extends Cubit<CompletedProjectsState> {
+  /// Set `false` when API-backed list is ready for production.
+  static const bool previewDemoWhenEmpty = true;
+
   CompletedProjectsCubit({
     ListProjectsUseCase? listProjectsUseCase,
   })  : _listProjectsUseCase =
@@ -55,10 +59,14 @@ class CompletedProjectsCubit extends Cubit<CompletedProjectsState> {
         ),
       ),
       (projects) {
-        final completed = projects
+        var completed = projects
             .where((p) => p.status == ProjectStatus.completed)
             .toList()
           ..sort((a, b) => a.name.compareTo(b.name));
+        if (completed.isEmpty && previewDemoWhenEmpty) {
+          completed = List<Project>.of(MockProjects.previewCompletedProjects)
+            ..sort((a, b) => a.name.compareTo(b.name));
+        }
         emit(
           state.copyWith(
             loading: false,

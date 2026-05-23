@@ -12,6 +12,7 @@ import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart'
     show openCompletedProjectView;
 import 'package:vestie/user/features/home/presentation/widgets/project_card.dart';
+import 'package:vestie/user/features/vff/presentation/widgets/user_vff_hub_empty_body.dart';
 import '../cubit/completed_projects_cubit.dart';
 import '../widgets/profile_sub_header.dart';
 
@@ -84,35 +85,9 @@ class _CompletedProjectsBody extends StatelessWidget {
 class _EmptyView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 32.w),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AppText(
-              AppStrings.completedProjectsEmptyTitle,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.lato(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
-              ),
-            ),
-            SizedBox(height: 8.h),
-            AppText(
-              AppStrings.completedProjectsEmptySubtitle,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.lato(
-                fontSize: 15.sp,
-                fontWeight: FontWeight.w400,
-                color: AppColors.textBody,
-                height: 1.4,
-              ),
-            ),
-          ],
-        ),
-      ),
+    return const UserVffHubEmptyBody(
+      message: AppStrings.completedProjectsEmptyTitle,
+      subtitle: AppStrings.completedProjectsEmptySubtitle,
     );
   }
 }
