@@ -8,9 +8,9 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/text/app_text.dart';
 
-/// Announcement block on project detail — card + optional delete control (Figma).
+/// Announcement block on project detail — card + swipe-to-delete for moderators.
 ///
-/// Delete is shown only when [canDeleteAnnouncement] is true (GroupLeader / CoLeader).
+/// Delete is enabled only when [canDeleteAnnouncement] is true (GroupLeader / CoLeader).
 class AnnouncementCard extends StatelessWidget {
   final String? text;
   final bool canDeleteAnnouncement;
@@ -25,19 +25,17 @@ class AnnouncementCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final body = _AnnouncementBody(text: text);
     final showDelete = canDeleteAnnouncement && onDelete != null;
 
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(child: _AnnouncementBody(text: text)),
-          if (showDelete) ...[
-            SizedBox(width: 8.w),
-            _AnnouncementDeleteButton(onTap: onDelete!),
-          ],
-        ],
-      ),
+    if (!showDelete) return body;
+
+    return Dismissible(
+      key: const ValueKey<String>('project-announcement'),
+      direction: DismissDirection.endToStart,
+      onDismissed: (_) => onDelete!(),
+      background: const _AnnouncementSwipeDeleteBackground(),
+      child: body,
     );
   }
 }
@@ -84,34 +82,39 @@ class _AnnouncementBody extends StatelessWidget {
   }
 }
 
-class _AnnouncementDeleteButton extends StatelessWidget {
-  final VoidCallback onTap;
-
-  const _AnnouncementDeleteButton({required this.onTap});
+/// Revealed on swipe — same fill + delete glyph as the legacy side button (Figma).
+class _AnnouncementSwipeDeleteBackground extends StatelessWidget {
+  const _AnnouncementSwipeDeleteBackground();
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.red100,
-      borderRadius: BorderRadius.circular(16.r),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: SizedBox(
-          width: 48.w,
-          child: Center(
-            child: SvgPicture.asset(
-              AppAssets.iconDelete,
-              width: 22.w,
-              height: 22.w,
-              fit: BoxFit.contain,
-              colorFilter: const ColorFilter.mode(
-                AppColors.red900,
-                BlendMode.srcIn,
-              ),
-            ),
-          ),
-        ),
+    return Container(
+      alignment: Alignment.centerRight,
+      decoration: BoxDecoration(
+        color: AppColors.red100,
+        borderRadius: BorderRadius.circular(16.r),
+      ),
+      child: SizedBox(
+        width: 48.w,
+        child: const Center(child: _AnnouncementDeleteIcon()),
+      ),
+    );
+  }
+}
+
+class _AnnouncementDeleteIcon extends StatelessWidget {
+  const _AnnouncementDeleteIcon();
+
+  @override
+  Widget build(BuildContext context) {
+    return SvgPicture.asset(
+      AppAssets.iconDelete,
+      width: 22.w,
+      height: 22.w,
+      fit: BoxFit.contain,
+      colorFilter: const ColorFilter.mode(
+        AppColors.red900,
+        BlendMode.srcIn,
       ),
     );
   }
