@@ -231,19 +231,25 @@ class _ContributeConfirmView extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
+                        SizedBox(height: 22.h,),
                         _row(
                           '${AppStrings.labelContributionAmount}:',
                           state.displayAmountDollar,
                         ),
+                        SizedBox(height:12.h,),
                         _row(
                           AppStrings.labelVestieFee3,
                           '-\$${state.vestieFeeFormatted}',
                         ),
+                        SizedBox(height:24.h,),
                         const _BreakdownDivider(),
+                        SizedBox(height:24.h,),
                         _row(
                           AppStrings.labelTotalDeduction,
                           '\$${state.totalDeductionFormatted}',
+                          color: AppColors.projectDetailText
                         ),
+                        SizedBox(height:12.h,),
                       ],
                     ),
                   ),
@@ -315,9 +321,9 @@ class _ContributeConfirmView extends StatelessWidget {
     );
   }
 
-  Widget _row(String left, String right) {
+  Widget _row(String left, String right, {Color? color}) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -327,7 +333,8 @@ class _ContributeConfirmView extends StatelessWidget {
               left,
               style: GoogleFonts.lato(
                 fontSize: 14.sp,
-                color: AppColors.neutral700,
+                color: color??AppColors.neutral700,
+                fontWeight: FontWeight.w400
               ),
             ),
           ),
