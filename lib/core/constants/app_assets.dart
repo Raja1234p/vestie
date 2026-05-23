@@ -106,6 +106,7 @@ class AppAssets {
   /// Member “Project Actions” — funds history & leave project rows.
   static const String iconProjectFundHistory = '$_iconPath/project_fund_history.svg';
   static const String iconLeaveGroup = '$_iconPath/leave-group.svg';
+  static const String iconVacationUmbrella = '$_iconPath/umbrella.svg';
   static const String iconEmergencyFund = '$_iconPath/emergency fund.svg';
   static const String iconInvestmentFund = '$_iconPath/investment  icon.svg';
 

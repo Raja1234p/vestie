@@ -16,12 +16,11 @@ extension ProjectCategoryX on ProjectCategory {
     }
   }
 
-  /// Returns custom icon asset for categories that use one.
-  /// Vacations intentionally uses the shared beach material icon fallback.
+  /// Category chip icon on home cards and project detail.
   String? get iconAsset {
     switch (this) {
       case ProjectCategory.vacations:
-        return null;
+        return AppAssets.iconVacationUmbrella;
       case ProjectCategory.emergency:
         return AppAssets.iconEmergencyFund;
       case ProjectCategory.investment:
