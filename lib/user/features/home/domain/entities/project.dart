@@ -29,6 +29,9 @@ class Project {
   /// Mock: member-only — which full-screen flow opens instead of project detail.
   final UserFlowOnOpen? userFlow;
 
+  /// When set, drives completed-project **View** → vote outcome (approved / not).
+  final bool? successVoteApproved;
+
   const Project({
     required this.id,
     required this.name,
@@ -45,6 +48,7 @@ class Project {
     this.requestPending = false,
     this.isPublic = true,
     this.userFlow,
+    this.successVoteApproved,
   });
 
   String get categoryLabel {
@@ -79,6 +83,18 @@ class Project {
 
   String get _normalizedDisplayStatus =>
       (displayStatus ?? '').trim().toLowerCase();
+
+  /// Majority success-vote result for completed projects (profile list **View**).
+  bool get isSuccessVoteApproved {
+    if (successVoteApproved != null) return successVoteApproved!;
+    final status = _normalizedDisplayStatus;
+    if (status.contains('not approved') ||
+        status.contains('reject') ||
+        status.contains('cancel')) {
+      return false;
+    }
+    return true;
+  }
 
   /// Home / mine list card CTA (not Discover join).
   bool get showsHomeActionButton {

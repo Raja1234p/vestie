@@ -67,6 +67,7 @@ class AppAssets {
   // ── Profile Settings Icons ────────────────────────────────────────────────
   static const String iconEditProfile       = '$_iconPath/edit_profile_icon.svg';
   static const String iconPaymentMethods    = '$_iconPath/payment_methods_icon.svg';
+  static const String iconCompleteProjects  = '$_iconPath/complete-projects.svg';
   static const String iconTransactionHistory = '$_iconPath/transactionhistory_icon.svg';
   static const String iconKeyGuidelines     = '$_iconPath/guidelines_icons.svg'; //
   /// Profile avatar — tap to change photo (design `Frame 343.svg`).

@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
+import 'package:vestie/user/features/home/domain/entities/project.dart';
 
 /// Member view after a success vote closes (Figma approved / not approved).
 class MemberVoteOutcomeUiData {
@@ -31,6 +32,22 @@ class MemberVoteOutcomeUiData {
   String get formattedAmountUsd {
     final formatter = NumberFormat('#,##0.00', 'en_US');
     return formatter.format(amountUsd);
+  }
+
+  factory MemberVoteOutcomeUiData.fromProject(
+    Project project, {
+    required bool isApproved,
+  }) {
+    final amount = project.currentAmount ?? 0;
+    const defaultMembers = 7;
+    final agreed = isApproved ? 5 : 2;
+    return MemberVoteOutcomeUiData(
+      isApproved: isApproved,
+      amountUsd: amount,
+      agreedCount: agreed,
+      disagreedCount: defaultMembers - agreed,
+      totalMemberCount: defaultMembers,
+    );
   }
 
   factory MemberVoteOutcomeUiData.preview({

@@ -15,4 +15,10 @@ enum UserFlowOnOpen {
 
   /// Shorthand demo: go straight to “Not Approved” screen.
   showMarkVoteNotApprovedResult,
+
+  /// Completed project — majority approved (vote outcome).
+  showVoteOutcomeApproved,
+
+  /// Completed project — majority not approved (vote outcome).
+  showVoteOutcomeRejected,
 }

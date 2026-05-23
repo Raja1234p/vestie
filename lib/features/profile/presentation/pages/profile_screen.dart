@@ -140,6 +140,11 @@ class _ProfileBody extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
                       state.isLoading && profile.fullName.isEmpty
                           ? const ProfileHeaderShimmer()
                           : Row(children: [
@@ -224,6 +229,12 @@ class _ProfileBody extends StatelessWidget {
                           onTap: () => context.push(AppRoutes.paymentMethods),
                         ),
                         SettingsItem(
+                          assetPath: AppAssets.iconCompleteProjects,
+                          label: AppStrings.menuCompletedProjects,
+                          onTap: () =>
+                              context.push(AppRoutes.completedProjects),
+                        ),
+                        SettingsItem(
                           assetPath: AppAssets.iconDollarCircle,
                           label: AppStrings.menuTransactionHistory,
                           onTap: () => context.push(AppRoutes.transactionHistory),
@@ -234,7 +245,10 @@ class _ProfileBody extends StatelessWidget {
                           onTap: () => context.push(AppRoutes.keyGuidelines),
                         ),
                       ]),
-                      const Spacer(),
+                            ],
+                          ),
+                        ),
+                      ),
                       ProfileLogoutButton(
                         isLoading: state.isLoggingOut,
                         onTap: () => context.read<ProfileCubit>().logout(),

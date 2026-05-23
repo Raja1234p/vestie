@@ -9,6 +9,8 @@ import '../../../features/wallet/presentation/pages/transaction_amount_screen.da
 import '../../../features/wallet/presentation/pages/transaction_confirmation_screen.dart';
 import '../../../features/wallet/presentation/pages/transaction_success_screen.dart';
 import '../../../features/wallet/presentation/pages/withdraw_method_screen.dart';
+import 'package:vestie/features/profile/presentation/pages/completed_projects_screen.dart';
+
 import '../app_routes.dart';
 
 List<RouteBase> buildProfileWalletRoutes() {
@@ -28,6 +30,10 @@ List<RouteBase> buildProfileWalletRoutes() {
     GoRoute(
       path: AppRoutes.transactionHistory,
       builder: (context, _) => const TransactionHistoryScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.completedProjects,
+      builder: (context, _) => const CompletedProjectsScreen(),
     ),
     GoRoute(
       path: AppRoutes.keyGuidelines,

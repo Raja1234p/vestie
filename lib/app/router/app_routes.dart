@@ -46,6 +46,7 @@ class AppRoutes {
   static const String addCard            = '/profile/payment-methods/add-card';
   static const String cardDetail         = '/profile/payment-methods/detail';
   static const String transactionHistory = '/profile/transaction-history';
+  static const String completedProjects  = '/profile/completed-projects';
   static const String keyGuidelines      = '/profile/key-guidelines';
 
   // ── Wallet Transaction Routing ───────────────────────────────────────────

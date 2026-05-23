@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/utils/project_end_relative_label.dart';
 import 'package:vestie/core/utils/roi_display_format.dart';
 import 'package:vestie/core/theme/app_colors.dart';
@@ -25,17 +26,22 @@ class ProjectCard extends StatelessWidget {
   final bool discoverCtaStyle;
   final bool actionLoading;
 
+  /// Profile → Completed Projects: always show View (same card, list context).
+  final bool forceShowActionButton;
+
   const ProjectCard({
     super.key,
     required this.project,
     required this.onAction,
     this.discoverCtaStyle = false,
     this.actionLoading = false,
+    this.forceShowActionButton = false,
   });
 
   /// My Projects: View while ongoing. Joined: View only when `displayStatus` is
   /// On Going; no CTA for Waiting for Approval (see [Project.showsHomeActionButton]).
-  bool get _showActionButton => project.showsHomeActionButton;
+  bool get _showActionButton =>
+      forceShowActionButton || project.showsHomeActionButton;
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +131,7 @@ class ProjectCard extends StatelessWidget {
                 ),
             ],
           ] else ...[
-            // Completed — project name + raised/total amount
+            // Completed — project name + raised/invested amount (+ ROI)
             AppText(
               project.name,
               style: GoogleFonts.lato(
@@ -135,14 +141,7 @@ class ProjectCard extends StatelessWidget {
               ),
             ),
             SizedBox(height: 6.h),
-            AppText(
-              projectRaisedText(project),
-              style: GoogleFonts.lato(
-                fontSize: 22.sp,
-                fontWeight: FontWeight.w800,
-                color: AppColors.textPrimary,
-              ),
-            ),
+            _CompletedAmountRow(project: project),
           ],
 
           if (_showActionButton) ...[
@@ -164,4 +163,58 @@ bool _showEndOrRoiRow(Project project) {
   if (ProjectEndRelativeLabel.hasActiveDeadline(project.endsIn)) return true;
   return project.category.isInvestment &&
       isDisplayableRoi(project.roiPercentage);
+}
+
+class _CompletedAmountRow extends StatelessWidget {
+  const _CompletedAmountRow({required this.project});
+
+  final Project project;
+
+  @override
+  Widget build(BuildContext context) {
+    final roiValue = formatRoiPercentDisplay(project.roiPercentage);
+    final showRoi =
+        project.category.isInvestment && roiValue.isNotEmpty;
+
+    final amountStyle = GoogleFonts.lato(
+      fontSize: 22.sp,
+      fontWeight: FontWeight.w800,
+      color: AppColors.textPrimary,
+    );
+
+    final roiLabelStyle = GoogleFonts.lato(
+      fontSize: 16.sp,
+      fontWeight: FontWeight.w500,
+      color: AppColors.grey800,
+      height: 1.2,
+    );
+    final roiValueStyle = GoogleFonts.lato(
+      fontSize: 16.sp,
+      fontWeight: FontWeight.w600,
+      color: const Color(0xFF000000),
+      height: 1.2,
+    );
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Expanded(
+          child: AppText(
+            projectRaisedText(project),
+            style: amountStyle,
+          ),
+        ),
+        if (showRoi)
+          Text.rich(
+            TextSpan(
+              style: roiLabelStyle,
+              children: [
+                TextSpan(text: AppStrings.labelRoiColon),
+                TextSpan(text: ' $roiValue', style: roiValueStyle),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
 }

@@ -10,7 +10,37 @@ import 'package:vestie/features/projects/domain/entities/invite_preview_entity.d
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
+import 'package:vestie/user/features/project_detail/presentation/models/member_vote_outcome_ui_data.dart';
 import '../../domain/entities/project_detail_route_args.dart';
+
+void _openMemberVoteOutcome(
+  BuildContext context,
+  Project project, {
+  required bool isApproved,
+}) {
+  context.push(
+    AppRoutes.userVoteOutcome,
+    extra: MemberVoteOutcomeRouteArgs(
+      data: MemberVoteOutcomeUiData.fromProject(
+        project,
+        isApproved: isApproved,
+      ),
+    ),
+  );
+}
+
+/// Profile → Completed Projects: **View** opens vote outcome (approved / rejected).
+void openCompletedProjectView(BuildContext context, Project project) {
+  if (project.userFlow != null) {
+    openProjectFromCard(context, project);
+    return;
+  }
+  _openMemberVoteOutcome(
+    context,
+    project,
+    isApproved: project.isSuccessVoteApproved,
+  );
+}
 
 /// Pops detail or returns to dashboard with a fresh project list.
 void popProjectDetailNavigation(
@@ -242,6 +272,12 @@ void openProjectFromCard(BuildContext context, Project p) {
             kind: UserStatusFlowKind.markVotedIncomplete,
           ),
         );
+        return;
+      case UserFlowOnOpen.showVoteOutcomeApproved:
+        _openMemberVoteOutcome(context, p, isApproved: true);
+        return;
+      case UserFlowOnOpen.showVoteOutcomeRejected:
+        _openMemberVoteOutcome(context, p, isApproved: false);
         return;
     }
   }

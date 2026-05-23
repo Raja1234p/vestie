@@ -164,6 +164,7 @@ class AppStrings {
   static const String projectJoinRequestSubmitted = 'Request Submitted';
   static const String labelGoal         = 'Goal';
   static const String labelRaised       = 'Raised';
+  static const String labelInvested     = 'Invested';
   static const String labelTotal        = 'Total';
   static const String labelEndsIn       = 'Ends in';
   static const String labelRoiColon     = 'ROI:';
@@ -460,6 +461,12 @@ class AppStrings {
   static const String settingsLabel       = 'Settings';
   static const String menuEditProfile     = 'Edit Profile';
   static const String menuPaymentMethods  = 'Payment Methods';
+  static const String menuCompletedProjects = 'Completed Projects';
+  static const String completedProjectsTitle = 'Completed Projects';
+  static const String completedProjectsEmptyTitle =
+      'No completed projects yet';
+  static const String completedProjectsEmptySubtitle =
+      'Projects you finish will show up here.';
   static const String menuTransactionHistory = 'Transaction History';
   static const String menuKeyGuidelines   = 'Vestie User Guidelines';
 

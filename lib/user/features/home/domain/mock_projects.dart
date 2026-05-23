@@ -17,11 +17,12 @@ class MockProjects {
     ),
     Project(
       id: 'p2',
-      name: 'Investment',
+      name: 'Investment Fund',
       category: ProjectCategory.investment,
       status: ProjectStatus.completed,
       relation: ProjectRelation.owned,
       currentAmount: 7600,
+      roiPercentage: 2.5,
     ),
     Project(
       id: 'p3',
@@ -30,6 +31,7 @@ class MockProjects {
       status: ProjectStatus.completed,
       relation: ProjectRelation.owned,
       currentAmount: 5000,
+      successVoteApproved: false,
     ),
     Project(
       id: 'p8',
@@ -91,11 +93,13 @@ class MockProjects {
     ),
     Project(
       id: 'p7',
-      name: 'Emergency Fund',
-      category: ProjectCategory.emergency,
+      name: 'Group Investment',
+      category: ProjectCategory.investment,
       status: ProjectStatus.completed,
       relation: ProjectRelation.joined,
-      currentAmount: 4200,
+      currentAmount: 5000,
+      roiPercentage: 2.5,
+      successVoteApproved: true,
     ),
     // ── Demo: member user flows (tap View) — see [UserFlowOnOpen]
     Project(

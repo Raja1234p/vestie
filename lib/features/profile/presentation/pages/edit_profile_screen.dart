@@ -400,7 +400,7 @@ class _ProfileFieldGroup extends StatelessWidget {
         ),
         Container(
           decoration: BoxDecoration(
-            color: readOnly ? AppColors.appBgBottom : Colors.white,
+            color: AppColors.appBgBottom,
             borderRadius: BorderRadius.circular(12.r),
             border: Border.all(
               color: hasError ? AppColors.error : AppColors.inputFieldBorder,

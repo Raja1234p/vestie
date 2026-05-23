@@ -1,4 +1,5 @@
 import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
 import '../../domain/entities/project.dart';
 
 String formatProjectWhole(double? value) {
@@ -14,8 +15,13 @@ String formatProjectWhole(double? value) {
 
 String projectRaisedText(Project project) {
   final amount = formatProjectWhole(project.currentAmount);
-  final prefix = project.relation == ProjectRelation.owned
-      ? AppStrings.labelRaised
-      : AppStrings.labelTotal;
+  final String prefix;
+  if (project.category.isInvestment) {
+    prefix = AppStrings.labelInvested;
+  } else if (project.relation == ProjectRelation.owned) {
+    prefix = AppStrings.labelRaised;
+  } else {
+    prefix = AppStrings.labelTotal;
+  }
   return '$prefix \$$amount';
 }
