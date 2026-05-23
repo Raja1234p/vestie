@@ -8,7 +8,6 @@ import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/core/widgets/common/app_purple_dashed_line.dart';
 import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
@@ -34,36 +33,29 @@ class PaymentCardList extends StatefulWidget {
   State<PaymentCardList> createState() => _PaymentCardListState();
 }
 
-class _PaymentCardListState extends State<PaymentCardList> {
-  /// `null` = wallet selected; otherwise selected card id.
-  String? _selectedCardId;
+enum _PaymentPickerSelection { none, wallet, card }
 
-  @override
-  void initState() {
-    super.initState();
-    if (widget.isSelectionMode && widget.cards.isNotEmpty) {
-      PaymentCard? primary;
-      for (final c in widget.cards) {
-        if (c.isPrimary) {
-          primary = c;
-          break;
-        }
-      }
-      _selectedCardId = (primary ?? widget.cards.first).id;
-    }
-  }
+class _PaymentCardListState extends State<PaymentCardList> {
+  _PaymentPickerSelection _selection = _PaymentPickerSelection.none;
+  String? _selectedCardId;
 
   void _selectCard(PaymentCard card) {
     if (!widget.isSelectionMode) {
       CardDetailSheet.show(context, card);
       return;
     }
-    setState(() => _selectedCardId = card.id);
+    setState(() {
+      _selection = _PaymentPickerSelection.card;
+      _selectedCardId = card.id;
+    });
     context.pop(CardPaymentMethodSelection(card));
   }
 
   void _selectWallet() {
-    setState(() => _selectedCardId = null);
+    setState(() {
+      _selection = _PaymentPickerSelection.wallet;
+      _selectedCardId = null;
+    });
     context.pop(const WalletPaymentMethodSelection());
   }
 
@@ -73,6 +65,7 @@ class _PaymentCardListState extends State<PaymentCardList> {
       return _SelectionList(
         cards: widget.cards,
         selectedCardId: _selectedCardId,
+        walletSelected: _selection == _PaymentPickerSelection.wallet,
         onSelectCard: _selectCard,
         onSelectWallet: _selectWallet,
         onAdd: widget.onAdd,
@@ -110,6 +103,7 @@ class _SelectionList extends StatelessWidget {
   const _SelectionList({
     required this.cards,
     required this.selectedCardId,
+    required this.walletSelected,
     required this.onSelectCard,
     required this.onSelectWallet,
     required this.onAdd,
@@ -117,6 +111,7 @@ class _SelectionList extends StatelessWidget {
 
   final List<PaymentCard> cards;
   final String? selectedCardId;
+  final bool walletSelected;
   final ValueChanged<PaymentCard> onSelectCard;
   final VoidCallback onSelectWallet;
   final VoidCallback onAdd;
@@ -150,13 +145,14 @@ class _SelectionList extends StatelessWidget {
                 ),
               ],
               SizedBox(height: 16.h),
-              const AppPurpleDashedLine(
-                color: AppColors.purple300,
+              Divider(
                 height: 1,
+                thickness: 1,
+                color: AppColors.neutral400,
               ),
               SizedBox(height: 16.h),
               PaymentMethodSelectRow(
-                selected: selectedCardId == null,
+                selected: walletSelected,
                 leading: SizedBox(
                   width: 32.w,
                   height: 32.h,

@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 
 /// One selectable payment row (card or wallet) with Figma radio trailing.
@@ -73,15 +71,61 @@ class PaymentMethodSelectRow extends StatelessWidget {
                     ],
                   ),
                 ),
-                AppSvgIcon(
-                  assetPath: selected
-                      ? AppAssets.iconRadioOn
-                      : AppAssets.iconRadioOff,
-                  size: 22.w,
-                ),
+                _PaymentMethodRadio(selected: selected),
                 ],
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PaymentMethodRadio extends StatelessWidget {
+  const _PaymentMethodRadio({required this.selected});
+
+  final bool selected;
+
+  static const double _size = 20;
+
+  @override
+  Widget build(BuildContext context) {
+    final outer = _size.w;
+    if (selected) {
+      final inner = outer / 3;
+      return SizedBox(
+        width: outer,
+        height: outer,
+        child: DecoratedBox(
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+            color: AppColors.neutral1200,
+          ),
+          child: Center(
+            child: SizedBox(
+              width: inner,
+              height: inner,
+              child: const DecoratedBox(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.surface,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+    return SizedBox(
+      width: outer,
+      height: outer,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: AppColors.neutral400,
+            width: 2,
           ),
         ),
       ),

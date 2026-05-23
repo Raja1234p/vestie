@@ -23,7 +23,7 @@ class TransactionConfirmationScreen extends StatelessWidget {
 
   String _confirmCta(WalletTransactionState state) {
     if (state.transactionType == WalletTransactionType.deposit) {
-      return AppStrings.confirmDepositTitle;
+      return AppStrings.btnConfirm;
     }
     return state.withdrawDeliveryMethod == WithdrawDeliveryMethod.instant
         ? AppStrings.btnConfirmInstantWithdraw

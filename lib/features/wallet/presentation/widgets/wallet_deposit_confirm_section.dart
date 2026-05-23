@@ -6,7 +6,6 @@ import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/utils/formatters.dart';
-import 'package:vestie/core/widgets/common/app_purple_dashed_line.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/features/wallet/domain/wallet_deposit_policy.dart';
 import 'package:vestie/features/wallet/domain/wallet_ui_constants.dart';
@@ -32,28 +31,43 @@ class WalletDepositConfirmSection extends StatelessWidget {
     );
 
     return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(horizontal: AppDimens.p16),
+      padding: EdgeInsets.fromLTRB(
+        AppDimens.p16,
+        AppDimens.v10,
+        AppDimens.p16,
+        0,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AppText(
             AppStrings.labelDepositAmount,
             style: GoogleFonts.lato(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w500,
-              color: AppColors.grey700,
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.neutral1200,
             ),
           ),
           SizedBox(height: AppDimens.v8),
           AppText(
             state.formattedAmount,
             style: GoogleFonts.lato(
-              fontSize: 36.sp,
+              fontSize: 40.sp,
               fontWeight: FontWeight.w800,
-              color: AppColors.grey1100,
+              color: AppColors.neutral1200,
+              height: 1.1,
             ),
           ),
           SizedBox(height: AppDimens.v24),
+          AppText(
+            AppStrings.labelBreakdown,
+            style: GoogleFonts.lato(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.neutral1200,
+            ),
+          ),
+          SizedBox(height: AppDimens.v10),
           Container(
             width: double.infinity,
             padding: EdgeInsets.fromLTRB(
@@ -63,7 +77,7 @@ class WalletDepositConfirmSection extends StatelessWidget {
               AppDimens.v14,
             ),
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: AppColors.grey100,
               borderRadius: BorderRadius.circular(AppRadius.r14),
               border: Border.all(color: AppColors.neutral400),
             ),
@@ -72,25 +86,32 @@ class WalletDepositConfirmSection extends StatelessWidget {
                 WalletDetailSummaryRow(
                   label: AppStrings.labelFrom,
                   value: fromLabel,
+                  labelColor: AppColors.neutral700,
+                  valueColor: AppColors.neutral1200,
+                  valueWeight: FontWeight.w600,
                 ),
                 SizedBox(height: AppDimens.v14),
                 WalletDetailSummaryRow(
                   label: AppStrings.walletDepositFeeLabel,
                   value: WalletDepositPolicy.feePercentLabel,
-                  valueColor: AppColors.red700,
+                  labelColor: AppColors.neutral700,
+                  valueColor: AppColors.red900,
                   valueWeight: FontWeight.w700,
                 ),
                 SizedBox(height: AppDimens.v14),
-                const AppPurpleDashedLine(
-                  color: AppColors.purple300,
+                Divider(
                   height: 1,
+                  thickness: 1,
+                  color: AppColors.neutral400,
                 ),
                 SizedBox(height: AppDimens.v14),
                 WalletDetailSummaryRow(
                   label: AppStrings.walletNewBalanceAfterLabel,
                   value: AppFormatters.formatCurrency(newBal),
-                  valueColor: AppColors.txPositive,
-                  valueWeight: FontWeight.w800,
+                  labelColor: AppColors.neutral1200,
+                  labelWeight: FontWeight.w600,
+                  valueColor: AppColors.green900,
+                  valueWeight: FontWeight.w700,
                   valueFontSize: 18.sp,
                 ),
               ],

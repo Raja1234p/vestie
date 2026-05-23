@@ -121,9 +121,10 @@ class WalletWithdrawConfirmSection extends StatelessWidget {
                 WalletDetailSummaryRow(
                   label: AppStrings.labelYouWillReceive,
                   value: AppFormatters.formatCurrency(net),
-                  valueColor: AppColors.txPositive,
-                  valueWeight: FontWeight.w800,
-                  valueFontSize: 18.sp,
+                  labelColor: AppColors.neutral1200,
+                  labelWeight: FontWeight.w600,
+                  valueColor: AppColors.green900,
+                  valueWeight: FontWeight.w700,
                 ),
               ],
             ),

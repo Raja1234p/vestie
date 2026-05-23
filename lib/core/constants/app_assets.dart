@@ -81,9 +81,10 @@ class AppAssets {
   static const String iconVisa       = '$_iconPath/visacard_icon.svg';
   static const String iconMastercard = '$_iconPath/mastercard_icon.svg';
 
-  // ── Transaction Type Icons ────────────────────────────────────────────────
-  static const String iconDeposit      = '$_iconPath/deposit_icon.svg';
-  static const String iconContribution = '$_iconPath/contribution_icon.svg';
+  // ── Transaction Type Icons (wallet recent activity — Figma SVGs) ───────
+  static const String iconDeposit      = '$_iconPath/wallet deposit icon.svg';
+  static const String iconContribution = '$_iconPath/contribution-icon.svg';
+  static const String iconBorrow       = '$_iconPath/borrow icon.svg';
   static const String iconDollarCircle = '$_iconPath/dollar-circle.svg';
   static const String iconCircleArrowUp02 = '$_iconPath/circle-arrow-up-02.svg';
 

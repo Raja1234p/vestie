@@ -25,6 +25,8 @@ class AppButton extends StatelessWidget {
   final Color? secondaryBorderColor;
   final Color? secondaryLabelColor;
   final FontWeight? secondaryLabelFontWeight;
+  /// Label size; defaults to 18.sp.
+  final double? labelFontSize;
   /// Outline button fill (e.g. white on gradient backgrounds).
   final Color? secondaryFillColor;
   final Widget? leading;
@@ -44,6 +46,7 @@ class AppButton extends StatelessWidget {
     this.secondaryBorderColor,
     this.secondaryLabelColor,
     this.secondaryLabelFontWeight,
+    this.labelFontSize,
     this.secondaryFillColor,
     this.leading,
   });
@@ -132,7 +135,7 @@ class AppButton extends StatelessWidget {
     required bool isSecondary,
   }) {
     final style = theme.textTheme.labelLarge?.copyWith(
-      fontSize: 18.sp,
+      fontSize: labelFontSize ?? 18.sp,
       fontWeight: isSecondary
           ? (secondaryLabelFontWeight ?? FontWeight.w500)
           : FontWeight.w500,

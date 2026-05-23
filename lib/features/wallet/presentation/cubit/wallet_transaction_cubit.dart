@@ -57,11 +57,22 @@ class WalletTransactionCubit extends Cubit<WalletTransactionState> {
     emit(state.copyWith(transactionType: type));
   }
 
+  /// Cent digits from the system numeric keyboard ([AppStackedCurrencyField]).
+  void setAmountDigits(String raw) {
+    var d = raw.replaceAll(RegExp(r'[^0-9]'), '');
+    if (d.length > 8) d = d.substring(0, 8);
+    while (d.length > 1 && d.startsWith('0')) {
+      d = d.substring(1);
+    }
+    if (d.length == 1 && d == '0') d = '';
+    emit(state.copyWith(amountDigits: d));
+  }
+
   void appendAmountDigit(String digit) {
     if (state.amountDigits.length >= 8) return; // Prevent massive numbers
     // Prevent leading zero if it's the only character
     if (state.amountDigits.isEmpty && digit == '0') return;
-    
+
     emit(state.copyWith(amountDigits: state.amountDigits + digit));
   }
 

@@ -25,10 +25,13 @@ class AppSuccessScreen extends StatelessWidget {
   final String? illustrationAsset;
   /// When set, content aligns to the top with this gap below [SafeArea] before the hero image.
   final double? illustrationTopSpacing;
+  /// Title color; defaults to [AppColors.textPrimary].
+  final Color? titleColor;
 
   const AppSuccessScreen({
     super.key,
     required this.title,
+    this.titleColor,
     this.subtitle,
     this.subtitleWidget,
     this.customContent,
@@ -98,7 +101,7 @@ class AppSuccessScreen extends StatelessWidget {
                                 ?.copyWith(
                                   fontSize: 26.sp,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.textPrimary,
+                                  color: titleColor ?? AppColors.textPrimary,
                                 ),
                             textAlign: TextAlign.center,
                           ),

@@ -9,16 +9,22 @@ import 'package:vestie/core/widgets/text/app_text.dart';
 class WalletDetailSummaryRow extends StatelessWidget {
   final String label;
   final String value;
+  final Color? labelColor;
+  final FontWeight labelWeight;
   final Color? valueColor;
   final FontWeight valueWeight;
+  final double? labelFontSize;
   final double? valueFontSize;
 
   const WalletDetailSummaryRow({
     super.key,
     required this.label,
     required this.value,
+    this.labelColor,
+    this.labelWeight = FontWeight.w500,
     this.valueColor,
     this.valueWeight = FontWeight.w600,
+    this.labelFontSize,
     this.valueFontSize,
   });
 
@@ -32,8 +38,9 @@ class WalletDetailSummaryRow extends StatelessWidget {
           child: AppText(
             label,
             style: GoogleFonts.lato(
-              fontSize: 14.sp,
-              color: AppColors.textBody,
+              fontSize: labelFontSize ?? 14.sp,
+              fontWeight: labelWeight,
+              color: labelColor ?? AppColors.grey700,
             ),
           ),
         ),

@@ -9,13 +9,17 @@ import '../text/app_text.dart';
 
 enum AppTransactionType { deposit, contribution, borrow, withdrawal, lend }
 
-/// Transaction / ledger list tile — matches project funds contribution history row.
+/// When [list], parent [ListView.separated] supplies vertical gap (no tile margin).
+enum AppTransactionItemSpacing { standalone, list }
+
+/// Wallet / ledger transaction row (Figma recent activity).
 class AppTransactionItem extends StatelessWidget {
   final AppTransactionType type;
   final String title;
   final String date;
   final String amount;
   final bool isNegative;
+  final AppTransactionItemSpacing spacing;
 
   const AppTransactionItem({
     super.key,
@@ -24,6 +28,7 @@ class AppTransactionItem extends StatelessWidget {
     required this.date,
     required this.amount,
     required this.isNegative,
+    this.spacing = AppTransactionItemSpacing.standalone,
   });
 
   bool get _isPositive => !isNegative;
@@ -31,19 +36,18 @@ class AppTransactionItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 10.h),
+      margin: spacing == AppTransactionItemSpacing.standalone
+          ? EdgeInsets.only(bottom: 10.h)
+          : EdgeInsets.zero,
       padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
       decoration: BoxDecoration(
-        color: AppColors.projectFundsLedgerCardBg,
-        borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(
-          color: AppColors.projectFundsLedgerBorder,
-          width: 1,
-        ),
+        color: AppColors.grey100,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: AppColors.neutral500, width: 1),
       ),
       child: Row(
         children: [
-          _TransactionIcon(isPositive: _isPositive),
+          _TransactionTypeIcon(type: type),
           SizedBox(width: 12.w),
           Expanded(
             child: Column(
@@ -54,9 +58,9 @@ class AppTransactionItem extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.lato(
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.projectDetailText,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.neutral1200,
                     height: 1.25,
                   ),
                 ),
@@ -64,23 +68,22 @@ class AppTransactionItem extends StatelessWidget {
                 AppText(
                   date,
                   style: GoogleFonts.lato(
-                    fontSize: 13.sp,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.projectFundsLedgerDate,
+                    color: AppColors.grey800,
                     height: 1.3,
                   ),
                 ),
               ],
             ),
           ),
+          SizedBox(width: 8.w),
           AppText(
             '${_isPositive ? '+' : '-'}\$$amount',
             style: GoogleFonts.lato(
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w800,
-              color: _isPositive
-                  ? AppColors.projectFundsLedgerAmountPositive
-                  : AppColors.projectFundsLedgerAmountNegative,
+              fontSize: 24.sp,
+              fontWeight: FontWeight.w700,
+              color: _isPositive ? AppColors.green900 : AppColors.red900,
             ),
           ),
         ],
@@ -89,31 +92,41 @@ class AppTransactionItem extends StatelessWidget {
   }
 }
 
-class _TransactionIcon extends StatelessWidget {
-  final bool isPositive;
+class _TransactionTypeIcon extends StatelessWidget {
+  const _TransactionTypeIcon({required this.type});
 
-  const _TransactionIcon({required this.isPositive});
+  final AppTransactionType type;
+
+  String get _asset {
+    switch (type) {
+      case AppTransactionType.deposit:
+        return AppAssets.iconDeposit;
+      case AppTransactionType.contribution:
+        return AppAssets.iconContribution;
+      case AppTransactionType.borrow:
+        return AppAssets.iconBorrow;
+      case AppTransactionType.withdrawal:
+        return AppAssets.iconContribution;
+      case AppTransactionType.lend:
+        return AppAssets.iconContribution;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 44.w,
-      height: 44.w,
+      width: 40.w,
+      height: 40.w,
       decoration: BoxDecoration(
-        color: AppColors.projectFundsLedgerIconTileBg,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: AppColors.projectFundsLedgerBorder,
-          width: 1,
-        ),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(10.r),
+        border: Border.all(color: AppColors.purple300, width: 1),
       ),
       alignment: Alignment.center,
       child: SvgPicture.asset(
-        isPositive
-            ? AppAssets.iconDollarCircle
-            : AppAssets.iconCircleArrowUp02,
-        width: 24.w,
-        height: 24.h,
+        _asset,
+        width: 22.w,
+        height: 22.h,
         fit: BoxFit.contain,
       ),
     );

@@ -16,7 +16,8 @@ import '../../domain/wallet_transaction_type.dart';
 import '../widgets/wallet_overview_card.dart';
 import '../widgets/wallet_action_buttons.dart';
 import '../widgets/wallet_recent_activity_empty.dart';
-import '../../../../core/widgets/common/app_transaction_item.dart';
+import '../widgets/wallet_recent_activity_list.dart';
+import '../../../profile/domain/mock_profile_data.dart';
 
 class WalletScreen extends StatelessWidget {
   const WalletScreen({super.key});
@@ -24,13 +25,7 @@ class WalletScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Replace with API-backed history when available.
-    final txItems = <({
-      AppTransactionType type,
-      String title,
-      String date,
-      String amount,
-      bool isNegative,
-    })>[];
+    final transactions = MockProfileData.transactions;
 
     return PostAuthGradientBackground(
       child: Column(
@@ -92,25 +87,10 @@ class WalletScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 8.h),
                   Expanded(
-                    child: txItems.isEmpty
+                    child: transactions.isEmpty
                         ? const WalletRecentActivityEmpty()
-                        : ListView.separated(
-                            padding:
-                                EdgeInsets.only(bottom: 16.h, top: 0.h),
-                            physics: const BouncingScrollPhysics(),
-                            separatorBuilder: (context, _) =>
-                                SizedBox(height: 10.h),
-                            itemCount: txItems.length,
-                            itemBuilder: (_, index) {
-                              final item = txItems[index];
-                              return AppTransactionItem(
-                                type: item.type,
-                                title: item.title,
-                                date: item.date,
-                                amount: item.amount,
-                                isNegative: item.isNegative,
-                              );
-                            },
+                        : WalletRecentActivityList(
+                            transactions: transactions,
                           ),
                   ),
                 ],

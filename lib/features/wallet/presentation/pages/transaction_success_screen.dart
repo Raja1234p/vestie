@@ -28,14 +28,15 @@ class TransactionSuccessScreen extends StatelessWidget {
           title: isDeposit
               ? AppStrings.depositSuccessTitle
               : AppStrings.withdrawSuccessTitle,
+          titleColor: isDeposit ? AppColors.grey1000 : null,
           subtitleWidget: isDeposit
               ? AppText(
                   AppStrings.depositSuccessBody(amountText),
                   textAlign: TextAlign.center,
                   style: GoogleFonts.lato(
                     fontSize: 18.sp,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.grey700,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.neutral1200,
                     height: 1.35,
                   ),
                 )

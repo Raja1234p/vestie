@@ -122,6 +122,8 @@ class AppDimens {
   static double get paymentMethodRowHeight => 72.0.h;
   /// Gap between payment method rows in a list.
   static double get paymentMethodRowGap => v8;
+  /// Wallet recent-activity transaction cards.
+  static double get walletTransactionRowGap => v12;
 }
 
 class AppRadius {
