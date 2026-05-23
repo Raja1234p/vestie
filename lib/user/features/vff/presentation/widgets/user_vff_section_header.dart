@@ -41,9 +41,8 @@ class UserVffSectionHeader extends StatelessWidget {
                 actionLabel!,
                 style: GoogleFonts.lato(
                   fontSize: 13.sp,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.primary,
-                  decoration: TextDecoration.underline,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.green900,
                 ),
               ),
             ),

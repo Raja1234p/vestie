@@ -10,83 +10,104 @@ import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/user/features/vff/presentation/models/user_vff_hub_ui_model.dart';
 
-/// **Flow: Hub → “My VFFs” tab** — one verified connection row.
+/// **Flow: Hub → “My VFFs” tab** — one connection card (Figma list row).
 class UserVffMyVffRow extends StatelessWidget {
   final UserVffConnectionRowUi row;
-  final VoidCallback onOpen;
+  final VoidCallback? onOpen;
 
   const UserVffMyVffRow({
     super.key,
     required this.row,
-    required this.onOpen,
+    this.onOpen,
   });
 
   @override
   Widget build(BuildContext context) {
+    final canOpen = onOpen != null && !row.isPendingSent;
+
     return Padding(
-      padding: EdgeInsets.only(bottom: 10.h),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16.r),
-        onTap: onOpen,
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(16.r),
-            border: Border.all(color: AppColors.border),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              AppAvatarCircle(
-                initials: row.initials,
-                size: 48.r,
-                backgroundColor: AppColors.purple200,
-                textColor: AppColors.grey1100,
-                fontSize: 13.sp,
-              ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AppText(
-                      row.name,
-                      style: GoogleFonts.lato(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.grey1100,
-                      ),
-                    ),
-                    SizedBox(height: 2.h),
-                    AppText(
-                      row.mutualLabel,
-                      style: GoogleFonts.lato(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textBody,
-                      ),
-                    ),
-                  ],
+      padding: EdgeInsets.only(bottom: 12.h),
+      child: Material(
+        color: AppColors.grey100,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.r),
+          side: const BorderSide(color: AppColors.cardBorder, width: 1),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: canOpen ? onOpen : null,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+            child: Row(
+              children: [
+                AppAvatarCircle(
+                  initials: row.initials,
+                  size: 40.r,
+                  backgroundColor: AppColors.purple200,
+                  textColor: AppColors.grey1100,
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.w600,
                 ),
-              ),
-              if (row.isPendingSent)
-                AppText(
-                  AppStrings.userVffStatusRequestSentSmall,
-                  style: GoogleFonts.lato(
-                    fontSize: 11.sp,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textBody,
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AppText(
+                        row.name,
+                        style: GoogleFonts.lato(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.neutral1200,
+                        ),
+                      ),
+                      SizedBox(height: 2.h),
+                      AppText(
+                        row.mutualLabel,
+                        style: GoogleFonts.lato(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.grey800,
+                        ),
+                      ),
+                    ],
                   ),
-                )
-              else
-                AppSvgIcon(
-                  assetPath: AppAssets.iconChevronRight,
-                  color: AppColors.grey800,
-                  size: 24.r,
                 ),
-            ],
+                if (row.isPendingSent)
+                  const _RequestSentBadge()
+                else
+                  AppSvgIcon(
+                    assetPath: AppAssets.iconChevronRight,
+                    color: AppColors.purple1000,
+                    size: 22.r,
+                  ),
+              ],
+            ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RequestSentBadge extends StatelessWidget {
+  const _RequestSentBadge();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(8.r),
+        border: Border.all(color: AppColors.neutral400, width: 1),
+      ),
+      child: AppText(
+        AppStrings.userVffStatusRequestSentSmall,
+        style: GoogleFonts.lato(
+          fontSize: 13.sp,
+          fontWeight: FontWeight.w600,
+          color: AppColors.neutral700,
         ),
       ),
     );

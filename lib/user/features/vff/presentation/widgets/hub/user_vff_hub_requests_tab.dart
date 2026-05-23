@@ -10,7 +10,7 @@ import '../../cubit/user_vff_hub_cubit.dart';
 import '../../cubit/user_vff_hub_state.dart';
 import '../../models/user_vff_hub_ui_model.dart';
 import '../../models/user_vff_profile_ui_model.dart';
-import '../user_vff_empty_placeholder.dart';
+import '../user_vff_hub_empty_body.dart';
 import '../user_vff_group_invitation_card.dart';
 import '../user_vff_incoming_request_card.dart';
 import '../user_vff_section_header.dart';
@@ -28,19 +28,14 @@ final class UserVffHubRequestsTab extends StatelessWidget {
     final grp = hubState.groupInvitations;
 
     if (inc.isEmpty && grp.isEmpty) {
-      return SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: UserVffEmptyPlaceholder(
-          message: AppStrings.userVffEmptyRequests,
-        ),
+      return const UserVffHubEmptyBody(
+        message: AppStrings.userVffEmptyRequests,
       );
     }
 
     final cap = UserVffHubState.previewCap;
     final incPrev = inc.length > cap ? inc.sublist(0, cap) : inc;
     final grpPrev = grp.length > cap ? grp.sublist(0, cap) : grp;
-    final incSeeAll = inc.length > cap;
-    final grpSeeAll = grp.length > cap;
 
     Widget incomingCard(UserVffIncomingRequestUi r) =>
         UserVffIncomingRequestCard(
@@ -86,19 +81,21 @@ final class UserVffHubRequestsTab extends StatelessWidget {
 
     return ListView(
       physics: const BouncingScrollPhysics(),
-      padding: EdgeInsets.only(bottom: AppDimens.v28),
+      padding: EdgeInsets.fromLTRB(
+        AppDimens.p18,
+        0,
+        AppDimens.p18,
+        AppDimens.v28,
+      ),
       children: [
         if (inc.isNotEmpty) ...[
           UserVffSectionHeader(
             title: AppStrings.userVffSectionVffRequests,
-            actionLabel:
-                incSeeAll ? AppStrings.userVffSeeAllVffRequestsLink : null,
-            onAction: incSeeAll
-                ? () => context.push(
-                      AppRoutes.userVffVffRequestsAll,
-                      extra: [...inc],
-                    )
-                : null,
+            actionLabel: AppStrings.userVffSeeAllRequestsLink,
+            onAction: () => context.push(
+              AppRoutes.userVffVffRequestsAll,
+              extra: [...inc],
+            ),
           ),
           ...incPrev.map(incomingCard),
         ],
@@ -107,14 +104,11 @@ final class UserVffHubRequestsTab extends StatelessWidget {
         if (grp.isNotEmpty) ...[
           UserVffSectionHeader(
             title: AppStrings.userVffSectionGroupInvites,
-            actionLabel:
-                grpSeeAll ? AppStrings.userVffSeeAllGroupInvitesLink : null,
-            onAction: grpSeeAll
-                ? () => context.push(
-                      AppRoutes.userVffGroupInvitesAll,
-                      extra: [...grp],
-                    )
-                : null,
+            actionLabel: AppStrings.userVffSeeAllRequestsLink,
+            onAction: () => context.push(
+              AppRoutes.userVffGroupInvitesAll,
+              extra: [...grp],
+            ),
           ),
           ...grpPrev.map(groupCard),
         ],

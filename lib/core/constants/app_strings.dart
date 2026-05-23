@@ -365,23 +365,25 @@ class AppStrings {
   static const String userVffHubTitle = 'My VFFs & Requests';
   static const String userVffTabMyVffs = 'My VFFs';
   static const String userVffTabRequests = 'Requests';
-  static const String userVffEmptyMyVffs = 'You don\'t have any VFF';
+  static const String userVffEmptyMyVffs =
+      'You don\'t have any VFFs yet.';
   static const String userVffEmptyRequests = 'No Pending Requests';
   static const String userVffSectionMyVffs = 'My VFFs';
   static const String userVffSectionVffRequests = 'VFF Requests';
   static const String userVffSectionGroupInvites = 'Group Invitations';
-  static const String userVffSeeAllVffRequestsLink = 'See all Requests';
-  static const String userVffSeeAllGroupInvitesLink = 'See all';
+  static const String userVffSeeAllRequestsLink = 'See All Requests';
+  static const String userVffSeeAllVffRequestsLink = userVffSeeAllRequestsLink;
+  static const String userVffSeeAllGroupInvitesLink = userVffSeeAllRequestsLink;
   static const String userVffViaProject = 'via';
   static const String userVffInvitedBy = 'Invited by';
   static const String btnAccept = 'Accept';
   static const String btnDecline = 'Decline';
   static const String userVffJoined = 'Joined';
-  static const String userVffRequestToJoin = 'Request to join';
+  static const String userVffRequestToJoin = 'Request to Join';
   static String userVffMutualProjects(int n) => '$n mutual projects';
   static const String userVffStatusRequestSentSmall = 'Request Sent';
   static const String userVffVffRequestsListTitle = 'VFF Requests';
-  static const String userVffGroupInvitationsTitle = 'Group Invitations';
+  static const String userVffGroupInvitationsTitle = 'Project Invitations';
 
   /// Profile
   static const String userVffBadgeMember = 'Member';

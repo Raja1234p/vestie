@@ -6,7 +6,7 @@ import 'package:vestie/app/router/route_args/user_vff_flow_args.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import '../../models/user_vff_profile_lookup.dart';
-import '../user_vff_empty_placeholder.dart';
+import '../user_vff_hub_empty_body.dart';
 import '../user_vff_my_vff_row.dart';
 import '../user_vff_section_header.dart';
 import '../../cubit/user_vff_hub_state.dart';
@@ -22,23 +22,27 @@ final class UserVffHubMyVffsTab extends StatelessWidget {
     final my = hubState.myVffConnections;
 
     if (my.isEmpty) {
-      return SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: UserVffEmptyPlaceholder(
-          message: AppStrings.userVffEmptyMyVffs,
-        ),
+      return const UserVffHubEmptyBody(
+        message: AppStrings.userVffEmptyMyVffs,
       );
     }
 
     return ListView(
       physics: const BouncingScrollPhysics(),
-      padding: EdgeInsets.only(bottom: AppDimens.v28),
+      padding: EdgeInsets.fromLTRB(
+        AppDimens.p18,
+        0,
+        AppDimens.p18,
+        AppDimens.v28,
+      ),
       children: [
         UserVffSectionHeader(title: AppStrings.userVffSectionMyVffs),
         ...my.map(
           (row) => UserVffMyVffRow(
             row: row,
-            onOpen: () {
+            onOpen: row.isPendingSent
+                ? null
+                : () {
               context.push(
                 AppRoutes.userVffProfile,
                 extra: UserVffProfileRouteArgs(

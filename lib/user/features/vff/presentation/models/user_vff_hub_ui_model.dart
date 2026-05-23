@@ -44,6 +44,8 @@ class UserVffGroupInviteUi {
   final String personInitials;
   final String invitedByName;
   final int memberCount;
+  /// Project invite CTA: [AppStrings.userVffRequestToJoin] vs [AppStrings.btnJoin].
+  final bool primaryIsRequestToJoin;
 
   const UserVffGroupInviteUi({
     required this.id,
@@ -52,6 +54,7 @@ class UserVffGroupInviteUi {
     this.personInitials = '',
     required this.invitedByName,
     this.memberCount = 0,
+    this.primaryIsRequestToJoin = false,
   });
 }
 
@@ -82,31 +85,37 @@ class UserVffHubUiModel {
   static UserVffHubUiModel demoFilled() => UserVffHubUiModel(
         myVffConnections: const [
           UserVffConnectionRowUi(
-            id: 'julian',
+            id: 'julian-1',
             name: 'Julian Lee',
             initials: 'JL',
             mutualLabel: '3 mutual projects',
           ),
           UserVffConnectionRowUi(
-            id: 'olivia',
-            name: 'Olivia Rojer',
-            initials: 'OR',
-            mutualLabel: '2 mutual projects',
+            id: 'julian-2',
+            name: 'Julian Lee',
+            initials: 'JL',
+            mutualLabel: '5 mutual projects',
+          ),
+          UserVffConnectionRowUi(
+            id: 'julian-3',
+            name: 'Julian Lee',
+            initials: 'JL',
+            mutualLabel: '3 mutual projects',
             isPendingSent: true,
           ),
         ],
         incomingVffRequests: const [
           UserVffIncomingRequestUi(
             id: 'r1',
-            name: 'Sara Malik',
-            initials: 'SM',
+            name: 'Julian Lee',
+            initials: 'JL',
             viaProjectName: 'Paris Trip 2025',
           ),
           UserVffIncomingRequestUi(
             id: 'r2',
-            name: 'Noah Abbas',
-            initials: 'NA',
-            viaProjectName: 'Weekend Saving Pot',
+            name: 'Julian Lee',
+            initials: 'JL',
+            viaProjectName: 'Paris Trip 2025',
           ),
         ],
         groupInvitations: const [
@@ -114,16 +123,15 @@ class UserVffHubUiModel {
             id: 'g1',
             kind: UserVffGroupInviteKind.project,
             titleLine: 'Paris Trip 2025',
-            invitedByName: 'Alex Kim',
+            invitedByName: 'Amir Malik',
             memberCount: 8,
           ),
           UserVffGroupInviteUi(
             id: 'g2',
-            kind: UserVffGroupInviteKind.memberRequestJoin,
-            titleLine: 'Priya Rao',
-            personInitials: 'PR',
-            invitedByName: 'Alex Kim',
-            memberCount: 0,
+            kind: UserVffGroupInviteKind.project,
+            titleLine: 'Emergency funds for NCop',
+            invitedByName: 'Amir Malik',
+            primaryIsRequestToJoin: true,
           ),
         ],
       );

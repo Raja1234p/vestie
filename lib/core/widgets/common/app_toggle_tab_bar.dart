@@ -27,6 +27,8 @@ class AppToggleTabBar extends StatelessWidget {
 
   final double? labelFontSize;
   final FontWeight? labelFontWeight;
+  final Color? activeLabelColor;
+  final Color? inactiveLabelColor;
 
   const AppToggleTabBar({
     super.key,
@@ -39,6 +41,8 @@ class AppToggleTabBar extends StatelessWidget {
     this.innerBorderRadius,
     this.labelFontSize,
     this.labelFontWeight,
+    this.activeLabelColor,
+    this.inactiveLabelColor,
   }) : assert(tabs.length == 2, 'AppToggleTabBar supports exactly 2 tabs');
 
   @override
@@ -52,6 +56,8 @@ class AppToggleTabBar extends StatelessWidget {
     final innerRadius = innerBorderRadius ?? 100.r;
     final fontSize = labelFontSize ?? 13.sp;
     final fontWeight = labelFontWeight ?? FontWeight.w600;
+    final activeColor = activeLabelColor ?? AppColors.neutral100;
+    final inactiveColor = inactiveLabelColor ?? AppColors.grey1100;
 
     return SizedBox(
       height: trackHeight,
@@ -83,8 +89,7 @@ class AppToggleTabBar extends StatelessWidget {
                       style: GoogleFonts.lato(
                         fontSize: fontSize,
                         fontWeight: fontWeight,
-                        color:
-                            isActive ? AppColors.neutral100 : AppColors.textBody,
+                        color: isActive ? activeColor : inactiveColor,
                       ),
                     ),
                   ),

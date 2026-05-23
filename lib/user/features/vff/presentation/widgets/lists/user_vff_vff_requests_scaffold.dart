@@ -16,8 +16,6 @@ import 'package:vestie/core/widgets/text/app_text.dart';
 import '../../cubit/user_vff_incoming_request_list_cubit.dart';
 import '../../models/user_vff_hub_ui_model.dart';
 import '../user_vff_incoming_request_card.dart';
-import '../user_vff_rounded_sheet.dart';
-
 /// Full inbound VFF request list scaffold.
 final class UserVffVffRequestsScaffold extends StatelessWidget {
   const UserVffVffRequestsScaffold({super.key});
@@ -39,9 +37,11 @@ final class UserVffVffRequestsScaffold extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: UserVffRoundedSheet(
-                padding: AppDimens.sheetInsetList,
-                child: BlocBuilder<UserVffIncomingRequestListCubit,
+              child: ColoredBox(
+                color: AppColors.surface,
+                child: Padding(
+                  padding: AppDimens.sheetInsetList,
+                  child: BlocBuilder<UserVffIncomingRequestListCubit,
                     List<UserVffIncomingRequestUi>>(
                   builder: (context, items) {
                     if (items.isEmpty) {
@@ -85,6 +85,7 @@ final class UserVffVffRequestsScaffold extends StatelessWidget {
                       },
                     );
                   },
+                ),
                 ),
               ),
             ),

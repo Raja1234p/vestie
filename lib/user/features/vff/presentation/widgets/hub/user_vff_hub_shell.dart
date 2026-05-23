@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/core/constants/app_dimens.dart';
-import 'package:vestie/core/constants/app_durations.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
@@ -18,7 +17,7 @@ import '../user_vff_rounded_sheet.dart';
 import 'user_vff_hub_my_vffs_tab.dart';
 import 'user_vff_hub_requests_tab.dart';
 
-/// Gradient scaffold wrapping VFF hub tabs + sheet.
+/// Gradient header + single white sheet (tabs + tab body — Figma).
 final class UserVffHubShell extends StatelessWidget {
   const UserVffHubShell({super.key});
 
@@ -39,45 +38,55 @@ final class UserVffHubShell extends StatelessWidget {
                 color: AppColors.grey1100,
               ),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: AppDimens.p16),
-              child: BlocSelector<UserVffHubCubit, UserVffHubState, int>(
-                selector: (s) => s.tabIndex,
-                builder: (context, idx) => AppToggleTabBar(
-                  tabs: const [
-                    AppStrings.userVffTabMyVffs,
-                    AppStrings.userVffTabRequests,
-                  ],
-                  activeIndex: idx,
-                  onTabSelected: (i) =>
-                      context.read<UserVffHubCubit>().selectTab(i),
-                ),
-              ),
-            ),
-            SizedBox(height: AppDimens.v10),
             Expanded(
-              child: UserVffRoundedSheet(
-                padding: AppDimens.sheetInsetComfort,
-                child: BlocBuilder<UserVffHubCubit, UserVffHubState>(
-                  builder: (context, hubState) {
-                    return AnimatedSwitcher(
-                      duration: AppDurations.hubTabFade,
-                      child: hubState.tabIndex == 0
-                          ? KeyedSubtree(
-                              key: const ValueKey('vff-my'),
-                              child: UserVffHubMyVffsTab(
-                                hubState: hubState,
-                              ),
-                            )
-                          : KeyedSubtree(
-                              key: const ValueKey('vff-requests'),
-                              child: UserVffHubRequestsTab(
-                                hubState: hubState,
-                              ),
-                            ),
-                    );
-                  },
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      AppDimens.p16,
+                      AppDimens.v24,
+                      AppDimens.p16,
+                      0,
+                    ),
+                    child: BlocSelector<UserVffHubCubit, UserVffHubState, int>(
+                      selector: (s) => s.tabIndex,
+                      builder: (context, idx) => AppToggleTabBar(
+                        outerHeight:
+                            AppDimens.projectDetailToggleBarOuterHeight,
+                        innerTabHeight:
+                            AppDimens.projectDetailToggleTabInnerHeight,
+                        outerBorderRadius:
+                            AppDimens.projectDetailToggleBarOuterRadius,
+                        innerBorderRadius:
+                            AppDimens.projectDetailToggleTabInnerRadius,
+                        labelFontSize:
+                            AppDimens.projectDetailToggleLabelFontSize,
+                        labelFontWeight: FontWeight.w500,
+                        activeLabelColor: AppColors.surface,
+                        inactiveLabelColor: AppColors.grey1100,
+                        tabs: const [
+                          AppStrings.userVffTabMyVffs,
+                          AppStrings.userVffTabRequests,
+                        ],
+                        activeIndex: idx,
+                        onTabSelected: (i) =>
+                            context.read<UserVffHubCubit>().selectTab(i),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 24.h),
+                  Expanded(
+                    child: BlocBuilder<UserVffHubCubit, UserVffHubState>(
+                      builder: (context, hubState) {
+                        if (hubState.tabIndex == 0) {
+                          return UserVffHubMyVffsTab(hubState: hubState);
+                        }
+                        return UserVffHubRequestsTab(hubState: hubState);
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

@@ -4,6 +4,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
+import 'package:vestie/app/router/route_args/user_vff_flow_args.dart';
+import 'package:vestie/user/features/vff/presentation/models/user_vff_hub_ui_model.dart';
 import 'package:vestie/core/constants/app_assets.dart';
 
 /// Notification bell + favourite (VFF hub) for Home / Discover headers.
@@ -31,7 +33,12 @@ class NotificationFavouriteHeaderActions extends StatelessWidget {
         SizedBox(width: 8.w),
         _SquareIconTap(
           extent: extent,
-          onTap: () => context.push(AppRoutes.userVffMain),
+          onTap: () => context.push(
+            AppRoutes.userVffMain,
+            extra: UserVffHubRouteArgs(
+              hub: UserVffHubUiModel.demoFilled(),
+            ),
+          ),
           child: SvgPicture.asset(
             AppAssets.iconFavourite,
             width: extent,
