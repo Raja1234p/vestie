@@ -70,6 +70,8 @@ class AppRoutes {
   static const String borrowRequests   = '/project/borrow-requests';
   static const String groupMembers     = '/project/group-members';
   static const String myBorrowRequest  = '/project/my-borrow-request';
+  static const String borrowRepayConfirm = '/project/borrow-repay-confirm';
+  static const String borrowRepaySuccess = '/project/borrow-repay-success';
   static const String projectFundsHistory = '/project/funds-history';
   static const String markProjectSuccessful = '/project/mark-successful';
   static const String stopContributions = '/project/stop-contributions';

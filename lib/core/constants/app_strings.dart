@@ -863,11 +863,26 @@ class AppStrings {
       'Great, you don\'t have any borrow requests.';
   static const String borrowRequestsTitle       = 'Borrow Requests';
   static const String myBorrowRequestTitle      = 'My Borrow Request';
+  static const String myBorrowTitle             = 'My Borrow';
   static const String myBorrowAmountLabel       = 'Borrow Amount';
+  static const String myBorrowBorrowDateLabel   = 'Borrow Date';
+  static const String myBorrowDueDateLabel      = 'Due date';
+  static const String myBorrowTotalRepaymentLabel = 'Total Repayment';
+  static const String myBorrowBreakdownProjectNameLabel = 'Project name';
+  static const String repayScreenTitle            = 'Repay';
+  static const String labelRepayAmount            = 'Repay Amount';
+  static const String btnConfirmRepay             = 'Confirm Repay';
+  static const String btnRepayBorrowAmount      = 'Repay Borrow Amount';
+  static String borrowRepaySuccessBody(String amount, String projectName) =>
+      'You\'ve successfully repaid $amount to $projectName.';
+  static const String btnPreviewApprovedBorrowRequest =
+      'Preview approved borrow request UI';
   static const String myBorrowMemberVotesLabel  = 'Member Votes';
   static const String myBorrowPendingBanner     =
       'Pending — waiting for decision';
   static const String myBorrowHistoryLabel      = 'Borrow History';
+  static const String btnPreviewPendingBorrowRequest =
+      'Preview pending borrow request UI';
   static const String btnMakeBorrowRequest      = 'Make Request';
   static const String btnCancelBorrowRequest    = 'Cancel Request';
   static const String cancelBorrowRequestDialogTitle = 'Are You Sure?';

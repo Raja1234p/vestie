@@ -7,6 +7,7 @@ import 'package:vestie/features/project_detail/domain/entities/project_detail_en
 import 'package:vestie/features/project_detail/presentation/models/investment_distribution_ui_data.dart';
 import 'package:vestie/features/project_detail/presentation/models/investment_returns_ui_data.dart';
 import 'package:vestie/leader/features/project_detail/presentation/models/leader_success_vote_progress_ui_data.dart';
+import 'package:vestie/user/features/borrow/presentation/models/my_borrow_approved_ui_data.dart';
 import 'package:vestie/user/features/project_detail/presentation/models/member_vote_outcome_ui_data.dart';
 
 import 'project_wallet_flow_args.dart';
@@ -27,15 +28,19 @@ class MyBorrowHistoryEntry {
 /// Member / leader “My Borrow Request” screen (not the group borrow-requests list).
 class MyBorrowRequestRouteArgs {
   final String projectId;
+  final String projectName;
   final ProjectWalletFlowArgs walletFlowArgs;
   final BorrowRequestEntity? activeRequest;
   final List<MyBorrowHistoryEntry> history;
+  final MyBorrowApprovedUiData? approvedBorrow;
 
   const MyBorrowRequestRouteArgs({
     required this.projectId,
+    this.projectName = '',
     required this.walletFlowArgs,
     this.activeRequest,
     this.history = const [],
+    this.approvedBorrow,
   });
 }
 

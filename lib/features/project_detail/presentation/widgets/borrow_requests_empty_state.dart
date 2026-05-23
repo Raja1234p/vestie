@@ -14,12 +14,14 @@ class BorrowRequestsEmptyState extends StatelessWidget {
   /// Inline tab preview — less top inset when list is empty.
   final bool compactTop;
   final String title;
+  final String? subtitle;
 
   const BorrowRequestsEmptyState({
     super.key,
     this.centered = false,
     this.compactTop = false,
     this.title = AppStrings.borrowRequestsEmpty,
+    this.subtitle,
   });
 
   @override
@@ -44,6 +46,19 @@ class BorrowRequestsEmptyState extends StatelessWidget {
               height: 1.25,
             ),
           ),
+          if (subtitle != null) ...[
+            SizedBox(height: 8.h),
+            AppText(
+              subtitle!,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.lato(
+                fontSize: 20.sp,
+                fontWeight: FontWeight.w500,
+                color: AppColors.grey800,
+                height: 1.4,
+              ),
+            ),
+          ],
         ],
       );
 

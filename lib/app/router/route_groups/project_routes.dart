@@ -23,6 +23,9 @@ import 'package:vestie/leader/features/project_detail/presentation/pages/voting_
 import 'package:vestie/leader/features/project_detail/presentation/pages/member_penalty_action_screen.dart';
 import 'package:vestie/user/features/borrow/presentation/cubit/borrow_cubit.dart';
 import 'package:vestie/user/features/borrow/presentation/pages/borrow_flow_screen.dart';
+import 'package:vestie/app/router/route_args/borrow_repay_flow_args.dart';
+import 'package:vestie/user/features/borrow/presentation/pages/borrow_repay_confirm_screen.dart';
+import 'package:vestie/user/features/borrow/presentation/pages/borrow_repay_success_screen.dart';
 import 'package:vestie/user/features/borrow/presentation/pages/my_borrow_request_screen.dart';
 import 'package:vestie/user/features/contribute/presentation/pages/contribute_flow_screen.dart';
 import 'package:vestie/user/features/contributions/presentation/bloc/contribute_event.dart';
@@ -187,6 +190,22 @@ List<RouteBase> buildProjectRoutes({
         final extra = state.extra;
         if (extra is! MyBorrowRequestRouteArgs) return invalidRouteScreen();
         return MyBorrowRequestScreen(args: extra);
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.borrowRepayConfirm,
+      builder: (context, state) {
+        final extra = state.extra;
+        if (extra is! BorrowRepayConfirmRouteArgs) return invalidRouteScreen();
+        return BorrowRepayConfirmScreen(args: extra);
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.borrowRepaySuccess,
+      builder: (context, state) {
+        final extra = state.extra;
+        if (extra is! BorrowRepayConfirmRouteArgs) return invalidRouteScreen();
+        return BorrowRepaySuccessScreen(args: extra);
       },
     ),
     GoRoute(
