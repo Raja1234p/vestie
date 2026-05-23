@@ -21,29 +21,69 @@ import '../widgets/home_header.dart';
 import '../widgets/projects_section.dart';
 
 /// Shell — provides HomeBloc + HomeSectionsCubit.
-class HomeScreen extends StatelessWidget {
-  /// When true (from [DashboardShellArgs]), runs the same load as pull-to-refresh
-  /// so `GET /projects?scope=mine` runs once with a fresh list after create-project.
+/// [activate] is true when the Home tab is selected (see [DashboardScreen]).
+class HomeScreen extends StatefulWidget {
+  final bool activate;
+
+  /// When true (from [DashboardShellArgs]), runs a full reload after create-project.
   final bool reloadHomeProjectList;
 
   const HomeScreen({
     super.key,
+    this.activate = true,
     this.reloadHomeProjectList = false,
   });
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late final HomeBloc _homeBloc = HomeBloc();
+  late final HomeSectionsCubit _sectionsCubit = HomeSectionsCubit();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.reloadHomeProjectList) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _homeBloc.add(const HomeRefreshRequested());
+        }
+      });
+      return;
+    }
+    if (widget.activate) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _onTabActivated();
+      });
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant HomeScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.activate && !oldWidget.activate) {
+      _onTabActivated();
+    }
+  }
+
+  void _onTabActivated() {
+    final state = _homeBloc.state;
+    if (state is HomeLoading) return;
+    if (state is HomeInitial || state is HomeError) {
+      _homeBloc.add(const HomeFetchStarted());
+      return;
+    }
+    _homeBloc.add(const HomeRefreshRequested(silent: true));
+  }
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (_) => HomeBloc()
-            ..add(
-              reloadHomeProjectList
-                  ? const HomeRefreshRequested()
-                  : const HomeFetchStarted(),
-            ),
-        ),
-        BlocProvider(create: (_) => HomeSectionsCubit()),
+        BlocProvider.value(value: _homeBloc),
+        BlocProvider.value(value: _sectionsCubit),
       ],
       child: const _HomeBody(),
     );

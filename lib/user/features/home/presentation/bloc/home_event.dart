@@ -10,6 +10,10 @@ class HomeFetchStarted extends HomeEvent {
 }
 
 class HomeRefreshRequested extends HomeEvent {
-  const HomeRefreshRequested();
-  @override List<Object> get props => [];
+  /// When true, keeps the current list visible while refetching (tab reselect).
+  final bool silent;
+
+  const HomeRefreshRequested({this.silent = false});
+
+  @override List<Object> get props => [silent];
 }

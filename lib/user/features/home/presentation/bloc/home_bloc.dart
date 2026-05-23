@@ -1,4 +1,3 @@
-import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/constants/storage_keys.dart';
@@ -30,7 +29,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   Future<void> _onFetch(HomeEvent event, Emitter<HomeState> emit) async {
-    emit(const HomeLoading());
+    final silent =
+        event is HomeRefreshRequested && event.silent && state is HomeLoaded;
+
+    if (!silent) {
+      emit(const HomeLoading());
+    }
 
     final mineResult = await _listProjectsUseCase(scope: 'mine');
 
@@ -57,6 +61,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     final mine = mineResult.fold((_) => null, (List<Project> v) => v);
     if (mine == null) {
+      if (silent) return;
       final failure = mineResult.fold((f) => f, (_) => null);
       emit(HomeError(
         message: failure == null

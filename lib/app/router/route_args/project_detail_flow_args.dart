@@ -152,6 +152,8 @@ class MemberDetailRouteArgs<T> {
   final ProjectDetailEntity? project;
   /// Leader or co-leader: moderation tools (overdue, borrow context).
   final bool isLeaderView;
+  /// Called after co-leader assign/remove so project detail can reload members.
+  final VoidCallback? onProjectMembersChanged;
 
   const MemberDetailRouteArgs({
     required this.member,
@@ -159,6 +161,7 @@ class MemberDetailRouteArgs<T> {
     required this.projectName,
     this.project,
     this.isLeaderView = false,
+    this.onProjectMembersChanged,
   });
 }
 
@@ -173,6 +176,14 @@ class MemberPenaltyActionRouteArgs<T> {
     required this.projectId,
     this.project,
   });
+}
+
+/// Popped from [MemberDetailScreen] — tells callers how to update the stack.
+enum MemberDetailPopResult {
+  /// Member was removed — pop group-members (if open) and refresh project detail.
+  memberRemoved,
+  /// Co-leader changed — refresh project detail when caller handles the result.
+  membersUpdated,
 }
 
 /// Popped from penalty screen after a successful remove / mark-defaulted action.

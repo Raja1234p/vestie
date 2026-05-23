@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/common/app_avatar_circle.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/common/app_svg_icon.dart';
@@ -117,64 +116,29 @@ class MemberLeaderRoleButton extends StatelessWidget {
     if (isCoLeader) {
       return AppButton(
         text: AppStrings.btnRemoveCoLeader,
-        onPressed: isLoading ? null : onTap,
+        onPressed: onTap,
         isLoading: isLoading,
         width: 145.w,
-        height: 44.h,
+        height: 41.h,
+        labelFontSize: 14.sp,
         hasShadow: false,
-        color: AppColors.red800,
+        color: AppColors.red700,
+        borderColor: AppColors.red900,
         useGradient: false,
       );
     }
 
-    return _MakeCoLeaderButton(
-      onTap: isLoading ? null : onTap,
+    return AppButton(
+      text: AppStrings.btnMakeCoLeader,
+      onPressed: onTap,
       isLoading: isLoading,
-    );
-  }
-}
-
-/// Figma — fill #4C24A0, white label 14 / w600, padding 12×14.
-class _MakeCoLeaderButton extends StatelessWidget {
-  final VoidCallback? onTap;
-  final bool isLoading;
-
-  const _MakeCoLeaderButton({
-    this.onTap,
-    this.isLoading = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final radius = BorderRadius.circular(100.r);
-
-    return Material(
-      color: AppColors.purple900,
-      borderRadius: radius,
-      child: InkWell(
-        onTap: isLoading ? null : onTap,
-        borderRadius: radius,
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 14.w),
-          child: isLoading
-              ? SizedBox(
-                  width: 20.w,
-                  height: 20.w,
-                  child: const CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: AppColors.surface,
-                  ),
-                )
-              : AppText(
-                  AppStrings.btnMakeCoLeader,
-                  style: AppTextStyles.labelLarge.copyWith(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.surface,
-                  ),
-                ),
-        ),
-      ),
+      width: 142.w,
+      height: 41.h,
+      labelFontSize: 14.sp,
+      hasShadow: false,
+      color: AppColors.purple800,
+      borderColor: AppColors.purple900,
+      useGradient: false,
     );
   }
 }

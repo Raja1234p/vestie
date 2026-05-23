@@ -123,17 +123,18 @@ class _InvestmentProjectDetailBodyState
                   isCompleted || _previewCompletedInvestment;
 
               Future<void> openMemberDetail(MemberEntity member) async {
-                final refreshed =
+                final result =
                     await ProjectDetailNavigationHelpers.openMemberProfile(
                   context,
                   project: project,
                   member: member,
                 );
-                if (refreshed == true && context.mounted) {
-                  context.read<ProjectDetailBloc>().add(
-                        LoadProjectDetailEvent(projectId: widget.projectId),
-                      );
-                }
+                ProjectDetailNavigationHelpers
+                    .refreshProjectDetailAfterMemberFlow(
+                  context,
+                  projectId: widget.projectId,
+                  result: result,
+                );
               }
 
               return RefreshIndicator(

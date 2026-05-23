@@ -93,14 +93,19 @@ class DiscoverCubit extends Cubit<DiscoverState> {
 
   bool _loadStarted = false;
 
-  void loadIfNeeded() {
+  /// Loads on first visit; refetches when the Discover tab is selected again.
+  void onTabActivated() {
     if (_reloadDiscoverRequested && !_consumedShellReload) {
       _consumedShellReload = true;
       _loadStarted = false;
     }
-    if (_loadStarted) return;
-    _loadStarted = true;
-    _load();
+    if (!_loadStarted) {
+      _loadStarted = true;
+      _load();
+      return;
+    }
+    if (state.loading) return;
+    refresh(silent: state.allProjects.isNotEmpty);
   }
 
   Future<void> _load({bool showLoadingIndicator = true}) async {

@@ -54,6 +54,7 @@ class DashboardScreen extends StatelessWidget {
                 children: [
                   HomeScreen(
                     key: homeTabKey(shellArgs),
+                    activate: index == 0,
                     reloadHomeProjectList: shellArgs.reloadHomeProjectList,
                   ),
                   DiscoverScreen(

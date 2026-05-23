@@ -6,10 +6,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 
 
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/error/failure_mapper.dart';
 import '../../../../core/error/failures.dart';
 
 import '../../domain/entities/member_activity_entity.dart';
+import '../../domain/entities/member_entity_extensions.dart';
 
 import '../../domain/usecases/get_member_activity_usecase.dart';
 
@@ -41,6 +43,12 @@ class MemberDetailState extends Equatable {
 
   final MemberDetailAction? completedAction;
 
+  final bool projectMembersChanged;
+
+  final bool vffRequestSent;
+
+  final bool isVffRequestLoading;
+
 
 
   const MemberDetailState({
@@ -58,6 +66,12 @@ class MemberDetailState extends Equatable {
     this.failure,
 
     this.completedAction,
+
+    this.projectMembersChanged = false,
+
+    this.vffRequestSent = false,
+
+    this.isVffRequestLoading = false,
 
   });
 
@@ -89,6 +103,12 @@ class MemberDetailState extends Equatable {
 
     MemberDetailAction? completedAction,
 
+    bool? projectMembersChanged,
+
+    bool? vffRequestSent,
+
+    bool? isVffRequestLoading,
+
     bool clearLoadError = false,
 
     bool clearFailure = false,
@@ -119,6 +139,16 @@ class MemberDetailState extends Equatable {
 
           clearCompleted ? null : (completedAction ?? this.completedAction),
 
+      projectMembersChanged:
+
+          projectMembersChanged ?? this.projectMembersChanged,
+
+      vffRequestSent: vffRequestSent ?? this.vffRequestSent,
+
+      isVffRequestLoading:
+
+          isVffRequestLoading ?? this.isVffRequestLoading,
+
     );
 
   }
@@ -143,6 +173,12 @@ class MemberDetailState extends Equatable {
 
         completedAction,
 
+        projectMembersChanged,
+
+        vffRequestSent,
+
+        isVffRequestLoading,
+
       ];
 
 }
@@ -155,17 +191,13 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
 
     required GetMemberActivityUseCase getMemberActivityUseCase,
 
-    required AssignCoLeaderUseCase assignCoLeaderUseCase,
-
-    required RemoveCoLeaderUseCase removeCoLeaderUseCase,
+    required UpdateCoLeaderRoleUseCase updateCoLeaderRoleUseCase,
 
     required RemoveMemberUseCase removeMemberUseCase,
 
   })  : _getMemberActivityUseCase = getMemberActivityUseCase,
 
-        _assignCoLeaderUseCase = assignCoLeaderUseCase,
-
-        _removeCoLeaderUseCase = removeCoLeaderUseCase,
+        _updateCoLeaderRoleUseCase = updateCoLeaderRoleUseCase,
 
         _removeMemberUseCase = removeMemberUseCase,
 
@@ -175,9 +207,7 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
 
   final GetMemberActivityUseCase _getMemberActivityUseCase;
 
-  final AssignCoLeaderUseCase _assignCoLeaderUseCase;
-
-  final RemoveCoLeaderUseCase _removeCoLeaderUseCase;
+  final UpdateCoLeaderRoleUseCase _updateCoLeaderRoleUseCase;
 
   final RemoveMemberUseCase _removeMemberUseCase;
 
@@ -244,6 +274,10 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
       },
       (activity) {
         ok = true;
+        final apiUserId = activity.member.apiUserId.trim();
+        if (apiUserId.isNotEmpty) {
+          _userId = apiUserId;
+        }
         emit(
           state.copyWith(
             loadStatus: MemberDetailLoadStatus.loaded,
@@ -258,27 +292,43 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
 
 
 
+  /// Sends a VFF request in place — UI switches to “VFF Request Sent” (no navigation).
+  Future<void> sendVffRequest() async {
+    if (state.vffRequestSent || state.isVffRequestLoading) return;
+
+    emit(state.copyWith(isVffRequestLoading: true, clearFailure: true));
+
+    // TODO: wire member VFF request API when available (profile flow is local today).
+    await Future<void>.delayed(Duration.zero);
+
+    if (isClosed) return;
+    emit(
+      state.copyWith(
+        isVffRequestLoading: false,
+        vffRequestSent: true,
+      ),
+    );
+  }
+
   Future<void> assignCoLeader({
 
     required String projectId,
 
     required String userId,
 
-  }) =>
+  }) {
 
-      _run(
+    return _setCoLeaderRole(
 
-        action: MemberDetailAction.assignCoLeader,
+      projectId: projectId,
 
-        task: () => _assignCoLeaderUseCase(
+      userId: userId,
 
-          projectId: projectId,
+      assign: true,
 
-          userId: userId,
+    );
 
-        ),
-
-      );
+  }
 
 
 
@@ -288,21 +338,63 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
 
     required String userId,
 
-  }) =>
+  }) {
 
-      _run(
+    return _setCoLeaderRole(
 
-        action: MemberDetailAction.removeCoLeader,
+      projectId: projectId,
 
-        task: () => _removeCoLeaderUseCase(
+      userId: userId,
 
-          projectId: projectId,
+      assign: false,
 
-          userId: userId,
+    );
 
+  }
+
+
+
+  Future<void> _setCoLeaderRole({
+
+    required String projectId,
+
+    required String userId,
+
+    required bool assign,
+
+  }) async {
+    final resolvedUserId = userId.trim().isNotEmpty
+        ? userId.trim()
+        : (_userId ?? '').trim();
+    if (resolvedUserId.isEmpty) {
+      emit(
+        state.copyWith(
+          failure: const ServerFailure(AppStrings.errorGeneric),
         ),
-
       );
+      return;
+    }
+
+    await _run(
+
+      action: assign
+
+          ? MemberDetailAction.assignCoLeader
+
+          : MemberDetailAction.removeCoLeader,
+
+      task: () => _updateCoLeaderRoleUseCase(
+
+        projectId: projectId,
+
+        userId: resolvedUserId,
+
+        assign: assign,
+
+      ),
+
+    );
+  }
 
 
 
@@ -376,11 +468,15 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
         if (action != MemberDetailAction.removeMember) {
           await refresh();
         }
+        final coLeaderChanged = action == MemberDetailAction.assignCoLeader ||
+            action == MemberDetailAction.removeCoLeader;
         emit(
           state.copyWith(
             isActionLoading: false,
             loadingAction: null,
             completedAction: action,
+            projectMembersChanged:
+                coLeaderChanged || state.projectMembersChanged,
           ),
         );
       },

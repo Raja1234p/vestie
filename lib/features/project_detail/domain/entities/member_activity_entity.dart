@@ -19,6 +19,7 @@ class MemberActivityTransactionEntity {
 /// `GET /projects/{projectId}/members/{userId}/activity`
 class MemberActivityEntity {
   final MemberEntity member;
+  final bool isCoLeader;
   final double totalContributed;
   final int contributionCount;
   final double totalBorrowed;
@@ -28,6 +29,7 @@ class MemberActivityEntity {
 
   const MemberActivityEntity({
     required this.member,
+    this.isCoLeader = false,
     required this.totalContributed,
     required this.contributionCount,
     required this.totalBorrowed,

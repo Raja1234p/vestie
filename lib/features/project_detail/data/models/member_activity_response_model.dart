@@ -8,6 +8,7 @@ import '../../domain/entities/viewer_membership_role.dart';
 
 class MemberActivityResponseModel {
   final MemberEntity member;
+  final bool isCoLeader;
   final double totalContributed;
   final int contributionCount;
   final double totalBorrowed;
@@ -17,6 +18,7 @@ class MemberActivityResponseModel {
 
   const MemberActivityResponseModel({
     required this.member,
+    this.isCoLeader = false,
     required this.totalContributed,
     required this.contributionCount,
     required this.totalBorrowed,
@@ -51,7 +53,8 @@ class MemberActivityResponseModel {
       const ['overdueAmount', 'totalOverdue', 'overdueBorrowAmount'],
     );
 
-    final member = _mapMember(json, summary, overdueAmount);
+    final isCoLeader = _readIsCoLeader(json);
+    final member = _mapMember(json, summary, overdueAmount, isCoLeader: isCoLeader);
     final transactions = _transactionMaps(json)
         .map(
           (row) => _mapTransaction(
@@ -63,6 +66,7 @@ class MemberActivityResponseModel {
 
     return MemberActivityResponseModel(
       member: member,
+      isCoLeader: isCoLeader,
       totalContributed: totalContributed,
       contributionCount: contributionCount,
       totalBorrowed: totalBorrowed,
@@ -74,6 +78,7 @@ class MemberActivityResponseModel {
 
   MemberActivityEntity toEntity() => MemberActivityEntity(
         member: member,
+        isCoLeader: isCoLeader,
         totalContributed: totalContributed,
         contributionCount: contributionCount,
         totalBorrowed: totalBorrowed,
@@ -150,11 +155,28 @@ class MemberActivityResponseModel {
     return 0;
   }
 
+  static bool _readIsCoLeader(Map<String, dynamic> json) {
+    if (json.containsKey('isCoLeader')) {
+      return json.safeBool('isCoLeader');
+    }
+    final nested = _nested(json, const [
+      'membership',
+      'member',
+      'viewerMembership',
+      'profile',
+    ]);
+    if (nested != null && nested.containsKey('isCoLeader')) {
+      return nested.safeBool('isCoLeader');
+    }
+    return false;
+  }
+
   static MemberEntity _mapMember(
     Map<String, dynamic> json,
     Map<String, dynamic> summary,
-    double? overdueAmount,
-  ) {
+    double? overdueAmount, {
+    required bool isCoLeader,
+  }) {
     final nested = _nested(json, const [
       'membership',
       'member',
@@ -197,6 +219,10 @@ class MemberActivityResponseModel {
             ViewerMembershipRole.member => MemberRole.member,
           };
 
+    final role = mappedRole == MemberRole.leader
+        ? MemberRole.leader
+        : (isCoLeader ? MemberRole.coLeader : MemberRole.member);
+
     final contributed = _readDouble(
       summary,
       const ['totalContributed', 'contributedTotal'],
@@ -210,7 +236,7 @@ class MemberActivityResponseModel {
       name: displayName,
       username: userName,
       status: profile.safeString('status'),
-      role: mappedRole,
+      role: role,
       contributedAmount: contributed,
       overdueAmount: overdueAmount,
     );

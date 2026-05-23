@@ -273,14 +273,14 @@ Future<void> _openMemberProfile(
   required ProjectDetailEntity project,
   required MemberEntity member,
 }) async {
-  final refreshed = await ProjectDetailNavigationHelpers.openMemberProfile(
+  final result = await ProjectDetailNavigationHelpers.openMemberProfile(
     context,
     project: project,
     member: member,
   );
-  if (refreshed == true && context.mounted) {
-    context.read<ProjectDetailBloc>().add(
-          LoadProjectDetailEvent(projectId: project.id),
-        );
-  }
+  ProjectDetailNavigationHelpers.refreshProjectDetailAfterMemberFlow(
+    context,
+    projectId: project.id,
+    result: result,
+  );
 }

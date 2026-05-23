@@ -30,9 +30,10 @@ extension ProjectCategoryX on ProjectCategory {
 
   bool get isInvestment => this == ProjectCategory.investment;
 
-  /// Co-leader role is supported on Vacation and Investment groups only.
+  /// Co-leader role is supported on Vacation and Emergency groups only.
   bool get supportsCoLeader =>
-      this == ProjectCategory.vacations || isInvestment;
+      this == ProjectCategory.vacations ||
+      this == ProjectCategory.emergency;
 
   /// Label used in project detail chips/content.
   /// Kept explicit to preserve current UI copy exactly.

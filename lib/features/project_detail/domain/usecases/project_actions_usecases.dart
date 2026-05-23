@@ -53,6 +53,22 @@ class RemoveCoLeaderUseCase {
   }
 }
 
+/// Assign (`POST`) or remove (`DELETE`) co-leader on the same member co-leader endpoint.
+class UpdateCoLeaderRoleUseCase {
+  final ProjectActionsRepository repository;
+  UpdateCoLeaderRoleUseCase(this.repository);
+
+  Future<Either<Failure, void>> call({
+    required String projectId,
+    required String userId,
+    required bool assign,
+  }) {
+    return assign
+        ? repository.promoteToCoLeader(projectId, userId)
+        : repository.demoteCoLeader(projectId, userId);
+  }
+}
+
 class RemoveMemberUseCase {
   final ProjectActionsRepository repository;
   RemoveMemberUseCase(this.repository);

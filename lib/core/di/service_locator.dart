@@ -123,6 +123,7 @@ class ServiceLocator {
   late final CreateInviteUseCase createInviteUseCase;
   late final AssignCoLeaderUseCase assignCoLeaderUseCase;
   late final RemoveCoLeaderUseCase removeCoLeaderUseCase;
+  late final UpdateCoLeaderRoleUseCase updateCoLeaderRoleUseCase;
   late final RemoveMemberUseCase removeMemberUseCase;
   late final GetMemberActivityUseCase getMemberActivityUseCase;
   late final MarkDefaultedUseCase markDefaultedUseCase;
@@ -219,6 +220,7 @@ class ServiceLocator {
     createInviteUseCase = CreateInviteUseCase(projectActionsRepository);
     assignCoLeaderUseCase = AssignCoLeaderUseCase(projectActionsRepository);
     removeCoLeaderUseCase = RemoveCoLeaderUseCase(projectActionsRepository);
+    updateCoLeaderRoleUseCase = UpdateCoLeaderRoleUseCase(projectActionsRepository);
     removeMemberUseCase = RemoveMemberUseCase(projectActionsRepository);
     getMemberActivityUseCase = GetMemberActivityUseCase(projectActionsRepository);
     markDefaultedUseCase = MarkDefaultedUseCase(projectActionsRepository);

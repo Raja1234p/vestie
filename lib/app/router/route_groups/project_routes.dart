@@ -108,6 +108,7 @@ List<RouteBase> buildProjectRoutes({
           projectName: extra.projectName,
           project: extra.project,
           isLeaderView: extra.isLeaderView,
+          onProjectMembersChanged: extra.onProjectMembersChanged,
         );
       },
     ),

@@ -893,7 +893,7 @@ class AppStrings {
   static const String contributionsLabel        = 'Contributions';
   static const String borrowedLabelShort        = 'Borrowed';
   static const String btnMakeCoLeader           = 'Make Co-Leader';
-  static const String btnRemoveCoLeader         = 'Remove Role';
+  static const String btnRemoveCoLeader         = 'Remove Co-Leader';
   static const String btnTakeAction             = 'Take Action';
   static const String btnRemoveMember           = 'Remove Member';
   static String memberOverdueBorrowNotice(int overdueBorrowCount) {

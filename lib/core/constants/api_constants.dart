@@ -41,6 +41,10 @@ class ApiConstants {
   static String projectMemberRemoveNonRepayment(String projectId, String userId) =>
       '$projects/$projectId/members/$userId/remove-non-repayment';
 
+  /// `POST` assign / `DELETE` remove — `/projects/{projectId}/members/{userId}/co-leader`
+  static String projectMemberCoLeader(String projectId, String userId) =>
+      '$projects/$projectId/members/$userId/co-leader';
+
   // ── Contributions ────────────────────────────────────────────────────────
   static const String contributions = '/contributions';
 

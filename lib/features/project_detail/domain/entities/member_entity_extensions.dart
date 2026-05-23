@@ -36,7 +36,7 @@ extension MemberEntityApiIds on MemberEntity {
       name: useApiName ? fromApi.name : name,
       username: fromApi.username.trim().isNotEmpty ? fromApi.username : username,
       status: fromApi.status.trim().isNotEmpty ? fromApi.status : status,
-      role: role,
+      role: fromApi.role,
       contributedAmount: fromApi.contributedAmount,
       overdueAmount: fromApi.overdueAmount ?? overdueAmount,
     );

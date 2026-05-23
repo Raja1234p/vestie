@@ -8,6 +8,7 @@ import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
+import 'package:vestie/app/router/route_args/project_detail_flow_args.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_member_row.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_members_empty_state.dart';
@@ -28,6 +29,29 @@ class GroupMembersScreen extends StatelessWidget {
   List<MemberEntity> get _activeMembers => members
       .where((m) => !m.status.toLowerCase().contains('pending'))
       .toList(growable: false);
+
+  Future<void> _openMemberProfile(
+    BuildContext context, {
+    required ProjectDetailEntity project,
+    required MemberEntity member,
+  }) async {
+    final result = await ProjectDetailNavigationHelpers.openMemberProfile(
+      context,
+      project: project,
+      member: member,
+    );
+    if (!context.mounted || result == null) return;
+
+    if (result == MemberDetailPopResult.memberRemoved) {
+      context.pop();
+      if (!context.mounted) return;
+      ProjectDetailNavigationHelpers.refreshProjectDetailAfterMemberFlow(
+        context,
+        projectId: project.id,
+        result: result,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,9 +86,7 @@ class GroupMembersScreen extends StatelessWidget {
                               member: member,
                               project: p,
                               onTap: p != null && p.canReviewMemberProfiles
-                                  ? (_) =>
-                                      ProjectDetailNavigationHelpers
-                                          .openMemberProfile(
+                                  ? (_) => _openMemberProfile(
                                         context,
                                         project: p,
                                         member: member,

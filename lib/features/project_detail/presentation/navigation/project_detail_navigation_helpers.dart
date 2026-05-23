@@ -48,20 +48,21 @@ class ProjectDetailNavigationHelpers {
 
   static MemberDetailRouteArgs memberDetailArgs(
     ProjectDetailEntity project,
-    MemberEntity member,
-  ) {
+    MemberEntity member, {
+    VoidCallback? onProjectMembersChanged,
+  }) {
     return MemberDetailRouteArgs(
       member: member,
       projectId: project.id,
       projectName: project.name,
       project: project,
       isLeaderView: project.isModeratorView,
+      onProjectMembersChanged: onProjectMembersChanged,
     );
   }
 
   /// Member / CoLeader / GroupLeader — opens project member profile.
-  /// Returns `true` when co-leader / remove-member / penalty-remove succeeded (caller may reload).
-  static Future<bool?> openMemberProfile(
+  static Future<MemberDetailPopResult?> openMemberProfile(
     BuildContext context, {
     required ProjectDetailEntity project,
     required MemberEntity member,
@@ -70,10 +71,42 @@ class ProjectDetailNavigationHelpers {
       AppSnackBar.showError(context, AppStrings.errorForbidden);
       return null;
     }
-    return context.push<bool>(
+    void reloadProjectDetail() {
+      if (!context.mounted) return;
+      try {
+        context.read<ProjectDetailBloc>().add(
+          LoadProjectDetailEvent(projectId: project.id),
+        );
+      } on ProviderNotFoundException {
+        // Member profile opened outside project detail (no bloc in tree).
+      }
+    }
+
+    return context.push<MemberDetailPopResult>(
       AppRoutes.memberDetail,
-      extra: memberDetailArgs(project, member),
+      extra: memberDetailArgs(
+        project,
+        member,
+        onProjectMembersChanged: reloadProjectDetail,
+      ),
     );
+  }
+
+  /// Reloads project detail when [result] indicates membership changed.
+  static void refreshProjectDetailAfterMemberFlow(
+    BuildContext context, {
+    required String projectId,
+    required MemberDetailPopResult? result,
+  }) {
+    if (result == null) return;
+    if (!context.mounted) return;
+    try {
+      context.read<ProjectDetailBloc>().add(
+            LoadProjectDetailEvent(projectId: projectId),
+          );
+    } on ProviderNotFoundException {
+      // Opened outside project detail.
+    }
   }
 
   /// VFF peer profile — prototype lookup until project-member VFF API exists.

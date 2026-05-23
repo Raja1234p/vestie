@@ -22,6 +22,8 @@ class AppButton extends StatelessWidget {
   final double? width;
   final double? height;
   final Color? color;
+  /// Stroke on flat primary buttons ([useGradient] false).
+  final Color? borderColor;
   final Color? secondaryBorderColor;
   final Color? secondaryLabelColor;
   final FontWeight? secondaryLabelFontWeight;
@@ -43,6 +45,7 @@ class AppButton extends StatelessWidget {
     this.width,
     this.height,
     this.color,
+    this.borderColor,
     this.secondaryBorderColor,
     this.secondaryLabelColor,
     this.secondaryLabelFontWeight,
@@ -54,12 +57,15 @@ class AppButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isEnabled = onPressed != null;
-    final bool showPrimaryShadow = isEnabled && hasShadow && !isSecondary && useGradient;
+    /// Keep fill/border while [isLoading] — disabled styling only when truly inactive.
+    final bool useActiveStyle = isEnabled || isLoading;
+    final bool showPrimaryShadow =
+        useActiveStyle && hasShadow && !isSecondary && useGradient;
     final theme = Theme.of(context);
     final radius = BorderRadius.circular(borderRadius ?? 999.r);
 
     // Default primary gradient
-    final gradient = isEnabled && !isSecondary && useGradient
+    final gradient = useActiveStyle && !isSecondary && useGradient
         ? const LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -74,7 +80,7 @@ class AppButton extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           gradient: gradient,
-          color: isEnabled
+          color: useActiveStyle
               ? (isSecondary
                   ? (secondaryFillColor ?? Colors.transparent)
                   : (gradient == null ? (color ?? AppColors.primary) : null))
@@ -85,7 +91,7 @@ class AppButton extends StatelessWidget {
                   color: secondaryBorderColor ?? AppColors.primary,
                   width: 1.w,
                 )
-              : !isEnabled
+              : !useActiveStyle
                   ? Border.all(
                       color: AppColors.grey400,
                       width: 1.w,
@@ -96,7 +102,7 @@ class AppButton extends StatelessWidget {
                           width: 1.w,
                         )
                       : Border.all(
-                          color: Colors.transparent,
+                          color: borderColor ?? Colors.transparent,
                           width: 1.w,
                         ),
           boxShadow: showPrimaryShadow ? AppShadows.primaryButton : null,

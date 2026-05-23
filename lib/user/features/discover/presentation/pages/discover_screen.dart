@@ -51,7 +51,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
     super.initState();
     if (widget.activate) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) _cubit.loadIfNeeded();
+        if (mounted) _cubit.onTabActivated();
       });
     }
   }
@@ -60,7 +60,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
   void didUpdateWidget(covariant DiscoverScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.activate && !oldWidget.activate) {
-      _cubit.loadIfNeeded();
+      _cubit.onTabActivated();
     }
   }
 

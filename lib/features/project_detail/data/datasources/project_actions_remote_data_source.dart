@@ -119,12 +119,12 @@ class ProjectActionsRemoteDataSourceImpl implements ProjectActionsRemoteDataSour
 
   @override
   Future<void> promoteToCoLeader(String projectId, String userId) async {
-    await apiClient.post('${ApiConstants.projects}/$projectId/members/$userId/co-leader');
+    await apiClient.post(ApiConstants.projectMemberCoLeader(projectId, userId));
   }
 
   @override
   Future<void> demoteCoLeader(String projectId, String userId) async {
-    await apiClient.delete('${ApiConstants.projects}/$projectId/members/$userId/co-leader');
+    await apiClient.delete(ApiConstants.projectMemberCoLeader(projectId, userId));
   }
 
   @override
