@@ -32,31 +32,28 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   Future<void> _onFetch(HomeEvent event, Emitter<HomeState> emit) async {
     emit(const HomeLoading());
 
-    final results = await Future.wait<Object>([
-      _listProjectsUseCase(scope: 'mine'),
-      _getMeUseCase(),
-    ]);
+    final mineResult = await _listProjectsUseCase(scope: 'mine');
 
-    final mineResult = results[0] as Either<Failure, List<Project>>;
-    final meResult = results[1] as Either<Failure, User>;
-
-    meResult.fold(
-      (_) {},
-      (User user) {
-        final userName = user.userName.isNotEmpty
-            ? user.userName
-            : (user.email.contains('@')
-                ? user.email.split('@').first
-                : '');
-        ServiceLocator.instance.sharedPrefs
-            .saveString(StorageKeys.userName, user.name);
-        ServiceLocator.instance.sharedPrefs
-            .saveString(StorageKeys.userEmail, user.email);
-        ServiceLocator.instance.sharedPrefs
-            .saveString(StorageKeys.userUsername, userName);
-        DashboardPrefetch.markUserMeLoaded();
-      },
-    );
+    if (!DashboardPrefetch.userMeLoadedOnDashboard) {
+      final meResult = await _getMeUseCase();
+      meResult.fold(
+        (_) {},
+        (User user) {
+          final userName = user.userName.isNotEmpty
+              ? user.userName
+              : (user.email.contains('@')
+                  ? user.email.split('@').first
+                  : '');
+          ServiceLocator.instance.sharedPrefs
+              .saveString(StorageKeys.userName, user.name);
+          ServiceLocator.instance.sharedPrefs
+              .saveString(StorageKeys.userEmail, user.email);
+          ServiceLocator.instance.sharedPrefs
+              .saveString(StorageKeys.userUsername, userName);
+          DashboardPrefetch.markUserMeLoaded();
+        },
+      );
+    }
 
     final mine = mineResult.fold((_) => null, (List<Project> v) => v);
     if (mine == null) {
