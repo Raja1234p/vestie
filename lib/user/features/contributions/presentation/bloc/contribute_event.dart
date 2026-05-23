@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:vestie/app/router/route_args/project_wallet_flow_args.dart';
+import 'package:vestie/features/profile/domain/entities/payment_card.dart';
 
 abstract class ContributeEvent extends Equatable {
   const ContributeEvent();
@@ -41,6 +42,19 @@ class AmountChangedEvent extends ContributeEvent {
 
   @override
   List<Object?> get props => [projectId, amount];
+}
+
+class ContributePaymentMethodSelectedEvent extends ContributeEvent {
+  final PaymentCard? card;
+  final bool payFromWallet;
+
+  const ContributePaymentMethodSelectedEvent({
+    this.card,
+    required this.payFromWallet,
+  });
+
+  @override
+  List<Object?> get props => [card, payFromWallet];
 }
 
 class ConfirmSubmitEvent extends ContributeEvent {

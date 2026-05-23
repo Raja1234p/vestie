@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import '../../domain/entities/contribution_preview_entity.dart';
 import 'package:vestie/core/error/failures.dart';
 import 'package:vestie/app/router/route_args/project_wallet_flow_args.dart';
+import 'package:vestie/features/profile/domain/entities/payment_card.dart';
 
 enum ContributeStep { amount, confirm, success }
 
@@ -14,6 +15,8 @@ class ContributeState extends Equatable {
   final bool isSubmitLoading;
   final bool isConfigLoading;
   final String selectedWalletId;
+  final PaymentCard? selectedCard;
+  final bool payFromWallet;
   final ContributionPreviewEntity? preview;
   final Failure? previewFailure;
   final Failure? submitFailure;
@@ -28,6 +31,8 @@ class ContributeState extends Equatable {
     this.isSubmitLoading = false,
     this.isConfigLoading = false,
     this.selectedWalletId = '',
+    this.selectedCard,
+    this.payFromWallet = true,
     this.preview,
     this.previewFailure,
     this.submitFailure,
@@ -43,6 +48,9 @@ class ContributeState extends Equatable {
     bool? isSubmitLoading,
     bool? isConfigLoading,
     String? selectedWalletId,
+    PaymentCard? selectedCard,
+    bool? payFromWallet,
+    bool clearSelectedCard = false,
     ContributionPreviewEntity? preview,
     Failure? previewFailure,
     Failure? submitFailure,
@@ -60,6 +68,9 @@ class ContributeState extends Equatable {
       isSubmitLoading: isSubmitLoading ?? this.isSubmitLoading,
       isConfigLoading: isConfigLoading ?? this.isConfigLoading,
       selectedWalletId: selectedWalletId ?? this.selectedWalletId,
+      selectedCard:
+          clearSelectedCard ? null : (selectedCard ?? this.selectedCard),
+      payFromWallet: payFromWallet ?? this.payFromWallet,
       preview: clearPreview ? null : (preview ?? this.preview),
       previewFailure: clearPreviewFailure ? null : (previewFailure ?? this.previewFailure),
       submitFailure: clearSubmitFailure ? null : (submitFailure ?? this.submitFailure),
@@ -86,6 +97,20 @@ class ContributeState extends Equatable {
 
   bool get canSubmit => preview != null && !isPreviewLoading && previewFailure == null;
 
+  double get walletBalance => args?.walletBalance ?? 0;
+
+  double get totalDeductionValue =>
+      preview?.totalDeduction ?? (amountValue + vestieFee);
+
+  bool walletCovers(double amount) => walletBalance >= amount;
+
+  bool get walletCoversTotal => walletCovers(totalDeductionValue);
+
+  bool get walletCoversContribution => walletCovers(amountValue);
+
+  /// User can pick a card when wallet cannot cover the confirm total.
+  bool get canPickPaymentMethod => !walletCoversTotal;
+
   @override
   List<Object?> get props => [
         args,
@@ -96,6 +121,8 @@ class ContributeState extends Equatable {
         isSubmitLoading,
         isConfigLoading,
         selectedWalletId,
+        selectedCard,
+        payFromWallet,
         preview,
         previewFailure,
         submitFailure,

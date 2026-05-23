@@ -4,8 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/widgets/common/app_payment_method_pill.dart';
+import 'package:vestie/features/profile/domain/entities/payment_method_selection.dart';
 import 'package:vestie/core/utils/app_snackbar.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
@@ -13,7 +16,6 @@ import 'package:vestie/core/widgets/common/app_stacked_currency_field.dart';
 import 'package:vestie/core/widgets/common/app_success_screen.dart';
 import 'package:vestie/core/widgets/common/app_text.dart';
 import 'package:vestie/core/widgets/common/app_tick_switch.dart';
-import 'package:vestie/core/widgets/common/app_wallet_balance_chip.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
@@ -104,7 +106,6 @@ class _ContributeAmountViewState extends State<_ContributeAmountView> {
         final bloc = context.read<ContributeBloc>();
         _syncAmountFieldFromState(state.amountDigits);
         final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
-        final walletFormatted = state.args?.walletAmountFormatted ?? '0';
 
         return Scaffold(
           resizeToAvoidBottomInset: true,
@@ -156,8 +157,9 @@ class _ContributeAmountViewState extends State<_ContributeAmountView> {
                                 ),
                               ),
                               SizedBox(height: 12.h),
-                              AppWalletBalanceChip(
-                                formattedBalance: walletFormatted,
+                              _ContributePaymentPill(
+                                state: state,
+                                forConfirm: false,
                               ),
                             ],
                           ),
@@ -192,8 +194,6 @@ class _ContributeConfirmView extends StatelessWidget {
   Widget build(BuildContext context) {
     final bloc = context.read<ContributeBloc>();
     final args = state.args;
-    final walletFormatted = args?.walletAmountFormatted ?? '0';
-
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: PostAuthGradientBackground(
@@ -217,10 +217,9 @@ class _ContributeConfirmView extends StatelessWidget {
                   _card(
                     _paymentRow(
                       '${AppStrings.labelPaymentFrom}:',
-                      AppWalletBalanceChip(
-                        formattedBalance: walletFormatted,
-                        backgroundColor: Colors.white,
-                        borderColor: AppColors.neutral400,
+                      _ContributePaymentPill(
+                        state: state,
+                        forConfirm: true,
                       ),
                     ),
                   ),
@@ -382,6 +381,62 @@ class _BreakdownDivider extends StatelessWidget {
     return Container(
       height: 1,
       color: AppColors.neutral400,
+    );
+  }
+}
+
+void _openContributePaymentPicker(BuildContext context, ContributeBloc bloc) {
+  context.push(AppRoutes.selectPaymentMethod).then((result) {
+    if (!context.mounted || result == null) return;
+    switch (result) {
+      case CardPaymentMethodSelection(:final card):
+        bloc.add(
+          ContributePaymentMethodSelectedEvent(
+            card: card,
+            payFromWallet: false,
+          ),
+        );
+      case WalletPaymentMethodSelection():
+        bloc.add(
+          const ContributePaymentMethodSelectedEvent(payFromWallet: true),
+        );
+    }
+  });
+}
+
+class _ContributePaymentPill extends StatelessWidget {
+  const _ContributePaymentPill({
+    required this.state,
+    required this.forConfirm,
+  });
+
+  final ContributeState state;
+  final bool forConfirm;
+
+  @override
+  Widget build(BuildContext context) {
+    final bloc = context.read<ContributeBloc>();
+    final walletFormatted = state.args?.walletAmountFormatted ?? '0';
+    final canPick = forConfirm
+        ? state.canPickPaymentMethod
+        : !state.walletCoversContribution && state.amountValue > 0;
+
+    if (!canPick && state.payFromWallet) {
+      return AppPaymentMethodPill.wallet(formattedBalance: walletFormatted);
+    }
+
+    if (!state.payFromWallet && state.selectedCard != null) {
+      return AppPaymentMethodPill.card(
+        card: state.selectedCard!,
+        showChevron: canPick,
+        onTap: canPick ? () => _openContributePaymentPicker(context, bloc) : null,
+      );
+    }
+
+    return AppPaymentMethodPill.wallet(
+      formattedBalance: walletFormatted,
+      showChevron: canPick,
+      onTap: canPick ? () => _openContributePaymentPicker(context, bloc) : null,
     );
   }
 }

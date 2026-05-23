@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:vestie/features/profile/domain/entities/payment_card.dart';
+import 'package:vestie/features/profile/domain/mock_profile_data.dart';
 import '../../domain/usecases/fetch_contribution_config_usecase.dart';
 import '../../domain/usecases/preview_contribution_usecase.dart';
 import '../../domain/usecases/confirm_contribution_usecase.dart';
@@ -41,6 +43,7 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
     });
 
     on<GoToConfirmEvent>(_onGoToConfirm);
+    on<ContributePaymentMethodSelectedEvent>(_onPaymentMethodSelected);
 
     on<AmountChangedEvent>(
       _onAmountChanged,
@@ -71,10 +74,45 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
     ));
     await Future<void>.delayed(const Duration(milliseconds: 400));
     if (isClosed) return;
+    final next = _paymentMethodForTotal(state);
     emit(state.copyWith(
       isPreviewLoading: false,
       step: ContributeStep.confirm,
+      selectedCard: next.$1,
+      payFromWallet: next.$2,
     ));
+  }
+
+  void _onPaymentMethodSelected(
+    ContributePaymentMethodSelectedEvent event,
+    Emitter<ContributeState> emit,
+  ) {
+    emit(state.copyWith(
+      selectedCard: event.card,
+      payFromWallet: event.payFromWallet,
+      clearSelectedCard: event.payFromWallet,
+    ));
+  }
+
+  /// When wallet cannot cover total, default to primary saved card.
+  (PaymentCard?, bool) _paymentMethodForTotal(ContributeState s) {
+    if (s.walletCoversTotal) {
+      return (null, true);
+    }
+    if (!s.payFromWallet && s.selectedCard != null) {
+      return (s.selectedCard, false);
+    }
+    final card = _defaultCard();
+    return (card, false);
+  }
+
+  PaymentCard? _defaultCard() {
+    final cards = MockProfileData.cards;
+    if (cards.isEmpty) return null;
+    for (final c in cards) {
+      if (c.isPrimary) return c;
+    }
+    return cards.first;
   }
 
   Future<void> _onAmountChanged(AmountChangedEvent event, Emitter<ContributeState> emit) async {

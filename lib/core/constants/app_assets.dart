@@ -141,6 +141,8 @@ class AppAssets {
   /// Generic heart glyph (lists, empty states); headers use [iconFavourite].
   static const String iconHeart = '$_iconPath/icon_heart.svg';
   static const String iconChevronDown = '$_iconPath/icon_chevron_down.svg';
+  /// Payment method pill dropdown (contribute confirm).
+  static const String iconChevronWallet = '$_iconPath/chevron-wallet.svg';
   static const String iconCopy = '$_iconPath/icon_copy.svg';
   static const String iconVisibility = '$_iconPath/icon_visibility.svg';
   static const String iconVisibilityOff = '$_iconPath/icon_visibility_off.svg';
