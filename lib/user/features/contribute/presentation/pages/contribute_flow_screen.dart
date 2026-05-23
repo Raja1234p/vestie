@@ -105,8 +105,6 @@ class _ContributeAmountViewState extends State<_ContributeAmountView> {
       builder: (context, state) {
         final bloc = context.read<ContributeBloc>();
         _syncAmountFieldFromState(state.amountDigits);
-        final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
-
         return Scaffold(
           resizeToAvoidBottomInset: true,
           backgroundColor: Colors.transparent,
@@ -126,20 +124,15 @@ class _ContributeAmountViewState extends State<_ContributeAmountView> {
                     builder: (context, constraints) {
                       return SingleChildScrollView(
                         controller: _scrollController,
-                        padding: EdgeInsets.fromLTRB(
-                          24.w,
-                          8.h,
-                          24.w,
-                          8.h + bottomInset,
-                        ),
+                        keyboardDismissBehavior:
+                            ScrollViewKeyboardDismissBehavior.onDrag,
+                        padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 8.h),
                         child: ConstrainedBox(
                           constraints: BoxConstraints(
                             minHeight: constraints.maxHeight,
                           ),
                           child: Column(
-                            mainAxisAlignment: bottomInset > 0
-                                ? MainAxisAlignment.start
-                                : MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               GestureDetector(

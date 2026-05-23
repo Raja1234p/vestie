@@ -72,10 +72,38 @@ class _BorrowAmountViewState extends State<_BorrowAmountView> {
       if (!mounted) return;
       _amountFieldFocus.requestFocus();
     });
+    _noteFocus.addListener(_onNoteFocusChanged);
+    _amountFieldFocus.addListener(_onAmountFocusChanged);
+  }
+
+  void _onAmountFocusChanged() {
+    if (!_amountFieldFocus.hasFocus) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_scrollController.hasClients) return;
+      _scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+      );
+    });
+  }
+
+  void _onNoteFocusChanged() {
+    if (!_noteFocus.hasFocus) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_scrollController.hasClients) return;
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+      );
+    });
   }
 
   @override
   void dispose() {
+    _noteFocus.removeListener(_onNoteFocusChanged);
+    _amountFieldFocus.removeListener(_onAmountFocusChanged);
     _noteFocus.dispose();
     _amountFieldFocus.dispose();
     _amountDigitsController.dispose();
@@ -111,8 +139,6 @@ class _BorrowAmountViewState extends State<_BorrowAmountView> {
         _syncAmountFieldFromState(state.amountDigits);
         _syncNoteFromState(state.note);
         final over = state.amountValue > state.args.borrowLimit;
-        final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
-
         return Scaffold(
           resizeToAvoidBottomInset: true,
           backgroundColor: Colors.transparent,
@@ -132,20 +158,15 @@ class _BorrowAmountViewState extends State<_BorrowAmountView> {
                     builder: (context, constraints) {
                       return SingleChildScrollView(
                         controller: _scrollController,
-                        padding: EdgeInsets.fromLTRB(
-                          24.w,
-                          8.h,
-                          24.w,
-                          8.h + bottomInset,
-                        ),
+                        keyboardDismissBehavior:
+                            ScrollViewKeyboardDismissBehavior.onDrag,
+                        padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 8.h),
                         child: ConstrainedBox(
                           constraints: BoxConstraints(
                             minHeight: constraints.maxHeight,
                           ),
                           child: Column(
-                            mainAxisAlignment: bottomInset > 0
-                                ? MainAxisAlignment.start
-                                : MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               GestureDetector(

@@ -163,28 +163,38 @@ class _AmountEntryBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Spacer(),
-        AppText(
-          subtitle,
-          textAlign: TextAlign.center,
-          style: GoogleFonts.lato(
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w500,
-            color: AppColors.grey700,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          padding: EdgeInsets.symmetric(horizontal: AppDimens.p24),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AppText(
+                  subtitle,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.lato(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.grey700,
+                  ),
+                ),
+                SizedBox(height: AppDimens.v10),
+                AppStackedCurrencyField(
+                  displayDollar: displayDollar,
+                  controller: amountController,
+                  focusNode: amountFocus,
+                  onDigitsChanged: onDigitsChanged,
+                  amountFontSize: 50.sp,
+                ),
+              ],
+            ),
           ),
-        ),
-        SizedBox(height: AppDimens.v10),
-        AppStackedCurrencyField(
-          displayDollar: displayDollar,
-          controller: amountController,
-          focusNode: amountFocus,
-          onDigitsChanged: onDigitsChanged,
-          amountFontSize: 50.sp,
-        ),
-        const Spacer(),
-      ],
+        );
+      },
     );
   }
 }
