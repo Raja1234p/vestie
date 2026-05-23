@@ -28,7 +28,7 @@ class TransactionSuccessScreen extends StatelessWidget {
           title: isDeposit
               ? AppStrings.depositSuccessTitle
               : AppStrings.withdrawSuccessTitle,
-          titleColor: isDeposit ? AppColors.grey1000 : null,
+          titleColor: AppColors.grey1000,
           subtitleWidget: isDeposit
               ? AppText(
                   AppStrings.depositSuccessBody(amountText),
@@ -67,18 +67,38 @@ class _WithdrawSubtitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final body = method == WithdrawDeliveryMethod.instant
-        ? AppStrings.withdrawSuccessBodyInstant(amountText)
-        : AppStrings.withdrawSuccessBodyStandard(amountText);
-    return AppText(
-      body,
-      textAlign: TextAlign.center,
-      style: GoogleFonts.lato(
-        fontSize: 18.sp,
-        fontWeight: FontWeight.w500,
-        color: AppColors.grey700,
-        height: 1.35,
+    final suffix = method == WithdrawDeliveryMethod.instant
+        ? ' will arrive within 30 Mins.'
+        : ' will arrive in 1-3 business days.';
+
+    final baseStyle = GoogleFonts.lato(
+      fontSize: 20.sp,
+      fontWeight: FontWeight.w400,
+      color: AppColors.grey900,
+      height: 1.35,
+    );
+
+    final amountStyle = GoogleFonts.lato(
+      fontSize: 20.sp,
+      fontWeight: FontWeight.bold,
+      color: AppColors.grey900,
+      height: 1.35,
+    );
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 40.w),
+      child: Text.rich(
+        TextSpan(
+          style: baseStyle,
+          children: [
+            const TextSpan(text: 'Your '),
+            TextSpan(text: amountText, style: amountStyle),
+            TextSpan(text: suffix),
+          ],
+        ),
+        textAlign: TextAlign.center,
       ),
     );
   }
 }
+

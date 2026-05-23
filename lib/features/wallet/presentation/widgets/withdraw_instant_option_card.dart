@@ -10,7 +10,10 @@ import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'withdraw_method_option_card.dart';
 
-/// Instant withdraw rail — Figma selected state (#F5F0FE, gradient border, fee footer).
+/// Active card stroke — Figma #DDD0FC, 1 logical px (padding ring).
+const double _activeBorderWidth = 1;
+
+/// Instant withdraw rail — Figma selected state (#CEBEFB fill, #DDD0FC border, fee footer).
 class WithdrawInstantOptionCard extends StatelessWidget {
   final bool selected;
   final VoidCallback onTap;
@@ -26,7 +29,7 @@ class WithdrawInstantOptionCard extends StatelessWidget {
     if (!selected) {
       return WithdrawMethodOptionCard(
         selected: false,
-        iconAsset: AppAssets.iconLightning,
+        iconAsset: AppAssets.withdrawInstantIllustration,
         title: AppStrings.withdrawInstantTitle,
         subtitle: AppStrings.withdrawInstantSubtitle,
         onTap: onTap,
@@ -34,14 +37,18 @@ class WithdrawInstantOptionCard extends StatelessWidget {
     }
 
     final radius = BorderRadius.circular(AppRadius.r16);
+    final innerRadius =
+        BorderRadius.circular(AppRadius.r16 - _activeBorderWidth);
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
         borderRadius: radius,
-        child: DecoratedBox(
+        child: Container(
+          padding: const EdgeInsets.all(_activeBorderWidth),
           decoration: BoxDecoration(
+            color: AppColors.purple300,
             borderRadius: radius,
             boxShadow: [
               BoxShadow(
@@ -52,65 +59,70 @@ class WithdrawInstantOptionCard extends StatelessWidget {
                 offset: Offset.zero,
               ),
             ],
-            gradient: const LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [AppColors.purple600, AppColors.purple1000],
-            ),
           ),
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(0.5.w, 0.5.w, 0.5.w, 1.h),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(15.r),
-              child: Column(
-                children: [
-                  Container(
-                    width: double.infinity,
-                    color: AppColors.purple100,
-                    padding: EdgeInsets.all(AppDimens.p14),
-                    child: Row(
-                      children: [
-                        AppSvgIcon(
-                          assetPath: AppAssets.iconLightning,
-                          size: AppDimens.iconLarge,
-                          color: AppColors.primary,
-                        ),
-                        SizedBox(width: AppDimens.p12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              AppText(
-                                AppStrings.withdrawInstantTitle,
-                                style: GoogleFonts.lato(
-                                  fontSize: 15.sp,
-                                  fontWeight: FontWeight.w800,
-                                  color: AppColors.grey1100,
-                                ),
+          child: ClipRRect(
+            borderRadius: innerRadius,
+            child: Column(
+              children: [
+                Container(
+                  width: double.infinity,
+                  color: AppColors.purple400,
+                  padding: EdgeInsets.all(AppDimens.p14),
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        AppAssets.withdrawInstantIllustration,
+                        width: 64.w,
+                        height: 64.w,
+                        fit: BoxFit.contain,
+                      ),
+                      SizedBox(width: AppDimens.p12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AppText(
+                              AppStrings.withdrawInstantTitle,
+                              style: GoogleFonts.lato(
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w800,
+                                color: AppColors.grey1100,
                               ),
-                              SizedBox(height: AppDimens.v4),
-                              AppText(
-                                AppStrings.withdrawInstantSubtitle,
-                                style: GoogleFonts.lato(
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColors.grey700,
-                                ),
+                            ),
+                            SizedBox(height: AppDimens.v4),
+                            AppText(
+                              AppStrings.withdrawInstantSubtitle,
+                              style: GoogleFonts.lato(
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.grey800,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    color: AppColors.surface,
+                    border: Border(
+                      top: BorderSide(
+                        color: AppColors.purple300,
+                        width: _activeBorderWidth,
+                      ),
                     ),
                   ),
-                  Container(
-                    width: double.infinity,
-                    color: AppColors.surface,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: AppDimens.p14,
-                      vertical: AppDimens.v10,
-                    ),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppDimens.p14,
+                    vertical: AppDimens.v10,
+                  ),
+                  child: Center(
                     child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         AppSvgIcon(
                           assetPath: AppAssets.iconInformationCircle,
@@ -118,21 +130,19 @@ class WithdrawInstantOptionCard extends StatelessWidget {
                           color: AppColors.green900,
                         ),
                         SizedBox(width: AppDimens.p8),
-                        Expanded(
-                          child: AppText(
-                            AppStrings.withdrawInstantFeeFooter,
-                            style: GoogleFonts.lato(
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.green900,
-                            ),
+                        AppText(
+                          AppStrings.withdrawInstantFeeFooter,
+                          style: GoogleFonts.lato(
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.green900,
                           ),
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

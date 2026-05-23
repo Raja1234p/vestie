@@ -6,11 +6,10 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_strings.dart';
-import 'package:vestie/core/constants/app_dimens.dart' show AppDimens, AppRadius;
+import 'package:vestie/core/constants/app_dimens.dart' show AppDimens;
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/utils/formatters.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
-import 'package:vestie/core/widgets/common/app_numpad.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_stacked_currency_field.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
@@ -39,11 +38,9 @@ class _TransactionAmountScreenState extends State<TransactionAmountScreen> {
     final cubitState = context.read<WalletTransactionCubit>().state;
     _amountDigitsController =
         TextEditingController(text: cubitState.amountDigits);
-    if (cubitState.transactionType == WalletTransactionType.deposit) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) _amountFieldFocus.requestFocus();
-      });
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _amountFieldFocus.requestFocus();
+    });
   }
 
   @override
@@ -76,6 +73,11 @@ class _TransactionAmountScreenState extends State<TransactionAmountScreen> {
     });
   }
 
+  void _onContinueWithdraw(BuildContext context, WalletTransactionCubit cubit) {
+    cubit.prepareWithdrawMethodSelection();
+    context.push(AppRoutes.withdrawMethod);
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<WalletTransactionCubit, WalletTransactionState>(
@@ -83,18 +85,18 @@ class _TransactionAmountScreenState extends State<TransactionAmountScreen> {
         final cubit = context.read<WalletTransactionCubit>();
         final isDeposit =
             state.transactionType == WalletTransactionType.deposit;
-        final title =
-            isDeposit ? AppStrings.depositFundsTitle : AppStrings.withdrawFundsTitle;
+        final title = isDeposit
+            ? AppStrings.depositFundsTitle
+            : AppStrings.withdrawFundsTitle;
         final subtitle = isDeposit
             ? AppStrings.depositAmountSubtitle
             : AppStrings.withdrawAmountSubtitle;
 
-        if (isDeposit) {
-          _syncAmountFieldFromState(state.amountDigits);
-        }
+        _syncAmountFieldFromState(state.amountDigits);
 
         return Scaffold(
           backgroundColor: Colors.transparent,
+          resizeToAvoidBottomInset: true,
           body: PostAuthGradientBackground(
             child: Column(
               children: [
@@ -115,48 +117,26 @@ class _TransactionAmountScreenState extends State<TransactionAmountScreen> {
                   ),
                 ),
                 Expanded(
-                  child: isDeposit
-                      ? _DepositAmountBody(
-                          subtitle: subtitle,
-                          displayDollar: state.amountDigits.isEmpty
-                              ? AppFormatters.formatCurrency(0)
-                              : state.formattedAmount,
-                          amountController: _amountDigitsController,
-                          amountFocus: _amountFieldFocus,
-                          onDigitsChanged: cubit.setAmountDigits,
-                        )
-                      : _WithdrawAmountBody(
-                          subtitle: subtitle,
-                          displayAmount: state.amountDigits.isEmpty
-                              ? AppFormatters.formatCurrency(0)
-                              : state.formattedAmount,
-                          onContinue: state.amountDigits.isEmpty
-                              ? null
-                              : () {
-                                  cubit.prepareWithdrawMethodSelection();
-                                  context.push(AppRoutes.withdrawMethod);
-                                },
-                        ),
-                ),
-                if (isDeposit)
-                  FlowScreenFooter(
-                    child: AppButton(
-                      text: AppStrings.btnContinue,
-                      onPressed: state.amountDigits.isEmpty
-                          ? null
-                          : () => _onContinueDeposit(context, cubit),
-                    ),
-                  )
-                else
-                  ClipRRect(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(AppRadius.r16),
-                    ),
-                    child: AppNumpad(
-                      onDigit: cubit.appendAmountDigit,
-                      onBackspace: cubit.removeAmountDigit,
-                    ),
+                  child: _AmountEntryBody(
+                    subtitle: subtitle,
+                    displayDollar: state.amountDigits.isEmpty
+                        ? AppFormatters.formatCurrency(0)
+                        : state.formattedAmount,
+                    amountController: _amountDigitsController,
+                    amountFocus: _amountFieldFocus,
+                    onDigitsChanged: cubit.setAmountDigits,
                   ),
+                ),
+                FlowScreenFooter(
+                  child: AppButton(
+                    text: AppStrings.btnContinue,
+                    onPressed: state.amountDigits.isEmpty
+                        ? null
+                        : () => isDeposit
+                            ? _onContinueDeposit(context, cubit)
+                            : _onContinueWithdraw(context, cubit),
+                  ),
+                ),
               ],
             ),
           ),
@@ -166,8 +146,8 @@ class _TransactionAmountScreenState extends State<TransactionAmountScreen> {
   }
 }
 
-class _DepositAmountBody extends StatelessWidget {
-  const _DepositAmountBody({
+class _AmountEntryBody extends StatelessWidget {
+  const _AmountEntryBody({
     required this.subtitle,
     required this.displayDollar,
     required this.amountController,
@@ -204,54 +184,6 @@ class _DepositAmountBody extends StatelessWidget {
           amountFontSize: 50.sp,
         ),
         const Spacer(),
-      ],
-    );
-  }
-}
-
-class _WithdrawAmountBody extends StatelessWidget {
-  const _WithdrawAmountBody({
-    required this.subtitle,
-    required this.displayAmount,
-    required this.onContinue,
-  });
-
-  final String subtitle;
-  final String displayAmount;
-  final VoidCallback? onContinue;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Spacer(),
-        AppText(
-          subtitle,
-          textAlign: TextAlign.center,
-          style: GoogleFonts.lato(
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w500,
-            color: AppColors.grey700,
-          ),
-        ),
-        SizedBox(height: AppDimens.v10),
-        AppText(
-          displayAmount,
-          style: GoogleFonts.lato(
-            fontSize: 50.sp,
-            fontWeight: FontWeight.w800,
-            color: AppColors.grey1100,
-          ),
-        ),
-        const Spacer(),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: AppDimens.p24),
-          child: AppButton(
-            text: AppStrings.btnContinue,
-            onPressed: onContinue,
-          ),
-        ),
-        SizedBox(height: AppDimens.v12),
       ],
     );
   }

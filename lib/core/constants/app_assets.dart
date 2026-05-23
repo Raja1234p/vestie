@@ -77,6 +77,11 @@ class AppAssets {
       '$_imagePath/payment_methods_empty.png';
   /// Wallet “Recent Activity” empty — same 3D coin as join/borrow requests empty.
   static const String walletEmptyActivityIllustration = borrowRequestsEmptyState;
+  /// Withdraw method screen — standard (coin) and instant (lightning) rails.
+  static const String withdrawStandardIllustration =
+      '$_imagePath/withdraw_standard.png';
+  static const String withdrawInstantIllustration =
+      '$_imagePath/withdraw_instant.png';
   // ── Payment Card Brand Logos ──────────────────────────────────────────────
   static const String iconVisa       = '$_iconPath/visacard_icon.svg';
   static const String iconMastercard = '$_iconPath/mastercard_icon.svg';
