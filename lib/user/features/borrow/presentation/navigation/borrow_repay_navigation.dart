@@ -38,6 +38,8 @@ class BorrowRepayNavigation {
         totalRepayment: approved.totalRepaymentDue,
         dueDateLabel: approved.dueDateLabel,
         paymentMethodLabel: paymentLabel,
+        penaltyPercent: approved.penaltyPercent,
+        penaltyAmount: approved.penaltyAmount,
       ),
     );
   }

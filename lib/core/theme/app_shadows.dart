@@ -27,4 +27,14 @@ class AppShadows {
           offset: Offset(0, 2.h),
         ),
       ];
+
+  /// VFF Following → Remove overlay (Figma: #D09292 @ 20%, y 4, blur 17.5).
+  static List<BoxShadow> get vffRemoveMenuOverlay => [
+        BoxShadow(
+          color: AppColors.vffRemoveOverlayShadow.withValues(alpha: 0.2),
+          offset: Offset(0, 4.h),
+          blurRadius: 17.5.r,
+          spreadRadius: 0,
+        ),
+      ];
 }

@@ -46,9 +46,23 @@ abstract final class MemberDetailActionsVisibility {
     return member.role != MemberRole.leader;
   }
 
+  /// VFF connection accepted — Following menu (not Send / Sent).
+  /// TODO: drive from member detail API when available.
+  static bool showVffFollowing({
+    required ProjectDetailEntity project,
+    required MemberEntity member,
+    bool vffConnectionAccepted = false,
+    bool previewFollowingUi = true,
+  }) {
+    if (!showSendVffRequest(project: project, member: member)) return false;
+    return previewFollowingUi || vffConnectionAccepted;
+  }
+
   static bool showFooter({
     required ProjectDetailEntity project,
     required MemberEntity member,
+    bool vffConnectionAccepted = false,
+    bool previewFollowingUi = true,
   }) {
     return showSendVffRequest(project: project, member: member) ||
         showRemoveMember(project: project, member: member);

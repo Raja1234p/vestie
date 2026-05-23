@@ -94,6 +94,19 @@ class BorrowRepayConfirmSection extends StatelessWidget {
                   valueColor: AppColors.neutral1200,
                   valueWeight: FontWeight.w600,
                 ),
+                if (args.showsPenalty) ...[
+                  SizedBox(height: AppDimens.v14),
+                  WalletDetailSummaryRow(
+                    label: AppStrings.penaltyPenaltyLabel,
+                    value: AppStrings.borrowRepayPenaltyValue(
+                      args.penaltyPercent,
+                      AppFormatters.formatCurrency(args.penaltyAmount),
+                    ),
+                    labelColor: AppColors.neutral700,
+                    valueColor: AppColors.red900,
+                    valueWeight: FontWeight.w600,
+                  ),
+                ],
                 SizedBox(height: AppDimens.v14),
                 const Divider(
                   height: 1,

@@ -875,6 +875,8 @@ class AppStrings {
   static const String btnRepayBorrowAmount      = 'Repay Borrow Amount';
   static String borrowRepaySuccessBody(String amount, String projectName) =>
       'You\'ve successfully repaid $amount to $projectName.';
+  static String borrowRepayPenaltyValue(int percent, String amountFormatted) =>
+      '$percent% ($amountFormatted)';
   static const String btnPreviewApprovedBorrowRequest =
       'Preview approved borrow request UI';
   static const String myBorrowMemberVotesLabel  = 'Member Votes';

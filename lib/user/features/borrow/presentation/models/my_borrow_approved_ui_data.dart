@@ -7,6 +7,8 @@ class MyBorrowApprovedUiData {
   final double totalRepayment;
   /// Shown on repay confirm (may include fees).
   final double totalRepaymentDue;
+  final int penaltyPercent;
+  final double penaltyAmount;
 
   const MyBorrowApprovedUiData({
     required this.borrowAmount,
@@ -14,5 +16,7 @@ class MyBorrowApprovedUiData {
     required this.dueDateLabel,
     required this.totalRepayment,
     required this.totalRepaymentDue,
+    this.penaltyPercent = 0,
+    this.penaltyAmount = 0,
   });
 }

@@ -41,6 +41,8 @@ class AppColors {
   static const Color red100  = Color(0xFFFEF2F2);
   static const Color red200  = Color(0xFFFDE3E3);
   static const Color red300  = Color(0xFFFBD0D0);
+  /// Remove menu drop shadow base (Figma #D09292 @ 20%).
+  static const Color vffRemoveOverlayShadow = Color(0xFFD09292);
   static const Color red400  = Color(0xFFF8B8B8);
   static const Color red500  = Color(0xFFF38C8C);
   static const Color red600  = Color(0xFFEB6060);

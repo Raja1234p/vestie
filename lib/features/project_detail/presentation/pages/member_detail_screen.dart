@@ -35,6 +35,8 @@ import 'package:vestie/leader/features/project_detail/presentation/widgets/membe
 
 import 'package:vestie/leader/features/project_detail/presentation/widgets/member_detail_result_dialogs.dart';
 
+import 'package:vestie/user/features/vff/presentation/widgets/user_vff_remove_connection_dialog.dart';
+
 import '../cubit/member_detail_cubit.dart';
 
 import '../widgets/member_detail_actions_visibility.dart';
@@ -341,6 +343,22 @@ class _MemberDetailView extends StatelessWidget {
     }
   }
 
+  Future<void> _onRemoveVffConnection(
+    BuildContext context,
+    MemberEntity member,
+  ) async {
+    final handle = member.username.replaceFirst(RegExp(r'^@'), '').trim();
+    final usernameWithoutAt =
+        handle.isNotEmpty ? handle : member.name.replaceAll(' ', '').toLowerCase();
+
+    final ok = await showUserVffRemoveConnectionDialog(
+      context,
+      usernameWithoutAt: usernameWithoutAt,
+    );
+    if (!context.mounted || ok != true) return;
+    // TODO: call remove VFF API when wired.
+  }
+
   void _promptRemoveMember(BuildContext context) {
 
     showRemoveMemberConfirm(
@@ -411,6 +429,16 @@ class _MemberDetailView extends StatelessWidget {
           final showSendVff = p != null &&
 
               MemberDetailActionsVisibility.showSendVffRequest(
+
+                project: p,
+
+                member: displayMember,
+
+              );
+
+          final showVffFollowing = p != null &&
+
+              MemberDetailActionsVisibility.showVffFollowing(
 
                 project: p,
 
@@ -513,6 +541,16 @@ class _MemberDetailView extends StatelessWidget {
                   if (showFooter && state.loadStatus == MemberDetailLoadStatus.loaded)
 
                     MemberDetailFooter(
+
+                      showVffFollowing: showVffFollowing,
+
+                      onRemoveVffConnection: () => _onRemoveVffConnection(
+
+                        context,
+
+                        displayMember,
+
+                      ),
 
                       showSendVffRequest: showSendVff,
 

@@ -6,6 +6,8 @@ class BorrowRepayConfirmRouteArgs {
   final double totalRepayment;
   final String dueDateLabel;
   final String paymentMethodLabel;
+  final int penaltyPercent;
+  final double penaltyAmount;
 
   const BorrowRepayConfirmRouteArgs({
     required this.projectId,
@@ -14,5 +16,9 @@ class BorrowRepayConfirmRouteArgs {
     required this.totalRepayment,
     required this.dueDateLabel,
     required this.paymentMethodLabel,
+    this.penaltyPercent = 0,
+    this.penaltyAmount = 0,
   });
+
+  bool get showsPenalty => penaltyPercent > 0 && penaltyAmount > 0;
 }

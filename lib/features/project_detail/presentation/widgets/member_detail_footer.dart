@@ -7,9 +7,12 @@ import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_outline_neutral_button.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
+import 'package:vestie/user/features/vff/presentation/widgets/vff_following_menu_button.dart';
 
 /// Pinned footer actions on [MemberDetailScreen].
 class MemberDetailFooter extends StatelessWidget {
+  final bool showVffFollowing;
+  final VoidCallback onRemoveVffConnection;
   final bool showSendVffRequest;
   final bool vffRequestSent;
   final bool isVffRequestLoading;
@@ -20,6 +23,8 @@ class MemberDetailFooter extends StatelessWidget {
 
   const MemberDetailFooter({
     super.key,
+    this.showVffFollowing = false,
+    required this.onRemoveVffConnection,
     required this.showSendVffRequest,
     this.vffRequestSent = false,
     this.isVffRequestLoading = false,
@@ -31,11 +36,17 @@ class MemberDetailFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final showSendCta = showSendVffRequest && !showVffFollowing;
+
     return FlowScreenFooter(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (showSendVffRequest) ...[
+          if (showVffFollowing) ...[
+            VffFollowingMenuButton(onRemove: onRemoveVffConnection),
+            if (showRemoveMember) SizedBox(height: 12.h),
+          ],
+          if (showSendCta) ...[
             if (vffRequestSent)
               IgnorePointer(
                 child: AppButton(

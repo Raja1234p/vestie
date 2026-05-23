@@ -51,6 +51,8 @@ class MyBorrowRequestArgsBuilder {
         dueDateLabel: 'May 1, 2025',
         totalRepayment: 300,
         totalRepaymentDue: 345,
+        penaltyPercent: 15,
+        penaltyAmount: 45,
       );
 
   /// Figma active state preview until my-borrow-request API is wired.
