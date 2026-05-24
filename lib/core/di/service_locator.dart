@@ -62,6 +62,10 @@ import 'package:vestie/user/features/vff/data/datasources/vff_remote_data_source
 import 'package:vestie/user/features/vff/data/repositories/vff_repository_impl.dart';
 import 'package:vestie/user/features/vff/domain/repositories/vff_repository.dart';
 import 'package:vestie/user/features/vff/domain/usecases/vff_usecases.dart';
+import 'package:vestie/user/features/home/data/datasources/user_me_summary_remote_data_source.dart';
+import 'package:vestie/user/features/home/data/repositories/user_me_summary_repository_impl.dart';
+import 'package:vestie/user/features/home/domain/repositories/user_me_summary_repository.dart';
+import 'package:vestie/user/features/home/domain/usecases/get_user_me_summary_use_case.dart';
 import '../network/base_api_client.dart';
 import '../../features/projects/presentation/bloc/project_detail_bloc.dart';
 import '../../features/project_detail/domain/usecases/moderate_member_usecase.dart';
@@ -171,6 +175,11 @@ class ServiceLocator {
   late final AcceptVffProjectInviteUseCase acceptVffProjectInviteUseCase;
   late final DeclineVffProjectInviteUseCase declineVffProjectInviteUseCase;
   late final JoinFromVffProfileUseCase joinFromVffProfileUseCase;
+
+  // ── Home (user summary) ──────────────────────────────────────────────────
+  late final UserMeSummaryRemoteDataSource userMeSummaryRemoteDataSource;
+  late final UserMeSummaryRepository userMeSummaryRepository;
+  late final GetUserMeSummaryUseCase getUserMeSummaryUseCase;
 
   late final BaseApiClient apiClient;
   late final VotingRemoteDataSource votingRemoteDataSource;
@@ -286,6 +295,13 @@ class ServiceLocator {
     acceptVffProjectInviteUseCase = AcceptVffProjectInviteUseCase(vffRepository);
     declineVffProjectInviteUseCase = DeclineVffProjectInviteUseCase(vffRepository);
     joinFromVffProfileUseCase = JoinFromVffProfileUseCase(vffRepository);
+
+    // ── Home user summary ──────────────────────────────────────────────────
+    userMeSummaryRemoteDataSource =
+        UserMeSummaryRemoteDataSourceImpl(apiClient: apiClient);
+    userMeSummaryRepository =
+        UserMeSummaryRepositoryImpl(remoteDataSource: userMeSummaryRemoteDataSource);
+    getUserMeSummaryUseCase = GetUserMeSummaryUseCase(userMeSummaryRepository);
 
     // ── Unified API Client & Action Handlers ──────────────────────────────
     votingRemoteDataSource = VotingRemoteDataSourceImpl(apiClient: apiClient);

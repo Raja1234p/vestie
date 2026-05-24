@@ -21,6 +21,7 @@ class ApiConstants {
 
   // ── User ─────────────────────────────────────────────────────────────────
   static const String me              = '/users/me';
+  static const String meSummary       = '/users/me/summary';
   static const String meProfilePicture = '/users/me/profile-picture';
   static const String riskDisclaimer  = '/users/me/risk-disclaimer';
 

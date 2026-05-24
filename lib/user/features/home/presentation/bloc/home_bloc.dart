@@ -8,6 +8,7 @@ import 'package:vestie/features/auth/domain/usecases/get_me_use_case.dart';
 import 'package:vestie/features/dashboard/domain/dashboard_prefetch.dart';
 import '../../domain/entities/project.dart';
 import 'package:vestie/features/projects/domain/usecases/list_projects_use_case.dart';
+import '../../domain/usecases/get_user_me_summary_use_case.dart';
 import 'home_event.dart';
 import 'home_state.dart';
 
@@ -16,13 +17,17 @@ import 'home_state.dart';
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final ListProjectsUseCase _listProjectsUseCase;
   final GetMeUseCase _getMeUseCase;
+  final GetUserMeSummaryUseCase _getUserMeSummaryUseCase;
 
   HomeBloc({
     ListProjectsUseCase? listProjectsUseCase,
     GetMeUseCase? getMeUseCase,
+    GetUserMeSummaryUseCase? getUserMeSummaryUseCase,
   })  : _listProjectsUseCase =
             listProjectsUseCase ?? ServiceLocator.instance.listProjectsUseCase,
         _getMeUseCase = getMeUseCase ?? ServiceLocator.instance.getMeUseCase,
+        _getUserMeSummaryUseCase = getUserMeSummaryUseCase ??
+            ServiceLocator.instance.getUserMeSummaryUseCase,
         super(const HomeInitial()) {
     on<HomeFetchStarted>(_onFetch);
     on<HomeRefreshRequested>(_onFetch);
@@ -37,6 +42,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
 
     final mineResult = await _listProjectsUseCase(scope: 'mine');
+    final summaryResult = await _getUserMeSummaryUseCase();
 
     if (!DashboardPrefetch.userMeLoadedOnDashboard) {
       final meResult = await _getMeUseCase();
@@ -78,8 +84,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         .where((p) => p.relation == ProjectRelation.joined)
         .toList(growable: false);
 
+    final totalContributed = summaryResult.fold(
+      (_) => 0.0,
+      (summary) => summary.totalContributed,
+    );
+
     emit(HomeLoaded(
-      totalContributed: 0,
+      totalContributed: totalContributed,
       myProjects: myProjects,
       joinedProjects: joinedProjects,
     ));
