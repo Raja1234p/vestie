@@ -12,10 +12,8 @@ import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/widgets/common/app_invite_members_dialog.dart';
 import '../../../../core/widgets/common/leader_action_menu.dart';
 import '../../../../core/widgets/common/member_project_action_menu.dart';
-import 'package:vestie/app/router/route_args/user_vff_flow_args.dart';
-import 'package:vestie/user/features/vff/presentation/models/user_vff_profile_lookup.dart';
-
 import '../../domain/entities/member_entity.dart';
+import '../widgets/project_member_vff_send_actions.dart';
 import '../../domain/entities/project_detail_entity.dart';
 import '../../domain/entities/project_detail_route_args.dart';
 import '../models/investment_distribution_ui_data.dart';
@@ -111,18 +109,12 @@ class ProjectDetailNavigationHelpers {
     }
   }
 
-  /// VFF peer profile — prototype lookup until project-member VFF API exists.
-  static void openAddFriendFlow(BuildContext context, MemberEntity member) {
-    final key = member.userId.isNotEmpty ? member.userId : member.username;
-    context.push(
-      AppRoutes.userVffProfile,
-      extra: UserVffProfileRouteArgs(
-        profile: lookupUserVffProfileForConnection(
-          key,
-          outboundRequestPending: true,
-        ),
-      ),
-    );
+  /// Sends a VFF request from a project member row (no profile screen).
+  static void sendVffRequestFromMemberRow(
+    BuildContext context, {
+    required MemberEntity member,
+  }) {
+    sendMemberVffFromProjectDetail(context, member: member);
   }
 
   static BorrowRequestsRouteArgs borrowRequestsArgs(
@@ -320,10 +312,18 @@ class ProjectDetailNavigationHelpers {
       AppSnackBar.showError(context, AppStrings.errorForbidden);
       return;
     }
-    // TODO(api): restore POST /projects/{id}/invites via createInviteUseCase.
+    final excludeUserIds = project.members
+        .map(
+          (m) => m.userId.trim().isNotEmpty ? m.userId.trim() : m.id.trim(),
+        )
+        .where((id) => id.isNotEmpty)
+        .toSet();
+  // TODO(api): restore POST /projects/{id}/invites for share-outside link.
     AppInviteMembersDialog.show(
       context,
+      projectId: project.id,
       projectName: project.name,
+      excludeUserIds: excludeUserIds,
       inviteLink: AppStrings.inviteLinkSample,
     );
   }

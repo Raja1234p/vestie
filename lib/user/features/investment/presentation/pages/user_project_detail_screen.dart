@@ -9,7 +9,7 @@ import 'package:vestie/app/router/route_args/project_detail_flow_args.dart';
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/core/widgets/common/app_avatar_circle.dart';
+import 'package:vestie/core/widgets/common/app_network_avatar.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_svg_icon.dart';
@@ -250,7 +250,8 @@ class _MemberRowTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          AppAvatarCircle(
+          AppNetworkAvatar(
+            imageUrl: member.photoUrl,
             initials:
                 member.name.isNotEmpty ? member.name[0].toUpperCase() : '?',
             size: 52.r,

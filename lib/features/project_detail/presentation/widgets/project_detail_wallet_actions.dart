@@ -49,10 +49,12 @@ class ProjectDetailWalletActions extends StatelessWidget {
           SizedBox(height: 13.h),
           AppButton(
             text: AppStrings.btnBorrow,
-            onPressed: () => context.push(
-              AppRoutes.borrowFlow,
-              extra: walletArgs,
-            ),
+            onPressed: project.canViewerBorrow
+                ? () => context.push(
+                      AppRoutes.borrowFlow,
+                      extra: walletArgs,
+                    )
+                : null,
             isSecondary: true,
           ),
         ],

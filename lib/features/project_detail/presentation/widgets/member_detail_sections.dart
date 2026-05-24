@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/widgets/common/app_avatar_circle.dart';
+import '../../../../core/widgets/common/app_network_avatar.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/common/app_svg_icon.dart';
 import '../../../../core/widgets/common/app_transaction_item.dart';
@@ -50,7 +50,8 @@ class MemberIdentitySection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        AppAvatarCircle(
+        AppNetworkAvatar(
+          imageUrl: member.photoUrl,
           initials: member.initials,
           size: 54.r,
           backgroundColor: AppColors.purple300,

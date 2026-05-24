@@ -35,6 +35,7 @@ import 'package:vestie/leader/features/project_detail/presentation/widgets/membe
 
 import 'package:vestie/leader/features/project_detail/presentation/widgets/member_detail_result_dialogs.dart';
 
+import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
 import 'package:vestie/user/features/vff/presentation/widgets/user_vff_remove_connection_dialog.dart';
 
 import '../cubit/member_detail_cubit.dart';
@@ -98,6 +99,10 @@ class MemberDetailScreen extends StatelessWidget {
         updateCoLeaderRoleUseCase: ServiceLocator.instance.updateCoLeaderRoleUseCase,
 
         removeMemberUseCase: ServiceLocator.instance.removeMemberUseCase,
+
+        sendVffRequestUseCase: ServiceLocator.instance.sendVffRequestUseCase,
+
+        removeVffConnectionUseCase: ServiceLocator.instance.removeVffConnectionUseCase,
 
       )..load(
 
@@ -241,6 +246,14 @@ class _MemberDetailView extends StatelessWidget {
         }
         break;
 
+      case MemberDetailAction.sendVffRequest:
+
+        onProjectMembersChanged?.call();
+
+        context.read<MemberDetailCubit>().clearStatus();
+
+        break;
+
       case MemberDetailAction.removeMember:
 
         onProjectMembersChanged?.call();
@@ -356,7 +369,7 @@ class _MemberDetailView extends StatelessWidget {
       usernameWithoutAt: usernameWithoutAt,
     );
     if (!context.mounted || ok != true) return;
-    // TODO: call remove VFF API when wired.
+    await context.read<MemberDetailCubit>().removeVffConnection();
   }
 
   void _promptRemoveMember(BuildContext context) {
@@ -411,6 +424,19 @@ class _MemberDetailView extends StatelessWidget {
 
           final activity = state.activity;
 
+          final vffConnectionState =
+              MemberDetailActionsVisibility.effectiveVffConnectionState(
+            member: displayMember,
+            activityVffConnectionState:
+                activity?.vffConnectionState ?? VffConnectionState.none,
+          );
+
+          final canSendVffRequest =
+              activity?.canSendVffRequest ?? displayMember.canSendVffRequest;
+
+          final vffRequestSent =
+              vffConnectionState == VffConnectionState.pendingOutgoing;
+
           final isCoLeader = activity?.isCoLeader ??
               displayMember.role == MemberRole.coLeader;
 
@@ -428,11 +454,15 @@ class _MemberDetailView extends StatelessWidget {
 
           final showSendVff = p != null &&
 
-              MemberDetailActionsVisibility.showSendVffRequest(
+              MemberDetailActionsVisibility.showVffSendOrSent(
 
                 project: p,
 
                 member: displayMember,
+
+                vffConnectionState: vffConnectionState,
+
+                canSendVffRequest: canSendVffRequest,
 
               );
 
@@ -443,6 +473,8 @@ class _MemberDetailView extends StatelessWidget {
                 project: p,
 
                 member: displayMember,
+
+                vffConnectionState: vffConnectionState,
 
               );
 
@@ -463,6 +495,10 @@ class _MemberDetailView extends StatelessWidget {
                 project: p,
 
                 member: displayMember,
+
+                vffConnectionState: vffConnectionState,
+
+                canSendVffRequest: canSendVffRequest,
 
               );
 
@@ -554,9 +590,11 @@ class _MemberDetailView extends StatelessWidget {
 
                       showSendVffRequest: showSendVff,
 
-                      vffRequestSent: state.vffRequestSent,
+                      vffRequestSent: vffRequestSent,
 
                       isVffRequestLoading: state.isVffRequestLoading,
+
+                      isRemoveVffLoading: state.isRemoveVffLoading,
 
                       showRemoveMember: showRemoveMember,
 

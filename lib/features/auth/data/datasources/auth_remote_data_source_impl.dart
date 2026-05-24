@@ -6,6 +6,7 @@ import '../models/auth_token_model.dart';
 import '../models/user_model.dart';
 import '../models/register_response_model.dart';
 import '../models/message_response_model.dart';
+import '../../domain/entities/update_me_photo.dart';
 import '../models/risk_disclaimer_model.dart';
 import 'auth_remote_data_source.dart';
 import '../../../../core/utils/logger.dart';
@@ -212,17 +213,18 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String firstName,
     required String lastName,
     required String userName,
-    required String photoUrl,
+    UpdateMePhoto photo = const UpdateMePhotoUnchanged(),
   }) async {
     try {
+      final formData = await _buildUpdateMeFormData(
+        firstName: firstName,
+        lastName: lastName,
+        userName: userName,
+        photo: photo,
+      );
       final response = await _client.put(
         ApiConstants.me,
-        data: {
-          'firstName': firstName,
-          'lastName': lastName,
-          'userName': userName,
-          'photoUrl': photoUrl,
-        },
+        data: formData,
       );
       return UserModel.fromJson(response.data);
     } on DioException catch (e) {
@@ -231,6 +233,60 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         error: e.response?.data,
       );
       _handleError(e, 'Failed to update user profile');
+    }
+  }
+
+  Future<FormData> _buildUpdateMeFormData({
+    required String firstName,
+    required String lastName,
+    required String userName,
+    required UpdateMePhoto photo,
+  }) async {
+    final formData = FormData.fromMap({
+      'firstName': firstName,
+      'lastName': lastName,
+      'userName': userName,
+    });
+
+    switch (photo) {
+      case UpdateMePhotoUpload(:final filePath):
+        final path = filePath.trim();
+        formData.files.add(
+          MapEntry(
+            'file',
+            await MultipartFile.fromFile(
+              path,
+              filename: path.split(RegExp(r'[/\\]')).last,
+            ),
+          ),
+        );
+      case UpdateMePhotoRemove():
+        break;
+      case UpdateMePhotoUnchanged():
+        break;
+    }
+
+    return formData;
+  }
+
+  @override
+  Future<UserModel> deleteMeProfilePicture() async {
+    try {
+      final response = await _client.delete(ApiConstants.meProfilePicture);
+      final data = response.data;
+      if (data is Map<String, dynamic>) {
+        return UserModel.fromJson(data);
+      }
+      if (data is Map) {
+        return UserModel.fromJson(data.cast<String, dynamic>());
+      }
+      return getMe();
+    } on DioException catch (e) {
+      AppLogger.error(
+        'API DeleteMeProfilePicture Error: ${e.response?.statusCode}',
+        error: e.response?.data,
+      );
+      _handleError(e, 'Failed to remove profile photo');
     }
   }
 

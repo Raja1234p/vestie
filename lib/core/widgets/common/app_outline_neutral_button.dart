@@ -19,6 +19,9 @@ class AppOutlineNeutralButton extends StatelessWidget {
   /// No fill or stroke — label only (e.g. Leave Project screen Cancel).
   final bool borderless;
 
+  /// Button height; defaults to 56.h.
+  final double? height;
+
   const AppOutlineNeutralButton({
     super.key,
     required this.label,
@@ -29,6 +32,7 @@ class AppOutlineNeutralButton extends StatelessWidget {
     this.labelColor,
     this.isLoading = false,
     this.borderless = false,
+    this.height,
   });
 
   @override
@@ -53,7 +57,7 @@ class AppOutlineNeutralButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(radius),
         child: Container(
           width: double.infinity,
-          height: 56.h,
+          height: height ?? 56.h,
           alignment: Alignment.center,
           child: isLoading
               ? SizedBox(

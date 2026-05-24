@@ -12,9 +12,14 @@ import 'package:vestie/core/widgets/text/app_text.dart';
 
 /// Following pill with Remove overlay above (Figma VFF accepted).
 class VffFollowingMenuButton extends StatefulWidget {
-  final VoidCallback onRemove;
+  final VoidCallback? onRemove;
+  final bool isRemoveLoading;
 
-  const VffFollowingMenuButton({super.key, required this.onRemove});
+  const VffFollowingMenuButton({
+    super.key,
+    required this.onRemove,
+    this.isRemoveLoading = false,
+  });
 
   @override
   State<VffFollowingMenuButton> createState() => _VffFollowingMenuButtonState();
@@ -31,8 +36,9 @@ class _VffFollowingMenuButtonState extends State<VffFollowingMenuButton> {
   }
 
   void _onRemoveTap() {
+    if (widget.isRemoveLoading || widget.onRemove == null) return;
     _closeMenu();
-    widget.onRemove();
+    widget.onRemove!();
   }
 
   @override
@@ -42,11 +48,14 @@ class _VffFollowingMenuButtonState extends State<VffFollowingMenuButton> {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (_menuOpen) ...[
-          _RemoveOverlay(onTap: _onRemoveTap),
+          _RemoveOverlay(
+            onTap: _onRemoveTap,
+            isLoading: widget.isRemoveLoading,
+          ),
           SizedBox(height: 8.h),
         ],
         GestureDetector(
-          onTap: _toggleMenu,
+          onTap: widget.isRemoveLoading ? null : _toggleMenu,
           behavior: HitTestBehavior.opaque,
           child: SizedBox(
             width: double.infinity,
@@ -57,28 +66,39 @@ class _VffFollowingMenuButtonState extends State<VffFollowingMenuButton> {
                 borderRadius: BorderRadius.circular(AppRadius.r8),
                 border: Border.all(color: AppColors.purple100),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  AppText(
-                    AppStrings.userVffFollowing,
-                    style: GoogleFonts.lato(
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.grey900,
+              child: widget.isRemoveLoading
+                  ? Center(
+                      child: SizedBox(
+                        width: 24.w,
+                        height: 24.w,
+                        child: const CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: AppColors.purple700,
+                        ),
+                      ),
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        AppText(
+                          AppStrings.userVffFooterMenuLabel,
+                          style: GoogleFonts.lato(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.grey900,
+                          ),
+                        ),
+                        SizedBox(width: AppDimens.p8),
+                        Transform.rotate(
+                          angle: _menuOpen ? 3.141592653589793 : 0,
+                          child: AppSvgIcon(
+                            assetPath: AppAssets.iconChevronDown,
+                            color: AppColors.grey900,
+                            size: 22.r,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  SizedBox(width: AppDimens.p8),
-                  Transform.rotate(
-                    angle: _menuOpen ? 3.141592653589793 : 0,
-                    child: AppSvgIcon(
-                      assetPath: AppAssets.iconChevronDown,
-                      color: AppColors.grey900,
-                      size: 22.r,
-                    ),
-                  ),
-                ],
-              ),
             ),
           ),
         ),
@@ -88,9 +108,13 @@ class _VffFollowingMenuButtonState extends State<VffFollowingMenuButton> {
 }
 
 class _RemoveOverlay extends StatelessWidget {
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
+  final bool isLoading;
 
-  const _RemoveOverlay({required this.onTap});
+  const _RemoveOverlay({
+    required this.onTap,
+    this.isLoading = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +122,7 @@ class _RemoveOverlay extends StatelessWidget {
       color: Colors.transparent,
       elevation: 0,
       child: InkWell(
-        onTap: onTap,
+        onTap: isLoading ? null : onTap,
         borderRadius: BorderRadius.circular(AppRadius.r8),
         child: Ink(
           decoration: BoxDecoration(
@@ -111,14 +135,23 @@ class _RemoveOverlay extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
             child: Align(
               alignment: Alignment.centerLeft,
-              child: AppText(
-                AppStrings.btnRemove,
-                style: GoogleFonts.lato(
-                  fontSize: 15.sp,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.red900,
-                ),
-              ),
+              child: isLoading
+                  ? SizedBox(
+                      width: 22.w,
+                      height: 22.w,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.red900,
+                      ),
+                    )
+                  : AppText(
+                      AppStrings.btnRemove,
+                      style: GoogleFonts.lato(
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.red900,
+                      ),
+                    ),
             ),
           ),
         ),

@@ -4,9 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
-import 'package:vestie/user/features/vff/presentation/models/user_vff_profile_ui_model.dart';
+import 'package:vestie/user/features/vff/presentation/models/user_vff_profile_ui_types.dart';
 
 class UserVffJoinedProjectRow extends StatelessWidget {
   final UserVffJoinedProjectRowUi row;
@@ -20,54 +19,39 @@ class UserVffJoinedProjectRow extends StatelessWidget {
     this.onRequestJoin,
   });
 
-  Widget _actionChip(BuildContext context) {
+  static TextStyle get _actionTextStyle => GoogleFonts.lato(
+        fontSize: 13.sp,
+        fontWeight: FontWeight.w600,
+      );
+
+  Widget _actionChip() {
     switch (row.action) {
       case UserVffJoinedProjectAction.join:
-        return SizedBox(
-          height: 36.h,
-          width: 88.w,
-          child: AppButton(
-            text: AppStrings.btnJoin,
-            height: 36.h,
-            onPressed: onJoin ?? () {},
-          ),
-        );
-      case UserVffJoinedProjectAction.joined:
-        return Container(
-          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
-          decoration: BoxDecoration(
-            color: AppColors.purple100,
-            borderRadius: BorderRadius.circular(999.r),
-            border: Border.all(color: AppColors.purple300),
-          ),
-          child: AppText(
-            AppStrings.userVffJoined,
-            style: GoogleFonts.lato(
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w800,
-              color: AppColors.primaryDark,
-            ),
-          ),
+        return _ActionChip(
+          label: AppStrings.btnJoin,
+          backgroundColor: AppColors.purple700,
+          labelColor: AppColors.surface,
+          onTap: onJoin,
         );
       case UserVffJoinedProjectAction.requestToJoin:
-        return SizedBox(
-          height: 36.h,
-          width: 120.w,
-          child: AppButton(
-            text: AppStrings.userVffRequestToJoin,
-            height: 36.h,
-            isSecondary: true,
-            onPressed: onRequestJoin ?? () {},
-          ),
+        return _ActionChip(
+          label: AppStrings.userVffRequestToJoin,
+          backgroundColor: AppColors.surface,
+          labelColor: AppColors.purple700,
+          borderColor: AppColors.purple700,
+          onTap: onRequestJoin,
         );
       case UserVffJoinedProjectAction.requestSentChip:
-        return AppText(
-          AppStrings.userVffStatusRequestSentSmall,
-          style: GoogleFonts.lato(
-            fontSize: 12.sp,
-            fontWeight: FontWeight.w700,
-            color: AppColors.textBody,
-          ),
+        return _ActionChip(
+          label: AppStrings.userVffStatusRequestSentSmall,
+          backgroundColor: AppColors.purple100,
+          labelColor: AppColors.purple700,
+        );
+      case UserVffJoinedProjectAction.joined:
+        return _ActionChip(
+          label: AppStrings.userVffJoined,
+          backgroundColor: AppColors.purple100,
+          labelColor: AppColors.purple700,
         );
     }
   }
@@ -79,10 +63,11 @@ class UserVffJoinedProjectRow extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: AppColors.grey300),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
             child: Column(
@@ -91,8 +76,8 @@ class UserVffJoinedProjectRow extends StatelessWidget {
                 AppText(
                   row.title,
                   style: GoogleFonts.lato(
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.w900,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.grey1100,
                   ),
                 ),
@@ -100,17 +85,64 @@ class UserVffJoinedProjectRow extends StatelessWidget {
                 AppText(
                   '${row.memberCount} ${AppStrings.userVffMembersCountSuffix}',
                   style: GoogleFonts.lato(
-                    fontSize: 12.sp,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textBody,
+                    color: AppColors.grey800,
                   ),
                 ),
               ],
             ),
           ),
           SizedBox(width: 8.w),
-          _actionChip(context),
+          _actionChip(),
         ],
+      ),
+    );
+  }
+}
+
+class _ActionChip extends StatelessWidget {
+  final String label;
+  final Color backgroundColor;
+  final Color labelColor;
+  final Color? borderColor;
+  final VoidCallback? onTap;
+
+  const _ActionChip({
+    required this.label,
+    required this.backgroundColor,
+    required this.labelColor,
+    this.borderColor,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final child = Container(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(8.r),
+        border: borderColor != null
+            ? Border.all(color: borderColor!, width: 1)
+            : null,
+      ),
+      child: Text(
+        label,
+        style: UserVffJoinedProjectRow._actionTextStyle.copyWith(
+          color: labelColor,
+        ),
+      ),
+    );
+
+    if (onTap == null) return child;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8.r),
+        child: child,
       ),
     );
   }

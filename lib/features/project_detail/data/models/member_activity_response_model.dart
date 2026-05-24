@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:vestie/core/utils/safe_parser.dart';
 import 'package:vestie/features/projects/data/models/project_list_json_parsing.dart';
+import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
 
 import '../../domain/entities/member_activity_entity.dart';
 import '../../domain/entities/member_entity.dart';
@@ -14,6 +15,10 @@ class MemberActivityResponseModel {
   final double totalBorrowed;
   final int overdueBorrowCount;
   final double? overdueAmount;
+  final double totalReturned;
+  final VffConnectionState vffConnectionState;
+  final bool canSendVffRequest;
+  final String? pendingVffRequestId;
   final List<MemberActivityTransactionEntity> transactions;
 
   const MemberActivityResponseModel({
@@ -24,6 +29,10 @@ class MemberActivityResponseModel {
     required this.totalBorrowed,
     this.overdueBorrowCount = 0,
     this.overdueAmount,
+    this.totalReturned = 0,
+    this.vffConnectionState = VffConnectionState.none,
+    this.canSendVffRequest = false,
+    this.pendingVffRequestId,
     required this.transactions,
   });
 
@@ -52,9 +61,25 @@ class MemberActivityResponseModel {
       summary,
       const ['overdueAmount', 'totalOverdue', 'overdueBorrowAmount'],
     );
+    final totalReturned = _readDouble(
+      summary,
+      const ['totalReturned', 'returnedTotal'],
+    );
+
+    final vffConnectionState = _readVffConnectionState(json);
+    final canSendVffRequest = json.safeBool('canSendVffRequest');
+    final pendingVffRequestId = json.safeStringNullable('pendingVffRequestId');
 
     final isCoLeader = _readIsCoLeader(json);
-    final member = _mapMember(json, summary, overdueAmount, isCoLeader: isCoLeader);
+    final member = _mapMember(
+      json,
+      summary,
+      overdueAmount,
+      isCoLeader: isCoLeader,
+      vffConnectionState: vffConnectionState,
+      canSendVffRequest: canSendVffRequest,
+      pendingVffRequestId: pendingVffRequestId,
+    );
     final transactions = _transactionMaps(json)
         .map(
           (row) => _mapTransaction(
@@ -72,6 +97,10 @@ class MemberActivityResponseModel {
       totalBorrowed: totalBorrowed,
       overdueBorrowCount: overdueBorrowCount,
       overdueAmount: overdueAmount,
+      totalReturned: totalReturned,
+      vffConnectionState: vffConnectionState,
+      canSendVffRequest: canSendVffRequest,
+      pendingVffRequestId: pendingVffRequestId,
       transactions: transactions,
     );
   }
@@ -84,6 +113,10 @@ class MemberActivityResponseModel {
         totalBorrowed: totalBorrowed,
         overdueBorrowCount: overdueBorrowCount,
         overdueAmount: overdueAmount,
+        totalReturned: totalReturned,
+        vffConnectionState: vffConnectionState,
+        canSendVffRequest: canSendVffRequest,
+        pendingVffRequestId: pendingVffRequestId,
         transactions: transactions,
       );
 
@@ -176,6 +209,9 @@ class MemberActivityResponseModel {
     Map<String, dynamic> summary,
     double? overdueAmount, {
     required bool isCoLeader,
+    VffConnectionState vffConnectionState = VffConnectionState.none,
+    bool canSendVffRequest = false,
+    String? pendingVffRequestId,
   }) {
     final nested = _nested(json, const [
       'membership',
@@ -185,6 +221,7 @@ class MemberActivityResponseModel {
     ]);
     final profile = nested ?? json;
 
+    // Flat activity payload: memberId, memberName, memberUsername, photoURL.
     var userId = json.safeString('memberId');
     if (userId.isEmpty) userId = profile.safeString('userId');
 
@@ -202,7 +239,12 @@ class MemberActivityResponseModel {
     if (displayName.isEmpty) displayName = 'Member';
 
     var userName = json.safeString('memberUsername');
-    if (userName.isEmpty) userName = profile.safeString('userName');
+    if (userName.isEmpty) {
+      userName = profile.safeString('userName');
+    }
+    if (userName.isEmpty) {
+      userName = profile.safeString('username');
+    }
 
     final membershipId = profile.safeString('membershipId');
 
@@ -228,6 +270,9 @@ class MemberActivityResponseModel {
       const ['totalContributed', 'contributedTotal'],
     );
 
+    final photoUrl = membershipPhotoUrlFromJson(json) ??
+        membershipPhotoUrlFromJson(profile);
+
     return MemberEntity(
       id: userId.isNotEmpty ? userId : membershipId,
       membershipId: membershipId,
@@ -239,7 +284,34 @@ class MemberActivityResponseModel {
       role: role,
       contributedAmount: contributed,
       overdueAmount: overdueAmount,
+      photoUrl: photoUrl,
+      vffAdded: membershipVffAddedFromJson(json) ||
+          membershipVffAddedFromJson(profile),
+      vffConnectionState: vffConnectionState,
+      canSendVffRequest: canSendVffRequest,
+      pendingVffRequestId: pendingVffRequestId,
     );
+  }
+
+  static VffConnectionState _readVffConnectionState(Map<String, dynamic> json) {
+    final root = VffConnectionState.parse(
+      json.safeStringNullable('vffConnectionState'),
+    );
+    if (root != VffConnectionState.none) return root;
+
+    final nested = _nested(json, const [
+      'membership',
+      'member',
+      'viewerMembership',
+      'profile',
+    ]);
+    if (nested != null) {
+      final fromNested = VffConnectionState.parse(
+        nested.safeStringNullable('vffConnectionState'),
+      );
+      if (fromNested != VffConnectionState.none) return fromNested;
+    }
+    return VffConnectionState.none;
   }
 
   static MemberActivityTransactionEntity _mapTransaction(

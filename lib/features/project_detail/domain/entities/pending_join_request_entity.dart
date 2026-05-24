@@ -8,6 +8,7 @@ class PendingJoinRequestEntity extends Equatable {
   final String displayName;
   final String username;
   final String initials;
+  final String? photoUrl;
 
   const PendingJoinRequestEntity({
     required this.membershipId,
@@ -16,9 +17,10 @@ class PendingJoinRequestEntity extends Equatable {
     this.displayName = '',
     this.username = '',
     this.initials = 'NA',
+    this.photoUrl,
   });
 
   @override
   List<Object?> get props =>
-      [membershipId, userId, status, displayName, username, initials];
+      [membershipId, userId, status, displayName, username, initials, photoUrl];
 }

@@ -16,12 +16,16 @@ import 'package:vestie/features/project_detail/presentation/widgets/project_memb
 class InvestmentCompletedDetailContent extends StatelessWidget {
   final ProjectDetailEntity project;
   final ValueChanged<MemberEntity> onMemberTap;
+  final ValueChanged<MemberEntity>? onSendVffRequest;
+  final String? sendingVffUserId;
   final VoidCallback? onDeleteAnnouncement;
 
   const InvestmentCompletedDetailContent({
     super.key,
     required this.project,
     required this.onMemberTap,
+    this.onSendVffRequest,
+    this.sendingVffUserId,
     this.onDeleteAnnouncement,
   });
 
@@ -65,10 +69,8 @@ class InvestmentCompletedDetailContent extends StatelessWidget {
         ProjectMembersPreviewSection(
           project: project,
           onMemberTap: onMemberTap,
-          onAddFriend: (member) => ProjectDetailNavigationHelpers.openAddFriendFlow(
-            context,
-            member,
-          ),
+          onSendVffRequest: onSendVffRequest,
+          sendingVffUserId: sendingVffUserId,
         ),
         SizedBox(height: 32.h),
       ],

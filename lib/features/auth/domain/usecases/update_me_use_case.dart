@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/error/failures.dart';
+import '../entities/update_me_photo.dart';
 import '../entities/user.dart';
 import '../repositories/auth_repository.dart';
 
@@ -13,14 +14,13 @@ class UpdateMeUseCase {
     required String firstName,
     required String lastName,
     required String userName,
-    required String photoUrl,
+    UpdateMePhoto photo = const UpdateMePhotoUnchanged(),
   }) {
     return _repository.updateMe(
       firstName: firstName,
       lastName: lastName,
       userName: userName,
-      photoUrl: photoUrl,
+      photo: photo,
     );
   }
 }
-

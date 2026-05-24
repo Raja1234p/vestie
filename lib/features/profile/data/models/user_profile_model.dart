@@ -22,12 +22,20 @@ class UserProfileModel extends UserProfileEntity {
       userName: json.safeString('userName'),
       firstName: json.safeString('firstName'),
       lastName: json.safeString('lastName'),
-      photoUrl: json.safeStringNullable('photoUrl'),
+      photoUrl: _photoUrl(json),
       isEmailVerified: json.safeBool('isEmailVerified'),
       status: json.safeString('status'),
       riskAcceptedAtUtc: json.safeDateTimeUtc('riskAcceptedAtUtc'),
       roles: json.safeList('roles').map((e) => e.toString()).toList(),
     );
+  }
+
+  static String? _photoUrl(Map<String, dynamic> json) {
+    for (final key in ['profilePhotoUrl', 'photoUrl', 'photoURL']) {
+      final value = json.safeStringNullable(key);
+      if (value != null && value.isNotEmpty) return value;
+    }
+    return null;
   }
 
   Map<String, dynamic> toJson() {

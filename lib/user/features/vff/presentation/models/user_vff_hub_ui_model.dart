@@ -3,6 +3,7 @@ class UserVffConnectionRowUi {
   final String id;
   final String name;
   final String initials;
+  final String? photoUrl;
   final String mutualLabel;
   /// Trailing chip “Request Sent” vs chevron.
   final bool isPendingSent;
@@ -11,6 +12,7 @@ class UserVffConnectionRowUi {
     required this.id,
     required this.name,
     required this.initials,
+    this.photoUrl,
     required this.mutualLabel,
     this.isPendingSent = false,
   });
@@ -19,14 +21,18 @@ class UserVffConnectionRowUi {
 /// Incoming VFF connection request (via a project).
 class UserVffIncomingRequestUi {
   final String id;
+  final String projectId;
   final String name;
   final String initials;
+  final String? photoUrl;
   final String viaProjectName;
 
   const UserVffIncomingRequestUi({
     required this.id,
+    this.projectId = '',
     required this.name,
     required this.initials,
+    this.photoUrl,
     required this.viaProjectName,
   });
 }
@@ -38,6 +44,7 @@ enum UserVffGroupInviteKind {
 
 class UserVffGroupInviteUi {
   final String id;
+  final String projectId;
   final UserVffGroupInviteKind kind;
   final String titleLine;
   /// For [UserVffGroupInviteKind.memberRequestJoin]; ignored for projects.
@@ -49,12 +56,28 @@ class UserVffGroupInviteUi {
 
   const UserVffGroupInviteUi({
     required this.id,
+    this.projectId = '',
     required this.kind,
     required this.titleLine,
     this.personInitials = '',
     required this.invitedByName,
     this.memberCount = 0,
     this.primaryIsRequestToJoin = false,
+  });
+}
+
+/// Outgoing request / invite row in the hub Sent sub-tab.
+class UserVffSentRowUi {
+  final String id;
+  final String titleLine;
+  final String detailLine;
+  final String statusLabel;
+
+  const UserVffSentRowUi({
+    required this.id,
+    required this.titleLine,
+    required this.detailLine,
+    required this.statusLabel,
   });
 }
 

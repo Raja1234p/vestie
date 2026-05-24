@@ -28,11 +28,13 @@ class UserVffTxRowUi {
 }
 
 class UserVffJoinedProjectRowUi {
+  final String projectId;
   final String title;
   final int memberCount;
   final UserVffJoinedProjectAction action;
 
   const UserVffJoinedProjectRowUi({
+    this.projectId = '',
     required this.title,
     required this.memberCount,
     required this.action,

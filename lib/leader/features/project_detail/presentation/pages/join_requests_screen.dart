@@ -171,6 +171,7 @@ class _JoinRequestsScreenState extends State<JoinRequestsScreen> {
                                     _actingMembershipId == r.membershipId;
                                 return JoinRequestCard(
                                   initials: r.initials,
+                                  photoUrl: r.photoUrl,
                                   name: r.displayName,
                                   username: username,
                                   isAcceptLoading: isBusy &&

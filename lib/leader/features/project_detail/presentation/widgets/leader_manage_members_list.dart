@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/core/widgets/common/app_avatar_circle.dart';
+import 'package:vestie/core/widgets/common/app_network_avatar.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 
@@ -63,7 +63,13 @@ class _LeaderMemberRow extends StatelessWidget {
         ),
         child: Row(
           children: [
-            AppAvatarCircle(initials: member.initials, size: 48.h),
+            AppNetworkAvatar(
+              imageUrl: member.photoUrl,
+              initials: member.initials,
+              size: 48.h,
+              backgroundColor: AppColors.purple300,
+              textColor: AppColors.grey1100,
+            ),
             SizedBox(width: 10.w),
             Expanded(
               child: Column(

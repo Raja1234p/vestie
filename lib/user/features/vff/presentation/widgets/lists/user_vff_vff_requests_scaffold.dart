@@ -4,19 +4,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:vestie/app/router/app_routes.dart';
-import 'package:vestie/app/router/route_args/user_vff_flow_args.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/utils/app_snackbar.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
+import 'package:vestie/core/widgets/common/app_shimmer.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import '../../cubit/user_vff_incoming_request_list_cubit.dart';
-import '../../models/user_vff_hub_ui_model.dart';
 import '../user_vff_hub_empty_body.dart';
 import '../user_vff_incoming_request_card.dart';
+
 /// Full inbound VFF request list scaffold.
 final class UserVffVffRequestsScaffold extends StatelessWidget {
   const UserVffVffRequestsScaffold({super.key});
@@ -42,42 +42,73 @@ final class UserVffVffRequestsScaffold extends StatelessWidget {
                 color: AppColors.surface,
                 child: Padding(
                   padding: AppDimens.sheetInsetList,
-                  child: BlocBuilder<UserVffIncomingRequestListCubit,
-                    List<UserVffIncomingRequestUi>>(
-                  builder: (context, items) {
-                    if (items.isEmpty) {
-                      return const UserVffHubEmptyBody(
-                        message: AppStrings.userVffEmptyRequests,
-                      );
-                    }
+                  child: BlocConsumer<UserVffIncomingRequestListCubit,
+                      UserVffIncomingRequestListState>(
+                    listenWhen: (prev, curr) =>
+                        prev.errorMessage != curr.errorMessage &&
+                        curr.errorMessage != null,
+                    listener: (context, state) {
+                      final message = state.errorMessage;
+                      if (message == null || message.isEmpty) return;
+                      AppSnackBar.showError(context, message);
+                    },
+                    builder: (context, state) {
+                      if (state.status ==
+                          UserVffIncomingRequestListStatus.loading) {
+                        return const JoinRequestsListShimmer();
+                      }
 
-                    final cubit =
-                        context.read<UserVffIncomingRequestListCubit>();
-
-                    return ListView.builder(
-                      physics: const BouncingScrollPhysics(),
-                      padding: EdgeInsets.only(bottom: AppDimens.v24),
-                      itemCount: items.length,
-                      itemBuilder: (_, i) {
-                        final r = items[i];
-                        return UserVffIncomingRequestCard(
-                          item: r,
-                          onAccept: () {
-                            cubit.remove(r);
-                            context.push(
-                              AppRoutes.userVffInvitesSent,
-                              extra: UserVffInvitesSentRouteArgs(
-                                inviteCount: 1,
-                                projectName: r.viaProjectName,
+                      if (state.status ==
+                          UserVffIncomingRequestListStatus.error) {
+                        return Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              AppText(
+                                state.errorMessage ?? AppStrings.errorGeneric,
+                                textAlign: TextAlign.center,
                               ),
-                            );
-                          },
-                          onDecline: () => cubit.remove(r),
+                              SizedBox(height: 12.h),
+                              TextButton(
+                                onPressed: () => context
+                                    .read<UserVffIncomingRequestListCubit>()
+                                    .load(),
+                                child: AppText(AppStrings.btnRetry),
+                              ),
+                            ],
+                          ),
                         );
-                      },
-                    );
-                  },
-                ),
+                      }
+
+                      final items = state.items;
+                      if (items.isEmpty) {
+                        return const UserVffHubEmptyBody(
+                          message: AppStrings.userVffEmptyRequests,
+                        );
+                      }
+
+                      final cubit =
+                          context.read<UserVffIncomingRequestListCubit>();
+                      final acting = state.actingRow;
+                      final inboxBusy = acting != null;
+
+                      return ListView.builder(
+                        physics: const BouncingScrollPhysics(),
+                        padding: EdgeInsets.only(bottom: AppDimens.v24),
+                        itemCount: items.length,
+                        itemBuilder: (_, i) {
+                          final r = items[i];
+                          return UserVffIncomingRequestCard(
+                            item: r,
+                            actingRow: acting,
+                            onAccept: inboxBusy ? null : () => cubit.accept(r),
+                            onDecline:
+                                inboxBusy ? null : () => cubit.decline(r),
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ),
               ),
             ),

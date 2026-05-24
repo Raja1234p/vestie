@@ -66,7 +66,8 @@ class UserMembersPanel extends StatelessWidget {
   final List<MemberEntity> members;
   final VoidCallback onViewAll;
   final ValueChanged<MemberEntity>? onMemberTap;
-  final ValueChanged<MemberEntity>? onAddFriend;
+  final ValueChanged<MemberEntity>? onSendVffRequest;
+  final String? sendingVffUserId;
 
   const UserMembersPanel({
     super.key,
@@ -74,7 +75,8 @@ class UserMembersPanel extends StatelessWidget {
     required this.members,
     required this.onViewAll,
     this.onMemberTap,
-    this.onAddFriend,
+    this.onSendVffRequest,
+    this.sendingVffUserId,
   });
 
   @override
@@ -84,7 +86,8 @@ class UserMembersPanel extends StatelessWidget {
       members: members,
       onViewAll: onViewAll,
       onMemberTap: onMemberTap,
-      onAddFriend: onAddFriend,
+      onSendVffRequest: onSendVffRequest,
+      sendingVffUserId: sendingVffUserId,
     );
   }
 }
@@ -94,7 +97,8 @@ class LeaderMembersPanel extends StatelessWidget {
   final List<MemberEntity> members;
   final VoidCallback onViewAll;
   final ValueChanged<MemberEntity>? onMemberTap;
-  final ValueChanged<MemberEntity>? onAddFriend;
+  final ValueChanged<MemberEntity>? onSendVffRequest;
+  final String? sendingVffUserId;
 
   const LeaderMembersPanel({
     super.key,
@@ -102,7 +106,8 @@ class LeaderMembersPanel extends StatelessWidget {
     required this.members,
     required this.onViewAll,
     this.onMemberTap,
-    this.onAddFriend,
+    this.onSendVffRequest,
+    this.sendingVffUserId,
   });
 
   @override
@@ -112,7 +117,8 @@ class LeaderMembersPanel extends StatelessWidget {
       members: members,
       onViewAll: onViewAll,
       onMemberTap: onMemberTap,
-      onAddFriend: onAddFriend,
+      onSendVffRequest: onSendVffRequest,
+      sendingVffUserId: sendingVffUserId,
     );
   }
 }

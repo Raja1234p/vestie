@@ -25,6 +25,24 @@ class AppShimmer extends StatelessWidget {
     );
   }
 
+  /// Skeleton placeholder for [AppNetworkImage] while a remote URL loads.
+  static Widget imagePlaceholder({
+    double? width,
+    double? height,
+    BorderRadius? borderRadius,
+  }) {
+    return AppShimmer(
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: AppColors.border,
+          borderRadius: borderRadius ?? BorderRadius.circular(8),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(

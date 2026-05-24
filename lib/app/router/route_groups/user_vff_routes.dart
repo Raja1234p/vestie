@@ -18,43 +18,19 @@ List<RouteBase> buildUserVffRoutes({
     GoRoute(
       path: AppRoutes.userVffMain,
       builder: (context, state) {
-        UserVffHubUiModel hub = UserVffHubUiModel.demoFilled();
+        UserVffHubUiModel hub = UserVffHubUiModel.empty;
         final extra = state.extra;
         if (extra is UserVffHubRouteArgs) hub = extra.hub;
-        return UserVffHubScreen(hub: hub);
+        return UserVffHubScreen(previewHub: hub);
       },
     ),
     GoRoute(
       path: AppRoutes.userVffVffRequestsAll,
-      builder: (context, state) {
-        final extra = state.extra;
-        if (extra is List<UserVffIncomingRequestUi>) {
-          return UserVffVffRequestsScreen(rows: extra);
-        }
-        if (extra is List) {
-          final rows = extra.whereType<UserVffIncomingRequestUi>().toList();
-          if (rows.length == extra.length) {
-            return UserVffVffRequestsScreen(rows: rows);
-          }
-        }
-        return invalidRouteScreen();
-      },
+      builder: (context, state) => const UserVffVffRequestsScreen(),
     ),
     GoRoute(
       path: AppRoutes.userVffGroupInvitesAll,
-      builder: (context, state) {
-        final extra = state.extra;
-        if (extra is List<UserVffGroupInviteUi>) {
-          return UserVffGroupInvitationsScreen(rows: extra);
-        }
-        if (extra is List) {
-          final rows = extra.whereType<UserVffGroupInviteUi>().toList();
-          if (rows.length == extra.length) {
-            return UserVffGroupInvitationsScreen(rows: rows);
-          }
-        }
-        return invalidRouteScreen();
-      },
+      builder: (context, state) => const UserVffGroupInvitationsScreen(),
     ),
     GoRoute(
       path: AppRoutes.userVffProfile,
@@ -63,7 +39,7 @@ List<RouteBase> buildUserVffRoutes({
         if (extra is! UserVffProfileRouteArgs) {
           return invalidRouteScreen();
         }
-        return UserVffProfileScreen(profile: extra.profile);
+        return UserVffProfileScreen(args: extra);
       },
     ),
     GoRoute(

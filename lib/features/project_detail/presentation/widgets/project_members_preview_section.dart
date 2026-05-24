@@ -15,14 +15,16 @@ import 'project_detail_view_all_link.dart';
 class ProjectMembersPreviewSection extends StatelessWidget {
   final ProjectDetailEntity project;
   final ValueChanged<MemberEntity>? onMemberTap;
-  final ValueChanged<MemberEntity>? onAddFriend;
+  final ValueChanged<MemberEntity>? onSendVffRequest;
+  final String? sendingVffUserId;
   final String title;
 
   const ProjectMembersPreviewSection({
     super.key,
     required this.project,
     this.onMemberTap,
-    this.onAddFriend,
+    this.onSendVffRequest,
+    this.sendingVffUserId,
     this.title = AppStrings.tabMembers,
   });
 
@@ -64,7 +66,8 @@ class ProjectMembersPreviewSection extends StatelessWidget {
           onViewAll: _openViewAll(context),
           showViewAllLink: false,
           onMemberTap: onMemberTap,
-          onAddFriend: onAddFriend,
+          onSendVffRequest: onSendVffRequest,
+          sendingVffUserId: sendingVffUserId,
         ),
       ],
     );

@@ -1,3 +1,5 @@
+import 'package:vestie/features/projects/data/models/project_list_json_parsing.dart';
+
 import '../../domain/entities/member_entity.dart';
 import '../../domain/entities/pending_join_request_entity.dart';
 
@@ -8,6 +10,7 @@ class PendingMembershipModel {
   final String? userName;
   final String? firstName;
   final String? lastName;
+  final String? photoUrl;
 
   const PendingMembershipModel({
     required this.membershipId,
@@ -16,6 +19,7 @@ class PendingMembershipModel {
     this.userName,
     this.firstName,
     this.lastName,
+    this.photoUrl,
   });
 
   factory PendingMembershipModel.fromJson(Map<String, dynamic> json) {
@@ -26,6 +30,7 @@ class PendingMembershipModel {
       userName: json['userName'] as String?,
       firstName: json['firstName'] as String?,
       lastName: json['lastName'] as String?,
+      photoUrl: membershipPhotoUrlFromJson(json),
     );
   }
 
@@ -45,6 +50,7 @@ class PendingMembershipModel {
       displayName: displayName,
       username: handle,
       initials: _initials(displayName),
+      photoUrl: photoUrl,
     );
   }
 
@@ -57,6 +63,7 @@ class PendingMembershipModel {
       displayName: member.name,
       username: member.username,
       initials: member.initials,
+      photoUrl: member.photoUrl ?? photoUrl,
     );
   }
 

@@ -17,6 +17,10 @@ class AppAssets {
   /// Home + Discover empty state — full-screen purple→white gradient background.
   static const String emptyStateBackground =
       '$_imagePath/empty_state_background.png';
+
+  /// VFF peer profile — purple-to-white gradient (Figma Frame 3).
+  static const String vffProfileBackground =
+      '$_imagePath/vff_profile_background.png';
   /// Home + Discover empty state — 3D target / dart (PNG).
   static const String homeDiscoverEmptyState =
       '$_imagePath/home_discover_empty_state.png';

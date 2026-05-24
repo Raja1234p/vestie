@@ -17,6 +17,8 @@ import 'package:vestie/features/project_detail/presentation/navigation/project_d
 import 'package:vestie/features/project_detail/presentation/widgets/announcement_card.dart';
 import '../widgets/investment_detail_preview_button.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/investment_completed_detail_content.dart';
+import 'package:vestie/core/utils/app_snackbar.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_member_vff_send_actions.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_members_preview_section.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_trailing_actions.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_load_error.dart';
@@ -97,7 +99,21 @@ class _InvestmentProjectDetailBodyState
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: PostAuthGradientBackground(
-        child: BlocBuilder<ProjectDetailBloc, ProjectDetailState>(
+        child: BlocConsumer<ProjectDetailBloc, ProjectDetailState>(
+          listenWhen: (prev, curr) =>
+              curr is ProjectDetailLoaded &&
+              curr.vffSendErrorMessage != null &&
+              curr.vffSendErrorMessage !=
+                  (prev is ProjectDetailLoaded ? prev.vffSendErrorMessage : null),
+          listener: (context, state) {
+            if (state is! ProjectDetailLoaded) return;
+            final message = state.vffSendErrorMessage;
+            if (message == null || message.isEmpty) return;
+            AppSnackBar.showError(context, message);
+            context
+                .read<ProjectDetailBloc>()
+                .add(const ClearMemberVffSendErrorEvent());
+          },
           builder: (context, state) {
             if (state is ProjectDetailLoading || state is ProjectDetailInitial) {
               return ProjectDetailLoadingBody(
@@ -227,6 +243,14 @@ class _InvestmentProjectDetailBodyState
                               InvestmentCompletedDetailContent(
                                 project: project,
                                 onMemberTap: (m) => openMemberDetail(m),
+                                onSendVffRequest: (member) =>
+                                    sendMemberVffFromProjectDetail(
+                                  context,
+                                  member: member,
+                                ),
+                                sendingVffUserId:
+                                    (state as ProjectDetailLoaded)
+                                        .sendingVffUserId,
                                 onDeleteAnnouncement: project
                                         .usesLeaderDetailPanels
                                     ? () {}
@@ -253,12 +277,30 @@ class _InvestmentProjectDetailBodyState
                                   SizedBox(height: 16.h),
                                   ProjectDetailWalletActions(project: project),
                                   SizedBox(height: 16.h),
-                                  ProjectMembersPreviewSection(
-                                    project: project,
-                                    onMemberTap: openMemberDetail,
-                                    onAddFriend: (member) =>
-                                        ProjectDetailNavigationHelpers
-                                            .openAddFriendFlow(context, member),
+                                  BlocBuilder<ProjectDetailBloc,
+                                      ProjectDetailState>(
+                                    buildWhen: (prev, curr) =>
+                                        prev is ProjectDetailLoaded &&
+                                        curr is ProjectDetailLoaded &&
+                                        (prev.project.members !=
+                                                curr.project.members ||
+                                            prev.sendingVffUserId !=
+                                                curr.sendingVffUserId),
+                                    builder: (context, detailState) {
+                                      final loaded = detailState
+                                          as ProjectDetailLoaded;
+                                      return ProjectMembersPreviewSection(
+                                        project: loaded.project,
+                                        onMemberTap: openMemberDetail,
+                                        onSendVffRequest: (member) =>
+                                            sendMemberVffFromProjectDetail(
+                                          context,
+                                          member: member,
+                                        ),
+                                        sendingVffUserId:
+                                            loaded.sendingVffUserId,
+                                      );
+                                    },
                                   ),
                                   SizedBox(height: 32.h),
                                 ],

@@ -20,6 +20,7 @@ import '../../features/auth/domain/usecases/get_me_use_case.dart';
 import '../../features/auth/domain/usecases/get_risk_disclaimer_use_case.dart';
 import '../../features/auth/domain/usecases/accept_risk_disclaimer_use_case.dart';
 import '../../features/auth/domain/usecases/google_login_use_case.dart';
+import '../../features/auth/domain/usecases/delete_me_profile_picture_use_case.dart';
 import '../../features/auth/domain/usecases/update_me_use_case.dart';
 import '../../features/projects/data/datasources/project_remote_data_source.dart';
 import '../../features/projects/data/datasources/projects_remote_data_source.dart';
@@ -57,6 +58,10 @@ import 'package:vestie/user/features/borrow/domain/repositories/borrow_repositor
 import 'package:vestie/user/features/borrow/domain/usecases/create_borrow_request_use_case.dart';
 import 'package:vestie/user/features/borrow/domain/usecases/approve_borrow_request_use_case.dart';
 import 'package:vestie/user/features/borrow/domain/usecases/reject_borrow_request_use_case.dart';
+import 'package:vestie/user/features/vff/data/datasources/vff_remote_data_source.dart';
+import 'package:vestie/user/features/vff/data/repositories/vff_repository_impl.dart';
+import 'package:vestie/user/features/vff/domain/repositories/vff_repository.dart';
+import 'package:vestie/user/features/vff/domain/usecases/vff_usecases.dart';
 import '../network/base_api_client.dart';
 import '../../features/projects/presentation/bloc/project_detail_bloc.dart';
 import '../../features/project_detail/domain/usecases/moderate_member_usecase.dart';
@@ -95,6 +100,7 @@ class ServiceLocator {
   late final AcceptRiskDisclaimerUseCase acceptRiskDisclaimerUseCase;
   late final GoogleLoginUseCase googleLoginUseCase;
   late final UpdateMeUseCase updateMeUseCase;
+  late final DeleteMeProfilePictureUseCase deleteMeProfilePictureUseCase;
 
   // ── Projects Feature ─────────────────────────────────────────────────────
   late final ProjectsRemoteDataSource projectsRemoteDataSource;
@@ -149,6 +155,23 @@ class ServiceLocator {
   late final ApproveBorrowRequestUseCase approveBorrowRequestUseCase;
   late final RejectBorrowRequestUseCase rejectBorrowRequestUseCase;
 
+  // ── VFF Feature ──────────────────────────────────────────────────────────
+  late final VffRemoteDataSource vffRemoteDataSource;
+  late final VffRepository vffRepository;
+  late final ListMyVffsUseCase listMyVffsUseCase;
+  late final GetConnectedVffProfileUseCase getConnectedVffProfileUseCase;
+  late final GetPublicVffProfileUseCase getPublicVffProfileUseCase;
+  late final RemoveVffConnectionUseCase removeVffConnectionUseCase;
+  late final GetVffReceivedInboxUseCase getVffReceivedInboxUseCase;
+  late final GetVffSentInboxUseCase getVffSentInboxUseCase;
+  late final SendVffRequestUseCase sendVffRequestUseCase;
+  late final AcceptVffRequestUseCase acceptVffRequestUseCase;
+  late final DeclineVffRequestUseCase declineVffRequestUseCase;
+  late final InviteVffsToProjectUseCase inviteVffsToProjectUseCase;
+  late final AcceptVffProjectInviteUseCase acceptVffProjectInviteUseCase;
+  late final DeclineVffProjectInviteUseCase declineVffProjectInviteUseCase;
+  late final JoinFromVffProfileUseCase joinFromVffProfileUseCase;
+
   late final BaseApiClient apiClient;
   late final VotingRemoteDataSource votingRemoteDataSource;
   late final VotingRepository votingRepository;
@@ -185,6 +208,7 @@ class ServiceLocator {
     acceptRiskDisclaimerUseCase = AcceptRiskDisclaimerUseCase(authRepository);
     googleLoginUseCase = GoogleLoginUseCase(authRepository);
     updateMeUseCase = UpdateMeUseCase(authRepository);
+    deleteMeProfilePictureUseCase = DeleteMeProfilePictureUseCase(authRepository);
 
     // ── Projects Feature ───────────────────────────────────────────────────
     projectsRemoteDataSource = ProjectsRemoteDataSourceImpl(dioClient);
@@ -246,6 +270,23 @@ class ServiceLocator {
     approveBorrowRequestUseCase = ApproveBorrowRequestUseCase(borrowRepository);
     rejectBorrowRequestUseCase = RejectBorrowRequestUseCase(borrowRepository);
 
+    // ── VFF Feature ────────────────────────────────────────────────────────
+    vffRemoteDataSource = VffRemoteDataSourceImpl(apiClient: apiClient);
+    vffRepository = VffRepositoryImpl(remoteDataSource: vffRemoteDataSource);
+    listMyVffsUseCase = ListMyVffsUseCase(vffRepository);
+    getConnectedVffProfileUseCase = GetConnectedVffProfileUseCase(vffRepository);
+    getPublicVffProfileUseCase = GetPublicVffProfileUseCase(vffRepository);
+    removeVffConnectionUseCase = RemoveVffConnectionUseCase(vffRepository);
+    getVffReceivedInboxUseCase = GetVffReceivedInboxUseCase(vffRepository);
+    getVffSentInboxUseCase = GetVffSentInboxUseCase(vffRepository);
+    sendVffRequestUseCase = SendVffRequestUseCase(vffRepository);
+    acceptVffRequestUseCase = AcceptVffRequestUseCase(vffRepository);
+    declineVffRequestUseCase = DeclineVffRequestUseCase(vffRepository);
+    inviteVffsToProjectUseCase = InviteVffsToProjectUseCase(vffRepository);
+    acceptVffProjectInviteUseCase = AcceptVffProjectInviteUseCase(vffRepository);
+    declineVffProjectInviteUseCase = DeclineVffProjectInviteUseCase(vffRepository);
+    joinFromVffProfileUseCase = JoinFromVffProfileUseCase(vffRepository);
+
     // ── Unified API Client & Action Handlers ──────────────────────────────
     votingRemoteDataSource = VotingRemoteDataSourceImpl(apiClient: apiClient);
     votingRepository = VotingRepositoryImpl(remoteDataSource: votingRemoteDataSource);
@@ -268,5 +309,6 @@ class ServiceLocator {
   ProjectDetailBloc createProjectDetailBloc() => ProjectDetailBloc(
         repository: projectDetailRepository,
         listPendingJoinRequests: listPendingJoinRequestsUseCase,
+        sendVffRequestUseCase: sendVffRequestUseCase,
       );
 }

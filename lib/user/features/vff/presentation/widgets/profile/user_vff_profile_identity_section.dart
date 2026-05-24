@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/core/widgets/common/app_avatar_circle.dart';
+import 'package:vestie/core/widgets/common/app_network_avatar.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import '../../models/user_vff_profile_ui_model.dart';
 import 'user_vff_profile_role_badge.dart';
@@ -20,7 +20,8 @@ final class UserVffProfileIdentitySection extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        AppAvatarCircle(
+        AppNetworkAvatar(
+          imageUrl: p.photoUrl,
           initials: p.initials,
           size: 72.r,
           backgroundColor: AppColors.purple200,
@@ -42,14 +43,15 @@ final class UserVffProfileIdentitySection extends StatelessWidget {
                   color: AppColors.grey1100,
                 ),
               ),
-              AppText(
-                '@${p.usernameHandle}',
-                style: GoogleFonts.lato(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textBody,
+              if (p.hasUsername)
+                AppText(
+                  '@${p.usernameHandle}',
+                  style: GoogleFonts.lato(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textBody,
+                  ),
                 ),
-              ),
             ],
           ),
         ),

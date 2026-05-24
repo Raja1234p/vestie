@@ -1,6 +1,7 @@
 import '../../domain/entities/member_entity.dart';
 import '../../domain/entities/member_entity_extensions.dart';
 import '../../domain/entities/project_detail_entity.dart';
+import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
 
 /// When [ProjectMemberRow] shows the Add Friend CTA.
 abstract final class ProjectMemberAddFriendVisibility {
@@ -9,6 +10,16 @@ abstract final class ProjectMemberAddFriendVisibility {
     required MemberEntity member,
   }) {
     if (isViewerSelf(project: project, member: member)) return false;
+
+    if (member.isVffConnected) return false;
+    if (member.hasPendingVffOutgoing) return false;
+    if (member.vffConnectionState == VffConnectionState.pendingIncoming) {
+      return false;
+    }
+    if (!member.canSendVffRequest &&
+        member.vffConnectionState != VffConnectionState.none) {
+      return false;
+    }
 
     if (project.isModeratorView) {
       return member.role == MemberRole.member ||

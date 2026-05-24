@@ -1,9 +1,14 @@
 /// UI-only snapshot for the user investment journey (no backend contract).
 class UserInvestmentMemberUi {
   final String name;
+  final String? photoUrl;
   final bool isActive;
 
-  const UserInvestmentMemberUi({required this.name, this.isActive = true});
+  const UserInvestmentMemberUi({
+    required this.name,
+    this.photoUrl,
+    this.isActive = true,
+  });
 }
 
 class UserInvestmentReturnsRowUi {

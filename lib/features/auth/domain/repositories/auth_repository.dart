@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/error/failures.dart';
+import '../entities/update_me_photo.dart';
 import '../entities/user.dart';
 import '../entities/register_result.dart';
 import '../entities/risk_disclaimer.dart';
@@ -50,8 +51,11 @@ abstract class AuthRepository {
     required String firstName,
     required String lastName,
     required String userName,
-    required String photoUrl,
+    UpdateMePhoto photo = const UpdateMePhotoUnchanged(),
   });
+
+  /// `DELETE /users/me/profile-picture`
+  Future<Either<Failure, User>> deleteMeProfilePicture();
 
   Future<Either<Failure, RiskDisclaimer>> getRiskDisclaimer();
 

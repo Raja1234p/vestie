@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
 import '../../domain/entities/member_entity.dart';
+import '../../domain/entities/member_entity_extensions.dart';
 import '../../domain/entities/project_detail_entity.dart';
 import 'project_detail_view_all_link.dart';
 import 'project_member_row.dart';
@@ -14,7 +15,8 @@ class MembersTab extends StatelessWidget {
   final List<MemberEntity> members;
   final VoidCallback onViewAll;
   final ValueChanged<MemberEntity>? onMemberTap;
-  final ValueChanged<MemberEntity>? onAddFriend;
+  final ValueChanged<MemberEntity>? onSendVffRequest;
+  final String? sendingVffUserId;
 
   /// When false, parent supplies header link (investment Members row).
   final bool showViewAllLink;
@@ -25,7 +27,8 @@ class MembersTab extends StatelessWidget {
     required this.members,
     required this.onViewAll,
     this.onMemberTap,
-    this.onAddFriend,
+    this.onSendVffRequest,
+    this.sendingVffUserId,
     this.showViewAllLink = true,
   });
 
@@ -55,9 +58,13 @@ class MembersTab extends StatelessWidget {
                     member: member,
                     project: project,
                     onTap: onMemberTap,
-                    onAddFriend: onAddFriend == null
+                    onAddFriend: onSendVffRequest == null
                         ? null
-                        : () => onAddFriend!(member),
+                        : () => onSendVffRequest!(member),
+                    isSendVffLoading:
+                        sendingVffUserId != null &&
+                        sendingVffUserId == member.apiUserId,
+                    vffRequestSent: member.hasPendingVffOutgoing,
                   ),
                 ),
               ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
@@ -6,21 +7,29 @@ import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/theme/app_text_styles.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 
-/// Outlined “Add Friend” CTA on project member rows (Figma).
+/// Outlined “Send VFF Request” CTA on project member rows (Figma).
 class ProjectMemberAddFriendButton extends StatelessWidget {
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
+  final bool isLoading;
+  final bool requestSent;
 
-  const ProjectMemberAddFriendButton({super.key, required this.onPressed});
+  const ProjectMemberAddFriendButton({
+    super.key,
+    required this.onPressed,
+    this.isLoading = false,
+    this.requestSent = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     final radius = BorderRadius.circular(AppRadius.r12);
+    final sent = requestSent;
 
     return Material(
       color: AppColors.surface,
       borderRadius: radius,
       child: InkWell(
-        onTap: onPressed,
+        onTap: isLoading || sent ? null : onPressed,
         borderRadius: radius,
         child: Container(
           padding: EdgeInsets.symmetric(
@@ -30,14 +39,30 @@ class ProjectMemberAddFriendButton extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: radius,
             border: Border.all(
-              color: AppColors.projectMemberAddFriendBorder,
+              color: sent
+                  ? AppColors.neutral400
+                  : AppColors.projectMemberAddFriendBorder,
               width: 1,
             ),
           ),
-          child: AppText(
-            AppStrings.btnAddFriend,
-            style: AppTextStyles.projectMemberAddFriend,
-          ),
+          child: isLoading
+              ? SizedBox(
+                  width: 20.w,
+                  height: 20.w,
+                  child: const CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.purple700,
+                  ),
+                )
+              : AppText(
+                  sent
+                      ? AppStrings.btnVffRequestSent
+                      : AppStrings.btnSendVffRequest,
+                  style: AppTextStyles.projectMemberAddFriend.copyWith(
+                    fontWeight: sent ? FontWeight.w700 : FontWeight.w600,
+                    color: sent ? AppColors.neutral700 : AppColors.neutral1200,
+                  ),
+                ),
         ),
       ),
     );

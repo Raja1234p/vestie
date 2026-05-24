@@ -6,7 +6,9 @@ import 'package:go_router/go_router.dart';
 import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/utils/app_snackbar.dart';
 import 'package:vestie/core/widgets/common/app_toggle_tab_bar.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_member_vff_send_actions.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
@@ -27,11 +29,26 @@ class ProjectDetailTabSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ProjectDetailBloc, ProjectDetailState>(
+    return BlocConsumer<ProjectDetailBloc, ProjectDetailState>(
+      listenWhen: (prev, curr) =>
+          curr is ProjectDetailLoaded &&
+          curr.vffSendErrorMessage != null &&
+          curr.vffSendErrorMessage !=
+              (prev is ProjectDetailLoaded ? prev.vffSendErrorMessage : null),
+      listener: (context, state) {
+        if (state is! ProjectDetailLoaded) return;
+        final message = state.vffSendErrorMessage;
+        if (message == null || message.isEmpty) return;
+        AppSnackBar.showError(context, message);
+        context.read<ProjectDetailBloc>().add(const ClearMemberVffSendErrorEvent());
+      },
       builder: (context, state) {
         if (state is! ProjectDetailLoaded) return const SizedBox.shrink();
         final bloc = context.read<ProjectDetailBloc>();
         final isBorrowTab = state.activeTab == ProjectDetailTab.borrowRequests;
+        final sendingVffUserId = state.sendingVffUserId;
+        void onSendVff(MemberEntity member) =>
+            sendMemberVffFromProjectDetail(context, member: member);
         return Column(
           children: [
             AppToggleTabBar(
@@ -104,11 +121,10 @@ class ProjectDetailTabSection extends StatelessWidget {
                           onMemberTap: project.canReviewMemberProfiles
                               ? onMemberTap
                               : null,
-                          onAddFriend: project.canReviewMemberProfiles
-                              ? (member) =>
-                                  ProjectDetailNavigationHelpers
-                                      .openAddFriendFlow(context, member)
+                          onSendVffRequest: project.canReviewMemberProfiles
+                              ? onSendVff
                               : null,
+                          sendingVffUserId: sendingVffUserId,
                         )
                       : UserMembersPanel(
                           key: const ValueKey('user-members'),
@@ -122,11 +138,10 @@ class ProjectDetailTabSection extends StatelessWidget {
                           onMemberTap: project.canReviewMemberProfiles
                               ? onMemberTap
                               : null,
-                          onAddFriend: project.canReviewMemberProfiles
-                              ? (member) =>
-                                  ProjectDetailNavigationHelpers
-                                      .openAddFriendFlow(context, member)
+                          onSendVffRequest: project.canReviewMemberProfiles
+                              ? onSendVff
                               : null,
+                          sendingVffUserId: sendingVffUserId,
                         ),
             ),
           ],

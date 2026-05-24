@@ -21,7 +21,9 @@ class UserModel extends User {
         ?? '$firstName $lastName'.trim();
     final email = (json['email'] as String?) ?? '';
     final handle = (json['userName'] as String?)?.trim() ?? '';
-    final rawPhoto = (json['photoUrl'] as String?)?.trim();
+    final rawPhoto = (json['profilePhotoUrl'] as String?)?.trim() ??
+        (json['photoUrl'] as String?)?.trim() ??
+        (json['photoURL'] as String?)?.trim();
 
     return UserModel(
       id:           (json['id']       as String?) ?? '',

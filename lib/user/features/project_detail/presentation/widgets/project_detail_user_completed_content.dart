@@ -7,7 +7,6 @@ import 'package:vestie/features/project_detail/presentation/widgets/announcement
 import 'package:vestie/features/project_detail/presentation/widgets/completed_project_notice_bar.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/investment_completed_detail_content.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_info_card.dart';
-import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_members_preview_section.dart';
 import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
 
@@ -18,12 +17,16 @@ import 'package:vestie/user/features/home/domain/entities/project_category_exten
 class ProjectDetailUserCompletedContent extends StatelessWidget {
   final ProjectDetailEntity project;
   final ValueChanged<MemberEntity> onMemberTap;
+  final ValueChanged<MemberEntity>? onSendVffRequest;
+  final String? sendingVffUserId;
   final VoidCallback? onDeleteAnnouncement;
 
   const ProjectDetailUserCompletedContent({
     super.key,
     required this.project,
     required this.onMemberTap,
+    this.onSendVffRequest,
+    this.sendingVffUserId,
     this.onDeleteAnnouncement,
   });
 
@@ -33,6 +36,8 @@ class ProjectDetailUserCompletedContent extends StatelessWidget {
       return InvestmentCompletedDetailContent(
         project: project,
         onMemberTap: onMemberTap,
+        onSendVffRequest: onSendVffRequest,
+        sendingVffUserId: sendingVffUserId,
         onDeleteAnnouncement: onDeleteAnnouncement,
       );
     }
@@ -58,10 +63,8 @@ class ProjectDetailUserCompletedContent extends StatelessWidget {
         ProjectMembersPreviewSection(
           project: project,
           onMemberTap: onMemberTap,
-          onAddFriend: (member) => ProjectDetailNavigationHelpers.openAddFriendFlow(
-            context,
-            member,
-          ),
+          onSendVffRequest: onSendVffRequest,
+          sendingVffUserId: sendingVffUserId,
         ),
         SizedBox(height: 32.h),
       ],

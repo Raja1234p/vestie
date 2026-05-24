@@ -1,6 +1,7 @@
 import 'package:vestie/core/utils/safe_parser.dart';
 import 'package:vestie/features/projects/data/models/project_list_json_parsing.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
+import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
 
 import '../../domain/entities/borrow_request_entity.dart';
 import '../../domain/entities/member_entity.dart';
@@ -12,15 +13,15 @@ import '../../domain/entities/viewer_membership_role.dart';
 class ProjectDetailResponseModel {
   final _ProjectPayload _project;
   final _RulesPayload _rules;
-  final _ViewerMembershipPayload _viewerMembership;
-  final List<_MemberPayload> _members;
+  final _MembershipPayload _viewerMembership;
+  final List<_MembershipPayload> _members;
   final List<_InvitePayload> _invites;
 
   const ProjectDetailResponseModel._({
     required _ProjectPayload project,
     required _RulesPayload rules,
-    required _ViewerMembershipPayload viewerMembership,
-    required List<_MemberPayload> members,
+    required _MembershipPayload viewerMembership,
+    required List<_MembershipPayload> members,
     required List<_InvitePayload> invites,
   })  : _project = project,
         _rules = rules,
@@ -52,8 +53,8 @@ class ProjectDetailResponseModel {
     return ProjectDetailResponseModel._(
       project: _ProjectPayload.fromJson(projectJson),
       rules: _RulesPayload.fromJson(rulesJson),
-      viewerMembership: _ViewerMembershipPayload.fromJson(viewerMembershipJson),
-      members: membersJson.map(_MemberPayload.fromJson).toList(growable: false),
+      viewerMembership: _MembershipPayload.fromJson(viewerMembershipJson),
+      members: membersJson.map(_MembershipPayload.fromJson).toList(growable: false),
       invites: invitesJson.map(_InvitePayload.fromJson).toList(growable: false),
     );
   }
@@ -97,6 +98,7 @@ class ProjectDetailResponseModel {
       penaltyPercentage: _rules.penaltyPercentage,
       successVoteWindowHours: _rules.successVoteWindowHours,
       invites: mappedInvites,
+      hasCoLeader: _project.hasCoLeader,
     );
   }
 
@@ -111,7 +113,7 @@ class ProjectDetailResponseModel {
     );
   }
 
-  static MemberEntity _mapMember(_MemberPayload json) {
+  static MemberEntity _mapMember(_MembershipPayload json) {
     final firstName = json.firstName;
     final lastName = json.lastName;
     final userName = json.userName;
@@ -136,6 +138,11 @@ class ProjectDetailResponseModel {
       role: mappedRole,
       contributedAmount: 0,
       overdueAmount: null,
+      photoUrl: json.photoUrl,
+      vffAdded: json.vffAdded,
+      vffConnectionState: json.vffConnectionState,
+      canSendVffRequest: json.canSendVffRequest,
+      pendingVffRequestId: json.pendingVffRequestId,
     );
   }
 
@@ -195,6 +202,7 @@ class _ProjectPayload {
   final String createdUtc;
   final int pendingRequestCount;
   final double? roi;
+  final bool hasCoLeader;
 
   const _ProjectPayload({
     required this.id,
@@ -215,6 +223,7 @@ class _ProjectPayload {
     required this.createdUtc,
     required this.pendingRequestCount,
     this.roi,
+    this.hasCoLeader = false,
   });
 
   factory _ProjectPayload.fromJson(Map<String, dynamic> json) {
@@ -229,7 +238,7 @@ class _ProjectPayload {
       lifecycleState: lifecycle,
       targetAmount: (json['targetAmount'] as num?)?.toDouble() ?? 0.0,
       raisedAmount: (json['raisedAmount'] as num?)?.toDouble() ?? 0.0,
-      endsAtUtc: _jsonString(json['endsAtUtc']),
+      endsAtUtc: _nullableString(json['endsAtUtc']) ?? '',
       launchedAtUtc: _nullableString(json['launchedAtUtc']),
       viewerRole: projectListItemViewerRole(json),
       displayStatus: display,
@@ -241,6 +250,7 @@ class _ProjectPayload {
       createdUtc: _jsonString(json['createdUtc']),
       pendingRequestCount: (json['pendingRequestCount'] as num?)?.toInt() ?? 0,
       roi: parseApiRoiPercent(json),
+      hasCoLeader: json['hasCoLeader'] == true,
     );
   }
 }
@@ -291,7 +301,7 @@ class _RulesPayload {
       );
 }
 
-class _ViewerMembershipPayload {
+class _MembershipPayload {
   final String membershipId;
   final String userId;
   final String userName;
@@ -302,8 +312,13 @@ class _ViewerMembershipPayload {
   final double? borrowLimitAmount;
   final bool isDefaulted;
   final String badge;
+  final String? photoUrl;
+  final bool vffAdded;
+  final VffConnectionState vffConnectionState;
+  final bool canSendVffRequest;
+  final String? pendingVffRequestId;
 
-  const _ViewerMembershipPayload({
+  const _MembershipPayload({
     required this.membershipId,
     required this.userId,
     required this.userName,
@@ -314,10 +329,15 @@ class _ViewerMembershipPayload {
     this.borrowLimitAmount,
     required this.isDefaulted,
     required this.badge,
+    this.photoUrl,
+    this.vffAdded = false,
+    this.vffConnectionState = VffConnectionState.none,
+    this.canSendVffRequest = false,
+    this.pendingVffRequestId,
   });
 
-  factory _ViewerMembershipPayload.fromJson(Map<String, dynamic> json) =>
-      _ViewerMembershipPayload(
+  factory _MembershipPayload.fromJson(Map<String, dynamic> json) =>
+      _MembershipPayload(
         membershipId: _jsonString(json['membershipId']),
         userId: _jsonString(json['userId']),
         userName: _jsonString(json['userName']),
@@ -328,45 +348,13 @@ class _ViewerMembershipPayload {
         borrowLimitAmount: _jsonDoubleNullable(json['borrowLimitAmount']),
         isDefaulted: json['isDefaulted'] == true,
         badge: _jsonString(json['badge']),
-      );
-}
-
-class _MemberPayload {
-  final String membershipId;
-  final String userId;
-  final String userName;
-  final String firstName;
-  final String lastName;
-  final String role;
-  final String status;
-  final double? borrowLimitAmount;
-  final bool isDefaulted;
-  final String badge;
-
-  const _MemberPayload({
-    required this.membershipId,
-    required this.userId,
-    required this.userName,
-    required this.firstName,
-    required this.lastName,
-    required this.role,
-    required this.status,
-    this.borrowLimitAmount,
-    required this.isDefaulted,
-    required this.badge,
-  });
-
-  factory _MemberPayload.fromJson(Map<String, dynamic> json) => _MemberPayload(
-        membershipId: _jsonString(json['membershipId']),
-        userId: _jsonString(json['userId']),
-        userName: _jsonString(json['userName']),
-        firstName: _jsonString(json['firstName']),
-        lastName: _jsonString(json['lastName']),
-        role: membershipRoleApiValueToString(json['role']),
-        status: membershipStatusApiValueToString(json['status']),
-        borrowLimitAmount: _jsonDoubleNullable(json['borrowLimitAmount']),
-        isDefaulted: json['isDefaulted'] == true,
-        badge: _jsonString(json['badge']),
+        photoUrl: membershipPhotoUrlFromJson(json),
+        vffAdded: membershipVffAddedFromJson(json),
+        vffConnectionState: VffConnectionState.parse(
+          json.safeStringNullable('vffConnectionState'),
+        ),
+        canSendVffRequest: json.safeBool('canSendVffRequest'),
+        pendingVffRequestId: membershipPendingVffRequestId(json),
       );
 }
 

@@ -17,9 +17,17 @@ import '../../domain/usecases/get_member_activity_usecase.dart';
 
 import '../../domain/usecases/project_actions_usecases.dart';
 
+import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
+import 'package:vestie/user/features/vff/domain/usecases/vff_usecases.dart';
 
 
-enum MemberDetailAction { assignCoLeader, removeCoLeader, removeMember }
+
+enum MemberDetailAction {
+  assignCoLeader,
+  removeCoLeader,
+  removeMember,
+  sendVffRequest,
+}
 
 
 
@@ -45,9 +53,9 @@ class MemberDetailState extends Equatable {
 
   final bool projectMembersChanged;
 
-  final bool vffRequestSent;
-
   final bool isVffRequestLoading;
+
+  final bool isRemoveVffLoading;
 
 
 
@@ -69,9 +77,9 @@ class MemberDetailState extends Equatable {
 
     this.projectMembersChanged = false,
 
-    this.vffRequestSent = false,
-
     this.isVffRequestLoading = false,
+
+    this.isRemoveVffLoading = false,
 
   });
 
@@ -105,9 +113,9 @@ class MemberDetailState extends Equatable {
 
     bool? projectMembersChanged,
 
-    bool? vffRequestSent,
-
     bool? isVffRequestLoading,
+
+    bool? isRemoveVffLoading,
 
     bool clearLoadError = false,
 
@@ -143,11 +151,13 @@ class MemberDetailState extends Equatable {
 
           projectMembersChanged ?? this.projectMembersChanged,
 
-      vffRequestSent: vffRequestSent ?? this.vffRequestSent,
-
       isVffRequestLoading:
 
           isVffRequestLoading ?? this.isVffRequestLoading,
+
+      isRemoveVffLoading:
+
+          isRemoveVffLoading ?? this.isRemoveVffLoading,
 
     );
 
@@ -175,9 +185,9 @@ class MemberDetailState extends Equatable {
 
         projectMembersChanged,
 
-        vffRequestSent,
-
         isVffRequestLoading,
+
+        isRemoveVffLoading,
 
       ];
 
@@ -195,11 +205,19 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
 
     required RemoveMemberUseCase removeMemberUseCase,
 
+    required SendVffRequestUseCase sendVffRequestUseCase,
+
+    required RemoveVffConnectionUseCase removeVffConnectionUseCase,
+
   })  : _getMemberActivityUseCase = getMemberActivityUseCase,
 
         _updateCoLeaderRoleUseCase = updateCoLeaderRoleUseCase,
 
         _removeMemberUseCase = removeMemberUseCase,
+
+        _sendVffRequestUseCase = sendVffRequestUseCase,
+
+        _removeVffConnectionUseCase = removeVffConnectionUseCase,
 
         super(const MemberDetailState());
 
@@ -210,6 +228,10 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
   final UpdateCoLeaderRoleUseCase _updateCoLeaderRoleUseCase;
 
   final RemoveMemberUseCase _removeMemberUseCase;
+
+  final SendVffRequestUseCase _sendVffRequestUseCase;
+
+  final RemoveVffConnectionUseCase _removeVffConnectionUseCase;
 
   String? _projectId;
   String? _userId;
@@ -278,10 +300,14 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
         if (apiUserId.isNotEmpty) {
           _userId = apiUserId;
         }
+        final previous = state.activity;
+        final merged = previous == null
+            ? activity
+            : _mergeActivityVffState(previous: previous, fetched: activity);
         emit(
           state.copyWith(
             loadStatus: MemberDetailLoadStatus.loaded,
-            activity: activity,
+            activity: merged,
             clearLoadError: true,
           ),
         );
@@ -294,19 +320,132 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
 
   /// Sends a VFF request in place — UI switches to “VFF Request Sent” (no navigation).
   Future<void> sendVffRequest() async {
-    if (state.vffRequestSent || state.isVffRequestLoading) return;
+    if (state.isVffRequestLoading) return;
+
+    final projectId = _projectId;
+    final userId = _userId;
+    if (projectId == null || userId == null) return;
+
+    final vffState =
+        state.activity?.vffConnectionState ?? VffConnectionState.none;
+    if (vffState == VffConnectionState.pendingOutgoing ||
+        vffState == VffConnectionState.connected) {
+      return;
+    }
 
     emit(state.copyWith(isVffRequestLoading: true, clearFailure: true));
 
-    // TODO: wire member VFF request API when available (profile flow is local today).
-    await Future<void>.delayed(Duration.zero);
+    final result = await _sendVffRequestUseCase(
+      projectId: projectId,
+      userId: userId,
+    );
 
     if (isClosed) return;
-    emit(
-      state.copyWith(
-        isVffRequestLoading: false,
-        vffRequestSent: true,
-      ),
+
+    await result.fold(
+      (failure) async {
+        emit(
+          state.copyWith(
+            isVffRequestLoading: false,
+            failure: failure,
+          ),
+        );
+      },
+      (sent) async {
+        final current = state.activity;
+        if (current != null) {
+          emit(
+            state.copyWith(
+              isVffRequestLoading: false,
+              activity: current.copyWith(
+                vffConnectionState: VffConnectionState.pendingOutgoing,
+                canSendVffRequest: false,
+                pendingVffRequestId: sent.id.isNotEmpty
+                    ? sent.id
+                    : current.pendingVffRequestId,
+              ),
+              completedAction: MemberDetailAction.sendVffRequest,
+              projectMembersChanged: true,
+            ),
+          );
+        } else {
+          emit(
+            state.copyWith(
+              isVffRequestLoading: false,
+              completedAction: MemberDetailAction.sendVffRequest,
+              projectMembersChanged: true,
+            ),
+          );
+        }
+        await refresh();
+      },
+    );
+  }
+
+  /// Activity GET can lag behind POST …/vff-requests — keep “sent” UI until API catches up.
+  MemberActivityEntity _mergeActivityVffState({
+    required MemberActivityEntity previous,
+    required MemberActivityEntity fetched,
+  }) {
+    if (fetched.vffConnectionState == VffConnectionState.connected ||
+        fetched.member.isVffConnected) {
+      return fetched;
+    }
+    if (previous.vffConnectionState == VffConnectionState.connected ||
+        previous.member.isVffConnected) {
+      return fetched.copyWith(
+        vffConnectionState: VffConnectionState.connected,
+        canSendVffRequest: false,
+      );
+    }
+    if (previous.vffConnectionState != VffConnectionState.pendingOutgoing) {
+      return fetched;
+    }
+    if (fetched.vffConnectionState == VffConnectionState.pendingOutgoing ||
+        fetched.vffConnectionState == VffConnectionState.connected) {
+      return fetched;
+    }
+    if (fetched.vffConnectionState == VffConnectionState.none &&
+        !fetched.canSendVffRequest) {
+      return fetched.copyWith(
+        vffConnectionState: VffConnectionState.pendingOutgoing,
+        pendingVffRequestId:
+            fetched.pendingVffRequestId ?? previous.pendingVffRequestId,
+      );
+    }
+    return fetched;
+  }
+
+  Future<void> removeVffConnection() async {
+    if (state.isRemoveVffLoading) return;
+
+    final userId = _userId;
+    if (userId == null || userId.trim().isEmpty) return;
+
+    emit(state.copyWith(isRemoveVffLoading: true, clearFailure: true));
+
+    final result = await _removeVffConnectionUseCase(userId);
+
+    if (isClosed) return;
+
+    await result.fold(
+      (failure) async {
+        emit(
+          state.copyWith(
+            isRemoveVffLoading: false,
+            failure: failure,
+          ),
+        );
+      },
+      (_) async {
+        emit(
+          state.copyWith(
+            isRemoveVffLoading: false,
+            projectMembersChanged: true,
+          ),
+        );
+        await refresh();
+      },
     );
   }
 

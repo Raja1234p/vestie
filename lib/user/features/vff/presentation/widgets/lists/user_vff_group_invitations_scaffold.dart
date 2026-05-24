@@ -4,20 +4,20 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:vestie/app/router/app_routes.dart';
-import 'package:vestie/app/router/route_args/user_vff_flow_args.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/utils/app_snackbar.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
+import 'package:vestie/core/widgets/common/app_shimmer.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import '../../cubit/user_vff_group_invitation_list_cubit.dart';
 import '../../models/user_vff_hub_ui_model.dart';
-import '../../models/user_vff_profile_ui_model.dart';
 import '../user_vff_group_invitation_card.dart';
 import '../user_vff_hub_empty_body.dart';
+
 /// Full group invitation list scaffold.
 final class UserVffGroupInvitationsScaffold extends StatelessWidget {
   const UserVffGroupInvitationsScaffold({super.key});
@@ -43,54 +43,82 @@ final class UserVffGroupInvitationsScaffold extends StatelessWidget {
                 color: AppColors.surface,
                 child: Padding(
                   padding: AppDimens.sheetInsetList,
-                  child: BlocBuilder<UserVffGroupInvitationListCubit,
-                    List<UserVffGroupInviteUi>>(
-                  builder: (context, items) {
-                    if (items.isEmpty) {
-                      return const UserVffHubEmptyBody(
-                        message: AppStrings.userVffEmptyRequests,
-                      );
-                    }
+                  child: BlocConsumer<UserVffGroupInvitationListCubit,
+                      UserVffGroupInvitationListState>(
+                    listenWhen: (prev, curr) =>
+                        prev.errorMessage != curr.errorMessage &&
+                        curr.errorMessage != null,
+                    listener: (context, state) {
+                      final message = state.errorMessage;
+                      if (message == null || message.isEmpty) return;
+                      AppSnackBar.showError(context, message);
+                    },
+                    builder: (context, state) {
+                      if (state.status ==
+                          UserVffGroupInvitationListStatus.loading) {
+                        return const JoinRequestsListShimmer();
+                      }
 
-                    final cubit =
-                        context.read<UserVffGroupInvitationListCubit>();
-
-                    return ListView.builder(
-                      physics: const BouncingScrollPhysics(),
-                      padding: EdgeInsets.only(bottom: AppDimens.v24),
-                      itemCount: items.length,
-                      itemBuilder: (_, i) {
-                        final g = items[i];
-                        return UserVffGroupInvitationCard(
-                          item: g,
-                          onPrimary: () {
-                            if (g.kind ==
-                                UserVffGroupInviteKind.memberRequestJoin) {
-                              cubit.remove(g);
-                              context.push(
-                                AppRoutes.userVffProfile,
-                                extra: UserVffProfileRouteArgs(
-                                  profile: UserVffProfileUiModel
-                                      .demoOliviaFollowing(),
-                                ),
-                              );
-                              return;
-                            }
-                            cubit.remove(g);
-                            context.push(
-                              AppRoutes.userVffInvitesSent,
-                              extra: UserVffInvitesSentRouteArgs(
-                                inviteCount: 1,
-                                projectName: g.titleLine,
+                      if (state.status ==
+                          UserVffGroupInvitationListStatus.error) {
+                        return Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              AppText(
+                                state.errorMessage ?? AppStrings.errorGeneric,
+                                textAlign: TextAlign.center,
                               ),
-                            );
-                          },
-                          onDecline: () => cubit.remove(g),
+                              SizedBox(height: 12.h),
+                              TextButton(
+                                onPressed: () => context
+                                    .read<UserVffGroupInvitationListCubit>()
+                                    .load(),
+                                child: AppText(AppStrings.btnRetry),
+                              ),
+                            ],
+                          ),
                         );
-                      },
-                    );
-                  },
-                ),
+                      }
+
+                      final items = state.items;
+                      if (items.isEmpty) {
+                        return const UserVffHubEmptyBody(
+                          message: AppStrings.userVffEmptyRequests,
+                        );
+                      }
+
+                      final cubit =
+                          context.read<UserVffGroupInvitationListCubit>();
+                      final acting = state.actingRow;
+                      final inboxBusy = acting != null;
+
+                      return ListView.builder(
+                        physics: const BouncingScrollPhysics(),
+                        padding: EdgeInsets.only(bottom: AppDimens.v24),
+                        itemCount: items.length,
+                        itemBuilder: (_, i) {
+                          final g = items[i];
+                          return UserVffGroupInvitationCard(
+                            item: g,
+                            actingRow: acting,
+                            onPrimary: inboxBusy
+                                ? null
+                                : () {
+                                    if (g.kind ==
+                                        UserVffGroupInviteKind
+                                            .memberRequestJoin) {
+                                      return;
+                                    }
+                                    cubit.accept(g);
+                                  },
+                            onDecline:
+                                inboxBusy ? null : () => cubit.decline(g),
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ),
               ),
             ),

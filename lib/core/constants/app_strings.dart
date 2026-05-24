@@ -365,10 +365,14 @@ class AppStrings {
   static const String userVffHubTitle = 'My VFFs & Requests';
   static const String userVffTabMyVffs = 'My VFFs';
   static const String userVffTabRequests = 'Requests';
+  static const String userVffRequestsReceived = 'Received';
+  static const String userVffRequestsSent = 'Sent';
+  static const String userVffSentJoinRequestsSection = 'Join Requests';
   static const String userVffEmptyMyVffs =
       'You don\'t have any VFFs yet.';
   static const String userVffEmptyRequests = 'No Pending Requests';
   static const String userVffSectionMyVffs = 'My VFFs';
+  static const String userVffSectionSentVffRequests = 'Sent VFF Requests';
   static const String userVffSectionVffRequests = 'VFF Requests';
   static const String userVffSectionGroupInvites = 'Group Invitations';
   static const String userVffSeeAllRequestsLink = 'See All Requests';
@@ -408,6 +412,9 @@ class AppStrings {
 
   /// Following menu
   static const String userVffFollowing = 'Following';
+
+  /// Connected VFF profile footer dropdown label (Figma).
+  static const String userVffFooterMenuLabel = 'VFF';
   static const String userVffMenuRemoveConnection = 'Remove VFF';
 
   /// Invite success (headline + sub copy + bold project line in UI)
@@ -713,6 +720,10 @@ class AppStrings {
   static const String takePhoto             = 'Take Photo';
   static const String chooseFromGallery     = 'Choose from Gallery';
   static const String profileUpdatedSuccess = 'Profile updated successfully!';
+  static const String profileChangeImage = 'Change Image';
+  static const String profileRemoveImage = 'Remove Image';
+  static const String profilePhotoUploading = 'Uploading photo...';
+  static const String profilePhotoRemoving = 'Removing photo...';
   static const String cardSavedSuccess      = 'Card saved successfully!';
   static const String cardRemovedSuccess    = 'Card removed.';
 

@@ -94,6 +94,7 @@ class JoinRequestsCubit extends Cubit<JoinRequestsState> {
           displayName: m.name,
           username: m.username,
           initials: m.initials,
+          photoUrl: m.photoUrl ?? pending.photoUrl,
         );
       }
     }

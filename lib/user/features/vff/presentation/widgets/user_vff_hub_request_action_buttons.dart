@@ -8,14 +8,18 @@ import 'package:vestie/core/widgets/common/app_button.dart';
 /// Accept / Join (lavender) + Decline (white, `#D9D9D9` border) — hub request cards.
 class UserVffHubRequestActionButtons extends StatelessWidget {
   final String primaryLabel;
-  final VoidCallback onPrimary;
-  final VoidCallback onDecline;
+  final VoidCallback? onPrimary;
+  final VoidCallback? onDecline;
+  final bool isPrimaryLoading;
+  final bool isDeclineLoading;
 
   const UserVffHubRequestActionButtons({
     super.key,
     required this.primaryLabel,
     required this.onPrimary,
     required this.onDecline,
+    this.isPrimaryLoading = false,
+    this.isDeclineLoading = false,
   });
 
   static const _radius = 8.0;
@@ -24,6 +28,7 @@ class UserVffHubRequestActionButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final height = _buttonHeight.h;
+    final busy = isPrimaryLoading || isDeclineLoading;
 
     return Row(
       children: [
@@ -33,6 +38,7 @@ class UserVffHubRequestActionButtons extends StatelessWidget {
             height: height,
             hasShadow: false,
             useGradient: false,
+            isLoading: isPrimaryLoading,
             isSecondary: true,
             borderRadius: _radius.r,
             secondaryFillColor: AppColors.purple400,
@@ -40,7 +46,7 @@ class UserVffHubRequestActionButtons extends StatelessWidget {
             secondaryLabelColor: AppColors.grey1100,
             secondaryLabelFontWeight: FontWeight.w600,
             labelFontSize: 13.sp,
-            onPressed: onPrimary,
+            onPressed: busy ? null : onPrimary,
           ),
         ),
         SizedBox(width: 10.w),
@@ -50,6 +56,7 @@ class UserVffHubRequestActionButtons extends StatelessWidget {
             height: height,
             hasShadow: false,
             useGradient: false,
+            isLoading: isDeclineLoading,
             isSecondary: true,
             borderRadius: _radius.r,
             secondaryFillColor: AppColors.surface,
@@ -57,7 +64,7 @@ class UserVffHubRequestActionButtons extends StatelessWidget {
             secondaryLabelColor: AppColors.grey1100,
             secondaryLabelFontWeight: FontWeight.w600,
             labelFontSize: 13.sp,
-            onPressed: onDecline,
+            onPressed: busy ? null : onDecline,
           ),
         ),
       ],

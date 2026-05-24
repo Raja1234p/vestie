@@ -6,6 +6,7 @@ import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import '../../domain/entities/member_entity.dart';
+import '../../domain/entities/member_entity_extensions.dart';
 import '../../domain/entities/project_detail_entity.dart';
 import 'project_member_row.dart';
 import 'project_members_empty_state.dart';
@@ -16,7 +17,8 @@ class ProjectMembersSection extends StatelessWidget {
   final List<MemberEntity> members;
   final ProjectDetailEntity? project;
   final ValueChanged<MemberEntity>? onMemberTap;
-  final ValueChanged<MemberEntity>? onAddFriend;
+  final ValueChanged<MemberEntity>? onSendVffRequest;
+  final String? sendingVffUserId;
   final bool Function(MemberEntity member)? showVffBadgeFor;
   final bool showTitle;
 
@@ -26,7 +28,8 @@ class ProjectMembersSection extends StatelessWidget {
     required this.members,
     this.project,
     this.onMemberTap,
-    this.onAddFriend,
+    this.onSendVffRequest,
+    this.sendingVffUserId,
     this.showVffBadgeFor,
     this.showTitle = true,
   });
@@ -63,9 +66,15 @@ class ProjectMembersSection extends StatelessWidget {
                 member: member,
                 project: project,
                 onTap: onMemberTap,
-                onAddFriend:
-                    onAddFriend == null ? null : () => onAddFriend!(member),
-                showVffBadge: showVffBadgeFor?.call(member) ?? false,
+                onAddFriend: onSendVffRequest == null
+                    ? null
+                    : () => onSendVffRequest!(member),
+                isSendVffLoading:
+                    sendingVffUserId != null &&
+                    sendingVffUserId == member.apiUserId,
+                vffRequestSent: member.hasPendingVffOutgoing,
+                showVffBadge:
+                    showVffBadgeFor?.call(member) ?? member.showsVffBadgeOnMemberRow,
               ),
             ),
           ),

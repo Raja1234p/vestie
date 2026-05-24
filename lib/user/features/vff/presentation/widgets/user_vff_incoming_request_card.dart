@@ -4,22 +4,25 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/core/widgets/common/app_avatar_circle.dart';
+import 'package:vestie/core/widgets/common/app_network_avatar.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/user/features/vff/presentation/models/user_vff_hub_ui_model.dart';
+import 'package:vestie/user/features/vff/presentation/models/user_vff_inbox_action.dart';
 import 'package:vestie/user/features/vff/presentation/widgets/user_vff_hub_request_action_buttons.dart';
 
 /// **Flow: Hub / VFF-requests list → “VFF Requests”** — inbound connection request row.
 class UserVffIncomingRequestCard extends StatelessWidget {
   final UserVffIncomingRequestUi item;
-  final VoidCallback onAccept;
-  final VoidCallback onDecline;
+  final VoidCallback? onAccept;
+  final VoidCallback? onDecline;
+  final UserVffInboxRowAction? actingRow;
 
   const UserVffIncomingRequestCard({
     super.key,
     required this.item,
     required this.onAccept,
     required this.onDecline,
+    this.actingRow,
   });
 
   @override
@@ -42,7 +45,8 @@ class UserVffIncomingRequestCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  AppAvatarCircle(
+                  AppNetworkAvatar(
+                    imageUrl: item.photoUrl,
                     initials: item.initials,
                     size: 40.r,
                     backgroundColor: AppColors.purple200,
@@ -82,6 +86,14 @@ class UserVffIncomingRequestCard extends StatelessWidget {
                 primaryLabel: AppStrings.btnAccept,
                 onPrimary: onAccept,
                 onDecline: onDecline,
+                isPrimaryLoading: actingRow.primaryLoading(
+                  item.id,
+                  UserVffInboxItemKind.vffRequest,
+                ),
+                isDeclineLoading: actingRow.declineLoading(
+                  item.id,
+                  UserVffInboxItemKind.vffRequest,
+                ),
               ),
             ],
           ),

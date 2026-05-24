@@ -1,11 +1,14 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/constants/storage_keys.dart';
+import '../../../auth/domain/entities/user.dart';
+import '../../../auth/domain/usecases/get_me_use_case.dart';
+import '../../../auth/domain/usecases/update_me_use_case.dart';
 import '../../../../core/di/service_locator.dart';
+import '../../../../core/error/failure_mapper.dart';
 import '../../../../core/utils/username_input_formatter.dart';
 import '../../../../core/utils/validation_utils.dart';
-import '../../../auth/domain/usecases/update_me_use_case.dart';
+import '../../data/profile_prefs.dart';
 import '../../domain/entities/user_profile.dart';
 
 class EditProfileState extends Equatable {
@@ -16,9 +19,7 @@ class EditProfileState extends Equatable {
   final String? fullNameError;
   final String? usernameError;
   final String? emailError;
-  /// API / server failures only (not field validation).
   final String? error;
-  final UserProfile? lastSavedFromServer;
 
   const EditProfileState({
     required this.fullName,
@@ -29,7 +30,6 @@ class EditProfileState extends Equatable {
     this.usernameError,
     this.emailError,
     this.error,
-    this.lastSavedFromServer,
   });
 
   EditProfileState copyWith({
@@ -41,12 +41,10 @@ class EditProfileState extends Equatable {
     String? usernameError,
     String? emailError,
     String? error,
-    UserProfile? lastSavedFromServer,
     bool clearFullNameError = false,
     bool clearUsernameError = false,
     bool clearEmailError = false,
     bool clearError = false,
-    bool clearLastSaved = false,
     bool clearAllFieldErrors = false,
   }) {
     return EditProfileState(
@@ -64,9 +62,6 @@ class EditProfileState extends Equatable {
           ? null
           : (emailError ?? this.emailError),
       error: clearError ? null : (error ?? this.error),
-      lastSavedFromServer: clearLastSaved
-          ? null
-          : (lastSavedFromServer ?? this.lastSavedFromServer),
     );
   }
 
@@ -80,52 +75,33 @@ class EditProfileState extends Equatable {
         usernameError,
         emailError,
         error,
-        lastSavedFromServer,
       ];
 }
 
 class EditProfileCubit extends Cubit<EditProfileState> {
-  final UpdateMeUseCase _updateMeUseCase;
-  String _photoUrlForApi;
-
-  EditProfileCubit(
-    UserProfile initial, {
-    String photoUrlForApi = '',
-  })  : _updateMeUseCase = ServiceLocator.instance.updateMeUseCase,
-        _photoUrlForApi = photoUrlForApi,
+  EditProfileCubit(UserProfile initial)
+      : _updateMeUseCase = ServiceLocator.instance.updateMeUseCase,
+        _getMeUseCase = ServiceLocator.instance.getMeUseCase,
         super(EditProfileState(
           fullName: initial.fullName,
           username: initial.username,
           email: initial.email,
         ));
 
+  final UpdateMeUseCase _updateMeUseCase;
+  final GetMeUseCase _getMeUseCase;
+
   void setFullName(String v) => emit(state.copyWith(
         fullName: v,
-        clearLastSaved: true,
         clearFullNameError: true,
         clearError: true,
       ));
 
   void setUsername(String v) => emit(state.copyWith(
         username: v,
-        clearLastSaved: true,
         clearUsernameError: true,
         clearError: true,
       ));
-
-  void setEmail(String v) => emit(state.copyWith(
-        email: v,
-        clearLastSaved: true,
-        clearEmailError: true,
-        clearError: true,
-      ));
-
-  Future<void> _persistLocal(UserProfile p) async {
-    final prefs = ServiceLocator.instance.sharedPrefs;
-    await prefs.saveString(StorageKeys.userName, p.fullName);
-    await prefs.saveString(StorageKeys.userEmail, p.email);
-    await prefs.saveString(StorageKeys.userUsername, p.username);
-  }
 
   Future<UserProfile?> save() async {
     final nameErr = ValidationUtils.validateFullName(state.fullName);
@@ -134,15 +110,10 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     final emailErr = ValidationUtils.validateEmail(state.email);
 
     if (nameErr != null || userErr != null || emailErr != null) {
-      emit(EditProfileState(
-        fullName: state.fullName,
-        username: state.username,
-        email: state.email,
-        isSaving: false,
+      emit(state.copyWith(
         fullNameError: nameErr,
         usernameError: userErr,
         emailError: emailErr,
-        lastSavedFromServer: state.lastSavedFromServer,
       ));
       return null;
     }
@@ -150,7 +121,6 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     emit(state.copyWith(
       isSaving: true,
       clearError: true,
-      clearLastSaved: true,
       clearAllFieldErrors: true,
     ));
 
@@ -158,39 +128,53 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     final firstName = parts.isEmpty ? '' : parts.first;
     final lastName = parts.length > 1 ? parts.sublist(1).join(' ') : '';
 
-    final result = await _updateMeUseCase(
+    final updateResult = await _updateMeUseCase(
       firstName: firstName,
       lastName: lastName,
       userName: UsernameInputFormatter.normalize(state.username),
-      photoUrl: _photoUrlForApi,
     );
 
-    return result.fold(
+    User? updatedUser;
+    final updateFailed = updateResult.fold(
       (failure) {
-        emit(state.copyWith(isSaving: false, error: failure.message));
-        return null;
+        emit(state.copyWith(
+          isSaving: false,
+          error: FailureMapper.userMessage(failure),
+        ));
+        return true;
       },
       (user) {
-        _photoUrlForApi = user.photoUrl ?? _photoUrlForApi;
-        final userName = user.userName.isNotEmpty
-            ? user.userName
-            : UsernameInputFormatter.normalize(state.username);
-        final updated = UserProfile(
-          fullName: user.name,
-          username: userName,
-          email: user.email,
-        );
-        emit(state.copyWith(
-          fullName: updated.fullName,
-          username: updated.username,
-          email: updated.email,
-          isSaving: false,
-          lastSavedFromServer: updated,
-          clearAllFieldErrors: true,
-        ));
-        _persistLocal(updated);
-        return updated;
+        updatedUser = user;
+        return false;
       },
     );
+    if (updateFailed || updatedUser == null) return null;
+
+    final syncResult = await _getMeUseCase();
+    if (isClosed) return null;
+
+    String? syncError;
+    User? syncedUser;
+    syncResult.fold(
+      (failure) => syncError = FailureMapper.userMessage(failure),
+      (user) => syncedUser = user,
+    );
+    if (syncError != null) {
+      emit(state.copyWith(isSaving: false, error: syncError));
+      return null;
+    }
+
+    final profile = ProfilePrefs.fromUser(syncedUser!);
+
+    await ProfilePrefs.persist(profile);
+
+    emit(state.copyWith(
+      fullName: profile.fullName,
+      username: profile.username,
+      email: profile.email,
+      isSaving: false,
+      clearAllFieldErrors: true,
+    ));
+    return profile;
   }
 }

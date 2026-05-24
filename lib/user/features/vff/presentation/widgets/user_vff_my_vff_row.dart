@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/core/widgets/common/app_avatar_circle.dart';
+import 'package:vestie/core/widgets/common/app_network_avatar.dart';
 import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/user/features/vff/presentation/models/user_vff_hub_ui_model.dart';
@@ -40,7 +40,8 @@ class UserVffMyVffRow extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
             child: Row(
               children: [
-                AppAvatarCircle(
+                AppNetworkAvatar(
+                  imageUrl: row.photoUrl,
                   initials: row.initials,
                   size: 40.r,
                   backgroundColor: AppColors.purple200,

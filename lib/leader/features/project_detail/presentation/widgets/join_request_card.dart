@@ -3,11 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/core/widgets/common/app_avatar_circle.dart';
+import 'package:vestie/core/widgets/common/app_network_avatar.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 
 class JoinRequestCard extends StatelessWidget {
   final String initials;
+  final String? photoUrl;
   final String name;
   final String username;
   final VoidCallback? onAccept;
@@ -18,6 +19,7 @@ class JoinRequestCard extends StatelessWidget {
   const JoinRequestCard({
     super.key,
     required this.initials,
+    this.photoUrl,
     required this.name,
     required this.username,
     required this.onAccept,
@@ -39,7 +41,13 @@ class JoinRequestCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              AppAvatarCircle(initials: initials, size: 52.h),
+              AppNetworkAvatar(
+                imageUrl: photoUrl,
+                initials: initials,
+                size: 52.h,
+                backgroundColor: AppColors.purple300,
+                textColor: AppColors.grey1100,
+              ),
               SizedBox(width: 10.w),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

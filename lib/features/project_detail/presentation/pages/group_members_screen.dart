@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/di/service_locator.dart';
+import 'package:vestie/core/error/failure_mapper.dart';
+import 'package:vestie/core/utils/app_snackbar.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
+import 'package:vestie/features/project_detail/domain/entities/member_entity_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/app/router/route_args/project_detail_flow_args.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_member_row.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_members_empty_state.dart';
+import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
+import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
 
 /// Full-screen group members list (View All Members).
-class GroupMembersScreen extends StatelessWidget {
+class GroupMembersScreen extends StatefulWidget {
   final List<MemberEntity> members;
   final String projectId;
   final ProjectDetailEntity? project;
@@ -26,9 +33,72 @@ class GroupMembersScreen extends StatelessWidget {
     this.project,
   });
 
-  List<MemberEntity> get _activeMembers => members
+  @override
+  State<GroupMembersScreen> createState() => _GroupMembersScreenState();
+}
+
+class _GroupMembersScreenState extends State<GroupMembersScreen> {
+  late List<MemberEntity> _members;
+  String? _sendingVffUserId;
+
+  @override
+  void initState() {
+    super.initState();
+    _members = widget.members;
+  }
+
+  List<MemberEntity> get _activeMembers => _members
       .where((m) => !m.status.toLowerCase().contains('pending'))
       .toList(growable: false);
+
+  Future<void> _sendVff({
+    required ProjectDetailEntity project,
+    required MemberEntity member,
+  }) async {
+    final userId = member.apiUserId;
+    if (userId.isEmpty || _sendingVffUserId != null) return;
+    if (member.hasPendingVffOutgoing || member.isVffConnected) return;
+
+    setState(() => _sendingVffUserId = userId);
+
+    final result = await ServiceLocator.instance.sendVffRequestUseCase(
+      projectId: project.id,
+      userId: userId,
+    );
+
+    if (!mounted) return;
+
+    await result.fold(
+      (failure) async {
+        setState(() => _sendingVffUserId = null);
+        AppSnackBar.showError(context, FailureMapper.userMessage(failure));
+      },
+      (sent) async {
+        setState(() {
+          _sendingVffUserId = null;
+          _members = _members
+              .map(
+                (m) => m.matchesIdentity(member)
+                    ? m.copyWith(
+                        vffConnectionState: VffConnectionState.pendingOutgoing,
+                        canSendVffRequest: false,
+                        pendingVffRequestId:
+                            sent.id.isNotEmpty ? sent.id : m.pendingVffRequestId,
+                      )
+                    : m,
+              )
+              .toList(growable: false);
+        });
+        try {
+          context.read<ProjectDetailBloc>().add(
+                LoadProjectDetailEvent(projectId: project.id),
+              );
+        } on ProviderNotFoundException {
+          // Opened outside project detail.
+        }
+      },
+    );
+  }
 
   Future<void> _openMemberProfile(
     BuildContext context, {
@@ -51,7 +121,7 @@ class GroupMembersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final active = _activeMembers;
-    final p = project;
+    final p = widget.project;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -89,9 +159,14 @@ class GroupMembersScreen extends StatelessWidget {
                                   : null,
                               onAddFriend: p != null &&
                                       p.canReviewMemberProfiles
-                                  ? () => ProjectDetailNavigationHelpers
-                                      .openAddFriendFlow(context, member)
+                                  ? () => _sendVff(
+                                        project: p,
+                                        member: member,
+                                      )
                                   : null,
+                              isSendVffLoading:
+                                  _sendingVffUserId == member.apiUserId,
+                              vffRequestSent: member.hasPendingVffOutgoing,
                             ),
                           );
                         },

@@ -6,6 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/utils/app_snackbar.dart';
+import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_toggle_tab_bar.dart';
@@ -13,7 +15,7 @@ import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import '../../cubit/user_vff_hub_cubit.dart';
 import '../../cubit/user_vff_hub_state.dart';
-import '../user_vff_rounded_sheet.dart';
+import '../user_vff_shimmers.dart';
 import 'user_vff_hub_my_vffs_tab.dart';
 import 'user_vff_hub_requests_tab.dart';
 
@@ -77,17 +79,97 @@ final class UserVffHubShell extends StatelessWidget {
                   ),
                   SizedBox(height: 24.h),
                   Expanded(
-                    child: BlocBuilder<UserVffHubCubit, UserVffHubState>(
+                    child: BlocConsumer<UserVffHubCubit, UserVffHubState>(
+                      listenWhen: (prev, curr) {
+                        final err = curr.errorMessage;
+                        final reqErr = curr.requestsErrorMessage;
+                        return (prev.errorMessage != err && err != null) ||
+                            (prev.requestsErrorMessage != reqErr &&
+                                reqErr != null);
+                      },
+                      listener: (context, hubState) {
+                        final message = hubState.errorMessage ??
+                            hubState.requestsErrorMessage;
+                        if (message == null || message.isEmpty) return;
+                        AppSnackBar.showError(context, message);
+                      },
                       builder: (context, hubState) {
                         if (hubState.tabIndex == 0) {
-                          return UserVffHubMyVffsTab(hubState: hubState);
+                          return _buildMyVffsBody(context, hubState);
                         }
-                        return UserVffHubRequestsTab(hubState: hubState);
+                        return _buildRequestsBody(context, hubState);
                       },
                     ),
                   ),
                 ],
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMyVffsBody(BuildContext context, UserVffHubState hubState) {
+    if (hubState.loadStatus == UserVffHubLoadStatus.loading &&
+        hubState.myVffConnections.isEmpty) {
+      return const UserVffHubShimmer(requestsTab: false);
+    }
+    if (hubState.loadStatus == UserVffHubLoadStatus.error &&
+        hubState.myVffConnections.isEmpty) {
+      return _HubErrorBody(
+        message: hubState.errorMessage ?? AppStrings.errorGeneric,
+        onRetry: () => context.read<UserVffHubCubit>().load(),
+      );
+    }
+    return UserVffHubMyVffsTab(hubState: hubState);
+  }
+
+  Widget _buildRequestsBody(BuildContext context, UserVffHubState hubState) {
+    final loading = hubState.requestsLoadStatus ==
+            UserVffHubRequestsLoadStatus.loading ||
+        hubState.requestsLoadStatus == UserVffHubRequestsLoadStatus.initial;
+
+    if (loading &&
+        hubState.incomingVffRequests.isEmpty &&
+        hubState.groupInvitations.isEmpty) {
+      return const UserVffHubShimmer(requestsTab: true);
+    }
+    if (hubState.requestsLoadStatus == UserVffHubRequestsLoadStatus.error &&
+        hubState.incomingVffRequests.isEmpty &&
+        hubState.groupInvitations.isEmpty) {
+      return _HubErrorBody(
+        message: hubState.requestsErrorMessage ?? AppStrings.errorGeneric,
+        onRetry: () =>
+            context.read<UserVffHubCubit>().loadReceivedInbox(force: true),
+      );
+    }
+    return UserVffHubRequestsTab(hubState: hubState);
+  }
+}
+
+class _HubErrorBody extends StatelessWidget {
+  final String message;
+  final VoidCallback onRetry;
+
+  const _HubErrorBody({
+    required this.message,
+    required this.onRetry,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(AppDimens.p18),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AppText(message, textAlign: TextAlign.center),
+            SizedBox(height: 16.h),
+            TextButton(
+              onPressed: onRetry,
+              child: AppText(AppStrings.btnRetry),
             ),
           ],
         ),

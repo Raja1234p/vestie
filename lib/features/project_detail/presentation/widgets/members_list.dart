@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/widgets/common/app_avatar_circle.dart';
+import '../../../../core/widgets/common/app_network_avatar.dart';
 import '../../../../core/widgets/text/app_text.dart';
 import '../../domain/entities/member_entity.dart';
 import 'project_member_co_leader_badge.dart';
@@ -69,7 +69,14 @@ class _MemberRow extends StatelessWidget {
         child: Row(
           children: [
             // Avatar
-            AppAvatarCircle(initials: member.initials,size: 55.h),
+            AppNetworkAvatar(
+              imageUrl: member.photoUrl,
+              initials: member.initials,
+              size: 55.h,
+              backgroundColor: AppColors.purple300,
+              textColor: AppColors.neutral1100,
+              fontSize: 18.sp,
+            ),
             SizedBox(width: 12.w),
 
             // Name + badge

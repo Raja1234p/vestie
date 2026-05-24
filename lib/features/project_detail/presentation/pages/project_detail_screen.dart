@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_back_button.dart';
 import '../../../../core/widgets/text/app_text.dart';
@@ -14,6 +15,7 @@ import 'package:vestie/features/project_detail/domain/entities/project_detail_en
 import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
 import '../navigation/open_project_from_card.dart';
 import '../navigation/project_detail_navigation_helpers.dart';
+import '../widgets/project_member_vff_send_actions.dart';
 import '../widgets/project_detail_member_layout.dart';
 import 'package:vestie/user/features/project_detail/presentation/widgets/project_detail_user_completed_content.dart';
 import '../widgets/project_detail_load_error.dart';
@@ -81,7 +83,21 @@ class _ProjectDetailBody extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: PostAuthGradientBackground(
-        child: BlocBuilder<ProjectDetailBloc, ProjectDetailState>(
+        child: BlocConsumer<ProjectDetailBloc, ProjectDetailState>(
+          listenWhen: (prev, curr) =>
+              curr is ProjectDetailLoaded &&
+              curr.vffSendErrorMessage != null &&
+              curr.vffSendErrorMessage !=
+                  (prev is ProjectDetailLoaded ? prev.vffSendErrorMessage : null),
+          listener: (context, state) {
+            if (state is! ProjectDetailLoaded) return;
+            final message = state.vffSendErrorMessage;
+            if (message == null || message.isEmpty) return;
+            AppSnackBar.showError(context, message);
+            context
+                .read<ProjectDetailBloc>()
+                .add(const ClearMemberVffSendErrorEvent());
+          },
           builder: (context, state) {
             if (state is ProjectDetailError) {
               return ProjectDetailLoadError(
@@ -148,6 +164,12 @@ class _ProjectDetailBody extends StatelessWidget {
                               project: project,
                               member: member,
                             ),
+                            onSendVffRequest: (member) =>
+                                sendMemberVffFromProjectDetail(
+                              context,
+                              member: member,
+                            ),
+                            sendingVffUserId: state.sendingVffUserId,
                           ),
                         ),
                       ),

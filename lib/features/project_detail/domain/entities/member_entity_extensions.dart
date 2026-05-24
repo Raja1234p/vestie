@@ -28,6 +28,16 @@ extension MemberEntityApiIds on MemberEntity {
     final apiName = fromApi.name.trim();
     final useApiName = apiName.isNotEmpty && apiName != 'Member';
 
+    final mergedRole = switch (fromApi.role) {
+      MemberRole.leader => MemberRole.leader,
+      MemberRole.coLeader => MemberRole.coLeader,
+      MemberRole.member => role,
+    };
+
+    final mergedPhoto = fromApi.photoUrl?.trim();
+    final useApiPhoto =
+        mergedPhoto != null && mergedPhoto.isNotEmpty;
+
     return MemberEntity(
       id: fromApi.apiUserId.isNotEmpty ? fromApi.apiUserId : id,
       membershipId: membershipId.isNotEmpty ? membershipId : fromApi.membershipId,
@@ -36,9 +46,18 @@ extension MemberEntityApiIds on MemberEntity {
       name: useApiName ? fromApi.name : name,
       username: fromApi.username.trim().isNotEmpty ? fromApi.username : username,
       status: fromApi.status.trim().isNotEmpty ? fromApi.status : status,
-      role: fromApi.role,
+      role: mergedRole,
       contributedAmount: fromApi.contributedAmount,
       overdueAmount: fromApi.overdueAmount ?? overdueAmount,
+      photoUrl: useApiPhoto ? fromApi.photoUrl : photoUrl,
+      vffAdded: fromApi.vffAdded || vffAdded || fromApi.isVffConnected,
+      vffConnectionState: fromApi.isVffConnected
+          ? fromApi.vffConnectionState
+          : (isVffConnected
+              ? vffConnectionState
+              : fromApi.vffConnectionState),
+      canSendVffRequest: fromApi.canSendVffRequest,
+      pendingVffRequestId: fromApi.pendingVffRequestId ?? pendingVffRequestId,
     );
   }
 }

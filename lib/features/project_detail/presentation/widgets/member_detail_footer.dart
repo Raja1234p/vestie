@@ -13,6 +13,7 @@ import 'package:vestie/user/features/vff/presentation/widgets/vff_following_menu
 class MemberDetailFooter extends StatelessWidget {
   final bool showVffFollowing;
   final VoidCallback onRemoveVffConnection;
+  final bool isRemoveVffLoading;
   final bool showSendVffRequest;
   final bool vffRequestSent;
   final bool isVffRequestLoading;
@@ -25,6 +26,7 @@ class MemberDetailFooter extends StatelessWidget {
     super.key,
     this.showVffFollowing = false,
     required this.onRemoveVffConnection,
+    this.isRemoveVffLoading = false,
     required this.showSendVffRequest,
     this.vffRequestSent = false,
     this.isVffRequestLoading = false,
@@ -43,7 +45,10 @@ class MemberDetailFooter extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (showVffFollowing) ...[
-            VffFollowingMenuButton(onRemove: onRemoveVffConnection),
+            VffFollowingMenuButton(
+              onRemove: isRemoveVffLoading ? null : onRemoveVffConnection,
+              isRemoveLoading: isRemoveVffLoading,
+            ),
             if (showRemoveMember) SizedBox(height: 12.h),
           ],
           if (showSendCta) ...[

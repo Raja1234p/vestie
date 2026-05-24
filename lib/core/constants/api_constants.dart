@@ -21,7 +21,30 @@ class ApiConstants {
 
   // ── User ─────────────────────────────────────────────────────────────────
   static const String me              = '/users/me';
+  static const String meProfilePicture = '/users/me/profile-picture';
   static const String riskDisclaimer  = '/users/me/risk-disclaimer';
+
+  // ── VFF ──────────────────────────────────────────────────────────────────
+  static const String userMeVffs = '/users/me/vffs';
+  static String userMeVffProfile(String userId) => '/users/me/vffs/$userId';
+  static String userVffPublicProfile(String userId) => '/users/$userId/vff-profile';
+  static String userVffConnection(String userId) => '/users/$userId/vff';
+  static const String userInboxReceived = '/users/me/inbox/received';
+  static const String userInboxSent = '/users/me/inbox/sent';
+  static String projectMemberVffRequest(String projectId, String userId) =>
+      '$projects/$projectId/members/$userId/vff-requests';
+  static String userVffRequestAccept(String requestId) =>
+      '/users/me/vff-requests/$requestId/accept';
+  static String userVffRequestDecline(String requestId) =>
+      '/users/me/vff-requests/$requestId/decline';
+  static String projectVffInvites(String projectId) =>
+      '$projects/$projectId/vff-invites';
+  static String projectVffInviteAccept(String projectId, String inviteId) =>
+      '$projects/$projectId/vff-invites/$inviteId/accept';
+  static String projectVffInviteDecline(String projectId, String inviteId) =>
+      '$projects/$projectId/vff-invites/$inviteId/decline';
+  static String projectJoinFromVff(String projectId) =>
+      '$projects/$projectId/join-from-vff';
 
   // ── Projects ─────────────────────────────────────────────────────────────
   static const String projects = '/projects';

@@ -2,6 +2,7 @@ import '../models/auth_token_model.dart';
 import '../models/user_model.dart';
 import '../models/register_response_model.dart';
 import '../models/message_response_model.dart';
+import '../../domain/entities/update_me_photo.dart';
 import '../models/risk_disclaimer_model.dart';
 
 abstract class AuthRemoteDataSource {
@@ -49,8 +50,11 @@ abstract class AuthRemoteDataSource {
     required String firstName,
     required String lastName,
     required String userName,
-    required String photoUrl,
+    UpdateMePhoto photo = const UpdateMePhotoUnchanged(),
   });
+
+  /// `DELETE /users/me/profile-picture`
+  Future<UserModel> deleteMeProfilePicture();
 
   Future<RiskDisclaimerModel> getRiskDisclaimer();
 

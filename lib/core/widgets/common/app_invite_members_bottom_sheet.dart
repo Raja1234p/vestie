@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -14,21 +15,24 @@ import '../../theme/app_colors.dart';
 import '../../utils/app_snackbar.dart';
 import '../../utils/invite_share_utils.dart';
 import '../text/app_text.dart';
-import 'app_avatar_circle.dart';
+import 'app_network_avatar.dart';
 import 'app_button.dart';
 import 'app_invite_members_dashed_divider.dart';
 import 'invite_vff_pick_ui.dart';
+import 'package:vestie/user/features/vff/presentation/cubit/invite_members_sheet_cubit.dart';
+import 'package:vestie/user/features/vff/presentation/cubit/invite_members_sheet_state.dart';
+import 'package:vestie/user/features/vff/presentation/widgets/user_vff_shimmers.dart';
 
 class AppInviteMembersBottomSheet extends StatefulWidget {
+  final String projectId;
   final String projectName;
   final String inviteLink;
-  final List<InviteVffPickUi> vffs;
 
   const AppInviteMembersBottomSheet({
     super.key,
+    required this.projectId,
     required this.projectName,
     required this.inviteLink,
-    required this.vffs,
   });
 
   @override
@@ -68,9 +72,16 @@ class _AppInviteMembersBottomSheetState
     _openShareSheet(buttonContext, origin: origin);
   }
 
-  void _submitInvite(BuildContext context) {
-    final count = _selectedIds.length;
-    if (count == 0) return;
+  Future<void> _submitInvite(BuildContext context) async {
+    final ids = _selectedIds.toList(growable: false);
+    if (ids.isEmpty) return;
+
+    final count = await context.read<InviteMembersSheetCubit>().inviteSelected(
+          projectId: widget.projectId,
+          userIds: ids,
+        );
+    if (!context.mounted || count == null) return;
+
     final args = UserVffInvitesSentRouteArgs(
       inviteCount: count,
       projectName: widget.projectName,
@@ -82,151 +93,211 @@ class _AppInviteMembersBottomSheetState
 
   @override
   Widget build(BuildContext context) {
-    final media = MediaQuery.of(context);
-    // Cap height so a tall sheet never draws under the status bar.
-    final maxBodyHeight = (media.size.height -
-            media.viewPadding.top -
-            media.viewPadding.bottom) *
-        0.88;
-    final selectionCount = _selectedIds.length;
-    final hasSelection = selectionCount > 0;
-    final dividerGutter = AppDimens.inviteMembersDividerGutter;
-    final hintToTopDivider = AppDimens.inviteMembersHintToDivider;
-    final sheetContentInset = AppDimens.p20;
+    return BlocConsumer<InviteMembersSheetCubit, InviteMembersSheetState>(
+      listenWhen: (prev, curr) =>
+          prev.errorMessage != curr.errorMessage && curr.errorMessage != null,
+      listener: (context, state) {
+        final message = state.errorMessage;
+        if (message == null || message.isEmpty) return;
+        AppSnackBar.showError(context, message);
+      },
+      builder: (context, sheetState) {
+        final vffs = sheetState.vffs;
+        final media = MediaQuery.of(context);
+        final maxBodyHeight = (media.size.height -
+                media.viewPadding.top -
+                media.viewPadding.bottom) *
+            0.88;
+        final selectionCount = _selectedIds.length;
+        final hasSelection = selectionCount > 0;
+        final dividerGutter = AppDimens.inviteMembersDividerGutter;
+        final hintToTopDivider = AppDimens.inviteMembersHintToDivider;
+        final sheetContentInset = AppDimens.p20;
+        final isSubmitting = sheetState.isSubmitting;
 
-    return ConstrainedBox(
-      constraints: BoxConstraints(maxHeight: maxBodyHeight),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(height: 24.h),
-          Container(
-            width: 52.w,
-            height: 5.h,
-            decoration: BoxDecoration(
-              color: AppColors.neutral400,
-              borderRadius: BorderRadius.circular(99),
-            ),
-          ),
-          SizedBox(height: 16.h),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: AppText(
-              AppStrings.inviteMembersTitle(widget.projectName),
-              textAlign: TextAlign.center,
-              style: GoogleFonts.lato(
-                fontSize: 20.sp,
-                fontWeight: FontWeight.w800,
-                color: AppColors.grey1100,
+        return ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: maxBodyHeight),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: 24.h),
+              Container(
+                width: 52.w,
+                height: 5.h,
+                decoration: BoxDecoration(
+                  color: AppColors.neutral400,
+                  borderRadius: BorderRadius.circular(99),
+                ),
               ),
-            ),
+              SizedBox(height: 16.h),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: AppText(
+                  AppStrings.inviteMembersTitle(widget.projectName),
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.lato(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.grey1100,
+                  ),
+                ),
+              ),
+              SizedBox(height: 6.h),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: AppText(
+                  AppStrings.inviteMembersSelectVffHint,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.lato(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.neutral700,
+                  ),
+                ),
+              ),
+              SizedBox(height: hintToTopDivider),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: sheetContentInset),
+                child: const AppInviteMembersDashedDivider(),
+              ),
+              SizedBox(height: dividerGutter),
+              Flexible(
+                fit: FlexFit.loose,
+                child: SingleChildScrollView(
+                  child: _buildVffGrid(
+                    sheetState: sheetState,
+                    vffs: vffs,
+                    sheetContentInset: sheetContentInset,
+                  ),
+                ),
+              ),
+              if (hasSelection) ...[
+                SizedBox(height: dividerGutter),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: sheetContentInset),
+                  child: AppButton(
+                    text: AppStrings.inviteMembersInviteSelected(selectionCount),
+                    onPressed: isSubmitting
+                        ? null
+                        : () => _submitInvite(context),
+                    isLoading: isSubmitting,
+                    useGradient: false,
+                    hasShadow: false,
+                    color: AppColors.purple800,
+                    borderRadius: 10.r,
+                    height: 50.h,
+                  ),
+                ),
+              ],
+              SizedBox(height: dividerGutter),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: sheetContentInset),
+                child: const AppInviteMembersDashedDivider(),
+              ),
+              SizedBox(height: dividerGutter),
+              AppText(
+                AppStrings.inviteMembersOrShareVia,
+                style: GoogleFonts.lato(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.neutral700,
+                ),
+              ),
+              SizedBox(height: dividerGutter),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: sheetContentInset),
+                child: Builder(
+                  builder: (buttonContext) {
+                    return AppButton(
+                      text: AppStrings.inviteShareOutsideVestie,
+                      onPressed: () => _openShareFromButton(buttonContext),
+                      useGradient: false,
+                      hasShadow: false,
+                      color: AppColors.neutral1200,
+                      borderRadius: 10.r,
+                      height: 50.h,
+                    );
+                  },
+                ),
+              ),
+              SizedBox(height: AppDimens.inviteMembersSheetBottom),
+            ],
           ),
-          SizedBox(height: 6.h),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: AppText(
-              AppStrings.inviteMembersSelectVffHint,
+        );
+      },
+    );
+  }
+
+  Widget _buildVffGrid({
+    required InviteMembersSheetState sheetState,
+    required List<InviteVffPickUi> vffs,
+    required double sheetContentInset,
+  }) {
+    if (sheetState.isLoading) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 16),
+        child: UserVffInviteGridShimmer(),
+      );
+    }
+
+    if (sheetState.status == InviteMembersSheetLoadStatus.error) {
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: sheetContentInset),
+        child: Column(
+          children: [
+            AppText(
+              sheetState.errorMessage ?? AppStrings.errorGeneric,
               textAlign: TextAlign.center,
               style: GoogleFonts.lato(
                 fontSize: 14.sp,
-                fontWeight: FontWeight.w400,
-                color: AppColors.neutral700,
+                color: AppColors.grey700,
               ),
             ),
-          ),
-          SizedBox(height: hintToTopDivider),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: sheetContentInset),
-            child: const AppInviteMembersDashedDivider(),
-          ),
-          SizedBox(height: dividerGutter),
-          Flexible(
-            fit: FlexFit.loose,
-            child: SingleChildScrollView(
-              child: widget.vffs.isEmpty
-                  ? Padding(
-                      padding: EdgeInsets.symmetric(vertical: 24.h),
-                      child: AppText(
-                        AppStrings.userVffEmptyMyVffs,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.lato(
-                          fontSize: 14.sp,
-                          color: AppColors.grey700,
-                        ),
-                      ),
-                    )
-                  : GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      padding: EdgeInsets.symmetric(horizontal: sheetContentInset),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 4,
-                        mainAxisSpacing: 12.h,
-                        crossAxisSpacing: 34.w,
-                        mainAxisExtent: 88.h,
-                      ),
-                      itemCount: widget.vffs.length,
-                      itemBuilder: (_, i) {
-                        final vff = widget.vffs[i];
-                        final selected = _selectedIds.contains(vff.id);
-                        return _VffGridTile(
-                          vff: vff,
-                          selected: selected,
-                          onTap: () => _toggleVff(vff.id),
-                        );
-                      },
-                    ),
-            ),
-          ),
-          if (hasSelection) ...[
-            SizedBox(height: dividerGutter),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: sheetContentInset),
-              child: AppButton(
-                text: AppStrings.inviteMembersInviteSelected(selectionCount),
-                onPressed: () => _submitInvite(context),
-                useGradient: false,
-                hasShadow: false,
-                color: AppColors.purple800,
-                borderRadius: 10.r,
-                height: 50.h,
-              ),
+            SizedBox(height: 12.h),
+            TextButton(
+              onPressed: () =>
+                  context.read<InviteMembersSheetCubit>().retryLoad(),
+              child: AppText(AppStrings.btnRetry),
             ),
           ],
-          SizedBox(height: dividerGutter),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: sheetContentInset),
-            child: const AppInviteMembersDashedDivider(),
+        ),
+      );
+    }
+
+    if (vffs.isEmpty) {
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: 24.h),
+        child: AppText(
+          AppStrings.userVffEmptyMyVffs,
+          textAlign: TextAlign.center,
+          style: GoogleFonts.lato(
+            fontSize: 14.sp,
+            color: AppColors.grey700,
           ),
-          SizedBox(height: dividerGutter),
-          AppText(
-            AppStrings.inviteMembersOrShareVia,
-            style: GoogleFonts.lato(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w400,
-              color: AppColors.neutral700,
-            ),
-          ),
-          SizedBox(height: dividerGutter),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: sheetContentInset),
-            child: Builder(
-              builder: (buttonContext) {
-                return AppButton(
-                  text: AppStrings.inviteShareOutsideVestie,
-                  onPressed: () => _openShareFromButton(buttonContext),
-                  useGradient: false,
-                  hasShadow: false,
-                  color: AppColors.neutral1200,
-                  borderRadius: 10.r,
-                  height: 50.h,
-                );
-              },
-            ),
-          ),
-          SizedBox(height: AppDimens.inviteMembersSheetBottom),
-        ],
+        ),
+      );
+    }
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.symmetric(horizontal: sheetContentInset),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 4,
+        mainAxisSpacing: 12.h,
+        crossAxisSpacing: 34.w,
+        mainAxisExtent: 88.h,
       ),
+      itemCount: vffs.length,
+      itemBuilder: (_, i) {
+        final vff = vffs[i];
+        final selected = _selectedIds.contains(vff.id);
+        return _VffGridTile(
+          vff: vff,
+          selected: selected,
+          onTap: () => _toggleVff(vff.id),
+        );
+      },
     );
   }
 }
@@ -260,7 +331,8 @@ class _VffGridTile extends StatelessWidget {
             child: Stack(
               clipBehavior: Clip.none,
               children: [
-                AppAvatarCircle(
+                AppNetworkAvatar(
+                  imageUrl: vff.photoUrl,
                   initials: vff.initials,
                   size: avatarSize,
                   backgroundColor:
@@ -317,4 +389,3 @@ class _VffGridTile extends StatelessWidget {
     );
   }
 }
-

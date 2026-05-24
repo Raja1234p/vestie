@@ -20,11 +20,34 @@ class UserVffHubRouteArgs {
       UserVffHubRouteArgs(hub: UserVffHubUiModel.demoFilled());
 }
 
+/// Popped from [UserVffProfileScreen] after a successful VFF mutation.
+enum UserVffProfilePopResult {
+  connectionRemoved,
+  vffRequestSent,
+}
+
 /// Opens peer profile (`user_vff_profile_screen.dart`).
 class UserVffProfileRouteArgs {
-  final UserVffProfileUiModel profile;
+  final String userId;
+  final bool isConnectedProfile;
+  final String? projectId;
+  final UserVffProfileUiModel? previewProfile;
 
-  const UserVffProfileRouteArgs({required this.profile});
+  const UserVffProfileRouteArgs({
+    required this.userId,
+    this.isConnectedProfile = false,
+    this.projectId,
+    this.previewProfile,
+  });
+
+  factory UserVffProfileRouteArgs.preview(UserVffProfileUiModel profile) {
+    return UserVffProfileRouteArgs(
+      userId: profile.id,
+      isConnectedProfile:
+          profile.footerMode == UserVffProfileFooterMode.followingSheet,
+      previewProfile: profile,
+    );
+  }
 }
 
 /// “Invites Sent!” confirmation (`user_vff_invites_sent_screen.dart`).

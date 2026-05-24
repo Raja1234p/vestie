@@ -4,23 +4,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../core/constants/app_dimens.dart';
 import '../../../../core/constants/app_strings.dart';
-import '../../../../core/constants/storage_keys.dart';
-import '../../../../core/di/service_locator.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/person_name_input_formatter.dart';
-import '../../../../core/widgets/common/app_toast.dart';
 import '../../../../core/utils/username_input_formatter.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/common/app_loader.dart';
+import '../../../../core/widgets/common/app_toast.dart';
 import '../../../../core/widgets/common/flow_screen_footer.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
-import '../../domain/entities/user_profile.dart';
+import '../../data/profile_prefs.dart';
 import '../cubit/edit_profile_cubit.dart';
 import '../widgets/profile_sub_header.dart';
 
-/// Loads `GET /users/me` (with prefs fallback) so fields match the API, then
-/// saves via `PUT /users/me` and shows the returned profile on this screen.
+/// Edit profile — fields from dashboard-cached prefs; save then `GET /users/me` sync.
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
 
@@ -29,73 +27,27 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  UserProfile? _profile;
-  String _photoUrl = '';
-  bool _loading = true;
-  String? _loadWarning;
+  EditProfileCubit? _cubit;
 
   @override
   void initState() {
     super.initState();
-    _bootstrap();
+    ProfilePrefs.load().then((profile) {
+      if (!mounted) return;
+      setState(() => _cubit = EditProfileCubit(profile));
+    });
   }
 
-  Future<void> _bootstrap() async {
-    setState(() {
-      _loading = true;
-      _loadWarning = null;
-    });
-
-    final prefs = ServiceLocator.instance.sharedPrefs;
-    final name = await prefs.getString(StorageKeys.userName) ?? '';
-    final email = await prefs.getString(StorageKeys.userEmail) ?? '';
-    final storedHandle = await prefs.getString(StorageKeys.userUsername) ?? '';
-    final fallbackUsername = storedHandle.isNotEmpty
-        ? storedHandle
-        : (email.contains('@') ? email.split('@').first : '');
-
-    final result = await ServiceLocator.instance.authRepository.getMe();
-    if (!mounted) return;
-
-    result.fold(
-      (failure) {
-        setState(() {
-          _loading = false;
-          _loadWarning = failure.message;
-          _profile = UserProfile(
-            fullName: name,
-            username: fallbackUsername,
-            email: email,
-          );
-          _photoUrl = '';
-        });
-      },
-      (user) {
-        final userName = user.userName.isNotEmpty
-            ? user.userName
-            : (user.email.contains('@')
-                ? user.email.split('@').first
-                : '');
-        setState(() {
-          _loading = false;
-          _loadWarning = null;
-          _profile = UserProfile(
-            fullName: user.name,
-            username: userName,
-            email: user.email,
-          );
-          _photoUrl = user.photoUrl ?? '';
-        });
-        prefs.saveString(StorageKeys.userName, user.name);
-        prefs.saveString(StorageKeys.userEmail, user.email);
-        prefs.saveString(StorageKeys.userUsername, userName);
-      },
-    );
+  @override
+  void dispose() {
+    _cubit?.close();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_loading || _profile == null) {
+    final cubit = _cubit;
+    if (cubit == null) {
       return Scaffold(
         backgroundColor: Colors.transparent,
         body: PostAuthGradientBackground(
@@ -109,33 +61,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       );
     }
 
-    return BlocProvider(
-      create: (_) => EditProfileCubit(
-        _profile!,
-        photoUrlForApi: _photoUrl,
-      ),
-      child: _EditProfileBody(
-        loadWarning: _loadWarning,
-        onRetryLoad: _bootstrap,
-      ),
+    return BlocProvider.value(
+      value: cubit,
+      child: const _EditProfileForm(),
     );
   }
 }
 
-class _EditProfileBody extends StatefulWidget {
-  const _EditProfileBody({
-    required this.loadWarning,
-    required this.onRetryLoad,
-  });
-
-  final String? loadWarning;
-  final VoidCallback onRetryLoad;
+class _EditProfileForm extends StatefulWidget {
+  const _EditProfileForm();
 
   @override
-  State<_EditProfileBody> createState() => _EditProfileBodyState();
+  State<_EditProfileForm> createState() => _EditProfileFormState();
 }
 
-class _EditProfileBodyState extends State<_EditProfileBody> {
+class _EditProfileFormState extends State<_EditProfileForm> {
   late final TextEditingController _nameCtrl;
   late final TextEditingController _userCtrl;
   late final TextEditingController _emailCtrl;
@@ -157,20 +97,29 @@ class _EditProfileBodyState extends State<_EditProfileBody> {
     super.dispose();
   }
 
+  Future<void> _save() async {
+    final cubit = context.read<EditProfileCubit>();
+    if (cubit.state.isSaving) return;
+
+    final updated = await cubit.save();
+    if (!mounted) return;
+    if (updated == null) {
+      final message = cubit.state.error;
+      if (message != null && message.isNotEmpty) {
+        AppToast.showError(context, message);
+      }
+      return;
+    }
+
+    _nameCtrl.text = updated.fullName;
+    _userCtrl.text = updated.username;
+    _emailCtrl.text = updated.email;
+    AppToast.showSuccess(context, AppStrings.profileUpdatedSuccess);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<EditProfileCubit, EditProfileState>(
-      listenWhen: (prev, curr) =>
-          prev.lastSavedFromServer == null &&
-          curr.lastSavedFromServer != null,
-      listener: (context, state) {
-        final p = state.lastSavedFromServer;
-        if (p == null) return;
-        _nameCtrl.text = state.fullName;
-        _userCtrl.text = state.username;
-        _emailCtrl.text = state.email;
-        AppToast.showSuccess(context, AppStrings.profileUpdatedSuccess);
-      },
+    return BlocBuilder<EditProfileCubit, EditProfileState>(
       builder: (context, state) {
         final cubit = context.read<EditProfileCubit>();
         return Scaffold(
@@ -185,17 +134,6 @@ class _EditProfileBodyState extends State<_EditProfileBody> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (widget.loadWarning != null) ...[
-                          _LoadWarningBanner(
-                            message: widget.loadWarning!,
-                            onRetry: widget.onRetryLoad,
-                          ),
-                          SizedBox(height: 16.h),
-                        ],
-                        if (state.lastSavedFromServer != null) ...[
-                          _UpdatedProfileBanner(profile: state.lastSavedFromServer!),
-                          SizedBox(height: 16.h),
-                        ],
                         _ProfileFieldGroup(
                           label: AppStrings.labelFullName2,
                           controller: _nameCtrl,
@@ -245,8 +183,9 @@ class _EditProfileBodyState extends State<_EditProfileBody> {
                     useGradient: false,
                     hasShadow: false,
                     color: AppColors.neutral1200,
+                    borderRadius: AppRadius.r8,
                     isLoading: state.isSaving,
-                    onPressed: state.isSaving ? null : () => cubit.save(),
+                    onPressed: state.isSaving ? null : _save,
                   ),
                 ),
               ],
@@ -254,108 +193,6 @@ class _EditProfileBodyState extends State<_EditProfileBody> {
           ),
         );
       },
-    );
-  }
-}
-
-class _LoadWarningBanner extends StatelessWidget {
-  const _LoadWarningBanner({
-    required this.message,
-    required this.onRetry,
-  });
-
-  final String message;
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(12.w),
-      decoration: BoxDecoration(
-        color: AppColors.error.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: AppColors.error.withValues(alpha: 0.35)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            message,
-            style: GoogleFonts.lato(
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w600,
-              color: AppColors.error,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          AppButton(
-            text: AppStrings.btnRetry,
-            onPressed: onRetry,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _UpdatedProfileBanner extends StatelessWidget {
-  const _UpdatedProfileBanner({required this.profile});
-
-  final UserProfile profile;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(14.w),
-      decoration: BoxDecoration(
-        color: AppColors.success.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: AppColors.success.withValues(alpha: 0.45)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            AppStrings.profileUpdatedSuccess,
-            style: GoogleFonts.lato(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w800,
-              color: AppColors.textPrimary,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            profile.fullName,
-            style: GoogleFonts.lato(
-              fontSize: 15.sp,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
-            ),
-          ),
-          if (profile.username.isNotEmpty) ...[
-            SizedBox(height: 4.h),
-            Text(
-              '@${profile.username}',
-              style: GoogleFonts.lato(
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textBody,
-              ),
-            ),
-          ],
-          SizedBox(height: 4.h),
-          Text(
-            profile.email,
-            style: GoogleFonts.lato(
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textBody,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -412,9 +249,7 @@ class _ProfileFieldGroup extends StatelessWidget {
             keyboardType: keyboardType,
             inputFormatters: inputFormatters,
             onChanged: onChanged,
-            onTapOutside: (_) {
-              FocusManager.instance.primaryFocus?.unfocus();
-            },
+            onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
             style: GoogleFonts.lato(
               fontSize: 16.sp,
               fontWeight: FontWeight.w500,

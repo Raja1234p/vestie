@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/theme/app_text_styles.dart';
-import 'package:vestie/core/widgets/common/app_avatar_circle.dart';
+import 'package:vestie/core/widgets/common/app_network_avatar.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import '../../domain/entities/member_entity.dart';
 import '../../domain/entities/project_detail_entity.dart';
@@ -20,6 +20,8 @@ class ProjectMemberRow extends StatelessWidget {
   final ProjectDetailEntity? project;
   final ValueChanged<MemberEntity>? onTap;
   final VoidCallback? onAddFriend;
+  final bool isSendVffLoading;
+  final bool vffRequestSent;
   final bool showVffBadge;
 
   const ProjectMemberRow({
@@ -28,21 +30,24 @@ class ProjectMemberRow extends StatelessWidget {
     this.project,
     this.onTap,
     this.onAddFriend,
+    this.isSendVffLoading = false,
+    this.vffRequestSent = false,
     this.showVffBadge = false,
   });
 
   bool get _showRoleBadge =>
       member.role == MemberRole.leader || member.role == MemberRole.coLeader;
 
-  bool get _showAddFriend {
+  bool get _canShowVffCta {
     if (onAddFriend == null) return false;
     if (project != null) {
       return ProjectMemberAddFriendVisibility.shouldShow(
-        project: project!,
-        member: member,
-      );
+            project: project!,
+            member: member,
+          ) ||
+          vffRequestSent;
     }
-    return member.role == MemberRole.member;
+    return member.role == MemberRole.member || vffRequestSent;
   }
 
   @override
@@ -64,13 +69,13 @@ class ProjectMemberRow extends StatelessWidget {
             SizedBox(
               width: avatarSize,
               height: avatarSize,
-              child: AppAvatarCircle(
+              child: AppNetworkAvatar(
+                imageUrl: member.photoUrl,
                 initials: member.initials,
                 size: avatarSize,
                 backgroundColor: AppColors.projectMemberAvatarBg,
                 textColor: AppColors.projectMemberAvatarInitials,
                 fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
               ),
             ),
             SizedBox(width: AppDimens.projectMemberAvatarNameGap),
@@ -100,9 +105,13 @@ class ProjectMemberRow extends StatelessWidget {
                 ],
               ),
             ),
-            if (_showAddFriend) ...[
+            if (_canShowVffCta) ...[
               SizedBox(width: AppDimens.p8),
-              ProjectMemberAddFriendButton(onPressed: onAddFriend!),
+              ProjectMemberAddFriendButton(
+                onPressed: vffRequestSent ? null : onAddFriend,
+                isLoading: isSendVffLoading,
+                requestSent: vffRequestSent,
+              ),
             ],
           ],
         ),

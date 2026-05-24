@@ -9,6 +9,7 @@ import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/storage/local_storage.dart';
 import '../../../../core/utils/logger.dart';
+import '../../domain/entities/update_me_photo.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/entities/register_result.dart';
 import '../../domain/entities/risk_disclaimer.dart';
@@ -192,14 +193,14 @@ class AuthRepositoryImpl implements AuthRepository {
     required String firstName,
     required String lastName,
     required String userName,
-    required String photoUrl,
+    UpdateMePhoto photo = const UpdateMePhotoUnchanged(),
   }) async {
     try {
       final userModel = await _remoteDataSource.updateMe(
         firstName: firstName,
         lastName: lastName,
         userName: userName,
-        photoUrl: photoUrl,
+        photo: photo,
       );
       return Right(userModel);
     } on ServerException catch (e, stack) {
@@ -208,6 +209,30 @@ class AuthRepositoryImpl implements AuthRepository {
     } catch (e, stack) {
       AppLogger.error('UpdateMe Unexpected Exception', error: e, stackTrace: stack);
       return const Left(ServerFailure('An unexpected error occurred while updating user profile'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, User>> deleteMeProfilePicture() async {
+    try {
+      final userModel = await _remoteDataSource.deleteMeProfilePicture();
+      return Right(userModel);
+    } on ServerException catch (e, stack) {
+      AppLogger.error(
+        'DeleteMeProfilePicture Server Exception',
+        error: e,
+        stackTrace: stack,
+      );
+      return Left(ServerFailure(e.message, e.title));
+    } catch (e, stack) {
+      AppLogger.error(
+        'DeleteMeProfilePicture Unexpected Exception',
+        error: e,
+        stackTrace: stack,
+      );
+      return const Left(
+        ServerFailure('An unexpected error occurred while removing profile photo'),
+      );
     }
   }
 

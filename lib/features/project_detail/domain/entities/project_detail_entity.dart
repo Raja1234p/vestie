@@ -48,6 +48,9 @@ class ProjectDetailEntity {
 
   final List<ProjectInviteEntity> invites;
 
+  /// From API `project.hasCoLeader`.
+  final bool hasCoLeader;
+
   const ProjectDetailEntity({
     required this.id,
     required this.name,
@@ -76,6 +79,7 @@ class ProjectDetailEntity {
     this.successVoteWindowHours = 0,
     this.hasActiveSuccessVote = false,
     this.invites = const [],
+    this.hasCoLeader = false,
   });
 
   double get progress =>
@@ -131,6 +135,14 @@ class ProjectDetailEntity {
   /// Investment projects: Contribute only (Figma). Others: Contribute + Borrow when enabled.
   bool get showsBorrowAction =>
       !category.isInvestment && borrowingEnabled;
+
+  /// Vacation / emergency group leaders cannot borrow until a co-leader is assigned.
+  bool get isBorrowDisabledForViewer =>
+      isVacationOrEmergency && isGroupLeader && !hasCoLeader;
+
+  /// Whether the current viewer may open the borrow flow.
+  bool get canViewerBorrow =>
+      showsBorrowAction && !isBorrowDisabledForViewer;
 
   bool get isVacationOrEmergency =>
       category == ProjectCategory.vacations ||

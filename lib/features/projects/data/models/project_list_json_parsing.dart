@@ -7,6 +7,29 @@ import '../../../../core/utils/safe_parser.dart';
 bool projectTypeIsInvestment(dynamic type) =>
     projectTypeApiValueToSummaryString(type).toLowerCase().contains('invest');
 
+String? membershipPhotoUrlFromJson(Map<String, dynamic> json) {
+  for (final key in const ['photoURL', 'photoUrl', 'profilePhotoUrl']) {
+    final value = json.safeStringNullable(key);
+    if (value != null && value.trim().isNotEmpty) return value.trim();
+  }
+  return null;
+}
+
+bool membershipVffAddedFromJson(Map<String, dynamic> json) {
+  final raw = json['VFFAdded'] ?? json['vffAdded'];
+  if (raw is bool) return raw;
+  if (raw is String) {
+    return raw.trim().toLowerCase() == 'true';
+  }
+  return false;
+}
+
+String? membershipPendingVffRequestId(Map<String, dynamic> json) {
+  final raw = json.safeStringNullable('pendingVffRequestId');
+  if (raw == null || raw.trim().isEmpty) return null;
+  return raw.trim();
+}
+
 String projectTypeApiValueToSummaryString(dynamic raw) {
   if (raw == null) return '';
   if (raw is double) return projectTypeApiValueToSummaryString(raw.toInt());

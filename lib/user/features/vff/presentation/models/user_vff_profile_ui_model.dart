@@ -8,24 +8,34 @@ class UserVffProfileUiModel {
   final String usernameHandle;
   final String displayName;
   final String initials;
+  final String? photoUrl;
+  final int mutualProjectsCount;
   final UserVffProfileBadgeMode badgeMode;
   final UserVffMetricsLayout metricsLayout;
   final UserVffMetricsUi metrics;
   final List<UserVffTxRowUi>? transactions;
   final List<UserVffJoinedProjectRowUi>? joinedProjects;
   final UserVffProfileFooterMode footerMode;
+  final bool showFooter;
+
+  bool get hasUsername => usernameHandle.isNotEmpty;
+
+  bool get hasMutualProjects => mutualProjectsCount > 0;
 
   const UserVffProfileUiModel({
     required this.id,
     required this.usernameHandle,
     required this.displayName,
     required this.initials,
+    this.photoUrl,
+    this.mutualProjectsCount = 0,
     required this.badgeMode,
     this.metricsLayout = UserVffMetricsLayout.contributedPair,
     required this.metrics,
     this.transactions,
     this.joinedProjects,
     this.footerMode = UserVffProfileFooterMode.sendRequest,
+    this.showFooter = true,
   });
 
   factory UserVffProfileUiModel.demoOliviaInitial() => UserVffProfileUiModel(

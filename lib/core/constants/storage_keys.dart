@@ -12,6 +12,7 @@ class StorageKeys {
   static const String userName             = 'user_name';
   static const String userUsername         = 'user_username';
   static const String userEmail            = 'user_email';
+  static const String userPhotoUrl         = 'user_photo_url';
   static const String hasSeenOnboarding    = 'has_seen_onboarding';
   static const String disclaimerAccepted   = 'disclaimer_accepted';
 

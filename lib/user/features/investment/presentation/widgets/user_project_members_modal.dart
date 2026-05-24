@@ -9,7 +9,7 @@ import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/utils/app_snackbar.dart';
 import 'package:vestie/core/utils/whatsapp_launch.dart';
-import 'package:vestie/core/widgets/common/app_avatar_circle.dart';
+import 'package:vestie/core/widgets/common/app_network_avatar.dart';
 import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 
@@ -90,7 +90,8 @@ Future<void> showUserProjectMembersModal(
                         final m = snapshot.members[i];
                         return Column(
                           children: [
-                            AppAvatarCircle(
+                            AppNetworkAvatar(
+                              imageUrl: m.photoUrl,
                               initials: m.name.isNotEmpty
                                   ? m.name[0]
                                   : '?',

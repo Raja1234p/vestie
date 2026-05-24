@@ -1,4 +1,5 @@
 import 'member_entity.dart';
+import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
 
 enum MemberActivityTransactionKind { contribution, borrow, other }
 
@@ -25,6 +26,10 @@ class MemberActivityEntity {
   final double totalBorrowed;
   final int overdueBorrowCount;
   final double? overdueAmount;
+  final double totalReturned;
+  final VffConnectionState vffConnectionState;
+  final bool canSendVffRequest;
+  final String? pendingVffRequestId;
   final List<MemberActivityTransactionEntity> transactions;
 
   const MemberActivityEntity({
@@ -35,10 +40,35 @@ class MemberActivityEntity {
     required this.totalBorrowed,
     this.overdueBorrowCount = 0,
     this.overdueAmount,
+    this.totalReturned = 0,
+    this.vffConnectionState = VffConnectionState.none,
+    this.canSendVffRequest = false,
+    this.pendingVffRequestId,
     required this.transactions,
   });
 
   bool get hasOverdue =>
       overdueBorrowCount > 0 ||
       (overdueAmount != null && overdueAmount! > 0);
+
+  MemberActivityEntity copyWith({
+    VffConnectionState? vffConnectionState,
+    bool? canSendVffRequest,
+    String? pendingVffRequestId,
+  }) {
+    return MemberActivityEntity(
+      member: member,
+      isCoLeader: isCoLeader,
+      totalContributed: totalContributed,
+      contributionCount: contributionCount,
+      totalBorrowed: totalBorrowed,
+      overdueBorrowCount: overdueBorrowCount,
+      overdueAmount: overdueAmount,
+      totalReturned: totalReturned,
+      vffConnectionState: vffConnectionState ?? this.vffConnectionState,
+      canSendVffRequest: canSendVffRequest ?? this.canSendVffRequest,
+      pendingVffRequestId: pendingVffRequestId ?? this.pendingVffRequestId,
+      transactions: transactions,
+    );
+  }
 }

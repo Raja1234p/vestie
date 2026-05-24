@@ -1,17 +1,23 @@
-import 'dart:io';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
-import '../../domain/entities/user_profile.dart';
+
+import '../../../auth/domain/entities/update_me_photo.dart';
+import '../../../auth/domain/entities/user.dart';
+import '../../../auth/domain/usecases/delete_me_profile_picture_use_case.dart';
+import '../../../auth/domain/usecases/get_me_use_case.dart';
 import '../../../auth/domain/usecases/logout_use_case.dart';
-import '../../../../core/di/service_locator.dart';
+import '../../../auth/domain/usecases/update_me_use_case.dart';
+import '../../data/profile_prefs.dart';
+import '../../domain/entities/user_profile.dart';
 import '../../../../core/constants/storage_keys.dart';
+import '../../../../core/di/service_locator.dart';
+import '../../../../core/error/failure_mapper.dart';
 import '../../../../core/storage/onboarding_prefs.dart';
+import '../../../../core/utils/username_input_formatter.dart';
 import 'package:vestie/features/dashboard/domain/dashboard_prefetch.dart';
 
 class ProfileState extends Equatable {
   final UserProfile profile;
-  final File? avatarFile;
   final bool isLoading;
   final bool isLoggingOut;
   final bool isLogoutSuccess;
@@ -19,7 +25,6 @@ class ProfileState extends Equatable {
 
   const ProfileState({
     required this.profile,
-    this.avatarFile,
     this.isLoading = false,
     this.isLoggingOut = false,
     this.isLogoutSuccess = false,
@@ -28,7 +33,6 @@ class ProfileState extends Equatable {
 
   ProfileState copyWith({
     UserProfile? profile,
-    File? avatarFile,
     bool? isLoading,
     bool? isLoggingOut,
     bool? isLogoutSuccess,
@@ -36,160 +40,150 @@ class ProfileState extends Equatable {
   }) =>
       ProfileState(
         profile: profile ?? this.profile,
-        avatarFile: avatarFile ?? this.avatarFile,
         isLoading: isLoading ?? this.isLoading,
         isLoggingOut: isLoggingOut ?? this.isLoggingOut,
         isLogoutSuccess: isLogoutSuccess ?? this.isLogoutSuccess,
         error: error,
       );
 
+  bool get hasProfilePhoto =>
+      profile.photoUrl != null && profile.photoUrl!.trim().isNotEmpty;
+
   @override
   List<Object?> get props =>
-      [profile, avatarFile, isLoading, isLoggingOut, isLogoutSuccess, error];
+      [profile, isLoading, isLoggingOut, isLogoutSuccess, error];
 }
 
 class ProfileCubit extends Cubit<ProfileState> {
-  final LogoutUseCase _logoutUseCase;
-
-  ProfileCubit({LogoutUseCase? logoutUseCase})
-      : _logoutUseCase = logoutUseCase ?? ServiceLocator.instance.logoutUseCase,
+  ProfileCubit({
+    LogoutUseCase? logoutUseCase,
+    UpdateMeUseCase? updateMeUseCase,
+    DeleteMeProfilePictureUseCase? deleteMeProfilePictureUseCase,
+    GetMeUseCase? getMeUseCase,
+  })  : _logoutUseCase = logoutUseCase ?? ServiceLocator.instance.logoutUseCase,
+        _updateMeUseCase =
+            updateMeUseCase ?? ServiceLocator.instance.updateMeUseCase,
+        _deleteMeProfilePictureUseCase = deleteMeProfilePictureUseCase ??
+            ServiceLocator.instance.deleteMeProfilePictureUseCase,
+        _getMeUseCase = getMeUseCase ?? ServiceLocator.instance.getMeUseCase,
         super(const ProfileState(
           profile: UserProfile(fullName: '', username: '', email: ''),
         ));
 
-  final _picker = ImagePicker();
+  final LogoutUseCase _logoutUseCase;
+  final UpdateMeUseCase _updateMeUseCase;
+  final DeleteMeProfilePictureUseCase _deleteMeProfilePictureUseCase;
+  final GetMeUseCase _getMeUseCase;
+
   bool _tabBootstrapped = false;
 
-  /// Called when the Profile tab is first shown. Skips `GET /users/me` if [HomeBloc] already loaded it.
   Future<void> ensureTabVisible() async {
     if (_tabBootstrapped) return;
     _tabBootstrapped = true;
     if (DashboardPrefetch.userMeLoadedOnDashboard) {
-      await _hydrateFromPrefsOnly();
+      await _hydrateFromPrefs();
       return;
     }
     await loadProfile();
   }
 
-  Future<void> _hydrateFromPrefsOnly() async {
-    final prefs = ServiceLocator.instance.sharedPrefs;
-    final name = await prefs.getString(StorageKeys.userName) ?? '';
-    final email = await prefs.getString(StorageKeys.userEmail) ?? '';
-    final handle = await prefs.getString(StorageKeys.userUsername) ?? '';
-    emit(state.copyWith(
-      isLoading: false,
-      profile: _profileFromLocal(name: name, email: email, handle: handle),
-    ));
+  Future<void> _hydrateFromPrefs() async {
+    final profile = await ProfilePrefs.load();
+    emit(state.copyWith(isLoading: false, profile: profile));
   }
 
-  static UserProfile _profileFromLocal({
-    required String name,
-    required String email,
-    required String handle,
-  }) {
-    return UserProfile(
-      fullName: name,
-      email: email,
-      username: handle.isNotEmpty
-          ? handle
-          : (email.contains('@') ? email.split('@').first : ''),
-    );
-  }
-
-  static Future<void> _persistUserToPrefs({
-    required String name,
-    required String email,
-    required String userName,
-  }) async {
-    final prefs = ServiceLocator.instance.sharedPrefs;
-    await prefs.saveString(StorageKeys.userName, name);
-    await prefs.saveString(StorageKeys.userEmail, email);
-    await prefs.saveString(StorageKeys.userUsername, userName);
-  }
-
-  /// After edit profile — show saved name immediately, then sync `GET /users/me`.
   Future<void> refreshProfile() async {
-    await _hydrateFromPrefsOnly();
-
-    final result = await ServiceLocator.instance.authRepository.getMe();
-    result.fold(
-      (_) {},
-      (user) {
-        final userName = user.userName.isNotEmpty
-            ? user.userName
-            : (user.email.contains('@') ? user.email.split('@').first : '');
-        emit(state.copyWith(
-          isLoading: false,
-          profile: UserProfile(
-            fullName: user.name,
-            email: user.email,
-            username: userName,
-          ),
-        ));
-        _persistUserToPrefs(
-          name: user.name,
-          email: user.email,
-          userName: userName,
-        );
-      },
-    );
+    await _hydrateFromPrefs();
   }
 
   Future<void> loadProfile() async {
-    final prefs = ServiceLocator.instance.sharedPrefs;
-    final name = await prefs.getString(StorageKeys.userName) ?? '';
-    final email = await prefs.getString(StorageKeys.userEmail) ?? '';
-    final handle = await prefs.getString(StorageKeys.userUsername) ?? '';
-
-    if (name.isNotEmpty || email.isNotEmpty) {
-      emit(state.copyWith(
-        profile: _profileFromLocal(name: name, email: email, handle: handle),
-      ));
+    final cached = await ProfilePrefs.load();
+    if (cached.fullName.isNotEmpty || cached.email.isNotEmpty) {
+      emit(state.copyWith(profile: cached));
     }
 
     emit(state.copyWith(isLoading: true));
-    final result = await ServiceLocator.instance.authRepository.getMe();
+    final result = await _getMeUseCase();
 
     result.fold(
       (failure) {
-        emit(state.copyWith(isLoading: false, error: failure.message));
-      },
-      (user) {
-        final userName = user.userName.isNotEmpty
-            ? user.userName
-            : (user.email.contains('@')
-                ? user.email.split('@').first
-                : '');
         emit(state.copyWith(
           isLoading: false,
-          profile: UserProfile(
-            fullName: user.name,
-            email: user.email,
-            username: userName,
-          ),
+          error: FailureMapper.userMessage(failure),
         ));
-        _persistUserToPrefs(
-          name: user.name,
-          email: user.email,
-          userName: userName,
-        );
+      },
+      (user) async {
+        final profile = ProfilePrefs.fromUser(user);
+        await ProfilePrefs.persist(profile);
+        emit(state.copyWith(isLoading: false, profile: profile));
       },
     );
   }
 
-  Future<void> pickAvatar(ImageSource source) async {
-    final picked = await _picker.pickImage(
-      source: source,
-      imageQuality: 80,
-      maxWidth: 400,
-    );
-    if (picked != null) {
-      emit(state.copyWith(avatarFile: File(picked.path)));
-    }
+  /// Uploads a new profile photo. Returns `null` on success, else user-facing error.
+  Future<String?> uploadPhotoFile(String filePath) {
+    return _updateProfilePhoto(UpdateMePhotoUpload(filePath));
   }
 
-  void updateProfile(UserProfile updated) =>
-      emit(state.copyWith(profile: updated));
+  /// Removes profile photo via `DELETE /users/me/profile-picture`.
+  Future<String?> removeAvatar() async {
+    final deleteResult = await _deleteMeProfilePictureUseCase();
+    if (isClosed) return null;
+
+    final deleteError = deleteResult.fold(
+      (failure) => FailureMapper.userMessage(failure),
+      (_) => null,
+    );
+    if (deleteError != null) return deleteError;
+
+    return _syncProfileFromServer();
+  }
+
+  Future<String?> _updateProfilePhoto(UpdateMePhoto photo) async {
+    final profile = state.profile;
+    final parts = profile.fullName.trim().split(RegExp(r'\s+'));
+    final firstName = parts.isEmpty ? '' : parts.first;
+    final lastName = parts.length > 1 ? parts.sublist(1).join(' ') : '';
+
+    final updateResult = await _updateMeUseCase(
+      firstName: firstName,
+      lastName: lastName,
+      userName: UsernameInputFormatter.normalize(profile.username),
+      photo: photo,
+    );
+
+    if (isClosed) return null;
+
+    final updateError = updateResult.fold(
+      (failure) => FailureMapper.userMessage(failure),
+      (_) => null,
+    );
+    if (updateError != null) return updateError;
+
+    return _syncProfileFromServer();
+  }
+
+  Future<String?> _syncProfileFromServer() async {
+    final syncResult = await _getMeUseCase();
+    if (isClosed) return null;
+
+    User? syncedUser;
+    String? syncError;
+    syncResult.fold(
+      (failure) => syncError = FailureMapper.userMessage(failure),
+      (user) => syncedUser = user,
+    );
+    if (syncError != null) return syncError;
+
+    await _applySyncedUser(syncedUser!);
+    return null;
+  }
+
+  Future<void> _applySyncedUser(User user) async {
+    final profile = ProfilePrefs.fromUser(user);
+    await ProfilePrefs.persist(profile);
+    emit(state.copyWith(profile: profile));
+  }
 
   Future<void> logout() async {
     emit(state.copyWith(isLoggingOut: true));
@@ -206,7 +200,7 @@ class ProfileCubit extends Cubit<ProfileState> {
     final result = await _logoutUseCase(refreshToken: refreshToken);
 
     await result.fold(
-      (failure) async {
+      (_) async {
         await _clearLocalData();
         emit(state.copyWith(isLoggingOut: false, isLogoutSuccess: true));
       },

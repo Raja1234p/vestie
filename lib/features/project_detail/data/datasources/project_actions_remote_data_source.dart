@@ -88,10 +88,7 @@ class ProjectActionsRemoteDataSourceImpl implements ProjectActionsRemoteDataSour
     final response = await apiClient.get<dynamic>(
       ApiConstants.projectMemberActivity(projectId, userId),
     );
-    final map = switch (response) {
-      final Map m => m.cast<String, dynamic>(),
-      _ => <String, dynamic>{},
-    };
+    final map = _unwrapActivityPayload(response);
     return MemberActivityResponseModel.fromJson(
       map,
       projectName: projectName,
@@ -248,4 +245,20 @@ class ProjectActionsRemoteDataSourceImpl implements ProjectActionsRemoteDataSour
   Future<void> completeProject({required String projectId}) async {
     await apiClient.post('${ApiConstants.projects}/$projectId/complete');
   }
+}
+
+/// Supports flat activity JSON or `{ "data": { … } }` envelopes.
+Map<String, dynamic> _unwrapActivityPayload(dynamic response) {
+  if (response is! Map) return <String, dynamic>{};
+  final map = response.cast<String, dynamic>();
+  final data = map['data'];
+  if (data is Map) {
+    final inner = data.cast<String, dynamic>();
+    if (inner.containsKey('memberId') ||
+        inner.containsKey('summary') ||
+        inner.containsKey('transactions')) {
+      return inner;
+    }
+  }
+  return map;
 }
