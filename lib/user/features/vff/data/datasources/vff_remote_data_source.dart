@@ -3,6 +3,7 @@ import '../../../../../core/network/base_api_client.dart';
 
 import '../models/vff_connection_model.dart';
 import '../models/vff_inbox_model.dart';
+import '../models/vff_json_parsing.dart';
 import '../models/vff_profile_model.dart';
 
 abstract class VffRemoteDataSource {
@@ -54,10 +55,9 @@ class VffRemoteDataSourceImpl implements VffRemoteDataSource {
 
   @override
   Future<List<VffConnectionModel>> listMyVffs() async {
-    final response = await apiClient.get<List<dynamic>>(ApiConstants.userMeVffs);
-    return response
-        .whereType<Map>()
-        .map((m) => VffConnectionModel.fromJson(m.cast<String, dynamic>()))
+    final response = await apiClient.get<dynamic>(ApiConstants.userMeVffs);
+    return VffJsonParsing.parseObjectList(response)
+        .map(VffConnectionModel.fromJson)
         .toList(growable: false);
   }
 

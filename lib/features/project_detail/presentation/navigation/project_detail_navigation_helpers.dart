@@ -22,6 +22,7 @@ import 'package:vestie/leader/features/project_detail/presentation/models/leader
 import 'package:vestie/user/features/project_detail/presentation/models/member_vote_outcome_ui_data.dart';
 import '../widgets/distribute_funds_amount_sheet.dart';
 import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
+import 'package:vestie/user/features/vff/presentation/mappers/invite_members_mapper.dart';
 import '../data/project_funds_history_ledger_builder.dart';
 import 'package:vestie/user/features/borrow/presentation/data/my_borrow_request_args_builder.dart';
 
@@ -312,12 +313,8 @@ class ProjectDetailNavigationHelpers {
       AppSnackBar.showError(context, AppStrings.errorForbidden);
       return;
     }
-    final excludeUserIds = project.members
-        .map(
-          (m) => m.userId.trim().isNotEmpty ? m.userId.trim() : m.id.trim(),
-        )
-        .where((id) => id.isNotEmpty)
-        .toSet();
+    final excludeUserIds =
+        InviteMembersMapper.excludeUserIdsForProject(project);
   // TODO(api): restore POST /projects/{id}/invites for share-outside link.
     AppInviteMembersDialog.show(
       context,

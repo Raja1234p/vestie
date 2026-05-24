@@ -370,6 +370,8 @@ class AppStrings {
   static const String userVffSentJoinRequestsSection = 'Join Requests';
   static const String userVffEmptyMyVffs =
       'You don\'t have any VFFs yet.';
+  static const String inviteMembersAllVffsInProject =
+      'All of your VFFs are already in this group.';
   static const String userVffEmptyRequests = 'No Pending Requests';
   static const String userVffSectionMyVffs = 'My VFFs';
   static const String userVffSectionSentVffRequests = 'Sent VFF Requests';

@@ -38,15 +38,19 @@ final class InviteMembersSheetCubit extends Cubit<InviteMembersSheetState> {
           errorMessage: FailureMapper.userMessage(failure),
         ),
       ),
-      (connections) => emit(
-        state.copyWith(
-          status: InviteMembersSheetLoadStatus.loaded,
-          vffs: InviteMembersMapper.fromConnections(
-            connections,
-            excludeUserIds: excludeUserIds,
+      (connections) {
+        final inviteable = InviteMembersMapper.fromConnections(
+          connections,
+          excludeUserIds: excludeUserIds,
+        );
+        emit(
+          state.copyWith(
+            status: InviteMembersSheetLoadStatus.loaded,
+            loadedConnectionCount: connections.length,
+            vffs: inviteable,
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 

@@ -33,6 +33,19 @@ abstract final class ProjectMemberAddFriendVisibility {
     return false;
   }
 
+  /// VFF badge on member rows — connected others only, never the signed-in viewer.
+  static bool showsVffBadge({
+    required ProjectDetailEntity? project,
+    required MemberEntity member,
+  }) {
+    if (!member.showsVffBadgeOnMemberRow) return false;
+    if (project != null &&
+        isViewerSelf(project: project, member: member)) {
+      return false;
+    }
+    return true;
+  }
+
   static bool isViewerSelf({
     required ProjectDetailEntity project,
     required MemberEntity member,

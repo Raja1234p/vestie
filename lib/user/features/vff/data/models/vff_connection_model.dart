@@ -12,7 +12,7 @@ class VffConnectionModel {
   factory VffConnectionModel.fromJson(Map<String, dynamic> json) {
     return VffConnectionModel(
       VffConnectionEntity(
-        userId: json.safeString('userId'),
+        userId: VffJsonParsing.readString(json, const ['userId', 'UserId']),
         fullName: VffJsonParsing.readString(json, const ['fullName', 'name']),
         username: json.safeStringNullable('username'),
         profilePhotoUrl: VffJsonParsing.readString(json, const [

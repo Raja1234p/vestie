@@ -43,7 +43,7 @@ class MemberEntity {
   bool get hasPendingVffOutgoing =>
       vffConnectionState == VffConnectionState.pendingOutgoing;
 
-  /// Project member row — API `vffConnectionState: Connected` and/or `vffAdded`.
+  /// Connected / VFF on this membership — row UI hides for viewer self via [ProjectMemberAddFriendVisibility].
   bool get showsVffBadgeOnMemberRow => isVffConnected || vffAdded;
 
   MemberEntity copyWith({

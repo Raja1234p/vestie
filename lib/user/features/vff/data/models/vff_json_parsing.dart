@@ -4,6 +4,28 @@ import '../../domain/entities/vff_enums.dart';
 import '../../domain/entities/vff_profile_entity.dart';
 
 abstract final class VffJsonParsing {
+  /// `GET /users/me/vffs` — raw array or `{ data: [...] }`.
+  static List<Map<String, dynamic>> parseObjectList(dynamic raw) {
+    var data = raw;
+    if (data is Map) {
+      final map = data.cast<String, dynamic>();
+      for (final key in const ['data', 'items', 'value', 'results', 'connections']) {
+        final nested = map[key];
+        if (nested is List) {
+          data = nested;
+          break;
+        }
+      }
+    }
+    if (data is! List) return const [];
+    return data
+        .whereType<Map>()
+        .map((m) => m.cast<String, dynamic>())
+        .toList(growable: false);
+  }
+
+  static String normalizeUserId(String id) => id.trim().toLowerCase();
+
   static DateTime? parseUtc(String? raw) {
     if (raw == null || raw.trim().isEmpty) return null;
     return DateTime.tryParse(raw)?.toUtc();

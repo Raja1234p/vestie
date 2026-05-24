@@ -73,8 +73,7 @@ class ProjectMembersSection extends StatelessWidget {
                     sendingVffUserId != null &&
                     sendingVffUserId == member.apiUserId,
                 vffRequestSent: member.hasPendingVffOutgoing,
-                showVffBadge:
-                    showVffBadgeFor?.call(member) ?? member.showsVffBadgeOnMemberRow,
+                showVffBadge: showVffBadgeFor?.call(member),
               ),
             ),
           ),

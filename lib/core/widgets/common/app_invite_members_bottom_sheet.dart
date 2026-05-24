@@ -265,10 +265,13 @@ class _AppInviteMembersBottomSheetState
     }
 
     if (vffs.isEmpty) {
+      final message = sheetState.allConnectionsAlreadyInProject
+          ? AppStrings.inviteMembersAllVffsInProject
+          : AppStrings.userVffEmptyMyVffs;
       return Padding(
         padding: EdgeInsets.symmetric(vertical: 24.h),
         child: AppText(
-          AppStrings.userVffEmptyMyVffs,
+          message,
           textAlign: TextAlign.center,
           style: GoogleFonts.lato(
             fontSize: 14.sp,

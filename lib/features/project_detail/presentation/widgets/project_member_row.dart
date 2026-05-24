@@ -22,7 +22,9 @@ class ProjectMemberRow extends StatelessWidget {
   final VoidCallback? onAddFriend;
   final bool isSendVffLoading;
   final bool vffRequestSent;
-  final bool showVffBadge;
+
+  /// When null, uses [ProjectMemberAddFriendVisibility.showsVffBadge] (others only).
+  final bool? showVffBadge;
 
   const ProjectMemberRow({
     super.key,
@@ -32,8 +34,15 @@ class ProjectMemberRow extends StatelessWidget {
     this.onAddFriend,
     this.isSendVffLoading = false,
     this.vffRequestSent = false,
-    this.showVffBadge = false,
+    this.showVffBadge,
   });
+
+  bool get _showVffBadge =>
+      showVffBadge ??
+      ProjectMemberAddFriendVisibility.showsVffBadge(
+        project: project,
+        member: member,
+      );
 
   bool get _showRoleBadge =>
       member.role == MemberRole.leader || member.role == MemberRole.coLeader;
@@ -87,7 +96,7 @@ class ProjectMemberRow extends StatelessWidget {
                     member.name,
                     style: AppTextStyles.projectMemberName,
                   ),
-                  if (_showRoleBadge || showVffBadge) ...[
+                  if (_showRoleBadge || _showVffBadge) ...[
                     SizedBox(height: AppDimens.projectMemberNameBadgeGap),
                     Wrap(
                       spacing: AppDimens.p8,
@@ -98,7 +107,7 @@ class ProjectMemberRow extends StatelessWidget {
                         else if (member.role == MemberRole.coLeader &&
                             (project == null || project!.supportsCoLeader))
                           const ProjectMemberCoLeaderBadge(),
-                        if (showVffBadge) const ProjectMemberVffBadge(),
+                        if (_showVffBadge) const ProjectMemberVffBadge(),
                       ],
                     ),
                   ],
