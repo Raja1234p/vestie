@@ -62,10 +62,10 @@ final class UserVffProfileScreen extends StatelessWidget {
               if (didPop) return;
               context.pop(cubit.profilePopResult);
             },
-            child: Scaffold(
-              backgroundColor: Colors.transparent,
-              body: UserVffProfileBackground(
-                child: Column(
+            child: UserVffProfileBackground(
+              child: Scaffold(
+                backgroundColor: Colors.transparent,
+                body: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     SafeArea(

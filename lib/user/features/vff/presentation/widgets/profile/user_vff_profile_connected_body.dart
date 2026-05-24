@@ -20,7 +20,7 @@ import 'user_vff_profile_connected_header.dart';
 import 'user_vff_profile_connected_metrics.dart';
 import 'user_vff_profile_footer_actions.dart';
 
-/// Connected VFF peer profile — hero + metrics on [UserVffProfileBackground] only.
+/// Connected VFF peer profile — hero + metrics over screen background image.
 final class UserVffProfileConnectedBody extends StatelessWidget {
   final UserVffProfileUiModel profile;
 
@@ -31,15 +31,17 @@ final class UserVffProfileConnectedBody extends StatelessWidget {
     final cubit = context.read<UserVffProfileCubit>();
     final joinedList = profile.joinedProjects ?? const <UserVffJoinedProjectRowUi>[];
 
-    return Stack(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        ListView(
-          physics: const BouncingScrollPhysics(),
-          padding: EdgeInsets.only(
-            top: AppDimens.v8,
-            bottom: AppDimens.v92,
-          ),
-          children: [
+        Expanded(
+          child: ListView(
+            physics: const BouncingScrollPhysics(),
+            padding: EdgeInsets.only(
+              top: AppDimens.v8,
+              bottom: AppDimens.v20,
+            ),
+            children: [
             Padding(
               padding: EdgeInsets.fromLTRB(AppDimens.p18, 0, AppDimens.p18, 8.h),
               child: UserVffProfileConnectedHeader(profile: profile),
@@ -92,20 +94,18 @@ final class UserVffProfileConnectedBody extends StatelessWidget {
               ),
             ),
           ],
+          ),
         ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: SafeArea(
-            top: false,
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                AppDimens.p18,
-                0,
-                AppDimens.p18,
-                8.h,
-              ),
-              child: const UserVffProfileFooterActions(),
+        SafeArea(
+          top: false,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(
+              AppDimens.p18,
+              0,
+              AppDimens.p18,
+              8.h,
             ),
+            child: const UserVffProfileFooterActions(),
           ),
         ),
       ],

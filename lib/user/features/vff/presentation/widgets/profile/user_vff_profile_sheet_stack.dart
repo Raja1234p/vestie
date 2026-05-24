@@ -9,7 +9,7 @@ import 'user_vff_profile_footer_actions.dart';
 import 'user_vff_profile_identity_section.dart';
 import 'user_vff_profile_metric_strip.dart';
 
-/// Scrollable sheet + sticky footer overlay.
+/// Scrollable profile body with footer pinned below the list.
 final class UserVffProfileSheetStack extends StatelessWidget {
   final UserVffProfileUiModel profile;
 
@@ -28,38 +28,38 @@ final class UserVffProfileSheetStack extends StatelessWidget {
     final p = profile;
     final showTx = p.transactions?.isNotEmpty ?? false;
 
-    return Stack(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        ListView(
-          physics: const BouncingScrollPhysics(),
-          padding: EdgeInsets.fromLTRB(
-            AppDimens.p18,
-            AppDimens.v8,
-            AppDimens.p18,
-            AppDimens.v92,
-          ),
-          children: [
-            UserVffProfileIdentitySection(profile: p),
-            SizedBox(height: AppDimens.v18),
-            UserVffProfileMetricStrip(profile: p),
-            SizedBox(height: AppDimens.v20),
-            if (showTx) ...(p.transactions ?? []).map((r) => UserVffTxRow(row: r)),
-            if (!showTx) SizedBox(height: AppDimens.v20),
-          ],
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: SafeArea(
-            top: false,
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                AppDimens.p18,
-                0,
-                AppDimens.p18,
-                8.h,
-              ),
-              child: const UserVffProfileFooterActions(),
+        Expanded(
+          child: ListView(
+            physics: const BouncingScrollPhysics(),
+            padding: EdgeInsets.fromLTRB(
+              AppDimens.p18,
+              AppDimens.v8,
+              AppDimens.p18,
+              AppDimens.v20,
             ),
+            children: [
+              UserVffProfileIdentitySection(profile: p),
+              SizedBox(height: AppDimens.v18),
+              UserVffProfileMetricStrip(profile: p),
+              SizedBox(height: AppDimens.v20),
+              if (showTx) ...(p.transactions ?? []).map((r) => UserVffTxRow(row: r)),
+              if (!showTx) SizedBox(height: AppDimens.v20),
+            ],
+          ),
+        ),
+        SafeArea(
+          top: false,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(
+              AppDimens.p18,
+              0,
+              AppDimens.p18,
+              8.h,
+            ),
+            child: const UserVffProfileFooterActions(),
           ),
         ),
       ],
