@@ -16,7 +16,6 @@ import '../bloc/home_event.dart';
 import '../bloc/home_state.dart';
 import '../cubit/home_sections_cubit.dart';
 import '../widgets/home_empty_view.dart';
-import '../widgets/home_gradient_background.dart';
 import '../widgets/home_header.dart';
 import '../widgets/projects_section.dart';
 
@@ -100,24 +99,32 @@ class _HomeBody extends StatelessWidget {
         if (state is HomeLoading || state is HomeInitial) {
           return Scaffold(
             backgroundColor: Colors.transparent,
-            body: HomeGradientBackground(
-              child: CustomScrollView(
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: HomeHeader(totalContributed: 0),
-                  ),
-                  SliverPadding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w),
-                    sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) => const ProjectCardShimmer(),
-                        childCount: 3,
+            body: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const HomeHeader(totalContributed: 0),
+                Expanded(
+                    child: ColoredBox(
+                      color: Colors.white,
+                      child: CustomScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        slivers: [
+                          SliverPadding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.w),
+                            sliver: SliverList(
+                              delegate: SliverChildBuilderDelegate(
+                                (context, index) =>
+                                    const ProjectCardShimmer(),
+                                childCount: 3,
+                              ),
+                            ),
+                          ),
+                          SliverToBoxAdapter(child: SizedBox(height: 16.h)),
+                        ],
                       ),
                     ),
                   ),
-                  SliverToBoxAdapter(child: SizedBox(height: 16.h)),
                 ],
-              ),
             ),
           );
         }
@@ -125,13 +132,13 @@ class _HomeBody extends StatelessWidget {
         if (state is HomeError) {
           return Scaffold(
             backgroundColor: Colors.transparent,
-            body: HomeGradientBackground(
+            body: SafeArea(
+              bottom: false,
               child: CustomScrollView(
-                physics: const NeverScrollableScrollPhysics(),
-                slivers: [
-                  SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: SafeArea(
+                  physics: const NeverScrollableScrollPhysics(),
+                  slivers: [
+                    SliverFillRemaining(
+                      hasScrollBody: false,
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 28.w),
                         child: Column(
@@ -160,10 +167,9 @@ class _HomeBody extends StatelessWidget {
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
           );
         }
 
@@ -201,46 +207,56 @@ class _HomeContent extends StatelessWidget {
         final cubit = context.read<HomeSectionsCubit>();
         return Scaffold(
           backgroundColor: Colors.transparent,
-          body: HomeGradientBackground(
-            child: RefreshIndicator(
-              color: AppColors.primary,
-              onRefresh: () async =>
-                  context.read<HomeBloc>().add(const HomeRefreshRequested()),
-              child: CustomScrollView(
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: HomeHeader(
-                        totalContributed: data.totalContributed),
-                  ),
-                  SliverPadding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
-                    sliver: SliverToBoxAdapter(
-                      child: Column(
-                        children: [
-                          ProjectsSection(
-                            title: AppStrings.myProjects,
-                            projects: data.myProjects,
-                            expanded: sections.myProjectsExpanded,
-                            onToggle: cubit.toggleMyProjects,
-                            onProjectAction: (p) => _openProjectDetail(context, p),
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              HomeHeader(totalContributed: data.totalContributed),
+              Expanded(
+                  child: ColoredBox(
+                    color: Colors.white,
+                    child: RefreshIndicator(
+                      color: AppColors.primary,
+                      onRefresh: () async => context
+                          .read<HomeBloc>()
+                          .add(const HomeRefreshRequested()),
+                      child: CustomScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        slivers: [
+                          SliverPadding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16.w,
+                              vertical: 4.h,
+                            ),
+                            sliver: SliverToBoxAdapter(
+                              child: Column(
+                                children: [
+                                  ProjectsSection(
+                                    title: AppStrings.myProjects,
+                                    projects: data.myProjects,
+                                    expanded: sections.myProjectsExpanded,
+                                    onToggle: cubit.toggleMyProjects,
+                                    onProjectAction: (p) =>
+                                        _openProjectDetail(context, p),
+                                  ),
+                                  ProjectsSection(
+                                    title: AppStrings.joinedProjects,
+                                    projects: data.joinedProjects,
+                                    expanded: sections.joinedProjectsExpanded,
+                                    onToggle: cubit.toggleJoined,
+                                    onProjectAction: (p) =>
+                                        _openProjectDetail(context, p),
+                                  ),
+                                  SizedBox(height: 16.h),
+                                ],
+                              ),
+                            ),
                           ),
-                          ProjectsSection(
-                            title: AppStrings.joinedProjects,
-                            projects: data.joinedProjects,
-                            expanded: sections.joinedProjectsExpanded,
-                            onToggle: cubit.toggleJoined,
-                            onProjectAction: (p) =>
-                                _openProjectDetail(context, p),
-                          ),
-                          SizedBox(height: 16.h),
                         ],
                       ),
                     ),
                   ),
-                ],
-              ),
-            ),
+                ),
+            ],
           ),
         );
       },

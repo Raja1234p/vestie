@@ -8,6 +8,7 @@ import '../../../../core/widgets/common/app_back_button.dart';
 import '../../../../core/widgets/text/app_text.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../../core/widgets/common/post_auth_header.dart';
+import '../../../../core/widgets/common/post_auth_scroll_viewport.dart';
 import '../../../../core/di/service_locator.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
@@ -136,44 +137,47 @@ class _ProjectDetailBody extends StatelessWidget {
               }
 
               if (isMemberCompletedView) {
-                return RefreshIndicator(
-                  color: AppColors.primary,
-                  onRefresh: onRefresh,
-                  child: CustomScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    slivers: [
-                      SliverToBoxAdapter(
-                        child: PostAuthHeader(
-                          title: project.name,
-                          leading: AppBackButton(
-                            onPressed: () => popProjectDetailNavigation(
-                              context,
-                              refreshHomeOnPop: refreshHomeOnPop,
-                              refreshDiscoverOnPop: refreshDiscoverOnPop,
+                return PostAuthScrollViewport(
+                  child: RefreshIndicator(
+                    color: AppColors.primary,
+                    onRefresh: onRefresh,
+                    child: CustomScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      slivers: [
+                        SliverToBoxAdapter(
+                          child: PostAuthHeader(
+                            applyTopSafeArea: false,
+                            title: project.name,
+                            leading: AppBackButton(
+                              onPressed: () => popProjectDetailNavigation(
+                                context,
+                                refreshHomeOnPop: refreshHomeOnPop,
+                                refreshDiscoverOnPop: refreshDiscoverOnPop,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      SliverPadding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
-                        sliver: SliverToBoxAdapter(
-                          child: ProjectDetailUserCompletedContent(
-                            project: project,
-                            onMemberTap: (member) => _openMemberProfile(
-                              context,
+                        SliverPadding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          sliver: SliverToBoxAdapter(
+                            child: ProjectDetailUserCompletedContent(
                               project: project,
-                              member: member,
+                              onMemberTap: (member) => _openMemberProfile(
+                                context,
+                                project: project,
+                                member: member,
+                              ),
+                              onSendVffRequest: (member) =>
+                                  sendMemberVffFromProjectDetail(
+                                context,
+                                member: member,
+                              ),
+                              sendingVffUserId: state.sendingVffUserId,
                             ),
-                            onSendVffRequest: (member) =>
-                                sendMemberVffFromProjectDetail(
-                              context,
-                              member: member,
-                            ),
-                            sendingVffUserId: state.sendingVffUserId,
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 );
               }

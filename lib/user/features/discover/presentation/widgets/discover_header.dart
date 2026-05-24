@@ -18,6 +18,7 @@ class DiscoverHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return PostAuthHeader(
       title: AppStrings.discoverTitle,
+      applyTopSafeArea: false,
       leading: AppBackButton(
         onPressed: () => context.read<NavCubit>().selectTab(0),
         color: AppColors.textPrimary,

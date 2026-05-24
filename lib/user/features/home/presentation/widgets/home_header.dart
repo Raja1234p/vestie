@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:vestie/core/constants/app_assets.dart';
+import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/notification_favourite_header_actions.dart';
-import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 
-/// Gradient header showing total contributed amount + bell icon.
+/// Home fixed header — [AppDimens.homeHeaderHeight] gradient under status bar.
 class HomeHeader extends StatelessWidget {
   final double totalContributed;
 
@@ -16,37 +18,71 @@ class HomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        PostAuthHeader(
-          title: AppStrings.totalContributed,
-          bottomGap: 0,
-          titleStyle: GoogleFonts.lato(
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w500,
-            color: AppColors.neutral1200,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.dark,
+      child: Container(
+        width: double.infinity,
+        height: AppDimens.homeHeaderHeight,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(AppAssets.appGradient),
+            fit: BoxFit.cover,
+            alignment: Alignment.topCenter,
           ),
-          trailing: const NotificationFavouriteHeaderActions(),
-        ),  
-        Padding(
-          padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 24.h),
-          child: AppText(
-            '\$${_formatAmount(totalContributed)}',
-            style: GoogleFonts.lato(
-              fontSize: 32.sp,
-              fontWeight: FontWeight.w800,
-              color: AppColors.textPrimary,
-              height: 1.1,
+        ),
+        child: SafeArea(
+          bottom: false,
+          child: SizedBox(
+            width: double.infinity,
+            height: double.infinity,
+            child: Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AppText(
+                            AppStrings.totalContributed,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.lato(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.neutral1200,
+                            ),
+                          ),
+                          SizedBox(height: 4.h),
+                          AppText(
+                            '\$${_formatAmount(totalContributed)}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.lato(
+                              fontSize: 32.sp,
+                              fontWeight: FontWeight.w800,
+                              color: AppColors.textPrimary,
+                              height: 1.1,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const NotificationFavouriteHeaderActions(),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
-      ],
+      ),
     );
   }
 
-  /// Formats as comma-separated integer: 4223 → "4,223"
-  String _formatAmount(double v) {
+  static String _formatAmount(double v) {
     final parts = v.toStringAsFixed(0).split('');
     final buf = StringBuffer();
     for (var i = 0; i < parts.length; i++) {

@@ -14,6 +14,9 @@ class PostAuthHeader extends StatelessWidget {
   final TextStyle? titleStyle;
   final double bottomGap;
 
+  /// When false, parent must apply top inset (e.g. [PostAuthScrollViewport]).
+  final bool applyTopSafeArea;
+
   const PostAuthHeader({
     super.key,
     required this.title,
@@ -22,42 +25,47 @@ class PostAuthHeader extends StatelessWidget {
     this.padding,
     this.titleStyle,
     this.bottomGap = 20,
+    this.applyTopSafeArea = true,
   });
 
   @override
   Widget build(BuildContext context) {
+    final content = Padding(
+      padding: padding ?? EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 12.h),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              if (leading != null) ...[leading!, SizedBox(width: 8.w)],
+              Expanded(
+                child: AppText(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: titleStyle ??
+                      GoogleFonts.lato(
+                        fontSize: 28.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.grey1100,
+                        letterSpacing: -0.5,
+                      ),
+                ),
+              ),
+              if (trailing != null) ...[SizedBox(width: 8.w), trailing!],
+            ],
+          ),
+          SizedBox(height: bottomGap.h),
+        ],
+      ),
+    );
+
+    if (!applyTopSafeArea) return content;
+
     return SafeArea(
       bottom: false,
-      child: Padding(
-        padding: padding ?? EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 12.h),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                if (leading != null) ...[leading!, SizedBox(width: 8.w)],
-                Expanded(
-                  child: AppText(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: titleStyle ??
-                        GoogleFonts.lato(
-                          fontSize: 28.sp,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.grey1100,
-                          letterSpacing: -0.5,
-                        ),
-                  ),
-                ),
-                if (trailing != null) ...[SizedBox(width: 8.w), trailing!],
-              ],
-            ),
-            SizedBox(height: bottomGap.h),
-          ],
-        ),
-      ),
+      child: content,
     );
   }
 }

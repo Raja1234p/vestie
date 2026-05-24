@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
+import 'package:vestie/core/widgets/common/post_auth_scroll_viewport.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart';
@@ -51,15 +52,17 @@ class _ProjectDetailModeratorScrollContentState
   Widget build(BuildContext context) {
     final project = widget.project;
 
-    return RefreshIndicator(
-      color: AppColors.primary,
-      onRefresh: widget.onRefresh,
-      child: CustomScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        slivers: [
-          SliverToBoxAdapter(
-            child: PostAuthHeader(
-              title: project.name,
+    return PostAuthScrollViewport(
+      child: RefreshIndicator(
+        color: AppColors.primary,
+        onRefresh: widget.onRefresh,
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            SliverToBoxAdapter(
+              child: PostAuthHeader(
+                applyTopSafeArea: false,
+                title: project.name,
               leading: AppBackButton(
                 onPressed: () => popProjectDetailNavigation(
                   context,
@@ -125,7 +128,8 @@ class _ProjectDetailModeratorScrollContentState
               ),
             ),
           ),
-        ],
+          ],
+        ),
       ),
     );
   }

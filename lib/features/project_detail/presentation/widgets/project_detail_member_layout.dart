@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
+import 'package:vestie/core/widgets/common/post_auth_scroll_viewport.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart';
@@ -47,6 +48,7 @@ class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
 
   Widget _header(BuildContext context) {
     return PostAuthHeader(
+      applyTopSafeArea: false,
       title: widget.project.name,
       leading: AppBackButton(
         onPressed: () => popProjectDetailNavigation(
@@ -97,13 +99,14 @@ class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
       );
     }
 
-    return RefreshIndicator(
-      color: AppColors.primary,
-      onRefresh: widget.onRefresh,
-      child: CustomScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        slivers: [
-          SliverToBoxAdapter(child: _header(context)),
+    return PostAuthScrollViewport(
+      child: RefreshIndicator(
+        color: AppColors.primary,
+        onRefresh: widget.onRefresh,
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            SliverToBoxAdapter(child: _header(context)),
           SliverPadding(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             sliver: SliverToBoxAdapter(
@@ -125,7 +128,8 @@ class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
               ),
             ),
           ),
-        ],
+          ],
+        ),
       ),
     );
   }

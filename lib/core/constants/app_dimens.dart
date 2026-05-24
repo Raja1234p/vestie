@@ -51,6 +51,9 @@ class AppDimens {
   /// Room for stacked primary footer on dense profile layouts.
   static double get v92 => 92.0.h;
 
+  /// Home tab gradient header: full width × 130 from screen top.
+  static double get homeHeaderHeight => 140.0.h;
+
   /// VFF rounded white sheet padding presets.
   static EdgeInsets get sheetInsetComfort =>
       EdgeInsets.fromLTRB(p18, v20, p18, v4);
