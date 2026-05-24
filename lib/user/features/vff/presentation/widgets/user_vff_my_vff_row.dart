@@ -99,16 +99,15 @@ class _RequestSentBadge extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: AppColors.vffRequestSentChipBg,
         borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(color: AppColors.neutral400, width: 1),
       ),
       child: AppText(
         AppStrings.userVffStatusRequestSentSmall,
         style: GoogleFonts.lato(
           fontSize: 13.sp,
           fontWeight: FontWeight.w600,
-          color: AppColors.neutral700,
+          color: AppColors.neutral1200,
         ),
       ),
     );

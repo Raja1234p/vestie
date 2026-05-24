@@ -14,6 +14,9 @@ final class UserVffProfileState extends Equatable {
   final bool isRemoveVffLoading;
   final bool vffRequestSent;
 
+  /// Join / request-to-join on a joined-project row (not footer send-VFF).
+  final String? joiningProjectId;
+
   const UserVffProfileState({
     this.loadStatus = UserVffProfileLoadStatus.initial,
     this.profile,
@@ -23,6 +26,7 @@ final class UserVffProfileState extends Equatable {
     this.isActionLoading = false,
     this.isRemoveVffLoading = false,
     this.vffRequestSent = false,
+    this.joiningProjectId,
   });
 
   UserVffProfileFooterMode? get effectiveFooterMode =>
@@ -42,6 +46,8 @@ final class UserVffProfileState extends Equatable {
     bool? isActionLoading,
     bool? isRemoveVffLoading,
     bool? vffRequestSent,
+    String? joiningProjectId,
+    bool clearJoiningProjectId = false,
   }) {
     return UserVffProfileState(
       loadStatus: loadStatus ?? this.loadStatus,
@@ -53,10 +59,16 @@ final class UserVffProfileState extends Equatable {
       isActionLoading: isActionLoading ?? this.isActionLoading,
       isRemoveVffLoading: isRemoveVffLoading ?? this.isRemoveVffLoading,
       vffRequestSent: vffRequestSent ?? this.vffRequestSent,
+      joiningProjectId: clearJoiningProjectId
+          ? null
+          : (joiningProjectId ?? this.joiningProjectId),
     );
   }
 
   bool get isFooterBusy => isActionLoading || isRemoveVffLoading;
+
+  bool isJoiningProject(String projectId) =>
+      joiningProjectId != null && joiningProjectId == projectId.trim();
 
   @override
   List<Object?> get props => [
@@ -68,5 +80,6 @@ final class UserVffProfileState extends Equatable {
         isActionLoading,
         isRemoveVffLoading,
         vffRequestSent,
+        joiningProjectId,
       ];
 }

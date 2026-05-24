@@ -263,6 +263,21 @@ class AppColors {
 
   /// Project detail — member list row card + avatar (Figma).
   static const Color projectMemberCardBg = grey100;
+
+  /// VFF profile — Contributions / Projects metric tiles (#F8F7FA).
+  static const Color vffProfileMetricCardBg = grey100;
+
+  /// VFF profile — joined project list row (#F8F7FA fill).
+  static const Color vffJoinedProjectCardBg = grey100;
+  static const Color vffJoinedProjectCardBorder = grey300;
+
+  /// VFF profile — joined project row actions (Figma).
+  static const Color vffJoinedProjectJoinBg = purple400;
+  static const Color vffJoinedProjectRequestBg = grey100;
+  static const Color vffJoinedProjectRequestBorder = purple300;
+
+  /// Request Sent chip / disabled CTA (#F5F0FE).
+  static const Color vffRequestSentChipBg = purple100;
   static const Color projectMemberAvatarBg = purple300;
   static const Color projectMemberAvatarInitials = neutral1200;
 

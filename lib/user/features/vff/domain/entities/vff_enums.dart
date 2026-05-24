@@ -62,13 +62,17 @@ enum VffProjectJoinState {
   alreadyMember,
   pending;
 
+  /// API `joinState` / `viewerJoinState` values (PascalCase), e.g.
+  /// `AlreadyMember`, `RequestToJoin`, `RequestSent`, `Join`.
   static VffProjectJoinState parse(String? raw) {
-    return switch (raw?.trim()) {
-      'RequestToJoin' || 'CanRequestToJoin' => VffProjectJoinState.requestToJoin,
-      'RequestSent' => VffProjectJoinState.requestSent,
-      'AlreadyMember' => VffProjectJoinState.alreadyMember,
-      'Pending' => VffProjectJoinState.pending,
-      'CanJoin' || 'Join' => VffProjectJoinState.join,
+    final key = raw?.trim().replaceAll(RegExp(r'[\s_-]'), '').toLowerCase();
+    if (key == null || key.isEmpty) return VffProjectJoinState.join;
+    return switch (key) {
+      'requesttojoin' || 'canrequesttojoin' => VffProjectJoinState.requestToJoin,
+      'requestsent' => VffProjectJoinState.requestSent,
+      'alreadymember' => VffProjectJoinState.alreadyMember,
+      'pending' => VffProjectJoinState.pending,
+      'canjoin' || 'join' => VffProjectJoinState.join,
       _ => VffProjectJoinState.join,
     };
   }

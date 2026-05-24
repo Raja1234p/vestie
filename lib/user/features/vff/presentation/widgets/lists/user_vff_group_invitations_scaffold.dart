@@ -11,12 +11,12 @@ import 'package:vestie/core/utils/app_snackbar.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
-import 'package:vestie/core/widgets/common/app_shimmer.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import '../../cubit/user_vff_group_invitation_list_cubit.dart';
 import '../../models/user_vff_hub_ui_model.dart';
 import '../user_vff_group_invitation_card.dart';
 import '../user_vff_hub_empty_body.dart';
+import '../user_vff_shimmers.dart';
 
 /// Full group invitation list scaffold.
 final class UserVffGroupInvitationsScaffold extends StatelessWidget {
@@ -56,7 +56,7 @@ final class UserVffGroupInvitationsScaffold extends StatelessWidget {
                     builder: (context, state) {
                       if (state.status ==
                           UserVffGroupInvitationListStatus.loading) {
-                        return const JoinRequestsListShimmer();
+                        return const UserVffGroupInvitationListShimmer();
                       }
 
                       if (state.status ==

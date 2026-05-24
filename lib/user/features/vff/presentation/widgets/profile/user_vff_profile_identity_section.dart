@@ -8,7 +8,7 @@ import 'package:vestie/core/widgets/text/app_text.dart';
 import '../../models/user_vff_profile_ui_model.dart';
 import 'user_vff_profile_role_badge.dart';
 
-/// Avatar + badge + legal name row for VFF profile.
+/// Avatar + badge + name row for VFF profile.
 final class UserVffProfileIdentitySection extends StatelessWidget {
   final UserVffProfileUiModel profile;
 
@@ -23,10 +23,10 @@ final class UserVffProfileIdentitySection extends StatelessWidget {
         AppNetworkAvatar(
           imageUrl: p.photoUrl,
           initials: p.initials,
-          size: 72.r,
+          size: 100.r,
           backgroundColor: AppColors.purple200,
           textColor: AppColors.grey1100,
-          fontSize: 20.sp,
+          fontSize: 28.sp,
         ),
         SizedBox(width: 14.w),
         Expanded(

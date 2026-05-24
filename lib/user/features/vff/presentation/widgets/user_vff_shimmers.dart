@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:vestie/core/constants/app_dimens.dart';
+import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_shimmer.dart';
 
 /// Hub body skeleton — matches active top tab (My VFFs vs Requests).
@@ -184,6 +185,65 @@ Widget _inboxRequestCardShimmer() {
   );
 }
 
+/// [UserVffGroupInvitationsScreen] — same padding as loaded [ListView] (no extra inset).
+final class UserVffGroupInvitationListShimmer extends StatelessWidget {
+  const UserVffGroupInvitationListShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppShimmer(
+      child: ListView.separated(
+        physics: const NeverScrollableScrollPhysics(),
+        padding: EdgeInsets.only(bottom: AppDimens.v24),
+        itemCount: 4,
+        separatorBuilder: (_, __) => SizedBox(height: 12.h),
+        itemBuilder: (_, __) => _vffGroupInvitationCardShimmer(),
+      ),
+    );
+  }
+}
+
+BoxDecoration _vffInboxListCardDecoration() => BoxDecoration(
+      color: AppColors.grey100,
+      borderRadius: BorderRadius.circular(12.r),
+      border: Border.all(color: AppColors.neutral400, width: 1),
+    );
+
+Widget _vffGroupInvitationCardShimmer() {
+  return Container(
+    padding: EdgeInsets.all(14.w),
+    decoration: _vffInboxListCardDecoration(),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AppShimmer.box(width: 160.w, height: 16.h, borderRadius: 4.r),
+        SizedBox(height: 6.h),
+        AppShimmer.box(width: 120.w, height: 12.h, borderRadius: 4.r),
+        SizedBox(height: 14.h),
+        Row(
+          children: [
+            Expanded(
+              child: AppShimmer.box(
+                width: double.infinity,
+                height: 40.h,
+                borderRadius: 8.r,
+              ),
+            ),
+            SizedBox(width: 8.w),
+            Expanded(
+              child: AppShimmer.box(
+                width: double.infinity,
+                height: 40.h,
+                borderRadius: 8.r,
+              ),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
 Widget _groupInviteCardShimmer() {
   return Container(
     padding: EdgeInsets.all(14.w),
@@ -236,7 +296,7 @@ class UserVffProfileShimmer extends StatelessWidget {
     final hero = Padding(
       padding: EdgeInsets.fromLTRB(
         AppDimens.p18,
-        AppDimens.v48,
+        AppDimens.v8,
         AppDimens.p18,
         8.h,
       ),
@@ -244,7 +304,7 @@ class UserVffProfileShimmer extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Center(
-            child: AppShimmer.box(width: 80.r, height: 80.r, borderRadius: 40.r),
+            child: AppShimmer.box(width: 100.r, height: 100.r, borderRadius: 50.r),
           ),
           SizedBox(height: 10.h),
           Center(
@@ -275,7 +335,7 @@ class UserVffProfileShimmer extends StatelessWidget {
           if (!connectedLayout) ...[
             Row(
               children: [
-                AppShimmer.box(width: 72.r, height: 72.r, borderRadius: 36.r),
+                AppShimmer.box(width: 100.r, height: 100.r, borderRadius: 50.r),
                 SizedBox(width: 14.w),
                 Expanded(
                   child: Column(
@@ -320,16 +380,10 @@ class UserVffProfileShimmer extends StatelessWidget {
             ? Column(
                 children: [
                   hero,
-                  ColoredBox(
-                    color: Colors.white,
-                    child: body,
-                  ),
+                  body,
                 ],
               )
-            : Padding(
-                padding: EdgeInsets.only(top: AppDimens.v48),
-                child: body,
-              ),
+            : body,
       ),
     );
   }
@@ -366,7 +420,7 @@ class UserVffInviteGridShimmer extends StatelessWidget {
         itemCount: 8,
         itemBuilder: (context, index) => Column(
           children: [
-            AppShimmer.box(width: 60.w, height: 60.w, borderRadius: 30.r),
+            AppShimmer.box(width: 60.r, height: 60.r, borderRadius: 30.r),
             SizedBox(height: 4.h),
             AppShimmer.box(width: 48.w, height: 12.h, borderRadius: 4.r),
           ],

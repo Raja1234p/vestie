@@ -7,13 +7,13 @@ import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/utils/app_snackbar.dart';
-import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import '../cubit/user_vff_profile_cubit.dart';
 import '../cubit/user_vff_profile_state.dart';
 import '../widgets/user_vff_profile_background.dart';
 import '../widgets/user_vff_shimmers.dart';
 import '../widgets/profile/user_vff_profile_sheet_stack.dart';
+import '../widgets/profile/user_vff_profile_top_bar.dart';
 
 /// **Flow: Hub row / invite → Peer profile.** Following → remove confirmation.
 final class UserVffProfileScreen extends StatelessWidget {
@@ -65,28 +65,17 @@ final class UserVffProfileScreen extends StatelessWidget {
             child: Scaffold(
               backgroundColor: Colors.transparent,
               body: UserVffProfileBackground(
-                child: Stack(
-                  fit: StackFit.expand,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Positioned.fill(child: _buildBody(context, state)),
                     SafeArea(
                       bottom: false,
-                      child: Align(
-                        alignment: Alignment.topLeft,
-                        child: Padding(
-                          padding: EdgeInsets.fromLTRB(
-                            AppDimens.p16,
-                            AppDimens.v8,
-                            AppDimens.p16,
-                            0,
-                          ),
-                          child: AppBackButton(
-                            onPressed: () =>
-                                context.pop(cubit.profilePopResult),
-                          ),
-                        ),
+                      child: UserVffProfileTopBar(
+                        title: _profileTitle(state),
+                        onBack: () => context.pop(cubit.profilePopResult),
                       ),
                     ),
+                    Expanded(child: _buildBody(context, state)),
                   ],
                 ),
               ),
@@ -95,6 +84,14 @@ final class UserVffProfileScreen extends StatelessWidget {
         },
       ),
     );
+  }
+
+  String _profileTitle(UserVffProfileState state) {
+    final name = state.profile?.displayName.trim();
+    if (name != null && name.isNotEmpty) return name;
+    final preview = args.previewProfile?.displayName.trim();
+    if (preview != null && preview.isNotEmpty) return preview;
+    return '';
   }
 
   Widget _buildBody(BuildContext context, UserVffProfileState state) {

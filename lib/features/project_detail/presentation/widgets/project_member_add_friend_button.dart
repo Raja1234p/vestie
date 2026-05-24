@@ -26,7 +26,7 @@ class ProjectMemberAddFriendButton extends StatelessWidget {
     final sent = requestSent;
 
     return Material(
-      color: AppColors.surface,
+      color: sent ? AppColors.vffRequestSentChipBg : AppColors.surface,
       borderRadius: radius,
       child: InkWell(
         onTap: isLoading || sent ? null : onPressed,
@@ -38,12 +38,12 @@ class ProjectMemberAddFriendButton extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             borderRadius: radius,
-            border: Border.all(
-              color: sent
-                  ? AppColors.neutral400
-                  : AppColors.projectMemberAddFriendBorder,
-              width: 1,
-            ),
+            border: sent
+                ? null
+                : Border.all(
+                    color: AppColors.projectMemberAddFriendBorder,
+                    width: 1,
+                  ),
           ),
           child: isLoading
               ? SizedBox(
@@ -59,8 +59,8 @@ class ProjectMemberAddFriendButton extends StatelessWidget {
                       ? AppStrings.btnVffRequestSent
                       : AppStrings.btnSendVffRequest,
                   style: AppTextStyles.projectMemberAddFriend.copyWith(
-                    fontWeight: sent ? FontWeight.w700 : FontWeight.w600,
-                    color: sent ? AppColors.neutral700 : AppColors.neutral1200,
+                    fontWeight: sent ? FontWeight.w600 : FontWeight.w600,
+                    color: AppColors.neutral1200,
                   ),
                 ),
         ),

@@ -32,12 +32,14 @@ class UserVffJoinedProjectRowUi {
   final String title;
   final int memberCount;
   final UserVffJoinedProjectAction action;
+  final bool isInvestment;
 
   const UserVffJoinedProjectRowUi({
     this.projectId = '',
     required this.title,
     required this.memberCount,
     required this.action,
+    this.isInvestment = false,
   });
 }
 

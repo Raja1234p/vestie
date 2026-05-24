@@ -70,7 +70,13 @@ abstract final class UserVffProfileMapper {
       title: entity.name,
       memberCount: entity.memberCount,
       action: _joinAction(entity.joinState),
+      isInvestment: _isInvestmentProject(entity.type),
     );
+  }
+
+  static bool _isInvestmentProject(String? type) {
+    final normalized = (type ?? '').trim().toLowerCase();
+    return normalized.contains('invest');
   }
 
   static UserVffJoinedProjectAction _joinAction(VffProjectJoinState state) {

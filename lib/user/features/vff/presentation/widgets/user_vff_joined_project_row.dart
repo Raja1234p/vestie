@@ -9,14 +9,18 @@ import 'package:vestie/user/features/vff/presentation/models/user_vff_profile_ui
 
 class UserVffJoinedProjectRow extends StatelessWidget {
   final UserVffJoinedProjectRowUi row;
+  final VoidCallback? onCardTap;
   final VoidCallback? onJoin;
   final VoidCallback? onRequestJoin;
+  final bool isLoading;
 
   const UserVffJoinedProjectRow({
     super.key,
     required this.row,
+    this.onCardTap,
     this.onJoin,
     this.onRequestJoin,
+    this.isLoading = false,
   });
 
   static TextStyle get _actionTextStyle => GoogleFonts.lato(
@@ -29,29 +33,31 @@ class UserVffJoinedProjectRow extends StatelessWidget {
       case UserVffJoinedProjectAction.join:
         return _ActionChip(
           label: AppStrings.btnJoin,
-          backgroundColor: AppColors.purple700,
-          labelColor: AppColors.surface,
+          backgroundColor: AppColors.vffJoinedProjectJoinBg,
+          labelColor: AppColors.neutral1200,
           onTap: onJoin,
+          isLoading: isLoading,
         );
       case UserVffJoinedProjectAction.requestToJoin:
         return _ActionChip(
           label: AppStrings.userVffRequestToJoin,
-          backgroundColor: AppColors.surface,
-          labelColor: AppColors.purple700,
-          borderColor: AppColors.purple700,
+          backgroundColor: AppColors.vffJoinedProjectRequestBg,
+          labelColor: AppColors.neutral1200,
+          borderColor: AppColors.vffJoinedProjectRequestBorder,
           onTap: onRequestJoin,
+          isLoading: isLoading,
         );
       case UserVffJoinedProjectAction.requestSentChip:
         return _ActionChip(
           label: AppStrings.userVffStatusRequestSentSmall,
-          backgroundColor: AppColors.purple100,
-          labelColor: AppColors.purple700,
+          backgroundColor: AppColors.vffRequestSentChipBg,
+          labelColor: AppColors.neutral1200,
         );
       case UserVffJoinedProjectAction.joined:
         return _ActionChip(
           label: AppStrings.userVffJoined,
           backgroundColor: AppColors.purple100,
-          labelColor: AppColors.purple700,
+          labelColor: AppColors.neutral1200,
         );
     }
   }
@@ -62,40 +68,72 @@ class UserVffJoinedProjectRow extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 10.h),
       padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: AppColors.vffJoinedProjectCardBg,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: AppColors.grey300),
+        border: Border.all(color: AppColors.vffJoinedProjectCardBorder),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppText(
-                  row.title,
-                  style: GoogleFonts.lato(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.grey1100,
-                  ),
-                ),
-                SizedBox(height: 2.h),
-                AppText(
-                  '${row.memberCount} ${AppStrings.userVffMembersCountSuffix}',
-                  style: GoogleFonts.lato(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.grey800,
-                  ),
-                ),
-              ],
+            child: _JoinedProjectCardBody(
+              row: row,
+              onTap: onCardTap,
             ),
           ),
           SizedBox(width: 8.w),
           _actionChip(),
         ],
+      ),
+    );
+  }
+}
+
+class _JoinedProjectCardBody extends StatelessWidget {
+  final UserVffJoinedProjectRowUi row;
+  final VoidCallback? onTap;
+
+  const _JoinedProjectCardBody({
+    required this.row,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final content = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AppText(
+          row.title,
+          style: GoogleFonts.lato(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w600,
+            color: AppColors.grey1100,
+          ),
+        ),
+        SizedBox(height: 2.h),
+        AppText(
+          '${row.memberCount} ${AppStrings.userVffMembersCountSuffix}',
+          style: GoogleFonts.lato(
+            fontSize: 14.sp,
+            fontWeight: FontWeight.w600,
+            color: AppColors.grey800,
+          ),
+        ),
+      ],
+    );
+
+    if (onTap == null) return content;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8.r),
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 2.h),
+          child: content,
+        ),
       ),
     );
   }
@@ -107,6 +145,7 @@ class _ActionChip extends StatelessWidget {
   final Color labelColor;
   final Color? borderColor;
   final VoidCallback? onTap;
+  final bool isLoading;
 
   const _ActionChip({
     required this.label,
@@ -114,6 +153,7 @@ class _ActionChip extends StatelessWidget {
     required this.labelColor,
     this.borderColor,
     this.onTap,
+    this.isLoading = false,
   });
 
   @override
@@ -127,15 +167,24 @@ class _ActionChip extends StatelessWidget {
             ? Border.all(color: borderColor!, width: 1)
             : null,
       ),
-      child: Text(
-        label,
-        style: UserVffJoinedProjectRow._actionTextStyle.copyWith(
-          color: labelColor,
-        ),
-      ),
+      child: isLoading
+          ? SizedBox(
+              width: 20.w,
+              height: 20.w,
+              child: const CircularProgressIndicator(
+                strokeWidth: 2,
+                color: AppColors.purple700,
+              ),
+            )
+          : Text(
+              label,
+              style: UserVffJoinedProjectRow._actionTextStyle.copyWith(
+                color: labelColor,
+              ),
+            ),
     );
 
-    if (onTap == null) return child;
+    if (onTap == null || isLoading) return child;
 
     return Material(
       color: Colors.transparent,

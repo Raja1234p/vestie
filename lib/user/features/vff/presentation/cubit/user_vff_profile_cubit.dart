@@ -185,9 +185,9 @@ final class UserVffProfileCubit extends Cubit<UserVffProfileState> {
 
   Future<bool> joinFromVff(String projectId) async {
     final trimmed = projectId.trim();
-    if (trimmed.isEmpty || state.isActionLoading) return false;
+    if (trimmed.isEmpty || state.joiningProjectId != null) return false;
 
-    emit(state.copyWith(isActionLoading: true, clearError: true));
+    emit(state.copyWith(joiningProjectId: trimmed, clearError: true));
 
     final result = await _joinFromVffProfileUseCase(projectId: trimmed);
 
@@ -198,24 +198,75 @@ final class UserVffProfileCubit extends Cubit<UserVffProfileState> {
       (failure) async {
         emit(
           state.copyWith(
-            isActionLoading: false,
+            clearJoiningProjectId: true,
             errorMessage: FailureMapper.userMessage(failure),
           ),
         );
       },
       (_) async {
         ok = true;
-        emit(state.copyWith(isActionLoading: false));
-        final userId = _userId;
-        if (userId != null) {
-          await load(
-            userId: userId,
-            loadAsConnected: _loadAsConnected,
-            projectId: state.projectId,
-          );
-        }
+        await _refreshProfileAfterJoin();
       },
     );
     return ok;
+  }
+
+  /// Updates joined-project chips without full-screen loading shimmer.
+  Future<void> _refreshProfileAfterJoin() async {
+    final userId = _userId?.trim();
+    if (userId == null || userId.isEmpty) {
+      if (!isClosed) {
+        emit(state.copyWith(clearJoiningProjectId: true));
+      }
+      return;
+    }
+
+    if (_loadAsConnected) {
+      final result = await _getConnectedVffProfileUseCase(userId);
+      if (isClosed) return;
+      result.fold(
+        (failure) => emit(
+          state.copyWith(
+            clearJoiningProjectId: true,
+            errorMessage: FailureMapper.userMessage(failure),
+          ),
+        ),
+        (entity) => emit(
+          state.copyWith(
+            loadStatus: UserVffProfileLoadStatus.loaded,
+            profile: UserVffProfileMapper.connected(entity),
+            clearJoiningProjectId: true,
+          ),
+        ),
+      );
+      return;
+    }
+
+    final result = await _getPublicVffProfileUseCase(userId);
+    if (isClosed) return;
+    final projectId = state.projectId;
+    result.fold(
+      (failure) => emit(
+        state.copyWith(
+          clearJoiningProjectId: true,
+          errorMessage: FailureMapper.userMessage(failure),
+        ),
+      ),
+      (entity) {
+        final canSend = projectId != null &&
+            projectId.trim().isNotEmpty &&
+            !entity.isVffConnected;
+        emit(
+          state.copyWith(
+            loadStatus: UserVffProfileLoadStatus.loaded,
+            profile: UserVffProfileMapper.public(
+              entity,
+              canSendVffRequest: canSend,
+            ),
+            clearJoiningProjectId: true,
+          ),
+        );
+      },
+    );
   }
 }

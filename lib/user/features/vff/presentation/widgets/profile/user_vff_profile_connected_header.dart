@@ -8,7 +8,7 @@ import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_member_vff_badge.dart';
 import '../../models/user_vff_profile_ui_model.dart';
 
-/// Centered avatar + project-detail VFF badge + name (connected peer profile).
+/// Centered avatar + VFF badge + name (connected peer profile).
 final class UserVffProfileConnectedHeader extends StatelessWidget {
   final UserVffProfileUiModel profile;
 
@@ -22,10 +22,10 @@ final class UserVffProfileConnectedHeader extends StatelessWidget {
         AppNetworkAvatar(
           imageUrl: p.photoUrl,
           initials: p.initials,
-          size: 80.r,
+          size: 100.r,
           backgroundColor: AppColors.purple200,
           textColor: AppColors.grey1100,
-          fontSize: 22.sp,
+          fontSize: 28.sp,
         ),
         SizedBox(height: 10.h),
         const ProjectMemberVffBadge(),

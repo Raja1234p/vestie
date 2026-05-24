@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -318,63 +320,66 @@ class _VffGridTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final avatarSize = 60.w;
-    final badgeSize = 16.w;
-    final borderWidth = 3.w;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Grid cell width can be < 60.w — keep avatar square (circle).
+        final avatarSide = math.min(60.r, constraints.maxWidth);
+        final badgeSize = 16.r;
+        final borderWidth = 3.r;
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(999),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            width: avatarSize,
-            height: avatarSize,
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                AppNetworkAvatar(
-                  imageUrl: vff.photoUrl,
-                  initials: vff.initials,
-                  size: avatarSize,
-                  backgroundColor:
-                      AppColors.purple300.withValues(alpha: 0.45),
-                  textColor: AppColors.grey1100,
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.w700,
-                ),
-                if (selected)
-                  Positioned.fill(
-                    child: IgnorePointer(
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: AppColors.purple900,
-                            width: borderWidth,
+        return InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(999),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: avatarSide,
+                height: avatarSide,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    AppNetworkAvatar(
+                      imageUrl: vff.photoUrl,
+                      initials: vff.initials,
+                      size: avatarSide,
+                      backgroundColor:
+                          AppColors.purple300.withValues(alpha: 0.45),
+                      textColor: AppColors.grey1100,
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    if (selected)
+                      Positioned.fill(
+                        child: IgnorePointer(
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: AppColors.purple900,
+                                width: borderWidth,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                if (selected)
-                  Positioned(
-                    right: 0,
-                    bottom: 0,
-                    child: SvgPicture.asset(
-                      AppAssets.iconFriendSelected,
-                      width: badgeSize,
-                      height: badgeSize,
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          SizedBox(height: 4.h),
-          SizedBox(
-            width: avatarSize,
-            child: AppText(
+                    if (selected)
+                      Positioned(
+                        right: 0,
+                        bottom: 0,
+                        child: SvgPicture.asset(
+                          AppAssets.iconFriendSelected,
+                          width: badgeSize,
+                          height: badgeSize,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 4.h),
+              SizedBox(
+                width: avatarSide,
+                child: AppText(
               vff.displayName,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -389,6 +394,8 @@ class _VffGridTile extends StatelessWidget {
           ),
         ],
       ),
+        );
+      },
     );
   }
 }

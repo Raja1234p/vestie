@@ -54,6 +54,12 @@ final class UserVffProfileFooterActions extends StatelessWidget {
             text: AppStrings.btnVffRequestSent,
             onPressed: null,
             isSecondary: true,
+            useGradient: false,
+            hasShadow: false,
+            secondaryFillColor: AppColors.vffRequestSentChipBg,
+            secondaryBorderColor: Colors.transparent,
+            secondaryLabelColor: AppColors.neutral1200,
+            secondaryLabelFontWeight: FontWeight.w600,
           );
         }
 
