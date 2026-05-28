@@ -1,0 +1,52 @@
+name: macOS Flutter + VNC
+
+on:
+  workflow_dispatch:
+
+jobs:
+  macos-flutter:
+    runs-on: macos-latest
+    timeout-minutes: 360
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.6'
+          channel: 'stable'
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      - name: Enable Screen Sharing (VNC)
+        run: |
+          sudo /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart \
+            -activate -configure -access -on \
+            -clientopts -setvnclegacy -vnclegacy yes \
+            -clientopts -setvncpw -vncpw "Flutter@123" \
+            -restart -agent -privs -all
+
+      - name: Install Ngrok & Start Tunnel
+        env:
+          NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+        run: |
+          brew install ngrok/ngrok/ngrok
+          ngrok config add-authtoken $NGROK_AUTH_TOKEN
+          ngrok tcp 5900 --log=stdout > ngrok.log &
+          sleep 5
+          curl -s http://127.0.0.1:4040/api/tunnels | \
+            python3 -c "
+          import sys, json
+          t = json.load(sys.stdin)['tunnels']
+          addr = t[0]['public_url'].replace('tcp://', '')
+          print('==================================')
+          print('  VNC ADDRESS:', addr)
+          print('  VNC PASSWORD: Flutter@123')
+          print('==================================')
+          "
+
+      - name: Keep Session Alive
+        run: sleep 21600
