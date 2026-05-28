@@ -23,7 +23,7 @@ class TxFilterBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: AppColors.surface,
-      padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 10.h),
+      padding: EdgeInsets.fromLTRB(0, 10.h, 0, 10.h),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
@@ -39,8 +39,27 @@ class TxFilterBar extends StatelessWidget {
                   color: active ? AppColors.chipActiveBg : AppColors.chipInactiveBg,
                   borderRadius: BorderRadius.circular(24.r),
                   border: Border.all(
-                    color: active ? AppColors.chipActiveBg : AppColors.chipBorder,
+                    color: active ? AppColors.primary : AppColors.chipBorder,
+                    width: 1,
                   ),
+                  boxShadow: active
+                      ? const [
+                          BoxShadow(
+                            color: AppColors.purple300,
+                            offset: Offset(0, 4),
+                            blurRadius: 7.6,
+                            spreadRadius: 0,
+                          ),
+                          // Figma includes an inner shadow; this is the closest
+                          // lightweight approximation using standard BoxShadow.
+                          BoxShadow(
+                            color: Color(0xFF8563D0),
+                            offset: Offset(0, 4),
+                            blurRadius: 4,
+                            spreadRadius: -1,
+                          ),
+                        ]
+                      : null,
                 ),
                 child: AppText(
                   filter,

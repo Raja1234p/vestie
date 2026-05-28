@@ -500,7 +500,7 @@ class AppStrings {
   static const String guidelineFinalContributionsTitle = 'Final Contributions';
   static const String guidelineFinalContributionsBody =
       'Contributions to active projects are final. Refunds are only issued if a project is cancelled.';
-  static const String btnLogout           = 'Logout';
+  static const String btnLogout           = 'Log Out';
 
   // ── Edit Profile ─────────────────────────────────────────────────────────
   static const String editProfileTitle    = 'Edit Profile';
@@ -748,6 +748,7 @@ class AppStrings {
   static const String withdrawAmountSubtitle    = 'Add Amount';
   static const String confirmDepositTitle       = 'Confirm Deposit';
   static const String confirmWithdrawTitle      = 'Confirm Withdraw';
+  static const String btnConfirmDeposit         = 'Confirm Deposit';
   static const String walletDepositDetailsTitle = 'Deposit Details';
   static const String walletWithdrawDetailsTitle = 'Withdraw Details';
   static const String walletDepositingLabel     = 'Depositing';
@@ -1040,6 +1041,7 @@ class AppStrings {
   static const String btnYesCancel         = 'Yes, Cancel';
   static const String projectCancelledTitle = 'Project Cancelled';
   static const String btnBackToHome        = 'Back to Home';
+  static const String btnViewDetails       = 'View Details';
   static const String defaultedNoRefundShort =
       'Defaulted members received no refund.';
   static const String hintAnnouncementText      = 'Type your announcement...';

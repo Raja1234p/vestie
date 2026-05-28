@@ -38,6 +38,13 @@ class ProjectActionButton extends StatelessWidget {
   }
 
   TextStyle get _textStyle {
+    if (project.status == ProjectStatus.completed) {
+      return GoogleFonts.lato(
+        fontSize: 13.sp,
+        fontWeight: FontWeight.w500,
+        color: AppColors.textPrimary,
+      );
+    }
     if (discoverCtaStyle &&
         project.status == ProjectStatus.ongoing &&
         project.relation != ProjectRelation.owned &&
@@ -57,12 +64,21 @@ class ProjectActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isCompletedViewStyle = project.status == ProjectStatus.completed;
+    final radius = BorderRadius.circular(10.r);
+
     return Material(
-      color: AppColors.cardActionBtn,
-      borderRadius: BorderRadius.circular(10.r),
+      color: isCompletedViewStyle ? Colors.transparent : AppColors.cardActionBtn,
+      borderRadius: radius,
+      shape: isCompletedViewStyle
+          ? RoundedRectangleBorder(
+              borderRadius: radius,
+              side: const BorderSide(color: Colors.black, width: 1),
+            )
+          : null,
       child: InkWell(
         onTap: isLoading ? null : onTap,
-        borderRadius: BorderRadius.circular(10.r),
+        borderRadius: radius,
         child: SizedBox(
           width: double.infinity,
           height: 44.h,

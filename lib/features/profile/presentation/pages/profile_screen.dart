@@ -270,15 +270,14 @@ class _ProfileBody extends StatelessWidget {
                                                   ),
                                                 ),
                                               ),
-                                              AppText(
-                                                profile.email.isNotEmpty
-                                                    ? profile.email
-                                                    : '...',
-                                                style: GoogleFonts.lato(
-                                                  fontSize: 13.sp,
-                                                  color: AppColors.textBody,
+                                              if (profile.username.isNotEmpty)
+                                                AppText(
+                                                  profile.username,
+                                                  style: GoogleFonts.lato(
+                                                    fontSize: 13.sp,
+                                                    color: AppColors.textBody,
+                                                  ),
                                                 ),
-                                              ),
                                             ],
                                           ),
                                         ],

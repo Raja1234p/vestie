@@ -54,7 +54,7 @@ class ProfilePhotoDialog extends StatelessWidget {
         padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 24.h),
         decoration: BoxDecoration(
           color: AppColors.surface,
-          borderRadius: BorderRadius.circular(24.r),
+          borderRadius: BorderRadius.circular(10.r),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -68,7 +68,7 @@ class ProfilePhotoDialog extends StatelessWidget {
                 icon: AppSvgIcon(
                   assetPath: AppAssets.iconClose,
                   size: 20.w,
-                  color: AppColors.grey800,
+                  color: const Color(0xFF381A7A),
                 ),
               ),
             ),

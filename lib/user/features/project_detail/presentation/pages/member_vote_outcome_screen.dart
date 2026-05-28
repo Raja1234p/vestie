@@ -52,7 +52,7 @@ class MemberVoteOutcomeScreen extends StatelessWidget {
         ? (data.isApproved
             ? AppStrings.btnStartDistributing
             : AppStrings.btnResumeContributions)
-        : AppStrings.btnBackToHome;
+        : AppStrings.btnViewDetails;
 
     return AppSuccessScreen(
       illustrationTopSpacing: 40.h,

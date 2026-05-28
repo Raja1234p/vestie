@@ -80,6 +80,12 @@ class AppAssets {
   /// Payment methods empty — 3D card holder (Figma).
   static const String paymentMethodsEmptyIllustration =
       '$_imagePath/payment_methods_empty.png';
+  /// Payment card detail bottom sheet background base (provided design export).
+  static const String paymentCardBgBase =
+      '$_imagePath/payment_card_bg_base.png';
+  /// Payment card detail bottom sheet top overlay (provided design export).
+  static const String paymentCardBgOverlay =
+      '$_imagePath/payment_card_bg_overlay.png';
   /// Wallet “Recent Activity” empty — same 3D coin as join/borrow requests empty.
   static const String walletEmptyActivityIllustration = borrowRequestsEmptyState;
   /// Withdraw method screen — standard (coin) and instant (lightning) rails.

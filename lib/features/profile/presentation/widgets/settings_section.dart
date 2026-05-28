@@ -102,7 +102,7 @@ class SettingsSection extends StatelessWidget {
                 onTap: item.onTap,
                 child: Padding(
                   padding:
-                      EdgeInsets.symmetric(horizontal: 14.w, vertical: 17.h),
+                      EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
                   child: Row(
                     children: [
                       _leading(item),

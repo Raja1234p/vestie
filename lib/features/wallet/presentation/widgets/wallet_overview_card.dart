@@ -33,7 +33,7 @@ class WalletOverviewCard extends StatelessWidget {
                   AppStrings.walletBalanceHeading,
                   style: GoogleFonts.lato(
                     fontSize: 14.sp,
-                    color: AppColors.grey800,
+                    color: AppColors.neutral1200,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

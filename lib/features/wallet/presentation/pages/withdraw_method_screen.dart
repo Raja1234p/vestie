@@ -27,7 +27,7 @@ class WithdrawMethodScreen extends StatelessWidget {
           builder: (context, state) {
             final cubit = context.read<WalletTransactionCubit>();
             final selected = state.withdrawDeliveryMethod ??
-                WithdrawDeliveryMethod.instant;
+                WithdrawDeliveryMethod.standard;
 
             return Column(
               children: [

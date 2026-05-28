@@ -69,7 +69,9 @@ class _TransactionAmountScreenState extends State<TransactionAmountScreen> {
         case WalletPaymentMethodSelection():
           cubit.selectWallet();
       }
-      context.push(AppRoutes.transactionConfirmation);
+      // Replace amount screen so back from confirm returns to previous screen,
+      // not to this amount entry screen.
+      context.pushReplacement(AppRoutes.transactionConfirmation);
     });
   }
 

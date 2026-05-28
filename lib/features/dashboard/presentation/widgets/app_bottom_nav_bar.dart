@@ -84,20 +84,31 @@ class AppBottomNavBar extends StatelessWidget {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: active
-                              ? AppColors.navActive
+                              ? AppColors.purple800
                               : AppColors.neutral200,
                           boxShadow: active
-                              ? [
+                              ? const [
                                   BoxShadow(
-                                    color: AppColors.purple900
-                                        .withValues(alpha: 0.28),
-                                    blurRadius: 14.r,
-                                    offset: Offset(0, 4.h),
+                                    color: AppColors.purple300,
+                                    blurRadius: 7.6,
+                                    spreadRadius: 0,
+                                    offset: Offset(0, 4),
+                                  ),
+                                  // Approximate Figma inner shadow with a tighter
+                                  // secondary shadow using negative spread.
+                                  BoxShadow(
+                                    color: Color(0xFF8563D0),
+                                    blurRadius: 4,
+                                    spreadRadius: -1,
+                                    offset: Offset(0, 4),
                                   ),
                                 ]
                               : null,
                           border: active
-                              ? null
+                              ? Border.all(
+                                  color: AppColors.primary,
+                                  width: 1,
+                                )
                               : Border.all(
                                   color: AppColors.cardBorder,
                                   width: 1,

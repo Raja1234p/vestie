@@ -8,7 +8,6 @@ import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/features/profile/domain/entities/payment_card.dart';
-import 'package:vestie/features/profile/presentation/widgets/payment_card_noise_painter.dart';
 
 /// Figma card detail preview — 370×175 white surface, noise, masked number, brand.
 class CardPreview extends StatelessWidget {
@@ -25,8 +24,16 @@ class CardPreview extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            const ColoredBox(color: AppColors.payCardSurfaceBg),
-            CustomPaint(painter: PaymentCardNoisePainter(seed: card.id.hashCode)),
+            Image.asset(
+              AppAssets.paymentCardBgBase,
+              fit: BoxFit.cover,
+              alignment: Alignment.topCenter,
+            ),
+            Image.asset(
+              AppAssets.paymentCardBgOverlay,
+              fit: BoxFit.cover,
+              alignment: Alignment.topCenter,
+            ),
             Padding(
               padding: EdgeInsets.all(20.w),
               child: Stack(

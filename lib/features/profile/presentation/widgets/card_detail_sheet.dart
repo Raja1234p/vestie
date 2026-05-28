@@ -47,7 +47,7 @@ class CardDetailSheet extends StatelessWidget {
           orElse: () => card,
         );
         final bottomInset = math.max(
-          24.h,
+          60.h,
           MediaQuery.viewPaddingOf(context).bottom + 8.h,
         );
 
@@ -71,7 +71,7 @@ class CardDetailSheet extends StatelessWidget {
               _ActionRow(
                 title: AppStrings.setPrimaryLabel,
                 subtitle: AppStrings.setPrimarySubtitle,
-                trailing: Switch.adaptive(
+                trailing: _PrimaryToggleSwitch(
                   value: current.isPrimary,
                   onChanged: current.isPrimary
                       ? null
@@ -82,10 +82,6 @@ class CardDetailSheet extends StatelessWidget {
                                 .setPrimary(current.id);
                           }
                         },
-                  activeThumbColor: AppColors.surface,
-                  activeTrackColor: AppColors.primary,
-                  inactiveThumbColor: AppColors.surface,
-                  inactiveTrackColor: AppColors.grey300,
                 ),
               ),
               SizedBox(height: 20.h),
@@ -166,6 +162,52 @@ class _ActionRow extends StatelessWidget {
         SizedBox(width: 12.w),
         trailing,
       ],
+    );
+  }
+}
+
+class _PrimaryToggleSwitch extends StatelessWidget {
+  const _PrimaryToggleSwitch({
+    required this.value,
+    required this.onChanged,
+  });
+
+  final bool value;
+  final ValueChanged<bool>? onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final isEnabled = onChanged != null;
+    return GestureDetector(
+      onTap: isEnabled ? () => onChanged!(!value) : null,
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedOpacity(
+        duration: const Duration(milliseconds: 180),
+        opacity: isEnabled ? 1 : 0.7,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          width: 52.w,
+          height: 30.h,
+          padding: EdgeInsets.all(4.r),
+          decoration: BoxDecoration(
+            color: value ? AppColors.primary : const Color(0xFFD9D9D9),
+            borderRadius: BorderRadius.circular(12.r),
+          ),
+          child: AnimatedAlign(
+            duration: const Duration(milliseconds: 180),
+            curve: Curves.easeInOut,
+            alignment: value ? Alignment.centerRight : Alignment.centerLeft,
+            child: Container(
+              width: 24.w,
+              height: 24.h,
+              decoration: BoxDecoration(
+                color: value ? AppColors.primary : AppColors.surface,
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

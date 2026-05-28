@@ -11,6 +11,7 @@ import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
+import 'package:vestie/features/profile/domain/entities/payment_method_selection.dart';
 import '../../domain/wallet_transaction_type.dart';
 import '../../domain/withdraw_delivery_method.dart';
 import '../cubit/wallet_transaction_cubit.dart';
@@ -21,9 +22,22 @@ import '../widgets/wallet_withdraw_confirm_section.dart';
 class TransactionConfirmationScreen extends StatelessWidget {
   const TransactionConfirmationScreen({super.key});
 
+  void _onBackPressed(BuildContext context, WalletTransactionState state) {
+    context.push(AppRoutes.selectPaymentMethod).then((result) {
+      if (!context.mounted || result == null) return;
+      final cubit = context.read<WalletTransactionCubit>();
+      switch (result) {
+        case CardPaymentMethodSelection(:final card):
+          cubit.selectCard(card);
+        case WalletPaymentMethodSelection():
+          cubit.selectWallet();
+      }
+    });
+  }
+
   String _confirmCta(WalletTransactionState state) {
     if (state.transactionType == WalletTransactionType.deposit) {
-      return AppStrings.btnConfirm;
+      return AppStrings.btnConfirmDeposit;
     }
     return state.withdrawDeliveryMethod == WithdrawDeliveryMethod.instant
         ? AppStrings.btnConfirmInstantWithdraw
@@ -53,7 +67,7 @@ class TransactionConfirmationScreen extends StatelessWidget {
                     AppDimens.v8,
                   ),
                   leading: AppBackButton(
-                    onPressed: context.pop,
+                    onPressed: () => _onBackPressed(context, state),
                     color: AppColors.textPrimary,
                   ),
                 ),

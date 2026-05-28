@@ -18,7 +18,7 @@ class DiscoverSearchBar extends StatelessWidget {
       height: 44.h,
       decoration: BoxDecoration(
         color: AppColors.searchBarBg,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(100.r),
         border: Border.all(color: AppColors.inputFieldBorder),
       ),
       child: TextField(
@@ -34,14 +34,14 @@ class DiscoverSearchBar extends StatelessWidget {
         decoration: InputDecoration(
           hintText: AppStrings.discoverSearchHint,
           hintStyle: GoogleFonts.lato(
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w500,
-            color: AppColors.authHint,
+            fontSize: 14.sp,
+            fontWeight: FontWeight.w400,
+            color: AppColors.grey800,
           ),
-          prefixIcon: Padding(
-            padding: EdgeInsets.only(left: 12.w, right: 8.w),
+          suffixIcon: Padding(
+            padding: EdgeInsets.only(left: 8.w, right: 12.w),
             child: Align(
-              alignment: Alignment.centerLeft,
+              alignment: Alignment.centerRight,
               widthFactor: 1,
               child: AppSvgIcon(
                 assetPath: AppAssets.iconSearch,
@@ -51,8 +51,10 @@ class DiscoverSearchBar extends StatelessWidget {
             ),
           ),
           border: InputBorder.none,
-          contentPadding:
-              EdgeInsets.symmetric(vertical: 12.h),
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 14.w,
+            vertical: 12.h,
+          ),
         ),
       ),
     );

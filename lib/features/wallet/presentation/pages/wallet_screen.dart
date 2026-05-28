@@ -76,13 +76,30 @@ class WalletScreen extends StatelessWidget {
                 children: [
                   Padding(
                     padding: EdgeInsets.only(top: 16.h, bottom: 8.h),
-                    child: AppText(
-                      AppStrings.recentActivityHeader,
-                      style: GoogleFonts.lato(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.guidelineTitle,
-                      ),
+                    child: Row(
+                      children: [
+                        AppText(
+                          AppStrings.recentActivityHeader,
+                          style: GoogleFonts.lato(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.guidelineTitle,
+                          ),
+                        ),
+                        const Spacer(),
+                        GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () => context.push(AppRoutes.walletRecentActivity),
+                          child: AppText(
+                            AppStrings.viewAllRequests,
+                            style: GoogleFonts.lato(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   SizedBox(height: 8.h),
