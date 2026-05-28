@@ -28,12 +28,19 @@ jobs:
       - name: Setup VNC & Start Server
         run: |
           mkdir -p ~/.vnc
-          echo "Flutter@123" | vncpasswd -f > ~/.vnc/passwd
+
+          # Use full path for vncpasswd
+          printf "Flutter@123\nFlutter@123\n" | \
+            /opt/homebrew/bin/vncpasswd ~/.vnc/passwd
+
           chmod 600 ~/.vnc/passwd
-          vncserver :1 \
+
+          # Start VNC server with full path
+          /opt/homebrew/bin/vncserver :1 \
             -geometry 1920x1080 \
             -depth 24 \
             -localhost no
+
           sleep 3
           echo "VNC Server started on port 5901"
 
