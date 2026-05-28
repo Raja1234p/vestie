@@ -29,6 +29,10 @@ jobs:
             -clientopts -setvncpw -vncpw "Flutter@123" \
             -restart -agent -privs -all
 
+      - name: Set Runner Password
+        run: |
+          sudo sysadminctl -resetPasswordFor runner -newPassword "Flutter@123"
+
       - name: Install noVNC
         run: |
           pip3 install websockify --break-system-packages
@@ -48,7 +52,6 @@ jobs:
         run: |
           brew install ngrok/ngrok/ngrok
           ngrok config add-authtoken $NGROK_AUTH_TOKEN
-          # HTTP tunnel - FREE, no credit card needed!
           ngrok http 6080 --log=stdout > ngrok.log &
           sleep 5
           curl -s http://127.0.0.1:4040/api/tunnels | \
