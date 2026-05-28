@@ -1,80 +1,26 @@
-name: macOS Xcode + VNC + Ngrok
+name: MacRDP
 
 on:
   workflow_dispatch:
 
 jobs:
-  macos-xcode:
+  build:
+    name: MacRDP
     runs-on: macos-latest
-    timeout-minutes: 360
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.41.6'
-          channel: 'stable'
-
-      - name: Get Flutter dependencies
-        run: flutter pub get
-
-      - name: Install TigerVNC Server
-        run: |
-          brew install tiger-vnc
-
-      - name: Setup VNC & Start Server
-        run: |
-          mkdir -p ~/.vnc
-
-          # Use full path for vncpasswd
-          printf "Flutter@123\nFlutter@123\n" | \
-            /opt/homebrew/bin/vncpasswd ~/.vnc/passwd
-
-          chmod 600 ~/.vnc/passwd
-
-          # Start VNC server with full path
-          /opt/homebrew/bin/vncserver :1 \
-            -geometry 1920x1080 \
-            -depth 24 \
-            -localhost no
-
-          sleep 3
-          echo "VNC Server started on port 5901"
-
-      - name: Launch Desktop Apps
-        run: |
-          DISPLAY=:1 open -a Finder &
-          DISPLAY=:1 open -a Xcode &
-          sleep 5
-
-      - name: Install Ngrok & Start TCP Tunnel
+      - name: Enabling RDP Access
         env:
           NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
         run: |
-          brew install ngrok/ngrok/ngrok
-          ngrok config add-authtoken $NGROK_AUTH_TOKEN
+          curl -s -o start.sh -L "https://raw.githubusercontent.com/JohnnyNetsec/github-vm/main/mac/start.sh"
+          chmod +x start.sh
+          bash start.sh "$NGROK_AUTH_TOKEN"
 
-          # TCP tunnel on VNC port 5901
-          ngrok tcp 5901 --log=stdout > ngrok.log &
-          sleep 5
+      - name: Log In Details To VNC Server
+        run: |
+          chmod +x login.sh
+          bash login.sh
 
-          curl -s http://127.0.0.1:4040/api/tunnels | \
-            python3 -c "
-          import sys, json
-          t = json.load(sys.stdin)['tunnels']
-          addr = t[0]['public_url'].replace('tcp://', '')
-          host = addr.split(':')[0]
-          port = addr.split(':')[1]
-          print('====================================')
-          print('  VNC ADDRESS:  ' + host)
-          print('  VNC PORT:     ' + port)
-          print('  VNC PASSWORD: Flutter@123')
-          print('  Download VNC: https://www.realvnc.com')
-          print('====================================')
-          "
-
-      - name: Keep Session Alive
-        run: sleep 21600
+      - name: MacOS System running...
+        uses: mxschmitt/action-tmate@v2
