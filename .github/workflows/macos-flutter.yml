@@ -23,15 +23,25 @@ jobs:
 
       - name: Enable Screen Sharing (VNC)
         run: |
-          sudo /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart \
-            -activate -configure -access -on \
-            -clientopts -setvnclegacy -vnclegacy yes \
-            -clientopts -setvncpw -vncpw "Flutter@123" \
-            -restart -agent -privs -all
-
-      - name: Set Runner Password
-        run: |
-          sudo sysadminctl -resetPasswordFor runner -newPassword "Flutter@123"
+          sudo python3 -c "
+          password = 'Flutter@123'[:8].ljust(8, chr(0))
+          key = [23, 82, 107, 6, 35, 78, 88, 7]
+          result = bytearray()
+          for i, char in enumerate(password.encode('latin-1')):
+              byte = char
+              rev = 0
+              for j in range(8):
+                  rev = (rev << 1) | ((byte >> j) & 1)
+              result.append(rev ^ key[i])
+          with open('/Library/Preferences/.com.apple.VNCSettings.txt', 'wb') as f:
+              f.write(bytes(result))
+          "
+          sudo defaults write /Library/Preferences/com.apple.RemoteDesktop VNCAlwaysStartOnConsolePort -bool true
+          sudo defaults write /Library/Preferences/com.apple.RemoteDesktop VNCLegacyConnectionsAllowed -bool true
+          sudo launchctl unload /System/Library/LaunchDaemons/com.apple.screensharing.plist 2>/dev/null || true
+          sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.screensharing.plist
+          sleep 5
+          echo "VNC Screen Sharing started!"
 
       - name: Install noVNC
         run: |
@@ -44,7 +54,7 @@ jobs:
             --vnc localhost:5900 \
             --listen 6080 &
           sleep 3
-          echo "noVNC started on port 6080"
+          echo "noVNC started!"
 
       - name: Install Ngrok & Start HTTP Tunnel
         env:
@@ -60,9 +70,9 @@ jobs:
           t = json.load(sys.stdin)['tunnels']
           addr = t[0]['public_url']
           print('==================================')
-          print('  OPEN THIS IN YOUR BROWSER:')
+          print('  OPEN IN BROWSER:')
           print('  ' + addr + '/vnc.html')
-          print('  VNC PASSWORD: Flutter@123')
+          print('  PASSWORD: Flutter@123')
           print('==================================')
           "
 
