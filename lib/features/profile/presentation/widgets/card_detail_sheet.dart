@@ -75,13 +75,9 @@ class CardDetailSheet extends StatelessWidget {
                   value: current.isPrimary,
                   onChanged: current.isPrimary
                       ? null
-                      : (on) {
-                          if (on) {
-                            context
-                                .read<PaymentMethodsCubit>()
-                                .setPrimary(current.id);
-                          }
-                        },
+                      : (_) => context
+                          .read<PaymentMethodsCubit>()
+                          .setPrimary(current.id),
                 ),
               ),
               SizedBox(height: 20.h),
@@ -179,7 +175,7 @@ class _PrimaryToggleSwitch extends StatelessWidget {
   Widget build(BuildContext context) {
     final isEnabled = onChanged != null;
     return GestureDetector(
-      onTap: isEnabled ? () => onChanged!(!value) : null,
+      onTap: isEnabled ? () => onChanged!(true) : null,
       behavior: HitTestBehavior.opaque,
       child: AnimatedOpacity(
         duration: const Duration(milliseconds: 180),
@@ -192,6 +188,9 @@ class _PrimaryToggleSwitch extends StatelessWidget {
           decoration: BoxDecoration(
             color: value ? AppColors.primary : const Color(0xFFD9D9D9),
             borderRadius: BorderRadius.circular(12.r),
+            border: value
+                ? Border.all(color: AppColors.primary, width: 1)
+                : null,
           ),
           child: AnimatedAlign(
             duration: const Duration(milliseconds: 180),
@@ -201,7 +200,7 @@ class _PrimaryToggleSwitch extends StatelessWidget {
               width: 24.w,
               height: 24.h,
               decoration: BoxDecoration(
-                color: value ? AppColors.primary : AppColors.surface,
+                color: AppColors.surface,
                 borderRadius: BorderRadius.circular(8.r),
               ),
             ),

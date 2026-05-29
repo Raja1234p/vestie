@@ -16,7 +16,6 @@ import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
-import 'package:vestie/features/profile/domain/entities/payment_method_selection.dart';
 import '../../domain/wallet_transaction_type.dart';
 import '../cubit/wallet_transaction_cubit.dart';
 
@@ -61,18 +60,7 @@ class _TransactionAmountScreenState extends State<TransactionAmountScreen> {
   }
 
   void _onContinueDeposit(BuildContext context, WalletTransactionCubit cubit) {
-    context.push(AppRoutes.selectPaymentMethod).then((result) {
-      if (!context.mounted || result == null) return;
-      switch (result) {
-        case CardPaymentMethodSelection(:final card):
-          cubit.selectCard(card);
-        case WalletPaymentMethodSelection():
-          cubit.selectWallet();
-      }
-      // Replace amount screen so back from confirm returns to previous screen,
-      // not to this amount entry screen.
-      context.pushReplacement(AppRoutes.transactionConfirmation);
-    });
+    context.push(AppRoutes.selectPaymentMethod);
   }
 
   void _onContinueWithdraw(BuildContext context, WalletTransactionCubit cubit) {

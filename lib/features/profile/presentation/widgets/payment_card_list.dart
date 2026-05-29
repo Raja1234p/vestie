@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
@@ -12,8 +14,8 @@ import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/features/profile/domain/entities/payment_card.dart';
-import 'package:vestie/features/profile/domain/entities/payment_method_selection.dart';
 import 'package:vestie/features/profile/presentation/widgets/card_detail_sheet.dart';
+import 'package:vestie/features/wallet/presentation/cubit/wallet_transaction_cubit.dart';
 import 'package:vestie/features/profile/presentation/widgets/payment_method_select_row.dart';
 import 'package:vestie/features/profile/presentation/widgets/payment_primary_button.dart';
 
@@ -48,7 +50,8 @@ class _PaymentCardListState extends State<PaymentCardList> {
       _selection = _PaymentPickerSelection.card;
       _selectedCardId = card.id;
     });
-    context.pop(CardPaymentMethodSelection(card));
+    context.read<WalletTransactionCubit>().selectCard(card);
+    context.push(AppRoutes.transactionConfirmation);
   }
 
   void _selectWallet() {
@@ -56,7 +59,8 @@ class _PaymentCardListState extends State<PaymentCardList> {
       _selection = _PaymentPickerSelection.wallet;
       _selectedCardId = null;
     });
-    context.pop(const WalletPaymentMethodSelection());
+    context.read<WalletTransactionCubit>().selectWallet();
+    context.push(AppRoutes.transactionConfirmation);
   }
 
   @override
