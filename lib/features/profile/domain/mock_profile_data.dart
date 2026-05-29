@@ -39,5 +39,7 @@ class MockProfileData {
     Transaction(id: 't5', title: 'Borrow: New Laptop',       date: 'Mar 18', amount:  1200, type: TransactionType.borrow),
     Transaction(id: 't6', title: 'Lend: Wedding Gift',       date: 'Mar 20', amount: -150,  type: TransactionType.lend),
     Transaction(id: 't7', title: 'Contribution: Family V...', date: 'Mar 11', amount: -115,  type: TransactionType.contribution),
+    Transaction(id: 't8', title: 'Repayment: Car Repair',    date: 'Mar 16', amount: -300,  type: TransactionType.repayment),
+    Transaction(id: 't9', title: 'Platform Fee',             date: 'Mar 17', amount: -5,    type: TransactionType.fee),
   ];
 }

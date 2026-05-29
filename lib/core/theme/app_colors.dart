@@ -252,7 +252,7 @@ class AppColors {
   static const Color bottomNavIconCircle = purple100; // #F5F0FE
 
   // Filter chips
-  static const Color chipActiveBg    = purple800;   // #4C24A0
+  static const Color chipActiveBg    = purple800;   // #6230C2
   static const Color chipActiveText  = neutral100;  // white
   static const Color chipInactiveBg  = neutral100;  // white
   static const Color chipInactiveText = grey900;    // #443F63

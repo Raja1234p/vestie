@@ -550,6 +550,8 @@ class AppStrings {
   static const String filterDeposits         = 'Deposits';
   static const String filterWithdrawals       = 'Withdrawals';
   static const String filterContributions     = 'Contributions';
+  static const String filterRepayments        = 'Repayments';
+  static const String filterFees              = 'Fees';
 
   // ── Create Project Wizard ─────────────────────────────────────────────────
   // Amount screen

@@ -36,7 +36,11 @@ class _TxBody extends StatelessWidget {
         return AppTransactionType.withdrawal;
       case TransactionType.lend:
         return AppTransactionType.lend;
-      default:
+      case TransactionType.repayment:
+        return AppTransactionType.lend;
+      case TransactionType.fee:
+        return AppTransactionType.withdrawal;
+      case TransactionType.borrow:
         return AppTransactionType.borrow;
     }
   }

@@ -18,6 +18,10 @@ AppTransactionType walletTransactionTypeFromEntity(TransactionType type) {
       return AppTransactionType.withdrawal;
     case TransactionType.lend:
       return AppTransactionType.lend;
+    case TransactionType.repayment:
+      return AppTransactionType.lend;
+    case TransactionType.fee:
+      return AppTransactionType.withdrawal;
   }
 }
 

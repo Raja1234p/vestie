@@ -61,6 +61,12 @@ class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
       case AppStrings.filterContributions:
         result = list.where((t) => t.isContribution).toList();
         break;
+      case AppStrings.filterRepayments:
+        result = list.where((t) => t.isRepayment).toList();
+        break;
+      case AppStrings.filterFees:
+        result = list.where((t) => t.isFee).toList();
+        break;
       default:
         result = list;
     }

@@ -1,4 +1,12 @@
-enum TransactionType { deposit, contribution, borrow, lend, withdrawal }
+enum TransactionType {
+  deposit,
+  contribution,
+  borrow,
+  lend,
+  withdrawal,
+  repayment,
+  fee,
+}
 
 class Transaction {
   final String id;
@@ -26,4 +34,6 @@ class Transaction {
   bool get isDeposit      => type == TransactionType.deposit || type == TransactionType.borrow;
   bool get isWithdrawal   => type == TransactionType.lend || type == TransactionType.withdrawal;
   bool get isContribution => type == TransactionType.contribution;
+  bool get isRepayment => type == TransactionType.repayment;
+  bool get isFee => type == TransactionType.fee;
 }

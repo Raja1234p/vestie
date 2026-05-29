@@ -17,6 +17,8 @@ class TxFilterBar extends StatelessWidget {
     AppStrings.filterDeposits,
     AppStrings.filterWithdrawals,
     AppStrings.filterContributions,
+    AppStrings.filterRepayments,
+    AppStrings.filterFees,
   ];
 
   @override
@@ -27,51 +29,42 @@ class TxFilterBar extends StatelessWidget {
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
-          children: _filters.map((filter) {
-            final active = filter == activeFilter;
-            return GestureDetector(
-              onTap: () => context.read<TransactionHistoryCubit>().selectFilter(filter),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                margin: EdgeInsets.only(right: 8.w),
-                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 7.h),
-                decoration: BoxDecoration(
-                  color: active ? AppColors.chipActiveBg : AppColors.chipInactiveBg,
-                  borderRadius: BorderRadius.circular(24.r),
-                  border: Border.all(
-                    color: active ? AppColors.primary : AppColors.chipBorder,
-                    width: 1,
+          children: [
+            SizedBox(width: 10.w),
+            ..._filters.map((filter) {
+              final active = filter == activeFilter;
+              return GestureDetector(
+                onTap: () =>
+                    context.read<TransactionHistoryCubit>().selectFilter(filter),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  margin: EdgeInsets.only(right: 8.w),
+                  padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 7.h),
+                  decoration: BoxDecoration(
+                    color: active
+                        ? AppColors.actionPrimaryPressed
+                        : AppColors.chipInactiveBg,
+                    borderRadius: BorderRadius.circular(24.r),
+                    border: Border.all(
+                      color: AppColors.purple300,
+                      width: 1,
+                    ),
                   ),
-                  boxShadow: active
-                      ? const [
-                          BoxShadow(
-                            color: AppColors.purple300,
-                            offset: Offset(0, 4),
-                            blurRadius: 7.6,
-                            spreadRadius: 0,
-                          ),
-                          // Figma includes an inner shadow; this is the closest
-                          // lightweight approximation using standard BoxShadow.
-                          BoxShadow(
-                            color: Color(0xFF8563D0),
-                            offset: Offset(0, 4),
-                            blurRadius: 4,
-                            spreadRadius: -1,
-                          ),
-                        ]
-                      : null,
-                ),
-                child: AppText(
-                  filter,
-                  style: GoogleFonts.lato(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w500,
-                    color: active ? AppColors.chipActiveText : AppColors.chipInactiveText,
+                  child: AppText(
+                    filter,
+                    style: GoogleFonts.lato(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                      color: active
+                          ? AppColors.chipActiveText
+                          : AppColors.chipInactiveText,
+                    ),
                   ),
                 ),
-              ),
-            );
-          }).toList(),
+              );
+            }),
+            SizedBox(width: 10.w),
+          ],
         ),
       ),
     );

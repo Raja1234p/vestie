@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/widgets/common/app_text.dart';
 
 const _filters = [
   AppStrings.filterAll,
@@ -12,6 +13,7 @@ const _filters = [
   AppStrings.filterInvestments,
 ];
 
+/// Discover category chips — matches Transaction History [TxFilterBar] styling.
 class DiscoverFilterRow extends StatelessWidget {
   final String selected;
   final ValueChanged<String> onSelect;
@@ -27,39 +29,41 @@ class DiscoverFilterRow extends StatelessWidget {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        children: _filters.map((f) {
-          final active = f == selected;
-          return GestureDetector(
-            onTap: () => onSelect(f),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              margin: EdgeInsets.only(right: 8.w),
-              padding:
-                  EdgeInsets.symmetric(horizontal: 14.w, vertical: 7.h),
-              decoration: BoxDecoration(
-                color: active
-                    ? AppColors.chipActiveBg
-                    : AppColors.chipInactiveBg,
-                borderRadius: BorderRadius.circular(100.r),
-                border: Border.all(
+        children: [
+          SizedBox(width: 10.w),
+          ..._filters.map((f) {
+            final active = f == selected;
+            return GestureDetector(
+              onTap: () => onSelect(f),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                margin: EdgeInsets.only(right: 8.w),
+                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 7.h),
+                decoration: BoxDecoration(
                   color: active
-                      ? AppColors.chipActiveBg
-                      : AppColors.chipBorder,
+                      ? AppColors.actionPrimaryPressed
+                      : AppColors.chipInactiveBg,
+                  borderRadius: BorderRadius.circular(24.r),
+                  border: Border.all(
+                    color: AppColors.purple300,
+                    width: 1,
+                  ),
+                ),
+                child: AppText(
+                  f,
+                  style: GoogleFonts.lato(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                    color: active
+                        ? AppColors.chipActiveText
+                        : AppColors.chipInactiveText,
+                  ),
                 ),
               ),
-              child: Text(
-                f,
-                style: GoogleFonts.lato(
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w600,
-                  color: active
-                      ? AppColors.chipActiveText
-                      : AppColors.chipInactiveText,
-                ),
-              ),
-            ),
-          );
-        }).toList(),
+            );
+          }),
+          SizedBox(width: 10.w),
+        ],
       ),
     );
   }
