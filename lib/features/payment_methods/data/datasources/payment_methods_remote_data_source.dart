@@ -1,5 +1,7 @@
 import 'package:vestie/core/constants/api_constants.dart';
+import 'package:vestie/core/network/api_response_body.dart';
 import 'package:vestie/core/network/base_api_client.dart';
+import 'package:vestie/core/utils/safe_parser.dart';
 
 import '../models/payment_method_api_model.dart';
 
@@ -13,9 +15,24 @@ class SetupIntentResultModel {
   });
 
   factory SetupIntentResultModel.fromJson(Map<String, dynamic> json) {
+    var body = unwrapApiResponseBody(json);
+    final nested = body['setupIntent'] ?? body['setup_intent'];
+    if (nested is Map) {
+      body = Map<String, dynamic>.from(nested);
+    }
+
     return SetupIntentResultModel(
-      clientSecret: json['clientSecret']?.toString() ?? '',
-      setupIntentId: json['setupIntentId']?.toString(),
+      clientSecret: body.safeString(
+        'clientSecret',
+        defaultValue: body.safeString(
+          'client_secret',
+          defaultValue: body.safeString('setupIntentClientSecret'),
+        ),
+      ),
+      setupIntentId: body.safeString(
+        'setupIntentId',
+        defaultValue: body.safeString('setup_intent_id'),
+      ),
     );
   }
 }
@@ -83,6 +100,17 @@ class PaymentMethodsRemoteDataSourceImpl implements PaymentMethodsRemoteDataSour
     return SetupIntentResultModel.fromJson(response);
   }
 
+  static PaymentMethodApiModel _parsePaymentMethodResponse(
+    Map<String, dynamic> response,
+  ) {
+    final body = unwrapApiResponseBody(response);
+    final nested = body['paymentMethod'];
+    if (nested is Map) {
+      return PaymentMethodApiModel.fromJson(nested.cast<String, dynamic>());
+    }
+    return PaymentMethodApiModel.fromJson(body);
+  }
+
   @override
   Future<PaymentMethodApiModel> attachPaymentMethod({
     required String paymentMethodId,
@@ -91,12 +119,7 @@ class PaymentMethodsRemoteDataSourceImpl implements PaymentMethodsRemoteDataSour
       ApiConstants.paymentMethods,
       data: {'paymentMethodId': paymentMethodId},
     );
-    if (response.containsKey('paymentMethod') && response['paymentMethod'] is Map) {
-      return PaymentMethodApiModel.fromJson(
-        (response['paymentMethod'] as Map).cast<String, dynamic>(),
-      );
-    }
-    return PaymentMethodApiModel.fromJson(response);
+    return _parsePaymentMethodResponse(response);
   }
 
   @override

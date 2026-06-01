@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/app/router/route_args/contribute_payment_picker_args.dart';
+import 'package:vestie/features/payment_methods/presentation/add_card_stripe_launcher.dart';
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
@@ -76,8 +76,8 @@ class _ContributePaymentPickerScreenState
   }
 
   Future<void> _addCard() async {
-    final added = await context.push<bool>(AppRoutes.addCard);
-    if (added == true && mounted) {
+    final card = await AddCardStripeLauncher.launch(context);
+    if (card != null && mounted) {
       await _load();
     }
   }

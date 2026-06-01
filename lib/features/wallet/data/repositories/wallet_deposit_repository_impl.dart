@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/constants/stripe_constants.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/core/error/failures.dart';
 import 'package:vestie/core/stripe/stripe_payment_service.dart';
@@ -38,11 +39,11 @@ class WalletDepositRepositoryImpl implements WalletDepositRepository {
         (config) => config,
       );
 
-      if (config.publishableKey.trim().isEmpty) {
-        return Left(ServerFailure(AppStrings.depositStripeNotConfigured));
-      }
+      final publishableKey = config.publishableKey.trim().isNotEmpty
+          ? config.publishableKey.trim()
+          : StripeConstants.publishableKey;
 
-      await stripePaymentService.ensureInitialized(config.publishableKey);
+      await stripePaymentService.ensureInitialized(publishableKey);
 
       final idempotencyKey = newIdempotencyKey('deposit-intent');
       final intent = await remoteDataSource.createDepositIntent(

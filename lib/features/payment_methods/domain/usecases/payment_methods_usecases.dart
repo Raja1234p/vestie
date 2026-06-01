@@ -37,8 +37,12 @@ class SavePaymentCardViaSetupUseCase {
 
   SavePaymentCardViaSetupUseCase(this.repository);
 
-  Future<Either<Failure, PaymentCard>> call() =>
-      repository.saveCardViaSetupIntent();
+  Future<Either<Failure, PaymentCard>> call({
+    Future<void> Function()? onBeforePresentPaymentSheet,
+  }) =>
+      repository.saveCardViaSetupIntent(
+        onBeforePresentPaymentSheet: onBeforePresentPaymentSheet,
+      );
 }
 
 class GetPaymentMethodUseCase {

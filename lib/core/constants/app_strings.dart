@@ -537,6 +537,8 @@ class AppStrings {
   static const String btnSaveCard           = 'Save Card';
   static const String addCardStripeSubtitle =
       'Add your card securely with Stripe. Your card details are not stored on this device.';
+  static const String addCardStripeSteps =
+      'Tap Save Card — the Stripe payment sheet will open to enter your card.';
   static const String addCardStripeCancelled = 'Card setup cancelled.';
   static const String addCardStripeFailed =
       'Could not add card. Please try again.';

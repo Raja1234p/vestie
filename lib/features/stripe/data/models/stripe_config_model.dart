@@ -1,3 +1,4 @@
+import 'package:vestie/core/network/api_response_body.dart';
 import 'package:vestie/core/utils/safe_parser.dart';
 import 'package:vestie/features/stripe/domain/entities/stripe_config_entity.dart';
 
@@ -8,12 +9,16 @@ class StripeConfigModel extends StripeConfigEntity {
   });
 
   factory StripeConfigModel.fromJson(Map<String, dynamic> json) {
+    final body = unwrapApiResponseBody(json);
     return StripeConfigModel(
-      publishableKey: json.safeString(
+      publishableKey: body.safeString(
         'publishableKey',
-        defaultValue: json.safeString('PublishableKey'),
+        defaultValue: body.safeString(
+          'PublishableKey',
+          defaultValue: body.safeString('publishable_key'),
+        ),
       ),
-      connectAccountType: json.safeString(
+      connectAccountType: body.safeString(
         'connectAccountType',
         defaultValue: 'express',
       ),

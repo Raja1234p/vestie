@@ -7,9 +7,13 @@ import 'app/main_app.dart';
 import 'core/constants/api_constants.dart';
 import 'core/di/service_locator.dart';
 import 'core/services/fcm_push_service.dart';
+import 'core/stripe/stripe_sdk_initializer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Stripe (flutter_stripe): publishable key required before runApp.
+  await StripeSdkInitializer.initialize();
 
   // Google Sign-In v7+: OAuth Web client ID from Google Cloud Console (used for `id_token` for your API).
   await GoogleSignIn.instance.initialize(

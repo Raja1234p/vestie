@@ -23,12 +23,14 @@ class PaymentCardList extends StatefulWidget {
   final List<PaymentCard> cards;
   final VoidCallback onAdd;
   final bool isSelectionMode;
+  final bool addCardLoading;
 
   const PaymentCardList({
     super.key,
     required this.cards,
     required this.onAdd,
     this.isSelectionMode = false,
+    this.addCardLoading = false,
   });
 
   @override
@@ -73,6 +75,7 @@ class _PaymentCardListState extends State<PaymentCardList> {
         onSelectCard: _selectCard,
         onSelectWallet: _selectWallet,
         onAdd: widget.onAdd,
+        addCardLoading: widget.addCardLoading,
       );
     }
 
@@ -95,7 +98,8 @@ class _PaymentCardListState extends State<PaymentCardList> {
           padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 32.h),
           child: PaymentPrimaryButton(
             label: AppStrings.btnAddCard,
-            onTap: widget.onAdd,
+            onTap: widget.addCardLoading ? null : widget.onAdd,
+            loading: widget.addCardLoading,
           ),
         ),
       ],
@@ -111,6 +115,7 @@ class _SelectionList extends StatelessWidget {
     required this.onSelectCard,
     required this.onSelectWallet,
     required this.onAdd,
+    this.addCardLoading = false,
   });
 
   final List<PaymentCard> cards;
@@ -119,6 +124,7 @@ class _SelectionList extends StatelessWidget {
   final ValueChanged<PaymentCard> onSelectCard;
   final VoidCallback onSelectWallet;
   final VoidCallback onAdd;
+  final bool addCardLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -174,7 +180,8 @@ class _SelectionList extends StatelessWidget {
         FlowScreenFooter(
           child: PaymentPrimaryButton(
             label: AppStrings.btnAddCard,
-            onTap: onAdd,
+            onTap: addCardLoading ? null : onAdd,
+            loading: addCardLoading,
           ),
         ),
       ],

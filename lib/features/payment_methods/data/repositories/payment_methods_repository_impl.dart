@@ -1,13 +1,14 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter/foundation.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/constants/stripe_constants.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/core/error/failures.dart';
 import 'package:vestie/core/stripe/stripe_payment_service.dart';
 import 'package:vestie/features/payment_methods/domain/payment_methods_cache.dart';
 import 'package:vestie/features/payment_methods/domain/repositories/payment_methods_repository.dart';
 import 'package:vestie/features/profile/domain/entities/payment_card.dart';
+import 'package:vestie/features/stripe/domain/entities/stripe_config_entity.dart';
 import 'package:vestie/features/stripe/domain/usecases/get_stripe_config_use_case.dart';
 
 import '../datasources/payment_methods_remote_data_source.dart';
@@ -22,6 +23,12 @@ class PaymentMethodsRepositoryImpl implements PaymentMethodsRepository {
     required this.getStripeConfigUseCase,
     required this.stripePaymentService,
   });
+
+  String _resolvePublishableKey(StripeConfigEntity config) {
+    final fromApi = config.publishableKey.trim();
+    if (fromApi.isNotEmpty) return fromApi;
+    return StripeConstants.publishableKey;
+  }
 
   @override
   Future<Either<Failure, List<PaymentCard>>> list({
@@ -61,28 +68,13 @@ class PaymentMethodsRepositoryImpl implements PaymentMethodsRepository {
     required String cardNumber,
     required String expiry,
     required String cvv,
-  }) async {
-    if (!kDebugMode) {
-      return saveCardViaSetupIntent();
-    }
-    try {
-      final model = await remoteDataSource.addCardDev(
-        holderName: holderName,
-        number: cardNumber,
-        expiry: expiry,
-        cvv: cvv,
-      );
-      PaymentMethodsCache.clear();
-      return Right(model.toCard());
-    } on Failure catch (f) {
-      return Left(f);
-    } catch (e) {
-      return Left(FailureMapper.fromException(e));
-    }
-  }
+  }) async =>
+      saveCardViaSetupIntent();
 
   @override
-  Future<Either<Failure, PaymentCard>> saveCardViaSetupIntent() async {
+  Future<Either<Failure, PaymentCard>> saveCardViaSetupIntent({
+    Future<void> Function()? onBeforePresentPaymentSheet,
+  }) async {
     try {
       final configResult = await getStripeConfigUseCase();
       final config = configResult.fold(
@@ -90,16 +82,15 @@ class PaymentMethodsRepositoryImpl implements PaymentMethodsRepository {
         (config) => config,
       );
 
-      if (config.publishableKey.trim().isEmpty) {
-        return Left(ServerFailure(AppStrings.depositStripeNotConfigured));
-      }
-
-      await stripePaymentService.ensureInitialized(config.publishableKey);
+      final publishableKey = _resolvePublishableKey(config);
+      await stripePaymentService.ensureInitialized(publishableKey);
 
       final setup = await remoteDataSource.createSetupIntent();
       if (setup.clientSecret.trim().isEmpty) {
         return Left(ServerFailure(AppStrings.addCardMissingClientSecret));
       }
+
+      await onBeforePresentPaymentSheet?.call();
 
       final paymentOutcome = await stripePaymentService.confirmSetupPayment(
         clientSecret: setup.clientSecret,
@@ -109,7 +100,14 @@ class PaymentMethodsRepositoryImpl implements PaymentMethodsRepository {
         case StripeSetupPaymentResult.cancelled:
           return Left(ServerFailure(AppStrings.addCardStripeCancelled));
         case StripeSetupPaymentResult.failed:
-          return Left(ServerFailure(AppStrings.addCardStripeFailed));
+          final stripeMsg = paymentOutcome.errorMessage?.trim();
+          return Left(
+            ServerFailure(
+              stripeMsg != null && stripeMsg.isNotEmpty
+                  ? stripeMsg
+                  : AppStrings.addCardStripeFailed,
+            ),
+          );
         case StripeSetupPaymentResult.completed:
           break;
       }

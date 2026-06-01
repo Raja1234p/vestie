@@ -43,7 +43,6 @@ class AppRoutes {
   // ── Profile sub-routes ───────────────────────────────────────────────────
   static const String editProfile        = '/profile/edit';
   static const String paymentMethods     = '/profile/payment-methods';
-  static const String addCard            = '/profile/payment-methods/add-card';
   static const String cardDetail         = '/profile/payment-methods/detail';
   static const String transactionHistory = '/profile/transaction-history';
   static const String completedProjects  = '/profile/completed-projects';

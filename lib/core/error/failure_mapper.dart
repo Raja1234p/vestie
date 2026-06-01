@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 
 import '../constants/app_strings.dart';
 import '../models/api_error_response_model.dart';
+import '../network/api_response_body.dart';
 import 'failures.dart';
 
 /// Maps exceptions and HTTP error payloads to [Failure] and user-facing dialog copy.
@@ -34,8 +35,9 @@ class FailureMapper {
   }
 
   static Failure fromDioException(DioException e) {
-    final body = parseResponseBody(e.response?.data);
-    if (body != null) {
+    final raw = parseResponseBody(e.response?.data);
+    final body = raw != null ? unwrapApiResponseBody(raw) : null;
+    if (body != null && body.isNotEmpty) {
       final apiError = ApiErrorResponseModel.fromJson(body);
       final message = _messageFromApiError(apiError);
       final title = apiError.title.trim().isEmpty ? null : apiError.title;

@@ -1,6 +1,5 @@
 import 'package:go_router/go_router.dart';
 
-import '../../../features/profile/presentation/pages/add_card_screen.dart';
 import '../../../features/profile/presentation/pages/edit_profile_screen.dart';
 import '../../../features/profile/presentation/pages/key_guidelines_screen.dart';
 import '../../../features/profile/presentation/pages/payment_methods_screen.dart';
@@ -30,10 +29,6 @@ List<RouteBase> buildProfileWalletRoutes() {
     GoRoute(
       path: AppRoutes.paymentMethods,
       builder: (context, _) => const PaymentMethodsScreen(),
-    ),
-    GoRoute(
-      path: AppRoutes.addCard,
-      builder: (context, _) => const AddCardScreen(),
     ),
     GoRoute(
       path: AppRoutes.transactionHistory,

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
-import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/utils/app_snackbar.dart';
+import '../../../../core/widgets/common/app_failure_dialog.dart';
 import '../../../../core/widgets/common/app_shimmer.dart';
 import '../../../../core/widgets/common/flow_screen_footer.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
@@ -25,6 +24,7 @@ class PaymentMethodsScreen extends StatelessWidget {
     return BlocProvider(
       create: (_) => PaymentMethodsCubit(
         listPaymentMethodsUseCase: sl.listPaymentMethodsUseCase,
+        savePaymentCardViaSetupUseCase: sl.savePaymentCardViaSetupUseCase,
         setPrimaryPaymentMethodUseCase: sl.setPrimaryPaymentMethodUseCase,
         removePaymentMethodUseCase: sl.removePaymentMethodUseCase,
       ),
@@ -37,8 +37,28 @@ class _PaymentBody extends StatelessWidget {
   final bool isSelectionMode;
   const _PaymentBody({required this.isSelectionMode});
 
-  void _openAddCard(BuildContext context) {
-    context.push(AppRoutes.addCard);
+  Future<void> _openStripeAddCard(BuildContext context) async {
+    final cubit = context.read<PaymentMethodsCubit>();
+    final error = await cubit.addCardViaStripe(
+      onBeforePresentPaymentSheet: () async {
+        await WidgetsBinding.instance.endOfFrame;
+      },
+    );
+
+    if (!context.mounted) return;
+
+    if (error == null) {
+      AppSnackBar.showSuccess(context, AppStrings.cardSavedSuccess);
+      return;
+    }
+
+    if (error != AppStrings.addCardStripeCancelled) {
+      await AppFailureDialog.show(
+        context,
+        title: AppStrings.errorDialogTitle,
+        message: error,
+      );
+    }
   }
 
   @override
@@ -69,18 +89,22 @@ class _PaymentBody extends StatelessWidget {
                       : loadFailed
                           ? const PaymentEmptyView()
                           : isEmpty
-                          ? const PaymentEmptyView()
-                          : PaymentCardList(
-                              cards: state.cards,
-                              onAdd: () => _openAddCard(context),
-                              isSelectionMode: isSelectionMode,
-                            ),
+                              ? const PaymentEmptyView()
+                              : PaymentCardList(
+                                  cards: state.cards,
+                                  onAdd: () => _openStripeAddCard(context),
+                                  isSelectionMode: isSelectionMode,
+                                  addCardLoading: state.addingCard,
+                                ),
                 ),
                 if (isEmpty)
                   FlowScreenFooter(
                     child: PaymentPrimaryButton(
                       label: AppStrings.btnAddCard,
-                      onTap: () => _openAddCard(context),
+                      onTap: state.addingCard
+                          ? null
+                          : () => _openStripeAddCard(context),
+                      loading: state.addingCard,
                     ),
                   ),
               ],
