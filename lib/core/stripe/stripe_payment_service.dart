@@ -30,6 +30,18 @@ class StripeSetupPaymentOutcome {
   });
 }
 
+/// Default country when Stripe PaymentSheet opens (ISO 3166-1 alpha-2).
+const BillingDetails _paymentSheetDefaultBillingDetails = BillingDetails(
+  address: Address(
+    city: null,
+    country: 'US',
+    line1: null,
+    line2: null,
+    postalCode: null,
+    state: null,
+  ),
+);
+
 /// PaymentSheet wrapper for deposits (PaymentIntent) and add card (SetupIntent).
 class StripePaymentService {
   Future<void> ensureInitialized(String publishableKey) async {
@@ -50,6 +62,7 @@ class StripePaymentService {
           paymentIntentClientSecret: secret,
           merchantDisplayName: AppStrings.appName,
           returnURL: StripeConstants.returnUrl,
+          billingDetails: _paymentSheetDefaultBillingDetails,
         ),
       );
       await _presentPaymentSheet();
@@ -84,6 +97,7 @@ class StripePaymentService {
           returnURL: StripeConstants.returnUrl,
           primaryButtonLabel: AppStrings.btnSaveCard,
           style: ThemeMode.system,
+          billingDetails: _paymentSheetDefaultBillingDetails,
         ),
       );
 
