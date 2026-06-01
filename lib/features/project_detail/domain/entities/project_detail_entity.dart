@@ -21,6 +21,8 @@ class ProjectDetailEntity {
   final ProjectStatus status;
   final double goalAmount;
   final double currentAmount;
+  /// From `GET /projects/{id}/pot` (`contributorCount`).
+  final int contributorCount;
   final String endsIn;
   /// Legacy field — project `description` from API (not leader announcements).
   final String announcement;
@@ -61,6 +63,7 @@ class ProjectDetailEntity {
     required this.status,
     required this.goalAmount,
     required this.currentAmount,
+    this.contributorCount = 0,
     required this.endsIn,
     required this.announcement,
     this.announcements = const [],

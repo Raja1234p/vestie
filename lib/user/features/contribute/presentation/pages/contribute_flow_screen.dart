@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
+import 'package:vestie/app/router/route_args/contribute_payment_picker_args.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_payment_method_pill.dart';
@@ -275,7 +276,7 @@ class _ContributeConfirmView extends StatelessWidget {
               child: AppButton(
                 text: AppStrings.btnConfirm,
                 isLoading: state.isSubmitLoading,
-                onPressed: !state.nonRefundableAccepted
+                onPressed: !state.canConfirmSubmit
                     ? null
                     : () => bloc.add(ConfirmSubmitEvent(
                           projectId: args?.projectId ?? '',
@@ -378,23 +379,38 @@ class _BreakdownDivider extends StatelessWidget {
   }
 }
 
-void _openContributePaymentPicker(BuildContext context, ContributeBloc bloc) {
-  context.push(AppRoutes.selectPaymentMethod).then((result) {
-    if (!context.mounted || result == null) return;
-    switch (result) {
-      case CardPaymentMethodSelection(:final card):
-        bloc.add(
-          ContributePaymentMethodSelectedEvent(
-            card: card,
-            payFromWallet: false,
-          ),
-        );
-      case WalletPaymentMethodSelection():
-        bloc.add(
-          const ContributePaymentMethodSelectedEvent(payFromWallet: true),
-        );
-    }
-  });
+void _openContributePaymentPicker(
+  BuildContext context,
+  ContributeBloc bloc,
+  ContributeState state,
+) {
+  final args = state.args;
+  if (args == null) return;
+  context
+      .push(
+        AppRoutes.contributePaymentPicker,
+        extra: ContributePaymentPickerArgs(
+          walletBalance: state.walletBalance,
+          requiredTotal: state.totalDeductionValue,
+          walletAmountFormatted: '\$${args.walletAmountFormatted}',
+        ),
+      )
+      .then((result) {
+        if (!context.mounted || result == null) return;
+        switch (result) {
+          case CardPaymentMethodSelection(:final card):
+            bloc.add(
+              ContributePaymentMethodSelectedEvent(
+                card: card,
+                payFromWallet: false,
+              ),
+            );
+          case WalletPaymentMethodSelection():
+            bloc.add(
+              const ContributePaymentMethodSelectedEvent(payFromWallet: true),
+            );
+        }
+      });
 }
 
 class _ContributePaymentPill extends StatelessWidget {
@@ -422,14 +438,18 @@ class _ContributePaymentPill extends StatelessWidget {
       return AppPaymentMethodPill.card(
         card: state.selectedCard!,
         showChevron: canPick,
-        onTap: canPick ? () => _openContributePaymentPicker(context, bloc) : null,
+        onTap: canPick
+            ? () => _openContributePaymentPicker(context, bloc, state)
+            : null,
       );
     }
 
     return AppPaymentMethodPill.wallet(
       formattedBalance: walletFormatted,
       showChevron: canPick,
-      onTap: canPick ? () => _openContributePaymentPicker(context, bloc) : null,
+      onTap: canPick
+          ? () => _openContributePaymentPicker(context, bloc, state)
+          : null,
     );
   }
 }
@@ -468,7 +488,7 @@ class _ContributeSuccessView extends StatelessWidget {
         ),
       ),
       buttonText: AppStrings.btnBackToProject,
-      onButtonPressed: () => context.pop(),
+      onButtonPressed: () => context.pop(state.submitResult),
     );
   }
 }

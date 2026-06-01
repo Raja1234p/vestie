@@ -2,11 +2,16 @@ import 'package:vestie/core/constants/api_constants.dart';
 import 'package:vestie/core/network/base_api_client.dart';
 
 import '../models/bank_account_model.dart';
+import '../models/bank_link_result_model.dart';
 
 abstract class BankAccountsRemoteDataSource {
   Future<List<BankAccountModel>> list();
 
-  Future<BankAccountModel> link({String? bankAccountToken});
+  Future<BankLinkResultModel> link({
+    String? bankAccountToken,
+    String? refreshUrl,
+    String? returnUrl,
+  });
 
   Future<void> remove(String bankAccountId);
 }
@@ -29,19 +34,24 @@ class BankAccountsRemoteDataSourceImpl implements BankAccountsRemoteDataSource {
   }
 
   @override
-  Future<BankAccountModel> link({String? bankAccountToken}) async {
+  Future<BankLinkResultModel> link({
+    String? bankAccountToken,
+    String? refreshUrl,
+    String? returnUrl,
+  }) async {
+    final data = <String, dynamic>{};
+    if (bankAccountToken != null && bankAccountToken.isNotEmpty) {
+      data['bankAccountToken'] = bankAccountToken;
+    } else {
+      if (refreshUrl != null) data['refreshUrl'] = refreshUrl;
+      if (returnUrl != null) data['returnUrl'] = returnUrl;
+    }
+
     final response = await apiClient.post<Map<String, dynamic>>(
       ApiConstants.bankAccounts,
-      data: bankAccountToken != null
-          ? {'bankAccountToken': bankAccountToken}
-          : <String, dynamic>{},
+      data: data,
     );
-    if (response['bankAccount'] is Map) {
-      return BankAccountModel.fromJson(
-        (response['bankAccount'] as Map).cast<String, dynamic>(),
-      );
-    }
-    return BankAccountModel.fromJson(response);
+    return BankLinkResultModel.fromJson(response);
   }
 
   @override

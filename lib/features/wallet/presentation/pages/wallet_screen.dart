@@ -10,7 +10,7 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/error/failure_mapper.dart';
 import '../../../../core/services/risk_disclaimer_gate.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/utils/app_snackbar.dart';
+import '../../../../core/widgets/common/app_error_view.dart';
 import '../../../../core/widgets/common/app_shimmer.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../../core/widgets/common/post_auth_header.dart';
@@ -59,19 +59,8 @@ class _WalletScreenState extends State<WalletScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<WalletCubit, WalletState>(
-      listenWhen: (p, c) => p.failure != c.failure && c.failure != null,
-      listener: (context, state) {
-        if (state.failure != null && state.usedFallbackDisplay) {
-          AppSnackBar.showError(
-            context,
-            FailureMapper.userMessage(state.failure!),
-          );
-        }
-      },
+    return BlocBuilder<WalletCubit, WalletState>(
       builder: (context, state) {
-        final transactions = state.recentActivity;
-
         return PostAuthGradientBackground(
           child: Column(
             children: [
@@ -85,10 +74,22 @@ class _WalletScreenState extends State<WalletScreen> {
               ),
               if (state.isLoading && state.wallet == null)
                 const Expanded(child: WalletTabShimmer())
+              else if (state.hasLoadError)
+                Expanded(
+                  child: AppErrorView(
+                    message: FailureMapper.userMessage(state.failure!),
+                    onRetry: () => context.read<WalletCubit>().load(
+                          forceRefresh: true,
+                        ),
+                  ),
+                )
               else ...[
                 WalletOverviewCard(
                   walletAmount: state.walletAmountFormatted,
                   borrowedAmount: state.borrowedAmountFormatted,
+                  lockedInProjectsAmount: state.wallet != null
+                      ? state.lockedInProjectsFormatted
+                      : null,
                 ),
                 if (state.hasPendingWithdrawal)
                   Padding(
@@ -177,10 +178,10 @@ class _WalletScreenState extends State<WalletScreen> {
                         ),
                         SizedBox(height: 8.h),
                         Expanded(
-                          child: transactions.isEmpty
+                          child: state.recentActivity.isEmpty
                               ? const WalletRecentActivityEmpty()
                               : WalletRecentActivityList(
-                                  transactions: transactions,
+                                  transactions: state.recentActivity,
                                 ),
                         ),
                       ],

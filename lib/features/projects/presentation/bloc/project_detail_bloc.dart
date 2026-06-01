@@ -12,6 +12,9 @@ import '../../../project_detail/domain/repositories/project_detail_repository.da
 import '../../../project_detail/domain/usecases/list_pending_join_requests_usecase.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_pot_extensions.dart';
+import 'package:vestie/features/project_pot/domain/entities/project_pot_entity.dart';
+import 'package:vestie/features/project_pot/domain/usecases/get_project_pot_use_case.dart';
 import 'package:vestie/user/features/vff/domain/usecases/vff_usecases.dart';
 
 enum ProjectDetailTab { borrowRequests, members }
@@ -28,6 +31,30 @@ class LoadProjectDetailEvent extends ProjectDetailEvent {
   const LoadProjectDetailEvent({required this.projectId});
   @override
   List<Object?> get props => [projectId];
+}
+
+/// Reloads `GET /projects/{id}/pot` and merges pot + VFF into loaded detail.
+class RefreshProjectPotEvent extends ProjectDetailEvent {
+  final String projectId;
+  const RefreshProjectPotEvent({required this.projectId});
+  @override
+  List<Object?> get props => [projectId];
+}
+
+/// Applies `POST /contributions` 201 payload before refreshing pot from API.
+class ApplyContributionSubmitResultEvent extends ProjectDetailEvent {
+  final String projectId;
+  final double projectPot;
+  final List<String> vffMemberUserIds;
+
+  const ApplyContributionSubmitResultEvent({
+    required this.projectId,
+    required this.projectPot,
+    required this.vffMemberUserIds,
+  });
+
+  @override
+  List<Object?> get props => [projectId, projectPot, vffMemberUserIds];
 }
 
 class ChangeTabEvent extends ProjectDetailEvent {
@@ -130,17 +157,22 @@ class ProjectDetailError extends ProjectDetailState {
 // BLOC
 class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
   final ProjectDetailRepository repository;
+  final GetProjectPotUseCase? _getProjectPotUseCase;
   final ListPendingJoinRequestsUseCase? _listPendingJoinRequests;
   final SendVffRequestUseCase? _sendVffRequestUseCase;
 
   ProjectDetailBloc({
     required this.repository,
+    GetProjectPotUseCase? getProjectPotUseCase,
     ListPendingJoinRequestsUseCase? listPendingJoinRequests,
     SendVffRequestUseCase? sendVffRequestUseCase,
-  })  : _listPendingJoinRequests = listPendingJoinRequests,
+  })  : _getProjectPotUseCase = getProjectPotUseCase,
+        _listPendingJoinRequests = listPendingJoinRequests,
         _sendVffRequestUseCase = sendVffRequestUseCase,
         super(ProjectDetailInitial()) {
     on<LoadProjectDetailEvent>(_onLoadProjectDetail);
+    on<RefreshProjectPotEvent>(_onRefreshProjectPot);
+    on<ApplyContributionSubmitResultEvent>(_onApplyContributionSubmitResult);
     on<ChangeTabEvent>(_onChangeTab);
     on<SendMemberVffRequestEvent>(_onSendMemberVffRequest);
     on<ClearMemberVffSendErrorEvent>(_onClearMemberVffSendError);
@@ -174,12 +206,63 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
             (list) => pendingCount = list.length,
           );
         }
+        var loadedProject = project;
+        final potUseCase = _getProjectPotUseCase;
+        if (potUseCase != null) {
+          final potResult = await potUseCase(event.projectId);
+          potResult.fold((_) {}, (pot) {
+            loadedProject = project.withProjectPot(pot);
+          });
+        }
+
         emit(
           ProjectDetailLoaded(
-            project: project,
+            project: loadedProject,
             activeTab: preservedTab,
             pendingJoinRequestCount: pendingCount,
           ),
+        );
+      },
+    );
+  }
+
+  void _onApplyContributionSubmitResult(
+    ApplyContributionSubmitResultEvent event,
+    Emitter<ProjectDetailState> emit,
+  ) {
+    final curr = state;
+    if (curr is! ProjectDetailLoaded) return;
+    if (curr.project.id != event.projectId) return;
+
+    final pot = ProjectPotEntity(
+      potAmount: event.projectPot,
+      contributorCount: curr.project.contributorCount,
+      vffMemberUserIds: event.vffMemberUserIds,
+    );
+    emit(curr.copyWith(project: curr.project.withProjectPot(pot)));
+    add(RefreshProjectPotEvent(projectId: event.projectId));
+  }
+
+  Future<void> _onRefreshProjectPot(
+    RefreshProjectPotEvent event,
+    Emitter<ProjectDetailState> emit,
+  ) async {
+    final curr = state;
+    if (curr is! ProjectDetailLoaded) return;
+    if (curr.project.id != event.projectId) return;
+
+    final potUseCase = _getProjectPotUseCase;
+    if (potUseCase == null) return;
+
+    final potResult = await potUseCase(event.projectId);
+    potResult.fold(
+      (_) {},
+      (pot) {
+        if (state is! ProjectDetailLoaded) return;
+        final loaded = state as ProjectDetailLoaded;
+        if (loaded.project.id != event.projectId) return;
+        emit(
+          loaded.copyWith(project: loaded.project.withProjectPot(pot)),
         );
       },
     );

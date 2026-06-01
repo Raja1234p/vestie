@@ -12,9 +12,10 @@
 
 | Item | Status |
 |------|--------|
-| Link bank (`POST /bank-accounts`) | **Not in app** — need linked bank via backend/admin for withdraw tests |
+| Link bank (`POST /bank-accounts`) | **In app** — WebView onboarding (`/bank/link-onboarding`); Add bank on empty picker |
+| Wallet / notifications API failure | Retry UI (`AppErrorView` + Try Again); no mock data |
 | FCM push delivery | Token register/unregister in app; actual push requires backend + device |
-| Project pot on detail | Still not wired to UI |
+| Project pot on detail | Wired via `GET /pot` + SignalR; contributor count on info card |
 
 ---
 
@@ -45,7 +46,7 @@
 
 | # | Test | Steps | Expected | Result |
 |---|------|--------|----------|--------|
-| 2.1 | No banks | Account with zero banks → Withdraw → continue | Message to link bank; no crash | |
+| 2.1 | No banks | Zero banks → Withdraw → continue → bank picker | Empty state + **Add bank account** → Stripe WebView | |
 | 2.2 | Shimmer | With banks → withdraw → bank picker | `BankAccountListShimmer` on load | |
 | 2.3 | List | Bank picker screen | Shows `displayName`; default label if applicable | |
 | 2.4 | Select bank | Tap a bank | Navigates to withdraw confirmation | |
@@ -108,7 +109,7 @@
 |---|------|--------|----------|--------|
 | 6.1 | Shimmer | Profile → Notifications (or app route) | `NotificationListShimmer` | |
 | 6.2 | List | After load | Items from API (title, body, time) | |
-| 6.3 | API failure | Offline open | Sample notifications + error snackbar (fallback) | |
+| 6.3 | API failure | Offline open | Error message + **Try Again** (no sample list) | |
 | 6.4 | Mark read | Tap unread notification (API list, not fallback samples) | Row styling updates; unread count decreases | |
 | 6.4b | Fallback mode | Force API failure → sample list | Tap does **not** call mark-read (expected) | |
 | 6.5 | Empty | Account with no notifications | Empty state illustration + copy | |

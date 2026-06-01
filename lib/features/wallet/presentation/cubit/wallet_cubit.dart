@@ -2,11 +2,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import 'package:vestie/features/profile/domain/entities/transaction.dart';
-import 'package:vestie/features/profile/domain/mock_profile_data.dart';
 import 'package:vestie/features/wallet/domain/entities/wallet_entity.dart';
 import 'package:vestie/features/wallet/domain/usecases/get_wallet_use_case.dart';
 import 'package:vestie/features/wallet/domain/wallet_balance_cache.dart';
-import 'package:vestie/features/wallet/domain/wallet_ui_constants.dart';
 
 import 'wallet_state.dart';
 
@@ -23,9 +21,8 @@ class WalletCubit extends Cubit<WalletState> {
         emit(state.copyWith(
           isLoading: false,
           failure: failure,
-          usedFallbackDisplay: true,
-          wallet: _fallbackWallet(),
-          recentActivity: MockProfileData.transactions,
+          wallet: null,
+          recentActivity: const [],
         ));
       },
       (wallet) {
@@ -33,7 +30,6 @@ class WalletCubit extends Cubit<WalletState> {
           isLoading: false,
           wallet: wallet,
           recentActivity: _mapTransactions(wallet),
-          usedFallbackDisplay: false,
           clearFailure: true,
         ));
       },
@@ -44,19 +40,9 @@ class WalletCubit extends Cubit<WalletState> {
     WalletBalanceCache.clear();
   }
 
-  WalletEntity _fallbackWallet() {
-    return WalletEntity(
-      walletId: '',
-      currency: 'USD',
-      walletBalance: WalletUiConstants.mockLedgerBalanceUsd,
-      availableBalance: WalletUiConstants.mockLedgerBalanceUsd,
-      borrowedBalance: 1200,
-    );
-  }
-
   List<Transaction> _mapTransactions(WalletEntity wallet) {
     if (wallet.recentTransactions.isEmpty) {
-      return MockProfileData.transactions;
+      return const [];
     }
     final dateFmt = DateFormat('MMM d');
     return wallet.recentTransactions.map((t) {

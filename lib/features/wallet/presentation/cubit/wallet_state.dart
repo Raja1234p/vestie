@@ -9,15 +9,15 @@ class WalletState extends Equatable {
   final WalletEntity? wallet;
   final List<Transaction> recentActivity;
   final Failure? failure;
-  final bool usedFallbackDisplay;
 
   const WalletState({
     this.isLoading = false,
     this.wallet,
     this.recentActivity = const [],
     this.failure,
-    this.usedFallbackDisplay = false,
   });
+
+  bool get hasLoadError => failure != null && wallet == null && !isLoading;
 
   String get walletAmountFormatted {
     final balance = wallet?.availableBalance;
@@ -30,6 +30,15 @@ class WalletState extends Equatable {
     if (borrowed == null) return r'$—';
     return _formatUsd(borrowed);
   }
+
+  String get lockedInProjectsFormatted {
+    final locked = wallet?.lockedInProjects;
+    if (locked == null) return r'$—';
+    return _formatUsd(locked);
+  }
+
+  bool get showLockedInProjects =>
+      wallet != null && wallet!.lockedInProjects > 0;
 
   bool get hasPendingWithdrawal =>
       wallet != null && wallet!.pendingWithdrawal > 0;
@@ -45,15 +54,14 @@ class WalletState extends Equatable {
     WalletEntity? wallet,
     List<Transaction>? recentActivity,
     Failure? failure,
-    bool? usedFallbackDisplay,
     bool clearFailure = false,
+    bool clearWallet = false,
   }) {
     return WalletState(
       isLoading: isLoading ?? this.isLoading,
-      wallet: wallet ?? this.wallet,
+      wallet: clearWallet ? null : (wallet ?? this.wallet),
       recentActivity: recentActivity ?? this.recentActivity,
       failure: clearFailure ? null : (failure ?? this.failure),
-      usedFallbackDisplay: usedFallbackDisplay ?? this.usedFallbackDisplay,
     );
   }
 
@@ -63,11 +71,5 @@ class WalletState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [
-        isLoading,
-        wallet,
-        recentActivity,
-        failure,
-        usedFallbackDisplay,
-      ];
+  List<Object?> get props => [isLoading, wallet, recentActivity, failure];
 }

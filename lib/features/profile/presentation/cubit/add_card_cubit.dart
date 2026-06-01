@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vestie/core/utils/validation_utils.dart';
 import 'package:vestie/features/payment_methods/domain/usecases/payment_methods_usecases.dart';
@@ -80,9 +81,12 @@ const Object _absent = Object();
 
 class AddCardCubit extends Cubit<AddCardState> {
   final SavePaymentCardUseCase savePaymentCardUseCase;
+  final SavePaymentCardViaSetupUseCase savePaymentCardViaSetupUseCase;
 
-  AddCardCubit({required this.savePaymentCardUseCase})
-      : super(const AddCardState());
+  AddCardCubit({
+    required this.savePaymentCardUseCase,
+    required this.savePaymentCardViaSetupUseCase,
+  }) : super(const AddCardState());
 
   void setHolderName(String value) {
     emit(state.copyWith(holderName: value, holderNameError: null));
@@ -122,15 +126,19 @@ class AddCardCubit extends Cubit<AddCardState> {
   }
 
   Future<PaymentCard?> save() async {
-    if (!validate()) return null;
+    if (kDebugMode) {
+      if (!validate()) return null;
+    }
     emit(state.copyWith(saving: true, clearSaveError: true));
 
-    final result = await savePaymentCardUseCase(
-      holderName: state.holderName,
-      cardNumber: state.cardNumber,
-      expiry: state.expiry,
-      cvv: state.cvv,
-    );
+    final result = kDebugMode
+        ? await savePaymentCardUseCase(
+            holderName: state.holderName,
+            cardNumber: state.cardNumber,
+            expiry: state.expiry,
+            cvv: state.cvv,
+          )
+        : await savePaymentCardViaSetupUseCase();
 
     return result.fold(
       (failure) {

@@ -120,6 +120,18 @@ class WalletDepositRepositoryImpl implements WalletDepositRepository {
             result: DepositFlowResult.cancelled,
             message: AppStrings.depositPaymentCancelled,
           );
+        case WalletDepositStatus.aborted:
+          return DepositFlowOutcome(
+            result: DepositFlowResult.failed,
+            message:
+                status.failureReason ?? AppStrings.depositStatusAborted,
+          );
+        case WalletDepositStatus.exhausted:
+          return DepositFlowOutcome(
+            result: DepositFlowResult.failed,
+            message:
+                status.failureReason ?? AppStrings.depositStatusExhausted,
+          );
         case WalletDepositStatus.pending:
         case WalletDepositStatus.unknown:
           await Future<void>.delayed(_pollInterval);

@@ -4,11 +4,11 @@
 
 Production-ready mobile integration following **clean architecture** (`data` / `domain` / `presentation`), **`ApiConstants`**, **`ServiceLocator`**, **`FailureMapper`**, and **`.cursor/rules/pre_commit.mdc`**.
 
-**Base URL (do not change for this integration):** keep `ApiConstants.baseUrl` as-is:
+**Base URL:** `ApiConstants.baseUrl` = `https://api.vestie.app/api/v1.0` (Vestie Week 4 API doc).
 
-`https://vestie-backend-byexejcphyhaapfy.centralus-01.azurewebsites.net/api/v1`
+**SignalR hub:** `ApiConstants.projectsHubUrl` → `https://api.vestie.app/hubs/projects` (not under `/api/v1.0`).
 
-All new endpoints are **path-only** additions under that base (e.g. `/wallet`, `/kyc/start`). Do **not** switch host or `/api/v1` → `/api/v1.0` in app code until product explicitly requests it. Backend docs may say `v1.0`; mobile paths in this plan are relative to the existing base.
+All REST paths are relative to `baseUrl` (e.g. `/wallet`, `/projects/{id}/contributions`). SignalR uses `projectsHubUrl` on the site root.
 
 ---
 
@@ -100,7 +100,7 @@ static void reset();             // logout — clear all flags + caches
 | Wallet balances | `GET /wallet` |
 | Contribute to pot | `POST /projects/{projectId}/contributions` |
 | Pot visibility | `GET /projects/{projectId}/pot` |
-| Real-time (optional) | SignalR `/hubs/projects` — `contribution_made`, `pot_updated` |
+| Real-time | SignalR `ProjectsSignalRService` — see **§5 Real-Time** below |
 
 ## Week 4 — Endpoint → screen map
 
@@ -154,7 +154,18 @@ features/project_pot/               # GET /projects/{id}/pot
 user/features/contributions/        # REFACTOR → POST /projects/{id}/contributions
 ```
 
-**PR order:** P0 foundation → P1 wallet GET → P2 pot GET → P3 contribution POST → P4 cross-screen sync → P5 SignalR (optional).
+**PR order:** P0 foundation → P1 wallet GET → P2 pot GET → P3 contribution POST → P4 cross-screen sync → P5 SignalR.
+
+### 2.4 Real-Time (SignalR) — implemented
+
+| Item | Mobile |
+|------|--------|
+| Hub | `lib/core/realtime/projects_signalr_service.dart` → `GET` negotiate + WebSocket to `/hubs/projects` |
+| Auth | Bearer via `accessTokenFactory` (same token as REST) |
+| Connect | `DashboardScreen` after login; `disconnect` on logout |
+| Join / leave | `ProjectRealtimeScope` on project detail routes → `JoinProjectChannel` / `LeaveProjectChannel` |
+| Events | `contribution_made`, `pot_updated` → `RefreshProjectPotEvent` → `GET /pot` merge |
+| UI merge | `project_detail_pot_extensions.dart` — `potAmount` + `vffMemberUserIds` on members |
 
 ---
 
@@ -209,16 +220,16 @@ user/features/contributions/        # REFACTOR → POST /projects/{id}/contribut
 
 ## Week 5 — Screen-by-screen detail
 
-### Stripe Connect (new flow — if product requires KYC before payouts)
+### Stripe Connect (#2–#3) — use KYC only (app decision)
 
-| Step | API | UI |
-|------|-----|-----|
-| Load SDK config | `GET /stripe/config` | `publishableKey`, `connectAccountType` |
-| Start onboarding | `POST /stripe/connect/account` `{ country }` | Open `onboardingUrl` in WebView / browser |
-| Return / refresh | Deep link `returnUrl` / `refreshUrl` | Re-fetch user/Connect status |
-| Expired link | `POST /stripe/connect/accounts/{accountId}/onboarding-link` | Regenerate URL |
+| Step | API | UI in app |
+|------|-----|-----------|
+| Load SDK config | `GET /stripe/config` | Deposit + add-card (`publishableKey`) |
+| Payout / identity | Week 7 `GET /kyc/status`, `POST /kyc/start` | `KycOnboardingScreen` (WebView) — **withdraw gate** |
+| Connect account (#2) | `POST /stripe/connect/account` | **Not implemented** — backend may map Connect to KYC |
+| Onboarding link (#3) | `POST /stripe/connect/accounts/{accountId}/onboarding-link` | **Not implemented** — use `/kyc/start` refresh instead |
 
-**Note:** No dedicated screen in app today — add under **Profile → Settings** or first deposit gate if backend requires `chargesEnabled`.
+**Product note:** Do not add a separate Stripe Connect screen unless product requires it alongside KYC. Withdrawals use **Profile → KYC** flow, not `stripe/connect/*` endpoints.
 
 ---
 
@@ -244,6 +255,8 @@ user/features/contributions/        # REFACTOR → POST /projects/{id}/contribut
 | `Completed` | `transaction_success_screen` |
 | `Failed` | Error + retry |
 | `Cancelled` | Pop with message |
+| `Aborted` | Error (deposit aborted) |
+| `Exhausted` | Error (retry deposit) |
 
 **Idempotency:** `Idempotency-Key: deposit-intent-{uuid}` on step 2; reuse same key on retry.
 

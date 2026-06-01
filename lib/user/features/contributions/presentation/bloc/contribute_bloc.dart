@@ -1,10 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/error/failures.dart';
 import 'package:vestie/core/utils/contribution_fee_policy.dart';
+import 'package:vestie/features/payment_methods/domain/usecases/payment_methods_usecases.dart';
 import 'package:vestie/features/profile/domain/entities/payment_card.dart';
-import 'package:vestie/features/profile/domain/mock_profile_data.dart';
 import 'package:vestie/features/wallet/domain/usecases/get_wallet_use_case.dart';
+import 'package:vestie/features/wallet/domain/wallet_balance_cache.dart';
 import '../../domain/usecases/confirm_contribution_usecase.dart';
 import '../../domain/usecases/fetch_contribution_config_usecase.dart';
 import '../../domain/usecases/preview_contribution_usecase.dart';
@@ -20,12 +22,16 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
   final PreviewContributionUseCase previewUseCase;
   final ConfirmContributionUseCase confirmUseCase;
   final GetWalletUseCase getWalletUseCase;
+  final ListPaymentMethodsUseCase listPaymentMethodsUseCase;
+
+  List<PaymentCard> _savedCards = const [];
 
   ContributeBloc({
     required this.configUseCase,
     required this.previewUseCase,
     required this.confirmUseCase,
     required this.getWalletUseCase,
+    required this.listPaymentMethodsUseCase,
   }) : super(const ContributeState()) {
     on<InitArgsEvent>(_onInitArgs);
 
@@ -75,6 +81,12 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
         walletBalance = w.availableBalance;
         walletId = w.walletId;
       },
+    );
+
+    final cardsResult = await listPaymentMethodsUseCase();
+    cardsResult.fold(
+      (_) => _savedCards = const [],
+      (cards) => _savedCards = cards,
     );
 
     final configResult =
@@ -176,12 +188,11 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
   }
 
   PaymentCard? _defaultCard() {
-    final cards = MockProfileData.cards;
-    if (cards.isEmpty) return null;
-    for (final c in cards) {
+    if (_savedCards.isEmpty) return null;
+    for (final c in _savedCards) {
       if (c.isPrimary) return c;
     }
-    return cards.first;
+    return _savedCards.first;
   }
 
   Future<void> _onAmountChanged(AmountChangedEvent event, Emitter<ContributeState> emit) async {
@@ -194,10 +205,15 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
     final args = state.args;
     if (args == null || state.preview == null) return;
 
+    if (!state.canConfirmSubmit) return;
+
     if (!state.payFromWallet) {
+      final shortfall =
+          (state.totalDeductionValue - state.walletBalance).clamp(0.0, double.infinity);
+      final shortfallFormatted = '\$${shortfall.toStringAsFixed(2)}';
       emit(state.copyWith(
-        submitFailure: const ServerFailure(
-          'Contributions currently debit your Vestie wallet only.',
+        submitFailure: ValidationFailure(
+          AppStrings.contributeDepositForWalletMessage(shortfallFormatted),
         ),
       ));
       return;
@@ -223,11 +239,16 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
         isSubmitLoading: false,
         submitFailure: failure,
       )),
-      (_) => emit(state.copyWith(
-        isSubmitLoading: false,
-        isSubmitSuccess: true,
-        step: ContributeStep.success,
-      )),
+      (submitResult) {
+        WalletBalanceCache.clear();
+        emit(state.copyWith(
+          isSubmitLoading: false,
+          isSubmitSuccess: true,
+          step: ContributeStep.success,
+          submitResult: submitResult,
+          args: args.copyWithWalletBalance(submitResult.walletAvailableBalance),
+        ));
+      },
     );
   }
 }

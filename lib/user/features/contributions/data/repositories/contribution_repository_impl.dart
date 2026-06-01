@@ -11,6 +11,7 @@ import '../../domain/entities/contribution_config_entity.dart';
 import '../../domain/entities/contribution_preview_entity.dart';
 import '../../domain/repositories/contribution_repository.dart';
 import '../datasources/contribution_remote_data_source.dart';
+import '../models/contribution_submit_result_model.dart';
 
 class ContributionRepositoryImpl implements ContributionRepository {
   final ContributionRemoteDataSource remoteDataSource;
@@ -62,7 +63,7 @@ class ContributionRepositoryImpl implements ContributionRepository {
   }
 
   @override
-  Future<Either<Failure, void>> confirmContribution({
+  Future<Either<Failure, ContributionSubmitResultModel>> confirmContribution({
     required String projectId,
     required String membershipId,
     required String walletId,
@@ -72,14 +73,14 @@ class ContributionRepositoryImpl implements ContributionRepository {
     required bool confirmNonRefundable,
   }) async {
     try {
-      await remoteDataSource.submitProjectContribution(
+      final result = await remoteDataSource.submitProjectContribution(
         projectId: projectId,
         amount: amount,
         confirmNonRefundable: confirmNonRefundable,
         idempotencyKey: newIdempotencyKey('contribute'),
       );
       await walletRepository.getWallet(forceRefresh: true);
-      return const Right(null);
+      return Right(result);
     } on Failure catch (f) {
       return Left(f);
     } catch (e) {

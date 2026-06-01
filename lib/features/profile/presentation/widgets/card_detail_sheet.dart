@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/utils/app_snackbar.dart';
 import 'package:vestie/core/widgets/common/app_purple_dashed_line.dart';
@@ -18,7 +19,7 @@ import 'package:vestie/features/profile/presentation/cubit/payment_methods_cubit
 import 'package:vestie/features/profile/presentation/widgets/card_preview.dart';
 
 /// Bottom sheet: card preview, set-primary toggle, remove card (Figma).
-class CardDetailSheet extends StatelessWidget {
+class CardDetailSheet extends StatefulWidget {
   final PaymentCard card;
   const CardDetailSheet({super.key, required this.card});
 
@@ -39,13 +40,48 @@ class CardDetailSheet extends StatelessWidget {
   }
 
   @override
+  State<CardDetailSheet> createState() => _CardDetailSheetState();
+}
+
+class _CardDetailSheetState extends State<CardDetailSheet> {
+  PaymentCard? _detailCard;
+  bool _loadingDetail = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshFromApi();
+  }
+
+  Future<void> _refreshFromApi() async {
+    final result =
+        await ServiceLocator.instance.getPaymentMethodUseCase(widget.card.id);
+    if (!mounted) return;
+    result.fold(
+      (_) => setState(() {
+        _detailCard = widget.card;
+        _loadingDetail = false;
+      }),
+      (card) => setState(() {
+        _detailCard = card;
+        _loadingDetail = false;
+      }),
+    );
+  }
+
+  PaymentCard _resolveCard(PaymentMethodsState state) {
+    final refreshed = _detailCard ?? widget.card;
+    return state.cards.firstWhere(
+      (c) => c.id == refreshed.id,
+      orElse: () => refreshed,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<PaymentMethodsCubit, PaymentMethodsState>(
       builder: (context, state) {
-        final current = state.cards.firstWhere(
-          (c) => c.id == card.id,
-          orElse: () => card,
-        );
+        final current = _resolveCard(state);
         final bottomInset = math.max(
           60.h,
           MediaQuery.viewPaddingOf(context).bottom + 8.h,
@@ -66,18 +102,36 @@ class CardDetailSheet extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20.h),
-              CardPreview(card: current),
+              if (_loadingDetail)
+                SizedBox(
+                  height: 180.h,
+                  child: const Center(
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                )
+              else
+                CardPreview(card: current),
               SizedBox(height: 28.h),
               _ActionRow(
                 title: AppStrings.setPrimaryLabel,
                 subtitle: AppStrings.setPrimarySubtitle,
                 trailing: _PrimaryToggleSwitch(
                   value: current.isPrimary,
-                  onChanged: current.isPrimary
+                  onChanged: current.isPrimary || _loadingDetail
                       ? null
-                      : (_) => context
-                          .read<PaymentMethodsCubit>()
-                          .setPrimary(current.id),
+                      : (_) async {
+                          final ok = await context
+                              .read<PaymentMethodsCubit>()
+                              .setPrimary(current.id);
+                          if (!context.mounted) return;
+                          if (!ok) {
+                            final err =
+                                context.read<PaymentMethodsCubit>().state.errorMessage;
+                            if (err != null) {
+                              AppSnackBar.showError(context, err);
+                            }
+                          }
+                        },
                 ),
               ),
               SizedBox(height: 20.h),
@@ -90,14 +144,29 @@ class CardDetailSheet extends StatelessWidget {
                 title: AppStrings.removeCardLabel,
                 subtitle: AppStrings.removeCardSubtitle,
                 trailing: GestureDetector(
-                  onTap: () {
-                    context.read<PaymentMethodsCubit>().removeCard(current.id);
-                    context.pop();
-                    AppSnackBar.showSuccess(
-                      context,
-                      AppStrings.cardRemovedSuccess,
-                    );
-                  },
+                  onTap: _loadingDetail
+                      ? null
+                      : () async {
+                          final ok = await context
+                              .read<PaymentMethodsCubit>()
+                              .removeCard(current.id);
+                          if (!context.mounted) return;
+                          if (!ok) {
+                            final err = context
+                                .read<PaymentMethodsCubit>()
+                                .state
+                                .errorMessage;
+                            if (err != null) {
+                              AppSnackBar.showError(context, err);
+                            }
+                            return;
+                          }
+                          context.pop();
+                          AppSnackBar.showSuccess(
+                            context,
+                            AppStrings.cardRemovedSuccess,
+                          );
+                        },
                   child: AppSvgIcon(
                     assetPath: AppAssets.iconDelete,
                     size: 22.w,

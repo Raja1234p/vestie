@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/di/service_locator.dart';
+import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/widgets/common/app_shimmer.dart';
 import '../../../../core/widgets/common/flow_screen_footer.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
@@ -42,9 +43,19 @@ class _PaymentBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PaymentMethodsCubit, PaymentMethodsState>(
+    return BlocConsumer<PaymentMethodsCubit, PaymentMethodsState>(
+      listenWhen: (prev, next) =>
+          prev.errorMessage != next.errorMessage && next.errorMessage != null,
+      listener: (context, state) {
+        AppSnackBar.showError(
+          context,
+          state.errorMessage ?? AppStrings.paymentMethodsLoadFailed,
+        );
+      },
       builder: (context, state) {
         final isEmpty = !state.loading && state.cards.isEmpty;
+        final loadFailed =
+            !state.loading && state.errorMessage != null && state.cards.isEmpty;
 
         return Scaffold(
           backgroundColor: Colors.transparent,
@@ -55,7 +66,9 @@ class _PaymentBody extends StatelessWidget {
                 Expanded(
                   child: state.loading
                       ? const PaymentCardListShimmer()
-                      : isEmpty
+                      : loadFailed
+                          ? const PaymentEmptyView()
+                          : isEmpty
                           ? const PaymentEmptyView()
                           : PaymentCardList(
                               cards: state.cards,

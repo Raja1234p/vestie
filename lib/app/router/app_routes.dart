@@ -56,12 +56,15 @@ class AppRoutes {
   static const String selectPaymentMethod    = '/wallet/select-payment-method';
   static const String selectBankAccount      = '/wallet/select-bank-account';
   static const String kycOnboarding          = '/kyc/onboarding';
+  static const String bankLinkOnboarding     = '/bank/link-onboarding';
   static const String transactionConfirmation= '/wallet/transaction-confirmation';
   static const String transactionSuccess     = '/wallet/transaction-success';
 
   // ── Project Detail Routing ───────────────────────────────────────────────
   static const String projectDetail    = '/project/detail';
   static const String contributeFlow   = '/project/contribute';
+  static const String contributePaymentPicker =
+      '/project/contribute/payment-method';
   static const String borrowFlow       = '/project/borrow';
   static const String investmentProjectDetail = '/project/investment-detail';
   static const String memberDetail     = '/project/member-detail';

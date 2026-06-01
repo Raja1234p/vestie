@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:vestie/core/error/failures.dart';
+import '../../data/models/contribution_submit_result_model.dart';
 import '../../domain/repositories/contribution_repository.dart';
 
 class ConfirmContributionUseCase {
@@ -8,7 +9,9 @@ class ConfirmContributionUseCase {
 
   ConfirmContributionUseCase(this.repository);
 
-  Future<Either<Failure, void>> call(ConfirmContributionParams params) async {
+  Future<Either<Failure, ContributionSubmitResultModel>> call(
+    ConfirmContributionParams params,
+  ) async {
     return await repository.confirmContribution(
       projectId: params.projectId,
       membershipId: params.membershipId,

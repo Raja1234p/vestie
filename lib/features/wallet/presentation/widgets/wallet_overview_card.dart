@@ -10,11 +10,13 @@ import '../../../../core/widgets/text/app_text.dart';
 class WalletOverviewCard extends StatelessWidget {
   final String walletAmount;
   final String borrowedAmount;
+  final String? lockedInProjectsAmount;
 
   const WalletOverviewCard({
     super.key,
     required this.walletAmount,
     required this.borrowedAmount,
+    this.lockedInProjectsAmount,
   });
 
   @override
@@ -48,6 +50,30 @@ class WalletOverviewCard extends StatelessWidget {
                     height: 1.1,
                   ),
                 ),
+                if (lockedInProjectsAmount != null) ...[
+                  SizedBox(height: 8.h),
+                  Row(
+                    children: [
+                      AppText(
+                        AppStrings.walletLockedInProjectsLabel,
+                        style: GoogleFonts.lato(
+                          fontSize: 12.sp,
+                          color: AppColors.neutral700,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(width: 6.w),
+                      AppText(
+                        lockedInProjectsAmount!,
+                        style: GoogleFonts.lato(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.neutral1200,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ],
             ),
           ),

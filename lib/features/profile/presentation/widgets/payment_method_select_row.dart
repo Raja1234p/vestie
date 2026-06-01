@@ -15,6 +15,7 @@ class PaymentMethodSelectRow extends StatelessWidget {
     required this.title,
     this.subtitle,
     required this.onTap,
+    this.enabled = true,
   });
 
   final bool selected;
@@ -22,12 +23,15 @@ class PaymentMethodSelectRow extends StatelessWidget {
   final String title;
   final String? subtitle;
   final VoidCallback onTap;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: AppDimens.paymentMethodRowHeight,
-      child: Container(
+    return Opacity(
+      opacity: enabled ? 1 : 0.45,
+      child: SizedBox(
+        height: AppDimens.paymentMethodRowHeight,
+        child: Container(
         decoration: BoxDecoration(
           color: AppColors.grey100,
           borderRadius: BorderRadius.circular(12.r),
@@ -35,7 +39,7 @@ class PaymentMethodSelectRow extends StatelessWidget {
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: onTap,
+            onTap: enabled ? onTap : null,
             borderRadius: BorderRadius.circular(12.r),
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -77,6 +81,7 @@ class PaymentMethodSelectRow extends StatelessWidget {
             ),
           ),
         ),
+      ),
       ),
     );
   }

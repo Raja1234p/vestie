@@ -15,7 +15,7 @@ Manual QA for **Week 4**, **Week 5**, and **Week 7**. Use with [`api_integration
 
 | File | Scope |
 |------|--------|
-| [week_4_qa.md](week_4_qa.md) | Wallet, contributions, risk disclaimer |
+| [week_4_qa.md](week_4_qa.md) | Wallet, contributions, pot, payment picker, disclaimer |
 | [week_5_qa.md](week_5_qa.md) | Stripe config, PaymentSheet deposit, payment methods |
 | [week_7_qa.md](week_7_qa.md) | Withdraw, KYC, banks, announcements, notifications, FCM |
 | [production_readiness_review.md](production_readiness_review.md) | Production go/no-go vs backend |
@@ -24,7 +24,8 @@ Manual QA for **Week 4**, **Week 5**, and **Week 7**. Use with [`api_integration
 
 | Item | Value |
 |------|--------|
-| API base (app) | `https://vestie-backend-byexejcphyhaapfy.centralus-01.azurewebsites.net/api/v1` |
+| API base (app) | `https://api.vestie.app/api/v1.0` |
+| SignalR hub | `https://api.vestie.app/hubs/projects` |
 | Build | **Physical device** recommended (Stripe PaymentSheet, FCM, camera) |
 | Stripe (staging) | See [stripe_test_cards.md](stripe_test_cards.md) — `4242 4242 4242 4242`, exp `12/34`, CVC `123` |
 | Stripe (production) | **Real cards only** — backend must use `pk_live_…` |

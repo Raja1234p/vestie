@@ -9,13 +9,12 @@ import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/di/service_locator.dart';
-import 'package:vestie/core/utils/app_snackbar.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/features/wallet/domain/withdraw_delivery_method.dart';
 import 'package:vestie/features/wallet/presentation/cubit/wallet_transaction_cubit.dart';
 import 'package:vestie/features/wallet/presentation/widgets/withdraw_method_body.dart';
 
-/// Pick standard vs instant payout before choosing a card (Figma).
+/// Pick standard vs instant payout before choosing a bank (Figma).
 class WithdrawMethodScreen extends StatelessWidget {
   const WithdrawMethodScreen({super.key});
 
@@ -49,21 +48,9 @@ class WithdrawMethodScreen extends StatelessWidget {
       }
       return;
     }
-    final banks = await ServiceLocator.instance.listBankAccountsUseCase();
+
     if (!context.mounted) return;
-    banks.fold(
-      (f) => AppSnackBar.showError(context, f.message),
-      (list) {
-        if (list.isEmpty) {
-          AppSnackBar.showError(
-            context,
-            'Link a bank account before withdrawing.',
-          );
-          return;
-        }
-        context.push(AppRoutes.selectBankAccount);
-      },
-    );
+    context.push(AppRoutes.selectBankAccount);
   }
 
   @override

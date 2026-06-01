@@ -23,7 +23,15 @@ class WalletDepositIntentModel {
   }
 }
 
-enum WalletDepositStatus { pending, completed, failed, cancelled, unknown }
+enum WalletDepositStatus {
+  pending,
+  completed,
+  failed,
+  cancelled,
+  aborted,
+  exhausted,
+  unknown,
+}
 
 class WalletDepositStatusModel {
   final WalletDepositStatus status;
@@ -48,6 +56,12 @@ class WalletDepositStatusModel {
       case 'cancelled':
       case 'canceled':
         mapped = WalletDepositStatus.cancelled;
+        break;
+      case 'aborted':
+        mapped = WalletDepositStatus.aborted;
+        break;
+      case 'exhausted':
+        mapped = WalletDepositStatus.exhausted;
         break;
       case 'pending':
       case 'processing':

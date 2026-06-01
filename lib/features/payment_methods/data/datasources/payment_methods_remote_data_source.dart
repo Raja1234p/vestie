@@ -106,17 +106,13 @@ class PaymentMethodsRemoteDataSourceImpl implements PaymentMethodsRemoteDataSour
     required String expiry,
     required String cvv,
   }) async {
-    final parts = expiry.split('/');
-    final expMonth = parts.isNotEmpty ? int.tryParse(parts[0]) : null;
-    final expYear = parts.length > 1 ? int.tryParse(parts[1]) : null;
     final response = await apiClient.post<Map<String, dynamic>>(
       ApiConstants.paymentMethods,
       data: {
-        'holderName': holderName,
-        'number': number.replaceAll(RegExp(r'\s'), ''),
-        'expMonth': expMonth,
-        'expYear': expYear != null && expYear < 100 ? 2000 + expYear : expYear,
-        'cvc': cvv,
+        'cardHolderName': holderName.trim(),
+        'cardNumber': number.replaceAll(RegExp(r'\s'), ''),
+        'expiryDate': expiry.trim(),
+        'cvv': cvv.trim(),
       },
     );
     if (response.containsKey('paymentMethod') && response['paymentMethod'] is Map) {

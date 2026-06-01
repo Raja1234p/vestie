@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:vestie/core/error/failures.dart';
+import '../../data/models/contribution_submit_result_model.dart';
 import '../entities/contribution_config_entity.dart';
 import '../entities/contribution_preview_entity.dart';
 
@@ -14,7 +15,7 @@ abstract class ContributionRepository {
     String? externalReference,
     required bool confirmNonRefundable,
   });
-  Future<Either<Failure, void>> confirmContribution({
+  Future<Either<Failure, ContributionSubmitResultModel>> confirmContribution({
     required String projectId,
     required String membershipId,
     required String walletId,

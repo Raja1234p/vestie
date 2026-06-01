@@ -14,6 +14,7 @@ import '../../../profile/presentation/pages/profile_screen.dart';
 import '../../../wallet/presentation/pages/wallet_screen.dart';
 import '../cubit/nav_cubit.dart';
 import '../models/dashboard_shell_args.dart';
+import '../../../../core/realtime/projects_signalr_service.dart';
 import '../../../../core/services/fcm_push_service.dart';
 import '../../../../core/utils/app_permission_helper.dart';
 import '../widgets/app_bottom_nav_bar.dart';
@@ -54,6 +55,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await FcmPushService.syncDeviceToken();
+      await ProjectsSignalRService.instance.connectIfLoggedIn();
       if (!mounted) return;
       await AppPermissionHelper.maybePromptNotificationsOnDashboard(context);
     });

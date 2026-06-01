@@ -4,6 +4,7 @@ import 'package:vestie/core/utils/contribution_fee_policy.dart';
 import '../../domain/entities/contribution_preview_entity.dart';
 import 'package:vestie/app/router/route_args/project_wallet_flow_args.dart';
 import 'package:vestie/features/profile/domain/entities/payment_card.dart';
+import 'package:vestie/user/features/contributions/data/models/contribution_submit_result_model.dart';
 
 enum ContributeStep { amount, confirm, success }
 
@@ -22,6 +23,7 @@ class ContributeState extends Equatable {
   final Failure? previewFailure;
   final Failure? submitFailure;
   final bool isSubmitSuccess;
+  final ContributionSubmitResultModel? submitResult;
 
   const ContributeState({
     this.args,
@@ -38,6 +40,7 @@ class ContributeState extends Equatable {
     this.previewFailure,
     this.submitFailure,
     this.isSubmitSuccess = false,
+    this.submitResult,
   });
 
   ContributeState copyWith({
@@ -56,6 +59,7 @@ class ContributeState extends Equatable {
     Failure? previewFailure,
     Failure? submitFailure,
     bool? isSubmitSuccess,
+    ContributionSubmitResultModel? submitResult,
     bool clearPreviewFailure = false,
     bool clearSubmitFailure = false,
     bool clearPreview = false,
@@ -76,6 +80,7 @@ class ContributeState extends Equatable {
       previewFailure: clearPreviewFailure ? null : (previewFailure ?? this.previewFailure),
       submitFailure: clearSubmitFailure ? null : (submitFailure ?? this.submitFailure),
       isSubmitSuccess: isSubmitSuccess ?? this.isSubmitSuccess,
+      submitResult: submitResult ?? this.submitResult,
     );
   }
 
@@ -113,6 +118,16 @@ class ContributeState extends Equatable {
   /// User can pick a card when wallet cannot cover the confirm total.
   bool get canPickPaymentMethod => !walletCoversTotal;
 
+  /// Confirm enabled when terms accepted and wallet covers total, or a card is selected.
+  bool get canConfirmSubmit {
+    if (preview == null || isPreviewLoading || previewFailure != null) {
+      return false;
+    }
+    if (!nonRefundableAccepted) return false;
+    if (payFromWallet) return walletCoversTotal;
+    return selectedCard != null;
+  }
+
   @override
   List<Object?> get props => [
         args,
@@ -129,5 +144,6 @@ class ContributeState extends Equatable {
         previewFailure,
         submitFailure,
         isSubmitSuccess,
+        submitResult,
       ];
 }

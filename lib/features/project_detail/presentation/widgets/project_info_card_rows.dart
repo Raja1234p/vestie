@@ -91,6 +91,25 @@ class ProjectInfoRaisedTotalRow extends StatelessWidget {
   }
 }
 
+class ProjectInfoContributorRow extends StatelessWidget {
+  final int count;
+
+  const ProjectInfoContributorRow({super.key, required this.count});
+
+  @override
+  Widget build(BuildContext context) {
+    if (count <= 0) return const SizedBox.shrink();
+    return AppText(
+      AppStrings.projectContributorCountLabel(count),
+      style: GoogleFonts.lato(
+        fontSize: 13.sp,
+        fontWeight: FontWeight.w600,
+        color: AppColors.neutral700,
+      ),
+    );
+  }
+}
+
 class ProjectInfoDeadlineRow extends StatelessWidget {
   final String endsIn;
 

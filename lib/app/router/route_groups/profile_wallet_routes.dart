@@ -13,6 +13,7 @@ import '../../../features/wallet/presentation/pages/withdraw_method_screen.dart'
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/features/wallet/presentation/cubit/wallet_deposit_cubit.dart';
 import 'package:vestie/features/wallet/presentation/cubit/wallet_withdraw_cubit.dart';
+import 'package:vestie/features/bank_accounts/presentation/pages/bank_link_onboarding_screen.dart';
 import 'package:vestie/features/kyc/presentation/pages/kyc_onboarding_screen.dart';
 import 'package:vestie/features/wallet/presentation/pages/select_bank_account_screen.dart';
 import 'package:vestie/features/profile/presentation/pages/completed_projects_screen.dart';
@@ -69,6 +70,10 @@ List<RouteBase> buildProfileWalletRoutes() {
     GoRoute(
       path: AppRoutes.kycOnboarding,
       builder: (context, _) => const KycOnboardingScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.bankLinkOnboarding,
+      builder: (context, _) => const BankLinkOnboardingScreen(),
     ),
     GoRoute(
       path: AppRoutes.transactionConfirmation,

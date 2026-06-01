@@ -533,6 +533,15 @@ class AppStrings {
   static const String hintExpiry            = 'MM/YY';
   static const String hintCvv               = '000';
   static const String btnSaveCard           = 'Save Card';
+  static const String addCardStripeSubtitle =
+      'Add your card securely with Stripe. Your card details are not stored on this device.';
+  static const String addCardStripeCancelled = 'Card setup cancelled.';
+  static const String addCardStripeFailed =
+      'Could not add card. Please try again.';
+  static const String addCardMissingClientSecret =
+      'Could not start card setup. Please try again.';
+  static const String paymentMethodsLoadFailed =
+      'Could not load payment methods. Pull to refresh or try again.';
   static const String errCardHolderRequired = 'Card holder name is required';
   static const String errCardNumberRequired = 'Card number is required';
   static const String errCardNumberInvalid  = 'Enter a valid 16-digit card number';
@@ -768,6 +777,17 @@ class AppStrings {
   static const String kycRequiredForWithdrawBody =
       'Complete identity verification before withdrawing funds.';
   static const String btnVerifyIdentity = 'Verify identity';
+  static const String bankLinkOnboardingTitle = 'Link bank account';
+  static const String bankLinkOnboardingUrlMissing =
+      'Could not start bank linking. Please try again.';
+  static const String btnAddBankAccount = 'Add bank account';
+  static const String bankAccountDefaultLabel = 'Default';
+  static const String bankLinkEmptySubtitle =
+      'Link a bank account to receive withdrawals.';
+  static const String withdrawInsufficientBalance =
+      'Insufficient wallet balance for this withdrawal.';
+  static const String withdrawSelectBankRequired =
+      'Select a bank account.';
   static const String walletBalanceLabel       = 'Wallet Balance:';
   static const String btnDepositFunds          = 'Deposit Funds';
   static const String btnWithdrawFunds         = 'Withdraw Funds';
@@ -809,6 +829,10 @@ class AppStrings {
       'Card payment failed. Check your card or try another payment method.';
   static const String depositPollTimeout =
       'Payment is still processing. Check your wallet shortly.';
+  static const String depositStatusAborted =
+      'Deposit was aborted before completion.';
+  static const String depositStatusExhausted =
+      'Deposit could not be completed. Please try again.';
   static String depositSuccessBody(String amount) =>
       '$amount has been added to your wallet.';
   static const String withdrawSuccessTitle      = 'Withdrawal Requested';
@@ -863,6 +887,14 @@ class AppStrings {
   static const String labelTotalDeduction      = 'Total Deduction';
   static const String contributeNonRefundable  =
       'I understand this contribution is non-refundable';
+  static const String contributeWalletInsufficientSubtitle =
+      'Insufficient balance for this total';
+  static String contributeDepositForWalletMessage(String amountFormatted) =>
+      'Contributions are paid from your Vestie wallet. Deposit at least '
+      '$amountFormatted to continue, then return and pay with Wallet.';
+  static const String walletLockedInProjectsLabel = 'Locked in projects';
+  static String projectContributorCountLabel(int count) =>
+      count == 1 ? '1 contributor' : '$count contributors';
   static const String borrowScreenTitle         = 'Borrow';
   static const String borrowTermsTitle          = 'Borrow Terms';
   static const String labelBorrowLimitChip     = 'Borrow Limit';

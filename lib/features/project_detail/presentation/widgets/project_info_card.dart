@@ -70,6 +70,10 @@ class ProjectInfoCard extends StatelessWidget {
               showRoi: project.category.isInvestment,
               compact: true,
             ),
+            if (project.contributorCount > 0) ...[
+              SizedBox(height: 8.h),
+              ProjectInfoContributorRow(count: project.contributorCount),
+            ],
           ],
         ],
       ),

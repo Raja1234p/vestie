@@ -15,6 +15,9 @@ abstract class PaymentMethodsRepository {
     required String cvv,
   });
 
+  /// Production add card: setup-intent → PaymentSheet → attach payment method.
+  Future<Either<Failure, PaymentCard>> saveCardViaSetupIntent();
+
   Future<Either<Failure, void>> setPrimary(String paymentMethodId);
 
   Future<Either<Failure, void>> remove(String paymentMethodId);

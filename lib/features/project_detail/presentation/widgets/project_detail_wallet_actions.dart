@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/services/risk_disclaimer_gate.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
+import 'package:vestie/user/features/contributions/data/models/contribution_submit_result_model.dart';
 import '../../domain/entities/project_detail_entity.dart';
 import '../navigation/project_detail_navigation_helpers.dart';
 
@@ -40,10 +42,20 @@ class ProjectDetailWalletActions extends StatelessWidget {
       children: [
         AppButton(
           text: AppStrings.btnContribute,
-          onPressed: () => context.push(
-            AppRoutes.contributeFlow,
-            extra: walletArgs,
-          ),
+          onPressed: () async {
+            final accepted = await RiskDisclaimerGate.ensureAccepted(context);
+            if (!accepted || !context.mounted) return;
+            final result = await context.push<ContributionSubmitResultModel>(
+              AppRoutes.contributeFlow,
+              extra: walletArgs,
+            );
+            if (!context.mounted || result == null) return;
+            ProjectDetailNavigationHelpers.refreshAfterContribution(
+              context,
+              projectId: project.id,
+              submitResult: result,
+            );
+          },
         ),
         if (project.showsBorrowAction) ...[
           SizedBox(height: 13.h),

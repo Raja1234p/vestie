@@ -32,6 +32,24 @@ class SavePaymentCardUseCase {
       );
 }
 
+class SavePaymentCardViaSetupUseCase {
+  final PaymentMethodsRepository repository;
+
+  SavePaymentCardViaSetupUseCase(this.repository);
+
+  Future<Either<Failure, PaymentCard>> call() =>
+      repository.saveCardViaSetupIntent();
+}
+
+class GetPaymentMethodUseCase {
+  final PaymentMethodsRepository repository;
+
+  GetPaymentMethodUseCase(this.repository);
+
+  Future<Either<Failure, PaymentCard>> call(String paymentMethodId) =>
+      repository.getById(paymentMethodId);
+}
+
 class SetPrimaryPaymentMethodUseCase {
   final PaymentMethodsRepository repository;
 

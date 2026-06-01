@@ -26,6 +26,7 @@ import 'package:vestie/features/project_detail/presentation/widgets/project_deta
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_loading_body.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_success_vote_dev_previews.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_wallet_actions.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_realtime_scope.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_info_card.dart';
 import 'package:vestie/user/features/project_detail/presentation/models/member_success_vote_ui_data.dart';
 import 'package:vestie/user/features/project_detail/presentation/widgets/member_success_vote_content.dart';
@@ -60,11 +61,14 @@ class InvestmentProjectDetailScreen extends StatelessWidget {
       child: BlocProvider(
         create: (_) => ServiceLocator.instance.createProjectDetailBloc()
           ..add(LoadProjectDetailEvent(projectId: projectId)),
-        child: InvestmentProjectDetailBody(
+        child: ProjectRealtimeScope(
           projectId: projectId,
-          initialProjectName: initialProjectName,
-          refreshHomeOnPop: refreshHomeOnPop,
-          refreshDiscoverOnPop: refreshDiscoverOnPop,
+          child: InvestmentProjectDetailBody(
+            projectId: projectId,
+            initialProjectName: initialProjectName,
+            refreshHomeOnPop: refreshHomeOnPop,
+            refreshDiscoverOnPop: refreshDiscoverOnPop,
+          ),
         ),
       ),
     );

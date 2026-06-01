@@ -12,10 +12,12 @@ import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_shimmer.dart';
+import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/features/bank_accounts/domain/entities/bank_account_entity.dart';
+import 'package:vestie/features/profile/presentation/widgets/payment_primary_button.dart';
 import '../cubit/wallet_transaction_cubit.dart';
 
 /// Pick linked bank for withdrawal (Week 7).
@@ -58,6 +60,13 @@ class _SelectBankAccountScreenState extends State<SelectBankAccountScreen> {
     );
   }
 
+  Future<void> _addBankAccount() async {
+    final linked = await context.push<bool>(AppRoutes.bankLinkOnboarding);
+    if (linked == true && mounted) {
+      await _load();
+    }
+  }
+
   void _onSelect(BankAccountEntity bank) {
     context.read<WalletTransactionCubit>().selectBankAccount(
           bankAccountId: bank.id,
@@ -68,6 +77,8 @@ class _SelectBankAccountScreenState extends State<SelectBankAccountScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isEmpty = !_loading && _banks.isEmpty;
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: PostAuthGradientBackground(
@@ -89,20 +100,8 @@ class _SelectBankAccountScreenState extends State<SelectBankAccountScreen> {
             Expanded(
               child: _loading
                   ? const BankAccountListShimmer()
-                  : _banks.isEmpty
-                      ? Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(24.w),
-                            child: AppText(
-                              _error ?? 'Link a bank account to withdraw.',
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.lato(
-                                fontSize: 16.sp,
-                                color: AppColors.neutral700,
-                              ),
-                            ),
-                          ),
-                        )
+                  : isEmpty
+                      ? _EmptyBankState(error: _error)
                       : ListView.separated(
                           padding: EdgeInsets.symmetric(
                             horizontal: 16.w,
@@ -134,7 +133,7 @@ class _SelectBankAccountScreenState extends State<SelectBankAccountScreen> {
                                       ),
                                       if (bank.isDefault)
                                         AppText(
-                                          'Default',
+                                          AppStrings.bankAccountDefaultLabel,
                                           style: GoogleFonts.lato(
                                             fontSize: 12.sp,
                                             color: AppColors.primary,
@@ -147,6 +146,41 @@ class _SelectBankAccountScreenState extends State<SelectBankAccountScreen> {
                             );
                           },
                         ),
+            ),
+            if (isEmpty || (!_loading && _banks.isNotEmpty))
+              FlowScreenFooter(
+                child: PaymentPrimaryButton(
+                  label: AppStrings.btnAddBankAccount,
+                  onTap: _loading ? null : _addBankAccount,
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _EmptyBankState extends StatelessWidget {
+  const _EmptyBankState({this.error});
+
+  final String? error;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(24.w),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AppText(
+              error ?? AppStrings.bankLinkEmptySubtitle,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.lato(
+                fontSize: 16.sp,
+                color: AppColors.neutral700,
+              ),
             ),
           ],
         ),

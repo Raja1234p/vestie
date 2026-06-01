@@ -16,7 +16,10 @@
 |------|--------|
 | Transaction history screen | Still mock data — not Week 5 API |
 | Simulated `POST /wallet/deposit` | Dev-only API helper — **not** used by the app deposit flow |
-| `POST /stripe/connect/account` separate flow | Withdraw uses Week 7 `/kyc/*` instead |
+| Stripe Connect #2–#3 | **Not in app** — withdraw uses Week 7 `/kyc/start` (see integration plan) |
+| Deposit payment-method picker | **Removed** — deposit uses PaymentSheet only (amount → confirm) |
+| Add card (release) | SetupIntent + PaymentSheet + `POST /payment-methods` |
+| Add card (debug) | Raw fields → `POST /payment-methods` with `cardHolderName`, `expiryDate`, etc. |
 
 ---
 
@@ -45,17 +48,17 @@
 |---|------|--------|----------|--------|
 | 2.1 | Shimmer | Open Payment Methods | `PaymentCardListShimmer`, not centered loader | |
 | 2.2 | List | After load | Saved cards from API (brand, last4) | |
-| 2.3 | API failure | Force offline on open | May show mock cards + error — document | |
+| 2.3 | API failure | Force offline on open | Empty state + error snackbar (no mock cards) | |
 | 2.4 | Set primary | Card detail → set primary | Primary badge updates; persists after reopen | |
 | 2.5 | Remove card | Remove non-primary card | Removed from list | |
 | 2.6 | Add card (dev) | Add card screen — test/dev path if enabled | New card appears in list | |
-| 2.7 | Selection mode | Deposit flow → pick payment method | List opens in selection mode; can pick card or wallet | |
+| 2.7 | Selection mode | Profile → Payment Methods only | Deposit skips picker (amount → confirm → PaymentSheet) | |
 
 ---
 
 ## 3. Deposit flow
 
-**Path:** Wallet → **Deposit Funds** → amount → payment method (if shown) → **Confirm**.
+**Path:** Wallet → **Deposit Funds** → amount → **Confirm** (no saved-card picker).
 
 | # | Test | Steps | Expected | Result |
 |---|------|--------|----------|--------|

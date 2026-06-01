@@ -23,6 +23,7 @@ import 'package:vestie/leader/features/project_detail/presentation/models/leader
 import 'package:vestie/user/features/project_detail/presentation/models/member_vote_outcome_ui_data.dart';
 import '../widgets/distribute_funds_amount_sheet.dart';
 import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
+import 'package:vestie/user/features/contributions/data/models/contribution_submit_result_model.dart';
 import 'package:vestie/user/features/vff/presentation/mappers/invite_members_mapper.dart';
 import '../data/project_funds_history_ledger_builder.dart';
 import 'package:vestie/user/features/borrow/presentation/data/my_borrow_request_args_builder.dart';
@@ -105,6 +106,26 @@ class ProjectDetailNavigationHelpers {
     try {
       context.read<ProjectDetailBloc>().add(
             LoadProjectDetailEvent(projectId: projectId),
+          );
+    } on ProviderNotFoundException {
+      // Opened outside project detail.
+    }
+  }
+
+  /// Merges contribute 201 `projectPot` / VFF ids, then refreshes pot for contributor count.
+  static void refreshAfterContribution(
+    BuildContext context, {
+    required String projectId,
+    required ContributionSubmitResultModel submitResult,
+  }) {
+    if (!context.mounted) return;
+    try {
+      context.read<ProjectDetailBloc>().add(
+            ApplyContributionSubmitResultEvent(
+              projectId: projectId,
+              projectPot: submitResult.projectPot,
+              vffMemberUserIds: submitResult.vffMemberUserIds,
+            ),
           );
     } on ProviderNotFoundException {
       // Opened outside project detail.

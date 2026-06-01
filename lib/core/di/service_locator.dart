@@ -203,6 +203,8 @@ class ServiceLocator {
   late final PaymentMethodsRepository paymentMethodsRepository;
   late final ListPaymentMethodsUseCase listPaymentMethodsUseCase;
   late final SavePaymentCardUseCase savePaymentCardUseCase;
+  late final SavePaymentCardViaSetupUseCase savePaymentCardViaSetupUseCase;
+  late final GetPaymentMethodUseCase getPaymentMethodUseCase;
   late final SetPrimaryPaymentMethodUseCase setPrimaryPaymentMethodUseCase;
   late final RemovePaymentMethodUseCase removePaymentMethodUseCase;
 
@@ -218,6 +220,7 @@ class ServiceLocator {
   late final BankAccountsRemoteDataSource bankAccountsRemoteDataSource;
   late final BankAccountsRepository bankAccountsRepository;
   late final ListBankAccountsUseCase listBankAccountsUseCase;
+  late final LinkBankAccountUseCase linkBankAccountUseCase;
   late final RemoveBankAccountUseCase removeBankAccountUseCase;
 
   late final WalletWithdrawalRemoteDataSource walletWithdrawalRemoteDataSource;
@@ -374,10 +377,16 @@ class ServiceLocator {
         PaymentMethodsRemoteDataSourceImpl(apiClient: apiClient);
     paymentMethodsRepository = PaymentMethodsRepositoryImpl(
       remoteDataSource: paymentMethodsRemoteDataSource,
+      getStripeConfigUseCase: getStripeConfigUseCase,
+      stripePaymentService: stripePaymentService,
     );
     listPaymentMethodsUseCase =
         ListPaymentMethodsUseCase(paymentMethodsRepository);
     savePaymentCardUseCase = SavePaymentCardUseCase(paymentMethodsRepository);
+    savePaymentCardViaSetupUseCase =
+        SavePaymentCardViaSetupUseCase(paymentMethodsRepository);
+    getPaymentMethodUseCase =
+        GetPaymentMethodUseCase(paymentMethodsRepository);
     setPrimaryPaymentMethodUseCase =
         SetPrimaryPaymentMethodUseCase(paymentMethodsRepository);
     removePaymentMethodUseCase =
@@ -403,6 +412,7 @@ class ServiceLocator {
     bankAccountsRepository =
         BankAccountsRepositoryImpl(remoteDataSource: bankAccountsRemoteDataSource);
     listBankAccountsUseCase = ListBankAccountsUseCase(bankAccountsRepository);
+    linkBankAccountUseCase = LinkBankAccountUseCase(bankAccountsRepository);
     removeBankAccountUseCase = RemoveBankAccountUseCase(bankAccountsRepository);
 
     walletWithdrawalRemoteDataSource =
@@ -495,11 +505,13 @@ class ServiceLocator {
         previewUseCase: previewContributionUseCase,
         confirmUseCase: confirmContributionUseCase,
         getWalletUseCase: getWalletUseCase,
+        listPaymentMethodsUseCase: listPaymentMethodsUseCase,
       );
 
   /// Fresh bloc per detail route — avoids stale project state from a shared instance.
   ProjectDetailBloc createProjectDetailBloc() => ProjectDetailBloc(
         repository: projectDetailRepository,
+        getProjectPotUseCase: getProjectPotUseCase,
         listPendingJoinRequests: listPendingJoinRequestsUseCase,
         sendVffRequestUseCase: sendVffRequestUseCase,
       );

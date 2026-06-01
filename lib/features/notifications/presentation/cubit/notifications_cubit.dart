@@ -2,7 +2,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:vestie/features/notifications/domain/entities/notification_list_entry.dart';
 import 'package:vestie/features/notifications/domain/usecases/notifications_usecases.dart';
-import 'package:vestie/features/notifications/presentation/data/notification_samples.dart';
 
 import 'notifications_state.dart';
 
@@ -19,11 +18,10 @@ class NotificationsCubit extends Cubit<NotificationsState> {
     emit(state.copyWith(loading: true, clearError: true));
     final result = await listNotificationsUseCase();
     result.fold(
-      (_) {
+      (failure) {
         emit(NotificationsState(
-          items: kDebugNotificationSamples,
           loading: false,
-          usedFallback: true,
+          error: failure.message,
         ));
       },
       (page) {
@@ -46,7 +44,7 @@ class NotificationsCubit extends Cubit<NotificationsState> {
   }
 
   Future<void> markAsRead(String notificationId) async {
-    if (state.usedFallback || notificationId.isEmpty) return;
+    if (notificationId.isEmpty) return;
 
     final index = state.items.indexWhere((e) => e.id == notificationId);
     if (index < 0 || state.items[index].isRead) return;

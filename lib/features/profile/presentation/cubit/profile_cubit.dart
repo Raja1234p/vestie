@@ -19,6 +19,7 @@ import 'package:vestie/features/bank_accounts/domain/bank_accounts_cache.dart';
 import 'package:vestie/features/kyc/domain/kyc_status_cache.dart';
 import 'package:vestie/features/payment_methods/domain/payment_methods_cache.dart';
 import 'package:vestie/features/stripe/domain/stripe_config_cache.dart';
+import 'package:vestie/core/realtime/projects_signalr_service.dart';
 import 'package:vestie/core/services/fcm_push_service.dart';
 import 'package:vestie/features/wallet/domain/wallet_balance_cache.dart';
 
@@ -219,6 +220,7 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   Future<void> _clearLocalData() async {
     await FcmPushService.unregisterStoredToken();
+    await ProjectsSignalRService.instance.disconnect();
     DashboardPrefetch.reset();
     WalletBalanceCache.clear();
     PaymentMethodsCache.clear();

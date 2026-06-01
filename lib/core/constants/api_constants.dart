@@ -4,8 +4,22 @@
 class ApiConstants {
   ApiConstants._();
 
-  static const String baseUrl =
-      'https://vestie-backend-byexejcphyhaapfy.centralus-01.azurewebsites.net/api/v1';
+  /// Week 4+ REST base (`/api/v1.0` per Vestie API documentation).
+  static const String baseUrl = 'https://api.vestie.app/api/v1.0';
+
+  /// SignalR hub path (site root, not under `/api/v1.0`).
+  static const String projectsHubPath = '/hubs/projects';
+
+  /// Full hub URL for `signalr_netcore` (Bearer via `accessTokenFactory`).
+  static String get projectsHubUrl {
+    final rest = Uri.parse(baseUrl);
+    return Uri(
+      scheme: rest.scheme,
+      host: rest.host,
+      port: rest.hasPort ? rest.port : null,
+      path: projectsHubPath,
+    ).toString();
+  }
 
   // ── Auth ─────────────────────────────────────────────────────────────────
   static const String register       = '/auth/register';

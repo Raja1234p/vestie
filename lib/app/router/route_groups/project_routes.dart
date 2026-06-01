@@ -28,7 +28,9 @@ import 'package:vestie/app/router/route_args/borrow_repay_flow_args.dart';
 import 'package:vestie/user/features/borrow/presentation/pages/borrow_repay_confirm_screen.dart';
 import 'package:vestie/user/features/borrow/presentation/pages/borrow_repay_success_screen.dart';
 import 'package:vestie/user/features/borrow/presentation/pages/my_borrow_request_screen.dart';
+import 'package:vestie/app/router/route_args/contribute_payment_picker_args.dart';
 import 'package:vestie/user/features/contribute/presentation/pages/contribute_flow_screen.dart';
+import 'package:vestie/user/features/contribute/presentation/pages/contribute_payment_picker_screen.dart';
 import 'package:vestie/user/features/contributions/presentation/bloc/contribute_event.dart';
 import 'package:vestie/user/features/project_detail/presentation/pages/investment_project_detail_screen.dart';
 import 'package:vestie/user/features/investment/presentation/models/user_investment_ui_snapshot.dart';
@@ -88,6 +90,14 @@ List<RouteBase> buildProjectRoutes({
             ..add(InitArgsEvent(args: extra)),
           child: const ContributeFlowScreen(),
         );
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.contributePaymentPicker,
+      builder: (context, state) {
+        final extra = state.extra;
+        if (extra is! ContributePaymentPickerArgs) return invalidRouteScreen();
+        return ContributePaymentPickerScreen(args: extra);
       },
     ),
     GoRoute(

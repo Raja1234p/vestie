@@ -22,6 +22,7 @@ import 'package:vestie/user/features/project_detail/presentation/widgets/project
 import '../widgets/project_detail_load_error.dart';
 import '../widgets/project_detail_loading_body.dart';
 import '../widgets/project_detail_moderator_scroll_content.dart';
+import '../widgets/project_realtime_scope.dart';
 
 /// Loads `GET /projects/{id}` via [ProjectDetailBloc] on open.
 class ProjectDetailScreen extends StatelessWidget {
@@ -54,11 +55,14 @@ class ProjectDetailScreen extends StatelessWidget {
       child: BlocProvider(
         create: (_) => ServiceLocator.instance.createProjectDetailBloc()
           ..add(LoadProjectDetailEvent(projectId: projectId)),
-        child: _ProjectDetailBody(
+        child: ProjectRealtimeScope(
           projectId: projectId,
-          initialProjectName: initialProjectName,
-          refreshHomeOnPop: refreshHomeOnPop,
-          refreshDiscoverOnPop: refreshDiscoverOnPop,
+          child: _ProjectDetailBody(
+            projectId: projectId,
+            initialProjectName: initialProjectName,
+            refreshHomeOnPop: refreshHomeOnPop,
+            refreshDiscoverOnPop: refreshDiscoverOnPop,
+          ),
         ),
       ),
     );

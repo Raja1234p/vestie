@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/app_error_view.dart';
 import '../../../../core/widgets/common/app_shimmer.dart';
 import '../../../../core/widgets/common/app_purple_dashed_line.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
@@ -38,22 +39,29 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             child: Column(
               children: [
                 ProfileSubHeader(title: AppStrings.notificationsTitle),
-                Expanded(
-                  child: state.loading
-                      ? const NotificationListShimmer()
-                      : state.items.isEmpty
-                          ? const _EmptyNotifications()
-                          : _NotificationListView(
-                              items: state.items,
-                              usedFallback: state.usedFallback,
-                            ),
-                ),
+                Expanded(child: _buildBody(context, state)),
               ],
             ),
           ),
         );
       },
     );
+  }
+
+  Widget _buildBody(BuildContext context, NotificationsState state) {
+    if (state.loading) {
+      return const NotificationListShimmer();
+    }
+    if (state.hasLoadError) {
+      return AppErrorView(
+        message: state.error,
+        onRetry: () => context.read<NotificationsCubit>().load(),
+      );
+    }
+    if (state.isEmptySuccess) {
+      return const _EmptyNotifications();
+    }
+    return _NotificationListView(items: state.items);
   }
 }
 
@@ -102,13 +110,9 @@ class _EmptyNotifications extends StatelessWidget {
 }
 
 class _NotificationListView extends StatelessWidget {
-  const _NotificationListView({
-    required this.items,
-    required this.usedFallback,
-  });
+  const _NotificationListView({required this.items});
 
   final List<NotificationListEntry> items;
-  final bool usedFallback;
 
   @override
   Widget build(BuildContext context) {
@@ -126,11 +130,9 @@ class _NotificationListView extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: _NotificationListTile(
               item: items[i],
-              onTap: usedFallback
-                  ? null
-                  : () => context
-                      .read<NotificationsCubit>()
-                      .markAsRead(items[i].id),
+              onTap: () => context
+                  .read<NotificationsCubit>()
+                  .markAsRead(items[i].id),
             ),
           ),
         );
@@ -142,78 +144,78 @@ class _NotificationListView extends StatelessWidget {
 class _NotificationListTile extends StatelessWidget {
   const _NotificationListTile({
     required this.item,
-    this.onTap,
+    required this.onTap,
   });
 
   final NotificationListEntry item;
-  final VoidCallback? onTap;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
       child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          width: 48.w,
-          height: 48.w,
-          decoration: BoxDecoration(
-            color: item.isRead ? AppColors.grey100 : AppColors.purple100,
-            shape: BoxShape.circle,
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: Center(
-            child: Image.asset(
-              AppAssets.notificationRowIcon,
-              width: 40.w,
-              height: 40.w,
-              fit: BoxFit.contain,
-              filterQuality: FilterQuality.high,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 48.w,
+            height: 48.w,
+            decoration: BoxDecoration(
+              color: item.isRead ? AppColors.grey100 : AppColors.purple100,
+              shape: BoxShape.circle,
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: Center(
+              child: Image.asset(
+                AppAssets.notificationRowIcon,
+                width: 40.w,
+                height: 40.w,
+                fit: BoxFit.contain,
+                filterQuality: FilterQuality.high,
+              ),
             ),
           ),
-        ),
-        SizedBox(width: 12.w),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                item.title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.lato(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.grey1100,
-                  height: 1.2,
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.lato(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.grey1100,
+                    height: 1.2,
+                  ),
                 ),
-              ),
-              SizedBox(height: 4.h),
-              Text(
-                item.body,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.lato(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.navInactive,
-                  height: 1.35,
+                SizedBox(height: 4.h),
+                Text(
+                  item.body,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.lato(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.navInactive,
+                    height: 1.35,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        SizedBox(width: 8.w),
-        Text(
-          item.timeLabel,
-          style: GoogleFonts.lato(
-            fontSize: 12.sp,
-            fontWeight: FontWeight.w500,
-            color: AppColors.navInactive,
+          SizedBox(width: 8.w),
+          Text(
+            item.timeLabel,
+            style: GoogleFonts.lato(
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w500,
+              color: AppColors.navInactive,
+            ),
           ),
-        ),
-      ],
+        ],
       ),
     );
   }

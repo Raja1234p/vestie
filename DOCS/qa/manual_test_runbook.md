@@ -66,7 +66,8 @@ Prerequisites: risk disclaimer accepted.
 | # | Step | Expected | Result |
 |---|------|----------|--------|
 | M1 | Deposit $25 | Stripe PaymentSheet → success → wallet ↑ | |
-| M2 | Contribute $5+ on project | Fee 15%; wallet ↓ | |
+| M2 | Contribute $5+ on project | Disclaimer → amount → confirm (15% fee); wallet ↓; pot updates on detail | |
+| M2b | Contribute with low wallet | Payment picker: wallet disabled; pick card or add card; deposit message if wallet still short | |
 | M3 | Withdraw $10+ (if KYC + bank) | Preview fees → success/processing | |
 | M4 | Notifications | List loads; tap marks read (API mode) | |
 
@@ -82,6 +83,8 @@ Use [stripe_test_cards.md](stripe_test_cards.md) for card numbers.
 | N2 | Deposit → cancel PaymentSheet | Returns to confirm; no success screen | |
 | N3 | Declined card `4000…0002` | Failure message; balance unchanged | |
 | N4 | Contribute below $5 | Validation blocks submit | |
+| N4b | Contribute without disclaimer | Contribute gated like deposit | |
+| N4c | Confirm with insufficient wallet, no card | Confirm disabled until card selected or wallet covers total | |
 | N5 | Withdraw below $10 | Validation blocks submit | |
 | N6 | No disclaimer → Deposit | Agreement / gate | |
 | N7 | Logout mid-flow | Next login clean state | |

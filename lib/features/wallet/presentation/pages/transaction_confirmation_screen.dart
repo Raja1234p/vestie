@@ -8,6 +8,7 @@ import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/utils/app_snackbar.dart';
+import 'package:vestie/core/utils/wallet_withdraw_validation.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
@@ -39,6 +40,12 @@ class _TransactionConfirmationScreenState
       if (!mounted) return;
       final tx = context.read<WalletTransactionCubit>().state;
       if (tx.transactionType == WalletTransactionType.withdraw) {
+        final balanceErr =
+            WalletWithdrawValidation.validateForWithdraw(tx.amountParsed);
+        if (balanceErr != null) {
+          AppSnackBar.showError(context, balanceErr);
+          return;
+        }
         final method =
             tx.withdrawDeliveryMethod ?? WithdrawDeliveryMethod.standard;
         context.read<WalletWithdrawCubit>().loadPreview(
@@ -66,9 +73,15 @@ class _TransactionConfirmationScreenState
       await context.read<WalletDepositCubit>().submitDeposit(txState.amountParsed);
       return;
     }
+    final balanceErr =
+        WalletWithdrawValidation.validateForWithdraw(txState.amountParsed);
+    if (balanceErr != null) {
+      AppSnackBar.showError(context, balanceErr);
+      return;
+    }
     final bankId = txState.selectedBankAccountId;
     if (bankId == null || bankId.isEmpty) {
-      AppSnackBar.showError(context, 'Select a bank account.');
+      AppSnackBar.showError(context, AppStrings.withdrawSelectBankRequired);
       return;
     }
     final method =
