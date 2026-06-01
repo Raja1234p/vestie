@@ -185,7 +185,9 @@ class _VerifyScreenState extends State<VerifyScreen> {
                       prev.isValid != curr.isValid,
                   builder: (context, state) {
                     return AuthGradientButton(
-                      text: AppStrings.btnVerify,
+                      text: widget.flow == VerifyFlow.registration
+                          ? AppStrings.btnCreateAccount
+                          : AppStrings.btnVerify,
                       isLoading: state.isLoading,
                       onPressed: state.isValid
                           ? () => context

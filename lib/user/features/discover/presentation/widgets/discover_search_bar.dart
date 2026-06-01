@@ -14,46 +14,52 @@ class DiscoverSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 44.h,
-      decoration: BoxDecoration(
-        color: AppColors.searchBarBg,
-        borderRadius: BorderRadius.circular(100.r),
-        border: Border.all(color: AppColors.inputFieldBorder),
-      ),
-      child: TextField(
-        onChanged: onChanged,
-        onTapOutside: (_) {
-          FocusManager.instance.primaryFocus?.unfocus();
-        },
-        style: GoogleFonts.lato(
-          fontSize: 16.sp,
-          fontWeight: FontWeight.w500,
-          color: AppColors.inputFieldText,
+    final height = 44.h;
+    final radius = height / 2;
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(radius),
+      child: Container(
+        height: height,
+        decoration: BoxDecoration(
+          color: AppColors.searchBarBg,
+          borderRadius: BorderRadius.circular(radius),
+          border: Border.all(color: AppColors.inputFieldBorder),
         ),
-        decoration: InputDecoration(
-          hintText: AppStrings.discoverSearchHint,
-          hintStyle: GoogleFonts.lato(
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w400,
-            color: AppColors.grey800,
+        child: TextField(
+          onChanged: onChanged,
+          onTapOutside: (_) {
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
+          style: GoogleFonts.lato(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w500,
+            color: AppColors.inputFieldText,
           ),
-          suffixIcon: Padding(
-            padding: EdgeInsets.only(left: 8.w, right: 12.w),
-            child: Align(
-              alignment: Alignment.centerRight,
-              widthFactor: 1,
+          decoration: InputDecoration(
+            hintText: AppStrings.discoverSearchHint,
+            hintStyle: GoogleFonts.lato(
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w400,
+              color: AppColors.grey800,
+            ),
+            isDense: true,
+            contentPadding: EdgeInsets.fromLTRB(16.w, 0, 4.w, 0),
+            border: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            suffixIcon: Padding(
+              padding: EdgeInsets.only(right: 14.w),
               child: AppSvgIcon(
                 assetPath: AppAssets.iconSearch,
                 size: 20.w,
-                color: AppColors.inputFieldIcon,
+                color: AppColors.purple1000,
               ),
             ),
-          ),
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: 14.w,
-            vertical: 12.h,
+            suffixIconConstraints: BoxConstraints(
+              minWidth: 40.w,
+              minHeight: height,
+            ),
           ),
         ),
       ),

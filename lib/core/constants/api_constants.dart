@@ -5,7 +5,7 @@ class ApiConstants {
   ApiConstants._();
 
   /// Week 4+ REST base (`/api/v1.0` per Vestie API documentation).
-  static const String baseUrl = 'https://api.vestie.app/api/v1.0';
+  static const String baseUrl = 'https://vestie-backend-byexejcphyhaapfy.centralus-01.azurewebsites.net/api/v1';
 
   /// SignalR hub path (site root, not under `/api/v1.0`).
   static const String projectsHubPath = '/hubs/projects';

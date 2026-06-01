@@ -10,15 +10,34 @@ import '../../../../core/theme/app_colors.dart';
 class _NavItem {
   final String asset;
   final String label;
-  const _NavItem(this.asset, this.label);
+  /// When set, used on the active tab instead of [asset] + tint.
+  final String? activeAsset;
+
+  const _NavItem(
+    this.asset,
+    this.label, {
+    this.activeAsset,
+  });
 }
 
 const _items = [
   _NavItem(AppAssets.iconHome, AppStrings.navHome),
-  _NavItem(AppAssets.iconSearch, AppStrings.navSearch),
+  _NavItem(
+    AppAssets.iconSearch,
+    AppStrings.navSearch,
+    activeAsset: AppAssets.iconSearchActive,
+  ),
   _NavItem(AppAssets.iconAdd, AppStrings.navAdd),
-  _NavItem(AppAssets.iconWallet, AppStrings.navWallet),
-  _NavItem(AppAssets.iconProfile, AppStrings.navProfile),
+  _NavItem(
+    AppAssets.iconWallet,
+    AppStrings.navWallet,
+    activeAsset: AppAssets.iconWalletActive,
+  ),
+  _NavItem(
+    AppAssets.iconProfile,
+    AppStrings.navProfile,
+    activeAsset: AppAssets.iconProfileActive,
+  ),
 ];
 
 /// Bottom navigation bar: white sheet with rounded bottom corners on [AppColors.dashBg],
@@ -116,15 +135,20 @@ class AppBottomNavBar extends StatelessWidget {
                         ),
                         child: Center(
                           child: SvgPicture.asset(
-                            _items[i].asset,
+                            active && _items[i].activeAsset != null
+                                ? _items[i].activeAsset!
+                                : _items[i].asset,
                             width: 22.w,
                             height: 22.w,
-                            colorFilter: ColorFilter.mode(
-                              active
-                                  ? Colors.white
-                                  : AppColors.grey800,
-                              BlendMode.srcIn,
-                            ),
+                            colorFilter: active &&
+                                    _items[i].activeAsset != null
+                                ? null
+                                : ColorFilter.mode(
+                                    active
+                                        ? Colors.white
+                                        : AppColors.grey800,
+                                    BlendMode.srcIn,
+                                  ),
                           ),
                         ),
                       ),

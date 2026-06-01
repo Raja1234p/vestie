@@ -67,6 +67,10 @@ class AppAssets {
   static const String iconAdd     = '$_iconPath/add_icon.svg';
   static const String iconWallet  = '$_iconPath/wallet_icon.svg';
   static const String iconProfile = '$_iconPath/profile_icon.svg';
+  /// Bottom nav — active tab (white glyphs on purple circle).
+  static const String iconSearchActive  = '$_iconPath/active_discover_icon.svg';
+  static const String iconWalletActive  = '$_iconPath/active_wallet_icon.svg';
+  static const String iconProfileActive = '$_iconPath/active_profile_icon.svg';
 
   // ── Profile Settings Icons ────────────────────────────────────────────────
   static const String iconEditProfile       = '$_iconPath/edit_profile_icon.svg';

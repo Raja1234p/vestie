@@ -57,6 +57,7 @@ class AppStrings {
   // Buttons & Links
   static const String btnContinue         = 'Continue';
   static const String btnVerify           = 'Verify';
+  static const String btnCreateAccount    = 'Create Account';
   static const String btnGoogle           = 'Continue with Google';
   static const String btnApple            = 'Continue with Apple';
   static const String forgotPassword      = 'Forgot password?';
