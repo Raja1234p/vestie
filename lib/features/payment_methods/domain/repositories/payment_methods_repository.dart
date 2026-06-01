@@ -20,7 +20,10 @@ abstract class PaymentMethodsRepository {
     Future<void> Function()? onBeforePresentPaymentSheet,
   });
 
-  Future<Either<Failure, void>> setPrimary(String paymentMethodId);
+  Future<Either<Failure, void>> setPrimary(
+    String paymentMethodId, {
+    required bool isPrimary,
+  });
 
   Future<Either<Failure, void>> remove(String paymentMethodId);
 }

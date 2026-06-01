@@ -9,12 +9,16 @@ class PaymentMethodsState extends Equatable {
   final List<PaymentCard> cards;
   final bool loading;
   final bool addingCard;
+  final String? settingPrimaryCardId;
+  final String? removingCardId;
   final String? errorMessage;
 
   const PaymentMethodsState({
     this.cards = const [],
     this.loading = false,
     this.addingCard = false,
+    this.settingPrimaryCardId,
+    this.removingCardId,
     this.errorMessage,
   });
 
@@ -22,6 +26,10 @@ class PaymentMethodsState extends Equatable {
     List<PaymentCard>? cards,
     bool? loading,
     bool? addingCard,
+    String? settingPrimaryCardId,
+    bool clearSettingPrimary = false,
+    String? removingCardId,
+    bool clearRemovingCard = false,
     String? errorMessage,
     bool clearError = false,
   }) =>
@@ -29,11 +37,24 @@ class PaymentMethodsState extends Equatable {
         cards: cards ?? this.cards,
         loading: loading ?? this.loading,
         addingCard: addingCard ?? this.addingCard,
+        settingPrimaryCardId: clearSettingPrimary
+            ? null
+            : (settingPrimaryCardId ?? this.settingPrimaryCardId),
+        removingCardId: clearRemovingCard
+            ? null
+            : (removingCardId ?? this.removingCardId),
         errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
       );
 
   @override
-  List<Object?> get props => [cards, loading, addingCard, errorMessage];
+  List<Object?> get props => [
+        cards,
+        loading,
+        addingCard,
+        settingPrimaryCardId,
+        removingCardId,
+        errorMessage,
+      ];
 }
 
 class PaymentMethodsCubit extends Cubit<PaymentMethodsState> {
@@ -58,7 +79,7 @@ class PaymentMethodsCubit extends Cubit<PaymentMethodsState> {
       (failure) => emit(
         PaymentMethodsState(
           loading: false,
-          errorMessage: failure.message,
+          errorMessage: FailureMapper.userMessage(failure),
         ),
       ),
       (cards) => emit(PaymentMethodsState(cards: cards, loading: false)),
@@ -100,37 +121,57 @@ class PaymentMethodsCubit extends Cubit<PaymentMethodsState> {
     );
   }
 
-  Future<bool> removeCard(String id) async {
-    emit(state.copyWith(clearError: true));
+  /// Returns `null` on success, or a user-facing error for toast.
+  Future<String?> removeCard(String id) async {
+    emit(state.copyWith(removingCardId: id, clearError: true));
     final result = await removePaymentMethodUseCase(id);
     return result.fold(
       (failure) {
-        emit(state.copyWith(errorMessage: failure.message));
-        return false;
+        emit(state.copyWith(clearRemovingCard: true));
+        return FailureMapper.userMessage(failure);
       },
       (_) {
         emit(
           state.copyWith(
             cards: state.cards.where((c) => c.id != id).toList(),
+            clearRemovingCard: true,
             clearError: true,
           ),
         );
-        return true;
+        return null;
       },
     );
   }
 
-  Future<bool> setPrimary(String id) async {
-    emit(state.copyWith(clearError: true));
-    final result = await setPrimaryPaymentMethodUseCase(id);
+  /// Returns `null` on success, or a user-facing error for toast.
+  Future<String?> setPrimary(String id, {required bool isPrimary}) async {
+    emit(state.copyWith(settingPrimaryCardId: id, clearError: true));
+    final result = await setPrimaryPaymentMethodUseCase(
+      id,
+      isPrimary: isPrimary,
+    );
     return result.fold(
       (failure) {
-        emit(state.copyWith(errorMessage: failure.message));
-        return false;
+        emit(state.copyWith(clearSettingPrimary: true));
+        return FailureMapper.userMessage(failure);
       },
-      (_) async {
-        await load(forceRefresh: true);
-        return true;
+      (_) {
+        emit(
+          state.copyWith(
+            cards: [
+              for (final card in state.cards)
+                if (isPrimary)
+                  card.copyWith(isPrimary: card.id == id)
+                else if (card.id == id)
+                  card.copyWith(isPrimary: false)
+                else
+                  card,
+            ],
+            clearSettingPrimary: true,
+            clearError: true,
+          ),
+        );
+        return null;
       },
     );
   }

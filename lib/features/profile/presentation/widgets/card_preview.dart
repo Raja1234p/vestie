@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/core/constants/app_assets.dart';
@@ -8,6 +7,7 @@ import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/features/profile/domain/entities/payment_card.dart';
+import 'package:vestie/features/profile/presentation/widgets/payment_card_brand_icon.dart';
 
 /// Figma card detail preview — 370×175 white surface, noise, masked number, brand.
 class CardPreview extends StatelessWidget {
@@ -83,13 +83,10 @@ class CardPreview extends StatelessWidget {
                         color: AppColors.surface,
                         borderRadius: BorderRadius.circular(6.r),
                       ),
-                      child: SvgPicture.asset(
-                        card.brand == CardBrand.visa
-                            ? AppAssets.iconVisa
-                            : AppAssets.iconMastercard,
+                      child: PaymentCardBrandIcon(
+                        brand: card.brand,
                         width: 40.w,
                         height: 14.h,
-                        fit: BoxFit.contain,
                       ),
                     ),
                   ),

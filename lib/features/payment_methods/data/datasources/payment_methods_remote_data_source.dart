@@ -55,7 +55,7 @@ abstract class PaymentMethodsRemoteDataSource {
     required String cvv,
   });
 
-  Future<void> setPrimary(String paymentMethodId);
+  Future<void> setPrimary(String paymentMethodId, {required bool isPrimary});
 
   Future<void> remove(String paymentMethodId);
 }
@@ -147,10 +147,13 @@ class PaymentMethodsRemoteDataSourceImpl implements PaymentMethodsRemoteDataSour
   }
 
   @override
-  Future<void> setPrimary(String paymentMethodId) async {
+  Future<void> setPrimary(
+    String paymentMethodId, {
+    required bool isPrimary,
+  }) async {
     await apiClient.patch<Map<String, dynamic>>(
       ApiConstants.paymentMethodPrimary(paymentMethodId),
-      data: {'isPrimary': true},
+      data: {'isPrimary': isPrimary},
     );
   }
 

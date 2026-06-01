@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
-import 'package:vestie/core/utils/app_snackbar.dart';
-import 'package:vestie/core/widgets/common/app_failure_dialog.dart';
+import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/widgets/common/app_loading_dialog.dart';
 import 'package:vestie/features/profile/domain/entities/payment_card.dart';
 
@@ -12,7 +11,7 @@ import 'package:vestie/features/profile/domain/entities/payment_card.dart';
 abstract final class AddCardStripeLauncher {
   static Future<PaymentCard?> launch(
     BuildContext context, {
-    bool showSuccessSnackBar = true,
+    bool showSuccessToast = true,
   }) async {
     var preparingDialogOpen = false;
 
@@ -52,16 +51,12 @@ abstract final class AddCardStripeLauncher {
           if (message == AppStrings.addCardStripeCancelled) {
             return null;
           }
-          AppFailureDialog.show(
-            context,
-            title: AppStrings.errorDialogTitle,
-            message: message,
-          );
+          AppToast.showError(context, message);
           return null;
         },
         (card) {
-          if (showSuccessSnackBar) {
-            AppSnackBar.showSuccess(context, AppStrings.cardSavedSuccess);
+          if (showSuccessToast) {
+            AppToast.showSuccess(context, AppStrings.cardSavedSuccess);
           }
           return card;
         },
@@ -69,7 +64,7 @@ abstract final class AddCardStripeLauncher {
     } catch (_) {
       dismissPreparing();
       if (context.mounted) {
-        AppSnackBar.showError(context, AppStrings.addCardStripeFailed);
+        AppToast.showError(context, AppStrings.addCardStripeFailed);
       }
       return null;
     }

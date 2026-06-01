@@ -16,6 +16,7 @@ import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/features/profile/domain/entities/payment_card.dart';
 import 'package:vestie/features/profile/presentation/widgets/card_detail_sheet.dart';
 import 'package:vestie/features/wallet/presentation/cubit/wallet_transaction_cubit.dart';
+import 'package:vestie/features/profile/presentation/widgets/payment_card_brand_icon.dart';
 import 'package:vestie/features/profile/presentation/widgets/payment_method_select_row.dart';
 import 'package:vestie/features/profile/presentation/widgets/payment_primary_button.dart';
 
@@ -142,12 +143,7 @@ class _SelectionList extends StatelessWidget {
                   leading: SizedBox(
                     width: 32.w,
                     height: 32.h,
-                    child: SvgPicture.asset(
-                      cards[i].brand == CardBrand.visa
-                          ? AppAssets.iconVisa
-                          : AppAssets.iconMastercard,
-                      fit: BoxFit.contain,
-                    ),
+                    child: PaymentCardBrandIcon(brand: cards[i].brand),
                   ),
                   title: cards[i].brandName,
                   subtitle: cards[i].maskedNumber,
@@ -217,12 +213,7 @@ class _ManageCardItem extends StatelessWidget {
                   SizedBox(
                     width: 32.w,
                     height: 32.h,
-                    child: SvgPicture.asset(
-                      card.brand == CardBrand.visa
-                          ? AppAssets.iconVisa
-                          : AppAssets.iconMastercard,
-                      fit: BoxFit.contain,
-                    ),
+                    child: PaymentCardBrandIcon(brand: card.brand),
                   ),
                   SizedBox(width: 10.w),
                   Column(

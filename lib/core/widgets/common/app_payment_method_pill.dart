@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../constants/app_assets.dart';
@@ -8,6 +7,7 @@ import '../../constants/app_strings.dart';
 import '../../theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import 'package:vestie/features/profile/domain/entities/payment_card.dart';
+import 'package:vestie/features/profile/presentation/widgets/payment_card_brand_icon.dart';
 
 /// Wallet balance or saved card pill for contribute / payment confirm rows.
 class AppPaymentMethodPill extends StatelessWidget {
@@ -103,11 +103,10 @@ class AppPaymentMethodPill extends StatelessWidget {
         SizedBox(
           width: 32.w,
           height: 20.h,
-          child: SvgPicture.asset(
-            c.brand == CardBrand.visa
-                ? AppAssets.iconVisa
-                : AppAssets.iconMastercard,
-            fit: BoxFit.contain,
+          child: PaymentCardBrandIcon(
+            brand: c.brand,
+            width: 32.w,
+            height: 20.h,
           ),
         ),
         SizedBox(width: 8.w),

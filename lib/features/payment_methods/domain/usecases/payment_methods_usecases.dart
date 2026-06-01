@@ -59,8 +59,11 @@ class SetPrimaryPaymentMethodUseCase {
 
   SetPrimaryPaymentMethodUseCase(this.repository);
 
-  Future<Either<Failure, void>> call(String paymentMethodId) =>
-      repository.setPrimary(paymentMethodId);
+  Future<Either<Failure, void>> call(
+    String paymentMethodId, {
+    required bool isPrimary,
+  }) =>
+      repository.setPrimary(paymentMethodId, isPrimary: isPrimary);
 }
 
 class RemovePaymentMethodUseCase {

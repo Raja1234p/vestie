@@ -1,7 +1,6 @@
-/// Centralised snackbar / toast system — Rule 5 & 6 compliance.
+/// Centralised feedback — errors always use top [AppToast]; success may use toast or bottom snackbar.
 ///
-/// API errors → top [AppToast] ([fluttertoast] / Figma). Legacy bottom snackbars elsewhere.
-/// OTP success → [AppToast.showSuccess] only (verify resend).
+/// Prefer [AppToast.showError] / [AppToast.showSuccess] directly for new code.
 library;
 
 import 'package:flutter/material.dart';

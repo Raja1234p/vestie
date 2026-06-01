@@ -130,9 +130,15 @@ class PaymentMethodsRepositoryImpl implements PaymentMethodsRepository {
   }
 
   @override
-  Future<Either<Failure, void>> setPrimary(String paymentMethodId) async {
+  Future<Either<Failure, void>> setPrimary(
+    String paymentMethodId, {
+    required bool isPrimary,
+  }) async {
     try {
-      await remoteDataSource.setPrimary(paymentMethodId);
+      await remoteDataSource.setPrimary(
+        paymentMethodId,
+        isPrimary: isPrimary,
+      );
       PaymentMethodsCache.clear();
       return const Right(null);
     } on Failure catch (f) {

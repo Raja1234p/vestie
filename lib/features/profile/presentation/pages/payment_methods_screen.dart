@@ -3,8 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/di/service_locator.dart';
-import '../../../../core/utils/app_snackbar.dart';
-import '../../../../core/widgets/common/app_failure_dialog.dart';
+import '../../../../core/widgets/common/app_toast.dart';
 import '../../../../core/widgets/common/app_shimmer.dart';
 import '../../../../core/widgets/common/flow_screen_footer.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
@@ -48,16 +47,12 @@ class _PaymentBody extends StatelessWidget {
     if (!context.mounted) return;
 
     if (error == null) {
-      AppSnackBar.showSuccess(context, AppStrings.cardSavedSuccess);
+      AppToast.showSuccess(context, AppStrings.cardSavedSuccess);
       return;
     }
 
     if (error != AppStrings.addCardStripeCancelled) {
-      await AppFailureDialog.show(
-        context,
-        title: AppStrings.errorDialogTitle,
-        message: error,
-      );
+      AppToast.showError(context, error);
     }
   }
 
@@ -65,9 +60,13 @@ class _PaymentBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<PaymentMethodsCubit, PaymentMethodsState>(
       listenWhen: (prev, next) =>
-          prev.errorMessage != next.errorMessage && next.errorMessage != null,
+          prev.errorMessage != next.errorMessage &&
+          next.errorMessage != null &&
+          next.settingPrimaryCardId == null &&
+          next.removingCardId == null &&
+          !next.addingCard,
       listener: (context, state) {
-        AppSnackBar.showError(
+        AppToast.showError(
           context,
           state.errorMessage ?? AppStrings.paymentMethodsLoadFailed,
         );

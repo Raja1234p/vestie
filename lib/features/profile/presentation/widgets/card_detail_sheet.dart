@@ -10,7 +10,7 @@ import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/core/utils/app_snackbar.dart';
+import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/widgets/common/app_purple_dashed_line.dart';
 import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
@@ -82,6 +82,9 @@ class _CardDetailSheetState extends State<CardDetailSheet> {
     return BlocBuilder<PaymentMethodsCubit, PaymentMethodsState>(
       builder: (context, state) {
         final current = _resolveCard(state);
+        final isSettingPrimary = state.settingPrimaryCardId == current.id;
+        final isRemoving = state.removingCardId == current.id;
+        final isBusy = isSettingPrimary || isRemoving;
         final bottomInset = math.max(
           60.h,
           MediaQuery.viewPaddingOf(context).bottom + 8.h,
@@ -115,24 +118,38 @@ class _CardDetailSheetState extends State<CardDetailSheet> {
               _ActionRow(
                 title: AppStrings.setPrimaryLabel,
                 subtitle: AppStrings.setPrimarySubtitle,
-                trailing: _PrimaryToggleSwitch(
-                  value: current.isPrimary,
-                  onChanged: current.isPrimary || _loadingDetail
-                      ? null
-                      : (_) async {
-                          final ok = await context
-                              .read<PaymentMethodsCubit>()
-                              .setPrimary(current.id);
-                          if (!context.mounted) return;
-                          if (!ok) {
-                            final err =
-                                context.read<PaymentMethodsCubit>().state.errorMessage;
-                            if (err != null) {
-                              AppSnackBar.showError(context, err);
-                            }
-                          }
-                        },
-                ),
+                trailing: isSettingPrimary
+                    ? SizedBox(
+                        width: 52.w,
+                        height: 30.h,
+                        child: Center(
+                          child: SizedBox(
+                            width: 22.w,
+                            height: 22.w,
+                            child: const CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                        ),
+                      )
+                    : _PrimaryToggleSwitch(
+                        value: current.isPrimary,
+                        onChanged: _loadingDetail || isBusy
+                            ? null
+                            : (isPrimary) async {
+                                final error = await context
+                                    .read<PaymentMethodsCubit>()
+                                    .setPrimary(
+                                      current.id,
+                                      isPrimary: isPrimary,
+                                    );
+                                if (!context.mounted) return;
+                                if (error != null) {
+                                  AppToast.showError(context, error);
+                                }
+                              },
+                      ),
               ),
               SizedBox(height: 20.h),
               const AppPurpleDashedLine(
@@ -143,36 +160,39 @@ class _CardDetailSheetState extends State<CardDetailSheet> {
               _ActionRow(
                 title: AppStrings.removeCardLabel,
                 subtitle: AppStrings.removeCardSubtitle,
-                trailing: GestureDetector(
-                  onTap: _loadingDetail
-                      ? null
-                      : () async {
-                          final ok = await context
-                              .read<PaymentMethodsCubit>()
-                              .removeCard(current.id);
-                          if (!context.mounted) return;
-                          if (!ok) {
-                            final err = context
-                                .read<PaymentMethodsCubit>()
-                                .state
-                                .errorMessage;
-                            if (err != null) {
-                              AppSnackBar.showError(context, err);
-                            }
-                            return;
-                          }
-                          context.pop();
-                          AppSnackBar.showSuccess(
-                            context,
-                            AppStrings.cardRemovedSuccess,
-                          );
-                        },
-                  child: AppSvgIcon(
-                    assetPath: AppAssets.iconDelete,
-                    size: 22.w,
-                    color: AppColors.logoutBtn,
-                  ),
-                ),
+                trailing: isRemoving
+                    ? SizedBox(
+                        width: 22.w,
+                        height: 22.w,
+                        child: const CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: AppColors.logoutBtn,
+                        ),
+                      )
+                    : GestureDetector(
+                        onTap: _loadingDetail || isBusy
+                            ? null
+                            : () async {
+                                final error = await context
+                                    .read<PaymentMethodsCubit>()
+                                    .removeCard(current.id);
+                                if (!context.mounted) return;
+                                if (error != null) {
+                                  AppToast.showError(context, error);
+                                  return;
+                                }
+                                context.pop();
+                                AppToast.showSuccess(
+                                  context,
+                                  AppStrings.cardRemovedSuccess,
+                                );
+                              },
+                        child: AppSvgIcon(
+                          assetPath: AppAssets.iconDelete,
+                          size: 22.w,
+                          color: AppColors.logoutBtn,
+                        ),
+                      ),
               ),
             ],
           ),
@@ -244,7 +264,7 @@ class _PrimaryToggleSwitch extends StatelessWidget {
   Widget build(BuildContext context) {
     final isEnabled = onChanged != null;
     return GestureDetector(
-      onTap: isEnabled ? () => onChanged!(true) : null,
+      onTap: isEnabled ? () => onChanged!(!value) : null,
       behavior: HitTestBehavior.opaque,
       child: AnimatedOpacity(
         duration: const Duration(milliseconds: 180),

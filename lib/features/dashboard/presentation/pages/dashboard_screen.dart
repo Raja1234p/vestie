@@ -69,7 +69,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: BlocProvider(
         create: (_) => WalletCubit(
           getWalletUseCase: ServiceLocator.instance.getWalletUseCase,
-        )..load(),
+        ),
         child: BlocBuilder<NavCubit, int>(
         builder: (context, index) {
           return Scaffold(
@@ -90,7 +90,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         shellArgs.reloadDiscoverProjectList,
                   ),
                   const _PlaceholderTab(),
-                  const WalletScreen(),
+                  WalletScreen(activate: index == 3),
                   ProfileScreen(activate: index == 4),
                 ],
               ),
@@ -102,9 +102,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   showCreateProjectAmountSheet(context);
                 } else {
                   context.read<NavCubit>().selectTab(i);
-                  if (i == 3) {
-                    context.read<WalletCubit>().load(forceRefresh: true);
-                  }
                 }
               },
             ),

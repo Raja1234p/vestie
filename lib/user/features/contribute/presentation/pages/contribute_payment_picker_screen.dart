@@ -18,6 +18,7 @@ import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/features/profile/domain/entities/payment_card.dart';
 import 'package:vestie/features/profile/domain/entities/payment_method_selection.dart';
+import 'package:vestie/features/profile/presentation/widgets/payment_card_brand_icon.dart';
 import 'package:vestie/features/profile/presentation/widgets/payment_method_select_row.dart';
 import 'package:vestie/features/profile/presentation/widgets/payment_primary_button.dart';
 
@@ -123,11 +124,8 @@ class _ContributePaymentPickerScreenState
                                 leading: SizedBox(
                                   width: 32.w,
                                   height: 32.h,
-                                  child: SvgPicture.asset(
-                                    _cards[i].brand == CardBrand.visa
-                                        ? AppAssets.iconVisa
-                                        : AppAssets.iconMastercard,
-                                    fit: BoxFit.contain,
+                                  child: PaymentCardBrandIcon(
+                                    brand: _cards[i].brand,
                                   ),
                                 ),
                                 title: _cards[i].brandName,

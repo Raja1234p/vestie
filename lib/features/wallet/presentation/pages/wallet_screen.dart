@@ -24,8 +24,14 @@ import '../widgets/wallet_overview_card.dart';
 import '../widgets/wallet_recent_activity_empty.dart';
 import '../widgets/wallet_recent_activity_list.dart';
 
+/// Wallet tab — loads `GET /wallet` only when [activate] is true (see [DashboardScreen]).
 class WalletScreen extends StatefulWidget {
-  const WalletScreen({super.key});
+  final bool activate;
+
+  const WalletScreen({
+    super.key,
+    this.activate = false,
+  });
 
   @override
   State<WalletScreen> createState() => _WalletScreenState();
@@ -35,13 +41,25 @@ class _WalletScreenState extends State<WalletScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      final cubit = context.read<WalletCubit>();
-      if (cubit.state.wallet == null && !cubit.state.isLoading) {
-        cubit.load();
-      }
-    });
+    if (widget.activate) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _onTabActivated();
+      });
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant WalletScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.activate && !oldWidget.activate) {
+      _onTabActivated();
+    }
+  }
+
+  void _onTabActivated() {
+    final cubit = context.read<WalletCubit>();
+    if (cubit.state.isLoading) return;
+    cubit.load(forceRefresh: cubit.state.wallet != null);
   }
 
   Future<void> _openFlow(
