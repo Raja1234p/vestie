@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/utils/app_permission_helper.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_toast.dart';
 import '../../../../core/widgets/common/app_loading_dialog.dart';
@@ -127,6 +128,9 @@ class _ProfileBody extends StatelessWidget {
   }
 
   Future<void> _pickAndUpload(BuildContext context, ImageSource source) async {
+    final allowed = await AppPermissionHelper.ensureImageSource(context, source);
+    if (!allowed) return;
+
     final picked = await imagePicker.pickImage(
       source: source,
       imageQuality: 80,

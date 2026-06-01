@@ -8,6 +8,8 @@ import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
+import 'package:vestie/core/di/service_locator.dart';
+import 'package:vestie/core/utils/app_snackbar.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/features/wallet/domain/withdraw_delivery_method.dart';
 import 'package:vestie/features/wallet/presentation/cubit/wallet_transaction_cubit.dart';
@@ -16,6 +18,53 @@ import 'package:vestie/features/wallet/presentation/widgets/withdraw_method_body
 /// Pick standard vs instant payout before choosing a card (Figma).
 class WithdrawMethodScreen extends StatelessWidget {
   const WithdrawMethodScreen({super.key});
+
+  Future<void> _onContinueWithdraw(BuildContext context) async {
+    final kyc = await ServiceLocator.instance.getKycStatusUseCase();
+    if (!context.mounted) return;
+    final verified = kyc.fold((_) => false, (s) => s.canWithdraw);
+    if (!verified) {
+      final verify = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(AppStrings.kycRequiredForWithdrawTitle),
+          content: Text(AppStrings.kycRequiredForWithdrawBody),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: Text(AppStrings.btnCancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: Text(AppStrings.btnVerifyIdentity),
+            ),
+          ],
+        ),
+      );
+      if (verify == true && context.mounted) {
+        final completed = await context.push<bool>(AppRoutes.kycOnboarding);
+        if (completed == true && context.mounted) {
+          await _onContinueWithdraw(context);
+        }
+      }
+      return;
+    }
+    final banks = await ServiceLocator.instance.listBankAccountsUseCase();
+    if (!context.mounted) return;
+    banks.fold(
+      (f) => AppSnackBar.showError(context, f.message),
+      (list) {
+        if (list.isEmpty) {
+          AppSnackBar.showError(
+            context,
+            'Link a bank account before withdrawing.',
+          );
+          return;
+        }
+        context.push(AppRoutes.selectBankAccount);
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,9 +96,7 @@ class WithdrawMethodScreen extends StatelessWidget {
                   child: WithdrawMethodBody(
                     selected: selected,
                     onSelect: cubit.setWithdrawDeliveryMethod,
-                    onContinue: () {
-                      context.push(AppRoutes.selectPaymentMethod);
-                    },
+                    onContinue: () => _onContinueWithdraw(context),
                   ),
                 ),
               ],

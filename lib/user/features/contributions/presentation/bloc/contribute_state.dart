@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
-import '../../domain/entities/contribution_preview_entity.dart';
 import 'package:vestie/core/error/failures.dart';
+import 'package:vestie/core/utils/contribution_fee_policy.dart';
+import '../../domain/entities/contribution_preview_entity.dart';
 import 'package:vestie/app/router/route_args/project_wallet_flow_args.dart';
 import 'package:vestie/features/profile/domain/entities/payment_card.dart';
 
@@ -90,7 +91,8 @@ class ContributeState extends Equatable {
 
   String get displayAmountDollar => '\$$amountFormatted';
 
-  double get vestieFee => preview?.platformFee ?? (amountValue * 0.03);
+  double get vestieFee =>
+      preview?.platformFee ?? ContributionFeePolicy.platformFee(amountValue);
   String get vestieFeeFormatted => vestieFee.toStringAsFixed(2);
   String get totalDeductionFormatted =>
       (preview?.totalDeduction ?? (amountValue + vestieFee)).toStringAsFixed(2);

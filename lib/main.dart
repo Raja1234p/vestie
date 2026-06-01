@@ -6,6 +6,7 @@ import 'package:device_preview/device_preview.dart';
 import 'app/main_app.dart';
 import 'core/constants/api_constants.dart';
 import 'core/di/service_locator.dart';
+import 'core/services/fcm_push_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,6 +25,9 @@ void main() async {
 
   // Initialize Dependency Injection
   await ServiceLocator.instance.init();
+
+  await FcmPushService.initialize();
+  await FcmPushService.syncDeviceToken();
 
   const enableDevicePreview = !kReleaseMode;
   runApp(

@@ -7,7 +7,7 @@ import 'package:vestie/features/project_detail/domain/entities/member_entity.dar
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/project_detail/presentation/models/completed_project_notice_copy.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
-import 'package:vestie/features/project_detail/presentation/widgets/announcement_card.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_announcements_section.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/completed_project_notice_bar.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_info_card.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_members_preview_section.dart';
@@ -18,7 +18,7 @@ class InvestmentCompletedDetailContent extends StatelessWidget {
   final ValueChanged<MemberEntity> onMemberTap;
   final ValueChanged<MemberEntity>? onSendVffRequest;
   final String? sendingVffUserId;
-  final VoidCallback? onDeleteAnnouncement;
+  final Future<void> Function(String announcementId)? onDeleteAnnouncement;
 
   const InvestmentCompletedDetailContent({
     super.key,
@@ -38,10 +38,11 @@ class InvestmentCompletedDetailContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 12.h),
-        AnnouncementCard(
-          text: project.announcement,
+        ProjectAnnouncementsSection(
+          announcements: project.announcements,
           canDeleteAnnouncement: project.isModeratorView,
-          onDelete: project.isModeratorView ? onDeleteAnnouncement : null,
+          onDeleteAnnouncement:
+              project.isModeratorView ? onDeleteAnnouncement : null,
         ),
         SizedBox(height: 12.h),
         ProjectInfoCard(

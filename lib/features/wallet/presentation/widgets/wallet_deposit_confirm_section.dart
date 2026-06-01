@@ -8,6 +8,7 @@ import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/utils/formatters.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/features/wallet/domain/wallet_deposit_policy.dart';
+import 'package:vestie/features/wallet/domain/wallet_balance_cache.dart';
 import 'package:vestie/features/wallet/domain/wallet_ui_constants.dart';
 import 'package:vestie/features/wallet/presentation/cubit/wallet_transaction_cubit.dart';
 import 'wallet_detail_summary_row.dart';
@@ -25,8 +26,10 @@ class WalletDepositConfirmSection extends StatelessWidget {
         : state.selectedCard == null
             ? AppStrings.emptyData
             : '${state.selectedCard!.brandName} - ${state.selectedCard!.last4}';
+    final currentBalance = WalletBalanceCache.value?.availableBalance ??
+        WalletUiConstants.mockLedgerBalanceUsd;
     final newBal = WalletDepositPolicy.newBalanceAfter(
-      currentBalanceUsd: WalletUiConstants.mockLedgerBalanceUsd,
+      currentBalanceUsd: currentBalance,
       depositAmountUsd: state.amountParsed,
     );
 

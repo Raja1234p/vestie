@@ -96,9 +96,6 @@ class AppPaymentMethodPill extends StatelessWidget {
 
   Widget _cardContent() {
     final c = card!;
-    final initial = c.holderName.trim().isNotEmpty
-        ? c.holderName.trim()[0].toUpperCase()
-        : '?';
 
     return Row(
       mainAxisSize: MainAxisSize.min,

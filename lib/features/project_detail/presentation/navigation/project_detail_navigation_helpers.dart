@@ -15,6 +15,7 @@ import '../../../../core/widgets/common/member_project_action_menu.dart';
 import '../../domain/entities/member_entity.dart';
 import '../widgets/project_member_vff_send_actions.dart';
 import '../../domain/entities/project_detail_entity.dart';
+import '../../domain/entities/create_announcement_route_args.dart';
 import '../../domain/entities/project_detail_route_args.dart';
 import '../models/investment_distribution_ui_data.dart';
 import '../models/investment_returns_ui_data.dart';
@@ -325,11 +326,11 @@ class ProjectDetailNavigationHelpers {
     );
   }
 
-  static void handleLeaderAction(
+  static Future<void> handleLeaderAction(
     BuildContext context, {
     required ProjectDetailEntity project,
     required LeaderMenuAction action,
-  }) {
+  }) async {
     if (action == LeaderMenuAction.inviteMembers) {
       openInviteMembers(context, project: project);
       return;
@@ -374,7 +375,15 @@ class ProjectDetailNavigationHelpers {
         );
         break;
       case LeaderMenuAction.addAnnouncement:
-        context.push(AppRoutes.createAnnouncement);
+        final created = await context.push<bool>(
+          AppRoutes.createAnnouncement,
+          extra: CreateAnnouncementRouteArgs(projectId: project.id),
+        );
+        if (created == true && context.mounted) {
+          context.read<ProjectDetailBloc>().add(
+                LoadProjectDetailEvent(projectId: project.id),
+              );
+        }
         break;
       case LeaderMenuAction.editProject:
         context.push(

@@ -15,6 +15,12 @@ import '../../../../core/error/failure_mapper.dart';
 import '../../../../core/storage/onboarding_prefs.dart';
 import '../../../../core/utils/username_input_formatter.dart';
 import 'package:vestie/features/dashboard/domain/dashboard_prefetch.dart';
+import 'package:vestie/features/bank_accounts/domain/bank_accounts_cache.dart';
+import 'package:vestie/features/kyc/domain/kyc_status_cache.dart';
+import 'package:vestie/features/payment_methods/domain/payment_methods_cache.dart';
+import 'package:vestie/features/stripe/domain/stripe_config_cache.dart';
+import 'package:vestie/core/services/fcm_push_service.dart';
+import 'package:vestie/features/wallet/domain/wallet_balance_cache.dart';
 
 class ProfileState extends Equatable {
   final UserProfile profile;
@@ -212,7 +218,13 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   Future<void> _clearLocalData() async {
+    await FcmPushService.unregisterStoredToken();
     DashboardPrefetch.reset();
+    WalletBalanceCache.clear();
+    PaymentMethodsCache.clear();
+    StripeConfigCache.clear();
+    KycStatusCache.clear();
+    BankAccountsCache.clear();
     await ServiceLocator.instance.authRepository.clearRiskDisclaimerLocalCache();
     await ServiceLocator.instance.secureStorage.remove(StorageKeys.accessToken);
     await ServiceLocator.instance.secureStorage.remove(StorageKeys.refreshToken);

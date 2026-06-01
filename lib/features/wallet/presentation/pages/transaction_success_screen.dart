@@ -6,6 +6,9 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/di/service_locator.dart';
+import 'package:vestie/features/dashboard/domain/dashboard_prefetch.dart';
+import 'package:vestie/features/wallet/domain/wallet_balance_cache.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_success_screen.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
@@ -46,9 +49,14 @@ class TransactionSuccessScreen extends StatelessWidget {
                       WithdrawDeliveryMethod.standard,
                 ),
           buttonText: AppStrings.btnDone,
-          onButtonPressed: () {
+          onButtonPressed: () async {
             context.read<WalletTransactionCubit>().reset();
-            context.go(AppRoutes.dashboard);
+            WalletBalanceCache.clear();
+            DashboardPrefetch.invalidateWallet();
+            await ServiceLocator.instance.getWalletUseCase(forceRefresh: true);
+            if (context.mounted) {
+              context.go(AppRoutes.dashboard);
+            }
           },
         );
       },

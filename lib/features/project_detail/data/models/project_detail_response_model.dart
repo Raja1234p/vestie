@@ -5,6 +5,7 @@ import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
 
 import '../../domain/entities/borrow_request_entity.dart';
 import '../../domain/entities/member_entity.dart';
+import '../../domain/entities/project_announcement_entity.dart';
 import '../../domain/entities/project_detail_entity.dart';
 import '../../domain/entities/project_invite_entity.dart';
 import '../../domain/entities/viewer_membership_role.dart';
@@ -16,6 +17,7 @@ class ProjectDetailResponseModel {
   final _MembershipPayload _viewerMembership;
   final List<_MembershipPayload> _members;
   final List<_InvitePayload> _invites;
+  final List<_AnnouncementPayload> _announcements;
 
   const ProjectDetailResponseModel._({
     required _ProjectPayload project,
@@ -23,11 +25,13 @@ class ProjectDetailResponseModel {
     required _MembershipPayload viewerMembership,
     required List<_MembershipPayload> members,
     required List<_InvitePayload> invites,
+    required List<_AnnouncementPayload> announcements,
   })  : _project = project,
         _rules = rules,
         _viewerMembership = viewerMembership,
         _members = members,
-        _invites = invites;
+        _invites = invites,
+        _announcements = announcements;
 
   factory ProjectDetailResponseModel.fromJson(Map<String, dynamic> json) {
     final projectJson =
@@ -49,6 +53,11 @@ class ProjectDetailResponseModel {
             .map((m) => m.cast<String, dynamic>())
             .toList() ??
         const <Map<String, dynamic>>[];
+    final announcementsJson = (json['announcements'] as List?)
+            ?.whereType<Map>()
+            .map((m) => m.cast<String, dynamic>())
+            .toList() ??
+        const <Map<String, dynamic>>[];
 
     return ProjectDetailResponseModel._(
       project: _ProjectPayload.fromJson(projectJson),
@@ -56,6 +65,9 @@ class ProjectDetailResponseModel {
       viewerMembership: _MembershipPayload.fromJson(viewerMembershipJson),
       members: membersJson.map(_MembershipPayload.fromJson).toList(growable: false),
       invites: invitesJson.map(_InvitePayload.fromJson).toList(growable: false),
+      announcements: announcementsJson
+          .map(_AnnouncementPayload.fromJson)
+          .toList(growable: false),
     );
   }
 
@@ -67,6 +79,16 @@ class ProjectDetailResponseModel {
 
     final mappedMembers = _members.map(_mapMember).toList(growable: false);
     final mappedInvites = _invites.map(_mapInvite).toList(growable: false);
+    final mappedAnnouncements = _announcements
+        .map(
+          (a) => ProjectAnnouncementEntity(
+            id: a.id,
+            heading: a.heading,
+            content: a.content,
+            createdAtUtc: a.createdAtUtc,
+          ),
+        )
+        .toList(growable: false);
 
     return ProjectDetailEntity(
       id: _project.id,
@@ -77,6 +99,7 @@ class ProjectDetailResponseModel {
       currentAmount: _project.raisedAmount,
       endsIn: _project.endsAtUtc,
       announcement: _project.description,
+      announcements: mappedAnnouncements,
       members: mappedMembers,
       borrowRequests: const <BorrowRequestEntity>[],
       viewerRole: viewerRole,
@@ -382,5 +405,28 @@ class _InvitePayload {
         expiresAtUtc: _jsonString(json['expiresAtUtc']),
         maxUses: (json['maxUses'] as num?)?.toInt(),
         usedCount: (json['usedCount'] as num?)?.toInt() ?? 0,
+      );
+}
+
+class _AnnouncementPayload {
+  final String id;
+  final String heading;
+  final String content;
+  final String? createdAtUtc;
+
+  const _AnnouncementPayload({
+    required this.id,
+    required this.heading,
+    required this.content,
+    this.createdAtUtc,
+  });
+
+  factory _AnnouncementPayload.fromJson(Map<String, dynamic> json) =>
+      _AnnouncementPayload(
+        id: _jsonString(json['id']),
+        heading: _jsonString(json['heading']),
+        content: _jsonString(json['content']),
+        createdAtUtc: _nullableString(json['createdAtUtc']) ??
+            _nullableString(json['createdUtc']),
       );
 }

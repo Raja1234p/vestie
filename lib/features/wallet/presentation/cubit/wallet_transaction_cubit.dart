@@ -10,6 +10,8 @@ class WalletTransactionState {
   final PaymentCard? selectedCard;
   final bool payFromWallet;
   final WithdrawDeliveryMethod? withdrawDeliveryMethod;
+  final String? selectedBankAccountId;
+  final String? selectedBankDisplayName;
 
   const WalletTransactionState({
     required this.transactionType,
@@ -17,6 +19,8 @@ class WalletTransactionState {
     this.selectedCard,
     this.payFromWallet = false,
     this.withdrawDeliveryMethod,
+    this.selectedBankAccountId,
+    this.selectedBankDisplayName,
   });
 
   WalletTransactionState copyWith({
@@ -25,7 +29,10 @@ class WalletTransactionState {
     PaymentCard? selectedCard,
     bool? payFromWallet,
     WithdrawDeliveryMethod? withdrawDeliveryMethod,
+    String? selectedBankAccountId,
+    String? selectedBankDisplayName,
     bool clearSelectedCard = false,
+    bool clearBankAccount = false,
   }) {
     return WalletTransactionState(
       transactionType: transactionType ?? this.transactionType,
@@ -35,6 +42,12 @@ class WalletTransactionState {
       payFromWallet: payFromWallet ?? this.payFromWallet,
       withdrawDeliveryMethod:
           withdrawDeliveryMethod ?? this.withdrawDeliveryMethod,
+      selectedBankAccountId: clearBankAccount
+          ? null
+          : (selectedBankAccountId ?? this.selectedBankAccountId),
+      selectedBankDisplayName: clearBankAccount
+          ? null
+          : (selectedBankDisplayName ?? this.selectedBankDisplayName),
     );
   }
 
@@ -100,6 +113,18 @@ class WalletTransactionCubit extends Cubit<WalletTransactionState> {
 
   void setWithdrawDeliveryMethod(WithdrawDeliveryMethod method) {
     emit(state.copyWith(withdrawDeliveryMethod: method));
+  }
+
+  void selectBankAccount({
+    required String bankAccountId,
+    required String displayName,
+  }) {
+    emit(state.copyWith(
+      selectedBankAccountId: bankAccountId,
+      selectedBankDisplayName: displayName,
+      clearSelectedCard: true,
+      payFromWallet: false,
+    ));
   }
 
   void reset() {

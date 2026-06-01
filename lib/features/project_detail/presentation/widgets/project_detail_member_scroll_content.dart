@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
-import 'package:vestie/features/project_detail/presentation/widgets/announcement_card.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_announcements_section.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_wallet_actions.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_info_card.dart';
 
@@ -26,9 +26,8 @@ class ProjectDetailMemberScrollContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SizedBox(height: 12.h),
-        AnnouncementCard(
-          text: project.announcement,
-          canDeleteAnnouncement: false,
+        ProjectAnnouncementsSection(
+          announcements: project.announcements,
         ),
         SizedBox(height: 12.h),
         ProjectInfoCard(project: project),

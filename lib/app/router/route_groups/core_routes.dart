@@ -22,6 +22,7 @@ import '../../../features/auth/presentation/models/auth_route_extras.dart';
 
 import 'package:vestie/leader/features/create_project/presentation/create_project_entry_mode.dart';
 
+import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/leader/features/create_project/presentation/pages/create_project_amount_screen.dart';
 
 import 'package:vestie/leader/features/create_project/presentation/pages/create_project_borrowing_settings_screen.dart';
@@ -178,7 +179,12 @@ List<RouteBase> buildCoreRoutes() {
 
       builder: (context, _) => BlocProvider(
 
-        create: (_) => NotificationsCubit(),
+        create: (_) => NotificationsCubit(
+          listNotificationsUseCase:
+              ServiceLocator.instance.listNotificationsUseCase,
+          markNotificationsReadUseCase:
+              ServiceLocator.instance.markNotificationsReadUseCase,
+        ),
 
         child: const NotificationsScreen(),
 

@@ -66,6 +66,13 @@
 	<string>We need access to your camera to take a profile picture.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>We save photos to your photo library.</string>
+	<key>NSUserNotificationsUsageDescription</key>
+	<string>We send notifications about your projects, wallet, and account activity.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 	<!-- share_plus / url_launcher: apps visible in the iOS share sheet -->
 	<key>LSApplicationQueriesSchemes</key>
 	<array>

@@ -11,6 +11,7 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_network_avatar.dart';
 import '../../../../core/widgets/common/app_svg_icon.dart';
+import '../../../../core/utils/app_permission_helper.dart';
 import '../../../../core/widgets/text/app_text.dart';
 
 /// Avatar row for edit profile — pick camera/gallery, preview local or network.
@@ -31,6 +32,9 @@ class EditProfileAvatarPicker extends StatelessWidget {
   static final _picker = ImagePicker();
 
   Future<void> _pick(BuildContext context, ImageSource source) async {
+    final allowed = await AppPermissionHelper.ensureImageSource(context, source);
+    if (!allowed) return;
+
     final picked = await _picker.pickImage(
       source: source,
       imageQuality: 80,

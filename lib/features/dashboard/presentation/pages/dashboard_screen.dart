@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/di/service_locator.dart';
+import 'package:vestie/features/wallet/presentation/cubit/wallet_cubit.dart';
 import 'package:vestie/core/theme/app_text_styles.dart';
 import 'package:vestie/core/widgets/common/app_text.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
@@ -12,16 +14,21 @@ import '../../../profile/presentation/pages/profile_screen.dart';
 import '../../../wallet/presentation/pages/wallet_screen.dart';
 import '../cubit/nav_cubit.dart';
 import '../models/dashboard_shell_args.dart';
+import '../../../../core/services/fcm_push_service.dart';
+import '../../../../core/utils/app_permission_helper.dart';
 import '../widgets/app_bottom_nav_bar.dart';
 
 /// Root shell for the main app — holds all bottom-nav tabs via IndexedStack.
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   final DashboardShellArgs shellArgs;
 
   const DashboardScreen({
     super.key,
     this.shellArgs = const DashboardShellArgs(),
   });
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
 
   /// Only reset a tab subtree when that tab's reload flag is set — avoids an
   /// extra Home fetch when only [DashboardShellArgs.reloadDiscoverProjectList]
@@ -39,12 +46,29 @@ class DashboardScreen extends StatelessWidget {
     }
     return const ValueKey('discover');
   }
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await FcmPushService.syncDeviceToken();
+      if (!mounted) return;
+      await AppPermissionHelper.maybePromptNotificationsOnDashboard(context);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final shellArgs = widget.shellArgs;
     return BlocProvider(
       create: (_) => NavCubit(initialIndex: shellArgs.initialTabIndex),
-      child: BlocBuilder<NavCubit, int>(
+      child: BlocProvider(
+        create: (_) => WalletCubit(
+          getWalletUseCase: ServiceLocator.instance.getWalletUseCase,
+        )..load(),
+        child: BlocBuilder<NavCubit, int>(
         builder: (context, index) {
           return Scaffold(
             backgroundColor: Colors.transparent,
@@ -53,12 +77,12 @@ class DashboardScreen extends StatelessWidget {
                 index: index,
                 children: [
                   HomeScreen(
-                    key: homeTabKey(shellArgs),
+                    key: DashboardScreen.homeTabKey(shellArgs),
                     activate: index == 0,
                     reloadHomeProjectList: shellArgs.reloadHomeProjectList,
                   ),
                   DiscoverScreen(
-                    key: discoverTabKey(shellArgs),
+                    key: DashboardScreen.discoverTabKey(shellArgs),
                     activate: index == 1,
                     reloadDiscoverProjectList:
                         shellArgs.reloadDiscoverProjectList,
@@ -76,11 +100,15 @@ class DashboardScreen extends StatelessWidget {
                   showCreateProjectAmountSheet(context);
                 } else {
                   context.read<NavCubit>().selectTab(i);
+                  if (i == 3) {
+                    context.read<WalletCubit>().load(forceRefresh: true);
+                  }
                 }
               },
             ),
           );
         },
+      ),
       ),
     );
   }

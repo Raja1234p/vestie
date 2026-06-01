@@ -69,8 +69,76 @@ class ApiConstants {
   static String projectMemberCoLeader(String projectId, String userId) =>
       '$projects/$projectId/members/$userId/co-leader';
 
-  // ── Contributions ────────────────────────────────────────────────────────
+  // ── Contributions (legacy paths — prefer [projectContributions]) ─────────
   static const String contributions = '/contributions';
+
+  static String projectContributions(String projectId) =>
+      '$projects/$projectId/contributions';
+
+  static String projectPot(String projectId) => '$projects/$projectId/pot';
+
+  // ── Wallet ───────────────────────────────────────────────────────────────
+  static const String wallet = '/wallet';
+
+  static const String walletDepositIntent = '/wallet/deposit/intent';
+
+  static String walletDepositStatus(String paymentIntentId) =>
+      '/wallet/deposit/$paymentIntentId/status';
+
+  static const String walletDepositSimulated = '/wallet/deposit';
+
+  static const String walletWithdrawalsPreview = '/wallet/withdrawals/preview';
+
+  static const String walletWithdrawals = '/wallet/withdrawals';
+
+  static String walletWithdrawalStatus(String withdrawalId) =>
+      '/wallet/withdrawals/$withdrawalId';
+
+  // ── KYC & bank ───────────────────────────────────────────────────────────
+  static const String kycStart = '/kyc/start';
+
+  static const String kycStatus = '/kyc/status';
+
+  static const String bankAccounts = '/bank-accounts';
+
+  static String bankAccount(String bankAccountId) =>
+      '/bank-accounts/$bankAccountId';
+
+  // ── Stripe (Week 5) ──────────────────────────────────────────────────────
+  static const String stripeConfig = '/stripe/config';
+
+  static const String stripeConnectAccount = '/stripe/connect/account';
+
+  static String stripeConnectOnboardingLink(String accountId) =>
+      '/stripe/connect/accounts/$accountId/onboarding-link';
+
+  // ── Payment methods ──────────────────────────────────────────────────────
+  static const String paymentMethods = '/payment-methods';
+
+  static const String paymentMethodsSetupIntent =
+      '/payment-methods/setup-intent';
+
+  static String paymentMethod(String paymentMethodId) =>
+      '/payment-methods/$paymentMethodId';
+
+  static String paymentMethodPrimary(String paymentMethodId) =>
+      '/payment-methods/$paymentMethodId/primary';
+
+  // ── Notifications ────────────────────────────────────────────────────────
+  static const String notificationsDeviceToken = '/notifications/device-token';
+
+  static const String notifications = '/notifications';
+
+  static const String notificationsMarkRead = '/notifications/mark-read';
+
+  static String projectAnnouncements(String projectId) =>
+      '$projects/$projectId/announcements';
+
+  static String projectAnnouncement(
+    String projectId,
+    String announcementId,
+  ) =>
+      '$projects/$projectId/announcements/$announcementId';
 
   static const String googleServerClientId = '531408349211-pfs5okgjus8t8iecl9arrt782mo4ppob.apps.googleusercontent.com';
 

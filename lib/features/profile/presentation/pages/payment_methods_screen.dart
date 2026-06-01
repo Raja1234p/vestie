@@ -4,7 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_strings.dart';
-import '../../../../core/widgets/common/app_loader.dart';
+import '../../../../core/di/service_locator.dart';
+import '../../../../core/widgets/common/app_shimmer.dart';
 import '../../../../core/widgets/common/flow_screen_footer.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../cubit/payment_methods_cubit.dart';
@@ -19,8 +20,13 @@ class PaymentMethodsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final sl = ServiceLocator.instance;
     return BlocProvider(
-      create: (_) => PaymentMethodsCubit(),
+      create: (_) => PaymentMethodsCubit(
+        listPaymentMethodsUseCase: sl.listPaymentMethodsUseCase,
+        setPrimaryPaymentMethodUseCase: sl.setPrimaryPaymentMethodUseCase,
+        removePaymentMethodUseCase: sl.removePaymentMethodUseCase,
+      ),
       child: _PaymentBody(isSelectionMode: isSelectionMode),
     );
   }
@@ -48,7 +54,7 @@ class _PaymentBody extends StatelessWidget {
                 ProfileSubHeader(title: AppStrings.paymentMethodsTitle),
                 Expanded(
                   child: state.loading
-                      ? const AppLoader()
+                      ? const PaymentCardListShimmer()
                       : isEmpty
                           ? const PaymentEmptyView()
                           : PaymentCardList(

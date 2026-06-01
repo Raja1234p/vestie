@@ -12,12 +12,16 @@ import '../../../../core/widgets/text/app_text.dart';
 ///
 /// Delete is enabled only when [canDeleteAnnouncement] is true (GroupLeader / CoLeader).
 class AnnouncementCard extends StatelessWidget {
+  final String? announcementId;
+  final String? heading;
   final String? text;
   final bool canDeleteAnnouncement;
   final VoidCallback? onDelete;
 
   const AnnouncementCard({
     super.key,
+    this.announcementId,
+    this.heading,
     this.text,
     this.canDeleteAnnouncement = false,
     this.onDelete,
@@ -25,13 +29,15 @@ class AnnouncementCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final body = _AnnouncementBody(text: text);
+    final body = _AnnouncementBody(heading: heading, text: text);
     final showDelete = canDeleteAnnouncement && onDelete != null;
 
     if (!showDelete) return body;
 
     return Dismissible(
-      key: const ValueKey<String>('project-announcement'),
+      key: ValueKey<String>(
+        'project-announcement-${announcementId ?? 'placeholder'}',
+      ),
       direction: DismissDirection.endToStart,
       onDismissed: (_) => onDelete!(),
       background: const _AnnouncementSwipeDeleteBackground(),
@@ -41,9 +47,10 @@ class AnnouncementCard extends StatelessWidget {
 }
 
 class _AnnouncementBody extends StatelessWidget {
+  final String? heading;
   final String? text;
 
-  const _AnnouncementBody({this.text});
+  const _AnnouncementBody({this.heading, this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -67,8 +74,21 @@ class _AnnouncementBody extends StatelessWidget {
             ),
           ),
           SizedBox(height: 4.h),
+          if (heading != null && heading!.trim().isNotEmpty) ...[
+            AppText(
+              heading!.trim(),
+              style: GoogleFonts.lato(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w700,
+                color: AppColors.projectDetailText,
+              ),
+            ),
+            SizedBox(height: 4.h),
+          ],
           AppText(
-            text ?? AppStrings.announcementPlaceholder,
+            (text != null && text!.trim().isNotEmpty)
+                ? text!.trim()
+                : AppStrings.announcementPlaceholder,
             style: GoogleFonts.lato(
               fontSize: 13.sp,
               fontWeight: FontWeight.w500,

@@ -12,9 +12,13 @@ import 'package:vestie/core/widgets/common/app_text_field.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
-
+import 'package:vestie/core/di/service_locator.dart';
+import 'package:vestie/core/utils/app_snackbar.dart';
+import 'package:vestie/core/error/failure_mapper.dart';
 class CreateAnnouncementScreen extends StatefulWidget {
-  const CreateAnnouncementScreen({super.key});
+  final String projectId;
+
+  const CreateAnnouncementScreen({super.key, required this.projectId});
 
   @override
   State<CreateAnnouncementScreen> createState() => _CreateAnnouncementScreenState();
@@ -28,6 +32,7 @@ class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
 
   String? _headingError;
   String? _contentError;
+  bool _submitting = false;
 
   @override
   void initState() {
@@ -61,10 +66,24 @@ class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
     return h == null && c == null;
   }
 
-  void _onSubmit() {
+  Future<void> _onSubmit() async {
     if (!_validate()) return;
     _unfocusKeyboard();
-    context.pop();
+    setState(() => _submitting = true);
+    final result = await ServiceLocator.instance.createProjectAnnouncementUseCase(
+      projectId: widget.projectId,
+      heading: _headingController.text.trim(),
+      content: _contentController.text.trim(),
+    );
+    if (!mounted) return;
+    setState(() => _submitting = false);
+    result.fold(
+      (f) => AppSnackBar.showError(context, FailureMapper.userMessage(f)),
+      (_) {
+        AppSnackBar.showSuccess(context, AppStrings.btnCreateAnnouncement);
+        context.pop(true);
+      },
+    );
   }
 
   @override
@@ -147,7 +166,8 @@ class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
             FlowScreenFooter(
               child: AppButton(
                 text: AppStrings.btnCreateAnnouncement,
-                onPressed: _onSubmit,
+                isLoading: _submitting,
+                onPressed: _submitting ? null : _onSubmit,
                 useGradient: false,
                 hasShadow: false,
                 color: AppColors.grey1200,

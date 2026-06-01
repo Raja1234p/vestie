@@ -1,7 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/utils/validation_utils.dart';
-import '../../domain/entities/payment_card.dart';
+import 'package:vestie/core/utils/validation_utils.dart';
+import 'package:vestie/features/payment_methods/domain/usecases/payment_methods_usecases.dart';
+import 'package:vestie/features/profile/domain/entities/payment_card.dart';
 
 class AddCardState extends Equatable {
   final String holderName;
@@ -13,6 +14,7 @@ class AddCardState extends Equatable {
   final String? expiryError;
   final String? cvvError;
   final bool saving;
+  final String? saveError;
 
   const AddCardState({
     this.holderName = '',
@@ -24,6 +26,7 @@ class AddCardState extends Equatable {
     this.expiryError,
     this.cvvError,
     this.saving = false,
+    this.saveError,
   });
 
   AddCardState copyWith({
@@ -36,6 +39,8 @@ class AddCardState extends Equatable {
     Object? expiryError = _absent,
     Object? cvvError = _absent,
     bool? saving,
+    String? saveError,
+    bool clearSaveError = false,
   }) {
     return AddCardState(
       holderName: holderName ?? this.holderName,
@@ -52,12 +57,12 @@ class AddCardState extends Equatable {
           expiryError == _absent ? this.expiryError : expiryError as String?,
       cvvError: cvvError == _absent ? this.cvvError : cvvError as String?,
       saving: saving ?? this.saving,
+      saveError: clearSaveError ? null : (saveError ?? this.saveError),
     );
   }
 
   @override
-  List<Object> get props =>
-      [
+  List<Object?> get props => [
         holderName,
         cardNumber,
         expiry,
@@ -67,13 +72,17 @@ class AddCardState extends Equatable {
         expiryError ?? '',
         cvvError ?? '',
         saving,
+        saveError ?? '',
       ];
 }
 
 const Object _absent = Object();
 
 class AddCardCubit extends Cubit<AddCardState> {
-  AddCardCubit() : super(const AddCardState());
+  final SavePaymentCardUseCase savePaymentCardUseCase;
+
+  AddCardCubit({required this.savePaymentCardUseCase})
+      : super(const AddCardState());
 
   void setHolderName(String value) {
     emit(state.copyWith(holderName: value, holderNameError: null));
@@ -92,7 +101,8 @@ class AddCardCubit extends Cubit<AddCardState> {
   }
 
   bool validate() {
-    final holderNameError = ValidationUtils.validateCardHolderName(state.holderName);
+    final holderNameError =
+        ValidationUtils.validateCardHolderName(state.holderName);
     final cardNumberError = ValidationUtils.validateCardNumber(state.cardNumber);
     final expiryError = ValidationUtils.validateCardExpiry(state.expiry);
     final cvvError = ValidationUtils.validateCardCvv(state.cvv);
@@ -113,33 +123,24 @@ class AddCardCubit extends Cubit<AddCardState> {
 
   Future<PaymentCard?> save() async {
     if (!validate()) return null;
-    emit(state.copyWith(saving: true));
-    await Future.delayed(const Duration(milliseconds: 800));
+    emit(state.copyWith(saving: true, clearSaveError: true));
 
-    final digits = state.cardNumber.replaceAll(RegExp(r'[^0-9]'), '');
-    final brand = _detectBrand(digits);
-    final last4 = digits.length >= 4 ? digits.substring(digits.length - 4) : '0000';
-
-    final card = PaymentCard(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      holderName: state.holderName.trim(),
-      last4: last4,
-      maskedNumber: '•••• $last4',
+    final result = await savePaymentCardUseCase(
+      holderName: state.holderName,
+      cardNumber: state.cardNumber,
       expiry: state.expiry,
-      brand: brand,
+      cvv: state.cvv,
     );
-    emit(state.copyWith(saving: false));
-    return card;
-  }
 
-  CardBrand _detectBrand(String digits) {
-    if (digits.startsWith('4')) return CardBrand.visa;
-    if (digits.length >= 2) {
-      final prefix = int.tryParse(digits.substring(0, 2));
-      if (prefix != null && prefix >= 51 && prefix <= 55) {
-        return CardBrand.mastercard;
-      }
-    }
-    return CardBrand.other;
+    return result.fold(
+      (failure) {
+        emit(state.copyWith(saving: false, saveError: failure.message));
+        return null;
+      },
+      (card) {
+        emit(state.copyWith(saving: false));
+        return card;
+      },
+    );
   }
 }

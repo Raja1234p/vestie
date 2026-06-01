@@ -14,7 +14,8 @@ import 'package:vestie/features/project_detail/domain/entities/member_entity.dar
 import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
-import 'package:vestie/features/project_detail/presentation/widgets/announcement_card.dart';
+import 'package:vestie/core/error/failure_mapper.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_announcements_section.dart';
 import '../widgets/investment_detail_preview_button.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/investment_completed_detail_content.dart';
 import 'package:vestie/core/utils/app_snackbar.dart';
@@ -93,6 +94,24 @@ class _InvestmentProjectDetailBodyState
     extends State<InvestmentProjectDetailBody> {
   bool _previewCompletedInvestment = false;
   bool _previewSuccessVote = false;
+
+  Future<void> _deleteAnnouncement(String announcementId) async {
+    final result =
+        await ServiceLocator.instance.deleteProjectAnnouncementUseCase(
+      projectId: widget.projectId,
+      announcementId: announcementId,
+    );
+    if (!mounted) return;
+    result.fold(
+      (failure) => AppSnackBar.showError(
+        context,
+        FailureMapper.userMessage(failure),
+      ),
+      (_) => context.read<ProjectDetailBloc>().add(
+            LoadProjectDetailEvent(projectId: widget.projectId),
+          ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -248,12 +267,9 @@ class _InvestmentProjectDetailBodyState
                                   context,
                                   member: member,
                                 ),
-                                sendingVffUserId:
-                                    (state as ProjectDetailLoaded)
-                                        .sendingVffUserId,
-                                onDeleteAnnouncement: project
-                                        .usesLeaderDetailPanels
-                                    ? () {}
+                                sendingVffUserId: state.sendingVffUserId,
+                                onDeleteAnnouncement: project.isModeratorView
+                                    ? _deleteAnnouncement
                                     : null,
                               )
                             else ...[
@@ -267,10 +283,13 @@ class _InvestmentProjectDetailBodyState
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  AnnouncementCard(
-                                    text: project.announcement,
-                                    canDeleteAnnouncement: project.isModeratorView,
-                                    onDelete: project.isModeratorView ? () {} : null,
+                                  ProjectAnnouncementsSection(
+                                    announcements: project.announcements,
+                                    canDeleteAnnouncement:
+                                        project.isModeratorView,
+                                    onDeleteAnnouncement: project.isModeratorView
+                                        ? _deleteAnnouncement
+                                        : null,
                                   ),
                                   SizedBox(height: 12.h),
                                   ProjectInfoCard(project: project),

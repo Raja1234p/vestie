@@ -20,4 +20,11 @@ class StorageKeys {
   static const String riskDisclaimerCachedAt = 'risk_disclaimer_cached_at';
   static const String riskDisclaimerVersion = 'risk_disclaimer_version';
   static const String riskDisclaimerGuidelinesJson = 'risk_disclaimer_guidelines_json';
+
+  /// Last FCM token successfully registered with the API.
+  static const String fcmDeviceToken = 'fcm_device_token';
+
+  /// User dismissed the dashboard notification permission prompt.
+  static const String notificationPermissionPromptDismissed =
+      'notification_permission_prompt_dismissed';
 }

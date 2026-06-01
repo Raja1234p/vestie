@@ -379,5 +379,262 @@ class ProfileHeaderShimmer extends StatelessWidget {
   }
 }
 
+/// Wallet tab initial load — balance, actions, recent activity panel.
+class WalletTabShimmer extends StatelessWidget {
+  const WalletTabShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppShimmer(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AppShimmer.box(width: 100, height: 14, borderRadius: 4),
+                      const SizedBox(height: 8),
+                      AppShimmer.box(
+                        width: double.infinity,
+                        height: 44,
+                        borderRadius: 6,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                AppShimmer.box(width: 88, height: 56, borderRadius: 10),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: AppShimmer.box(
+                    width: double.infinity,
+                    height: 48,
+                    borderRadius: 24,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: AppShimmer.box(
+                    width: double.infinity,
+                    height: 48,
+                    borderRadius: 24,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: Container(
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+              ),
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      AppShimmer.box(width: 120, height: 18, borderRadius: 4),
+                      const Spacer(),
+                      AppShimmer.box(width: 72, height: 16, borderRadius: 4),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  ...List.generate(
+                    4,
+                    (_) => Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Row(
+                        children: [
+                          AppShimmer.box(
+                            width: 40,
+                            height: 40,
+                            borderRadius: 20,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                AppShimmer.box(
+                                  width: 140,
+                                  height: 14,
+                                  borderRadius: 4,
+                                ),
+                                const SizedBox(height: 6),
+                                AppShimmer.box(
+                                  width: 90,
+                                  height: 12,
+                                  borderRadius: 4,
+                                ),
+                              ],
+                            ),
+                          ),
+                          AppShimmer.box(width: 56, height: 16, borderRadius: 4),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Notifications inbox list skeleton.
+class NotificationListShimmer extends StatelessWidget {
+  const NotificationListShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppShimmer(
+      child: ListView.separated(
+        physics: const NeverScrollableScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
+        itemCount: 5,
+        separatorBuilder: (_, _) => const SizedBox(height: 16),
+        itemBuilder: (_, _) => Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AppShimmer.box(width: 48, height: 48, borderRadius: 24),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AppShimmer.box(width: 160, height: 16, borderRadius: 4),
+                  const SizedBox(height: 8),
+                  AppShimmer.box(width: double.infinity, height: 12, borderRadius: 4),
+                  const SizedBox(height: 4),
+                  AppShimmer.box(width: 200, height: 12, borderRadius: 4),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            AppShimmer.box(width: 40, height: 12, borderRadius: 4),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Payment methods card list skeleton.
+class PaymentCardListShimmer extends StatelessWidget {
+  const PaymentCardListShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppShimmer(
+      child: ListView(
+        physics: const NeverScrollableScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+        children: [
+          for (var i = 0; i < 3; i++) ...[
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.border),
+              ),
+              child: Row(
+                children: [
+                  AppShimmer.box(width: 40, height: 28, borderRadius: 4),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AppShimmer.box(
+                          width: 120,
+                          height: 16,
+                          borderRadius: 4,
+                        ),
+                        const SizedBox(height: 6),
+                        AppShimmer.box(width: 80, height: 12, borderRadius: 4),
+                      ],
+                    ),
+                  ),
+                  AppShimmer.box(width: 20, height: 20, borderRadius: 10),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Bank account picker rows (withdraw flow).
+class BankAccountListShimmer extends StatelessWidget {
+  const BankAccountListShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppShimmer(
+      child: ListView.separated(
+        physics: const NeverScrollableScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        itemCount: 3,
+        separatorBuilder: (_, _) => const SizedBox(height: 10),
+        itemBuilder: (_, _) => AppShimmer.box(
+          width: double.infinity,
+          height: 56,
+          borderRadius: 12,
+        ),
+      ),
+    );
+  }
+}
+
+/// KYC / Stripe onboarding WebView placeholder.
+class KycWebViewShimmer extends StatelessWidget {
+  const KycWebViewShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppShimmer(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          AppShimmer.box(width: double.infinity, height: 48, borderRadius: 8),
+          const SizedBox(height: 16),
+          AppShimmer.box(width: double.infinity, height: 120, borderRadius: 8),
+          const SizedBox(height: 12),
+          AppShimmer.box(width: double.infinity, height: 16, borderRadius: 4),
+          const SizedBox(height: 8),
+          AppShimmer.box(width: double.infinity, height: 16, borderRadius: 4),
+          const SizedBox(height: 8),
+          AppShimmer.box(width: 240, height: 16, borderRadius: 4),
+          const Spacer(),
+          AppShimmer.box(width: double.infinity, height: 44, borderRadius: 8),
+        ],
+      ),
+    );
+  }
+}
+
 
 

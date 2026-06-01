@@ -19,6 +19,7 @@ extension ProjectDetailEntityMemberUpdates on ProjectDetailEntity {
       currentAmount: currentAmount,
       endsIn: endsIn,
       announcement: announcement,
+      announcements: announcements,
       members: updatedMembers,
       borrowRequests: borrowRequests,
       viewerRole: viewerRole,

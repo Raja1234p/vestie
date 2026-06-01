@@ -20,6 +20,10 @@ class BaseApiClient {
     return _execute(() => dio.put<T>(path, data: data, queryParameters: queryParameters, options: options));
   }
 
+  Future<T> patch<T>(String path, {dynamic data, Map<String, dynamic>? queryParameters, Options? options}) async {
+    return _execute(() => dio.patch<T>(path, data: data, queryParameters: queryParameters, options: options));
+  }
+
   Future<T> delete<T>(String path, {dynamic data, Map<String, dynamic>? queryParameters, Options? options}) async {
     return _execute(() => dio.delete<T>(path, data: data, queryParameters: queryParameters, options: options));
   }

@@ -11,32 +11,40 @@ import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/features/wallet/domain/wallet_withdraw_policy.dart';
 import 'package:vestie/features/wallet/domain/withdraw_delivery_method.dart';
 import 'package:vestie/features/wallet/presentation/cubit/wallet_transaction_cubit.dart';
+import 'package:vestie/features/wallet/presentation/cubit/wallet_withdraw_cubit.dart';
 import 'wallet_detail_summary_row.dart';
 
 /// Confirm withdraw — same layout/typography as [WalletDepositConfirmSection].
 class WalletWithdrawConfirmSection extends StatelessWidget {
-  final WalletTransactionState state;
+  final WalletTransactionState txState;
+  final WalletWithdrawState withdrawState;
 
-  const WalletWithdrawConfirmSection({super.key, required this.state});
+  const WalletWithdrawConfirmSection({
+    super.key,
+    required this.txState,
+    required this.withdrawState,
+  });
 
   @override
   Widget build(BuildContext context) {
     final method =
-        state.withdrawDeliveryMethod ?? WithdrawDeliveryMethod.standard;
+        txState.withdrawDeliveryMethod ?? WithdrawDeliveryMethod.standard;
     final isInstant = method == WithdrawDeliveryMethod.instant;
-    final toLabel = state.payFromWallet
-        ? AppStrings.walletTitle
-        : state.selectedCard == null
-            ? AppStrings.emptyData
-            : '${state.selectedCard!.brandName} - ${state.selectedCard!.last4}';
-    final feeAmt = WalletWithdrawPolicy.feeAmount(state.amountParsed, method);
+    final preview = withdrawState.preview;
+    final toLabel = txState.selectedBankDisplayName ??
+        preview?.destinationDisplay ??
+        AppStrings.emptyData;
+    final feeAmt = preview?.feeAmount ??
+        WalletWithdrawPolicy.feeAmount(txState.amountParsed, method);
     final feeRow = isInstant
         ? AppStrings.withdrawFeeInstantRow(feeAmt)
         : AppStrings.walletFeeNone;
-    final eta = isInstant
-        ? AppStrings.withdrawProcessingInstantValue
-        : AppStrings.walletProcessingTimeValue;
-    final net = WalletWithdrawPolicy.netReceive(state.amountParsed, method);
+    final eta = preview?.processingTime ??
+        (isInstant
+            ? AppStrings.withdrawProcessingInstantValue
+            : AppStrings.walletProcessingTimeValue);
+    final net = preview?.youWillReceive ??
+        WalletWithdrawPolicy.netReceive(txState.amountParsed, method);
 
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(
@@ -62,7 +70,7 @@ class WalletWithdrawConfirmSection extends StatelessWidget {
             children: [
               Expanded(
                 child: AppText(
-                  state.formattedAmount,
+                  txState.formattedAmount,
                   style: GoogleFonts.lato(
                     fontSize: 40.sp,
                     fontWeight: FontWeight.w800,

@@ -10,7 +10,13 @@ import '../../../features/wallet/presentation/pages/transaction_confirmation_scr
 import '../../../features/wallet/presentation/pages/wallet_recent_activity_screen.dart';
 import '../../../features/wallet/presentation/pages/transaction_success_screen.dart';
 import '../../../features/wallet/presentation/pages/withdraw_method_screen.dart';
+import 'package:vestie/core/di/service_locator.dart';
+import 'package:vestie/features/wallet/presentation/cubit/wallet_deposit_cubit.dart';
+import 'package:vestie/features/wallet/presentation/cubit/wallet_withdraw_cubit.dart';
+import 'package:vestie/features/kyc/presentation/pages/kyc_onboarding_screen.dart';
+import 'package:vestie/features/wallet/presentation/pages/select_bank_account_screen.dart';
 import 'package:vestie/features/profile/presentation/pages/completed_projects_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../app_routes.dart';
 
@@ -57,8 +63,34 @@ List<RouteBase> buildProfileWalletRoutes() {
       builder: (context, _) => const PaymentMethodsScreen(isSelectionMode: true),
     ),
     GoRoute(
+      path: AppRoutes.selectBankAccount,
+      builder: (context, _) => const SelectBankAccountScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.kycOnboarding,
+      builder: (context, _) => const KycOnboardingScreen(),
+    ),
+    GoRoute(
       path: AppRoutes.transactionConfirmation,
-      builder: (context, _) => const TransactionConfirmationScreen(),
+      builder: (context, _) => MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (_) => WalletDepositCubit(
+              runWalletDepositUseCase:
+                  ServiceLocator.instance.runWalletDepositUseCase,
+            ),
+          ),
+          BlocProvider(
+            create: (_) => WalletWithdrawCubit(
+              previewWithdrawalUseCase:
+                  ServiceLocator.instance.previewWithdrawalUseCase,
+              runWalletWithdrawUseCase:
+                  ServiceLocator.instance.runWalletWithdrawUseCase,
+            ),
+          ),
+        ],
+        child: const TransactionConfirmationScreen(),
+      ),
     ),
     GoRoute(
       path: AppRoutes.transactionSuccess,

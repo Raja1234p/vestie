@@ -3,6 +3,7 @@ import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
 import 'borrow_request_entity.dart';
 import 'member_entity.dart';
+import 'project_announcement_entity.dart';
 import 'project_invite_entity.dart';
 import 'viewer_membership_role.dart';
 
@@ -21,7 +22,9 @@ class ProjectDetailEntity {
   final double goalAmount;
   final double currentAmount;
   final String endsIn;
+  /// Legacy field — project `description` from API (not leader announcements).
   final String announcement;
+  final List<ProjectAnnouncementEntity> announcements;
   final List<MemberEntity> members;
   final List<BorrowRequestEntity> borrowRequests;
   /// API `project.viewerRole`: `GroupLeader` | `CoLeader` | `Member`.
@@ -60,6 +63,7 @@ class ProjectDetailEntity {
     required this.currentAmount,
     required this.endsIn,
     required this.announcement,
+    this.announcements = const [],
     required this.members,
     required this.borrowRequests,
     this.viewerRole = ViewerMembershipRole.member,

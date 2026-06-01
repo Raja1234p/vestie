@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/app_shimmer.dart';
 import '../../../../core/widgets/common/app_purple_dashed_line.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../profile/presentation/widgets/profile_sub_header.dart';
@@ -21,33 +22,14 @@ class NotificationsScreen extends StatefulWidget {
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
-  /// Forces the empty-state art for 5s on open, then shows list or real empty.
-  bool _showIntroEmpty = true;
-
   @override
   void initState() {
     super.initState();
-    Future<void>.delayed(const Duration(seconds: 5), () {
-      if (mounted) setState(() => _showIntroEmpty = false);
-    });
+    context.read<NotificationsCubit>().load();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_showIntroEmpty) {
-      return Scaffold(
-        backgroundColor: Colors.transparent,
-        body: PostAuthGradientBackground(
-          child: Column(
-            children: [
-              ProfileSubHeader(title: AppStrings.notificationsTitle),
-              const Expanded(child: _EmptyNotifications()),
-            ],
-          ),
-        ),
-      );
-    }
-
     return BlocBuilder<NotificationsCubit, NotificationsState>(
       builder: (context, state) {
         return Scaffold(
@@ -57,9 +39,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               children: [
                 ProfileSubHeader(title: AppStrings.notificationsTitle),
                 Expanded(
-                  child: state.items.isEmpty
-                      ? const _EmptyNotifications()
-                      : _NotificationListView(items: state.items),
+                  child: state.loading
+                      ? const NotificationListShimmer()
+                      : state.items.isEmpty
+                          ? const _EmptyNotifications()
+                          : _NotificationListView(
+                              items: state.items,
+                              usedFallback: state.usedFallback,
+                            ),
                 ),
               ],
             ),
@@ -83,12 +70,10 @@ class _EmptyNotifications extends StatelessWidget {
           children: [
             Image.asset(
               AppAssets.emptyNotification,
-              width: 220.w,
-              height: 220.w,
+              width: 200.w,
               fit: BoxFit.contain,
-              filterQuality: FilterQuality.high,
             ),
-            SizedBox(height: 32.h),
+            SizedBox(height: 24.h),
             Text(
               AppStrings.notificationEmptyTitle,
               textAlign: TextAlign.center,
@@ -96,7 +81,6 @@ class _EmptyNotifications extends StatelessWidget {
                 fontSize: 22.sp,
                 fontWeight: FontWeight.w700,
                 color: AppColors.grey1100,
-                height: 1.2,
               ),
             ),
             SizedBox(height: 12.h),
@@ -118,9 +102,13 @@ class _EmptyNotifications extends StatelessWidget {
 }
 
 class _NotificationListView extends StatelessWidget {
-  const _NotificationListView({required this.items});
+  const _NotificationListView({
+    required this.items,
+    required this.usedFallback,
+  });
 
   final List<NotificationListEntry> items;
+  final bool usedFallback;
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +124,14 @@ class _NotificationListView extends StatelessWidget {
           padding: EdgeInsets.symmetric(vertical: 8.h),
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: _NotificationListTile(item: items[i]),
+            child: _NotificationListTile(
+              item: items[i],
+              onTap: usedFallback
+                  ? null
+                  : () => context
+                      .read<NotificationsCubit>()
+                      .markAsRead(items[i].id),
+            ),
           ),
         );
       },
@@ -145,20 +140,26 @@ class _NotificationListView extends StatelessWidget {
 }
 
 class _NotificationListTile extends StatelessWidget {
-  const _NotificationListTile({required this.item});
+  const _NotificationListTile({
+    required this.item,
+    this.onTap,
+  });
 
   final NotificationListEntry item;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return InkWell(
+      onTap: onTap,
+      child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           width: 48.w,
           height: 48.w,
-          decoration: const BoxDecoration(
-            color: AppColors.purple100,
+          decoration: BoxDecoration(
+            color: item.isRead ? AppColors.grey100 : AppColors.purple100,
             shape: BoxShape.circle,
           ),
           clipBehavior: Clip.antiAlias,
@@ -196,30 +197,24 @@ class _NotificationListTile extends StatelessWidget {
                 style: GoogleFonts.lato(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
-                  color: AppColors.grey800,
+                  color: AppColors.navInactive,
                   height: 1.35,
                 ),
               ),
             ],
           ),
         ),
-        SizedBox(width: 4.w),
-        ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: 80.w),
-          child: Text(
-            item.timeLabel,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.end,
-            style: GoogleFonts.lato(
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w400,
-              color: AppColors.grey500,
-              height: 1.2,
-            ),
+        SizedBox(width: 8.w),
+        Text(
+          item.timeLabel,
+          style: GoogleFonts.lato(
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w500,
+            color: AppColors.navInactive,
           ),
         ),
       ],
+      ),
     );
   }
 }

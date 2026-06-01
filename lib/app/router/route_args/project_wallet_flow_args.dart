@@ -28,5 +28,16 @@ class ProjectWalletFlowArgs {
         .toStringAsFixed(0)
         .replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (_) => ',');
   }
+
+  ProjectWalletFlowArgs copyWithWalletBalance(double balance) {
+    return ProjectWalletFlowArgs(
+      projectId: projectId,
+      projectName: projectName,
+      walletBalance: balance,
+      borrowLimit: borrowLimit,
+      borrowDueByLabel: borrowDueByLabel,
+      membershipId: membershipId,
+    );
+  }
 }
 

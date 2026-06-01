@@ -16,6 +16,9 @@ import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
+import 'package:vestie/core/utils/app_snackbar.dart';
+import 'package:vestie/core/utils/wallet_withdraw_validation.dart';
+
 import '../../domain/wallet_transaction_type.dart';
 import '../cubit/wallet_transaction_cubit.dart';
 
@@ -64,6 +67,11 @@ class _TransactionAmountScreenState extends State<TransactionAmountScreen> {
   }
 
   void _onContinueWithdraw(BuildContext context, WalletTransactionCubit cubit) {
+    final err = WalletWithdrawValidation.validateAmount(cubit.state.amountParsed);
+    if (err != null) {
+      AppSnackBar.showError(context, err);
+      return;
+    }
     cubit.prepareWithdrawMethodSelection();
     context.push(AppRoutes.withdrawMethod);
   }

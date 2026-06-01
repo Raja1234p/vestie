@@ -76,6 +76,47 @@ import '../../features/project_detail/domain/repositories/voting_repository.dart
 import '../../features/project_detail/data/repositories/voting_repository_impl.dart';
 import '../../features/project_detail/data/datasources/voting_remote_data_source.dart';
 import 'package:vestie/user/features/contributions/presentation/bloc/contribute_bloc.dart';
+import 'package:vestie/features/wallet/data/datasources/wallet_remote_data_source.dart';
+import 'package:vestie/features/wallet/data/repositories/wallet_repository_impl.dart';
+import 'package:vestie/features/wallet/domain/repositories/wallet_repository.dart';
+import 'package:vestie/features/wallet/domain/usecases/get_wallet_use_case.dart';
+import 'package:vestie/features/project_pot/data/datasources/project_pot_remote_data_source.dart';
+import 'package:vestie/features/project_pot/data/repositories/project_pot_repository_impl.dart';
+import 'package:vestie/features/project_pot/domain/repositories/project_pot_repository.dart';
+import 'package:vestie/features/project_pot/domain/usecases/get_project_pot_use_case.dart';
+import 'package:vestie/features/stripe/data/datasources/stripe_remote_data_source.dart';
+import 'package:vestie/features/stripe/data/repositories/stripe_repository_impl.dart';
+import 'package:vestie/features/stripe/domain/repositories/stripe_repository.dart';
+import 'package:vestie/core/stripe/stripe_payment_service.dart';
+import 'package:vestie/features/stripe/domain/usecases/get_stripe_config_use_case.dart';
+import 'package:vestie/features/payment_methods/data/datasources/payment_methods_remote_data_source.dart';
+import 'package:vestie/features/payment_methods/data/repositories/payment_methods_repository_impl.dart';
+import 'package:vestie/features/payment_methods/domain/repositories/payment_methods_repository.dart';
+import 'package:vestie/features/payment_methods/domain/usecases/payment_methods_usecases.dart';
+import 'package:vestie/features/wallet/data/datasources/wallet_deposit_remote_data_source.dart';
+import 'package:vestie/features/wallet/data/repositories/wallet_deposit_repository_impl.dart';
+import 'package:vestie/features/wallet/domain/repositories/wallet_deposit_repository.dart';
+import 'package:vestie/features/wallet/domain/usecases/run_wallet_deposit_use_case.dart';
+import 'package:vestie/features/kyc/data/datasources/kyc_remote_data_source.dart';
+import 'package:vestie/features/kyc/data/repositories/kyc_repository_impl.dart';
+import 'package:vestie/features/kyc/domain/repositories/kyc_repository.dart';
+import 'package:vestie/features/kyc/domain/usecases/kyc_usecases.dart';
+import 'package:vestie/features/bank_accounts/data/datasources/bank_accounts_remote_data_source.dart';
+import 'package:vestie/features/bank_accounts/data/repositories/bank_accounts_repository_impl.dart';
+import 'package:vestie/features/bank_accounts/domain/repositories/bank_accounts_repository.dart';
+import 'package:vestie/features/bank_accounts/domain/usecases/bank_accounts_usecases.dart';
+import 'package:vestie/features/wallet/data/datasources/wallet_withdrawal_remote_data_source.dart';
+import 'package:vestie/features/wallet/data/repositories/wallet_withdrawal_repository_impl.dart';
+import 'package:vestie/features/wallet/domain/repositories/wallet_withdrawal_repository.dart';
+import 'package:vestie/features/wallet/domain/usecases/wallet_withdrawal_usecases.dart';
+import 'package:vestie/features/project_announcements/data/datasources/project_announcements_remote_data_source.dart';
+import 'package:vestie/features/project_announcements/data/repositories/project_announcements_repository_impl.dart';
+import 'package:vestie/features/project_announcements/domain/repositories/project_announcements_repository.dart';
+import 'package:vestie/features/project_announcements/domain/usecases/project_announcements_usecases.dart';
+import 'package:vestie/features/notifications/data/datasources/notifications_remote_data_source.dart';
+import 'package:vestie/features/notifications/data/repositories/notifications_repository_impl.dart';
+import 'package:vestie/features/notifications/domain/repositories/notifications_repository.dart';
+import 'package:vestie/features/notifications/domain/usecases/notifications_usecases.dart';
 
 class ServiceLocator {
   ServiceLocator._();
@@ -144,6 +185,57 @@ class ServiceLocator {
   late final ResolveGoalUseCase resolveGoalUseCase;
   late final ExtendDeadlineUseCase extendDeadlineUseCase;
   late final CompleteProjectUseCase completeProjectUseCase;
+
+  // ── Wallet & project pot (Week 4+) ───────────────────────────────────────
+  late final WalletRemoteDataSource walletRemoteDataSource;
+  late final WalletRepository walletRepository;
+  late final GetWalletUseCase getWalletUseCase;
+  late final ProjectPotRemoteDataSource projectPotRemoteDataSource;
+  late final ProjectPotRepository projectPotRepository;
+  late final GetProjectPotUseCase getProjectPotUseCase;
+
+  late final StripeRemoteDataSource stripeRemoteDataSource;
+  late final StripeRepository stripeRepository;
+  late final GetStripeConfigUseCase getStripeConfigUseCase;
+  late final StripePaymentService stripePaymentService;
+
+  late final PaymentMethodsRemoteDataSource paymentMethodsRemoteDataSource;
+  late final PaymentMethodsRepository paymentMethodsRepository;
+  late final ListPaymentMethodsUseCase listPaymentMethodsUseCase;
+  late final SavePaymentCardUseCase savePaymentCardUseCase;
+  late final SetPrimaryPaymentMethodUseCase setPrimaryPaymentMethodUseCase;
+  late final RemovePaymentMethodUseCase removePaymentMethodUseCase;
+
+  late final WalletDepositRemoteDataSource walletDepositRemoteDataSource;
+  late final WalletDepositRepository walletDepositRepository;
+  late final RunWalletDepositUseCase runWalletDepositUseCase;
+
+  late final KycRemoteDataSource kycRemoteDataSource;
+  late final KycRepository kycRepository;
+  late final GetKycStatusUseCase getKycStatusUseCase;
+  late final StartKycUseCase startKycUseCase;
+
+  late final BankAccountsRemoteDataSource bankAccountsRemoteDataSource;
+  late final BankAccountsRepository bankAccountsRepository;
+  late final ListBankAccountsUseCase listBankAccountsUseCase;
+  late final RemoveBankAccountUseCase removeBankAccountUseCase;
+
+  late final WalletWithdrawalRemoteDataSource walletWithdrawalRemoteDataSource;
+  late final WalletWithdrawalRepository walletWithdrawalRepository;
+  late final PreviewWithdrawalUseCase previewWithdrawalUseCase;
+  late final RunWalletWithdrawUseCase runWalletWithdrawUseCase;
+
+  late final ProjectAnnouncementsRemoteDataSource projectAnnouncementsRemoteDataSource;
+  late final ProjectAnnouncementsRepository projectAnnouncementsRepository;
+  late final CreateProjectAnnouncementUseCase createProjectAnnouncementUseCase;
+  late final DeleteProjectAnnouncementUseCase deleteProjectAnnouncementUseCase;
+
+  late final NotificationsRemoteDataSource notificationsRemoteDataSource;
+  late final NotificationsRepository notificationsRepository;
+  late final ListNotificationsUseCase listNotificationsUseCase;
+  late final MarkNotificationsReadUseCase markNotificationsReadUseCase;
+  late final RegisterDeviceTokenUseCase registerDeviceTokenUseCase;
+  late final UnregisterDeviceTokenUseCase unregisterDeviceTokenUseCase;
 
   // ── Contributions Feature ────────────────────────────────────────────────
   late final ContributionRemoteDataSource contributionRemoteDataSource;
@@ -265,9 +357,92 @@ class ServiceLocator {
     extendDeadlineUseCase = ExtendDeadlineUseCase(projectActionsRepository);
     completeProjectUseCase = CompleteProjectUseCase(projectActionsRepository);
 
+    // ── Wallet & project pot ─────────────────────────────────────────────────
+    walletRemoteDataSource = WalletRemoteDataSourceImpl(apiClient: apiClient);
+    walletRepository = WalletRepositoryImpl(remoteDataSource: walletRemoteDataSource);
+    getWalletUseCase = GetWalletUseCase(walletRepository);
+    projectPotRemoteDataSource = ProjectPotRemoteDataSourceImpl(apiClient: apiClient);
+    projectPotRepository = ProjectPotRepositoryImpl(remoteDataSource: projectPotRemoteDataSource);
+    getProjectPotUseCase = GetProjectPotUseCase(projectPotRepository);
+
+    stripeRemoteDataSource = StripeRemoteDataSourceImpl(apiClient: apiClient);
+    stripeRepository = StripeRepositoryImpl(remoteDataSource: stripeRemoteDataSource);
+    getStripeConfigUseCase = GetStripeConfigUseCase(stripeRepository);
+    stripePaymentService = StripePaymentService();
+
+    paymentMethodsRemoteDataSource =
+        PaymentMethodsRemoteDataSourceImpl(apiClient: apiClient);
+    paymentMethodsRepository = PaymentMethodsRepositoryImpl(
+      remoteDataSource: paymentMethodsRemoteDataSource,
+    );
+    listPaymentMethodsUseCase =
+        ListPaymentMethodsUseCase(paymentMethodsRepository);
+    savePaymentCardUseCase = SavePaymentCardUseCase(paymentMethodsRepository);
+    setPrimaryPaymentMethodUseCase =
+        SetPrimaryPaymentMethodUseCase(paymentMethodsRepository);
+    removePaymentMethodUseCase =
+        RemovePaymentMethodUseCase(paymentMethodsRepository);
+
+    walletDepositRemoteDataSource =
+        WalletDepositRemoteDataSourceImpl(apiClient: apiClient);
+    walletDepositRepository = WalletDepositRepositoryImpl(
+      remoteDataSource: walletDepositRemoteDataSource,
+      walletRepository: walletRepository,
+      getStripeConfigUseCase: getStripeConfigUseCase,
+      stripePaymentService: stripePaymentService,
+    );
+    runWalletDepositUseCase = RunWalletDepositUseCase(walletDepositRepository);
+
+    kycRemoteDataSource = KycRemoteDataSourceImpl(apiClient: apiClient);
+    kycRepository = KycRepositoryImpl(remoteDataSource: kycRemoteDataSource);
+    getKycStatusUseCase = GetKycStatusUseCase(kycRepository);
+    startKycUseCase = StartKycUseCase(kycRepository);
+
+    bankAccountsRemoteDataSource =
+        BankAccountsRemoteDataSourceImpl(apiClient: apiClient);
+    bankAccountsRepository =
+        BankAccountsRepositoryImpl(remoteDataSource: bankAccountsRemoteDataSource);
+    listBankAccountsUseCase = ListBankAccountsUseCase(bankAccountsRepository);
+    removeBankAccountUseCase = RemoveBankAccountUseCase(bankAccountsRepository);
+
+    walletWithdrawalRemoteDataSource =
+        WalletWithdrawalRemoteDataSourceImpl(apiClient: apiClient);
+    walletWithdrawalRepository = WalletWithdrawalRepositoryImpl(
+      remoteDataSource: walletWithdrawalRemoteDataSource,
+      walletRepository: walletRepository,
+    );
+    previewWithdrawalUseCase =
+        PreviewWithdrawalUseCase(walletWithdrawalRepository);
+    runWalletWithdrawUseCase = RunWalletWithdrawUseCase(walletWithdrawalRepository);
+
+    projectAnnouncementsRemoteDataSource =
+        ProjectAnnouncementsRemoteDataSourceImpl(apiClient: apiClient);
+    projectAnnouncementsRepository = ProjectAnnouncementsRepositoryImpl(
+      remoteDataSource: projectAnnouncementsRemoteDataSource,
+    );
+    createProjectAnnouncementUseCase =
+        CreateProjectAnnouncementUseCase(projectAnnouncementsRepository);
+    deleteProjectAnnouncementUseCase =
+        DeleteProjectAnnouncementUseCase(projectAnnouncementsRepository);
+
+    notificationsRemoteDataSource =
+        NotificationsRemoteDataSourceImpl(apiClient: apiClient);
+    notificationsRepository =
+        NotificationsRepositoryImpl(remoteDataSource: notificationsRemoteDataSource);
+    listNotificationsUseCase = ListNotificationsUseCase(notificationsRepository);
+    markNotificationsReadUseCase =
+        MarkNotificationsReadUseCase(notificationsRepository);
+    registerDeviceTokenUseCase =
+        RegisterDeviceTokenUseCase(notificationsRepository);
+    unregisterDeviceTokenUseCase =
+        UnregisterDeviceTokenUseCase(notificationsRepository);
+
     // ── Contributions Feature ──────────────────────────────────────────────
     contributionRemoteDataSource = ContributionRemoteDataSourceImpl(apiClient: apiClient);
-    contributionRepository = ContributionRepositoryImpl(remoteDataSource: contributionRemoteDataSource);
+    contributionRepository = ContributionRepositoryImpl(
+      remoteDataSource: contributionRemoteDataSource,
+      walletRepository: walletRepository,
+    );
     fetchContributionConfigUseCase = FetchContributionConfigUseCase(contributionRepository);
     previewContributionUseCase = PreviewContributionUseCase(contributionRepository);
     confirmContributionUseCase = ConfirmContributionUseCase(contributionRepository);
@@ -319,6 +494,7 @@ class ServiceLocator {
         configUseCase: fetchContributionConfigUseCase,
         previewUseCase: previewContributionUseCase,
         confirmUseCase: confirmContributionUseCase,
+        getWalletUseCase: getWalletUseCase,
       );
 
   /// Fresh bloc per detail route — avoids stale project state from a shared instance.

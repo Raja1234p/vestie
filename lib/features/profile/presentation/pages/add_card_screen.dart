@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/di/service_locator.dart';
 import '../../../../core/utils/app_snackbar.dart';
 import '../../../../core/utils/person_name_input_formatter.dart';
 import '../../../../core/widgets/common/app_text_field.dart';
@@ -21,7 +22,9 @@ class AddCardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => AddCardCubit(),
+      create: (_) => AddCardCubit(
+        savePaymentCardUseCase: ServiceLocator.instance.savePaymentCardUseCase,
+      ),
       child: const _AddCardBody(),
     );
   }
@@ -49,6 +52,10 @@ class _AddCardBodyState extends State<_AddCardBody> {
   Future<void> _save(BuildContext ctx) async {
     final cubit = ctx.read<AddCardCubit>();
     final card = await cubit.save();
+    if (ctx.mounted && cubit.state.saveError != null) {
+      AppSnackBar.showError(ctx, cubit.state.saveError!);
+      return;
+    }
     if (card != null && ctx.mounted) {
       // If PaymentMethodsCubit is in scope (pushed from there), add the card
       try {

@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/di/service_locator.dart';
+import '../../../dashboard/domain/dashboard_prefetch.dart';
 import '../../domain/entities/risk_disclaimer.dart';
 import '../../domain/usecases/accept_risk_disclaimer_use_case.dart';
 import '../../domain/usecases/get_risk_disclaimer_use_case.dart';
@@ -79,7 +80,10 @@ class AgreementCubit extends Cubit<AgreementState> {
 
     result.fold(
       (failure) => emit(state.copyWith(isLoading: false, error: failure.message)),
-      (_) => emit(state.copyWith(isLoading: false, isSuccess: true)),
+      (_) {
+        DashboardPrefetch.markRiskDisclaimerAccepted();
+        emit(state.copyWith(isLoading: false, isSuccess: true));
+      },
     );
   }
 }

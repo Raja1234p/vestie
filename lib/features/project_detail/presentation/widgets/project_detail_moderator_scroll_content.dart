@@ -9,7 +9,10 @@ import 'package:vestie/features/project_detail/domain/entities/member_entity.dar
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
-import 'package:vestie/features/project_detail/presentation/widgets/announcement_card.dart';
+import 'package:vestie/core/di/service_locator.dart';
+import 'package:vestie/core/error/failure_mapper.dart';
+import 'package:vestie/core/utils/app_snackbar.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_announcements_section.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_success_vote_dev_previews.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_tab_section.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_trailing_actions.dart';
@@ -43,6 +46,25 @@ class ProjectDetailModeratorScrollContent extends StatefulWidget {
 class _ProjectDetailModeratorScrollContentState
     extends State<ProjectDetailModeratorScrollContent> {
   bool _previewViewSuccessVotesScenario = false;
+  bool _deletingAnnouncement = false;
+
+  Future<void> _deleteAnnouncement(String announcementId) async {
+    if (_deletingAnnouncement) return;
+    setState(() => _deletingAnnouncement = true);
+    final result =
+        await ServiceLocator.instance.deleteProjectAnnouncementUseCase(
+      projectId: widget.project.id,
+      announcementId: announcementId,
+    );
+    if (!mounted) return;
+    setState(() => _deletingAnnouncement = false);
+    await result.fold(
+      (failure) async {
+        AppSnackBar.showError(context, FailureMapper.userMessage(failure));
+      },
+      (_) async => widget.onRefresh(),
+    );
+  }
 
   bool get _showViewSuccessVotesCta =>
       widget.project.showsViewSuccessVotesAction ||
@@ -98,10 +120,12 @@ class _ProjectDetailModeratorScrollContentState
               child: Column(
                 children: [
                   SizedBox(height: 12.h),
-                  AnnouncementCard(
-                    text: project.announcement,
+                  ProjectAnnouncementsSection(
+                    announcements: project.announcements,
                     canDeleteAnnouncement: project.isModeratorView,
-                    onDelete: project.isModeratorView ? () {} : null,
+                    onDeleteAnnouncement: project.isModeratorView
+                        ? _deleteAnnouncement
+                        : null,
                   ),
                   SizedBox(height: 12.h),
                   ProjectInfoCard(project: project),

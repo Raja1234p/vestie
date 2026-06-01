@@ -723,6 +723,26 @@ class AppStrings {
   // ── Profile ───────────────────────────────────────────────────────────────
   static const String takePhoto             = 'Take Photo';
   static const String chooseFromGallery     = 'Choose from Gallery';
+  static const String permissionCameraTitle = 'Camera access needed';
+  static const String permissionPhotosTitle = 'Photo library access needed';
+  static const String permissionCameraDenied =
+      'Camera access was denied. You can enable it in Settings.';
+  static const String permissionPhotosDenied =
+      'Photo library access was denied. You can enable it in Settings.';
+  static const String permissionCameraSettingsBody =
+      'Open Settings → Vestie → Camera and allow access to take a profile photo.';
+  static const String permissionPhotosSettingsBody =
+      'Open Settings → Vestie → Photos and allow access to choose a profile picture.';
+  static const String permissionNotificationsTitle = 'Enable notifications';
+  static const String permissionNotificationsDenied =
+      'Notifications are off. Enable them in Settings to get project and wallet updates.';
+  static const String permissionNotificationsPromptBody =
+      'Get alerts for contributions, withdrawals, and project activity. You can change this anytime in Settings.';
+  static const String permissionNotificationsSettingsBody =
+      'Open Settings → Vestie → Notifications and turn notifications on.';
+  static const String btnOpenSettings = 'Open Settings';
+  static const String btnEnableNotifications = 'Enable';
+  static const String btnNotNow = 'Not now';
   static const String profileUpdatedSuccess = 'Profile updated successfully!';
   static const String profileChangeImage = 'Change Image';
   static const String profileRemoveImage = 'Remove Image';
@@ -740,6 +760,14 @@ class AppStrings {
   static const String walletAmountLabel        = 'Wallet Amount';
   /// Wallet tab — balance heading (Figma).
   static const String walletBalanceHeading     = 'Wallet Balance';
+  static const String walletPendingWithdrawalLabel = 'Pending withdrawal';
+  static const String kycOnboardingTitle = 'Identity verification';
+  static const String kycOnboardingUrlMissing =
+      'Could not start verification. Please try again.';
+  static const String kycRequiredForWithdrawTitle = 'Verification required';
+  static const String kycRequiredForWithdrawBody =
+      'Complete identity verification before withdrawing funds.';
+  static const String btnVerifyIdentity = 'Verify identity';
   static const String walletBalanceLabel       = 'Wallet Balance:';
   static const String btnDepositFunds          = 'Deposit Funds';
   static const String btnWithdrawFunds         = 'Withdraw Funds';
@@ -770,6 +798,17 @@ class AppStrings {
   static const String btnConfirm                = 'Confirm';
   static const String btnDone                   = 'Done';
   static const String depositSuccessTitle       = 'Deposit Successful';
+  static const String depositStripeNotConfigured =
+      'Card payments are not available right now. Please try again later.';
+  static const String depositMissingClientSecret =
+      'Could not start card payment. Please try again.';
+  static const String depositMissingPaymentIntentId =
+      'Payment could not be verified. Check your wallet balance.';
+  static const String depositPaymentCancelled = 'Deposit cancelled.';
+  static const String depositPaymentFailed =
+      'Card payment failed. Check your card or try another payment method.';
+  static const String depositPollTimeout =
+      'Payment is still processing. Check your wallet shortly.';
   static String depositSuccessBody(String amount) =>
       '$amount has been added to your wallet.';
   static const String withdrawSuccessTitle      = 'Withdrawal Requested';

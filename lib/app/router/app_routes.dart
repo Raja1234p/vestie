@@ -54,6 +54,8 @@ class AppRoutes {
   static const String withdrawMethod         = '/wallet/withdraw-method';
   static const String walletRecentActivity   = '/wallet/recent-activity';
   static const String selectPaymentMethod    = '/wallet/select-payment-method';
+  static const String selectBankAccount      = '/wallet/select-bank-account';
+  static const String kycOnboarding          = '/kyc/onboarding';
   static const String transactionConfirmation= '/wallet/transaction-confirmation';
   static const String transactionSuccess     = '/wallet/transaction-success';
 

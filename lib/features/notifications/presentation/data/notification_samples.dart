@@ -8,36 +8,43 @@ const bool kOpenNotificationsWithSampleList = true;
 /// Debug / design preview only — matches the notification list reference.
 const List<NotificationListEntry> kDebugNotificationSamples = [
   NotificationListEntry(
+    id: 'sample-1',
     title: AppStrings.notificationSample1Title,
     body: AppStrings.notificationSample1Body,
     timeLabel: AppStrings.notificationTime3min,
   ),
   NotificationListEntry(
+    id: 'sample-2',
     title: AppStrings.notificationSample2Title,
     body: AppStrings.notificationSample2Body,
     timeLabel: AppStrings.notificationTime12min,
   ),
   NotificationListEntry(
+    id: 'sample-3',
     title: AppStrings.notificationSample3Title,
     body: AppStrings.notificationSample3Body,
     timeLabel: AppStrings.notificationTime1hr,
   ),
   NotificationListEntry(
+    id: 'sample-4',
     title: AppStrings.notificationSample4Title,
     body: AppStrings.notificationSample4Body,
     timeLabel: AppStrings.notificationTime2hr,
   ),
   NotificationListEntry(
+    id: 'sample-5',
     title: AppStrings.notificationSample5Title,
     body: AppStrings.notificationSample5Body,
     timeLabel: AppStrings.notificationTimeYesterday,
   ),
   NotificationListEntry(
+    id: 'sample-6',
     title: AppStrings.notificationSample6Title,
     body: AppStrings.notificationSample6Body,
     timeLabel: AppStrings.notificationTimeYesterday,
   ),
   NotificationListEntry(
+    id: 'sample-7',
     title: AppStrings.notificationSample7Title,
     body: AppStrings.notificationSample7Body,
     timeLabel: AppStrings.notificationTime2days,

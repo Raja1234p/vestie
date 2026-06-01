@@ -13,6 +13,7 @@ import 'package:vestie/features/project_detail/presentation/pages/group_members_
 import 'package:vestie/leader/features/project_detail/presentation/pages/borrow_requests_screen.dart';
 import 'package:vestie/leader/features/project_detail/presentation/pages/cancel_project_screen.dart';
 import 'package:vestie/leader/features/project_detail/presentation/pages/leader_project_settings_screen.dart';
+import 'package:vestie/features/project_detail/domain/entities/create_announcement_route_args.dart';
 import 'package:vestie/leader/features/project_detail/presentation/pages/create_announcement_screen.dart';
 import 'package:vestie/leader/features/project_detail/presentation/pages/join_requests_screen.dart';
 import 'package:vestie/leader/features/project_detail/presentation/pages/leader_view_success_votes_screen.dart';
@@ -131,7 +132,11 @@ List<RouteBase> buildProjectRoutes({
     ),
     GoRoute(
       path: AppRoutes.createAnnouncement,
-      builder: (context, _) => const CreateAnnouncementScreen(),
+      builder: (context, state) {
+        final extra = state.extra;
+        if (extra is! CreateAnnouncementRouteArgs) return invalidRouteScreen();
+        return CreateAnnouncementScreen(projectId: extra.projectId);
+      },
     ),
     GoRoute(
       path: AppRoutes.leaderProjectSettings,

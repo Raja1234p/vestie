@@ -10,7 +10,6 @@ import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_stacked_currency_field.dart';
 import 'package:vestie/core/widgets/common/app_tick_switch.dart';
-import 'package:vestie/core/widgets/common/app_purple_dashed_line.dart';
 import 'package:vestie/core/widgets/common/app_success_screen.dart';
 import 'package:vestie/core/widgets/common/app_text.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
