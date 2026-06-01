@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/widgets/common/app_back_button.dart';
+import 'auth_go_back_button.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/common/app_text_field.dart';
 import '../bloc/forgot_password_bloc.dart';
@@ -57,11 +57,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
               // behind the header looks identical.
               SizedBox(height: 40.h),
 
-              // ── Back arrow ────────────────────────────────────────
-              AppBackButton(
-                onPressed: () => context.pop(),
-                color: AppColors.authTitle,
-              ),
+              AuthGoBackButton(onPressed: () => context.pop()),
               SizedBox(height: 24.h),
 
               // ── Title ─────────────────────────────────────────────

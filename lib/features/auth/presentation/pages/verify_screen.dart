@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/widgets/common/app_back_button.dart';
+import '../widgets/auth_go_back_button.dart';
 import '../../../../core/widgets/common/app_failure_dialog.dart';
 import '../../../../core/widgets/common/app_toast.dart';
 import '../../../../core/widgets/common/app_loading_dialog.dart';
@@ -134,12 +134,11 @@ class _VerifyScreenState extends State<VerifyScreen> {
               children: [
                 SizedBox(height: 48.h),
                 if (widget.flow == VerifyFlow.forgotPassword) ...[
-                  AppBackButton(
+                  AuthGoBackButton(
                     onPressed: () {
                       FocusScope.of(context).unfocus();
                       context.pop();
                     },
-                    color: AppColors.authTitle,
                   ),
                   SizedBox(height: 20.h),
                 ],

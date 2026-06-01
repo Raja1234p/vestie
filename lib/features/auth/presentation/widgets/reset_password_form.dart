@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/widgets/common/app_back_button.dart';
+import 'auth_go_back_button.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import 'auth_password_visibility_icon.dart';
 import '../../../../core/widgets/common/app_text_field.dart';
@@ -73,14 +73,13 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 48.h),
-              AppBackButton(
+              AuthGoBackButton(
                 onPressed: () {
                   _newPassCtrl.clear();
                   _confirmCtrl.clear();
                   context.read<ResetPasswordFormCubit>().reset();
                   context.pop();
                 },
-                color: AppColors.authTitle,
               ),
               SizedBox(height: 20.h),
               Text(

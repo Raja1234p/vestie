@@ -217,7 +217,7 @@ class _RegisterFormState extends State<RegisterForm> {
                       Text(
                         AppStrings.hasAccount,
                         style: GoogleFonts.lato(
-                          fontSize: 18.sp,
+                          fontSize: 16.sp,
                           fontWeight: FontWeight.w600,
                           color: AppColors.grey900,
                           height: 1.35,
@@ -229,7 +229,7 @@ class _RegisterFormState extends State<RegisterForm> {
                         child: Text(
                           AppStrings.loginLink,
                           style: GoogleFonts.lato(
-                            fontSize: 18.sp,
+                            fontSize: 16.sp,
                             fontWeight: FontWeight.w600,
                             color: AppColors.grey900,
                             height: 1.35,

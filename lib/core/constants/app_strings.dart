@@ -71,7 +71,7 @@ class AppStrings {
 
   // Validation hints
   static const String passwordHint =
-      '8+ chars: uppercase, lowercase, number & symbol';
+      '8+ characters with letters and numbers';
 
   // Forgot Password
   static const String forgotTitle          = 'Forgot your password?';
@@ -93,6 +93,7 @@ class AppStrings {
   static const String passwordUpdatedTitle   = 'Password Updated!';
   static const String passwordUpdatedSubtitle =
       'Your password has been changed successfully. You can now log in with your new password.';
+  static const String btnGoBack              = 'Go Back';
   static const String btnBackToLogin         = 'Back to Login';
 
   // Agreement Screen
