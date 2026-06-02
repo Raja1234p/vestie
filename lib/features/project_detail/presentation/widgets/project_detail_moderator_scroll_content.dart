@@ -127,8 +127,8 @@ class _ProjectDetailModeratorScrollContentState
                   ProjectAnnouncementsSection(
                     project: project,
                     onDeleteAnnouncement: _deleteAnnouncement,
+                    gapAfter: 12.h,
                   ),
-                  SizedBox(height: 12.h),
                   ProjectInfoCard(project: project),
                   if (project.showsSuccessVoteDevPreviews) ...[
                     ProjectDetailSuccessVoteDevPreviews(

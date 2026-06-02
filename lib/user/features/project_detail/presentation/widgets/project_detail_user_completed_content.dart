@@ -50,8 +50,8 @@ class ProjectDetailUserCompletedContent extends StatelessWidget {
         ProjectAnnouncementsSection(
           project: project,
           onDeleteAnnouncement: onDeleteAnnouncement,
+          gapAfter: 12.h,
         ),
-        SizedBox(height: 12.h),
         ProjectInfoCard(project: project),
         SizedBox(height: 16.h),
         CompletedProjectNoticeBar(

@@ -15,10 +15,18 @@ class ProjectAnnouncementsSection extends StatefulWidget {
   /// Returns `true` when the API delete succeeded.
   final Future<bool> Function(String announcementId)? onDeleteAnnouncement;
 
+  /// Vertical gap above the first card (omitted when there are no announcements).
+  final double gapBefore;
+
+  /// Vertical gap below the last card (omitted when there are no announcements).
+  final double gapAfter;
+
   const ProjectAnnouncementsSection({
     super.key,
     required this.project,
     this.onDeleteAnnouncement,
+    this.gapBefore = 0,
+    this.gapAfter = 0,
   });
 
   @override
@@ -78,7 +86,9 @@ class _ProjectAnnouncementsSectionState extends State<ProjectAnnouncementsSectio
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
       children: [
+        if (widget.gapBefore > 0) SizedBox(height: widget.gapBefore),
         for (var i = 0; i < _visible.length; i++) ...[
           if (i > 0) SizedBox(height: 10.h),
           AnnouncementCard(
@@ -91,6 +101,7 @@ class _ProjectAnnouncementsSectionState extends State<ProjectAnnouncementsSectio
                 : null,
           ),
         ],
+        if (widget.gapAfter > 0) SizedBox(height: widget.gapAfter),
       ],
     );
   }

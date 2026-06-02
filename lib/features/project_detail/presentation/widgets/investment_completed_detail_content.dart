@@ -41,8 +41,8 @@ class InvestmentCompletedDetailContent extends StatelessWidget {
         ProjectAnnouncementsSection(
           project: project,
           onDeleteAnnouncement: onDeleteAnnouncement,
+          gapAfter: 12.h,
         ),
-        SizedBox(height: 12.h),
         ProjectInfoCard(
           project: project,
           displayAsCompleted: true,

@@ -296,8 +296,8 @@ class _InvestmentProjectDetailBodyState
                                   ProjectAnnouncementsSection(
                                     project: project,
                                     onDeleteAnnouncement: _deleteAnnouncement,
+                                    gapAfter: 12.h,
                                   ),
-                                  SizedBox(height: 12.h),
                                   ProjectInfoCard(project: project),
                                   SizedBox(height: 16.h),
                                   ProjectDetailWalletActions(project: project),
