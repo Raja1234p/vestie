@@ -48,21 +48,25 @@ class _ProjectDetailModeratorScrollContentState
   bool _previewViewSuccessVotesScenario = false;
   bool _deletingAnnouncement = false;
 
-  Future<void> _deleteAnnouncement(String announcementId) async {
-    if (_deletingAnnouncement) return;
+  Future<bool> _deleteAnnouncement(String announcementId) async {
+    if (_deletingAnnouncement) return false;
     setState(() => _deletingAnnouncement = true);
     final result =
         await ServiceLocator.instance.deleteProjectAnnouncementUseCase(
       projectId: widget.project.id,
       announcementId: announcementId,
     );
-    if (!mounted) return;
+    if (!mounted) return false;
     setState(() => _deletingAnnouncement = false);
-    await result.fold(
-      (failure) async {
+    return result.fold(
+      (failure) {
         AppSnackBar.showError(context, FailureMapper.userMessage(failure));
+        return false;
       },
-      (_) async => widget.onRefresh(),
+      (_) {
+        widget.onRefresh();
+        return true;
+      },
     );
   }
 
@@ -121,11 +125,8 @@ class _ProjectDetailModeratorScrollContentState
                 children: [
                   SizedBox(height: 12.h),
                   ProjectAnnouncementsSection(
-                    announcements: project.announcements,
-                    canDeleteAnnouncement: project.isModeratorView,
-                    onDeleteAnnouncement: project.isModeratorView
-                        ? _deleteAnnouncement
-                        : null,
+                    project: project,
+                    onDeleteAnnouncement: _deleteAnnouncement,
                   ),
                   SizedBox(height: 12.h),
                   ProjectInfoCard(project: project),

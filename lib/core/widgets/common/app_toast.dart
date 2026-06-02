@@ -22,6 +22,11 @@ class AppToast {
     _show(context, message: message, backgroundColor: AppColors.green700);
   }
 
+  /// Neutral hint (e.g. action blocked until setup is complete).
+  static void showInfo(BuildContext context, String message) {
+    _show(context, message: message, backgroundColor: AppColors.grey900);
+  }
+
   static void showApiFailure(BuildContext context, Failure failure) {
     showError(context, FailureMapper.userMessage(failure));
   }

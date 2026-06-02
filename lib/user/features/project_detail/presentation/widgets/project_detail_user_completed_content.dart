@@ -19,7 +19,7 @@ class ProjectDetailUserCompletedContent extends StatelessWidget {
   final ValueChanged<MemberEntity> onMemberTap;
   final ValueChanged<MemberEntity>? onSendVffRequest;
   final String? sendingVffUserId;
-  final Future<void> Function(String announcementId)? onDeleteAnnouncement;
+  final Future<bool> Function(String announcementId)? onDeleteAnnouncement;
 
   const ProjectDetailUserCompletedContent({
     super.key,
@@ -48,10 +48,8 @@ class ProjectDetailUserCompletedContent extends StatelessWidget {
       children: [
         SizedBox(height: 12.h),
         ProjectAnnouncementsSection(
-          announcements: project.announcements,
-          canDeleteAnnouncement: project.isModeratorView,
-          onDeleteAnnouncement:
-              project.isModeratorView ? onDeleteAnnouncement : null,
+          project: project,
+          onDeleteAnnouncement: onDeleteAnnouncement,
         ),
         SizedBox(height: 12.h),
         ProjectInfoCard(project: project),

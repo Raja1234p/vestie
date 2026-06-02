@@ -5,7 +5,10 @@ import 'package:go_router/go_router.dart';
 import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/services/risk_disclaimer_gate.dart';
+import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
+import 'package:vestie/core/widgets/common/app_toast.dart';
+import 'package:vestie/app/router/route_args/project_wallet_flow_args.dart';
 import 'package:vestie/user/features/contributions/data/models/contribution_submit_result_model.dart';
 import '../../domain/entities/project_detail_entity.dart';
 import '../navigation/project_detail_navigation_helpers.dart';
@@ -59,18 +62,42 @@ class ProjectDetailWalletActions extends StatelessWidget {
         ),
         if (project.showsBorrowAction) ...[
           SizedBox(height: 13.h),
-          AppButton(
-            text: AppStrings.btnBorrow,
-            onPressed: project.canViewerBorrow
-                ? () => context.push(
-                      AppRoutes.borrowFlow,
-                      extra: walletArgs,
-                    )
-                : null,
-            isSecondary: true,
+          _BorrowButton(
+            project: project,
+            walletArgs: walletArgs,
           ),
         ],
       ],
+    );
+  }
+}
+
+class _BorrowButton extends StatelessWidget {
+  final ProjectDetailEntity project;
+  final ProjectWalletFlowArgs walletArgs;
+
+  const _BorrowButton({
+    required this.project,
+    required this.walletArgs,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final blocked = project.isBorrowDisabledForViewer;
+
+    return AppButton(
+      text: AppStrings.btnBorrow,
+      isSecondary: true,
+      secondaryFillColor: blocked ? AppColors.grey800 : null,
+      secondaryBorderColor: blocked ? AppColors.grey800 : null,
+      secondaryLabelColor: blocked ? AppColors.surface : null,
+      onPressed: () {
+        if (blocked) {
+          AppToast.showInfo(context, AppStrings.borrowRequiresCoLeaderMessage);
+          return;
+        }
+        context.push(AppRoutes.borrowFlow, extra: walletArgs);
+      },
     );
   }
 }

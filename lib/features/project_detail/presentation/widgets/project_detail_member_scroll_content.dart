@@ -26,9 +26,7 @@ class ProjectDetailMemberScrollContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SizedBox(height: 12.h),
-        ProjectAnnouncementsSection(
-          announcements: project.announcements,
-        ),
+        ProjectAnnouncementsSection(project: project),
         SizedBox(height: 12.h),
         ProjectInfoCard(project: project),
         SizedBox(height: 16.h),

@@ -99,21 +99,27 @@ class _InvestmentProjectDetailBodyState
   bool _previewCompletedInvestment = false;
   bool _previewSuccessVote = false;
 
-  Future<void> _deleteAnnouncement(String announcementId) async {
+  Future<bool> _deleteAnnouncement(String announcementId) async {
     final result =
         await ServiceLocator.instance.deleteProjectAnnouncementUseCase(
       projectId: widget.projectId,
       announcementId: announcementId,
     );
-    if (!mounted) return;
-    result.fold(
-      (failure) => AppSnackBar.showError(
-        context,
-        FailureMapper.userMessage(failure),
-      ),
-      (_) => context.read<ProjectDetailBloc>().add(
-            LoadProjectDetailEvent(projectId: widget.projectId),
-          ),
+    if (!mounted) return false;
+    return result.fold(
+      (failure) {
+        AppSnackBar.showError(
+          context,
+          FailureMapper.userMessage(failure),
+        );
+        return false;
+      },
+      (_) {
+        context.read<ProjectDetailBloc>().add(
+              LoadProjectDetailEvent(projectId: widget.projectId),
+            );
+        return true;
+      },
     );
   }
 
@@ -288,12 +294,8 @@ class _InvestmentProjectDetailBodyState
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   ProjectAnnouncementsSection(
-                                    announcements: project.announcements,
-                                    canDeleteAnnouncement:
-                                        project.isModeratorView,
-                                    onDeleteAnnouncement: project.isModeratorView
-                                        ? _deleteAnnouncement
-                                        : null,
+                                    project: project,
+                                    onDeleteAnnouncement: _deleteAnnouncement,
                                   ),
                                   SizedBox(height: 12.h),
                                   ProjectInfoCard(project: project),

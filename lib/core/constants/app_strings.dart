@@ -774,7 +774,7 @@ class AppStrings {
   /// Wallet tab — balance heading (Figma).
   static const String walletBalanceHeading     = 'Wallet Balance';
   static const String walletPendingWithdrawalLabel = 'Pending withdrawal';
-  static const String kycOnboardingTitle = 'Identity verification';
+  static const String kycOnboardingTitle = 'KYC';
   static const String kycOnboardingUrlMissing =
       'Could not start verification. Please try again.';
   static const String kycRequiredForWithdrawTitle = 'Verification required';
@@ -946,6 +946,8 @@ class AppStrings {
       'The group leader has marked this project as complete. You can no longer add contributions or borrow from this project.';
   static const String btnContribute             = 'Contribute';
   static const String btnBorrow                 = 'Borrow';
+  static const String borrowRequiresCoLeaderMessage =
+      'Add a co-leader to your project first. After that, you can submit a borrow request.';
   static const String tabBorrowRequests         = 'Borrow Requests';
   static const String tabMembers                = 'Members';
   static const String tabMember                 = 'Member';

@@ -13,7 +13,7 @@ import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/core/di/service_locator.dart';
-import 'package:vestie/core/utils/app_snackbar.dart';
+import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
 class CreateAnnouncementScreen extends StatefulWidget {
   final String projectId;
@@ -78,9 +78,9 @@ class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
     if (!mounted) return;
     setState(() => _submitting = false);
     result.fold(
-      (f) => AppSnackBar.showError(context, FailureMapper.userMessage(f)),
+      (f) => AppToast.showError(context, FailureMapper.userMessage(f)),
       (_) {
-        AppSnackBar.showSuccess(context, AppStrings.btnCreateAnnouncement);
+        AppToast.showSuccess(context, AppStrings.btnCreateAnnouncement);
         context.pop(true);
       },
     );
