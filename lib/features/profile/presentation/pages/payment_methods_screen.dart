@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
+import 'package:vestie/app/router/app_routes.dart';
+import 'package:vestie/features/wallet/presentation/cubit/wallet_transaction_cubit.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/widgets/common/app_toast.dart';
@@ -8,6 +11,7 @@ import '../../../../core/widgets/common/app_shimmer.dart';
 import '../../../../core/widgets/common/flow_screen_footer.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../domain/entities/payment_method_picker_behavior.dart';
+import '../../domain/payment_method_auto_select.dart';
 import '../cubit/payment_methods_cubit.dart';
 import '../widgets/payment_card_list.dart';
 import '../widgets/payment_empty_view.dart';
@@ -75,16 +79,40 @@ class _PaymentBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<PaymentMethodsCubit, PaymentMethodsState>(
       listenWhen: (prev, next) =>
-          prev.errorMessage != next.errorMessage &&
-          next.errorMessage != null &&
-          next.settingPrimaryCardId == null &&
-          next.removingCardId == null &&
-          !next.addingCard,
+          (prev.errorMessage != next.errorMessage &&
+              next.errorMessage != null &&
+              next.settingPrimaryCardId == null &&
+              next.removingCardId == null &&
+              !next.addingCard) ||
+          (isSelectionMode &&
+              pickerBehavior == PaymentMethodPickerBehavior.depositFlow &&
+              prev.loading &&
+              !next.loading &&
+              !next.addingCard &&
+              next.errorMessage == null),
       listener: (context, state) {
-        AppToast.showError(
-          context,
-          state.errorMessage ?? AppStrings.paymentMethodsLoadFailed,
-        );
+        if (state.errorMessage != null &&
+            state.settingPrimaryCardId == null &&
+            state.removingCardId == null &&
+            !state.addingCard) {
+          AppToast.showError(
+            context,
+            state.errorMessage ?? AppStrings.paymentMethodsLoadFailed,
+          );
+          return;
+        }
+
+        if (!isSelectionMode ||
+            pickerBehavior != PaymentMethodPickerBehavior.depositFlow ||
+            state.loading) {
+          return;
+        }
+
+        final autoCard = PaymentMethodAutoSelect.resolve(state.cards);
+        if (autoCard == null) return;
+
+        context.read<WalletTransactionCubit>().selectCard(autoCard);
+        context.pushReplacement(AppRoutes.transactionConfirmation);
       },
       builder: (context, state) {
         final isEmpty = !state.loading && state.cards.isEmpty;

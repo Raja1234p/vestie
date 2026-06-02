@@ -62,6 +62,11 @@ class _PaymentCardListState extends State<PaymentCardList> {
       return;
     }
     context.read<WalletTransactionCubit>().selectCard(card);
+    if (widget.pickerBehavior ==
+        PaymentMethodPickerBehavior.depositFlowChangeCard) {
+      context.pop();
+      return;
+    }
     context.push(AppRoutes.transactionConfirmation);
   }
 
@@ -85,8 +90,7 @@ class _PaymentCardListState extends State<PaymentCardList> {
         cards: widget.cards,
         selectedCardId: _selectedCardId,
         walletSelected: _selection == _PaymentPickerSelection.wallet,
-        showWalletOption:
-            widget.pickerBehavior != PaymentMethodPickerBehavior.depositFlow,
+        showWalletOption: !widget.pickerBehavior.isDepositPicker,
         onSelectCard: _selectCard,
         onSelectWallet: _selectWallet,
         onAdd: widget.onAdd,

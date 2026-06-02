@@ -833,6 +833,9 @@ class AppStrings {
   static const String depositPaymentCancelled = 'Deposit cancelled.';
   static const String depositPaymentFailed =
       'Card payment failed. Check your card or try another payment method.';
+  static const String depositChangePaymentMethod = 'Change card';
+  static const String depositCardInsufficientHint =
+      'This card could not complete the payment. Try another card or check your bank.';
   static const String depositPollTimeout =
       'Payment is still processing. Check your wallet shortly.';
   static const String depositStatusAborted =
@@ -894,7 +897,9 @@ class AppStrings {
   static const String contributeNonRefundable  =
       'I understand this contribution is non-refundable';
   static const String contributeWalletInsufficientSubtitle =
-      'Insufficient balance for this total';
+      'Insufficient balance for this total. Tap above to choose a card.';
+  static const String contributeSelectCardRequired =
+      'Select a payment card to continue.';
   static String contributeDepositForWalletMessage(String amountFormatted) =>
       'Contributions are paid from your Vestie wallet. Deposit at least '
       '$amountFormatted to continue, then return and pay with Wallet.';

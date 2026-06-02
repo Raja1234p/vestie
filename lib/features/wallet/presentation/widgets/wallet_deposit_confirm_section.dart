@@ -18,8 +18,15 @@ import 'wallet_detail_summary_row.dart';
 /// Confirm deposit — hero amount + breakdown card (Figma).
 class WalletDepositConfirmSection extends StatelessWidget {
   final WalletTransactionState state;
+  final String? depositErrorMessage;
+  final VoidCallback? onChangePaymentMethod;
 
-  const WalletDepositConfirmSection({super.key, required this.state});
+  const WalletDepositConfirmSection({
+    super.key,
+    required this.state,
+    this.depositErrorMessage,
+    this.onChangePaymentMethod,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -94,13 +101,50 @@ class WalletDepositConfirmSection extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    WalletDetailSummaryRow(
-                      label: AppStrings.labelFrom,
-                      value: fromLabel,
-                      labelColor: AppColors.neutral700,
-                      valueColor: AppColors.neutral1200,
-                      valueWeight: FontWeight.w600,
+                    InkWell(
+                      onTap: onChangePaymentMethod,
+                      borderRadius: BorderRadius.circular(8.r),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 2.h),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: WalletDetailSummaryRow(
+                                label: AppStrings.labelFrom,
+                                value: fromLabel,
+                                labelColor: AppColors.neutral700,
+                                valueColor: AppColors.neutral1200,
+                                valueWeight: FontWeight.w600,
+                              ),
+                            ),
+                            if (onChangePaymentMethod != null) ...[
+                              SizedBox(width: 8.w),
+                              AppText(
+                                AppStrings.depositChangePaymentMethod,
+                                style: GoogleFonts.lato(
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.purple900,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
                     ),
+                    if (depositErrorMessage != null &&
+                        depositErrorMessage!.isNotEmpty) ...[
+                      SizedBox(height: AppDimens.v10),
+                      AppText(
+                        depositErrorMessage!,
+                        style: GoogleFonts.lato(
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.red900,
+                          height: 1.35,
+                        ),
+                      ),
+                    ],
                     SizedBox(height: AppDimens.v14),
                     WalletDetailSummaryRow(
                       label: AppStrings.walletDepositFeeLabel,

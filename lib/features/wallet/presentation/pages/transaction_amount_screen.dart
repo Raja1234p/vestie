@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,12 +20,13 @@ import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/core/utils/app_snackbar.dart';
 import 'package:vestie/core/di/service_locator.dart';
+import 'package:vestie/core/services/payment_methods_prefetch.dart';
 import 'package:vestie/core/utils/wallet_withdraw_validation.dart';
-
-import 'package:vestie/features/profile/domain/entities/payment_method_picker_behavior.dart';
+import 'package:vestie/features/payment_methods/domain/payment_methods_cache.dart';
 
 import '../../domain/wallet_transaction_type.dart';
 import '../cubit/wallet_transaction_cubit.dart';
+import '../navigation/wallet_deposit_navigation.dart';
 
 class TransactionAmountScreen extends StatefulWidget {
   const TransactionAmountScreen({super.key});
@@ -36,6 +39,7 @@ class TransactionAmountScreen extends StatefulWidget {
 class _TransactionAmountScreenState extends State<TransactionAmountScreen> {
   final FocusNode _amountFieldFocus = FocusNode();
   late final TextEditingController _amountDigitsController;
+  bool _resolvingPaymentMethods = false;
 
   @override
   void initState() {
@@ -45,14 +49,17 @@ class _TransactionAmountScreenState extends State<TransactionAmountScreen> {
         TextEditingController(text: cubitState.amountDigits);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _amountFieldFocus.requestFocus();
-      _warmWalletCacheIfWithdrawing();
+      _warmCachesForFlow();
     });
   }
 
-  void _warmWalletCacheIfWithdrawing() {
+  void _warmCachesForFlow() {
     final type = context.read<WalletTransactionCubit>().state.transactionType;
-    if (type != WalletTransactionType.withdraw) return;
-    ServiceLocator.instance.getWalletUseCase(forceRefresh: false);
+    if (type == WalletTransactionType.withdraw) {
+      ServiceLocator.instance.getWalletUseCase(forceRefresh: false);
+      return;
+    }
+    PaymentMethodsPrefetch.warmIfNeeded();
   }
 
   @override
@@ -72,11 +79,22 @@ class _TransactionAmountScreenState extends State<TransactionAmountScreen> {
     }
   }
 
-  void _onContinueDeposit(BuildContext context, WalletTransactionCubit cubit) {
-    context.push(
-      AppRoutes.selectPaymentMethod,
-      extra: PaymentMethodPickerBehavior.depositFlow,
-    );
+  Future<void> _onContinueDeposit(
+    BuildContext context,
+    WalletTransactionCubit cubit,
+  ) async {
+    if (PaymentMethodsCache.value != null) {
+      WalletDepositNavigation.continueFromAmount(context, cubit);
+      return;
+    }
+
+    setState(() => _resolvingPaymentMethods = true);
+    await PaymentMethodsPrefetch.warmIfNeeded();
+    if (!mounted) return;
+    setState(() => _resolvingPaymentMethods = false);
+
+    if (!context.mounted) return;
+    WalletDepositNavigation.continueFromAmount(context, cubit);
   }
 
   void _onContinueWithdraw(BuildContext context, WalletTransactionCubit cubit) {
@@ -142,7 +160,9 @@ class _TransactionAmountScreenState extends State<TransactionAmountScreen> {
                 FlowScreenFooter(
                   child: AppButton(
                     text: AppStrings.btnContinue,
-                    onPressed: state.amountDigits.isEmpty
+                    isLoading: isDeposit && _resolvingPaymentMethods,
+                    onPressed: state.amountDigits.isEmpty ||
+                            (isDeposit && _resolvingPaymentMethods)
                         ? null
                         : () => isDeposit
                             ? _onContinueDeposit(context, cubit)

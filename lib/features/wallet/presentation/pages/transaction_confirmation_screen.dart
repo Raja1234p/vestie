@@ -8,6 +8,9 @@ import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/utils/app_snackbar.dart';
+import 'package:vestie/core/widgets/common/app_toast.dart';
+import 'package:vestie/features/payment_methods/domain/payment_methods_cache.dart';
+import 'package:vestie/features/profile/domain/entities/payment_method_picker_behavior.dart';
 import 'package:vestie/core/utils/wallet_withdraw_validation.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
@@ -113,7 +116,7 @@ class _TransactionConfirmationScreenState
               p.message != c.message,
           listener: (context, depositState) async {
             if (depositState.failure != null) {
-              AppSnackBar.showError(
+              AppToast.showError(
                 context,
                 FailureMapper.userMessage(depositState.failure!),
               );
@@ -146,9 +149,10 @@ class _TransactionConfirmationScreenState
         builder: (context, state) {
           final isDeposit =
               state.transactionType == WalletTransactionType.deposit;
-          final depositSubmitting = isDeposit
-              ? context.watch<WalletDepositCubit>().state.isSubmitting
-              : false;
+          final depositState = isDeposit
+              ? context.watch<WalletDepositCubit>().state
+              : null;
+          final depositSubmitting = depositState?.isSubmitting ?? false;
           final withdrawSubmitting = !isDeposit
               ? context.watch<WalletWithdrawCubit>().state.isSubmitting
               : false;
@@ -177,7 +181,17 @@ class _TransactionConfirmationScreenState
                   ),
                   Expanded(
                     child: isDeposit
-                        ? WalletDepositConfirmSection(state: state)
+                        ? WalletDepositConfirmSection(
+                            state: state,
+                            depositErrorMessage: depositState?.failure != null
+                                ? _depositErrorHint(depositState!)
+                                : null,
+                            onChangePaymentMethod:
+                                _canChangeDepositCard(state)
+                                    ? () =>
+                                        _openDepositCardPicker(context, state)
+                                    : null,
+                          )
                         : WalletWithdrawConfirmSection(
                             txState: state,
                             withdrawState:
@@ -198,5 +212,41 @@ class _TransactionConfirmationScreenState
         },
       ),
     );
+  }
+
+  static bool _canChangeDepositCard(WalletTransactionState state) {
+    if (state.selectedCard == null) return false;
+    final count = PaymentMethodsCache.value?.length ?? 0;
+    return count > 1;
+  }
+
+  static String _depositErrorHint(WalletDepositState depositState) {
+    final apiMessage = depositState.message?.trim();
+    if (apiMessage != null && apiMessage.isNotEmpty) {
+      return apiMessage;
+    }
+    if (depositState.failure != null) {
+      return FailureMapper.userMessage(depositState.failure!);
+    }
+    return AppStrings.depositCardInsufficientHint;
+  }
+
+  Future<void> _openDepositCardPicker(
+    BuildContext context,
+    WalletTransactionState txState,
+  ) async {
+    final previousCardId = txState.selectedCard?.id;
+    await context.push(
+      AppRoutes.selectPaymentMethod,
+      extra: PaymentMethodPickerBehavior.depositFlowChangeCard,
+    );
+    if (!context.mounted) return;
+    final newCardId =
+        context.read<WalletTransactionCubit>().state.selectedCard?.id;
+    if (newCardId != null &&
+        newCardId.isNotEmpty &&
+        newCardId != previousCardId) {
+      context.read<WalletDepositCubit>().clearFailure();
+    }
   }
 }

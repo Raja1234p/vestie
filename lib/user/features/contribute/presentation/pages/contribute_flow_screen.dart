@@ -209,12 +209,34 @@ class _ContributeConfirmView extends StatelessWidget {
                   _label(AppStrings.labelPaymentMethod),
                   SizedBox(height: 12.h),
                   _card(
-                    _paymentRow(
-                      '${AppStrings.labelPaymentFrom}:',
-                      _ContributePaymentPill(
-                        state: state,
-                        forConfirm: true,
-                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _paymentRow(
+                          '${AppStrings.labelPaymentFrom}:',
+                          _ContributePaymentPill(
+                            state: state,
+                            forConfirm: true,
+                          ),
+                        ),
+                        if (state.canPickPaymentMethod &&
+                            !state.walletCoversTotal &&
+                            (state.payFromWallet ||
+                                state.selectedCard == null)) ...[
+                          SizedBox(height: 10.h),
+                          AppText(
+                            state.payFromWallet
+                                ? AppStrings.contributeWalletInsufficientSubtitle
+                                : AppStrings.contributeSelectCardRequired,
+                            style: GoogleFonts.lato(
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.red900,
+                              height: 1.35,
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                   ),
                   SizedBox(height: 20.h),

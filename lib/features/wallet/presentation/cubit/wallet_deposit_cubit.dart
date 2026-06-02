@@ -83,5 +83,7 @@ class WalletDepositCubit extends Cubit<WalletDepositState> {
     );
   }
 
+  void clearFailure() => emit(state.copyWith(clearFailure: true));
+
   void reset() => emit(const WalletDepositState());
 }

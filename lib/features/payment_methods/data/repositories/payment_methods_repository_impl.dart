@@ -120,8 +120,9 @@ class PaymentMethodsRepositoryImpl implements PaymentMethodsRepository {
       final model = await remoteDataSource.attachPaymentMethod(
         paymentMethodId: paymentMethodId,
       );
-      PaymentMethodsCache.clear();
-      return Right(model.toCard());
+      final card = model.toCard();
+      PaymentMethodsCache.upsert(card);
+      return Right(card);
     } on Failure catch (f) {
       return Left(f);
     } catch (e) {
@@ -139,7 +140,11 @@ class PaymentMethodsRepositoryImpl implements PaymentMethodsRepository {
         paymentMethodId,
         isPrimary: isPrimary,
       );
-      PaymentMethodsCache.clear();
+      if (isPrimary) {
+        PaymentMethodsCache.setPrimary(paymentMethodId);
+      } else {
+        PaymentMethodsCache.clear();
+      }
       return const Right(null);
     } on Failure catch (f) {
       return Left(f);
@@ -152,7 +157,7 @@ class PaymentMethodsRepositoryImpl implements PaymentMethodsRepository {
   Future<Either<Failure, void>> remove(String paymentMethodId) async {
     try {
       await remoteDataSource.remove(paymentMethodId);
-      PaymentMethodsCache.clear();
+      PaymentMethodsCache.removeById(paymentMethodId);
       return const Right(null);
     } on Failure catch (f) {
       return Left(f);
