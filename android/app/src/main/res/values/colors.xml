@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- FCM notification accent color — matches Vestie brand purple -->
+    <color name="notification_color">#4C24A0</color>
+</resources>

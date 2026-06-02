@@ -125,20 +125,33 @@ abstract final class AppPermissionHelper {
     return true;
   }
 
-  /// One-time prompt on dashboard when notifications are off (after login).
+  /// Prompts for notification permission once per install.
+  ///
+  /// - Already granted → no-op.
+  /// - Permanently denied → no-op (user must go to Settings manually).
+  /// - Not determined / denied (promptable) → shows in-app dialog once, then marks dismissed.
   static Future<void> maybePromptNotificationsOnDashboard(
     BuildContext context,
   ) async {
     if (kIsWeb || !context.mounted) return;
+
+    // Already granted — nothing to do.
+    final granted = await _notificationsAlreadyGranted();
+    if (granted) return;
+
+    if (!context.mounted) return;
+
+    // On Android, check if permanently denied — don't bother prompting.
+    if (Platform.isAndroid) {
+      final status = await Permission.notification.status;
+      if (status.isPermanentlyDenied) return;
+    }
 
     final prefs = ServiceLocator.instance.sharedPrefs;
     if (await prefs.getBool(StorageKeys.notificationPermissionPromptDismissed) ==
         true) {
       return;
     }
-
-    final granted = await _notificationsAlreadyGranted();
-    if (granted) return;
 
     if (!context.mounted) return;
 
