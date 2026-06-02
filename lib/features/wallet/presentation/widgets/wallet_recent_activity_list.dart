@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:vestie/core/constants/app_dimens.dart';
+import 'package:vestie/core/utils/formatters.dart';
 import 'package:vestie/core/widgets/common/app_transaction_item.dart';
 import 'package:vestie/features/profile/domain/entities/transaction.dart';
 
@@ -46,7 +47,7 @@ class WalletRecentActivityList extends StatelessWidget {
           type: walletTransactionTypeFromEntity(tx.type),
           title: tx.title,
           date: tx.date,
-          amount: tx.amount.abs().toStringAsFixed(0),
+          amount: AppFormatters.formatMoneyAmount(tx.amount.abs()),
           isNegative: !tx.isPositive,
         );
       },

@@ -1,3 +1,5 @@
+import 'package:vestie/core/utils/formatters.dart';
+
 /// Contribute / borrow wallet flow route args.
 ///
 /// Kept under app router args to avoid coupling borrow/contribute features to
@@ -23,11 +25,8 @@ class ProjectWalletFlowArgs {
     this.membershipId,
   });
 
-  String get walletAmountFormatted {
-    return walletBalance
-        .toStringAsFixed(0)
-        .replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (_) => ',');
-  }
+  String get walletAmountFormatted =>
+      AppFormatters.formatMoneyAmount(walletBalance);
 
   ProjectWalletFlowArgs copyWithWalletBalance(double balance) {
     return ProjectWalletFlowArgs(

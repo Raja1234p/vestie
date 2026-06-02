@@ -1,4 +1,4 @@
-import 'package:intl/intl.dart';
+import 'package:vestie/core/utils/notification_time_formatter.dart';
 import 'package:vestie/core/utils/safe_parser.dart';
 import 'package:vestie/features/notifications/domain/entities/app_notification_entity.dart';
 import 'package:vestie/features/notifications/domain/entities/notification_list_entry.dart';
@@ -20,16 +20,14 @@ class AppNotificationModel extends AppNotificationEntity {
       body: json.safeString('body'),
       type: json.safeString('type'),
       isRead: json.safeBool('isRead'),
-      createdAtUtc: DateTime.tryParse(
+      createdAtUtc: NotificationTimeFormatter.parseCreatedAtUtc(
         json.safeString('createdAtUtc', defaultValue: ''),
       ),
     );
   }
 
   NotificationListEntry toListEntry() {
-    final label = createdAtUtc != null
-        ? DateFormat('MMM d').format(createdAtUtc!.toLocal())
-        : '';
+    final label = NotificationTimeFormatter.format(createdAtUtc);
     return NotificationListEntry(
       id: id,
       title: title,

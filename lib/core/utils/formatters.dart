@@ -13,6 +13,11 @@ class AppFormatters {
     return currencyFormatter.format(amount);
   }
 
+  /// Grouped amount with cents, no symbol — for widgets that prepend `\$` themselves.
+  static String formatMoneyAmount(double amount) {
+    return NumberFormat('#,##0.00', 'en_US').format(amount);
+  }
+
   /// Format Date explicitly. "13 Apr 2026"
   static String formatDate(DateTime date) {
     final dateFormatter = DateFormat('dd MMM yyyy');

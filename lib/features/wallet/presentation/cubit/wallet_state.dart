@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import 'package:vestie/core/error/failures.dart';
+import 'package:vestie/core/utils/formatters.dart';
 import 'package:vestie/features/profile/domain/entities/transaction.dart';
 import 'package:vestie/features/wallet/domain/entities/wallet_entity.dart';
 
@@ -65,10 +66,7 @@ class WalletState extends Equatable {
     );
   }
 
-  static String _formatUsd(double amount) {
-    final fixed = amount.toStringAsFixed(0);
-    return '\$$fixed';
-  }
+  static String _formatUsd(double amount) => AppFormatters.formatCurrency(amount);
 
   @override
   List<Object?> get props => [isLoading, wallet, recentActivity, failure];

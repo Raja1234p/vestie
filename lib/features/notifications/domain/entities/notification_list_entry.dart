@@ -16,6 +16,22 @@ class NotificationListEntry extends Equatable {
   final String timeLabel;
   final bool isRead;
 
+  NotificationListEntry copyWith({
+    String? id,
+    String? title,
+    String? body,
+    String? timeLabel,
+    bool? isRead,
+  }) {
+    return NotificationListEntry(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      body: body ?? this.body,
+      timeLabel: timeLabel ?? this.timeLabel,
+      isRead: isRead ?? this.isRead,
+    );
+  }
+
   @override
   List<Object?> get props => [id, title, body, timeLabel, isRead];
 }
