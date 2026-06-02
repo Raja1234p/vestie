@@ -780,6 +780,12 @@ class AppStrings {
   static const String kycRequiredForWithdrawTitle = 'Verification required';
   static const String kycRequiredForWithdrawBody =
       'Complete identity verification before withdrawing funds.';
+  static const String kycOnboardingCompleteHint =
+      'Identity verified. Tap Continue to proceed.';
+  static const String kycOnboardingPendingHint =
+      'Verification submitted. Tap Continue once approved.';
+  static const String kycOnboardingCanceled =
+      'Verification canceled.';
   static const String btnVerifyIdentity = 'Verify identity';
   static const String bankLinkOnboardingTitle = 'Link bank account';
   static const String bankLinkOnboardingUrlMissing =

@@ -17,7 +17,13 @@ class StripeOnboardingFlowShell extends StatefulWidget {
   final String urlMissingMessage;
   final Future<String?> Function() resolveOnboardingUrl;
   final bool Function(String? url) isCompletionUrl;
-  final VoidCallback onFlowComplete;
+  final bool Function(String? url)? isRefreshUrl;
+  /// Called after the return URL redirect when [onReturnUrlReached] is null.
+  final VoidCallback? onFlowComplete;
+
+  /// When set, called instead of [onFlowComplete] after the return URL redirect
+  /// (e.g. verify KYC status before popping the route).
+  final Future<void> Function()? onReturnUrlReached;
   final VoidCallback onCancel;
 
   /// When [resolveOnboardingUrl] returns null without error (e.g. bank already linked).
@@ -29,10 +35,15 @@ class StripeOnboardingFlowShell extends StatefulWidget {
     required this.urlMissingMessage,
     required this.resolveOnboardingUrl,
     required this.isCompletionUrl,
-    required this.onFlowComplete,
+    this.onFlowComplete,
     required this.onCancel,
+    this.isRefreshUrl,
+    this.onReturnUrlReached,
     this.onImmediateSuccess,
-  });
+  }) : assert(
+          onReturnUrlReached != null || onFlowComplete != null,
+          'Provide onReturnUrlReached or onFlowComplete',
+        );
 
   @override
   State<StripeOnboardingFlowShell> createState() =>
@@ -43,6 +54,8 @@ class _StripeOnboardingFlowShellState extends State<StripeOnboardingFlowShell> {
   final _webViewKey = GlobalKey<StripeOnboardingWebViewState>();
 
   bool _bootstrapping = true;
+  bool _returnUrlReceived = false;
+  bool _handlingReturnUrl = false;
   String? _onboardingUrl;
   String? _error;
 
@@ -96,7 +109,40 @@ class _StripeOnboardingFlowShellState extends State<StripeOnboardingFlowShell> {
     }
   }
 
+  Future<void> _onStripeRefresh() async {
+    if (_bootstrapping) return;
+    final previousUrl = _onboardingUrl;
+    await _bootstrap();
+    if (!mounted) return;
+    final nextUrl = _onboardingUrl;
+    if (nextUrl != null &&
+        nextUrl.isNotEmpty &&
+        nextUrl != previousUrl &&
+        _webViewKey.currentState != null) {
+      await _webViewKey.currentState!.reloadOnboarding(nextUrl);
+    }
+  }
+
+  Future<void> _onWebViewReturnUrl() async {
+    if (_returnUrlReceived || _handlingReturnUrl) return;
+    _returnUrlReceived = true;
+    _handlingReturnUrl = true;
+    if (mounted) setState(() {});
+
+    try {
+      if (widget.onReturnUrlReached != null) {
+        await widget.onReturnUrlReached!();
+      } else {
+        widget.onFlowComplete?.call();
+      }
+    } finally {
+      _handlingReturnUrl = false;
+    }
+  }
+
   Future<void> _onBackPressed() async {
+    if (_returnUrlReceived || _handlingReturnUrl) return;
+
     if (_onboardingUrl == null) {
       widget.onCancel();
       return;
@@ -110,9 +156,10 @@ class _StripeOnboardingFlowShellState extends State<StripeOnboardingFlowShell> {
   @override
   Widget build(BuildContext context) {
     final hasWebView = _onboardingUrl != null;
+    final blockPop = hasWebView || _handlingReturnUrl;
 
     return PopScope(
-      canPop: !hasWebView,
+      canPop: !blockPop,
       onPopInvokedWithResult: (didPop, _) async {
         if (didPop) return;
         await _onBackPressed();
@@ -124,9 +171,12 @@ class _StripeOnboardingFlowShellState extends State<StripeOnboardingFlowShell> {
             children: [
               PostAuthHeader(
                 title: widget.title,
-                leading: AppBackButton(
-                  onPressed: _onBackPressed,
-                  color: AppColors.textPrimary,
+                leading: IgnorePointer(
+                  ignoring: _handlingReturnUrl,
+                  child: AppBackButton(
+                    onPressed: _onBackPressed,
+                    color: AppColors.textPrimary,
+                  ),
                 ),
               ),
               Expanded(
@@ -187,7 +237,9 @@ class _StripeOnboardingFlowShellState extends State<StripeOnboardingFlowShell> {
       key: _webViewKey,
       initialUrl: _onboardingUrl!,
       isCompletionUrl: widget.isCompletionUrl,
-      onComplete: widget.onFlowComplete,
+      isRefreshUrl: widget.isRefreshUrl,
+      onRefresh: _onStripeRefresh,
+      onComplete: _onWebViewReturnUrl,
     );
   }
 }

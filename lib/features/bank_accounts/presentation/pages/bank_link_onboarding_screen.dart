@@ -40,7 +40,8 @@ class BankLinkOnboardingScreen extends StatelessWidget {
           context.pop(true);
         }
       },
-      isCompletionUrl: BankFlowConstants.isCompletionOrRefreshUrl,
+      isCompletionUrl: BankFlowConstants.isCompletionUrl,
+      isRefreshUrl: BankFlowConstants.isRefreshUrl,
       onFlowComplete: () {
         BankAccountsCache.clear();
         if (context.mounted) {

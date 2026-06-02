@@ -7,9 +7,11 @@ import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
+import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
+import 'package:vestie/features/kyc/presentation/models/kyc_onboarding_result.dart';
 import 'package:vestie/features/wallet/domain/withdraw_delivery_method.dart';
 import 'package:vestie/features/wallet/presentation/cubit/wallet_transaction_cubit.dart';
 import 'package:vestie/features/wallet/presentation/widgets/withdraw_method_body.dart';
@@ -55,9 +57,20 @@ class _WithdrawMethodScreenState extends State<WithdrawMethodScreen> {
           ),
         );
         if (verify == true && context.mounted) {
-          final completed = await context.push<bool>(AppRoutes.kycOnboarding);
-          if (completed == true && context.mounted) {
-            await _runContinueWithdraw(context);
+          final result = await context.push<KycOnboardingResult>(
+            AppRoutes.kycOnboarding,
+          );
+          if (!context.mounted || result == null) return;
+          switch (result) {
+            case KycOnboardingResult.completed:
+              AppToast.showSuccess(
+                context,
+                AppStrings.kycOnboardingCompleteHint,
+              );
+            case KycOnboardingResult.pending:
+              AppToast.showInfo(context, AppStrings.kycOnboardingPendingHint);
+            case KycOnboardingResult.canceled:
+              AppToast.showError(context, AppStrings.kycOnboardingCanceled);
           }
         }
         return;

@@ -7,16 +7,23 @@ import 'app_shimmer.dart';
 ///
 /// Keeps [KycWebViewShimmer] until the first page finishes loading (fully visible).
 /// [handleBack] walks WebView history before the route should pop.
+///
+/// Return / refresh redirects are detected in [NavigationDelegate.onNavigationRequest]
+/// only (not [onPageFinished] / [onUrlChange]) to avoid false completion on back.
 class StripeOnboardingWebView extends StatefulWidget {
   final String initialUrl;
   final bool Function(String? url) isCompletionUrl;
+  final bool Function(String? url)? isRefreshUrl;
   final VoidCallback onComplete;
+  final VoidCallback? onRefresh;
 
   const StripeOnboardingWebView({
     super.key,
     required this.initialUrl,
     required this.isCompletionUrl,
     required this.onComplete,
+    this.isRefreshUrl,
+    this.onRefresh,
   });
 
   @override
@@ -35,10 +42,10 @@ class StripeOnboardingWebViewState extends State<StripeOnboardingWebView> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
-          onPageFinished: (url) => _onPageFinished(url),
-          onUrlChange: (change) => _tryComplete(change.url),
+          onPageFinished: (_) => _onFirstPageLoaded(),
           onNavigationRequest: (request) {
-            _tryComplete(request.url);
+            final decision = _navigationDecision(request.url);
+            if (decision != null) return decision;
             return NavigationDecision.navigate;
           },
         ),
@@ -46,8 +53,18 @@ class StripeOnboardingWebViewState extends State<StripeOnboardingWebView> {
       ..loadRequest(Uri.parse(widget.initialUrl));
   }
 
+  /// Loads a new Stripe session (e.g. after `refreshUrl` redirect).
+  Future<void> reloadOnboarding(String url) async {
+    _flowCompleted = false;
+    if (mounted) {
+      setState(() => _firstPageLoaded = false);
+    }
+    await _controller.loadRequest(Uri.parse(url));
+  }
+
   /// Returns `true` when the hosting route should pop (no WebView history).
   Future<bool> handleBack() async {
+    if (_flowCompleted) return false;
     if (await _controller.canGoBack()) {
       await _controller.goBack();
       return false;
@@ -55,14 +72,30 @@ class StripeOnboardingWebViewState extends State<StripeOnboardingWebView> {
     return true;
   }
 
-  void _onPageFinished(String url) {
-    if (!mounted) return;
+  void _onFirstPageLoaded() {
+    if (!mounted || _firstPageLoaded) return;
     setState(() => _firstPageLoaded = true);
-    _tryComplete(url);
   }
 
-  void _tryComplete(String? url) {
-    if (_flowCompleted || !widget.isCompletionUrl(url)) return;
+  NavigationDecision? _navigationDecision(String? url) {
+    if (_isRefresh(url)) {
+      widget.onRefresh?.call();
+      return NavigationDecision.prevent;
+    }
+    if (widget.isCompletionUrl(url)) {
+      _tryComplete();
+      return NavigationDecision.prevent;
+    }
+    return null;
+  }
+
+  bool _isRefresh(String? url) {
+    final checker = widget.isRefreshUrl;
+    return checker != null && checker(url);
+  }
+
+  void _tryComplete() {
+    if (_flowCompleted) return;
     _flowCompleted = true;
     widget.onComplete();
   }
