@@ -14,12 +14,14 @@ class WithdrawMethodBody extends StatelessWidget {
   final WithdrawDeliveryMethod selected;
   final ValueChanged<WithdrawDeliveryMethod> onSelect;
   final VoidCallback onContinue;
+  final bool isLoading;
 
   const WithdrawMethodBody({
     super.key,
     required this.selected,
     required this.onSelect,
     required this.onContinue,
+    this.isLoading = false,
   });
 
   @override
@@ -49,7 +51,8 @@ class WithdrawMethodBody extends StatelessWidget {
         FlowScreenFooter(
           child: AppButton(
             text: AppStrings.btnContinue,
-            onPressed: onContinue,
+            isLoading: isLoading,
+            onPressed: isLoading ? null : onContinue,
           ),
         ),
       ],

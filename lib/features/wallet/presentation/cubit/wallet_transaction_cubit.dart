@@ -104,10 +104,10 @@ class WalletTransactionCubit extends Cubit<WalletTransactionState> {
     emit(state.copyWith(clearSelectedCard: true, payFromWallet: true));
   }
 
-  /// Default instant rail before the user opens the method picker.
+  /// Default standard rail before the user opens the method picker.
   void prepareWithdrawMethodSelection() {
     emit(state.copyWith(
-      withdrawDeliveryMethod: WithdrawDeliveryMethod.instant,
+      withdrawDeliveryMethod: WithdrawDeliveryMethod.standard,
     ));
   }
 
