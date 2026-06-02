@@ -17,6 +17,7 @@ import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import '../../domain/wallet_transaction_type.dart';
 import '../../domain/withdraw_delivery_method.dart';
 import '../cubit/wallet_deposit_cubit.dart';
+import '../cubit/wallet_cubit.dart';
 import '../cubit/wallet_transaction_cubit.dart';
 import '../cubit/wallet_withdraw_cubit.dart';
 import '../widgets/wallet_deposit_confirm_section.dart';
@@ -70,7 +71,15 @@ class _TransactionConfirmationScreenState
     WalletTransactionState txState,
   ) async {
     if (txState.transactionType == WalletTransactionType.deposit) {
-      await context.read<WalletDepositCubit>().submitDeposit(txState.amountParsed);
+      final cardId = txState.selectedCard?.id.trim() ?? '';
+      if (txState.payFromWallet || cardId.isEmpty) {
+        AppSnackBar.showError(context, AppStrings.depositSelectCardRequired);
+        return;
+      }
+      await context.read<WalletDepositCubit>().submitDeposit(
+            amount: txState.amountParsed,
+            paymentMethodId: cardId,
+          );
       return;
     }
     final balanceErr =
@@ -102,7 +111,7 @@ class _TransactionConfirmationScreenState
               p.failure != c.failure ||
               p.isSuccess != c.isSuccess ||
               p.message != c.message,
-          listener: (context, depositState) {
+          listener: (context, depositState) async {
             if (depositState.failure != null) {
               AppSnackBar.showError(
                 context,
@@ -110,13 +119,15 @@ class _TransactionConfirmationScreenState
               );
             }
             if (depositState.isSuccess && context.mounted) {
+              await context.read<WalletCubit>().load(forceRefresh: true);
+              if (!context.mounted) return;
               context.pushReplacement(AppRoutes.transactionSuccess);
             }
           },
         ),
         BlocListener<WalletWithdrawCubit, WalletWithdrawState>(
           listenWhen: (p, c) => p.failure != c.failure || p.isSuccess != c.isSuccess,
-          listener: (context, withdrawState) {
+          listener: (context, withdrawState) async {
             if (withdrawState.failure != null) {
               AppSnackBar.showError(
                 context,
@@ -124,6 +135,8 @@ class _TransactionConfirmationScreenState
               );
             }
             if (withdrawState.isSuccess && context.mounted) {
+              await context.read<WalletCubit>().load(forceRefresh: true);
+              if (!context.mounted) return;
               context.pushReplacement(AppRoutes.transactionSuccess);
             }
           },

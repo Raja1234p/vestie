@@ -14,5 +14,6 @@ class DepositFlowOutcome {
 abstract class WalletDepositRepository {
   Future<Either<Failure, DepositFlowOutcome>> runDepositFlow({
     required double amount,
+    required String paymentMethodId,
   });
 }

@@ -6,6 +6,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../core/constants/app_strings.dart';
 import '../core/theme/app_theme.dart';
 import 'package:vestie/leader/features/create_project/presentation/cubit/create_project_cubit.dart';
+import '../core/di/service_locator.dart';
+import '../features/wallet/presentation/cubit/wallet_cubit.dart';
 import '../features/wallet/presentation/cubit/wallet_transaction_cubit.dart';
 import 'router/app_router.dart';
 
@@ -32,6 +34,11 @@ class MainApp extends StatelessWidget {
             ),
             BlocProvider<WalletTransactionCubit>(
               create: (_) => WalletTransactionCubit(),
+            ),
+            BlocProvider<WalletCubit>(
+              create: (_) => WalletCubit(
+                getWalletUseCase: ServiceLocator.instance.getWalletUseCase,
+              ),
             ),
           ],
           child: MaterialApp.router(

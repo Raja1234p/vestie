@@ -31,6 +31,7 @@ class WalletDepositRepositoryImpl implements WalletDepositRepository {
   @override
   Future<Either<Failure, DepositFlowOutcome>> runDepositFlow({
     required double amount,
+    required String paymentMethodId,
   }) async {
     try {
       final configResult = await getStripeConfigUseCase();
@@ -48,10 +49,11 @@ class WalletDepositRepositoryImpl implements WalletDepositRepository {
       final idempotencyKey = newIdempotencyKey('deposit-intent');
       final intent = await remoteDataSource.createDepositIntent(
         amount: amount,
+        paymentMethodId: paymentMethodId,
         idempotencyKey: idempotencyKey,
       );
 
-      if (intent.clientSecret.trim().isEmpty) {
+      if (intent.clientSecret.trim().isEmpty && !intent.paymentAlreadyComplete) {
         return Right(
           DepositFlowOutcome(
             result: DepositFlowResult.failed,
@@ -60,34 +62,32 @@ class WalletDepositRepositoryImpl implements WalletDepositRepository {
         );
       }
 
-      final paymentResult = await stripePaymentService.confirmDepositPayment(
-        clientSecret: intent.clientSecret,
-      );
+      if (!intent.paymentAlreadyComplete) {
+        final paymentResult = await stripePaymentService.confirmDepositPayment(
+          clientSecret: intent.clientSecret,
+        );
 
-      switch (paymentResult) {
-        case StripeDepositPaymentResult.cancelled:
-          return Right(
-            DepositFlowOutcome(
-              result: DepositFlowResult.cancelled,
-              message: AppStrings.depositPaymentCancelled,
-            ),
-          );
-        case StripeDepositPaymentResult.failed:
-          return Right(
-            DepositFlowOutcome(
-              result: DepositFlowResult.failed,
-              message: AppStrings.depositPaymentFailed,
-            ),
-          );
-        case StripeDepositPaymentResult.completed:
-          break;
+        switch (paymentResult) {
+          case StripeDepositPaymentResult.cancelled:
+            return Right(
+              DepositFlowOutcome(
+                result: DepositFlowResult.cancelled,
+                message: AppStrings.depositPaymentCancelled,
+              ),
+            );
+          case StripeDepositPaymentResult.failed:
+            return Right(
+              DepositFlowOutcome(
+                result: DepositFlowResult.failed,
+                message: AppStrings.depositPaymentFailed,
+              ),
+            );
+          case StripeDepositPaymentResult.completed:
+            break;
+        }
       }
 
       final outcome = await _pollUntilTerminal(intent.paymentIntentId);
-
-      if (outcome.result == DepositFlowResult.completed) {
-        await walletRepository.getWallet(forceRefresh: true);
-      }
 
       return Right(outcome);
     } on Failure catch (f) {

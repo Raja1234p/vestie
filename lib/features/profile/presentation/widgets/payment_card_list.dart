@@ -14,6 +14,8 @@ import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/features/profile/domain/entities/payment_card.dart';
+import 'package:vestie/features/profile/domain/entities/payment_method_picker_behavior.dart';
+import 'package:vestie/features/profile/domain/entities/payment_method_selection.dart';
 import 'package:vestie/features/profile/presentation/widgets/card_detail_sheet.dart';
 import 'package:vestie/features/wallet/presentation/cubit/wallet_transaction_cubit.dart';
 import 'package:vestie/features/profile/presentation/widgets/payment_card_brand_icon.dart';
@@ -24,6 +26,7 @@ class PaymentCardList extends StatefulWidget {
   final List<PaymentCard> cards;
   final VoidCallback onAdd;
   final bool isSelectionMode;
+  final PaymentMethodPickerBehavior pickerBehavior;
   final bool addCardLoading;
 
   const PaymentCardList({
@@ -31,6 +34,7 @@ class PaymentCardList extends StatefulWidget {
     required this.cards,
     required this.onAdd,
     this.isSelectionMode = false,
+    this.pickerBehavior = PaymentMethodPickerBehavior.depositFlow,
     this.addCardLoading = false,
   });
 
@@ -53,6 +57,10 @@ class _PaymentCardListState extends State<PaymentCardList> {
       _selection = _PaymentPickerSelection.card;
       _selectedCardId = card.id;
     });
+    if (widget.pickerBehavior == PaymentMethodPickerBehavior.returnSelection) {
+      context.pop(CardPaymentMethodSelection(card));
+      return;
+    }
     context.read<WalletTransactionCubit>().selectCard(card);
     context.push(AppRoutes.transactionConfirmation);
   }
@@ -62,6 +70,10 @@ class _PaymentCardListState extends State<PaymentCardList> {
       _selection = _PaymentPickerSelection.wallet;
       _selectedCardId = null;
     });
+    if (widget.pickerBehavior == PaymentMethodPickerBehavior.returnSelection) {
+      context.pop(const WalletPaymentMethodSelection());
+      return;
+    }
     context.read<WalletTransactionCubit>().selectWallet();
     context.push(AppRoutes.transactionConfirmation);
   }
@@ -73,6 +85,8 @@ class _PaymentCardListState extends State<PaymentCardList> {
         cards: widget.cards,
         selectedCardId: _selectedCardId,
         walletSelected: _selection == _PaymentPickerSelection.wallet,
+        showWalletOption:
+            widget.pickerBehavior != PaymentMethodPickerBehavior.depositFlow,
         onSelectCard: _selectCard,
         onSelectWallet: _selectWallet,
         onAdd: widget.onAdd,
@@ -113,6 +127,7 @@ class _SelectionList extends StatelessWidget {
     required this.cards,
     required this.selectedCardId,
     required this.walletSelected,
+    required this.showWalletOption,
     required this.onSelectCard,
     required this.onSelectWallet,
     required this.onAdd,
@@ -122,6 +137,7 @@ class _SelectionList extends StatelessWidget {
   final List<PaymentCard> cards;
   final String? selectedCardId;
   final bool walletSelected;
+  final bool showWalletOption;
   final ValueChanged<PaymentCard> onSelectCard;
   final VoidCallback onSelectWallet;
   final VoidCallback onAdd;
@@ -150,26 +166,28 @@ class _SelectionList extends StatelessWidget {
                   onTap: () => onSelectCard(cards[i]),
                 ),
               ],
-              SizedBox(height: 16.h),
-              Divider(
-                height: 1,
-                thickness: 1,
-                color: AppColors.neutral400,
-              ),
-              SizedBox(height: 16.h),
-              PaymentMethodSelectRow(
-                selected: walletSelected,
-                leading: SizedBox(
-                  width: 32.w,
-                  height: 32.h,
-                  child: SvgPicture.asset(
-                    AppAssets.iconDollarCircle,
-                    fit: BoxFit.contain,
-                  ),
+              if (showWalletOption) ...[
+                SizedBox(height: 16.h),
+                Divider(
+                  height: 1,
+                  thickness: 1,
+                  color: AppColors.neutral400,
                 ),
-                title: AppStrings.walletTitle,
-                onTap: onSelectWallet,
-              ),
+                SizedBox(height: 16.h),
+                PaymentMethodSelectRow(
+                  selected: walletSelected,
+                  leading: SizedBox(
+                    width: 32.w,
+                    height: 32.h,
+                    child: SvgPicture.asset(
+                      AppAssets.iconDollarCircle,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  title: AppStrings.walletTitle,
+                  onTap: onSelectWallet,
+                ),
+              ],
             ],
           ),
         ),

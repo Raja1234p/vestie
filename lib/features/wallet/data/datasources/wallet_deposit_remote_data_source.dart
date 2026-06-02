@@ -7,6 +7,7 @@ import '../models/wallet_deposit_models.dart';
 abstract class WalletDepositRemoteDataSource {
   Future<WalletDepositIntentModel> createDepositIntent({
     required double amount,
+    required String paymentMethodId,
     required String idempotencyKey,
   });
 
@@ -24,11 +25,15 @@ class WalletDepositRemoteDataSourceImpl implements WalletDepositRemoteDataSource
   @override
   Future<WalletDepositIntentModel> createDepositIntent({
     required double amount,
+    required String paymentMethodId,
     required String idempotencyKey,
   }) async {
     final response = await apiClient.post<Map<String, dynamic>>(
       ApiConstants.walletDepositIntent,
-      data: {'amount': amount},
+      data: {
+        'amount': amount,
+        'paymentMethodId': paymentMethodId,
+      },
       options: Options(headers: {'Idempotency-Key': idempotencyKey}),
     );
     return WalletDepositIntentModel.fromJson(response);

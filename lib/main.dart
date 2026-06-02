@@ -31,7 +31,6 @@ void main() async {
   await ServiceLocator.instance.init();
 
   await FcmPushService.initialize();
-  await FcmPushService.syncDeviceToken();
 
   const enableDevicePreview = !kReleaseMode;
   runApp(

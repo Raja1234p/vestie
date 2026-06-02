@@ -7,6 +7,7 @@ import '../../../../core/widgets/common/app_toast.dart';
 import '../../../../core/widgets/common/app_shimmer.dart';
 import '../../../../core/widgets/common/flow_screen_footer.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
+import '../../domain/entities/payment_method_picker_behavior.dart';
 import '../cubit/payment_methods_cubit.dart';
 import '../widgets/payment_card_list.dart';
 import '../widgets/payment_empty_view.dart';
@@ -15,7 +16,13 @@ import '../widgets/profile_sub_header.dart';
 
 class PaymentMethodsScreen extends StatelessWidget {
   final bool isSelectionMode;
-  const PaymentMethodsScreen({super.key, this.isSelectionMode = false});
+  final PaymentMethodPickerBehavior pickerBehavior;
+
+  const PaymentMethodsScreen({
+    super.key,
+    this.isSelectionMode = false,
+    this.pickerBehavior = PaymentMethodPickerBehavior.depositFlow,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,14 +34,22 @@ class PaymentMethodsScreen extends StatelessWidget {
         setPrimaryPaymentMethodUseCase: sl.setPrimaryPaymentMethodUseCase,
         removePaymentMethodUseCase: sl.removePaymentMethodUseCase,
       ),
-      child: _PaymentBody(isSelectionMode: isSelectionMode),
+      child: _PaymentBody(
+        isSelectionMode: isSelectionMode,
+        pickerBehavior: pickerBehavior,
+      ),
     );
   }
 }
 
 class _PaymentBody extends StatelessWidget {
   final bool isSelectionMode;
-  const _PaymentBody({required this.isSelectionMode});
+  final PaymentMethodPickerBehavior pickerBehavior;
+
+  const _PaymentBody({
+    required this.isSelectionMode,
+    required this.pickerBehavior,
+  });
 
   Future<void> _openStripeAddCard(BuildContext context) async {
     final cubit = context.read<PaymentMethodsCubit>();
@@ -93,6 +108,7 @@ class _PaymentBody extends StatelessWidget {
                                   cards: state.cards,
                                   onAdd: () => _openStripeAddCard(context),
                                   isSelectionMode: isSelectionMode,
+                                  pickerBehavior: pickerBehavior,
                                   addCardLoading: state.addingCard,
                                 ),
                 ),

@@ -826,6 +826,8 @@ class AppStrings {
       'Card payments are not available right now. Please try again later.';
   static const String depositMissingClientSecret =
       'Could not start card payment. Please try again.';
+  static const String depositSelectCardRequired =
+      'Select a payment card to deposit with.';
   static const String depositMissingPaymentIntentId =
       'Payment could not be verified. Check your wallet balance.';
   static const String depositPaymentCancelled = 'Deposit cancelled.';

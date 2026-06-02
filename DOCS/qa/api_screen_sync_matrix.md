@@ -40,12 +40,19 @@ Use this when verifying **data on screen matches API** after actions (refresh, n
 
 | Screen | API | Load | Refresh after |
 |--------|-----|------|----------------|
-| Stripe SDK init | `GET /stripe/config` | On deposit flow | Cached session |
-| Payment methods | `GET /payment-methods` | `PaymentCardListShimmer` | Add/remove/primary |
-| Deposit confirm | `POST /wallet/deposit/intent` | — | — |
-| PaymentSheet | Stripe (`clientSecret`) | — | — |
-| Deposit result | `GET /wallet/deposit/{id}/status` poll | Submitting state | Wallet on Completed |
-| Wallet after deposit | `GET /wallet` force | — | Balance ↑ |
+| Stripe SDK init | `GET /stripe/config` (#1) | On deposit / add card | Session cache |
+| Payment methods (manage) | `GET /payment-methods` (#9) | `PaymentCardListShimmer` | Add/remove/primary |
+| Card detail sheet | `GET /payment-methods/{id}` (#12) | Inline loader | Toggle/delete |
+| Add card | `POST …/setup-intent` (#10) → SDK → `POST /payment-methods` (#11) | Stripe sheet | List refresh |
+| Deposit picker | `GET /payment-methods` (#9) | Same as list | After add card |
+| Deposit confirm | `POST /wallet/deposit/intent` (#6) `{ amount, paymentMethodId }` | — | — |
+| PaymentSheet | Stripe `clientSecret` | — | — |
+| Deposit result | `GET /wallet/deposit/{id}/status` (#7) poll | Submitting | Success screen |
+| Wallet after deposit | `GET /wallet` (#5) force | — | Done → wallet tab |
+| Risk disclaimer | `GET` + `POST /users/me/risk-disclaimer` (#0b) | — | Unlocks deposit |
+| Stripe Connect onboarding | `POST /stripe/connect/*` (#2–#3) | — | **Not integrated** |
+| Simulated deposit | `POST /wallet/deposit` (#8) | — | **Not in app flow** |
+| SignalR wallet hub | `/hubs/wallet` | On wallet tab | Push refresh (if connected) |
 
 ---
 

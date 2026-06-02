@@ -53,9 +53,6 @@ class WalletWithdrawalRepositoryImpl implements WalletWithdrawalRepository {
       );
 
       final outcome = await _poll(submit.withdrawalId);
-      if (outcome.status == WithdrawalFlowStatus.completed) {
-        await walletRepository.getWallet(forceRefresh: true);
-      }
       return Right(outcome);
     } on Failure catch (f) {
       return Left(f);

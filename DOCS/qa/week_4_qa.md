@@ -15,6 +15,7 @@
 | Contribute with card only (no wallet top-up) | API debits **wallet only** — card selection guides user to **Deposit** if balance short |
 | Wallet **View all** recent activity | Full list screen may still use mock if API list endpoint not wired |
 | SignalR on two devices | Needs two physical devices / accounts on same project |
+| Wallet hub event names | App listens for `wallet_updated`, `balance_updated`, deposit/withdraw events — confirm with backend if balance does not auto-refresh |
 
 ---
 

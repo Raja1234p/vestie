@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../features/profile/presentation/pages/edit_profile_screen.dart';
 import '../../../features/profile/presentation/pages/key_guidelines_screen.dart';
+import '../../../features/profile/domain/entities/payment_method_picker_behavior.dart';
 import '../../../features/profile/presentation/pages/payment_methods_screen.dart';
 import '../../../features/profile/presentation/pages/transaction_history_screen.dart';
 import '../../../features/wallet/presentation/pages/transaction_amount_screen.dart';
@@ -56,7 +57,15 @@ List<RouteBase> buildProfileWalletRoutes() {
     ),
     GoRoute(
       path: AppRoutes.selectPaymentMethod,
-      builder: (context, _) => const PaymentMethodsScreen(isSelectionMode: true),
+      builder: (context, state) {
+        final behavior = state.extra is PaymentMethodPickerBehavior
+            ? state.extra! as PaymentMethodPickerBehavior
+            : PaymentMethodPickerBehavior.depositFlow;
+        return PaymentMethodsScreen(
+          isSelectionMode: true,
+          pickerBehavior: behavior,
+        );
+      },
     ),
     GoRoute(
       path: AppRoutes.selectBankAccount,

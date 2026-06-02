@@ -43,11 +43,17 @@ class WalletDepositCubit extends Cubit<WalletDepositState> {
   WalletDepositCubit({required this.runWalletDepositUseCase})
       : super(const WalletDepositState());
 
-  Future<void> submitDeposit(double amount) async {
+  Future<void> submitDeposit({
+    required double amount,
+    required String paymentMethodId,
+  }) async {
     if (amount <= 0) return;
     emit(state.copyWith(isSubmitting: true, clearFailure: true, isSuccess: false));
 
-    final result = await runWalletDepositUseCase(amount);
+    final result = await runWalletDepositUseCase(
+      amount: amount,
+      paymentMethodId: paymentMethodId,
+    );
 
     if (isClosed) return;
 

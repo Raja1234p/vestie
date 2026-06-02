@@ -40,6 +40,9 @@ class WalletCubit extends Cubit<WalletState> {
     WalletBalanceCache.clear();
   }
 
+  /// Clears tab state on logout (wallet reloads on next tab open).
+  void reset() => emit(const WalletState());
+
   List<Transaction> _mapTransactions(WalletEntity wallet) {
     if (wallet.recentTransactions.isEmpty) {
       return const [];

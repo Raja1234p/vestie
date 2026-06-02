@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/app/router/route_args/borrow_repay_flow_args.dart';
 import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/features/profile/domain/entities/payment_method_picker_behavior.dart';
 import 'package:vestie/features/profile/domain/entities/payment_method_selection.dart';
 import 'package:vestie/user/features/borrow/presentation/models/my_borrow_approved_ui_data.dart';
 
@@ -19,6 +20,7 @@ class BorrowRepayNavigation {
   }) async {
     final selection = await context.push<PaymentMethodSelection>(
       AppRoutes.selectPaymentMethod,
+      extra: PaymentMethodPickerBehavior.returnSelection,
     );
     if (!context.mounted || selection == null) return;
 

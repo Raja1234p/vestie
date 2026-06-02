@@ -6,12 +6,10 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_strings.dart';
-import 'package:vestie/core/di/service_locator.dart';
-import 'package:vestie/features/dashboard/domain/dashboard_prefetch.dart';
-import 'package:vestie/features/wallet/domain/wallet_balance_cache.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_success_screen.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
+import 'package:vestie/features/dashboard/presentation/models/dashboard_shell_args.dart';
 import '../../domain/wallet_transaction_type.dart';
 import '../../domain/withdraw_delivery_method.dart';
 import '../cubit/wallet_transaction_cubit.dart';
@@ -19,6 +17,14 @@ import '../cubit/wallet_transaction_cubit.dart';
 /// Post-submit wallet success (deposit or withdraw).
 class TransactionSuccessScreen extends StatelessWidget {
   const TransactionSuccessScreen({super.key});
+
+  void _onDone(BuildContext context) {
+    context.go(
+      AppRoutes.dashboard,
+      extra: const DashboardShellArgs(initialTabIndex: 3),
+    );
+    context.read<WalletTransactionCubit>().reset();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,15 +55,7 @@ class TransactionSuccessScreen extends StatelessWidget {
                       WithdrawDeliveryMethod.standard,
                 ),
           buttonText: AppStrings.btnDone,
-          onButtonPressed: () async {
-            context.read<WalletTransactionCubit>().reset();
-            WalletBalanceCache.clear();
-            DashboardPrefetch.invalidateWallet();
-            await ServiceLocator.instance.getWalletUseCase(forceRefresh: true);
-            if (context.mounted) {
-              context.go(AppRoutes.dashboard);
-            }
-          },
+          onButtonPressed: () => _onDone(context),
         );
       },
     );
@@ -109,4 +107,3 @@ class _WithdrawSubtitle extends StatelessWidget {
     );
   }
 }
-

@@ -4,12 +4,25 @@ class WalletDepositIntentModel {
   final String clientSecret;
   final String paymentIntentId;
   final double? amount;
+  /// Stripe PaymentIntent status from #6 (e.g. `requires_payment_method`, `succeeded`).
+  final String? stripeStatus;
+  final bool? requiresAction;
 
   const WalletDepositIntentModel({
     required this.clientSecret,
     required this.paymentIntentId,
     this.amount,
+    this.stripeStatus,
+    this.requiresAction,
   });
+
+  /// Server charged the saved card on intent create — skip PaymentSheet.
+  bool get paymentAlreadyComplete {
+    final status = (stripeStatus ?? '').toLowerCase();
+    if (status == 'succeeded') return true;
+    if (status == 'processing' && requiresAction == false) return true;
+    return false;
+  }
 
   factory WalletDepositIntentModel.fromJson(Map<String, dynamic> json) {
     return WalletDepositIntentModel(
@@ -19,6 +32,10 @@ class WalletDepositIntentModel {
         defaultValue: json.safeString('paymentIntent'),
       ),
       amount: json.safeDoubleNullable('amount'),
+      stripeStatus: json.safeStringNullable('status'),
+      requiresAction: json['requiresAction'] is bool
+          ? json['requiresAction'] as bool
+          : null,
     );
   }
 }

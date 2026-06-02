@@ -20,6 +20,8 @@ import 'package:vestie/core/utils/app_snackbar.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/utils/wallet_withdraw_validation.dart';
 
+import 'package:vestie/features/profile/domain/entities/payment_method_picker_behavior.dart';
+
 import '../../domain/wallet_transaction_type.dart';
 import '../cubit/wallet_transaction_cubit.dart';
 
@@ -71,7 +73,10 @@ class _TransactionAmountScreenState extends State<TransactionAmountScreen> {
   }
 
   void _onContinueDeposit(BuildContext context, WalletTransactionCubit cubit) {
-    context.push(AppRoutes.transactionConfirmation);
+    context.push(
+      AppRoutes.selectPaymentMethod,
+      extra: PaymentMethodPickerBehavior.depositFlow,
+    );
   }
 
   void _onContinueWithdraw(BuildContext context, WalletTransactionCubit cubit) {

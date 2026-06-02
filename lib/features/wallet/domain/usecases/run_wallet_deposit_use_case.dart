@@ -8,6 +8,12 @@ class RunWalletDepositUseCase {
 
   RunWalletDepositUseCase(this.repository);
 
-  Future<Either<Failure, DepositFlowOutcome>> call(double amount) =>
-      repository.runDepositFlow(amount: amount);
+  Future<Either<Failure, DepositFlowOutcome>> call({
+    required double amount,
+    required String paymentMethodId,
+  }) =>
+      repository.runDepositFlow(
+        amount: amount,
+        paymentMethodId: paymentMethodId,
+      );
 }

@@ -1,6 +1,6 @@
 # Week 5 QA — Stripe config, deposits, payment methods
 
-**Implemented in app:** `GET /stripe/config`, payment methods list/primary/remove/dev add card, deposit intent + **Stripe PaymentSheet** + poll + confirm screen, disclaimer on deposit.
+**App base URL:** `ApiConstants.baseUrl` (currently Azure `/api/v1`; Week 5 doc uses `/api/v1.0` — same paths).
 
 **Tester:** _______________ **Date:** _______________ **Build:** _______________ **Device:** _______________
 
@@ -10,16 +10,53 @@
 
 ---
 
-## Known gaps
+## API integration status (Week 5 doc)
+
+| # | Method | Endpoint | App status | Where / notes |
+|---|--------|----------|------------|---------------|
+| 0a | POST | `/auth/login` | **Integrated** | Auth (prerequisite) |
+| 0b | POST | `/users/me/risk-disclaimer` | **Integrated** | Agreement screen; gate on wallet deposit/withdraw |
+| 0b | GET | `/users/me/risk-disclaimer` | **Integrated** | Login/splash/agreement load state |
+| 1 | GET | `/stripe/config` | **Integrated** | Deposit + add card (publishable key; cached) |
+| 2 | POST | `/stripe/connect/account` | **Not integrated** | Constants only; withdraw uses Week 7 `POST /kyc/start` |
+| 3 | POST | `/stripe/connect/accounts/{id}/onboarding-link` | **Not integrated** | — |
+| 4 | POST | `/stripe/webhook` | **N/A (server)** | Stripe CLI / Azure Function — not mobile |
+| 5 | GET | `/wallet` | **Integrated** | Wallet tab; refresh after deposit success |
+| 6 | POST | `/wallet/deposit/intent` | **Integrated** | Body: `{ amount, paymentMethodId }` + `Idempotency-Key` |
+| 7 | GET | `/wallet/deposit/{paymentIntentId}/status` | **Integrated** | Poll every 2s, max 90s after PaymentSheet |
+| 8 | POST | `/wallet/deposit` (simulated) | **Not in user flow** | Data source exists (`kDebugMode` only); release uses #6–#7 |
+| 9 | GET | `/payment-methods` | **Integrated** | Profile + deposit picker |
+| 10 | POST | `/payment-methods/setup-intent` | **Integrated** | Add card → PaymentSheet → #11 |
+| 11 | POST | `/payment-methods` | **Integrated** | `{ paymentMethodId }` after SetupIntent (SDK path) |
+| 11b | POST | `/payment-methods` (raw card) | **Not in UI** | `addCardDev` in data layer; app always uses #10 + SDK |
+| 12 | GET | `/payment-methods/{paymentMethodId}` | **Integrated** | Card detail bottom sheet |
+| 13 | PATCH | `/payment-methods/{id}/primary` | **Integrated** | `{ isPrimary: true \| false }` — set / unset primary |
+| 14 | DELETE | `/payment-methods/{paymentMethodId}` | **Integrated** | Card detail → remove |
+
+**Real-time (optional):** `/hubs/wallet` — client wired; requires Azure WebSockets + live hub (see Week 4 QA known gaps).
+
+---
+
+## Implemented in app (summary)
+
+- `GET /stripe/config`, `GET /wallet`, deposit intent + **PaymentSheet** + status poll
+- Deposit UI: amount → **select saved card** → confirm → intent with **`paymentMethodId`**
+- Payment methods: list, SetupIntent add card, GET detail, primary/unset, delete
+- Risk disclaimer on wallet deposit (payment methods **do not** require disclaimer)
+
+---
+
+## Known gaps (do not fail app for these alone)
 
 | Item | Status |
 |------|--------|
-| Transaction history screen | Still mock data — not Week 5 API |
-| Simulated `POST /wallet/deposit` | Dev-only API helper — **not** used by the app deposit flow |
-| Stripe Connect #2–#3 | **Not in app** — withdraw uses Week 7 `/kyc/start` (see integration plan) |
-| Deposit payment-method picker | **Removed** — deposit uses PaymentSheet only (amount → confirm) |
-| Add card (release) | SetupIntent + PaymentSheet + `POST /payment-methods` |
-| Add card (debug) | Raw fields → `POST /payment-methods` with `cardHolderName`, `expiryDate`, etc. |
+| Stripe Connect #2–#3 | **Not in app** — leader payouts / KYC via Week 7 `/kyc/*` |
+| Simulated `POST /wallet/deposit` (#8) | Not used in release deposit flow |
+| Raw card `POST /payment-methods` (Option B) | Not exposed in UI |
+| Transaction history screen | Mock — not Week 5 |
+| SignalR `/hubs/wallet` | Wired; often fails if WebSockets off on server |
+| Deposit confirm fee row (2.5% UI) | Client preview only — not in Week 5 intent API doc |
+| PaymentSheet may re-prompt card | Backend may pre-attach PM from intent; verify on device |
 
 ---
 
@@ -27,8 +64,8 @@
 
 | # | Test | Steps | Expected | Result |
 |---|------|--------|----------|--------|
-| 0.1 | Disclaimer accepted | Same as Week 4 | Deposit allowed | |
-| 0.2 | Wallet funded | Optional: note starting balance | For deposit/withdraw later tests | |
+| 0.1 | Disclaimer accepted | Wallet → Deposit (or Agreement) | Deposit allowed; no 403 | |
+| 0.2 | Saved card | Profile → Payment Methods | At least one card for deposit picker | |
 
 ---
 
@@ -36,59 +73,63 @@
 
 | # | Test | Steps | Expected | Result |
 |---|------|--------|----------|--------|
-| 1.1 | Implicit load | Start deposit or add card | No crash; Stripe paths work or dev fallback | |
+| 1.1 | Implicit load | Start deposit or add card | No crash; SDK init from API or fallback `pk_test_…` | |
 
 ---
 
-## 2. Payment methods (`GET` / `PATCH` / `DELETE` / dev `POST`)
+## 2. Payment methods (#9–#14, #10–#11)
 
-**Path:** Profile → **Payment Methods** (or wallet flow → select payment method).
+**Path:** Profile → **Payment Methods** (manage) or Wallet deposit → **select card**.
 
 | # | Test | Steps | Expected | Result |
 |---|------|--------|----------|--------|
-| 2.1 | Shimmer | Open Payment Methods | `PaymentCardListShimmer`, not centered loader | |
-| 2.2 | List | After load | Saved cards from API (brand, last4) | |
-| 2.3 | API failure | Force offline on open | Empty state + error snackbar (no mock cards) | |
-| 2.4 | Set primary | Card detail → set primary | Primary badge updates; persists after reopen | |
-| 2.5 | Remove card | Remove non-primary card | Removed from list | |
-| 2.6 | Add card (dev) | Add card screen — test/dev path if enabled | New card appears in list | |
-| 2.7 | Selection mode | Profile → Payment Methods only | Deposit skips picker (amount → confirm → PaymentSheet) | |
+| 2.1 | Shimmer | Open Payment Methods | `PaymentCardListShimmer` | |
+| 2.2 | List (#9) | After load | Cards from API (brand, last4, primary) | |
+| 2.3 | API failure | Offline on open | Empty/error + toast; no mock cards | |
+| 2.4 | Add card (#10→#11) | Add Card → Stripe sheet → save | `4242…`; card in list; top success toast | |
+| 2.5 | Card detail (#12) | Tap card → sheet | GET detail refreshes preview | |
+| 2.6 | Set primary (#13) | Toggle primary ON | Badge; persists after reopen | |
+| 2.7 | Unset primary (#13) | Toggle primary OFF | `{ isPrimary: false }`; badge removed | |
+| 2.8 | Remove (#14) | Delete non-primary | 204; removed from list | |
+| 2.9 | No disclaimer for PM | Logout → add card without disclaimer | Add card works | |
+| 2.10 | Deposit picker | Deposit → Continue | Selection list; tap card → confirm | |
 
 ---
 
-## 3. Deposit flow
+## 3. Deposit flow (#5–#7)
 
-**Path:** Wallet → **Deposit Funds** → amount → **Confirm** (no saved-card picker).
+**Path:** Wallet → **Deposit** → amount → **select card** → **Confirm deposit**.
 
 | # | Test | Steps | Expected | Result |
 |---|------|--------|----------|--------|
-| 3.1 | Enter amount | e.g. `$50` → continue | Reaches confirmation | |
-| 3.2 | Confirm UI | Review screen | Shows deposit amount | |
-| 3.3 | Stripe PaymentSheet opens | Confirm deposit | Native Stripe sheet appears (not instant success) | |
-| 3.3a | Success card | Number `4242 4242 4242 4242`, exp `12/34`, CVC `123` | Sheet completes; poll → success | |
-| 3.3b | Decline card | `4000 0000 0000 0002`, exp `12/34`, CVC `123` | Error; wallet balance unchanged | |
-| 3.3c | Cancel sheet | Tap X / close PaymentSheet | Back to confirm; no success navigation | |
-| 3.4 | Success screen | After complete | Success UI; balance updated | |
-| 3.5 | Wallet refresh | Wallet tab | Balance increased by deposit amount (match API) | |
-| 3.6 | API sync | Note balance B0 → deposit $50 → wallet | Balance ≥ B0 + 50 (see sync matrix) | |
+| 3.1 | Enter amount | e.g. `$50` → Continue | Payment method picker | |
+| 3.2 | Select card | Tap saved card | Confirm screen; **From** shows card | |
+| 3.3 | Intent body | Confirm (network log) | `POST …/deposit/intent` with `amount` + `paymentMethodId` | |
+| 3.4 | PaymentSheet | Confirm deposit | Native Stripe sheet | |
+| 3.4a | Success | `4242 4242 4242 4242`, `12/34`, `123` | Poll → success screen | |
+| 3.4b | Decline | `4000 0000 0000 0002` | Error toast; balance unchanged | |
+| 3.4c | Cancel sheet | Close PaymentSheet | Stay on confirm; no success | |
+| 3.5 | Status poll (#7) | After pay | Multiple GET …/status until **Completed** or timeout | |
+| 3.6 | Success → Done | Tap Done | Wallet tab; balance updated | |
 | 3.7 | Disclaimer | Without disclaimer → deposit | Blocked at gate | |
-| 3.8 | Production build | Release/profile + **test** backend keys only | PaymentSheet still required; no simulated deposit | |
+| 3.8 | No card | Confirm without selecting card | Toast: select payment card | |
 
 ---
 
-## 4. End-to-end deposit script (from integration plan)
-
-Run in order; check each box.
+## 4. End-to-end deposit script
 
 | Step | Action | Expected | Result |
 |------|--------|----------|--------|
-| 1 | `POST /auth/login` (via app login) | Session OK | |
-| 2 | Accept risk disclaimer | `POST` accepted in app | |
-| 3 | Wallet tab — note balance | Baseline recorded | |
-| 4 | Deposit $50 via app | Intent created | |
-| 5 | Confirm with `4242…` | Payment succeeds | |
-| 6 | Wait for poll / success screen | Status **Completed** | |
-| 7 | Wallet tab again | Balance ≥ baseline + $50 | |
+| 1 | Login | Session OK | |
+| 2 | Accept risk disclaimer | POST accepted | |
+| 3 | Wallet tab — note balance | Baseline **B0** | |
+| 4 | Add/select card if needed | `pm_…` available | |
+| 5 | Deposit $50 → pick card → confirm | Intent + PaymentSheet | |
+| 6 | Pay `4242…` | Stripe succeeds | |
+| 7 | Wait for poll / success | Status **Completed** | |
+| 8 | Done → Wallet tab | Balance ≥ **B0 + 50** | |
+
+**Backend:** Webhook must reach API (Stripe CLI locally or Azure relay) or poll stays **Pending**.
 
 ---
 
@@ -96,9 +137,8 @@ Run in order; check each box.
 
 | # | Test | Steps | Expected | Result |
 |---|------|--------|----------|--------|
-| 5.1 | Contribute still works | Week 4 contribute $5+ | Still succeeds | |
-| 5.2 | Profile | Open profile, edit optional | No crash | |
-| 5.3 | Logout / login | Logout → login | Payment list reloads | |
+| 5.1 | Contribute | Week 4 $5+ contribute | Still works | |
+| 5.2 | Profile / logout | Logout → login | Payment list reloads | |
 
 ---
 
@@ -106,9 +146,10 @@ Run in order; check each box.
 
 | Check | PASS / FAIL |
 |-------|-------------|
-| Payment methods list + primary/remove | |
-| Deposit completes and updates wallet | |
-| Shimmer on payment methods | |
+| Payment methods #9–#14 (+ #10–#11 add card) | |
+| Deposit #6–#7 with `paymentMethodId` + wallet refresh | |
+| Disclaimer gate on deposit (#0b) | |
+| Stripe Connect #2–#3 | N/A mobile (document as not integrated) |
 
 **Notes:**
 

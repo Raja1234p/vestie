@@ -1,5 +1,5 @@
-/// Temporary ledger balance for confirm-screen previews until wallet API is wired.
+/// Wallet tab UI limits.
 abstract final class WalletUiConstants {
-  /// Pre-deposit balance for confirm preview ($240 deposit → $2,590).
-  static const double mockLedgerBalanceUsd = 2350;
+  /// Recent activity rows on the wallet tab (full list on View all).
+  static const int recentActivityPreviewCount = 5;
 }

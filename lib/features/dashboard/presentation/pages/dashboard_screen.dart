@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
-import 'package:vestie/core/di/service_locator.dart';
-import 'package:vestie/features/wallet/presentation/cubit/wallet_cubit.dart';
-import 'package:vestie/core/theme/app_text_styles.dart';
+import 'package:vestie/features/wallet/presentation/cubit/wallet_cubit.dart';import 'package:vestie/core/theme/app_text_styles.dart';
 import 'package:vestie/core/widgets/common/app_text.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/leader/features/create_project/presentation/widgets/create_project_amount_sheet.dart';
@@ -15,6 +13,7 @@ import '../../../wallet/presentation/pages/wallet_screen.dart';
 import '../cubit/nav_cubit.dart';
 import '../models/dashboard_shell_args.dart';
 import '../../../../core/realtime/projects_signalr_service.dart';
+import '../../../../core/realtime/wallet_signalr_service.dart';
 import '../../../../core/services/fcm_push_service.dart';
 import '../../../../core/utils/app_permission_helper.dart';
 import '../widgets/app_bottom_nav_bar.dart';
@@ -47,6 +46,13 @@ class DashboardScreen extends StatefulWidget {
     }
     return const ValueKey('discover');
   }
+
+  static Key walletTabKey(DashboardShellArgs args) {
+    if (args.reloadWallet) {
+      return ValueKey('wallet-reload-${args.navigationMark}');
+    }
+    return const ValueKey('wallet');
+  }
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
@@ -56,6 +62,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await FcmPushService.syncDeviceToken();
       await ProjectsSignalRService.instance.connectIfLoggedIn();
+      await WalletSignalRService.instance.connectIfLoggedIn();
       if (!mounted) return;
       await AppPermissionHelper.maybePromptNotificationsOnDashboard(context);
     });
@@ -66,10 +73,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final shellArgs = widget.shellArgs;
     return BlocProvider(
       create: (_) => NavCubit(initialIndex: shellArgs.initialTabIndex),
-      child: BlocProvider(
-        create: (_) => WalletCubit(
-          getWalletUseCase: ServiceLocator.instance.getWalletUseCase,
-        ),
+      child: _WalletShellReloadGate(
+        reloadWallet: shellArgs.reloadWallet,
         child: BlocBuilder<NavCubit, int>(
         builder: (context, index) {
           return Scaffold(
@@ -90,7 +95,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         shellArgs.reloadDiscoverProjectList,
                   ),
                   const _PlaceholderTab(),
-                  WalletScreen(activate: index == 3),
+                  WalletScreen(
+                    key: DashboardScreen.walletTabKey(shellArgs),
+                    activate: index == 3,
+                  ),
                   ProfileScreen(activate: index == 4),
                 ],
               ),
@@ -107,10 +115,39 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           );
         },
-      ),
+        ),
       ),
     );
   }
+}
+
+/// Refetches wallet into [WalletCubit] after deposit/withdraw success navigation.
+class _WalletShellReloadGate extends StatefulWidget {
+  const _WalletShellReloadGate({
+    required this.reloadWallet,
+    required this.child,
+  });
+
+  final bool reloadWallet;
+  final Widget child;
+
+  @override
+  State<_WalletShellReloadGate> createState() => _WalletShellReloadGateState();
+}
+
+class _WalletShellReloadGateState extends State<_WalletShellReloadGate> {
+  @override
+  void initState() {
+    super.initState();
+    if (!widget.reloadWallet) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<WalletCubit>().load(forceRefresh: true);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
 
 /// Placeholder for the center nav slot (Add opens sheet, not this tab).

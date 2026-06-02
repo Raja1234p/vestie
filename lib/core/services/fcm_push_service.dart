@@ -16,6 +16,8 @@ class FcmPushService {
 
   static bool _firebaseReady = false;
   static bool _tokenRefreshAttached = false;
+  static Future<void>? _syncInFlight;
+  static String? _sessionSyncedToken;
 
   static Future<void> initialize() async {
     if (kIsWeb) return;
@@ -33,10 +35,26 @@ class FcmPushService {
     }
   }
 
-  /// Call when the user reaches the post-auth shell (dashboard) or cold-starts logged in.
-  static Future<void> syncDeviceToken() async {
+  /// Call once when the user reaches the post-auth shell (dashboard).
+  ///
+  /// Skips the API when the FCM token is unchanged; coalesces concurrent calls.
+  static Future<void> syncDeviceToken({bool force = false}) async {
     if (!_firebaseReady || kIsWeb) return;
 
+    if (_syncInFlight != null) {
+      await _syncInFlight;
+      return;
+    }
+
+    _syncInFlight = _syncDeviceTokenBody(force: force);
+    try {
+      await _syncInFlight;
+    } finally {
+      _syncInFlight = null;
+    }
+  }
+
+  static Future<void> _syncDeviceTokenBody({required bool force}) async {
     final sl = ServiceLocator.instance;
     final loggedIn =
         await sl.sharedPrefs.getBool(StorageKeys.isLoggedIn);
@@ -45,6 +63,17 @@ class FcmPushService {
     try {
       final token = await FirebaseMessaging.instance.getToken();
       if (token == null || token.isEmpty) return;
+
+      if (!force && _sessionSyncedToken == token) return;
+
+      if (!force) {
+        final stored =
+            await sl.sharedPrefs.getString(StorageKeys.fcmDeviceToken);
+        if (stored == token) {
+          _sessionSyncedToken = token;
+          return;
+        }
+      }
 
       final platform = Platform.isIOS ? 'iOS' : 'Android';
       final result = await sl.registerDeviceTokenUseCase(
@@ -57,6 +86,7 @@ class FcmPushService {
         },
         (_) async {
           await sl.sharedPrefs.saveString(StorageKeys.fcmDeviceToken, token);
+          _sessionSyncedToken = token;
         },
       );
     } catch (e) {
@@ -66,6 +96,8 @@ class FcmPushService {
 
   /// Call before clearing auth tokens on logout.
   static Future<void> unregisterStoredToken() async {
+    _sessionSyncedToken = null;
+
     final sl = ServiceLocator.instance;
     final stored = await sl.sharedPrefs.getString(StorageKeys.fcmDeviceToken);
     if (stored != null && stored.isNotEmpty) {

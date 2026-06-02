@@ -7,17 +7,26 @@ class ApiConstants {
   /// Week 4+ REST base (`/api/v1.0` per Vestie API documentation).
   static const String baseUrl = 'https://vestie-backend-byexejcphyhaapfy.centralus-01.azurewebsites.net/api/v1';
 
-  /// SignalR hub path (site root, not under `/api/v1.0`).
+  /// SignalR hubs live on the API host root (not under `/api/v1`).
+  ///
+  /// Azure staging:
+  /// - `https://vestie-backend-byexejcphyhaapfy.centralus-01.azurewebsites.net/hubs/projects`
+  /// - `https://vestie-backend-byexejcphyhaapfy.centralus-01.azurewebsites.net/hubs/wallet`
   static const String projectsHubPath = '/hubs/projects';
+  static const String walletHubPath = '/hubs/wallet';
 
   /// Full hub URL for `signalr_netcore` (Bearer via `accessTokenFactory`).
-  static String get projectsHubUrl {
+  static String get projectsHubUrl => signalRHubUrl(projectsHubPath);
+
+  static String get walletHubUrl => signalRHubUrl(walletHubPath);
+
+  static String signalRHubUrl(String hubPath) {
     final rest = Uri.parse(baseUrl);
     return Uri(
       scheme: rest.scheme,
       host: rest.host,
       port: rest.hasPort ? rest.port : null,
-      path: projectsHubPath,
+      path: hubPath,
     ).toString();
   }
 
