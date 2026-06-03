@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vestie/core/realtime/project_realtime_event.dart';
+import 'package:vestie/core/services/wallet_prefetch.dart';
 import 'package:vestie/core/realtime/projects_signalr_service.dart';
 import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
-import 'package:vestie/features/wallet/domain/wallet_balance_cache.dart';
 import 'package:vestie/features/wallet/presentation/cubit/wallet_cubit.dart';
 
 /// Joins SignalR project channel while visible; refreshes pot (+ wallet on contribute).
@@ -29,6 +29,7 @@ class _ProjectRealtimeScopeState extends State<ProjectRealtimeScope> {
   @override
   void initState() {
     super.initState();
+    unawaited(WalletPrefetch.warmIfNeeded());
     ProjectsSignalRService.instance.joinProject(widget.projectId);
     _subscription = ProjectsSignalRService.instance.events.listen(_onEvent);
   }
@@ -57,7 +58,7 @@ class _ProjectRealtimeScopeState extends State<ProjectRealtimeScope> {
     bloc.add(RefreshProjectPotEvent(projectId: widget.projectId));
 
     if (event.kind == ProjectRealtimeEventKind.contributionMade) {
-      WalletBalanceCache.clear();
+      unawaited(WalletPrefetch.refresh());
       try {
         context.read<WalletCubit>().load(forceRefresh: true);
       } catch (_) {}

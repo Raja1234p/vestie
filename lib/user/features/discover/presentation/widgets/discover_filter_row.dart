@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import 'package:vestie/core/widgets/common/app_text.dart';
 
 const _filters = [
@@ -33,6 +35,7 @@ class DiscoverFilterRow extends StatelessWidget {
           SizedBox(width: 10.w),
           ..._filters.map((f) {
             final active = f == selected;
+            final iconAsset = _iconAssetForFilter(f);
             return GestureDetector(
               onTap: () => onSelect(f),
               child: AnimatedContainer(
@@ -49,15 +52,30 @@ class DiscoverFilterRow extends StatelessWidget {
                     width: 1,
                   ),
                 ),
-                child: AppText(
-                  f,
-                  style: GoogleFonts.lato(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w500,
-                    color: active
-                        ? AppColors.chipActiveText
-                        : AppColors.chipInactiveText,
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (iconAsset != null) ...[
+                      AppSvgIcon(
+                        assetPath: iconAsset,
+                        size: 14.w,
+                        color: active
+                            ? AppColors.chipActiveText
+                            : AppColors.primary,
+                      ),
+                      SizedBox(width: 5.w),
+                    ],
+                    AppText(
+                      f,
+                      style: GoogleFonts.lato(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                        color: active
+                            ? AppColors.chipActiveText
+                            : AppColors.chipInactiveText,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             );
@@ -66,5 +84,18 @@ class DiscoverFilterRow extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+String? _iconAssetForFilter(String filter) {
+  switch (filter) {
+    case AppStrings.filterVacations:
+      return AppAssets.iconVacationUmbrella;
+    case AppStrings.filterEmergency:
+      return AppAssets.iconEmergencyFund;
+    case AppStrings.filterInvestments:
+      return AppAssets.iconInvestmentFund;
+    default:
+      return null;
   }
 }

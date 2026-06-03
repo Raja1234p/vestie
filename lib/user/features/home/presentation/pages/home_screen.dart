@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/services/bank_accounts_prefetch.dart';
 import 'package:vestie/core/services/payment_methods_prefetch.dart';
+import 'package:vestie/core/services/wallet_prefetch.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_shimmer.dart';
@@ -74,6 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onTabActivated() {
     unawaited(PaymentMethodsPrefetch.warmIfNeeded());
     unawaited(BankAccountsPrefetch.warmIfNeeded());
+    unawaited(WalletPrefetch.warmIfNeeded());
 
     final state = _homeBloc.state;
     if (state is HomeLoading) return;

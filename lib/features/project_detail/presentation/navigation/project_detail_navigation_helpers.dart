@@ -23,6 +23,7 @@ import 'package:vestie/leader/features/project_detail/presentation/models/leader
 import 'package:vestie/user/features/project_detail/presentation/models/member_vote_outcome_ui_data.dart';
 import '../widgets/distribute_funds_amount_sheet.dart';
 import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
+import 'package:vestie/features/wallet/domain/wallet_balance_cache.dart';
 import 'package:vestie/user/features/contributions/data/models/contribution_submit_result_model.dart';
 import 'package:vestie/user/features/vff/presentation/mappers/invite_members_mapper.dart';
 import '../data/project_funds_history_ledger_builder.dart';
@@ -37,9 +38,11 @@ class ProjectDetailNavigationHelpers {
     final dueBy = project.repaymentWindowDays > 0
         ? 'In ${project.repaymentWindowDays} days'
         : ProjectWalletFlowArgs.defaultBorrowDueByLabel;
+    final cachedBalance = WalletBalanceCache.value?.availableBalance;
     return ProjectWalletFlowArgs(
       projectId: project.id,
       projectName: project.name,
+      walletBalance: cachedBalance ?? 0,
       borrowLimit: project.borrowLimitAmount > 0
           ? project.borrowLimitAmount
           : ProjectWalletFlowArgs.defaultBorrowLimit,

@@ -40,7 +40,7 @@ final class UserVffProfileTopBar extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: GoogleFonts.lato(
-                fontSize: 25.sp,
+                fontSize: 28.sp,
                 fontWeight: FontWeight.w600,
                 color: AppColors.guidelineTitle,
               ),

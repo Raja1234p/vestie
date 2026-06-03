@@ -64,15 +64,17 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
   }
 
   Future<void> _onInitArgs(InitArgsEvent event, Emitter<ContributeState> emit) async {
+    final cachedWallet = WalletBalanceCache.value;
+    var walletBalance =
+        cachedWallet?.availableBalance ?? event.args.walletBalance;
+    var walletId = cachedWallet?.walletId ?? '';
+
     emit(state.copyWith(
-      args: event.args,
+      args: event.args.copyWithWalletBalance(walletBalance),
       isConfigLoading: true,
       clearPreviewFailure: true,
       clearSubmitFailure: true,
     ));
-
-    var walletBalance = event.args.walletBalance;
-    var walletId = '';
 
     final walletResult = await getWalletUseCase();
     walletResult.fold(
@@ -240,7 +242,9 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
         submitFailure: failure,
       )),
       (submitResult) {
-        WalletBalanceCache.clear();
+        WalletBalanceCache.patchAvailableBalance(
+          submitResult.walletAvailableBalance,
+        );
         emit(state.copyWith(
           isSubmitLoading: false,
           isSubmitSuccess: true,

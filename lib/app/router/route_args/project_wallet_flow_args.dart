@@ -12,7 +12,8 @@ class ProjectWalletFlowArgs {
   final String borrowDueByLabel;
   final String? membershipId;
 
-  static const double defaultWallet = 2400.0;
+  /// Legacy mock default — do not use in production UI; prefer [WalletBalanceCache].
+  static const double defaultWallet = 0;
   static const double defaultBorrowLimit = 250.0;
   static const String defaultBorrowDueByLabel = 'May 1, 2025 (30 days)';
 

@@ -33,7 +33,7 @@ final class UserVffGroupInvitationsScaffold extends StatelessWidget {
               title: AppStrings.userVffGroupInvitationsTitle,
               leading: AppBackButton(onPressed: () => context.pop()),
               titleStyle: GoogleFonts.lato(
-                fontSize: 20.sp,
+                fontSize: 28.sp,
                 fontWeight: FontWeight.w800,
                 color: AppColors.grey1100,
               ),

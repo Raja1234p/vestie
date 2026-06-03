@@ -10,5 +10,22 @@ class WalletBalanceCache {
 
   static void update(WalletEntity wallet) => _cached = wallet;
 
+  /// Updates cached available (and wallet) balance after contribute / deposit.
+  static void patchAvailableBalance(double availableBalance) {
+    final w = _cached;
+    if (w == null) return;
+    _cached = WalletEntity(
+      walletId: w.walletId,
+      currency: w.currency,
+      walletBalance: availableBalance,
+      availableBalance: availableBalance,
+      borrowedBalance: w.borrowedBalance,
+      borrowed: w.borrowed,
+      lockedInProjects: w.lockedInProjects,
+      pendingWithdrawal: w.pendingWithdrawal,
+      recentTransactions: w.recentTransactions,
+    );
+  }
+
   static void clear() => _cached = null;
 }

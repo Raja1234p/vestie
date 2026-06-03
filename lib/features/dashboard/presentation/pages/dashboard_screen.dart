@@ -17,6 +17,7 @@ import '../../../../core/realtime/wallet_signalr_service.dart';
 import '../../../../core/services/fcm_push_service.dart';
 import '../../../../core/services/bank_accounts_prefetch.dart';
 import '../../../../core/services/payment_methods_prefetch.dart';
+import '../../../../core/services/wallet_prefetch.dart';
 import '../../../../core/utils/app_permission_helper.dart';
 import '../widgets/app_bottom_nav_bar.dart';
 
@@ -64,6 +65,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       PaymentMethodsPrefetch.warmIfNeeded();
       BankAccountsPrefetch.warmIfNeeded();
+      WalletPrefetch.warmIfNeeded();
       await FcmPushService.syncDeviceToken();
       await ProjectsSignalRService.instance.connectIfLoggedIn();
       await WalletSignalRService.instance.connectIfLoggedIn();

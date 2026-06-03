@@ -22,6 +22,7 @@ import 'package:vestie/core/utils/app_snackbar.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/services/bank_accounts_prefetch.dart';
 import 'package:vestie/core/services/payment_methods_prefetch.dart';
+import 'package:vestie/core/services/wallet_prefetch.dart';
 import 'package:vestie/core/utils/wallet_withdraw_validation.dart';
 import 'package:vestie/features/payment_methods/domain/payment_methods_cache.dart';
 
@@ -62,6 +63,7 @@ class _TransactionAmountScreenState extends State<TransactionAmountScreen> {
       return;
     }
     unawaited(PaymentMethodsPrefetch.warmIfNeeded());
+    unawaited(WalletPrefetch.warmIfNeeded());
   }
 
   @override
