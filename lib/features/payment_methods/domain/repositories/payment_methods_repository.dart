@@ -8,13 +8,6 @@ abstract class PaymentMethodsRepository {
 
   Future<Either<Failure, PaymentCard>> getById(String paymentMethodId);
 
-  Future<Either<Failure, PaymentCard>> saveCardFromForm({
-    required String holderName,
-    required String cardNumber,
-    required String expiry,
-    required String cvv,
-  });
-
   /// SetupIntent → PaymentSheet → `POST /payment-methods` with `paymentMethodId`.
   Future<Either<Failure, PaymentCard>> saveCardViaSetupIntent({
     Future<void> Function()? onBeforePresentPaymentSheet,

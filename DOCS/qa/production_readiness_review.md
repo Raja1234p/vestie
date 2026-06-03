@@ -83,8 +83,7 @@ flutter build ios --debug --no-codesign
 | Flow | Status |
 |------|--------|
 | Deposit intent → PaymentSheet → poll | **Ready** |
-| Add card (release) SetupIntent → PaymentSheet → attach | **Ready** |
-| Add card (debug) raw POST | **Dev only** |
+| Add card SetupIntent → PaymentSheet → attach | **Ready** |
 | Payment methods list / primary / remove | **Ready** |
 | Transaction history screen | **Mock** — out of W5 scope |
 

@@ -63,15 +63,6 @@ class PaymentMethodsRepositoryImpl implements PaymentMethodsRepository {
   }
 
   @override
-  Future<Either<Failure, PaymentCard>> saveCardFromForm({
-    required String holderName,
-    required String cardNumber,
-    required String expiry,
-    required String cvv,
-  }) async =>
-      saveCardViaSetupIntent();
-
-  @override
   Future<Either<Failure, PaymentCard>> saveCardViaSetupIntent({
     Future<void> Function()? onBeforePresentPaymentSheet,
   }) async {

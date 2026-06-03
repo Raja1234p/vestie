@@ -202,7 +202,6 @@ class ServiceLocator {
   late final PaymentMethodsRemoteDataSource paymentMethodsRemoteDataSource;
   late final PaymentMethodsRepository paymentMethodsRepository;
   late final ListPaymentMethodsUseCase listPaymentMethodsUseCase;
-  late final SavePaymentCardUseCase savePaymentCardUseCase;
   late final SavePaymentCardViaSetupUseCase savePaymentCardViaSetupUseCase;
   late final GetPaymentMethodUseCase getPaymentMethodUseCase;
   late final SetPrimaryPaymentMethodUseCase setPrimaryPaymentMethodUseCase;
@@ -383,7 +382,6 @@ class ServiceLocator {
     );
     listPaymentMethodsUseCase =
         ListPaymentMethodsUseCase(paymentMethodsRepository);
-    savePaymentCardUseCase = SavePaymentCardUseCase(paymentMethodsRepository);
     savePaymentCardViaSetupUseCase =
         SavePaymentCardViaSetupUseCase(paymentMethodsRepository);
     getPaymentMethodUseCase =

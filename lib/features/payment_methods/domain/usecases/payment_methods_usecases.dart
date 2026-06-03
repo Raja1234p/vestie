@@ -13,25 +13,6 @@ class ListPaymentMethodsUseCase {
       repository.list(forceRefresh: forceRefresh);
 }
 
-class SavePaymentCardUseCase {
-  final PaymentMethodsRepository repository;
-
-  SavePaymentCardUseCase(this.repository);
-
-  Future<Either<Failure, PaymentCard>> call({
-    required String holderName,
-    required String cardNumber,
-    required String expiry,
-    required String cvv,
-  }) =>
-      repository.saveCardFromForm(
-        holderName: holderName,
-        cardNumber: cardNumber,
-        expiry: expiry,
-        cvv: cvv,
-      );
-}
-
 class SavePaymentCardViaSetupUseCase {
   final PaymentMethodsRepository repository;
 

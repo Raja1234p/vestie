@@ -48,13 +48,6 @@ abstract class PaymentMethodsRemoteDataSource {
     required String paymentMethodId,
   });
 
-  Future<PaymentMethodApiModel> addCardDev({
-    required String holderName,
-    required String number,
-    required String expiry,
-    required String cvv,
-  });
-
   Future<void> setPrimary(String paymentMethodId, {required bool isPrimary});
 
   Future<void> remove(String paymentMethodId);
@@ -120,30 +113,6 @@ class PaymentMethodsRemoteDataSourceImpl implements PaymentMethodsRemoteDataSour
       data: {'paymentMethodId': paymentMethodId},
     );
     return _parsePaymentMethodResponse(response);
-  }
-
-  @override
-  Future<PaymentMethodApiModel> addCardDev({
-    required String holderName,
-    required String number,
-    required String expiry,
-    required String cvv,
-  }) async {
-    final response = await apiClient.post<Map<String, dynamic>>(
-      ApiConstants.paymentMethods,
-      data: {
-        'cardHolderName': holderName.trim(),
-        'cardNumber': number.replaceAll(RegExp(r'\s'), ''),
-        'expiryDate': expiry.trim(),
-        'cvv': cvv.trim(),
-      },
-    );
-    if (response.containsKey('paymentMethod') && response['paymentMethod'] is Map) {
-      return PaymentMethodApiModel.fromJson(
-        (response['paymentMethod'] as Map).cast<String, dynamic>(),
-      );
-    }
-    return PaymentMethodApiModel.fromJson(response);
   }
 
   @override

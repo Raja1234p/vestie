@@ -27,8 +27,7 @@
 | 8 | POST | `/wallet/deposit` (simulated) | **Not in user flow** | Data source exists (`kDebugMode` only); release uses #6–#7 |
 | 9 | GET | `/payment-methods` | **Integrated** | Profile + deposit picker |
 | 10 | POST | `/payment-methods/setup-intent` | **Integrated** | Add card → PaymentSheet → #11 |
-| 11 | POST | `/payment-methods` | **Integrated** | `{ paymentMethodId }` after SetupIntent (SDK path) |
-| 11b | POST | `/payment-methods` (raw card) | **Not in UI** | `addCardDev` in data layer; app always uses #10 + SDK |
+| 11 | POST | `/payment-methods` | **Integrated** | `{ paymentMethodId }` after SetupIntent (Stripe SDK only) |
 | 12 | GET | `/payment-methods/{paymentMethodId}` | **Integrated** | Card detail bottom sheet |
 | 13 | PATCH | `/payment-methods/{id}/primary` | **Integrated** | `{ isPrimary: true \| false }` — set / unset primary |
 | 14 | DELETE | `/payment-methods/{paymentMethodId}` | **Integrated** | Card detail → remove |
@@ -52,7 +51,6 @@
 |------|--------|
 | Stripe Connect #2–#3 | **Not in app** — leader payouts / KYC via Week 7 `/kyc/*` |
 | Simulated `POST /wallet/deposit` (#8) | Not used in release deposit flow |
-| Raw card `POST /payment-methods` (Option B) | Not exposed in UI |
 | Transaction history screen | Mock — not Week 5 |
 | SignalR `/hubs/wallet` | Wired; often fails if WebSockets off on server |
 | Deposit confirm fee row (2.5% UI) | Client preview only — not in Week 5 intent API doc |
