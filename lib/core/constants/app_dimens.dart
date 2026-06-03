@@ -42,6 +42,9 @@ class AppDimens {
   static double get v34 => 34.0.h;
   static double get v48 => 48.0.h;
 
+  /// Shared [DottedBorder] dash lengths (project card description, agreement, etc.).
+  static const List<double> dottedBorderDashPattern = [10, 6];
+
   /// Invite members sheet — gap above/below dashed dividers; hint-to-first-divider.
   static double get inviteMembersDividerGutter => v24;
   static double get inviteMembersHintToDivider => v34;

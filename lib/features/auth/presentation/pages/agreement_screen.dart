@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_assets.dart';
+import '../../../../core/constants/app_dimens.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_button.dart';
@@ -170,7 +171,7 @@ class _AgreementGuidelinesBox extends StatelessWidget {
           radius: Radius.circular(12.r),
           color: AppColors.purple300,
           strokeWidth: 1,
-          dashPattern: const [4, 4],
+          dashPattern: AppDimens.dottedBorderDashPattern,
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
         ),
         child: Container(

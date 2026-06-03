@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/utils/project_end_relative_label.dart';
 import 'package:vestie/core/utils/roi_display_format.dart';
@@ -103,7 +104,7 @@ class ProjectCard extends StatelessWidget {
                         radius: Radius.circular(8.r),
                         color: AppColors.projectCardDescriptionBorder,
                         strokeWidth: 1,
-                        dashPattern: const [10, 6],
+                        dashPattern: AppDimens.dottedBorderDashPattern,
                         padding: EdgeInsets.symmetric(
                           horizontal: 10.w,
                           vertical: 8.h,
