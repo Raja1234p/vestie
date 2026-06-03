@@ -17,3 +17,16 @@ class HomeRefreshRequested extends HomeEvent {
 
   @override List<Object> get props => [silent];
 }
+
+/// Updates raised amount on a project card after contribute (201 `projectPot`).
+class HomeProjectPotPatched extends HomeEvent {
+  final String projectId;
+  final double projectPot;
+
+  const HomeProjectPotPatched({
+    required this.projectId,
+    required this.projectPot,
+  });
+
+  @override List<Object> get props => [projectId, projectPot];
+}

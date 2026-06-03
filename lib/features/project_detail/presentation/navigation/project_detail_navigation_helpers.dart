@@ -23,6 +23,7 @@ import 'package:vestie/leader/features/project_detail/presentation/models/leader
 import 'package:vestie/user/features/project_detail/presentation/models/member_vote_outcome_ui_data.dart';
 import '../widgets/distribute_funds_amount_sheet.dart';
 import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
+import 'package:vestie/core/services/home_project_list_sync.dart';
 import 'package:vestie/features/wallet/domain/wallet_balance_cache.dart';
 import 'package:vestie/user/features/contributions/data/models/contribution_submit_result_model.dart';
 import 'package:vestie/user/features/vff/presentation/mappers/invite_members_mapper.dart';
@@ -121,6 +122,10 @@ class ProjectDetailNavigationHelpers {
     required String projectId,
     required ContributionSubmitResultModel submitResult,
   }) {
+    HomeProjectListSync.recordContribution(
+      projectId: projectId,
+      projectPot: submitResult.projectPot,
+    );
     if (!context.mounted) return;
     try {
       context.read<ProjectDetailBloc>().add(

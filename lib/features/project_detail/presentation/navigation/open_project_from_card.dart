@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/app_routes.dart';
 import '../../../../app/router/route_args/project_detail_flow_args.dart';
+import 'package:vestie/core/services/home_project_list_sync.dart';
 import 'package:vestie/features/dashboard/presentation/models/dashboard_shell_args.dart';
 import 'package:vestie/features/projects/domain/entities/created_project_entity.dart';
 import 'package:vestie/features/projects/domain/entities/invite_preview_entity.dart';
@@ -48,6 +49,8 @@ void popProjectDetailNavigation(
   bool refreshHomeOnPop = false,
   bool refreshDiscoverOnPop = false,
 }) {
+  refreshHomeOnPop =
+      refreshHomeOnPop || HomeProjectListSync.consumeRefreshHomeOnPop();
   if (refreshHomeOnPop) {
     context.go(
       AppRoutes.dashboard,

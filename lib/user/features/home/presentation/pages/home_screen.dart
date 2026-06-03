@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/services/bank_accounts_prefetch.dart';
 import 'package:vestie/core/services/payment_methods_prefetch.dart';
+import 'package:vestie/core/services/home_project_list_sync.dart';
 import 'package:vestie/core/services/wallet_prefetch.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
@@ -49,6 +50,15 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    HomeProjectListSync.onProjectPotUpdated = (projectId, projectPot) {
+      if (!mounted) return;
+      _homeBloc.add(
+        HomeProjectPotPatched(
+          projectId: projectId,
+          projectPot: projectPot,
+        ),
+      );
+    };
     if (widget.reloadHomeProjectList) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
@@ -84,6 +94,16 @@ class _HomeScreenState extends State<HomeScreen> {
       return;
     }
     _homeBloc.add(const HomeRefreshRequested(silent: true));
+  }
+
+  @override
+  void dispose() {
+    if (HomeProjectListSync.onProjectPotUpdated != null) {
+      HomeProjectListSync.onProjectPotUpdated = null;
+    }
+    _homeBloc.close();
+    _sectionsCubit.close();
+    super.dispose();
   }
 
   @override

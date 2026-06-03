@@ -51,6 +51,29 @@ class Project {
     this.successVoteApproved,
   });
 
+  Project copyWith({
+    double? currentAmount,
+  }) {
+    return Project(
+      id: id,
+      name: name,
+      category: category,
+      status: status,
+      relation: relation,
+      goalAmount: goalAmount,
+      currentAmount: currentAmount ?? this.currentAmount,
+      endsIn: endsIn,
+      roiPercentage: roiPercentage,
+      description: description,
+      displayStatus: displayStatus,
+      projectInviteCode: projectInviteCode,
+      requestPending: requestPending,
+      isPublic: isPublic,
+      userFlow: userFlow,
+      successVoteApproved: successVoteApproved,
+    );
+  }
+
   String get categoryLabel {
     return category.label;
   }

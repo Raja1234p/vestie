@@ -5,6 +5,7 @@ import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/error/failures.dart';
 import 'package:vestie/features/auth/domain/entities/user.dart';
 import 'package:vestie/features/auth/domain/usecases/get_me_use_case.dart';
+import 'package:vestie/core/services/home_project_list_sync.dart';
 import 'package:vestie/features/dashboard/domain/dashboard_prefetch.dart';
 import '../../domain/entities/project.dart';
 import 'package:vestie/features/projects/domain/usecases/list_projects_use_case.dart';
@@ -31,6 +32,46 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         super(const HomeInitial()) {
     on<HomeFetchStarted>(_onFetch);
     on<HomeRefreshRequested>(_onFetch);
+    on<HomeProjectPotPatched>(_onProjectPotPatched);
+  }
+
+  void _onProjectPotPatched(
+    HomeProjectPotPatched event,
+    Emitter<HomeState> emit,
+  ) {
+    final curr = state;
+    if (curr is! HomeLoaded) return;
+    if (event.projectId.isEmpty || event.projectPot <= 0) return;
+
+    emit(
+      HomeLoaded(
+        totalContributed: curr.totalContributed,
+        myProjects: _patchProjectPot(
+          curr.myProjects,
+          projectId: event.projectId,
+          projectPot: event.projectPot,
+        ),
+        joinedProjects: _patchProjectPot(
+          curr.joinedProjects,
+          projectId: event.projectId,
+          projectPot: event.projectPot,
+        ),
+      ),
+    );
+  }
+
+  List<Project> _patchProjectPot(
+    List<Project> projects, {
+    required String projectId,
+    required double projectPot,
+  }) {
+    var updated = false;
+    final next = projects.map((p) {
+      if (p.id != projectId) return p;
+      updated = true;
+      return p.copyWith(currentAmount: projectPot);
+    }).toList(growable: false);
+    return updated ? next : projects;
   }
 
   Future<void> _onFetch(HomeEvent event, Emitter<HomeState> emit) async {
@@ -77,12 +118,16 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       return;
     }
 
-    final myProjects = mine
+    var myProjects = mine
         .where((p) => p.relation == ProjectRelation.owned)
         .toList(growable: false);
-    final joinedProjects = mine
+    var joinedProjects = mine
         .where((p) => p.relation == ProjectRelation.joined)
         .toList(growable: false);
+
+    myProjects = HomeProjectListSync.applyPendingPots(myProjects);
+    joinedProjects = HomeProjectListSync.applyPendingPots(joinedProjects);
+    HomeProjectListSync.reconcileAfterFetch([...myProjects, ...joinedProjects]);
 
     final totalContributed = summaryResult.fold(
       (_) => 0.0,
