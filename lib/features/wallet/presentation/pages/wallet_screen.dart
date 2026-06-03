@@ -138,47 +138,7 @@ class _WalletScreenState extends State<WalletScreen> {
                           WalletOverviewCard(
                             walletAmount: state.walletAmountFormatted,
                             borrowedAmount: state.borrowedAmountFormatted,
-                            lockedInProjectsAmount: state.wallet != null
-                                ? state.lockedInProjectsFormatted
-                                : null,
                           ),
-                          if (state.hasPendingWithdrawal)
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 4.h),
-                              child: Container(
-                                width: double.infinity,
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12.w,
-                                  vertical: 10.h,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColors.grey100,
-                                  borderRadius: BorderRadius.circular(10.r),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: AppText(
-                                        AppStrings.walletPendingWithdrawalLabel,
-                                        style: GoogleFonts.lato(
-                                          fontSize: 13.sp,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.neutral1200,
-                                        ),
-                                      ),
-                                    ),
-                                    AppText(
-                                      state.pendingWithdrawalFormatted,
-                                      style: GoogleFonts.lato(
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.w800,
-                                        color: AppColors.neutral1200,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
                           WalletActionButtons(
                             onDeposit: () => _openFlow(
                               context,

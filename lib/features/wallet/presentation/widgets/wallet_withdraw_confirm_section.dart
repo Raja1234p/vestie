@@ -8,6 +8,7 @@ import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/utils/formatters.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
+import 'package:vestie/features/wallet/domain/entities/withdrawal_entities.dart';
 import 'package:vestie/features/wallet/domain/wallet_withdraw_policy.dart';
 import 'package:vestie/features/wallet/domain/withdraw_delivery_method.dart';
 import 'package:vestie/features/wallet/presentation/cubit/wallet_transaction_cubit.dart';
@@ -31,14 +32,15 @@ class WalletWithdrawConfirmSection extends StatelessWidget {
         txState.withdrawDeliveryMethod ?? WithdrawDeliveryMethod.standard;
     final isInstant = method == WithdrawDeliveryMethod.instant;
     final preview = withdrawState.preview;
-    final toLabel = txState.selectedBankDisplayName ??
-        preview?.destinationDisplay ??
+    final toLabel = preview?.destinationDisplay ??
+        txState.selectedBankDisplayName ??
         AppStrings.emptyData;
-    final feeAmt = preview?.feeAmount ??
-        WalletWithdrawPolicy.feeAmount(txState.amountParsed, method);
-    final feeRow = isInstant
-        ? AppStrings.withdrawFeeInstantRow(feeAmt)
-        : AppStrings.walletFeeNone;
+    final feeRow = _withdrawFeeLabel(
+      isInstant: isInstant,
+      preview: preview,
+      amount: txState.amountParsed,
+      method: method,
+    );
     final eta = preview?.processingTime ??
         (isInstant
             ? AppStrings.withdrawProcessingInstantValue
@@ -161,6 +163,55 @@ class WalletWithdrawConfirmSection extends StatelessWidget {
       ),
     );
   }
+}
+
+bool _previewIsInstant(WithdrawalPreviewEntity preview) =>
+    preview.type.toLowerCase() == 'instant';
+
+double _resolvedPreviewFeeAmount(
+  WithdrawalPreviewEntity preview,
+  double principal,
+) {
+  if (preview.feeAmount > 0) return preview.feeAmount;
+  if (preview.feePercent > 0 && principal > 0) {
+    return double.parse(
+      (principal * preview.feePercent / 100).toStringAsFixed(2),
+    );
+  }
+  if (preview.youWillReceive > 0 && principal > preview.youWillReceive) {
+    return double.parse(
+      (principal - preview.youWillReceive).toStringAsFixed(2),
+    );
+  }
+  return 0;
+}
+
+String _withdrawFeeLabel({
+  required bool isInstant,
+  required WithdrawalPreviewEntity? preview,
+  required double amount,
+  required WithdrawDeliveryMethod method,
+}) {
+  final instantFromPreview =
+      preview != null && _previewIsInstant(preview);
+  if (!isInstant && !instantFromPreview) return AppStrings.walletFeeNone;
+
+  if (preview != null) {
+    final feeAmount = _resolvedPreviewFeeAmount(preview, amount);
+    if (feeAmount <= 0) return AppStrings.walletFeeNone;
+    final feePercent = preview.feePercent > 0
+        ? preview.feePercent
+        : WalletWithdrawPolicy.instantFeeRate * 100;
+    return AppStrings.withdrawFeeInstantRow(
+      feePercent: feePercent,
+      feeAmount: feeAmount,
+    );
+  }
+
+  return AppStrings.withdrawFeeInstantRow(
+    feePercent: WalletWithdrawPolicy.instantFeeRate * 100,
+    feeAmount: WalletWithdrawPolicy.feeAmount(amount, method),
+  );
 }
 
 /// Instant pill — Figma: #F5F0FE fill, purple border, lightning PNG + label.

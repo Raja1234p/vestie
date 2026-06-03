@@ -14,6 +14,7 @@ abstract class WalletWithdrawalRepository {
   Future<Either<Failure, WithdrawalPreviewEntity>> preview({
     required double amount,
     required WithdrawalApiType type,
+    String? bankAccountId,
   });
 
   Future<Either<Failure, WithdrawFlowOutcome>> runWithdrawFlow({

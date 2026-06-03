@@ -1,3 +1,5 @@
+import 'package:vestie/core/utils/formatters.dart';
+
 class AppStrings {
   AppStrings._();
 
@@ -916,9 +918,15 @@ class AppStrings {
   static const String btnConfirmInstantWithdraw = 'Confirm Instant Withdraw';
   static const String btnConfirmStandardWithdraw = 'Confirm Standard Withdraw';
 
-  static String withdrawFeeInstantRow(double feeDollars) {
-    final v = feeDollars.toStringAsFixed(0);
-    return '1.5% (-\$$v)';
+  static String withdrawFeeInstantRow({
+    required double feePercent,
+    required double feeAmount,
+  }) {
+    final pct = feePercent == feePercent.roundToDouble()
+        ? '${feePercent.toInt()}%'
+        : '${feePercent.toStringAsFixed(1)}%';
+    final fee = AppFormatters.formatCurrency(feeAmount);
+    return '$pct (-$fee)';
   }
 
   static String withdrawSuccessBodyInstant(String amountFormatted) =>

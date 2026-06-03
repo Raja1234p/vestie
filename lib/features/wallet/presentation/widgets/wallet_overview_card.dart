@@ -10,13 +10,11 @@ import '../../../../core/widgets/text/app_text.dart';
 class WalletOverviewCard extends StatelessWidget {
   final String walletAmount;
   final String borrowedAmount;
-  final String? lockedInProjectsAmount;
 
   const WalletOverviewCard({
     super.key,
     required this.walletAmount,
     required this.borrowedAmount,
-    this.lockedInProjectsAmount,
   });
 
   @override
@@ -24,7 +22,7 @@ class WalletOverviewCard extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Column(
@@ -35,76 +33,65 @@ class WalletOverviewCard extends StatelessWidget {
                   AppStrings.walletBalanceHeading,
                   style: GoogleFonts.lato(
                     fontSize: 14.sp,
-                    color: AppColors.neutral1200,
+                    color: AppColors.neutral1100,
                     fontWeight: FontWeight.w500,
+                    height: 1,
                   ),
                 ),
-                SizedBox(height: 4.h),
+                SizedBox(height: 6.h),
                 AppText(
                   walletAmount,
                   style: GoogleFonts.lato(
                     fontSize: 40.sp,
                     fontWeight: FontWeight.w800,
-                    color: AppColors.neutral1200,
+                    color: AppColors.neutral1100,
                     letterSpacing: -0.5,
-                    height: 1.1,
+                    height: 1,
                   ),
                 ),
-                if (lockedInProjectsAmount != null) ...[
-                  SizedBox(height: 8.h),
-                  Row(
-                    children: [
-                      AppText(
-                        AppStrings.walletLockedInProjectsLabel,
-                        style: GoogleFonts.lato(
-                          fontSize: 12.sp,
-                          color: AppColors.neutral700,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      SizedBox(width: 6.w),
-                      AppText(
-                        lockedInProjectsAmount!,
-                        style: GoogleFonts.lato(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.neutral1200,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
               ],
             ),
           ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-            decoration: BoxDecoration(
-              color: AppColors.grey100,
-              borderRadius: BorderRadius.circular(10.r),
+          _BorrowedSummaryCard(amount: borrowedAmount),
+        ],
+      ),
+    );
+  }
+}
+
+class _BorrowedSummaryCard extends StatelessWidget {
+  final String amount;
+
+  const _BorrowedSummaryCard({required this.amount});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 75.h,
+      padding: EdgeInsets.symmetric(horizontal: 12.w),
+      decoration: BoxDecoration(
+        color: AppColors.grey100,
+        borderRadius: BorderRadius.circular(10.r),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AppText(
+            AppStrings.borrowedLabel,
+            style: GoogleFonts.lato(
+              fontSize: 12.sp,
+              color: AppColors.neutral1100,
+              fontWeight: FontWeight.w500,
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                AppText(
-                  AppStrings.borrowedLabel,
-                  style: GoogleFonts.lato(
-                    fontSize: 12.sp,
-                    color: AppColors.neutral1200,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                SizedBox(height: 2.h),
-                AppText(
-                  borrowedAmount,
-                  style: GoogleFonts.lato(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.neutral1200,
-                  ),
-                ),
-              ],
+          ),
+          SizedBox(height: 2.h),
+          AppText(
+            amount,
+            style: GoogleFonts.lato(
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w800,
+              color: AppColors.neutral1100,
             ),
           ),
         ],

@@ -55,6 +55,7 @@ class _TransactionConfirmationScreenState
         context.read<WalletWithdrawCubit>().loadPreview(
               amount: tx.amountParsed,
               method: method,
+              bankAccountId: tx.selectedBankAccountId,
             );
       }
     });

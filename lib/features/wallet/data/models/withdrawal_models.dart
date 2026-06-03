@@ -1,3 +1,4 @@
+import 'package:vestie/core/network/api_response_body.dart';
 import 'package:vestie/core/utils/safe_parser.dart';
 import 'package:vestie/features/wallet/domain/entities/withdrawal_entities.dart';
 
@@ -14,15 +15,16 @@ class WithdrawalPreviewModel extends WithdrawalPreviewEntity {
   });
 
   factory WithdrawalPreviewModel.fromJson(Map<String, dynamic> json) {
+    final body = unwrapApiResponseBody(json);
     return WithdrawalPreviewModel(
-      amount: json.safeDouble('amount'),
-      type: json.safeString('type'),
-      feePercent: json.safeDouble('feePercent'),
-      feeAmount: json.safeDouble('feeAmount'),
-      youWillReceive: json.safeDouble('youWillReceive'),
-      processingTime: json.safeString('processingTime'),
-      destinationDisplay: json.safeString('destinationDisplay'),
-      currency: json.safeString('currency', defaultValue: 'USD'),
+      amount: body.safeDouble('amount'),
+      type: body.safeString('type'),
+      feePercent: body.safeDouble('feePercent'),
+      feeAmount: body.safeDouble('feeAmount'),
+      youWillReceive: body.safeDouble('youWillReceive'),
+      processingTime: body.safeString('processingTime'),
+      destinationDisplay: body.safeString('destinationDisplay'),
+      currency: body.safeString('currency', defaultValue: 'USD'),
     );
   }
 }

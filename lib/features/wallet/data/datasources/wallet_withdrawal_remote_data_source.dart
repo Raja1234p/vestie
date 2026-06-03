@@ -8,6 +8,7 @@ abstract class WalletWithdrawalRemoteDataSource {
   Future<WithdrawalPreviewModel> preview({
     required double amount,
     required String type,
+    String? bankAccountId,
   });
 
   Future<WithdrawalSubmitModel> submit({
@@ -30,10 +31,16 @@ class WalletWithdrawalRemoteDataSourceImpl
   Future<WithdrawalPreviewModel> preview({
     required double amount,
     required String type,
+    String? bankAccountId,
   }) async {
+    final data = <String, dynamic>{'amount': amount, 'type': type};
+    final bankId = bankAccountId?.trim();
+    if (bankId != null && bankId.isNotEmpty) {
+      data['bankAccountId'] = bankId;
+    }
     final response = await apiClient.post<Map<String, dynamic>>(
       ApiConstants.walletWithdrawalsPreview,
-      data: {'amount': amount, 'type': type},
+      data: data,
     );
     return WithdrawalPreviewModel.fromJson(response);
   }

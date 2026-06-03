@@ -12,8 +12,13 @@ class PreviewWithdrawalUseCase {
   Future<Either<Failure, WithdrawalPreviewEntity>> call({
     required double amount,
     required WithdrawalApiType type,
+    String? bankAccountId,
   }) =>
-      repository.preview(amount: amount, type: type);
+      repository.preview(
+        amount: amount,
+        type: type,
+        bankAccountId: bankAccountId,
+      );
 }
 
 class RunWalletWithdrawUseCase {

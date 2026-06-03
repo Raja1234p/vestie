@@ -24,11 +24,13 @@ class WalletWithdrawalRepositoryImpl implements WalletWithdrawalRepository {
   Future<Either<Failure, WithdrawalPreviewEntity>> preview({
     required double amount,
     required WithdrawalApiType type,
+    String? bankAccountId,
   }) async {
     try {
       final model = await remoteDataSource.preview(
         amount: amount,
         type: withdrawalTypeToApi(type),
+        bankAccountId: bankAccountId,
       );
       return Right(model);
     } on Failure catch (f) {

@@ -32,24 +32,6 @@ class WalletState extends Equatable {
     return _formatUsd(borrowed);
   }
 
-  String get lockedInProjectsFormatted {
-    final locked = wallet?.lockedInProjects;
-    if (locked == null) return r'$—';
-    return _formatUsd(locked);
-  }
-
-  bool get showLockedInProjects =>
-      wallet != null && wallet!.lockedInProjects > 0;
-
-  bool get hasPendingWithdrawal =>
-      wallet != null && wallet!.pendingWithdrawal > 0;
-
-  String get pendingWithdrawalFormatted {
-    final pending = wallet?.pendingWithdrawal;
-    if (pending == null) return r'$—';
-    return _formatUsd(pending);
-  }
-
   WalletState copyWith({
     bool? isLoading,
     WalletEntity? wallet,

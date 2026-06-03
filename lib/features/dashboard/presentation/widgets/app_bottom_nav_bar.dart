@@ -21,7 +21,11 @@ class _NavItem {
 }
 
 const _items = [
-  _NavItem(AppAssets.iconHome, AppStrings.navHome),
+  _NavItem(
+    AppAssets.iconHome,
+    AppStrings.navHome,
+    activeAsset: AppAssets.iconHomeActive,
+  ),
   _NavItem(
     AppAssets.iconSearch,
     AppStrings.navSearch,

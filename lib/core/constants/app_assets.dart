@@ -62,7 +62,8 @@ class AppAssets {
   static const String notificationRowIcon = '$_iconPath/Frame 258.png';
 
   // ── Bottom Navigation Icons ───────────────────────────────────────────────
-  static const String iconHome    = '$_iconPath/home_icon.svg';
+  static const String iconHome        = '$_iconPath/home_icon.svg';
+  static const String iconHomeActive  = '$_iconPath/home_icon_active.svg';
   static const String iconSearch  = '$_iconPath/search_icon.svg';
   static const String iconAdd     = '$_iconPath/add_icon.svg';
   static const String iconWallet  = '$_iconPath/wallet_icon.svg';

@@ -55,6 +55,7 @@ class WalletWithdrawCubit extends Cubit<WalletWithdrawState> {
   Future<void> loadPreview({
     required double amount,
     required WithdrawDeliveryMethod method,
+    String? bankAccountId,
   }) async {
     emit(state.copyWith(isPreviewLoading: true, clearFailure: true));
     final type = withdrawalTypeFromDelivery(
@@ -63,6 +64,7 @@ class WalletWithdrawCubit extends Cubit<WalletWithdrawState> {
     final result = await previewWithdrawalUseCase(
       amount: amount,
       type: type,
+      bankAccountId: bankAccountId,
     );
     if (isClosed) return;
     result.fold(
