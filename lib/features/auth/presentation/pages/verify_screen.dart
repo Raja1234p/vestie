@@ -136,11 +136,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                 AuthGoBackButton(
                   onPressed: () {
                     FocusScope.of(context).unfocus();
-                    if (widget.flow == VerifyFlow.forgotPassword) {
-                      context.pop();
-                    } else {
-                      context.go(AppRoutes.register);
-                    }
+                    context.pop();
                   },
                 ),
                 SizedBox(height: 20.h),

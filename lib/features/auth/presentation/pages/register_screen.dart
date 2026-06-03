@@ -45,12 +45,14 @@ class RegisterScreen extends StatelessWidget {
                 curr is RegisterSuccess ||
                 curr is RegisterGoogleSuccess ||
                 curr is RegisterError,
-            listener: (context, state) {
+            listener: (context, state) async {
               if (state is RegisterSuccess) {
-                context.go(
+                await context.push(
                   AppRoutes.verify,
                   extra: VerifyScreenExtra(email: state.user.email),
                 );
+                if (!context.mounted) return;
+                context.read<RegisterBloc>().add(const RegisterReset());
               } else if (state is RegisterGoogleSuccess) {
                 if (state.isDisclaimerAccepted) {
                   context.go(AppRoutes.dashboard);
