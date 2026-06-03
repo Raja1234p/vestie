@@ -66,6 +66,9 @@ class AppAssets {
   static const String iconNotification = '$_iconPath/notification-01.svg';
   /// Home / Discover header — favourite (VFF hub), design `favourite.svg`.
   static const String iconFavourite = '$_iconPath/favourite.svg';
+  /// Profile tab header — more options (three dots), Figma “More Options Container”.
+  static const String iconProfileMoreOptions =
+      '$_iconPath/profile_more_options.svg';
   /// List row graphic (notification item, design export “Frame 258”).
   static const String notificationRowIcon = '$_iconPath/Frame 258.png';
 

@@ -51,7 +51,6 @@ class ProfilePhotoDialog extends StatelessWidget {
       backgroundColor: Colors.transparent,
       insetPadding: EdgeInsets.symmetric(horizontal: 32.w),
       child: Container(
-        padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 24.h),
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(10.r),
@@ -59,51 +58,65 @@ class ProfilePhotoDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Align(
-              alignment: Alignment.centerRight,
-              child: IconButton(
-                onPressed: () => Navigator.of(context).pop(),
-                padding: EdgeInsets.zero,
-                constraints: BoxConstraints(minWidth: 32.w, minHeight: 32.w),
-                icon: AppSvgIcon(
-                  assetPath: AppAssets.iconClose,
-                  size: 20.w,
-                  color: const Color(0xFF381A7A),
+            Padding(
+              padding: EdgeInsets.only(top: 24.h, right: 24.w),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  padding: EdgeInsets.zero,
+                  constraints: BoxConstraints(
+                    minWidth: 32.w,
+                    minHeight: 32.w,
+                  ),
+                  icon: AppSvgIcon(
+                    assetPath: AppAssets.iconClose,
+                    size: 32.w,
+                    color: const Color(0xFF381A7A),
+                  ),
                 ),
               ),
             ),
-            AppNetworkAvatar(
-              imageUrl: photoUrl,
-              initials: initials,
-              size: 120.r,
-              backgroundColor: AppColors.cardBorder,
-              fontSize: 32.sp,
-            ),
-            SizedBox(height: 28.h),
-            AppButton(
-              text: AppStrings.profileChangeImage,
-              onPressed: () {
-                Navigator.of(context).pop();
-                onChangeImage();
-              },
-              useGradient: false,
-              color: AppColors.purple700,
-              hasShadow: false,
-              height: 38.h,
-              borderRadius: AppRadius.r8,
-              labelFontSize: 16.sp,
-            ),
-            SizedBox(height: 12.h),
-            AppOutlineNeutralButton(
-              label: AppStrings.profileRemoveImage,
-              onPressed: () {
-                Navigator.of(context).pop();
-                onRemoveImage();
-              },
-              height: 38.h,
-              borderRadius: AppRadius.r8,
-              borderColor: AppColors.grey1100,
-              labelColor: AppColors.grey1100,
+            Padding(
+              padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 24.h),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AppNetworkAvatar(
+                    imageUrl: photoUrl,
+                    initials: initials,
+                    size: 120.r,
+                    backgroundColor: AppColors.cardBorder,
+                    fontSize: 32.sp,
+                  ),
+                  SizedBox(height: 28.h),
+                  AppButton(
+                    text: AppStrings.profileChangeImage,
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      onChangeImage();
+                    },
+                    useGradient: false,
+                    color: AppColors.purple700,
+                    hasShadow: false,
+                    height: 38.h,
+                    borderRadius: AppRadius.r8,
+                    labelFontSize: 16.sp,
+                  ),
+                  SizedBox(height: 12.h),
+                  AppOutlineNeutralButton(
+                    label: AppStrings.profileRemoveImage,
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      onRemoveImage();
+                    },
+                    height: 38.h,
+                    borderRadius: AppRadius.r8,
+                    borderColor: AppColors.grey1100,
+                    labelColor: AppColors.grey1100,
+                  ),
+                ],
+              ),
             ),
           ],
         ),

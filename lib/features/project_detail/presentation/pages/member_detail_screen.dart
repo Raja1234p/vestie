@@ -431,9 +431,6 @@ class _MemberDetailView extends StatelessWidget {
                 activity?.vffConnectionState ?? VffConnectionState.none,
           );
 
-          final canSendVffRequest =
-              activity?.canSendVffRequest ?? displayMember.canSendVffRequest;
-
           final vffRequestSent =
               vffConnectionState == VffConnectionState.pendingOutgoing;
 

@@ -115,7 +115,7 @@ class CreateProjectReviewScreen extends StatelessWidget {
                           buildWhen: (p, c) => p.loading != c.loading,
                           builder: (context, submit) {
                             return AppButton(
-                              text: AppStrings.btnNext,
+                              text: AppStrings.btnCreateProject2,
                               useGradient: false,
                               hasShadow: false,
                               color: AppColors.neutral1200,
