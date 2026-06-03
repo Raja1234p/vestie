@@ -197,6 +197,9 @@ class AppColors {
   /// Project detail — chip labels, goal copy, body (#000000 Figma).
   static const Color projectDetailText = neutral1200;
 
+  /// Home / Discover project card — description dotted outline (#D9D9D9, 1px).
+  static const Color projectCardDescriptionBorder = neutral400;
+
   /// Project funds history — summary metric values (#141414).
   static const Color projectFundsMetricValue = neutral1100;
   /// Ledger list row fill (#F8F7FA).

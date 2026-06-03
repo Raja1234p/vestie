@@ -92,31 +92,46 @@ class ProjectCard extends StatelessWidget {
                 color: AppColors.textPrimary,
               ),
             ),
-            if (project.description != null) ...[
-              SizedBox(height: 2.h),
-              SizedBox(
-                width: double.infinity,
-                child: DottedBorder(
-                  options: RoundedRectDottedBorderOptions(
-                    radius: Radius.circular(8.r),
-                    color: const Color(0xFFD9D9D9),
-                    strokeWidth: 1,
-                    dashPattern: const [2, 4],
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 10.w,
-                      vertical: 8.h,
+            SizedBox(height: 8.h),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (project.description != null) ...[
+                  Expanded(
+                    child: DottedBorder(
+                      options: RoundedRectDottedBorderOptions(
+                        radius: Radius.circular(8.r),
+                        color: AppColors.projectCardDescriptionBorder,
+                        strokeWidth: 1,
+                        dashPattern: const [10, 6],
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10.w,
+                          vertical: 8.h,
+                        ),
+                      ),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: Text(
+                          project.description!,
+                          style: GoogleFonts.lato(
+                            fontSize: 11.sp,
+                            color: AppColors.textBody,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                  child: Text(
-                    project.description!,
-                    style: GoogleFonts.lato(
-                      fontSize: 11.sp,
-                      color: AppColors.textBody,
-                    ),
-                  ),
+                  SizedBox(width: 8.w),
+                ] else
+                  const Spacer(),
+                Image.asset(
+                  project.category.cardImageAsset,
+                  width: 100.w,
+                  height: 69.h,
+                  fit: BoxFit.contain,
                 ),
-              ),
-            ],
+              ],
+            ),
             if (project.goalAmount != null) ...[
               SizedBox(height: 8.h),
               ProjectGoalRow(project: project),

@@ -37,6 +37,14 @@ class AppAssets {
 
   // Project created success illustration (PNG — reliable rendering across devices).
   static const String projectCreatedImage = '$_imagePath/project_created_image.png';
+
+  /// Home / Discover project cards — right of subtitle (100×69).
+  static const String projectCardInvestment =
+      '$_imagePath/project_card_investment.png';
+  static const String projectCardEmergency =
+      '$_imagePath/project_card_emergency.png';
+  static const String projectCardVacation =
+      '$_imagePath/project_card_vacation.png';
   /// 3D purple “success” badge (member flows: join approved, vote yes, mark complete).
   static const String markSuccessfullProject = '$_imagePath/markSuccessfullProject.png';
   static const String markCancel            = '$_imagePath/markcancel.png';

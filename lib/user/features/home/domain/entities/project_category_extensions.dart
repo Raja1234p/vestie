@@ -28,6 +28,18 @@ extension ProjectCategoryX on ProjectCategory {
     }
   }
 
+  /// Category illustration on home / discover project cards.
+  String get cardImageAsset {
+    switch (this) {
+      case ProjectCategory.vacations:
+        return AppAssets.projectCardVacation;
+      case ProjectCategory.emergency:
+        return AppAssets.projectCardEmergency;
+      case ProjectCategory.investment:
+        return AppAssets.projectCardInvestment;
+    }
+  }
+
   bool get isInvestment => this == ProjectCategory.investment;
 
   /// Co-leader role is supported on Vacation and Emergency groups only.
