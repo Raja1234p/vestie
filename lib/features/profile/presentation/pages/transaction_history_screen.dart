@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_strings.dart';
-import '../../../../core/widgets/common/app_loader.dart';
+import '../../../../core/widgets/common/app_shimmer.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../cubit/transaction_history_cubit.dart';
 import '../widgets/profile_sub_header.dart';
@@ -58,7 +58,15 @@ class _TxBody extends StatelessWidget {
                 TxFilterBar(activeFilter: state.activeFilter),
                 Expanded(
                   child: state.loading
-                      ? const AppLoader()
+                      ? ListView.builder(
+                          padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 16.h),
+                          physics: const BouncingScrollPhysics(),
+                          itemCount: 7,
+                          itemBuilder: (_, __) => Padding(
+                            padding: EdgeInsets.only(bottom: 10.h),
+                            child: const WalletRecentActivityRowShimmer(),
+                          ),
+                        )
                       : ListView.builder(
                           padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 16.h),
                           itemCount: state.filtered.length,
