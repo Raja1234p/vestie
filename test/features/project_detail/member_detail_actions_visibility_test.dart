@@ -7,7 +7,100 @@ import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
 
 void main() {
+  group('MemberDetailActionsVisibility.isVffActionTarget', () {
+    test('false for self, true for any other member regardless of roles', () {
+      const viewerMembershipId = 'viewer-m';
+      const project = ProjectDetailEntity(
+        id: 'p1',
+        name: 'Trip',
+        category: ProjectCategory.emergency,
+        status: ProjectStatus.ongoing,
+        goalAmount: 1000,
+        currentAmount: 0,
+        endsIn: '30d',
+        announcement: '',
+        members: [],
+        borrowRequests: [],
+        viewerRole: ViewerMembershipRole.member,
+        membershipId: viewerMembershipId,
+      );
+
+      const self = MemberEntity(
+        id: 'viewer',
+        membershipId: viewerMembershipId,
+        userId: 'viewer',
+        initials: 'ME',
+        name: 'Me',
+        role: MemberRole.member,
+        contributedAmount: 0,
+      );
+
+      const groupLeader = MemberEntity(
+        id: 'gl',
+        membershipId: 'gl-m',
+        userId: 'gl',
+        initials: 'GL',
+        name: 'Leader',
+        role: MemberRole.leader,
+        contributedAmount: 0,
+      );
+
+      expect(
+        MemberDetailActionsVisibility.isVffActionTarget(
+          project: project,
+          member: self,
+        ),
+        isFalse,
+      );
+      expect(
+        MemberDetailActionsVisibility.isVffActionTarget(
+          project: project,
+          member: groupLeader,
+        ),
+        isTrue,
+      );
+    });
+  });
+
   group('MemberDetailActionsVisibility.showVffSendOrSent', () {
+    test('shows Send VFF when canSendVffRequest is false but state is none', () {
+      const project = ProjectDetailEntity(
+        id: 'p1',
+        name: 'Vacation',
+        category: ProjectCategory.vacations,
+        status: ProjectStatus.ongoing,
+        goalAmount: 1000,
+        currentAmount: 0,
+        endsIn: '30d',
+        announcement: '',
+        members: [],
+        borrowRequests: [],
+        viewerRole: ViewerMembershipRole.groupLeader,
+        membershipId: 'viewer-membership',
+      );
+
+      const member = MemberEntity(
+        id: 'user-2',
+        membershipId: 'm2',
+        userId: 'user-2',
+        initials: 'AB',
+        name: 'Alex',
+        role: MemberRole.member,
+        contributedAmount: 0,
+        vffConnectionState: VffConnectionState.none,
+        canSendVffRequest: false,
+      );
+
+      expect(
+        MemberDetailActionsVisibility.showVffSendOrSent(
+          project: project,
+          member: member,
+          vffConnectionState: VffConnectionState.none,
+        ),
+        isTrue,
+      );
+    });
+
     test('shows Request Sent when activity reports PendingOutgoing', () {
       const project = ProjectDetailEntity(
         id: 'p1',
@@ -41,7 +134,6 @@ void main() {
           project: project,
           member: member,
           vffConnectionState: VffConnectionState.pendingOutgoing,
-          canSendVffRequest: false,
         ),
         isTrue,
       );
@@ -89,7 +181,6 @@ void main() {
           project: project,
           member: member,
           vffConnectionState: VffConnectionState.connected,
-          canSendVffRequest: false,
         ),
         isFalse,
       );

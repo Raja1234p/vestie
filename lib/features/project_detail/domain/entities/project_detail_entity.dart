@@ -190,7 +190,8 @@ class ProjectDetailEntity {
   /// GroupLeader, CoLeader, and Member can open the invite-members sheet.
   bool get canInviteMembers => showsProjectDetailOverflowMenu;
 
-  /// Any active participant can open another member's project profile.
+  /// Any active participant can open another member's profile and send VFF
+  /// to anyone except themselves (same for all project categories).
   bool get canReviewMemberProfiles => isMember || isModeratorView;
 
   /// Vacation / emergency members: 4 items; investment members: 3 (no My Borrows).

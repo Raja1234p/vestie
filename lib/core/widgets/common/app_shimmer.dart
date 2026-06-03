@@ -636,9 +636,9 @@ class BankAccountListShimmer extends StatelessWidget {
   }
 }
 
-/// KYC / Stripe onboarding WebView placeholder.
-class KycWebViewShimmer extends StatelessWidget {
-  const KycWebViewShimmer({super.key});
+/// KYC / bank Stripe hosted onboarding loading placeholder.
+class StripeOnboardingShimmer extends StatelessWidget {
+  const StripeOnboardingShimmer({super.key});
 
   @override
   Widget build(BuildContext context) {

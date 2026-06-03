@@ -4,31 +4,32 @@ import '../../domain/entities/member_entity.dart';
 import '../../domain/entities/project_detail_entity.dart';
 import 'project_member_add_friend_visibility.dart';
 
-/// Leader / VFF actions on [MemberDetailScreen] — aligned with member-row Add Friend rules.
+/// VFF send / following / footer rules — same for every project category.
+/// Only restriction: never on the signed-in user’s own member row/card.
 abstract final class MemberDetailActionsVisibility {
-  /// Same audience as Add Friend (role / self), but does not hide pending-outgoing
-  /// — member detail still shows Send VFF or Request Sent in the footer.
+  /// Any project member except the current viewer (group leader, co-leader, or member).
   static bool isVffActionTarget({
     required ProjectDetailEntity project,
     required MemberEntity member,
   }) {
-    if (ProjectMemberAddFriendVisibility.isViewerSelf(
+    return !ProjectMemberAddFriendVisibility.isViewerSelf(
       project: project,
       member: member,
-    )) {
+    );
+  }
+
+  /// Member list “Send VFF Request” — same audience and connection rules everywhere.
+  static bool canShowSendVffOnMemberRow({
+    required ProjectDetailEntity project,
+    required MemberEntity member,
+  }) {
+    if (!isVffActionTarget(project: project, member: member)) return false;
+    if (member.isVffConnected) return false;
+    if (member.hasPendingVffOutgoing) return false;
+    if (member.vffConnectionState == VffConnectionState.pendingIncoming) {
       return false;
     }
-
-    if (project.isModeratorView) {
-      return member.role == MemberRole.member ||
-          member.role == MemberRole.coLeader;
-    }
-
-    if (project.isMemberView) {
-      return member.role == MemberRole.leader;
-    }
-
-    return false;
+    return true;
   }
 
   static bool showSendVffRequest({
@@ -109,12 +110,11 @@ abstract final class MemberDetailActionsVisibility {
     );
   }
 
-  /// Send VFF or “Request Sent” chip — driven by activity API.
+  /// Member detail footer: Send VFF or “Request Sent” (uses activity VFF state).
   static bool showVffSendOrSent({
     required ProjectDetailEntity project,
     required MemberEntity member,
     VffConnectionState vffConnectionState = VffConnectionState.none,
-    bool canSendVffRequest = false,
   }) {
     if (!isVffActionTarget(project: project, member: member)) return false;
     if (_isVffConnected(
@@ -124,15 +124,14 @@ abstract final class MemberDetailActionsVisibility {
       return false;
     }
     if (vffConnectionState == VffConnectionState.pendingIncoming) return false;
-    return canSendVffRequest ||
-        vffConnectionState == VffConnectionState.pendingOutgoing;
+    if (vffConnectionState == VffConnectionState.pendingOutgoing) return true;
+    return canShowSendVffOnMemberRow(project: project, member: member);
   }
 
   static bool showFooter({
     required ProjectDetailEntity project,
     required MemberEntity member,
     VffConnectionState vffConnectionState = VffConnectionState.none,
-    bool canSendVffRequest = false,
   }) {
     return showVffFollowing(
           project: project,
@@ -143,7 +142,6 @@ abstract final class MemberDetailActionsVisibility {
           project: project,
           member: member,
           vffConnectionState: vffConnectionState,
-          canSendVffRequest: canSendVffRequest,
         ) ||
         showRemoveMember(project: project, member: member);
   }

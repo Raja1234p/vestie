@@ -133,15 +133,17 @@ class _VerifyScreenState extends State<VerifyScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 48.h),
-                if (widget.flow == VerifyFlow.forgotPassword) ...[
-                  AuthGoBackButton(
-                    onPressed: () {
-                      FocusScope.of(context).unfocus();
+                AuthGoBackButton(
+                  onPressed: () {
+                    FocusScope.of(context).unfocus();
+                    if (widget.flow == VerifyFlow.forgotPassword) {
                       context.pop();
-                    },
-                  ),
-                  SizedBox(height: 20.h),
-                ],
+                    } else {
+                      context.go(AppRoutes.register);
+                    }
+                  },
+                ),
+                SizedBox(height: 20.h),
                 AppText(
                   AppStrings.verifyTitle,
                   style: GoogleFonts.lato(

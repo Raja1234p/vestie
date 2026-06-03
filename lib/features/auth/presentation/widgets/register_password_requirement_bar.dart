@@ -12,13 +12,14 @@ class RegisterPasswordRequirementBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-      decoration: BoxDecoration(
-        color: AppColors.registerPasswordRequirementPillBg,
-        borderRadius: BorderRadius.circular(999.r),
-      ),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+        decoration: BoxDecoration(
+          color: AppColors.registerPasswordRequirementPillBg,
+          borderRadius: BorderRadius.circular(999.r),
+        ),
       child: Row(
         children: [
           Expanded(
@@ -44,6 +45,7 @@ class RegisterPasswordRequirementBar extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

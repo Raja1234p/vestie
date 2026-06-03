@@ -462,8 +462,6 @@ class _MemberDetailView extends StatelessWidget {
 
                 vffConnectionState: vffConnectionState,
 
-                canSendVffRequest: canSendVffRequest,
-
               );
 
           final showVffFollowing = p != null &&
@@ -497,8 +495,6 @@ class _MemberDetailView extends StatelessWidget {
                 member: displayMember,
 
                 vffConnectionState: vffConnectionState,
-
-                canSendVffRequest: canSendVffRequest,
 
               );
 

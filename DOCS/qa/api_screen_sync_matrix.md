@@ -60,8 +60,8 @@ Use this when verifying **data on screen matches API** after actions (refresh, n
 
 | Screen | API | Load | Refresh after |
 |--------|-----|------|----------------|
-| KYC onboarding | `POST /kyc/start` → WebView | `KycWebViewShimmer` | Withdraw gate |
-| KYC gate | `GET /kyc/status` | — | After WebView pop |
+| KYC onboarding | `POST /kyc/start` → browser | `StripeOnboardingShimmer` | Withdraw gate |
+| KYC gate | `GET /kyc/status` | — | After browser onboarding pop |
 | Bank picker | `GET /bank-accounts` | `BankAccountListShimmer` | — |
 | Withdraw preview | `POST /wallet/withdrawals/preview` | — | — |
 | Withdraw submit | `POST /wallet/withdrawals` + poll | — | Wallet |

@@ -29,7 +29,7 @@ flutter build ios --debug --no-codesign
 |------|-------------------|---------|
 | **Week 4** | **Go** | Wallet + contribute + pot on detail + SignalR + disclaimer on Contribute + payment picker when wallet short |
 | **Week 5** | **Go** | Payment methods API + Stripe PaymentSheet deposit + SetupIntent add card (release) |
-| **Week 7** | **Go** | Withdraw + KYC + bank link WebView + announcements + notifications + FCM; wallet/notifications retry UI |
+| **Week 7** | **Go** | Withdraw + KYC + bank browser onboarding + announcements + notifications + FCM; wallet/notifications retry UI |
 
 **Base URL (app):** `https://api.vestie.app/api/v1.0` (`lib/core/constants/api_constants.dart`). Confirm with backend before store release.
 
@@ -96,8 +96,8 @@ flutter build ios --debug --no-codesign
 | Area | Status |
 |------|--------|
 | Withdraw preview / submit / poll | **Ready** |
-| KYC WebView | **Ready** |
-| Bank link WebView (`POST /bank-accounts`) | **Ready** |
+| KYC browser onboarding | **Ready** |
+| Bank link browser (`POST /bank-accounts`) | **Ready** |
 | Bank list + empty state + add bank | **Ready** |
 | Bank remove UI | **Data layer only** — optional settings screen |
 | Announcements create / list / delete | **Ready** |
@@ -119,7 +119,7 @@ flutter build ios --debug --no-codesign
 | Payment methods manage | **Go** | week_5 §2 |
 | Deposit (PaymentSheet) | **Go** | week_5 §3 + stripe_test_cards |
 | Withdraw Standard/Instant | **Go** | week_7 §3 |
-| KYC WebView | **Go** | week_7 §1 |
+| KYC browser onboarding | **Go** | week_7 §1 |
 | Link bank in app | **Go** | week_7 §2 |
 | Announcements | **Go** | week_7 §5 |
 | Notifications + mark-read | **Go** | week_7 §6 |

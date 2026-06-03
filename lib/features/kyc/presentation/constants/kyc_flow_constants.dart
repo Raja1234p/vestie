@@ -1,29 +1,28 @@
-/// Deep-link style URLs passed to `POST /kyc/start` and matched when Stripe redirects.
+import 'package:vestie/core/constants/api_constants.dart';
+import 'package:vestie/core/stripe/stripe_connect_redirect_matcher.dart';
+
+/// Redirect URLs for `POST /kyc/start` — derived from [ApiConstants.baseUrl] host.
+///
+/// Stripe opens the HTTPS URLs. Backend pages at those paths must immediately
+/// redirect to [appSchemeRefreshUrl] / [appSchemeReturnUrl] so Android closes
+/// the browser tab and returns to the app (`vestie://` deep link).
 class KycFlowConstants {
   KycFlowConstants._();
 
-  static const String returnUrl = 'https://vestie.app/kyc/complete';
-  static const String refreshUrl = 'https://vestie.app/kyc/refresh';
+  static String get returnUrl => ApiConstants.kycReturnUrl;
 
-  /// Stripe redirect when onboarding finished — close WebView, do not show landing page.
-  static bool isCompletionUrl(String? url) {
-    if (url == null || url.isEmpty) return false;
-    final uri = Uri.tryParse(url);
-    final expected = Uri.tryParse(returnUrl);
-    if (uri == null || expected == null) return false;
-    return uri.scheme == expected.scheme &&
-        uri.host == expected.host &&
-        uri.path == expected.path;
-  }
+  static String get refreshUrl => ApiConstants.kycRefreshUrl;
 
-  /// Stripe redirect when the session expired — fetch a new onboarding link.
-  static bool isRefreshUrl(String? url) {
-    if (url == null || url.isEmpty) return false;
-    final uri = Uri.tryParse(url);
-    final expected = Uri.tryParse(refreshUrl);
-    if (uri == null || expected == null) return false;
-    return uri.scheme == expected.scheme &&
-        uri.host == expected.host &&
-        uri.path == expected.path;
-  }
+  static const String appSchemeReturnUrl = 'vestie://kyc/complete';
+  static const String appSchemeRefreshUrl = 'vestie://kyc/refresh';
+
+  static bool isCompletionUrl(String? url) => StripeConnectRedirectMatcher.matchesAny(
+        url,
+        [returnUrl, appSchemeReturnUrl],
+      );
+
+  static bool isRefreshUrl(String? url) => StripeConnectRedirectMatcher.matchesAny(
+        url,
+        [refreshUrl, appSchemeRefreshUrl],
+      );
 }

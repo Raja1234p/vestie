@@ -1,36 +1,19 @@
 import '../../domain/entities/member_entity.dart';
 import '../../domain/entities/member_entity_extensions.dart';
 import '../../domain/entities/project_detail_entity.dart';
-import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
+import 'member_detail_actions_visibility.dart';
 
-/// When [ProjectMemberRow] shows the Add Friend CTA.
+/// When [ProjectMemberRow] shows “Send VFF Request” — delegates to
+/// [MemberDetailActionsVisibility] (same rules for every project category).
 abstract final class ProjectMemberAddFriendVisibility {
   static bool shouldShow({
     required ProjectDetailEntity project,
     required MemberEntity member,
   }) {
-    if (isViewerSelf(project: project, member: member)) return false;
-
-    if (member.isVffConnected) return false;
-    if (member.hasPendingVffOutgoing) return false;
-    if (member.vffConnectionState == VffConnectionState.pendingIncoming) {
-      return false;
-    }
-    if (!member.canSendVffRequest &&
-        member.vffConnectionState != VffConnectionState.none) {
-      return false;
-    }
-
-    if (project.isModeratorView) {
-      return member.role == MemberRole.member ||
-          member.role == MemberRole.coLeader;
-    }
-
-    if (project.isMemberView) {
-      return member.role == MemberRole.leader;
-    }
-
-    return false;
+    return MemberDetailActionsVisibility.canShowSendVffOnMemberRow(
+      project: project,
+      member: member,
+    );
   }
 
   /// VFF badge on member rows — connected others only, never the signed-in viewer.

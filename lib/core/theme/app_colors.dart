@@ -144,7 +144,7 @@ class AppColors {
   static const Color authLabel    = grey900;    // #443F63
   static const Color authHint     = grey500;    // #B8B2D1 — placeholder
   /// Register password hint pill — label + icon accent (Figma #0A5C3C).
-  static const Color registerPasswordRequirementAccent = green1000;
+  static const Color registerPasswordRequirementAccent = green900; // #0F7C52
   /// Register password hint pill background — Figma #F0FBF7.
   static const Color registerPasswordRequirementPillBg = Color(0xFFF0FBF7);
 

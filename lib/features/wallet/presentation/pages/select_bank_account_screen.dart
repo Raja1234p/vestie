@@ -16,7 +16,9 @@ import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
+import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/features/bank_accounts/domain/entities/bank_account_entity.dart';
+import 'package:vestie/features/bank_accounts/presentation/models/bank_link_onboarding_result.dart';
 import 'package:vestie/features/profile/presentation/widgets/payment_primary_button.dart';
 import '../cubit/wallet_transaction_cubit.dart';
 
@@ -61,9 +63,17 @@ class _SelectBankAccountScreenState extends State<SelectBankAccountScreen> {
   }
 
   Future<void> _addBankAccount() async {
-    final linked = await context.push<bool>(AppRoutes.bankLinkOnboarding);
-    if (linked == true && mounted) {
-      await _load();
+    final result = await context.push<BankLinkOnboardingResult>(
+      AppRoutes.bankLinkOnboarding,
+    );
+    if (!mounted || result == null) return;
+    switch (result) {
+      case BankLinkOnboardingResult.linked:
+        await _load();
+      case BankLinkOnboardingResult.incomplete:
+        AppToast.showInfo(context, AppStrings.bankLinkOnboardingIncompleteHint);
+      case BankLinkOnboardingResult.canceled:
+        AppToast.showError(context, AppStrings.bankLinkOnboardingCanceled);
     }
   }
 

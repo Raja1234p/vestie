@@ -75,7 +75,7 @@ class AppStrings {
 
   // Forgot Password
   static const String forgotTitle          = 'Forgot your password?';
-  static const String forgotSubtitle       = 'Enter your email to receive a secure reset link.';
+  static const String forgotSubtitle       = 'Enter your email to receive a verification code';
   static const String labelEmailAddress    = 'Email address';
   static const String hintRegisteredEmail  = 'Enter your registered email';
   static const String btnSendResetEmail    = 'Send Reset Email';
@@ -782,14 +782,36 @@ class AppStrings {
       'Complete identity verification before withdrawing funds.';
   static const String kycOnboardingCompleteHint =
       'Identity verified. Tap Continue to proceed.';
-  static const String kycOnboardingPendingHint =
-      'Verification submitted. Tap Continue once approved.';
+  static const String kycOnboardingPendingReviewHint =
+      'Verification is under review. Tap Continue once approved.';
+  static const String kycOnboardingIncompleteHint =
+      'Verification incomplete. Tap Continue to finish onboarding.';
+  static const String kycOnboardingRejectedHint =
+      'Verification was rejected. Contact support or try again.';
   static const String kycOnboardingCanceled =
       'Verification canceled.';
+  static const String stripeBrowserOnboardingKycBody =
+      'Opening secure verification in your browser…';
+  static const String stripeBrowserOnboardingBankBody =
+      'Opening bank linking in your browser…';
+  static const String stripeBrowserOnboardingReturnHint =
+      'If you see a “Continue in the Vestie app” page in the browser, '
+      'close that tab — you should return here automatically. '
+      'If not, tap Return to Vestie below.';
+  static const String stripeBrowserOnboardingReturnToApp = 'Return to Vestie';
+  static const String stripeBrowserOnboardingOpenAgain = 'Open browser again';
+  static const String stripeBrowserOnboardingCheckStatus =
+      "I've finished — check status";
+  static const String stripeBrowserOnboardingLaunchFailed =
+      'Could not open the browser. Please try again.';
   static const String btnVerifyIdentity = 'Verify identity';
   static const String bankLinkOnboardingTitle = 'Link bank account';
   static const String bankLinkOnboardingUrlMissing =
       'Could not start bank linking. Please try again.';
+  static const String bankLinkOnboardingIncompleteHint =
+      'Bank linking incomplete. Try again to add an account.';
+  static const String bankLinkOnboardingCanceled =
+      'Bank linking canceled.';
   static const String btnAddBankAccount = 'Add bank account';
   static const String bankAccountDefaultLabel = 'Default';
   static const String bankLinkEmptySubtitle =

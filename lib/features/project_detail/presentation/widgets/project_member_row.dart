@@ -56,7 +56,7 @@ class ProjectMemberRow extends StatelessWidget {
           ) ||
           vffRequestSent;
     }
-    return member.role == MemberRole.member || vffRequestSent;
+    return vffRequestSent;
   }
 
   @override

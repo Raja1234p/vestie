@@ -30,6 +30,30 @@ class ApiConstants {
     ).toString();
   }
 
+  /// API host root (no `/api/v1`) — used for Stripe Connect `return_url` / `refresh_url`.
+  static Uri get apiOrigin {
+    final rest = Uri.parse(baseUrl);
+    return Uri(
+      scheme: rest.scheme,
+      host: rest.host,
+      port: rest.hasPort ? rest.port : null,
+    );
+  }
+
+  static String get stripeRedirectHost => apiOrigin.host;
+
+  static String get kycReturnUrl =>
+      apiOrigin.replace(path: '/kyc/complete').toString();
+
+  static String get kycRefreshUrl =>
+      apiOrigin.replace(path: '/kyc/refresh').toString();
+
+  static String get bankReturnUrl =>
+      apiOrigin.replace(path: '/bank/return').toString();
+
+  static String get bankRefreshUrl =>
+      apiOrigin.replace(path: '/bank/refresh').toString();
+
   // ── Auth ─────────────────────────────────────────────────────────────────
   static const String register       = '/auth/register';
   static const String verifyEmail    = '/auth/verify-email';

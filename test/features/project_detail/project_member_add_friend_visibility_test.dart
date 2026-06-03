@@ -7,86 +7,140 @@ import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
 
 void main() {
-  group('ProjectMemberAddFriendVisibility.showsVffBadge', () {
+  group('ProjectMemberAddFriendVisibility.shouldShow', () {
     const viewerMembershipId = 'viewer-m';
     const otherMembershipId = 'other-m';
 
-    const project = ProjectDetailEntity(
-      id: 'p1',
-      name: 'Trip',
-      category: ProjectCategory.vacations,
-      status: ProjectStatus.ongoing,
-      goalAmount: 1000,
-      currentAmount: 0,
-      endsIn: '30d',
-      announcement: '',
-      members: [
-        MemberEntity(
-          id: 'viewer-user',
-          membershipId: viewerMembershipId,
-          userId: 'viewer-user',
-          initials: 'ME',
-          name: 'Me',
-          role: MemberRole.member,
-          contributedAmount: 0,
-          vffConnectionState: VffConnectionState.connected,
-        ),
-        MemberEntity(
-          id: 'other-user',
-          membershipId: otherMembershipId,
-          userId: 'other-user',
-          initials: 'OT',
-          name: 'Other',
-          role: MemberRole.member,
-          contributedAmount: 0,
-          vffConnectionState: VffConnectionState.connected,
-        ),
-      ],
-      borrowRequests: [],
-      viewerRole: ViewerMembershipRole.member,
-      membershipId: viewerMembershipId,
+    ProjectDetailEntity projectFor(ViewerMembershipRole viewerRole) {
+      return ProjectDetailEntity(
+        id: 'p1',
+        name: 'Project',
+        category: ProjectCategory.vacations,
+        status: ProjectStatus.ongoing,
+        goalAmount: 1000,
+        currentAmount: 0,
+        endsIn: '30d',
+        announcement: '',
+        members: [
+          const MemberEntity(
+            id: 'viewer-user',
+            membershipId: viewerMembershipId,
+            userId: 'viewer-user',
+            initials: 'ME',
+            name: 'Me',
+            role: MemberRole.member,
+            contributedAmount: 0,
+          ),
+        ],
+        borrowRequests: [],
+        viewerRole: viewerRole,
+        membershipId: viewerMembershipId,
+      );
+    }
+
+    const otherMember = MemberEntity(
+      id: 'other-user',
+      membershipId: otherMembershipId,
+      userId: 'other-user',
+      initials: 'OT',
+      name: 'Other',
+      role: MemberRole.coLeader,
+      contributedAmount: 0,
+      vffConnectionState: VffConnectionState.none,
     );
 
-    test('hides VFF badge on viewer own row', () {
-      const self = MemberEntity(
-        id: 'viewer-user',
-        membershipId: viewerMembershipId,
-        userId: 'viewer-user',
-        initials: 'ME',
-        name: 'Me',
-        role: MemberRole.member,
-        contributedAmount: 0,
-        vffConnectionState: VffConnectionState.connected,
-      );
+    const self = MemberEntity(
+      id: 'viewer-user',
+      membershipId: viewerMembershipId,
+      userId: 'viewer-user',
+      initials: 'ME',
+      name: 'Me',
+      role: MemberRole.member,
+      contributedAmount: 0,
+      vffConnectionState: VffConnectionState.none,
+    );
+
+    test('hides Send VFF on viewer own row only', () {
+      final project = projectFor(ViewerMembershipRole.groupLeader);
 
       expect(
-        ProjectMemberAddFriendVisibility.showsVffBadge(
+        ProjectMemberAddFriendVisibility.shouldShow(
           project: project,
           member: self,
         ),
         isFalse,
       );
-    });
-
-    test('shows VFF badge on other connected members', () {
-      const other = MemberEntity(
-        id: 'other-user',
-        membershipId: otherMembershipId,
-        userId: 'other-user',
-        initials: 'OT',
-        name: 'Other',
-        role: MemberRole.member,
-        contributedAmount: 0,
-        vffConnectionState: VffConnectionState.connected,
-      );
-
       expect(
-        ProjectMemberAddFriendVisibility.showsVffBadge(
+        ProjectMemberAddFriendVisibility.shouldShow(
           project: project,
-          member: other,
+          member: otherMember,
         ),
         isTrue,
       );
+    });
+
+    test('member viewer can send VFF to another member (any role)', () {
+      const peer = MemberEntity(
+        id: 'peer-user',
+        membershipId: 'peer-m',
+        userId: 'peer-user',
+        initials: 'PE',
+        name: 'Peer',
+        role: MemberRole.member,
+        contributedAmount: 0,
+        vffConnectionState: VffConnectionState.none,
+      );
+
+      expect(
+        ProjectMemberAddFriendVisibility.shouldShow(
+          project: projectFor(ViewerMembershipRole.member),
+          member: peer,
+        ),
+        isTrue,
+      );
+    });
+
+    test('same rules for group leader, co-leader, and member viewers', () {
+      for (final role in ViewerMembershipRole.values) {
+        expect(
+          ProjectMemberAddFriendVisibility.shouldShow(
+            project: projectFor(role),
+            member: otherMember,
+          ),
+          isTrue,
+          reason: '${role.apiLabel}',
+        );
+      }
+    });
+
+    test('same rules for emergency and investment categories', () {
+      for (final category in [
+        ProjectCategory.emergency,
+        ProjectCategory.investment,
+      ]) {
+        final project = ProjectDetailEntity(
+          id: 'p-$category',
+          name: 'Project',
+          category: category,
+          status: ProjectStatus.ongoing,
+          goalAmount: 1000,
+          currentAmount: 0,
+          endsIn: '30d',
+          announcement: '',
+          members: [],
+          borrowRequests: [],
+          viewerRole: ViewerMembershipRole.member,
+          membershipId: viewerMembershipId,
+        );
+        expect(
+          ProjectMemberAddFriendVisibility.shouldShow(
+            project: project,
+            member: otherMember,
+          ),
+          isTrue,
+          reason: '$category',
+        );
+      }
     });
   });
 }

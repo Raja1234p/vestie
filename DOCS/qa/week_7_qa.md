@@ -1,6 +1,6 @@
 # Week 7 QA — Withdraw, KYC, banks, announcements, notifications, FCM
 
-**Implemented in app:** Withdraw preview/submit/poll, KYC status + WebView onboarding, bank list + picker, wallet `pendingWithdrawal` + `recentTransactions`, project announcements create/list/delete, notifications list, FCM register/unregister, shimmer on wallet/notifications/payment methods/bank/KYC load.
+**Implemented in app:** Withdraw preview/submit/poll, KYC status + browser onboarding, bank list + picker, wallet `pendingWithdrawal` + `recentTransactions`, project announcements create/list/delete, notifications list, FCM register/unregister, shimmer on wallet/notifications/payment methods/bank/KYC load.
 
 **Tester:** _______________ **Date:** _______________ **Build:** _______________ **Device:** _______________
 
@@ -12,7 +12,7 @@
 
 | Item | Status |
 |------|--------|
-| Link bank (`POST /bank-accounts`) | **In app** — WebView onboarding (`/bank/link-onboarding`); Add bank on empty picker |
+| Link bank (`POST /bank-accounts`) | **In app** — browser onboarding (`/bank/link-onboarding`); Add bank on empty picker |
 | Wallet / notifications API failure | Retry UI (`AppErrorView` + Try Again); no mock data |
 | FCM push delivery | Token register/unregister in app; actual push requires backend + device |
 | Project pot on detail | Wired via `GET /pot` + SignalR; contributor count on info card |
@@ -34,9 +34,9 @@
 
 | # | Test | Steps | Expected | Result |
 |---|------|--------|----------|--------|
-| 1.1 | Shimmer | Withdraw without KYC → **Verify identity** → onboarding | `KycWebViewShimmer` while starting | |
-| 1.2 | WebView loads | After start | Stripe/Connect onboarding page in WebView | |
-| 1.3 | Complete onboarding | Finish Stripe flow until redirect | App pops back with success (`true`) | |
+| 1.1 | Shimmer | Withdraw without KYC → **Verify identity** → onboarding | `StripeOnboardingShimmer` while starting | |
+| 1.2 | Browser opens | After start | Stripe Connect page in in-app browser | |
+| 1.3 | Complete onboarding | Finish Stripe flow until `vestie://` redirect or check status | App pops with correct result | |
 | 1.4 | Retry withdraw | Withdraw again | Passes KYC gate (if Verified on server) | |
 | 1.5 | Cancel | Back from KYC screen | Returns without crash; withdraw still blocked if not verified | |
 
@@ -46,7 +46,7 @@
 
 | # | Test | Steps | Expected | Result |
 |---|------|--------|----------|--------|
-| 2.1 | No banks | Zero banks → Withdraw → continue → bank picker | Empty state + **Add bank account** → Stripe WebView | |
+| 2.1 | No banks | Zero banks → Withdraw → continue → bank picker | Empty state + **Add bank account** → Stripe browser | |
 | 2.2 | Shimmer | With banks → withdraw → bank picker | `BankAccountListShimmer` on load | |
 | 2.3 | List | Bank picker screen | Shows `displayName`; default label if applicable | |
 | 2.4 | Select bank | Tap a bank | Navigates to withdraw confirmation | |
@@ -137,7 +137,7 @@
 | Notifications | `NotificationListShimmer` | |
 | Payment methods | `PaymentCardListShimmer` | |
 | Select bank account | `BankAccountListShimmer` | |
-| KYC onboarding start | `KycWebViewShimmer` | |
+| KYC onboarding start | `StripeOnboardingShimmer` | |
 
 ---
 
@@ -156,7 +156,7 @@
 
 | Check | PASS / FAIL |
 |-------|-------------|
-| KYC WebView + withdraw gate | |
+| KYC browser + withdraw gate | |
 | Withdraw preview fees (0% / 1.5%) | |
 | Withdraw submit + wallet update | |
 | Announcements list / create / delete | |

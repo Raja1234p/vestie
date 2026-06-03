@@ -1,27 +1,24 @@
-/// Deep-link style URLs for `POST /bank-accounts` (browser onboarding).
+import 'package:vestie/core/constants/api_constants.dart';
+import 'package:vestie/core/stripe/stripe_connect_redirect_matcher.dart';
+
+/// Redirect URLs for `POST /bank-accounts` — derived from [ApiConstants.baseUrl] host.
 class BankFlowConstants {
   BankFlowConstants._();
 
-  static const String returnUrl = 'https://vestie.app/bank/return';
-  static const String refreshUrl = 'https://vestie.app/bank/refresh';
+  static String get returnUrl => ApiConstants.bankReturnUrl;
 
-  static bool isCompletionUrl(String? url) {
-    if (url == null || url.isEmpty) return false;
-    final uri = Uri.tryParse(url);
-    final expected = Uri.tryParse(returnUrl);
-    if (uri == null || expected == null) return false;
-    return uri.scheme == expected.scheme &&
-        uri.host == expected.host &&
-        uri.path == expected.path;
-  }
+  static String get refreshUrl => ApiConstants.bankRefreshUrl;
 
-  static bool isRefreshUrl(String? url) {
-    if (url == null || url.isEmpty) return false;
-    final uri = Uri.tryParse(url);
-    final expected = Uri.tryParse(refreshUrl);
-    if (uri == null || expected == null) return false;
-    return uri.scheme == expected.scheme &&
-        uri.host == expected.host &&
-        uri.path == expected.path;
-  }
+  static const String appSchemeReturnUrl = 'vestie://bank/return';
+  static const String appSchemeRefreshUrl = 'vestie://bank/refresh';
+
+  static bool isCompletionUrl(String? url) => StripeConnectRedirectMatcher.matchesAny(
+        url,
+        [returnUrl, appSchemeReturnUrl],
+      );
+
+  static bool isRefreshUrl(String? url) => StripeConnectRedirectMatcher.matchesAny(
+        url,
+        [refreshUrl, appSchemeRefreshUrl],
+      );
 }

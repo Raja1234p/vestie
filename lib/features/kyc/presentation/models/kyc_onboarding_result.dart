@@ -1,11 +1,21 @@
-/// Result of the in-app KYC WebView route (`context.pop` value).
+/// Result of the in-app KYC browser onboarding route (`context.pop` value).
+///
+/// Stripe Connect Account Links: [return_url] only means the user left hosted
+/// onboarding (finished, saved for later, or exited). Always check account
+/// requirements via `GET /kyc/status` — never treat [return_url] alone as success.
 enum KycOnboardingResult {
-  /// Stripe redirected to `returnUrl` and `GET /kyc/status` confirms withdraw-ready.
+  /// `canWithdraw` — verified and payouts enabled.
   completed,
 
-  /// Stripe redirected to `returnUrl` but account is not verified yet (e.g. pending).
-  pending,
+  /// No outstanding requirements; Stripe is reviewing (status pending).
+  pendingReview,
 
-  /// User left before a return redirect, or status could not be confirmed.
+  /// Returned from Stripe but requirements remain or onboarding not finished.
+  incomplete,
+
+  /// User closed the app screen (back) before a Stripe [return_url] redirect.
   canceled,
+
+  /// Stripe rejected the connected account.
+  rejected,
 }
