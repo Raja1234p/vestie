@@ -11,6 +11,7 @@ import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
+import 'package:vestie/features/kyc/presentation/kyc_browser_onboarding_runner.dart';
 import 'package:vestie/features/kyc/presentation/models/kyc_onboarding_result.dart';
 import 'package:vestie/features/wallet/domain/withdraw_delivery_method.dart';
 import 'package:vestie/features/wallet/presentation/cubit/wallet_transaction_cubit.dart';
@@ -30,6 +31,21 @@ class _WithdrawMethodScreenState extends State<WithdrawMethodScreen> {
   Future<void> _onContinueWithdraw(BuildContext context) async {
     if (_isContinuing) return;
     await _runContinueWithdraw(context);
+  }
+
+  void _showKycResultToast(BuildContext context, KycOnboardingResult result) {
+    switch (result) {
+      case KycOnboardingResult.completed:
+        return;
+      case KycOnboardingResult.pendingReview:
+        AppToast.showInfo(context, AppStrings.kycOnboardingPendingReviewHint);
+      case KycOnboardingResult.incomplete:
+        AppToast.showInfo(context, AppStrings.kycOnboardingIncompleteHint);
+      case KycOnboardingResult.rejected:
+        AppToast.showError(context, AppStrings.kycOnboardingRejectedHint);
+      case KycOnboardingResult.canceled:
+        AppToast.showError(context, AppStrings.kycOnboardingCanceled);
+    }
   }
 
   Future<void> _runContinueWithdraw(BuildContext context) async {
@@ -57,33 +73,26 @@ class _WithdrawMethodScreenState extends State<WithdrawMethodScreen> {
           ),
         );
         if (verify == true && context.mounted) {
-          final result = await context.push<KycOnboardingResult>(
-            AppRoutes.kycOnboarding,
-          );
-          if (!context.mounted || result == null) return;
-          switch (result) {
-            case KycOnboardingResult.completed:
-              AppToast.showSuccess(
-                context,
-                AppStrings.kycOnboardingCompleteHint,
+          try {
+            final result = await KycBrowserOnboardingRunner.run();
+            if (!context.mounted) return;
+            _showKycResultToast(context, result);
+            if (result == KycOnboardingResult.completed) {
+              final recheck = await ServiceLocator.instance.getKycStatusUseCase(
+                forceRefresh: true,
               );
-            case KycOnboardingResult.pendingReview:
-              AppToast.showInfo(
-                context,
-                AppStrings.kycOnboardingPendingReviewHint,
-              );
-            case KycOnboardingResult.incomplete:
-              AppToast.showInfo(
-                context,
-                AppStrings.kycOnboardingIncompleteHint,
-              );
-            case KycOnboardingResult.rejected:
-              AppToast.showError(
-                context,
-                AppStrings.kycOnboardingRejectedHint,
-              );
-            case KycOnboardingResult.canceled:
-              AppToast.showError(context, AppStrings.kycOnboardingCanceled);
+              if (!context.mounted) return;
+              final canProceed =
+                  recheck.fold((_) => false, (s) => s.canWithdraw);
+              if (canProceed) {
+                context.push(AppRoutes.selectBankAccount);
+                return;
+              }
+            }
+          } catch (e) {
+            if (context.mounted) {
+              AppToast.showError(context, e.toString());
+            }
           }
         }
         return;
