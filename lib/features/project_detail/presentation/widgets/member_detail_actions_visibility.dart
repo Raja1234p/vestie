@@ -1,6 +1,7 @@
 import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
 
 import '../../domain/entities/member_entity.dart';
+import '../../domain/entities/member_entity_extensions.dart';
 import '../../domain/entities/project_detail_entity.dart';
 import 'project_member_add_friend_visibility.dart';
 
@@ -56,19 +57,35 @@ abstract final class MemberDetailActionsVisibility {
         member.role == MemberRole.coLeader;
   }
 
-  /// Group leader only — remove member (not self, not group leader row).
+  /// Group leader only — remove member on any project type (not self, not project leader).
   static bool showRemoveMember({
     required ProjectDetailEntity project,
     required MemberEntity member,
   }) {
-    if (!project.isGroupLeader) return false;
+    if (!project.canRemoveMembers) return false;
     if (ProjectMemberAddFriendVisibility.isViewerSelf(
       project: project,
       member: member,
     )) {
       return false;
     }
-    return member.role != MemberRole.leader;
+    return !_isProjectGroupLeader(project: project, member: member);
+  }
+
+  /// Leader row from `project.members` (stable); falls back to [MemberEntity.role] when list empty.
+  static bool _isProjectGroupLeader({
+    required ProjectDetailEntity project,
+    required MemberEntity member,
+  }) {
+    for (final m in project.members) {
+      if (m.role == MemberRole.leader && member.matchesIdentity(m)) {
+        return true;
+      }
+    }
+    if (project.members.isEmpty && member.role == MemberRole.leader) {
+      return true;
+    }
+    return false;
   }
 
   /// Resolved VFF state for footer actions (activity API + project member list).

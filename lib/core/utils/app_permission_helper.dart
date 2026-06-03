@@ -162,7 +162,7 @@ abstract final class AppPermissionHelper {
       primaryLabel: AppStrings.btnEnableNotifications,
       secondaryLabel: AppStrings.btnNotNow,
       showSecondary: true,
-      primaryColor: AppColors.purple500,
+      primaryColor: AppColors.primary,
       onPrimary: () {
         Navigator.of(context).pop();
         ensureNotifications(context);
@@ -213,7 +213,7 @@ abstract final class AppPermissionHelper {
       primaryLabel: AppStrings.btnOpenSettings,
       secondaryLabel: AppStrings.btnCancel,
       showSecondary: true,
-      primaryColor: AppColors.purple500,
+      primaryColor: AppColors.primary,
       onPrimary: () {
         Navigator.of(context).pop();
         openAppSettings();

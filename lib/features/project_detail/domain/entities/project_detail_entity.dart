@@ -167,8 +167,11 @@ class ProjectDetailEntity {
       usesLeaderDetailPanels &&
       showsSuccessVoteDevPreviews;
 
-  /// Promote / demote co-leader — Vacation and Investment only (not Emergency).
+  /// Promote / demote co-leader — vacation and emergency only (see [ProjectCategoryX.supportsCoLeader]).
   bool get supportsCoLeader => category.supportsCoLeader;
+
+  /// Remove member — group leader on every project category (vacation, emergency, investment).
+  bool get canRemoveMembers => isGroupLeader;
 
   /// Which ⋯ menu to show — same rules on investment, vacation, and emergency.
   ProjectDetailOverflowMenuKind get overflowMenuKind {

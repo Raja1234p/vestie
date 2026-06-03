@@ -6,7 +6,143 @@ import 'package:vestie/features/project_detail/presentation/widgets/member_detai
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
 
+ProjectDetailEntity _leaderProject({
+  required ProjectCategory category,
+  List<MemberEntity> members = const [],
+}) {
+  return ProjectDetailEntity(
+    id: 'p1',
+    name: 'Test',
+    category: category,
+    status: ProjectStatus.ongoing,
+    goalAmount: 1000,
+    currentAmount: 0,
+    endsIn: '30d',
+    announcement: '',
+    members: members,
+    borrowRequests: [],
+    viewerRole: ViewerMembershipRole.groupLeader,
+    membershipId: 'leader-m',
+  );
+}
+
 void main() {
+  group('MemberDetailActionsVisibility.showRemoveMember', () {
+    test('true for group leader viewing a regular member on every category', () {
+      const member = MemberEntity(
+        id: 'u2',
+        membershipId: 'm2',
+        userId: 'u2',
+        initials: 'AB',
+        name: 'Alex',
+        role: MemberRole.member,
+        contributedAmount: 0,
+      );
+
+      for (final category in ProjectCategory.values) {
+        expect(
+          MemberDetailActionsVisibility.showRemoveMember(
+            project: _leaderProject(category: category),
+            member: member,
+          ),
+          isTrue,
+          reason: 'remove should show for $category',
+        );
+      }
+    });
+
+    test('false for co-leader viewer on vacation project', () {
+      const project = ProjectDetailEntity(
+        id: 'p1',
+        name: 'Trip',
+        category: ProjectCategory.vacations,
+        status: ProjectStatus.ongoing,
+        goalAmount: 1000,
+        currentAmount: 0,
+        endsIn: '30d',
+        announcement: '',
+        members: [],
+        borrowRequests: [],
+        viewerRole: ViewerMembershipRole.coLeader,
+        membershipId: 'co-m',
+      );
+      const member = MemberEntity(
+        id: 'u2',
+        membershipId: 'm2',
+        userId: 'u2',
+        initials: 'AB',
+        name: 'Alex',
+        role: MemberRole.member,
+        contributedAmount: 0,
+      );
+
+      expect(
+        MemberDetailActionsVisibility.showRemoveMember(
+          project: project,
+          member: member,
+        ),
+        isFalse,
+      );
+    });
+
+    test('false for self and for project leader row', () {
+      const leaderMember = MemberEntity(
+        id: 'gl',
+        membershipId: 'leader-m',
+        userId: 'gl',
+        initials: 'GL',
+        name: 'Leader',
+        role: MemberRole.leader,
+        contributedAmount: 0,
+      );
+      final project = _leaderProject(
+        category: ProjectCategory.investment,
+        members: [leaderMember],
+      );
+
+      expect(
+        MemberDetailActionsVisibility.showRemoveMember(
+          project: project,
+          member: leaderMember,
+        ),
+        isFalse,
+      );
+      expect(
+        MemberDetailActionsVisibility.showRemoveMember(
+          project: project,
+          member: leaderMember.copyWith(role: MemberRole.member),
+        ),
+        isFalse,
+        reason: 'leader slot in members list blocks remove even if role field is member',
+      );
+    });
+
+    test('true when activity role is leader but member is not leader in project list', () {
+      const listMember = MemberEntity(
+        id: 'u2',
+        membershipId: 'm2',
+        userId: 'u2',
+        initials: 'AB',
+        name: 'Alex',
+        role: MemberRole.member,
+        contributedAmount: 0,
+      );
+      final misTagged = listMember.copyWith(role: MemberRole.leader);
+      final project = _leaderProject(
+        category: ProjectCategory.emergency,
+        members: [listMember],
+      );
+
+      expect(
+        MemberDetailActionsVisibility.showRemoveMember(
+          project: project,
+          member: misTagged,
+        ),
+        isTrue,
+      );
+    });
+  });
+
   group('MemberDetailActionsVisibility.isVffActionTarget', () {
     test('false for self, true for any other member regardless of roles', () {
       const viewerMembershipId = 'viewer-m';
