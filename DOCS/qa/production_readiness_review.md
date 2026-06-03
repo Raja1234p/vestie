@@ -1,6 +1,6 @@
 # Vestie API integration — production readiness review (final)
 
-**Review date:** 2026-05-29  
+**Review date:** 2026-06-02 (final audit)  
 **Scope:** Mobile app Weeks **4**, **5**, **7** vs Vestie backend API docs  
 **Goal:** Ship money flows without breaking existing Vestie navigation and screens.
 
@@ -33,7 +33,8 @@ flutter build ios --debug --no-codesign
 
 **Base URL (app):** `https://api.vestie.app/api/v1.0` (`lib/core/constants/api_constants.dart`). Confirm with backend before store release.
 
-**QA:** Run [manual_test_runbook.md](manual_test_runbook.md) then [week_4_qa.md](week_4_qa.md) → [week_5_qa.md](week_5_qa.md) → [week_7_qa.md](week_7_qa.md).
+**QA:** Run [manual_test_runbook.md](manual_test_runbook.md) then [week_4_qa.md](week_4_qa.md) → [week_5_qa.md](week_5_qa.md) → [week_7_qa.md](week_7_qa.md).  
+**Remaining tests after card/bank/deposit/withdraw:** [final_audit_remaining_tests.md](final_audit_remaining_tests.md).
 
 ---
 
@@ -68,7 +69,7 @@ flutter build ios --debug --no-codesign
 
 | Screen | Ready? | Notes |
 |--------|--------|--------|
-| Wallet tab | Yes | Shimmer; **Locked in projects** row; retry on load failure |
+| Wallet tab | Yes | Shimmer; balance + borrowed; retry on load failure (locked/pending rows removed from UI) |
 | Contribute | Yes | Disclaimer on entry; confirm gated on wallet total or card; dedicated payment picker |
 | Project detail pot | Yes | Raised amount + contributor count from pot |
 | Card-only contribute | Partial | API is wallet debit; card path prompts deposit if short |
@@ -99,7 +100,7 @@ flutter build ios --debug --no-codesign
 | KYC browser onboarding | **Ready** |
 | Bank link browser (`POST /bank-accounts`) | **Ready** |
 | Bank list + empty state + add bank | **Ready** |
-| Bank remove UI | **Data layer only** — optional settings screen |
+| Bank list / default / remove | **Ready** — Profile → **My Accounts** + withdraw picker |
 | Announcements create / list / delete | **Ready** |
 | Notifications + mark-read on tap | **Ready** |
 | FCM register / unregister | **Ready** (device + Firebase files) |
@@ -114,7 +115,7 @@ flutter build ios --debug --no-codesign
 |------------|-----|--------|
 | Login / dashboard / projects | **Go** | Runbook §3 |
 | Risk disclaimer (wallet + Contribute) | **Go** | week_4 §3 |
-| Wallet balances + locked in projects | **Go** | week_4 §1 |
+| Wallet balances (+ borrowed) | **Go** | week_4 §1 |
 | Contribute ($5+, 15%, payment picker) | **Go** | week_4 §2 |
 | Payment methods manage | **Go** | week_5 §2 |
 | Deposit (PaymentSheet) | **Go** | week_5 §3 + stripe_test_cards |
