@@ -1,6 +1,5 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../utils/logger.dart';
 
@@ -14,7 +13,7 @@ const _logTag = 'StripeOnboarding';
 /// backend HTML at those paths must bounce to `vestie://` so the Custom Tab
 /// closes (plain HTTPS pages stay inside the browser on Android).
 ///
-/// Uses [FlutterWebAuth2] (Chrome Custom Tab / SFSafariViewController).
+/// Uses [FlutterWebAuth2] 5.x (Chrome Auth Tab / ASWebAuthenticationSession).
 class StripeHostedOnboardingLauncher {
   StripeHostedOnboardingLauncher._();
 
@@ -56,33 +55,15 @@ class StripeHostedOnboardingLauncher {
         error: e,
         name: _logTag,
       );
-      return _openWithUrlLauncherFallback(onboardingUrl);
+      return null;
     } catch (e, st) {
       AppLogger.error(
-        'FlutterWebAuth2 error; using url_launcher fallback',
+        'FlutterWebAuth2 error',
         error: e,
         stackTrace: st,
         name: _logTag,
       );
-      return _openWithUrlLauncherFallback(onboardingUrl);
+      return null;
     }
-  }
-
-  /// User must return manually; no callback URL.
-  static Future<void> openExternal(String onboardingUrl) async {
-    final uri = Uri.parse(onboardingUrl);
-    final ok = await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
-    if (!ok) {
-      throw Exception('Could not open browser');
-    }
-  }
-
-  static Future<String?> _openWithUrlLauncherFallback(String onboardingUrl) async {
-    AppLogger.info(
-      'Opened Stripe in external browser — app will not auto-capture Return redirect',
-      name: _logTag,
-    );
-    await openExternal(onboardingUrl);
-    return null;
   }
 }

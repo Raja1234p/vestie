@@ -19,8 +19,12 @@ import 'post_auth_header.dart';
 
 /// Stripe hosted Connect onboarding in the system browser.
 ///
-/// [StripeHostedOnboardingLauncher] closes the browser when Stripe redirects to
-/// `https://vestie.app/...`. Falls back to manual return if needed.
+/// Return paths (backend must redirect HTTPS → `vestie://`):
+/// - KYC: `vestie://kyc/complete`, `vestie://kyc/refresh`
+/// - Bank: `vestie://bank/return`, `vestie://bank/refresh`
+///
+/// [FlutterWebAuth2] closes the Custom Tab on redirect; [AppLinks] handles the
+/// same URIs when the app is resumed or opened from a cold start.
 class StripeBrowserOnboardingScreen extends StatefulWidget {
   final String title;
   final String urlMissingMessage;
@@ -69,7 +73,23 @@ class _StripeBrowserOnboardingScreenState extends State<StripeBrowserOnboardingS
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _linkSub = _appLinks.uriLinkStream.listen(_onDeepLink);
+    unawaited(_handleColdStartLink());
     WidgetsBinding.instance.addPostFrameCallback((_) => _bootstrap());
+  }
+
+  /// App opened from `vestie://…` while not running (backend sample pattern).
+  Future<void> _handleColdStartLink() async {
+    try {
+      final uri = await _appLinks.getInitialLink();
+      if (uri != null && mounted) _onDeepLink(uri);
+    } catch (e, st) {
+      AppLogger.error(
+        'getInitialLink failed',
+        error: e,
+        stackTrace: st,
+        name: _logTag,
+      );
+    }
   }
 
   @override
@@ -92,13 +112,12 @@ class _StripeBrowserOnboardingScreenState extends State<StripeBrowserOnboardingS
   }
 
   void _onDeepLink(Uri uri) {
-    AppLogger.info('Deep link received: $uri', name: _logTag);
-    _handleCallbackUrl(uri.toString());
+    AppLogger.info('Deep link: $uri', name: _logTag);
+    _dispatchRedirect(uri.toString());
   }
 
-  void _handleCallbackUrl(String? url) {
+  void _dispatchRedirect(String? url) {
     if (url == null || url.isEmpty) return;
-    AppLogger.info('Stripe redirect captured: $url', name: _logTag);
     if (widget.isRefreshUrl(url)) {
       AppLogger.info(
         'Matched refresh URL (Stripe "Return to …" / link expired) — starting new session',
@@ -175,7 +194,7 @@ class _StripeBrowserOnboardingScreenState extends State<StripeBrowserOnboardingS
     if (!mounted) return;
 
     if (callbackUrl != null) {
-      _handleCallbackUrl(callbackUrl);
+      _dispatchRedirect(callbackUrl);
       return;
     }
 

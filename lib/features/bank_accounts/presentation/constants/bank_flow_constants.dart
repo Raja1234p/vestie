@@ -12,13 +12,27 @@ class BankFlowConstants {
   static const String appSchemeReturnUrl = 'vestie://bank/return';
   static const String appSchemeRefreshUrl = 'vestie://bank/refresh';
 
-  static bool isCompletionUrl(String? url) => StripeConnectRedirectMatcher.matchesAny(
-        url,
-        [returnUrl, appSchemeReturnUrl],
-      );
+  static bool isCompletionUrl(String? url) {
+    final uri = Uri.tryParse(url ?? '');
+    if (uri != null &&
+        StripeConnectRedirectMatcher.isVestieCompletion(uri, host: 'bank')) {
+      return true;
+    }
+    return StripeConnectRedirectMatcher.matchesAny(
+      url,
+      [returnUrl, appSchemeReturnUrl],
+    );
+  }
 
-  static bool isRefreshUrl(String? url) => StripeConnectRedirectMatcher.matchesAny(
-        url,
-        [refreshUrl, appSchemeRefreshUrl],
-      );
+  static bool isRefreshUrl(String? url) {
+    final uri = Uri.tryParse(url ?? '');
+    if (uri != null &&
+        StripeConnectRedirectMatcher.isVestieRefresh(uri, host: 'bank')) {
+      return true;
+    }
+    return StripeConnectRedirectMatcher.matchesAny(
+      url,
+      [refreshUrl, appSchemeRefreshUrl],
+    );
+  }
 }
