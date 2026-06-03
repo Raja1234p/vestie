@@ -7,9 +7,16 @@ import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 
-/// Centered empty state for payment methods (Figma — illustration + copy only).
+/// Centered empty state (Figma illustration + copy). Defaults to payment methods.
 class PaymentEmptyView extends StatelessWidget {
-  const PaymentEmptyView({super.key});
+  const PaymentEmptyView({
+    super.key,
+    this.title,
+    this.subtitle,
+  });
+
+  final String? title;
+  final String? subtitle;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +35,7 @@ class PaymentEmptyView extends StatelessWidget {
             ),
             SizedBox(height: 24.h),
             AppText(
-              AppStrings.emptyPaymentTitle,
+              title ?? AppStrings.emptyPaymentTitle,
               textAlign: TextAlign.center,
               style: GoogleFonts.lato(
                 fontSize: 20.sp,
@@ -38,7 +45,7 @@ class PaymentEmptyView extends StatelessWidget {
             ),
             SizedBox(height: 10.h),
             AppText(
-              AppStrings.emptyPaymentSubtitle,
+              subtitle ?? AppStrings.emptyPaymentSubtitle,
               textAlign: TextAlign.center,
               style: GoogleFonts.lato(
                 fontSize: 14.sp,

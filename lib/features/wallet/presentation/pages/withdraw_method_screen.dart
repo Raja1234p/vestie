@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/theme/app_colors.dart';
@@ -15,6 +14,7 @@ import 'package:vestie/features/kyc/presentation/kyc_browser_onboarding_runner.d
 import 'package:vestie/features/kyc/presentation/models/kyc_onboarding_result.dart';
 import 'package:vestie/features/wallet/domain/withdraw_delivery_method.dart';
 import 'package:vestie/features/wallet/presentation/cubit/wallet_transaction_cubit.dart';
+import 'package:vestie/features/wallet/presentation/navigation/wallet_withdraw_navigation.dart';
 import 'package:vestie/features/wallet/presentation/widgets/withdraw_method_body.dart';
 
 /// Pick standard vs instant payout before choosing a bank (Figma).
@@ -85,7 +85,10 @@ class _WithdrawMethodScreenState extends State<WithdrawMethodScreen> {
               final canProceed =
                   recheck.fold((_) => false, (s) => s.canWithdraw);
               if (canProceed) {
-                context.push(AppRoutes.selectBankAccount);
+                WalletWithdrawNavigation.continueFromMethod(
+                  context,
+                  context.read<WalletTransactionCubit>(),
+                );
                 return;
               }
             }
@@ -99,7 +102,10 @@ class _WithdrawMethodScreenState extends State<WithdrawMethodScreen> {
       }
 
       if (!context.mounted) return;
-      context.push(AppRoutes.selectBankAccount);
+      WalletWithdrawNavigation.continueFromMethod(
+        context,
+        context.read<WalletTransactionCubit>(),
+      );
     } finally {
       if (mounted) {
         setState(() => _isContinuing = false);

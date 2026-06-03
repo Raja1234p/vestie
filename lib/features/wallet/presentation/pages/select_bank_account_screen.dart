@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
@@ -12,13 +11,16 @@ import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_shimmer.dart';
+import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
-import 'package:vestie/core/widgets/text/app_text.dart';
-import 'package:vestie/core/widgets/common/app_toast.dart';
+import 'package:vestie/core/services/bank_accounts_prefetch.dart';
 import 'package:vestie/features/bank_accounts/domain/entities/bank_account_entity.dart';
+import 'package:vestie/features/bank_accounts/presentation/bank_browser_onboarding_runner.dart';
 import 'package:vestie/features/bank_accounts/presentation/models/bank_link_onboarding_result.dart';
+import 'package:vestie/features/bank_accounts/presentation/widgets/bank_account_manage_row.dart';
+import 'package:vestie/features/profile/presentation/widgets/payment_empty_view.dart';
 import 'package:vestie/features/profile/presentation/widgets/payment_primary_button.dart';
 import '../cubit/wallet_transaction_cubit.dart';
 
@@ -34,6 +36,7 @@ class _SelectBankAccountScreenState extends State<SelectBankAccountScreen> {
   final _listBankAccounts = ServiceLocator.instance.listBankAccountsUseCase;
   List<BankAccountEntity> _banks = const [];
   bool _loading = true;
+  bool _linking = false;
   String? _error;
 
   @override
@@ -63,17 +66,29 @@ class _SelectBankAccountScreenState extends State<SelectBankAccountScreen> {
   }
 
   Future<void> _addBankAccount() async {
-    final result = await context.push<BankLinkOnboardingResult>(
-      AppRoutes.bankLinkOnboarding,
-    );
-    if (!mounted || result == null) return;
-    switch (result) {
-      case BankLinkOnboardingResult.linked:
+    setState(() => _linking = true);
+    try {
+      final result = await BankBrowserOnboardingRunner.run(
+        onBrowserPresented: () {
+          if (mounted) setState(() => _linking = false);
+        },
+      );
+      if (!mounted) return;
+      if (result == BankLinkOnboardingResult.linked) {
+        await BankAccountsPrefetch.refresh();
+        if (!mounted) return;
         await _load();
-      case BankLinkOnboardingResult.incomplete:
+        return;
+      }
+      if (result == BankLinkOnboardingResult.incomplete) {
         AppToast.showInfo(context, AppStrings.bankLinkOnboardingIncompleteHint);
-      case BankLinkOnboardingResult.canceled:
+      } else if (result == BankLinkOnboardingResult.canceled) {
         AppToast.showError(context, AppStrings.bankLinkOnboardingCanceled);
+      }
+    } catch (e) {
+      if (mounted) AppToast.showError(context, e.toString());
+    } finally {
+      if (mounted) setState(() => _linking = false);
     }
   }
 
@@ -88,6 +103,7 @@ class _SelectBankAccountScreenState extends State<SelectBankAccountScreen> {
   @override
   Widget build(BuildContext context) {
     final isEmpty = !_loading && _banks.isEmpty;
+    final loadFailed = !_loading && _error != null && _banks.isEmpty;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -109,50 +125,23 @@ class _SelectBankAccountScreenState extends State<SelectBankAccountScreen> {
             ),
             Expanded(
               child: _loading
-                  ? const BankAccountListShimmer()
-                  : isEmpty
-                      ? _EmptyBankState(error: _error)
+                  ? const PaymentCardListShimmer()
+                  : loadFailed || isEmpty
+                      ? PaymentEmptyView(
+                          title: AppStrings.emptyMyAccountsTitle,
+                          subtitle: _error ?? AppStrings.emptyMyAccountsSubtitle,
+                        )
                       : ListView.separated(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 16.w,
-                            vertical: 8.h,
-                          ),
+                          padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 8.h),
                           itemCount: _banks.length,
-                          separatorBuilder: (_, _) => SizedBox(height: 10.h),
+                          separatorBuilder: (_, _) =>
+                              SizedBox(height: AppDimens.paymentMethodRowGap),
                           itemBuilder: (context, index) {
                             final bank = _banks[index];
-                            return Material(
-                              color: AppColors.grey100,
-                              borderRadius: BorderRadius.circular(12.r),
-                              child: InkWell(
-                                onTap: () => _onSelect(bank),
-                                borderRadius: BorderRadius.circular(12.r),
-                                child: Padding(
-                                  padding: EdgeInsets.all(16.w),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: AppText(
-                                          bank.displayName,
-                                          style: GoogleFonts.lato(
-                                            fontSize: 16.sp,
-                                            fontWeight: FontWeight.w600,
-                                            color: AppColors.neutral1200,
-                                          ),
-                                        ),
-                                      ),
-                                      if (bank.isDefault)
-                                        AppText(
-                                          AppStrings.bankAccountDefaultLabel,
-                                          style: GoogleFonts.lato(
-                                            fontSize: 12.sp,
-                                            color: AppColors.primary,
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                            return BankAccountManageRow(
+                              account: bank,
+                              showChevron: false,
+                              onTap: () => _onSelect(bank),
                             );
                           },
                         ),
@@ -161,37 +150,10 @@ class _SelectBankAccountScreenState extends State<SelectBankAccountScreen> {
               FlowScreenFooter(
                 child: PaymentPrimaryButton(
                   label: AppStrings.btnAddBankAccount,
-                  onTap: _loading ? null : _addBankAccount,
+                  onTap: _loading || _linking ? null : _addBankAccount,
+                  loading: _linking,
                 ),
               ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _EmptyBankState extends StatelessWidget {
-  const _EmptyBankState({this.error});
-
-  final String? error;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.all(24.w),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AppText(
-              error ?? AppStrings.bankLinkEmptySubtitle,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.lato(
-                fontSize: 16.sp,
-                color: AppColors.neutral700,
-              ),
-            ),
           ],
         ),
       ),

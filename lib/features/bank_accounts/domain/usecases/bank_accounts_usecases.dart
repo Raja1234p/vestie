@@ -41,3 +41,15 @@ class RemoveBankAccountUseCase {
   Future<Either<Failure, void>> call(String bankAccountId) =>
       repository.remove(bankAccountId);
 }
+
+class SetDefaultBankAccountUseCase {
+  final BankAccountsRepository repository;
+
+  SetDefaultBankAccountUseCase(this.repository);
+
+  Future<Either<Failure, void>> call(
+    String bankAccountId, {
+    required bool isDefault,
+  }) =>
+      repository.setDefault(bankAccountId, isDefault: isDefault);
+}

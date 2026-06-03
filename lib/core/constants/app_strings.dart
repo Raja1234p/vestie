@@ -814,6 +814,19 @@ class AppStrings {
       'Bank linking canceled.';
   static const String btnAddBankAccount = 'Add bank account';
   static const String selectBankAccountTitle = 'My Accounts';
+  static const String menuMyAccounts = 'My Accounts';
+  static const String emptyMyAccountsTitle = 'Add Bank Account';
+  static const String emptyMyAccountsSubtitle =
+      'No bank account linked. Add a bank account to receive withdrawals.';
+  static const String setDefaultBankLabel = 'Set as default bank account';
+  static const String setDefaultBankSubtitle =
+      'We will use this bank account for withdrawals';
+  static const String removeBankLabel = 'Remove bank account';
+  static const String removeBankSubtitle =
+      'We will remove this bank account from your profile.';
+  static const String bankRemovedSuccess = 'Bank account removed.';
+  static const String bankAccountsLoadFailed =
+      'Could not load bank accounts. Please try again.';
   static const String bankAccountDefaultLabel = 'Default';
   static const String bankLinkEmptySubtitle =
       'Link a bank account to receive withdrawals.';

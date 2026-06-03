@@ -151,6 +151,9 @@ class ApiConstants {
   static String bankAccount(String bankAccountId) =>
       '/bank-accounts/$bankAccountId';
 
+  static String bankAccountDefault(String bankAccountId) =>
+      '/bank-accounts/$bankAccountId/default';
+
   // ── Stripe (Week 5) ──────────────────────────────────────────────────────
   static const String stripeConfig = '/stripe/config';
 

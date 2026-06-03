@@ -315,6 +315,12 @@ class _ProfileBody extends StatelessWidget {
                                         context.push(AppRoutes.paymentMethods),
                                   ),
                                   SettingsItem(
+                                    assetPath: AppAssets.iconDollarCircle,
+                                    label: AppStrings.menuMyAccounts,
+                                    onTap: () =>
+                                        context.push(AppRoutes.myAccounts),
+                                  ),
+                                  SettingsItem(
                                     assetPath: AppAssets.iconCompleteProjects,
                                     label: AppStrings.menuCompletedProjects,
                                     onTap: () => context.push(

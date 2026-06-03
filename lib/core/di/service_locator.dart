@@ -222,6 +222,7 @@ class ServiceLocator {
   late final ListBankAccountsUseCase listBankAccountsUseCase;
   late final LinkBankAccountUseCase linkBankAccountUseCase;
   late final RemoveBankAccountUseCase removeBankAccountUseCase;
+  late final SetDefaultBankAccountUseCase setDefaultBankAccountUseCase;
 
   late final WalletWithdrawalRemoteDataSource walletWithdrawalRemoteDataSource;
   late final WalletWithdrawalRepository walletWithdrawalRepository;
@@ -414,6 +415,8 @@ class ServiceLocator {
     listBankAccountsUseCase = ListBankAccountsUseCase(bankAccountsRepository);
     linkBankAccountUseCase = LinkBankAccountUseCase(bankAccountsRepository);
     removeBankAccountUseCase = RemoveBankAccountUseCase(bankAccountsRepository);
+    setDefaultBankAccountUseCase =
+        SetDefaultBankAccountUseCase(bankAccountsRepository);
 
     walletWithdrawalRemoteDataSource =
         WalletWithdrawalRemoteDataSourceImpl(apiClient: apiClient);

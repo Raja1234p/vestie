@@ -226,6 +226,7 @@ class ProfileCubit extends Cubit<ProfileState> {
     DashboardPrefetch.reset();
     WalletBalanceCache.clear();
     PaymentMethodsCache.clear();
+    BankAccountsCache.clear();
     StripeConfigCache.clear();
     KycStatusCache.clear();
     BankAccountsCache.clear();
