@@ -57,7 +57,7 @@ abstract final class MemberDetailActionsVisibility {
         member.role == MemberRole.coLeader;
   }
 
-  /// Group leader only — remove member on any project type (not self, not project leader).
+  /// Group leader or co-leader — remove member on any project type (not self, not project leader).
   static bool showRemoveMember({
     required ProjectDetailEntity project,
     required MemberEntity member,
@@ -163,7 +163,7 @@ abstract final class MemberDetailActionsVisibility {
         showRemoveMember(project: project, member: member);
   }
 
-  /// Group leader only — mark defaulted (same rules as remove member).
+  /// Group leader or co-leader — mark defaulted (same rules as remove member).
   static bool showMarkAsDefaulted({
     required ProjectDetailEntity project,
     required MemberEntity member,
@@ -180,7 +180,7 @@ abstract final class MemberDetailActionsVisibility {
         showMarkAsDefaulted(project: project, member: member);
   }
 
-  /// Overdue banner "Take Action" (group leader, not self, not project leader).
+  /// Overdue banner "Take Action" (moderator, not self, not project leader).
   static bool showOverdueTakeAction({
     required ProjectDetailEntity project,
     required MemberEntity member,

@@ -6,9 +6,11 @@ import 'package:vestie/features/project_detail/presentation/widgets/member_detai
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
 
-ProjectDetailEntity _leaderProject({
+ProjectDetailEntity _moderatorProject({
   required ProjectCategory category,
+  required ViewerMembershipRole viewerRole,
   List<MemberEntity> members = const [],
+  String membershipId = 'viewer-m',
 }) {
   return ProjectDetailEntity(
     id: 'p1',
@@ -21,14 +23,15 @@ ProjectDetailEntity _leaderProject({
     announcement: '',
     members: members,
     borrowRequests: [],
-    viewerRole: ViewerMembershipRole.groupLeader,
-    membershipId: 'leader-m',
+    viewerRole: viewerRole,
+    membershipId: membershipId,
   );
 }
 
 void main() {
   group('MemberDetailActionsVisibility.showRemoveMember', () {
-    test('true for group leader viewing a regular member on every category', () {
+    test('true for group leader or co-leader viewing a regular member on every category',
+        () {
       const member = MemberEntity(
         id: 'u2',
         membershipId: 'm2',
@@ -40,18 +43,29 @@ void main() {
       );
 
       for (final category in ProjectCategory.values) {
-        expect(
-          MemberDetailActionsVisibility.showRemoveMember(
-            project: _leaderProject(category: category),
-            member: member,
-          ),
-          isTrue,
-          reason: 'remove should show for $category',
-        );
+        for (final role in [
+          ViewerMembershipRole.groupLeader,
+          ViewerMembershipRole.coLeader,
+        ]) {
+          expect(
+            MemberDetailActionsVisibility.showRemoveMember(
+              project: _moderatorProject(
+                category: category,
+                viewerRole: role,
+                membershipId: role == ViewerMembershipRole.coLeader
+                    ? 'co-m'
+                    : 'leader-m',
+              ),
+              member: member,
+            ),
+            isTrue,
+            reason: 'remove should show for $category as $role',
+          );
+        }
       }
     });
 
-    test('false for co-leader viewer on vacation project', () {
+    test('false for regular member viewer', () {
       const project = ProjectDetailEntity(
         id: 'p1',
         name: 'Trip',
@@ -63,10 +77,10 @@ void main() {
         announcement: '',
         members: [],
         borrowRequests: [],
-        viewerRole: ViewerMembershipRole.coLeader,
-        membershipId: 'co-m',
+        viewerRole: ViewerMembershipRole.member,
+        membershipId: 'member-m',
       );
-      const member = MemberEntity(
+      const target = MemberEntity(
         id: 'u2',
         membershipId: 'm2',
         userId: 'u2',
@@ -79,7 +93,7 @@ void main() {
       expect(
         MemberDetailActionsVisibility.showRemoveMember(
           project: project,
-          member: member,
+          member: target,
         ),
         isFalse,
       );
@@ -95,9 +109,11 @@ void main() {
         role: MemberRole.leader,
         contributedAmount: 0,
       );
-      final project = _leaderProject(
+      final project = _moderatorProject(
         category: ProjectCategory.investment,
+        viewerRole: ViewerMembershipRole.groupLeader,
         members: [leaderMember],
+        membershipId: 'leader-m',
       );
 
       expect(
@@ -128,9 +144,11 @@ void main() {
         contributedAmount: 0,
       );
       final misTagged = listMember.copyWith(role: MemberRole.leader);
-      final project = _leaderProject(
+      final project = _moderatorProject(
         category: ProjectCategory.emergency,
+        viewerRole: ViewerMembershipRole.coLeader,
         members: [listMember],
+        membershipId: 'co-m',
       );
 
       expect(
