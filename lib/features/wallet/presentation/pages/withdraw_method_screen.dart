@@ -36,11 +36,11 @@ class _WithdrawMethodScreenState extends State<WithdrawMethodScreen> {
   void _showKycResultToast(BuildContext context, KycOnboardingResult result) {
     switch (result) {
       case KycOnboardingResult.completed:
-        return;
+        AppToast.showSuccess(context, AppStrings.kycOnboardingCompleteHint);
       case KycOnboardingResult.pendingReview:
         AppToast.showInfo(context, AppStrings.kycOnboardingPendingReviewHint);
       case KycOnboardingResult.incomplete:
-        AppToast.showInfo(context, AppStrings.kycOnboardingIncompleteHint);
+        AppToast.showError(context, AppStrings.kycOnboardingIncompleteHint);
       case KycOnboardingResult.rejected:
         AppToast.showError(context, AppStrings.kycOnboardingRejectedHint);
       case KycOnboardingResult.canceled:
