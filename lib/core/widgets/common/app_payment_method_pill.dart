@@ -55,7 +55,7 @@ class AppPaymentMethodPill extends StatelessWidget {
             SizedBox(width: 8.w),
             AppSvgIcon(
               assetPath: AppAssets.iconChevronWallet,
-              size: 12.r,
+              size: 8.sp,
             ),
           ],
         ],
