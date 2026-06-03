@@ -95,7 +95,7 @@ class _SelectBankAccountScreenState extends State<SelectBankAccountScreen> {
         child: Column(
           children: [
             PostAuthHeader(
-              title: AppStrings.walletToLabel,
+              title: AppStrings.selectBankAccountTitle,
               padding: EdgeInsets.fromLTRB(
                 AppDimens.p16,
                 AppDimens.v16,

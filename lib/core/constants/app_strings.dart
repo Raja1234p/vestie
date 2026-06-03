@@ -813,6 +813,7 @@ class AppStrings {
   static const String bankLinkOnboardingCanceled =
       'Bank linking canceled.';
   static const String btnAddBankAccount = 'Add bank account';
+  static const String selectBankAccountTitle = 'My Accounts';
   static const String bankAccountDefaultLabel = 'Default';
   static const String bankLinkEmptySubtitle =
       'Link a bank account to receive withdrawals.';
