@@ -54,6 +54,7 @@ class ProjectInvitationJoinListener extends StatelessWidget {
               :final projectName,
               :final isInvestment,
             ):
+            await PendingProjectInviteStore.clear();
             if (!context.mounted) return;
             openProjectJoinedSuccess(
               context,

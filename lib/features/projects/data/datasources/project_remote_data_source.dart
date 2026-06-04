@@ -70,6 +70,6 @@ class ProjectRemoteDataSourceImpl implements ProjectRemoteDataSource {
         inviteCode: inviteCode,
       ),
     );
-    return JoinProjectResultModel.fromJson(response);
+    return JoinProjectResultModel.fromJson(unwrapApiResponseBody(response));
   }
 }

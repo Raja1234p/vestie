@@ -39,22 +39,21 @@ class _SplashScreenState extends State<SplashScreen> {
         listener: (context, state) async {
           if (state is! SplashCompleted) return;
 
-          final pendingInvite = await PendingProjectInviteStore.read();
-          if (!context.mounted) return;
-
-          if (pendingInvite != null &&
-              pendingInvite.isNotEmpty &&
-              state.isAuthenticated) {
-            context.go(AppRoutes.projectInvitation(pendingInvite));
-            return;
-          }
-
           if (state.isAuthenticated) {
-            if (state.isDisclaimerAccepted) {
-              context.go(AppRoutes.dashboard);
-            } else {
+            if (!state.isDisclaimerAccepted) {
               context.go(AppRoutes.agreement);
+              return;
             }
+
+            final pendingInvite = await PendingProjectInviteStore.read();
+            if (!context.mounted) return;
+
+            if (pendingInvite != null && pendingInvite.isNotEmpty) {
+              context.go(AppRoutes.projectInvitation(pendingInvite));
+              return;
+            }
+
+            context.go(AppRoutes.dashboard);
           } else if (state.hasSeenOnboarding) {
             context.go(AppRoutes.login);
           } else {

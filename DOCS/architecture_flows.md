@@ -230,11 +230,12 @@ flowchart TB
   └─ first launch → /onboarding → /login
 
 /login or /register → /verify → ProjectInviteNavigation.goAfterAuth
-  ├─ pending invite code → /join/:code
-  └─ else → /agreement or /dashboard
+  ├─ disclaimer not accepted → /agreement (pending invite preserved)
+  ├─ disclaimer accepted + pending invite → consume → /join/:code
+  └─ disclaimer accepted, no pending → /dashboard
 ```
 
-**Global GoRouter redirect:** only **`ProjectInviteRouteGuard`** (invite paths). Unauthenticated `/join/:code` → persist code in `PendingProjectInviteStore` → `/login`. There is **no** blanket auth guard on all routes.
+**Global GoRouter redirect:** only **`ProjectInviteRouteGuard`** (invite paths). Unauthenticated `/join/:code` → persist code → `/login`. Authenticated without disclaimer → `/agreement` (code **not** consumed). There is **no** blanket auth guard on all routes.
 
 `AppAuthSession` is `refreshListenable` on the router so login/logout re-runs invite redirect.
 

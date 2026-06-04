@@ -4,6 +4,7 @@ import 'package:app_links/app_links.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/router/app_routes.dart';
+import '../../app/router/project_invite_navigation.dart';
 import '../../core/auth/app_auth_session.dart';
 import 'package:vestie/features/invites/presentation/constants/invite_flow_constants.dart';
 
@@ -66,6 +67,12 @@ final class ProjectInviteDeepLinkService {
       return;
     }
 
-    router.go(AppRoutes.projectInvitation(code));
+    final context = router.routerDelegate.navigatorKey.currentContext;
+    if (context == null || !context.mounted) return;
+
+    await ProjectInviteNavigation.goToInviteOrAgreement(
+      context,
+      inviteCode: code,
+    );
   }
 }
