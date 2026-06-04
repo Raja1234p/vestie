@@ -49,6 +49,8 @@ import '../../../features/onboarding/presentation/pages/onboarding_screen.dart';
 
 import '../../../features/splash/presentation/pages/splash_screen.dart';
 
+import '../../../features/invites/presentation/pages/project_invitation_screen.dart';
+
 import '../app_routes.dart';
 
 
@@ -62,6 +64,17 @@ List<RouteBase> buildCoreRoutes() {
       path: AppRoutes.splash,
 
       builder: (context, _) => const SplashScreen(),
+
+    ),
+
+    GoRoute(
+
+      path: AppRoutes.projectInvitationPath,
+
+      builder: (context, state) {
+        final code = state.pathParameters['inviteCode']?.trim() ?? '';
+        return ProjectInvitationScreen(inviteCode: code);
+      },
 
     ),
 

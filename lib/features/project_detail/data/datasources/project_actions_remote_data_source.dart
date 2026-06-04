@@ -171,6 +171,14 @@ class ProjectActionsRemoteDataSourceImpl implements ProjectActionsRemoteDataSour
         'maxUses': maxUses,
       },
     );
+    final url = (response['inviteUrl'] ??
+            response['shareUrl'] ??
+            response['url'] ??
+            '')
+        .toString()
+        .trim();
+    if (url.isNotEmpty) return url;
+
     return (response['inviteCode'] ?? response['code'] ?? '').toString();
   }
 

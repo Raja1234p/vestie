@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/app_routes.dart';
 import '../../../../app/router/route_args/project_detail_flow_args.dart';
+import '../../../../app/router/route_args/project_joined_success_route_args.dart';
 import 'package:vestie/core/services/home_project_list_sync.dart';
 import 'package:vestie/features/dashboard/presentation/models/dashboard_shell_args.dart';
 import 'package:vestie/features/projects/domain/entities/created_project_entity.dart';
@@ -289,6 +290,23 @@ void openProjectFromCard(BuildContext context, Project p) {
     context,
     args: projectDetailRouteArgsForProject(p),
     isInvestment: p.category.isInvestment,
+  );
+}
+
+/// Immediate join success — shared [ProjectJoinedSuccessScreen] / [AppSuccessScreen].
+void openProjectJoinedSuccess(
+  BuildContext context, {
+  required String projectId,
+  required String projectName,
+  required bool isInvestment,
+}) {
+  context.go(
+    AppRoutes.projectJoinedSuccess,
+    extra: ProjectJoinedSuccessRouteArgs(
+      projectId: projectId,
+      projectName: projectName,
+      isInvestment: isInvestment,
+    ),
   );
 }
 

@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/constants/storage_keys.dart';
+import '../../../../core/auth/app_auth_session.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/storage/onboarding_prefs.dart';
 
@@ -30,13 +30,8 @@ class SplashCubit extends Cubit<SplashState> {
     // Simulate minor delay for branding
     await Future.delayed(const Duration(seconds: 5));
 
-    // Check if user is logged in and has an access token
-    final isLoggedIn =
-        await ServiceLocator.instance.sharedPrefs.getBool(StorageKeys.isLoggedIn);
-    final token = await ServiceLocator.instance.secureStorage.getString(
-        StorageKeys.accessToken);
-
-    final isAuthenticated = isLoggedIn && token != null;
+    await AppAuthSession.instance.refresh();
+    final isAuthenticated = AppAuthSession.instance.isAuthenticated;
     bool isDisclaimerAccepted = false;
 
     if (isAuthenticated) {

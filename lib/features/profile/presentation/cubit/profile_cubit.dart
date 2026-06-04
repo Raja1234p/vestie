@@ -5,6 +5,7 @@ import '../../../auth/domain/entities/update_me_photo.dart';
 import '../../../auth/domain/entities/user.dart';
 import '../../../auth/domain/usecases/delete_me_profile_picture_use_case.dart';
 import '../../../auth/domain/usecases/get_me_use_case.dart';
+import '../../../../core/auth/app_auth_session.dart';
 import '../../../auth/domain/usecases/logout_use_case.dart';
 import '../../../auth/domain/usecases/update_me_use_case.dart';
 import '../../data/profile_prefs.dart';
@@ -235,5 +236,6 @@ class ProfileCubit extends Cubit<ProfileState> {
     await ServiceLocator.instance.secureStorage.remove(StorageKeys.refreshToken);
     await ServiceLocator.instance.sharedPrefs.saveBool(StorageKeys.isLoggedIn, false);
     await OnboardingPrefs.markCompleted();
+    AppAuthSession.instance.markLoggedOut();
   }
 }

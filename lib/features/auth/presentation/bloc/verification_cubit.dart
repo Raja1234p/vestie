@@ -9,6 +9,7 @@ import '../../../../core/storage/onboarding_prefs.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/utils/validation_utils.dart';
+import '../../domain/entities/user.dart';
 import '../../domain/usecases/forgot_password_use_case.dart';
 import '../../domain/usecases/resend_code_use_case.dart';
 import '../../domain/usecases/verify_email_use_case.dart';
@@ -127,14 +128,6 @@ class VerificationCubit extends Cubit<VerificationState> {
       return;
     }
 
-    if (flow == VerifyFlow.forgotPassword) {
-      emit(state.copyWith(isLoading: true, clearError: true, isValid: true));
-      if (!isClosed) {
-        emit(state.copyWith(isLoading: false, isSuccess: true));
-      }
-      return;
-    }
-
     emit(state.copyWith(isLoading: true, clearError: true, isValid: true));
 
     final result = await _verifyEmailUseCase(email: email, code: code);
@@ -147,31 +140,9 @@ class VerificationCubit extends Cubit<VerificationState> {
           title: failure.title,
         )),
         (user) async {
-          if (user.accessToken != null) {
-            await ServiceLocator.instance.secureStorage.saveString(
-              StorageKeys.accessToken,
-              user.accessToken!,
-            );
+          if (flow == VerifyFlow.registration) {
+            await _persistSessionAfterRegistrationVerify(user);
           }
-          if (user.refreshToken != null && user.refreshToken!.isNotEmpty) {
-            await ServiceLocator.instance.secureStorage.saveString(
-              StorageKeys.refreshToken,
-              user.refreshToken!,
-            );
-          }
-          await ServiceLocator.instance.sharedPrefs.saveBool(
-            StorageKeys.isLoggedIn,
-            true,
-          );
-          await ServiceLocator.instance.sharedPrefs.saveString(
-            StorageKeys.userName,
-            user.name,
-          );
-          await ServiceLocator.instance.sharedPrefs.saveString(
-            StorageKeys.userEmail,
-            user.email,
-          );
-          await OnboardingPrefs.markCompleted();
 
           if (!isClosed) {
             emit(state.copyWith(isLoading: false, isSuccess: true));
@@ -179,6 +150,34 @@ class VerificationCubit extends Cubit<VerificationState> {
         },
       );
     }
+  }
+
+  Future<void> _persistSessionAfterRegistrationVerify(User user) async {
+    if (user.accessToken != null) {
+      await ServiceLocator.instance.secureStorage.saveString(
+        StorageKeys.accessToken,
+        user.accessToken!,
+      );
+    }
+    if (user.refreshToken != null && user.refreshToken!.isNotEmpty) {
+      await ServiceLocator.instance.secureStorage.saveString(
+        StorageKeys.refreshToken,
+        user.refreshToken!,
+      );
+    }
+    await ServiceLocator.instance.sharedPrefs.saveBool(
+      StorageKeys.isLoggedIn,
+      true,
+    );
+    await ServiceLocator.instance.sharedPrefs.saveString(
+      StorageKeys.userName,
+      user.name,
+    );
+    await ServiceLocator.instance.sharedPrefs.saveString(
+      StorageKeys.userEmail,
+      user.email,
+    );
+    await OnboardingPrefs.markCompleted();
   }
 
   Future<void> resendCode() async {

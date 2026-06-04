@@ -37,6 +37,12 @@ class AppAssets {
 
   // Project created success illustration (PNG — reliable rendering across devices).
   static const String projectCreatedImage = '$_imagePath/project_created_image.png';
+  /// Shared-link invitation hero (3D glass person + plus ring).
+  static const String projectInvitationHero =
+      '$_imagePath/project_invitation_hero.png';
+  /// Public project — immediate join success (3D purple badge + check).
+  static const String projectJoinedSuccess =
+      '$_imagePath/project_joined_success.png';
 
   /// Home / Discover project cards — right of subtitle (100×69).
   static const String projectCardInvestment =

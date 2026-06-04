@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-
-import '../../../../app/router/app_routes.dart';
+import '../../../../app/router/project_invite_navigation.dart';
+import '../../../../core/auth/app_auth_session.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/widgets/common/app_failure_dialog.dart';
 import '../../../../core/widgets/common/app_loading_dialog.dart';
@@ -45,20 +44,22 @@ class LoginScreen extends StatelessWidget {
                 curr is LoginSuccess ||
                 curr is LoginGoogleSuccess ||
                 curr is LoginError,
-            listener: (context, state) {
+            listener: (context, state) async {
               if (state is LoginSuccess) {
                 AppLogger.info('Login success: ${state.user.email}');
-                if (state.isDisclaimerAccepted) {
-                  context.go(AppRoutes.dashboard);
-                } else {
-                  context.go(AppRoutes.agreement);
-                }
+                await AppAuthSession.instance.refresh();
+                if (!context.mounted) return;
+                await ProjectInviteNavigation.goAfterAuth(
+                  context,
+                  disclaimerAccepted: state.isDisclaimerAccepted,
+                );
               } else if (state is LoginGoogleSuccess) {
-                if (state.isDisclaimerAccepted) {
-                  context.go(AppRoutes.dashboard);
-                } else {
-                  context.go(AppRoutes.agreement);
-                }
+                await AppAuthSession.instance.refresh();
+                if (!context.mounted) return;
+                await ProjectInviteNavigation.goAfterAuth(
+                  context,
+                  disclaimerAccepted: state.isDisclaimerAccepted,
+                );
               } else if (state is LoginError) {
                 AppFailureDialog.show(
                   context,

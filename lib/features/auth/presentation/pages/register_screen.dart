@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/app_routes.dart';
+import '../../../../app/router/project_invite_navigation.dart';
+import '../../../../core/auth/app_auth_session.dart';
 import '../models/auth_route_extras.dart';
 import '../../../../core/widgets/common/app_failure_dialog.dart';
 import '../../../../core/widgets/common/app_loading_dialog.dart';
@@ -54,11 +56,12 @@ class RegisterScreen extends StatelessWidget {
                 if (!context.mounted) return;
                 context.read<RegisterBloc>().add(const RegisterReset());
               } else if (state is RegisterGoogleSuccess) {
-                if (state.isDisclaimerAccepted) {
-                  context.go(AppRoutes.dashboard);
-                } else {
-                  context.go(AppRoutes.agreement);
-                }
+                await AppAuthSession.instance.refresh();
+                if (!context.mounted) return;
+                await ProjectInviteNavigation.goAfterAuth(
+                  context,
+                  disclaimerAccepted: state.isDisclaimerAccepted,
+                );
               } else if (state is RegisterError) {
                 AppFailureDialog.show(
                   context,

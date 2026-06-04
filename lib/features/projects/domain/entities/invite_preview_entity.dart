@@ -9,6 +9,10 @@ class InvitePreviewEntity extends Equatable {
   final String expiresAtUtc;
   final bool isExpired;
   final bool isJoinable;
+  final String? description;
+  final int? memberCount;
+  final int? contributionCount;
+  final double? roiPercentage;
 
   const InvitePreviewEntity({
     required this.projectId,
@@ -19,7 +23,14 @@ class InvitePreviewEntity extends Equatable {
     required this.expiresAtUtc,
     required this.isExpired,
     required this.isJoinable,
+    this.description,
+    this.memberCount,
+    this.contributionCount,
+    this.roiPercentage,
   });
+
+  bool get isInvestment =>
+      projectType.toLowerCase().contains('invest');
 
   @override
   List<Object?> get props => [
@@ -31,5 +42,9 @@ class InvitePreviewEntity extends Equatable {
         expiresAtUtc,
         isExpired,
         isJoinable,
+        description,
+        memberCount,
+        contributionCount,
+        roiPercentage,
       ];
 }

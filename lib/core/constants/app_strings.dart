@@ -166,6 +166,24 @@ class AppStrings {
   static const String btnRequestToJoin  = 'Request to join';
   static const String btnSendRequest    = 'Send Request';
   static const String projectJoinRequestSubmitted = 'Request Submitted';
+  static const String projectInvitationJoinProject = 'Join Project';
+  static const String projectInvitationRequestToJoin = 'Request to Join';
+  static const String projectInvitationExpectedRoi = 'Expected ROI';
+  static const String projectInvitationMaybeLater = 'Maybe Later';
+  static const String projectInvitationProjectType = 'Project Type';
+  static const String projectInvitationMembers = 'Members';
+  static const String projectInvitationContributions = 'Contributions';
+  static const String projectInvitationDescription = 'Description';
+  static const String projectInvitationExpired =
+      'This invite link has expired.';
+  static const String projectInvitationNotJoinable =
+      'This project is not accepting new members right now.';
+  static String projectInvitationMembersCount(int count) =>
+      '$count $userVffMembersCountSuffix';
+  static const String projectJoinedSuccessTitle = 'Project Joined';
+  static String projectJoinedWelcomeSubtitle(String projectName) =>
+      'Welcome to $projectName';
+  static const String btnOpenProject = 'Open Project';
   static const String labelGoal         = 'Goal';
   static const String labelRaised       = 'Raised';
   static const String labelInvested     = 'Invested';
@@ -666,7 +684,9 @@ class AppStrings {
   static const String shareViaWhatsapp       = 'Share via Whatsapp';
   static const String btnGoToMyProject       = 'Go to my Project';
   static const String linkCopied             = 'Link copied!';
-  static const String shareBaseDomain        = 'vestie.app/join';
+  /// Shared invite path host (production/staging on Azure until vestie.app is live).
+  static const String shareBaseDomain =
+      'vestie-backend-byexejcphyhaapfy.centralus-01.azurewebsites.net/join';
   /// Text before the invite URL in WhatsApp (URL may already include `https://`).
   static const String shareWhatsappPrefix    = 'Join my project: ';
 
@@ -1290,7 +1310,8 @@ class AppStrings {
       'You’ve marked the project as incomplete. If the majority disagrees, all contributions will be refunded.';
   static const String shareQrCode               = 'Share QR Code';
   static const String copyCodeFromBelow         = 'Or copy code from below';
-  static const String inviteLinkSample          = 'vestie.app/join/family-vacation-2025';
+  static const String inviteLinkSample =
+      'https://vestie-backend-byexejcphyhaapfy.centralus-01.azurewebsites.net/join/SAMPLE';
   static String inviteMembersTitle(String projectName) =>
       'Invite to $projectName';
   static const String inviteMembersSelectVffHint = 'Tap to select VFFs';

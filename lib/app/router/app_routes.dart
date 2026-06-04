@@ -4,6 +4,10 @@ class AppRoutes {
   AppRoutes._();
 
   static const String splash        = '/';
+
+  /// Shared project invite — `vestie.app/join/{inviteCode}`.
+  static const String projectInvitationPath = '/join/:inviteCode';
+  static String projectInvitation(String inviteCode) => '/join/$inviteCode';
   static const String onboarding    = '/onboarding';
   static const String login         = '/login';
   static const String register      = '/register';
@@ -87,6 +91,9 @@ class AppRoutes {
   static const String projectCancelled     = '/project/cancelled';
 
   // ── Member user flows (join + success vote) ────────────────────────────
+  /// Public group — immediate join success (`AppSuccessScreen`).
+  static const String projectJoinedSuccess = '/project/joined-success';
+
   static const String userStatusFlow  = '/user/status-flow';
   static const String userSuccessVote  = '/user/success-vote';
   static const String userVoteOutcome  = '/user/vote-outcome';

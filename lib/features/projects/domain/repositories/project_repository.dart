@@ -12,7 +12,7 @@ abstract class ProjectRepository {
   Future<Either<Failure, void>> completeProject(String projectId);
   Future<Either<Failure, InvitePreviewEntity>> previewInvite(String inviteCode);
   Future<Either<Failure, JoinProjectResultEntity>> joinProject({
-    required String projectId,
+    String? projectId,
     String? inviteCode,
   });
 }

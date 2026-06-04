@@ -42,19 +42,50 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+            <!-- Invite links use app_links; avoid Flutter passing vestie:// to go_router first. -->
+            <meta-data
+              android:name="flutter_deeplinking_enabled"
+              android:value="false" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-            <!-- flutter_stripe PaymentSheet + Stripe Connect KYC/bank redirects -->
+            <!-- flutter_stripe PaymentSheet return (vestie://stripe-redirect) -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="vestie" />
+                <data android:scheme="vestie" android:host="stripe-redirect" />
+            </intent-filter>
+            <!-- Project invite: vestie://join/{inviteCode} — MainActivity only (not WebAuth) -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="vestie" android:host="join" />
+            </intent-filter>
+            <!-- Staging invite: https://…azurewebsites.net/join/{code} -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="https"
+                    android:host="vestie-backend-byexejcphyhaapfy.centralus-01.azurewebsites.net"
+                    android:pathPrefix="/join" />
+            </intent-filter>
+            <!-- Production invite: https://vestie.app/join/{code} -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="https"
+                    android:host="vestie.app"
+                    android:pathPrefix="/join" />
             </intent-filter>
         </activity>
-        <!-- flutter_web_auth_2 5.x: captures vestie://… from Stripe redirect pages -->
+        <!-- flutter_web_auth_2: KYC/bank only (not invite join — avoids Open-with chooser) -->
         <activity
             android:name="com.linusu.flutter_web_auth_2.CallbackActivity"
             android:exported="true"
@@ -63,7 +94,25 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="vestie" />
+                <data android:scheme="vestie" android:host="kyc" android:pathPrefix="/complete" />
+            </intent-filter>
+            <intent-filter android:label="flutter_web_auth_2">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="vestie" android:host="kyc" android:pathPrefix="/refresh" />
+            </intent-filter>
+            <intent-filter android:label="flutter_web_auth_2">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="vestie" android:host="bank" android:pathPrefix="/return" />
+            </intent-filter>
+            <intent-filter android:label="flutter_web_auth_2">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="vestie" android:host="bank" android:pathPrefix="/refresh" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

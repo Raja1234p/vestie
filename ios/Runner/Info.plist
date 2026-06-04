@@ -74,6 +74,8 @@
 		<string>remote-notification</string>
 	</array>
 	<!-- share_plus / url_launcher: apps visible in the iOS share sheet -->
+	<key>FlutterDeepLinkingEnabled</key>
+	<false/>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

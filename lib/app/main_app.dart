@@ -9,15 +9,29 @@ import 'package:vestie/leader/features/create_project/presentation/cubit/create_
 import '../core/di/service_locator.dart';
 import '../features/wallet/presentation/cubit/wallet_cubit.dart';
 import '../features/wallet/presentation/cubit/wallet_transaction_cubit.dart';
+import '../core/services/project_invite_deep_link_service.dart';
 import 'router/app_router.dart';
 
-class MainApp extends StatelessWidget {
+class MainApp extends StatefulWidget {
   const MainApp({
     super.key,
     this.enableDevicePreview = false,
   });
 
   final bool enableDevicePreview;
+
+  @override
+  State<MainApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MainApp> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ProjectInviteDeepLinkService.instance.start(AppRouter.router);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,12 +60,12 @@ class MainApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,
             routerConfig: AppRouter.router,
-            locale: enableDevicePreview
+            locale: widget.enableDevicePreview
                 ? DevicePreview.locale(context)
                 : null,
             builder: (context, child) {
               final app = child ?? const SizedBox.shrink();
-              final wrapped = enableDevicePreview
+              final wrapped = widget.enableDevicePreview
                   ? DevicePreview.appBuilder(context, app)
                   : app;
               return FToastBuilder()(context, wrapped);

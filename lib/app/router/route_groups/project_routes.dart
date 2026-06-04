@@ -7,6 +7,8 @@ import 'package:vestie/features/project_detail/domain/entities/member_entity.dar
 import 'package:vestie/features/project_detail/domain/entities/project_detail_route_args.dart';
 import 'package:vestie/features/project_detail/presentation/pages/member_detail_screen.dart';
 import 'package:vestie/features/project_detail/presentation/pages/project_detail_screen.dart';
+import 'package:vestie/features/projects/presentation/pages/project_joined_success_screen.dart';
+import 'package:vestie/app/router/route_args/project_joined_success_route_args.dart';
 import 'package:vestie/features/project_detail/presentation/pages/project_funds_history_screen.dart';
 import 'package:vestie/features/project_detail/presentation/models/investment_returns_ui_data.dart';
 import 'package:vestie/features/project_detail/presentation/pages/group_members_screen.dart';
@@ -283,6 +285,16 @@ List<RouteBase> buildProjectRoutes({
         final extra = state.extra;
         if (extra is! ProjectCancelledRouteArgs) return invalidRouteScreen();
         return ProjectCancelledScreen(projectName: extra.projectName);
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.projectJoinedSuccess,
+      builder: (context, state) {
+        final extra = state.extra;
+        if (extra is! ProjectJoinedSuccessRouteArgs) {
+          return invalidRouteScreen();
+        }
+        return ProjectJoinedSuccessScreen(args: extra);
       },
     ),
     GoRoute(

@@ -27,4 +27,7 @@ class StorageKeys {
   /// User dismissed the dashboard notification permission prompt.
   static const String notificationPermissionPromptDismissed =
       'notification_permission_prompt_dismissed';
+
+  /// Invite code from a shared `vestie.app/join/{code}` link (pre-auth).
+  static const String pendingProjectInviteCode = 'pending_project_invite_code';
 }

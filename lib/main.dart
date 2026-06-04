@@ -6,7 +6,9 @@ import 'package:device_preview/device_preview.dart';
 import 'app/main_app.dart';
 import 'core/constants/api_constants.dart';
 import 'core/di/service_locator.dart';
+import 'core/auth/app_auth_session.dart';
 import 'core/services/fcm_push_service.dart';
+import 'core/services/project_invite_deep_link_service.dart';
 import 'core/stripe/stripe_sdk_initializer.dart';
 
 void main() async {
@@ -31,6 +33,9 @@ void main() async {
   await ServiceLocator.instance.init();
 
   await FcmPushService.initialize();
+
+  await ProjectInviteDeepLinkService.instance.captureInitialInviteIfAny();
+  await AppAuthSession.instance.refresh();
 
   const enableDevicePreview = !kReleaseMode;
   runApp(

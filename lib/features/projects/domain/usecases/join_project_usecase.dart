@@ -10,7 +10,7 @@ class JoinProjectUseCase {
   JoinProjectUseCase(this.repository);
 
   Future<Either<Failure, JoinProjectResultEntity>> call({
-    required String projectId,
+    String? projectId,
     String? inviteCode,
   }) async {
     return repository.joinProject(

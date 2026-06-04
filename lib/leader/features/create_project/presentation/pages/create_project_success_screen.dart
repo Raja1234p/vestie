@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vestie/core/utils/whatsapp_launch.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart';
+import 'package:vestie/core/utils/invite_share_link_resolver.dart';
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
@@ -41,17 +42,8 @@ class _CreateProjectSuccessScreenState extends State<CreateProjectSuccessScreen>
   bool _loadingInvite = true;
   String? _shareText;
 
-  static String _fallbackShareLink(CreateProjectForm form) {
-    final slug = form.projectName
-        .trim()
-        .toLowerCase()
-        .replaceAll(RegExp(r'[^a-z0-9 ]'), '')
-        .replaceAll(' ', '-');
-    return 'https://${AppStrings.shareBaseDomain}/$slug-${DateTime.now().year}';
-  }
-
-  static String _inviteUrlFromCode(String code) =>
-      'https://${AppStrings.shareBaseDomain}/$code';
+  static String _inviteUrlFromApi(String apiValue) =>
+      resolveInviteShareLink(apiValue);
 
   @override
   void initState() {
@@ -63,10 +55,9 @@ class _CreateProjectSuccessScreenState extends State<CreateProjectSuccessScreen>
     if (!mounted) return;
 
     if (widget.projectId.isEmpty) {
-      final form = context.read<CreateProjectCubit>().state;
       setState(() {
         _loadingInvite = false;
-        _shareText = _fallbackShareLink(form);
+        _shareText = '';
       });
       return;
     }
@@ -86,16 +77,13 @@ class _CreateProjectSuccessScreenState extends State<CreateProjectSuccessScreen>
         AppSnackBar.showError(context, failure.message);
         setState(() {
           _loadingInvite = false;
-          _shareText = _fallbackShareLink(form);
+          _shareText = '';
         });
       },
       (inviteCode) {
-        final trimmed = inviteCode.trim();
         setState(() {
           _loadingInvite = false;
-          _shareText = trimmed.isEmpty
-              ? _fallbackShareLink(form)
-              : _inviteUrlFromCode(trimmed);
+          _shareText = _inviteUrlFromApi(inviteCode);
         });
       },
     );
@@ -105,8 +93,7 @@ class _CreateProjectSuccessScreenState extends State<CreateProjectSuccessScreen>
   Widget build(BuildContext context) {
     return BlocBuilder<CreateProjectCubit, CreateProjectForm>(
       builder: (context, form) {
-        final shareLink =
-            _shareText ?? (_loadingInvite ? '' : _fallbackShareLink(form));
+        final shareLink = _shareText ?? '';
         final canShare = shareLink.isNotEmpty && !_loadingInvite;
 
         return AppSuccessScreen(

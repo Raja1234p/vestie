@@ -8,7 +8,10 @@ import '../../../../app/router/app_routes.dart';
 import '../../../../app/router/route_args/project_detail_flow_args.dart';
 import '../../../../app/router/route_args/project_wallet_flow_args.dart';
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/di/service_locator.dart';
 import '../../../../core/utils/app_snackbar.dart';
+import '../../../../core/utils/invite_share_link_resolver.dart';
+import '../../../../core/widgets/common/app_loading_dialog.dart';
 import '../../../../core/widgets/common/app_invite_members_dialog.dart';
 import '../../../../core/widgets/common/leader_action_menu.dart';
 import '../../../../core/widgets/common/member_project_action_menu.dart';
@@ -335,23 +338,52 @@ class ProjectDetailNavigationHelpers {
     );
   }
 
-  static void openInviteMembers(
+  static Future<void> openInviteMembers(
     BuildContext context, {
     required ProjectDetailEntity project,
-  }) {
+  }) async {
     if (!project.canInviteMembers) {
       AppSnackBar.showError(context, AppStrings.errorForbidden);
       return;
     }
+
+    AppLoadingDialog.show(context);
+    final result = await ServiceLocator.instance.createInviteUseCase(
+      projectId: project.id,
+      requiresApproval: project.joinApprovalRequired,
+      expiresInDays: 30,
+      maxUses: 25,
+    );
+
+    if (!context.mounted) return;
+    final nav = Navigator.of(context, rootNavigator: true);
+    if (nav.canPop()) nav.pop();
+
+    final inviteLink = result.fold(
+      (failure) {
+        AppSnackBar.showError(context, failure.message);
+        return null;
+      },
+      (value) {
+        final link = resolveInviteShareLink(value);
+        if (link.isEmpty) {
+          AppSnackBar.showError(context, AppStrings.errorGeneric);
+          return null;
+        }
+        return link;
+      },
+    );
+
+    if (!context.mounted || inviteLink == null) return;
+
     final excludeUserIds =
         InviteMembersMapper.excludeUserIdsForProject(project);
-  // TODO(api): restore POST /projects/{id}/invites for share-outside link.
-    AppInviteMembersDialog.show(
+    await AppInviteMembersDialog.show(
       context,
       projectId: project.id,
       projectName: project.name,
       excludeUserIds: excludeUserIds,
-      inviteLink: AppStrings.inviteLinkSample,
+      inviteLink: inviteLink,
     );
   }
 

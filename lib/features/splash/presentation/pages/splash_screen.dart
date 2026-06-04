@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/app_routes.dart';
+import '../../../../core/storage/pending_project_invite_store.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_dimens.dart';
 import '../../../../core/extensions/widget_extensions.dart';
@@ -35,19 +36,29 @@ class _SplashScreenState extends State<SplashScreen> {
     return BlocProvider(
       create: (context) => SplashCubit()..initializeApp(),
       child: BlocListener<SplashCubit, SplashState>(
-        listener: (context, state) {
-          if (state is SplashCompleted) {
-            if (state.isAuthenticated) {
-              if (state.isDisclaimerAccepted) {
-                context.go(AppRoutes.dashboard);
-              } else {
-                context.go(AppRoutes.agreement);
-              }
-            } else if (state.hasSeenOnboarding) {
-              context.go(AppRoutes.login);
+        listener: (context, state) async {
+          if (state is! SplashCompleted) return;
+
+          final pendingInvite = await PendingProjectInviteStore.read();
+          if (!context.mounted) return;
+
+          if (pendingInvite != null &&
+              pendingInvite.isNotEmpty &&
+              state.isAuthenticated) {
+            context.go(AppRoutes.projectInvitation(pendingInvite));
+            return;
+          }
+
+          if (state.isAuthenticated) {
+            if (state.isDisclaimerAccepted) {
+              context.go(AppRoutes.dashboard);
             } else {
-              context.go(AppRoutes.onboarding);
+              context.go(AppRoutes.agreement);
             }
+          } else if (state.hasSeenOnboarding) {
+            context.go(AppRoutes.login);
+          } else {
+            context.go(AppRoutes.onboarding);
           }
         },
         child: Stack(

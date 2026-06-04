@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../app/router/app_routes.dart';
+import '../../../../app/router/project_invite_navigation.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_dimens.dart';
 import '../../../../core/constants/app_strings.dart';
@@ -36,9 +35,12 @@ class _AgreementBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AgreementCubit, AgreementState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state.isSuccess) {
-          context.go(AppRoutes.dashboard);
+          await ProjectInviteNavigation.goAfterAuth(
+            context,
+            disclaimerAccepted: true,
+          );
         } else if (state.error != null) {
           AppFailureDialog.show(context, message: state.error!);
         }
