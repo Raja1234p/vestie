@@ -27,9 +27,6 @@ class SplashCubit extends Cubit<SplashState> {
   Future<void> initializeApp() async {
     emit(SplashLoading());
 
-    // Simulate minor delay for branding
-    await Future.delayed(const Duration(seconds: 5));
-
     await AppAuthSession.instance.refresh();
     final isAuthenticated = AppAuthSession.instance.isAuthenticated;
     bool isDisclaimerAccepted = false;

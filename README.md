@@ -34,6 +34,7 @@ flutter run
 
 ## Docs
 
+- **Architecture & flow map** (roles, routes, join paths, project types, navigation patterns): [`DOCS/architecture_flows.md`](DOCS/architecture_flows.md)
 - **Group Vacation & Emergency member flows** (screens, routes, UI-only vs API, integration checklist): [`DOCS/group_vacation_emergency_member_flow.md`](DOCS/group_vacation_emergency_member_flow.md)
 
 ---
