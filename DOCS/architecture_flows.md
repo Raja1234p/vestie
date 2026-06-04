@@ -124,8 +124,8 @@ API `type` string mapping (substring): `invest*` → investment, `emerg*` → em
 
 | Value | Join behavior |
 |-------|----------------|
-| **Public** | Often `status: active` → immediate membership |
-| **Private** | Often `status: pending` → “Request Sent”; leader approves in join requests |
+| **Public** | Join API returns `status: "active"` → immediate membership (invite: Project Joined → Open Project) |
+| **Private** | Join API returns `status: "pending"` → “Request Sent”; leader approves in join requests |
 
 Invite preview exposes `visibility`, `requiresApproval`, `isJoinable`, `isExpired`.
 
