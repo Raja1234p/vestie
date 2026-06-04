@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../auth/session_sign_out.dart';
 import '../../constants/api_constants.dart';
 import '../../constants/storage_keys.dart';
 import '../../network/api_response_body.dart';
@@ -46,7 +47,7 @@ class AuthInterceptor extends QueuedInterceptor {
 
     final path = _normalizePath(err.requestOptions.path);
     if (_isAuthEndpoint(path) || err.requestOptions.extra[_kAuthRetryExtraKey] == true) {
-      await _clearTokens();
+      await SessionSignOut.locally();
       return handler.next(err);
     }
 
@@ -56,7 +57,7 @@ class AuthInterceptor extends QueuedInterceptor {
       AppLogger.error(
         'Auth refresh skipped: no refresh token in secure storage',
       );
-      await _clearTokens();
+      await SessionSignOut.locally();
       return handler.next(err);
     }
 
@@ -89,7 +90,7 @@ class AuthInterceptor extends QueuedInterceptor {
         error: e,
         stackTrace: stack,
       );
-      await _clearTokens();
+      await SessionSignOut.locally();
       return handler.next(err);
     }
   }
@@ -97,7 +98,7 @@ class AuthInterceptor extends QueuedInterceptor {
   static String _normalizePath(String path) {
     var p = path.trim();
     final uri = Uri.tryParse(p);
-    if (uri != null && uri.hasPath) {
+    if (uri != null && uri.path.isNotEmpty) {
       p = uri.path;
     }
     if (!p.startsWith('/')) p = '/$p';
@@ -166,10 +167,5 @@ class AuthInterceptor extends QueuedInterceptor {
     );
 
     return _parseTokenPair(refreshResponse.data);
-  }
-
-  Future<void> _clearTokens() async {
-    await _secureStorage.remove(StorageKeys.accessToken);
-    await _secureStorage.remove(StorageKeys.refreshToken);
   }
 }

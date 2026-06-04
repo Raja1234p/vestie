@@ -5,6 +5,7 @@ import '../../core/auth/app_auth_session.dart';
 import '../../core/constants/app_strings.dart';
 import 'app_routes.dart';
 import 'project_invite_route_guard.dart';
+import 'session_auth_redirect.dart';
 import 'route_groups/core_routes.dart';
 import 'route_groups/profile_wallet_routes.dart';
 import 'route_groups/project_routes.dart';
@@ -19,7 +20,11 @@ class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: AppRoutes.splash,
     refreshListenable: AppAuthSession.instance,
-    redirect: (context, state) => ProjectInviteRouteGuard.redirect(state),
+    redirect: (context, state) async {
+      final inviteRedirect = await ProjectInviteRouteGuard.redirect(state);
+      if (inviteRedirect != null) return inviteRedirect;
+      return SessionAuthRedirect.redirect(state);
+    },
     routes: [
       ...buildCoreRoutes(),
       ...buildProfileWalletRoutes(),
