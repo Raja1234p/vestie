@@ -35,24 +35,42 @@ class FailureMapper {
   }
 
   static Failure fromDioException(DioException e) {
+    final statusCode = e.response?.statusCode;
     final raw = parseResponseBody(e.response?.data);
     final body = raw != null ? unwrapApiResponseBody(raw) : null;
+
     if (body != null && body.isNotEmpty) {
       final apiError = ApiErrorResponseModel.fromJson(body);
       final message = _messageFromApiError(apiError);
       final title = apiError.title.trim().isEmpty ? null : apiError.title;
-      final code = e.response?.statusCode;
 
-      if (code == 400) {
+      if (statusCode == 400) {
         return ValidationFailure(message, title, apiError.errors);
       }
-      if (code == 401) {
+      if (statusCode == 401) {
         return UnauthorizedFailure(message, title);
       }
-      if (code == 403) {
+      if (statusCode == 403) {
         return ForbiddenFailure(message, title);
       }
       return ServerFailure(message, title);
+    }
+
+    // HTTP status without parseable JSON — do not treat 401 as offline.
+    if (statusCode == 401) {
+      return const UnauthorizedFailure(AppStrings.errorUnauthorized);
+    }
+    if (statusCode == 403) {
+      return const ForbiddenFailure(AppStrings.errorForbidden);
+    }
+    if (statusCode == 400) {
+      return const ValidationFailure();
+    }
+    if (statusCode != null && statusCode >= 500) {
+      return const ServerFailure(AppStrings.errorServer);
+    }
+    if (statusCode != null && statusCode >= 400) {
+      return const ServerFailure(AppStrings.errorGeneric);
     }
 
     if (e.type == DioExceptionType.connectionTimeout ||
@@ -60,11 +78,12 @@ class FailureMapper {
         e.type == DioExceptionType.sendTimeout) {
       return const TimeoutFailure();
     }
-    if (e.type == DioExceptionType.connectionError ||
-        e.type == DioExceptionType.unknown) {
+    if (e.response == null &&
+        (e.type == DioExceptionType.connectionError ||
+            e.type == DioExceptionType.unknown)) {
       return const NetworkFailure();
     }
-    return const NetworkFailure();
+    return const ServerFailure(AppStrings.errorGeneric);
   }
 
   static String userMessage(Failure failure) {

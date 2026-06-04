@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../constants/api_constants.dart';
 import '../../constants/storage_keys.dart';
+import '../../network/api_response_body.dart';
 import '../../storage/secure_storage_impl.dart';
 import '../../utils/logger.dart';
 
@@ -43,7 +44,7 @@ class AuthInterceptor extends QueuedInterceptor {
       return handler.next(err);
     }
 
-    final path = err.requestOptions.path;
+    final path = _normalizePath(err.requestOptions.path);
     if (_isAuthEndpoint(path) || err.requestOptions.extra[_kAuthRetryExtraKey] == true) {
       await _clearTokens();
       return handler.next(err);
@@ -93,21 +94,38 @@ class AuthInterceptor extends QueuedInterceptor {
     }
   }
 
+  static String _normalizePath(String path) {
+    var p = path.trim();
+    final uri = Uri.tryParse(p);
+    if (uri != null && uri.hasPath) {
+      p = uri.path;
+    }
+    if (!p.startsWith('/')) p = '/$p';
+    if (p.length > 1 && p.endsWith('/')) {
+      p = p.substring(0, p.length - 1);
+    }
+    return p;
+  }
+
   static bool _isAuthEndpoint(String path) {
-    return path == ApiConstants.refreshToken ||
-        path == ApiConstants.login ||
-        path == ApiConstants.googleLogin ||
-        path == ApiConstants.appleLogin ||
-        path == ApiConstants.verifyEmail ||
-        path == ApiConstants.logout;
+    final p = _normalizePath(path);
+    return p == ApiConstants.refreshToken ||
+        p == ApiConstants.login ||
+        p == ApiConstants.googleLogin ||
+        p == ApiConstants.appleLogin ||
+        p == ApiConstants.verifyEmail ||
+        p == ApiConstants.logout;
   }
 
   /// Returns (accessToken, refreshToken) from flat or `tokens`-wrapped JSON.
   static (String?, String?) _parseTokenPair(dynamic data) {
-    if (data is! Map<String, dynamic>) return (null, null);
-    final tokenData = data['tokens'] is Map<String, dynamic>
-        ? data['tokens'] as Map<String, dynamic>
-        : data;
+    if (data is! Map) return (null, null);
+    final map = unwrapApiResponseBody(
+      Map<String, dynamic>.from(data),
+    );
+    final tokenData = map['tokens'] is Map
+        ? Map<String, dynamic>.from(map['tokens'] as Map)
+        : map;
     return (
       tokenData['accessToken'] as String?,
       tokenData['refreshToken'] as String?,
