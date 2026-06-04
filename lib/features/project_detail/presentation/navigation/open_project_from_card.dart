@@ -299,6 +299,7 @@ void openProjectJoinedSuccess(
   required String projectId,
   required String projectName,
   required bool isInvestment,
+  bool fromInviteLink = false,
 }) {
   context.go(
     AppRoutes.projectJoinedSuccess,
@@ -306,6 +307,27 @@ void openProjectJoinedSuccess(
       projectId: projectId,
       projectName: projectName,
       isInvestment: isInvestment,
+      fromInviteLink: fromInviteLink,
+    ),
+  );
+}
+
+/// Pending membership (`status: pending`) — “Request Sent” on [AppSuccessScreen].
+void openProjectJoinRequestSentSuccess(
+  BuildContext context, {
+  required String projectId,
+  required String projectName,
+  bool isInvestment = false,
+  bool fromInviteLink = false,
+}) {
+  context.go(
+    AppRoutes.projectJoinedSuccess,
+    extra: ProjectJoinedSuccessRouteArgs(
+      projectId: projectId,
+      projectName: projectName,
+      isInvestment: isInvestment,
+      kind: ProjectJoinSuccessKind.requestPending,
+      fromInviteLink: fromInviteLink,
     ),
   );
 }

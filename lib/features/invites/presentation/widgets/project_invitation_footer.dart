@@ -61,7 +61,7 @@ class ProjectInvitationFooter extends StatelessWidget {
                   highlightColor:
                       AppColors.guidelineTitle.withValues(alpha: 0.06),
                   child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 12.h),
+                    padding: EdgeInsets.only(bottom: 12.h),
                     child: Center(
                       child: AppText(
                         AppStrings.projectInvitationMaybeLater,

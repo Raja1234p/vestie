@@ -5,11 +5,22 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/utils/formatters.dart';
 import 'package:vestie/core/widgets/common/app_invite_members_dashed_divider.dart';
 import 'package:vestie/core/widgets/common/app_text.dart';
 import 'package:vestie/features/projects/domain/entities/invite_preview_entity.dart';
 
 import '../../domain/invite_preview_category.dart';
+
+String _contributionsDisplay(InvitePreviewEntity preview) {
+  if (preview.raisedAmount != null) {
+    return AppFormatters.formatWholeAmount(preview.raisedAmount!);
+  }
+  if (preview.contributionCount != null) {
+    return preview.contributionCount!.toString();
+  }
+  return '—';
+}
 
 class ProjectInvitationStatsRow extends StatelessWidget {
   final InvitePreviewEntity preview;
@@ -48,9 +59,7 @@ class ProjectInvitationStatsRow extends StatelessWidget {
             )),
             Expanded(child: _StatColumn(
               label: AppStrings.projectInvitationContributions,
-              child: _StatValue(
-                preview.contributionCount?.toString() ?? '—',
-              ),
+              child: _StatValue(_contributionsDisplay(preview)),
             )),
           ],
         ),
@@ -142,7 +151,7 @@ class _CategoryChip extends StatelessWidget {
               style: GoogleFonts.lato(
                 fontSize: 13.sp,
                 fontWeight: FontWeight.w500,
-                color: AppColors.primary,
+                color: AppColors.guidelineTitle,
               ),
             ),
           ],

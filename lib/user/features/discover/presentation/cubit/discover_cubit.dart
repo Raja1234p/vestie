@@ -217,9 +217,16 @@ class DiscoverCubit extends Cubit<DiscoverState> {
       )),
       (joinResult) async {
         if (joinResult.isPendingMembership) {
+          final projectId = joinResult.projectId.isNotEmpty
+              ? joinResult.projectId
+              : project.id;
           emit(state.copyWith(
             clearJoiningProjectId: true,
-            joinEffect: const DiscoverJoinShowRequestSubmitted(),
+            joinEffect: DiscoverJoinShowRequestSubmitted(
+              projectId: projectId,
+              projectName: project.name,
+              isInvestment: project.category.isInvestment,
+            ),
           ));
           await refresh(silent: true);
           return;

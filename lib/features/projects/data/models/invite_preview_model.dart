@@ -14,6 +14,7 @@ class InvitePreviewModel extends InvitePreviewEntity {
     required super.isJoinable,
     super.description,
     super.memberCount,
+    super.raisedAmount,
     super.contributionCount,
     super.roiPercentage,
   });
@@ -30,12 +31,14 @@ class InvitePreviewModel extends InvitePreviewEntity {
       isJoinable: json['isJoinable'] as bool? ?? false,
       description: _optionalString(json['description']),
       memberCount: _optionalInt(json['memberCount'] ?? json['membersCount']),
+      raisedAmount: _optionalDouble(json['raisedAmount']),
       contributionCount: _optionalInt(
         json['contributionCount'] ?? json['contributionsCount'],
       ),
       roiPercentage: normalizeDisplayableRoi(
         _optionalDouble(
-          json['roiPercentage'] ??
+          json['roi'] ??
+              json['roiPercentage'] ??
               json['expectedRoi'] ??
               json['annualRoiPercent'],
         ),

@@ -11,6 +11,7 @@ class InvitePreviewEntity extends Equatable {
   final bool isJoinable;
   final String? description;
   final int? memberCount;
+  final double? raisedAmount;
   final int? contributionCount;
   final double? roiPercentage;
 
@@ -25,6 +26,7 @@ class InvitePreviewEntity extends Equatable {
     required this.isJoinable,
     this.description,
     this.memberCount,
+    this.raisedAmount,
     this.contributionCount,
     this.roiPercentage,
   });
@@ -44,6 +46,7 @@ class InvitePreviewEntity extends Equatable {
         isJoinable,
         description,
         memberCount,
+        raisedAmount,
         contributionCount,
         roiPercentage,
       ];

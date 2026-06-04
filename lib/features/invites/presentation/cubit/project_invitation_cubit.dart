@@ -71,7 +71,13 @@ class ProjectInvitationCubit extends Cubit<ProjectInvitationState> {
         if (joinResult.isPendingMembership) {
           emit(state.copyWith(
             joining: false,
-            joinEffect: const ProjectInvitationJoinShowRequestSubmitted(),
+            joinEffect: ProjectInvitationJoinShowRequestSubmitted(
+              projectId: joinResult.projectId.isNotEmpty
+                  ? joinResult.projectId
+                  : preview.projectId,
+              projectName: preview.projectName,
+              isInvestment: preview.isInvestment,
+            ),
           ));
           return;
         }

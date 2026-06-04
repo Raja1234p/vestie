@@ -20,7 +20,18 @@ final class DiscoverJoinShowError extends DiscoverJoinEffect {
 }
 
 final class DiscoverJoinShowRequestSubmitted extends DiscoverJoinEffect {
-  const DiscoverJoinShowRequestSubmitted();
+  final String projectId;
+  final String projectName;
+  final bool isInvestment;
+
+  const DiscoverJoinShowRequestSubmitted({
+    required this.projectId,
+    required this.projectName,
+    required this.isInvestment,
+  });
+
+  @override
+  List<Object?> get props => [projectId, projectName, isInvestment];
 }
 
 final class DiscoverJoinOpenDetail extends DiscoverJoinEffect {

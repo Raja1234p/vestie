@@ -179,8 +179,11 @@ class AppStrings {
   static const String projectInvitationNotJoinable =
       'This project is not accepting new members right now.';
   static String projectInvitationMembersCount(int count) =>
-      '$count $userVffMembersCountSuffix';
+      '$count ${count == 1 ? userVffBadgeMember : userVffMembersCountSuffix}';
   static const String projectJoinedSuccessTitle = 'Project Joined';
+  static const String projectJoinRequestSentTitle = 'Request Sent';
+  static const String projectJoinRequestSentSubtitle =
+      "Your request has been sent to the project leader. You'll be notified once your request is approved.";
   static String projectJoinedWelcomeSubtitle(String projectName) =>
       'Welcome to $projectName';
   static const String btnOpenProject = 'Open Project';

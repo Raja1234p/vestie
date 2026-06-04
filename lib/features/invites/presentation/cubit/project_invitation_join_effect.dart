@@ -19,7 +19,18 @@ final class ProjectInvitationJoinShowError extends ProjectInvitationJoinEffect {
 
 final class ProjectInvitationJoinShowRequestSubmitted
     extends ProjectInvitationJoinEffect {
-  const ProjectInvitationJoinShowRequestSubmitted();
+  final String projectId;
+  final String projectName;
+  final bool isInvestment;
+
+  const ProjectInvitationJoinShowRequestSubmitted({
+    required this.projectId,
+    required this.projectName,
+    required this.isInvestment,
+  });
+
+  @override
+  List<Object?> get props => [projectId, projectName, isInvestment];
 }
 
 final class ProjectInvitationJoinOpenDetail extends ProjectInvitationJoinEffect {

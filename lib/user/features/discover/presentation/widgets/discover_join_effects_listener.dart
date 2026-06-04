@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:vestie/core/constants/app_strings.dart';
-import 'package:vestie/core/utils/app_snackbar.dart';
 import 'package:vestie/core/widgets/common/app_failure_dialog.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart';
 import '../cubit/discover_cubit.dart';
@@ -33,10 +31,16 @@ class DiscoverJoinEffectsListener extends StatelessWidget {
               title: title,
               message: message,
             );
-          case DiscoverJoinShowRequestSubmitted():
-            AppSnackBar.showSuccess(
+          case DiscoverJoinShowRequestSubmitted(
+              :final projectId,
+              :final projectName,
+              :final isInvestment,
+            ):
+            openProjectJoinRequestSentSuccess(
               context,
-              AppStrings.projectJoinRequestSubmitted,
+              projectId: projectId,
+              projectName: projectName,
+              isInvestment: isInvestment,
             );
           case DiscoverJoinOpenDetail(
               :final projectId,
