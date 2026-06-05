@@ -504,6 +504,10 @@ class AppStrings {
       'Projects you finish will show up here.';
   static const String menuTransactionHistory = 'Transaction History';
   static const String menuKeyGuidelines   = 'Vestie User Guidelines';
+  static const String menuDeleteAccount   = 'Delete Account';
+  static const String deleteAccountConfirmBody =
+      'This action will permanently delete your account and all your data. This cannot be undone.';
+  static const String btnDeleteMyAccount  = 'Delete My Account';
 
   // Vestie User Guidelines (profile screen — Figma)
   static const String guidelineYourRiskTitle = 'Your Risk';

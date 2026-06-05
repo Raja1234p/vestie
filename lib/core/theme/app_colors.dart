@@ -50,6 +50,9 @@ class AppColors {
   static const Color red800  = Color(0xFFC22F2F);
   static const Color red900  = Color(0xFFA02222);
   static const Color red1000 = Color(0xFF7A1717);
+
+  /// Profile delete-account popup label + confirm dialog body (#A02222).
+  static const Color profileDeleteAccountLabel = Color(0xFFA02222);
   static const Color red1100 = Color(0xFF550E0E);
   static const Color red1200 = Color(0xFF300707);
 

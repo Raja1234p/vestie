@@ -20,6 +20,7 @@ import '../../../../core/widgets/common/post_auth_header.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../../core/widgets/common/app_shimmer.dart';
 import '../cubit/profile_cubit.dart';
+import '../widgets/delete_account_confirm_dialog.dart';
 import '../widgets/profile_header_more_options_action.dart';
 import '../widgets/profile_logout_button.dart';
 import '../widgets/profile_photo_dialog.dart';
@@ -402,7 +403,12 @@ class _ProfileHeader extends StatelessWidget {
         color: const Color(0xFF141414),
         letterSpacing: -0.5,
       ),
-      trailing: const ProfileHeaderMoreOptionsAction(),
+      trailing: ProfileHeaderMoreOptionsAction(
+        onSelected: (action) {
+          if (action != ProfileHeaderMenuAction.deleteAccount) return;
+          showDeleteAccountConfirmDialog(context, onConfirm: () {});
+        },
+      ),
     );
   }
 }
