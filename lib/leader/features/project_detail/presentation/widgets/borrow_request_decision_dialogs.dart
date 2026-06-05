@@ -107,10 +107,10 @@ Future<void> showRejectBorrowRequestFlow(
     description: '',
     descriptionWidget:
         _borrowDescription(context, isApprove: false, request: request),
-    primaryLabel: AppStrings.btnOk,
+    primaryLabel: AppStrings.btnBackToProject,
     showSecondary: false,
-    primaryColor: Colors.transparent,
-    primaryTextColor: AppColors.neutral1200,
+    primaryColor: AppColors.neutral1200,
+    primaryTextColor: AppColors.surface,
     primaryBorderColor: AppColors.neutral1200,
     iconAsset: AppAssets.failureIcon,
     onPrimary: () => Navigator.of(context).pop(),

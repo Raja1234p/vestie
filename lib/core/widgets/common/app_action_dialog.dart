@@ -87,12 +87,13 @@ class AppActionDialog extends StatelessWidget {
     );
   }
 
-  /// Single **Ok** result dialog with [AppAssets.projectCreatedImage].
+  /// Success result dialog with [AppAssets.projectCreatedImage] and filled primary CTA.
   static Future<void> showSuccessOk(
     BuildContext context, {
     required String title,
     String description = '',
     Widget? descriptionWidget,
+    String primaryLabel = AppStrings.btnBackToProject,
     required VoidCallback onPrimary,
   }) {
     return show(
@@ -100,10 +101,10 @@ class AppActionDialog extends StatelessWidget {
       title: title,
       description: description,
       descriptionWidget: descriptionWidget,
-      primaryLabel: AppStrings.btnOk,
+      primaryLabel: primaryLabel,
       showSecondary: false,
-      primaryColor: Colors.transparent,
-      primaryTextColor: AppColors.neutral1200,
+      primaryColor: AppColors.neutral1200,
+      primaryTextColor: AppColors.surface,
       primaryBorderColor: AppColors.neutral1200,
       iconAsset: AppAssets.projectCreatedImage,
       onPrimary: onPrimary,
