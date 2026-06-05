@@ -7,7 +7,6 @@ class AppAssets {
   // ── Images ────────────────────────────────────────────────────────────────
   static const String logoSvg = '$_imagePath/logo.svg';
   static const String appGradient = '$_imagePath/gradient.png';
-  static const String authLoginGradient = '$_imagePath/Login gradient.svg';
   /// Auth screens background — purple-to-white gradient PNG.
   static const String authGradientBg = '$_imagePath/auth_gradient_bg.png';
   static const String splashBackground = '$_imagePath/splash_background.png';
@@ -24,11 +23,6 @@ class AppAssets {
   /// Home + Discover empty state — 3D target / dart (PNG).
   static const String homeDiscoverEmptyState =
       '$_imagePath/home_discover_empty_state.png';
-  /// Legacy SVG empty illustration (unused in UI; kept for reference).
-  static const String dashboardEmptyStateSvg =
-      '$_imagePath/dashboard_empty_state_image.svg';
-  static const String homeEmptyState = homeDiscoverEmptyState;
-  static const String discoverEmptyIllustration = homeDiscoverEmptyState;
   static const String emptyNotification    = '$_imagePath/emptynotification.png';
 
   /// Project detail — no borrow requests (Figma 3D person + $).
@@ -59,7 +53,6 @@ class AppAssets {
   static const String onboarding1 = '$_imagePath/onboarding_1.png';
   static const String onboarding2 = '$_imagePath/onboarding_2.png';
   static const String onboarding3 = '$_imagePath/onboarding_3.png';
-  static const String inviteQrCode = '$_imagePath/qrcode.png';
 
   // ── Auth Social Icons ─────────────────────────────────────────────────────
   static const String iconApple  = '$_iconPath/apple.svg';
@@ -91,14 +84,11 @@ class AppAssets {
   static const String iconProfileActive = '$_iconPath/active_profile_icon.svg';
 
   // ── Profile Settings Icons ────────────────────────────────────────────────
-  static const String iconEditProfile       = '$_iconPath/edit_profile_icon.svg';
   static const String iconPaymentMethods    = '$_iconPath/payment_methods_icon.svg';
   static const String iconCompleteProjects  = '$_iconPath/complete-projects.svg';
-  static const String iconTransactionHistory = '$_iconPath/transactionhistory_icon.svg';
   static const String iconKeyGuidelines     = '$_iconPath/guidelines_icons.svg'; //
   /// Profile avatar — tap to change photo (design `Frame 343.svg`).
   static const String profileAvatarEditBadge = '$_iconPath/Frame 343.svg';
-  static const String emptyPaymentMethodIcon     = '$_iconPath/wallet-cards.svg';
   /// Payment methods empty — 3D card holder (Figma).
   static const String paymentMethodsEmptyIllustration =
       '$_imagePath/payment_methods_empty.png';
@@ -108,8 +98,6 @@ class AppAssets {
   /// Payment card detail bottom sheet top overlay (provided design export).
   static const String paymentCardBgOverlay =
       '$_imagePath/payment_card_bg_overlay.png';
-  /// Wallet “Recent Activity” empty — same 3D coin as join/borrow requests empty.
-  static const String walletEmptyActivityIllustration = borrowRequestsEmptyState;
   /// Withdraw method screen — standard (coin) and instant (lightning) rails.
   static const String withdrawStandardIllustration =
       '$_imagePath/withdraw_standard.png';
@@ -132,8 +120,6 @@ class AppAssets {
 
   // ── Arrow Direction Icons ────────────────────────────────────────────────
   static const String iconArrowUpBig   = '$_iconPath/arrow-up-big.svg';
-  static const String iconArrowDownBig = '$_iconPath/arrow-down-big.svg';
-  static const String iconArrowDown01 = '$_iconPath/arrow-down-01.svg';
   static const String iconPopMenu      = '$_iconPath/popmenuicon.svg';
   /// Member “Project Actions” — funds history & leave project rows.
   static const String iconProjectFundHistory = '$_iconPath/project_fund_history.svg';
@@ -158,7 +144,6 @@ class AppAssets {
   static const String iconTickSwitchOn = '$_iconPath/tick_switch_on.png';
   static const String infoIcon    = '$_iconPath/alert-01.svg';
   // ── Specific Feature Backgrounds ──────────────────────────────────────────
-  static const String contributionSuccessBg = '$_imagePath/Contribution Successful.png';
   static const String failureIcon           = '$_imagePath/failure_icon.png';
   static const String upWordArrow    = '$_iconPath/arrow-up-big.svg';
   static const String downWordArrow    = '$_iconPath/arrow-down-big.svg';
@@ -170,23 +155,17 @@ class AppAssets {
   static const String iconClose = '$_iconPath/icon_close.svg';
   /// Create project amount sheet — dismiss (design `cross-icon.svg`).
   static const String iconCreateProjectSheetClose = '$_iconPath/cross_icon.svg';
-  /// Generic heart glyph (lists, empty states); headers use [iconFavourite].
-  static const String iconHeart = '$_iconPath/icon_heart.svg';
   static const String iconChevronDown = '$_iconPath/icon_chevron_down.svg';
   /// Payment method pill dropdown (contribute confirm).
   static const String iconChevronWallet = '$_iconPath/chevron-wallet.svg';
   static const String iconCopy = '$_iconPath/icon_copy.svg';
   static const String iconVisibility = '$_iconPath/icon_visibility.svg';
-  static const String iconVisibilityOff = '$_iconPath/icon_visibility_off.svg';
   /// Login / auth password “hidden” state — design PNG (closed eye), crisp at small sizes.
   static const String iconPasswordHiddenEye = '$_iconPath/password_eye_hidden.png';
   static const String iconBackspace = '$_iconPath/icon_backspace.svg';
   static const String iconCalendar = '$_iconPath/icon_calendar.svg';
   /// Project card “Ends in” row — `calendar-02` (12×12 in UI).
   static const String iconCalendar02 = '$_iconPath/calendar_02.svg';
-  static const String iconSchedule = '$_iconPath/icon_schedule.svg';
-  static const String iconGroups = '$_iconPath/icon_groups.svg';
-  static const String iconShield = '$_iconPath/icon_shield.svg';
   static const String iconPeople = '$_iconPath/icon_people.svg';
   static const String iconPerson = '$_iconPath/icon_person.svg';
   /// Leader badge on project member rows (Figma `user-02.svg`).
@@ -195,7 +174,6 @@ class AppAssets {
   static const String iconCoLeaderUsers = '$_iconPath/user-multiple-03.svg';
   /// My Borrows — project overflow menu (`user-dollar.svg`).
   static const String iconMyBorrows = '$_iconPath/user-dollar.svg';
-  static const String iconSettings = '$_iconPath/icon_settings.svg';
   static const String iconDelete = '$_iconPath/icon_delete.svg';
   static const String iconInfo = '$_iconPath/icon_info.svg';
   /// Information circle (design export `information-circle.svg`).
@@ -206,8 +184,4 @@ class AppAssets {
   static const String iconLink = '$_iconPath/icon_link.svg';
   static const String iconFacebook = '$_iconPath/icon_facebook.svg';
   static const String iconInstagram = '$_iconPath/icon_instagram.svg';
-  static const String iconRadioOn = '$_iconPath/icon_radio_on.svg';
-  static const String iconRadioOff = '$_iconPath/icon_radio_off.svg';
-  static const String iconList = '$_iconPath/icon_list.svg';
-  static const String iconLightning = '$_iconPath/icon_lightning.svg';
 }
