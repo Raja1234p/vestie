@@ -28,14 +28,30 @@ flutter run
 | URL launch | `url_launcher` |
 | Secure storage | `flutter_secure_storage` |
 | Local prefs | `shared_preferences` |
-| HTTP | `dio` (stubbed — ready for real API) |
+| HTTP | `dio` + `BaseApiClient` (live Vestie API) |
 
 ---
 
 ## Docs
 
+- **Project scope & product overview:** [`DOCS/project_scope.md`](DOCS/project_scope.md)
+- **Feature index (onboarding):** [`FEATURE_MAP.md`](FEATURE_MAP.md)
+- **Dependency injection map:** [`DEPENDENCY_MAP.md`](DEPENDENCY_MAP.md)
 - **Architecture & flow map** (roles, routes, join paths, project types, navigation patterns): [`DOCS/architecture_flows.md`](DOCS/architecture_flows.md)
 - **Group Vacation & Emergency member flows** (screens, routes, UI-only vs API, integration checklist): [`DOCS/group_vacation_emergency_member_flow.md`](DOCS/group_vacation_emergency_member_flow.md)
+- **Refactor audit & roadmap:** [`DOCS/refactor/architecture_audit.md`](DOCS/refactor/architecture_audit.md)
+
+## Build & release
+
+```bash
+flutter pub get
+dart analyze
+flutter test
+flutter run                    # production entry: lib/main.dart
+flutter run -t lib/main_dev.dart   # DevicePreview (dev dependency)
+```
+
+Release script (analyze, test, app bundle, split APK): [`scripts/build_release.ps1`](scripts/build_release.ps1)
 
 ---
 
@@ -54,7 +70,8 @@ lib/
 │   ├── theme/                   # AppColors, AppTheme
 │   ├── utils/                   # validation_utils, app_snackbar, …
 │   ├── widgets/common/          # AppButton, AppTextField, AppText, AppLoader, …
-│   └── di/                      # service_locator (when used)
+│   ├── di/                      # ServiceLocator + inject_*.dart
+│   └── navigation/              # vestie_navigation barrel
 │
 ├── features/                    # Shared / cross-role modules
 │   ├── auth/
