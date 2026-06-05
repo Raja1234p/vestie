@@ -3,11 +3,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../constants/app_assets.dart';
+import '../../constants/app_dimens.dart';
 import '../../constants/app_strings.dart';
 import '../../theme/app_colors.dart';
 import '../text/app_text.dart';
 import 'app_svg_icon.dart';
 import 'failure_icon.dart';
+import 'success_dialog_icon.dart';
 
 class AppActionBottomSheet extends StatelessWidget {
   final String title;
@@ -77,9 +79,19 @@ class AppActionBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 24.h),
+      padding: EdgeInsets.fromLTRB(
+        20.w,
+        0,
+        20.w,
+        AppDimens.dialogActionBottomInset,
+      ),
       child: Container(
-        padding: EdgeInsets.fromLTRB(18.w, 20.h, 18.w, 18.h),
+        padding: EdgeInsets.fromLTRB(
+          18.w,
+          20.h,
+          18.w,
+          AppDimens.dialogActionBottomInset,
+        ),
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(28.r),
@@ -151,6 +163,9 @@ class _SheetIcon extends StatelessWidget {
     if (iconAsset != null) {
       if (iconAsset == AppAssets.failureIcon) {
         return const FailureIcon();
+      }
+      if (iconAsset == AppAssets.projectCreatedImage) {
+        return const SuccessDialogIcon();
       }
       final isSvg = iconAsset!.toLowerCase().endsWith('.svg');
       return SizedBox(

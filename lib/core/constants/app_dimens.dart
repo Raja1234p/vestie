@@ -101,9 +101,20 @@ class AppDimens {
   /// Error icon medallion diameter in dialogs.
   static double get dialogErrorIconDiameter => 72.0.r;
 
-  /// [AppAssets.failureIcon] — Figma 132×145 (screens + dialogs).
-  static double get failureIconWidth => 132.0.w;
-  static double get failureIconHeight => 145.0.h;
+  /// Dialog hero illustrations (success + failure) — Figma 132×145.
+  static double get dialogHeroIconWidth => 132.0.w;
+  static double get dialogHeroIconHeight => 145.0.h;
+
+  /// [AppAssets.failureIcon] — screens + dialogs.
+  static double get failureIconWidth => dialogHeroIconWidth;
+  static double get failureIconHeight => dialogHeroIconHeight;
+
+  /// [AppAssets.projectCreatedImage] — success dialogs.
+  static double get successDialogIconWidth => dialogHeroIconWidth;
+  static double get successDialogIconHeight => dialogHeroIconHeight;
+
+  /// Below the bottom action in [AppActionDialog] / [AppActionBottomSheet] (Figma 24).
+  static double get dialogActionBottomInset => v24;
 
   /// Project detail member row — avatar circle (equal width & height).
   static double get projectMemberAvatarSize => 48.0.r;

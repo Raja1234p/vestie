@@ -9,6 +9,7 @@ import '../../theme/app_colors.dart';
 import '../text/app_text.dart';
 import 'app_svg_icon.dart';
 import 'failure_icon.dart';
+import 'success_dialog_icon.dart';
 
 class AppActionDialog extends StatelessWidget {
   final String title;
@@ -112,7 +113,12 @@ class AppActionDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(18.w, 35.h, 18.w, 14.h),
+      padding: EdgeInsets.fromLTRB(
+        18.w,
+        35.h,
+        18.w,
+        AppDimens.dialogActionBottomInset,
+      ),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(28.r),
@@ -189,10 +195,13 @@ class _DialogIcon extends StatelessWidget {
       if (iconAsset == AppAssets.failureIcon) {
         return const FailureIcon();
       }
+      if (iconAsset == AppAssets.projectCreatedImage) {
+        return const SuccessDialogIcon();
+      }
       final isSvg = iconAsset!.toLowerCase().endsWith('.svg');
       return SizedBox(
-        width: 100.w,
-        height: 100.w,
+        width: AppDimens.dialogHeroIconWidth,
+        height: AppDimens.dialogHeroIconHeight,
         child: isSvg
             ? SvgPicture.asset(iconAsset!)
             : Image.asset(iconAsset!, fit: BoxFit.contain),
