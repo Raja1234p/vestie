@@ -13,7 +13,7 @@ import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart';
-import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
+import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_announcements_section.dart';
 import '../widgets/investment_detail_preview_button.dart';
@@ -180,13 +180,13 @@ class _InvestmentProjectDetailBodyState
 
               Future<void> openMemberDetail(MemberEntity member) async {
                 final result =
-                    await ProjectDetailNavigationHelpers.openMemberProfile(
+                    await ProjectDetailNavigation.openMemberProfile(
                   context,
                   project: project,
                   member: member,
                 );
                 if (!context.mounted) return;
-                ProjectDetailNavigationHelpers
+                ProjectDetailNavigation
                     .refreshProjectDetailAfterMemberFlow(
                   context,
                   projectId: widget.projectId,
@@ -209,7 +209,7 @@ class _InvestmentProjectDetailBodyState
                           project: project,
                           pendingJoinRequestCount: pendingCount,
                           onLeaderMenuSelected: (action) =>
-                              ProjectDetailNavigationHelpers.handleLeaderAction(
+                              ProjectDetailNavigation.handleLeaderAction(
                             context,
                             project: project,
                             action: action,
@@ -217,7 +217,7 @@ class _InvestmentProjectDetailBodyState
                             refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
                           ),
                           onMemberMenuSelected: (action) =>
-                              ProjectDetailNavigationHelpers.handleMemberAction(
+                              ProjectDetailNavigation.handleMemberAction(
                             context,
                             project: project,
                             action: action,

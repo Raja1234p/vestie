@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vestie/core/widgets/common/leader_action_menu.dart';
 import 'package:vestie/core/widgets/common/member_project_action_menu.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
-import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
+import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation.dart';
 import 'project_detail_join_requests_chip.dart';
 
 /// Header trailing for investment, vacation, and emergency detail — driven by
@@ -51,7 +51,7 @@ class ProjectDetailTrailingActions extends StatelessWidget {
         if (showJoinChip) ...[
           ProjectDetailJoinRequestsChip(
             count: pendingJoinRequestCount,
-            onTap: () => ProjectDetailNavigationHelpers.handleLeaderAction(
+            onTap: () => ProjectDetailNavigation.handleLeaderAction(
               context,
               project: project,
               action: LeaderMenuAction.joinRequests,

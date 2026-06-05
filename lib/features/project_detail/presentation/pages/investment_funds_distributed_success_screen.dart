@@ -7,7 +7,7 @@ import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_success_screen.dart';
 import 'package:vestie/features/project_detail/presentation/models/investment_returns_ui_data.dart';
-import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
+import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation.dart';
 
 /// Leader success after confirming a fund distribution (Figma).
 class InvestmentFundsDistributedSuccessScreen extends StatelessWidget {
@@ -50,7 +50,7 @@ class InvestmentFundsDistributedSuccessScreen extends StatelessWidget {
       ),
       buttonText: AppStrings.btnBackToProject,
       onButtonPressed: () =>
-          ProjectDetailNavigationHelpers.popAfterFundsDistributed(
+          ProjectDetailNavigation.popAfterFundsDistributed(
         context,
         projectId: args.projectId,
         projectName: args.projectName,

@@ -1,7 +1,7 @@
 import 'package:vestie/app/router/route_args/project_detail_flow_args.dart';
 import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
-import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
+import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation.dart';
 import 'package:vestie/user/features/borrow/presentation/models/my_borrow_approved_ui_data.dart';
 
 /// Builds [MyBorrowRequestRouteArgs] for the member My Borrow Request screen.
@@ -13,7 +13,7 @@ class MyBorrowRequestArgsBuilder {
     return MyBorrowRequestRouteArgs(
       projectId: project.id,
       projectName: project.name,
-      walletFlowArgs: ProjectDetailNavigationHelpers.walletArgs(project),
+      walletFlowArgs: ProjectDetailNavigation.walletArgs(project),
       activeRequest: active,
       history: active != null ? _previewHistory() : const [],
     );
@@ -26,7 +26,7 @@ class MyBorrowRequestArgsBuilder {
     return MyBorrowRequestRouteArgs(
       projectId: project.id,
       projectName: project.name,
-      walletFlowArgs: ProjectDetailNavigationHelpers.walletArgs(project),
+      walletFlowArgs: ProjectDetailNavigation.walletArgs(project),
       activeRequest: _previewActiveRequest(),
       history: _previewHistory(),
     );

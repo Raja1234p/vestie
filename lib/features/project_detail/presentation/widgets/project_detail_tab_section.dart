@@ -11,7 +11,7 @@ import 'package:vestie/core/widgets/common/app_toggle_tab_bar.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_member_vff_send_actions.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
-import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
+import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation.dart';
 import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
 
 import 'project_detail_tab_panels.dart';
@@ -82,7 +82,7 @@ class ProjectDetailTabSection extends StatelessWidget {
                           requests: project.borrowRequests,
                           onViewAll: () => context.push(
                             AppRoutes.borrowRequests,
-                            extra: ProjectDetailNavigationHelpers
+                            extra: ProjectDetailNavigation
                                 .borrowRequestsArgs(
                               project,
                               isLeaderMode: true,
@@ -98,7 +98,7 @@ class ProjectDetailTabSection extends StatelessWidget {
                           requests: project.borrowRequests,
                           onViewAll: () => context.push(
                             AppRoutes.borrowRequests,
-                            extra: ProjectDetailNavigationHelpers
+                            extra: ProjectDetailNavigation
                                 .borrowRequestsArgs(
                               project,
                               isLeaderMode: false,
@@ -114,7 +114,7 @@ class ProjectDetailTabSection extends StatelessWidget {
                           project: project,
                           members: project.members,
                           onViewAll: () =>
-                              ProjectDetailNavigationHelpers.openGroupMembers(
+                              ProjectDetailNavigation.openGroupMembers(
                             context,
                             project: project,
                           ),
@@ -131,7 +131,7 @@ class ProjectDetailTabSection extends StatelessWidget {
                           project: project,
                           members: project.members,
                           onViewAll: () =>
-                              ProjectDetailNavigationHelpers.openGroupMembers(
+                              ProjectDetailNavigation.openGroupMembers(
                             context,
                             project: project,
                           ),

@@ -7,7 +7,7 @@ import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import '../../domain/entities/member_entity.dart';
 import '../../domain/entities/project_detail_entity.dart';
-import '../navigation/project_detail_navigation_helpers.dart';
+import '../navigation/project_detail_navigation.dart';
 import 'members_tab.dart';
 import 'project_detail_view_all_link.dart';
 
@@ -29,7 +29,7 @@ class ProjectMembersPreviewSection extends StatelessWidget {
   });
 
   VoidCallback _openViewAll(BuildContext context) =>
-      () => ProjectDetailNavigationHelpers.openGroupMembers(
+      () => ProjectDetailNavigation.openGroupMembers(
             context,
             project: project,
           );

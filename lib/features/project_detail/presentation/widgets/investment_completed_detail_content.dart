@@ -6,7 +6,7 @@ import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/project_detail/presentation/models/completed_project_notice_copy.dart';
-import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
+import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_announcements_section.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/completed_project_notice_bar.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_info_card.dart';
@@ -52,7 +52,7 @@ class InvestmentCompletedDetailContent extends StatelessWidget {
           text: project.isModeratorView
               ? AppStrings.btnDistributeFunds
               : AppStrings.btnInvestmentReturns,
-          onPressed: () => ProjectDetailNavigationHelpers.openInvestmentReturns(
+          onPressed: () => ProjectDetailNavigation.openInvestmentReturns(
             context,
             project: project,
           ),

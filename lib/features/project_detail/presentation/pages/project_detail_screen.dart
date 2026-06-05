@@ -15,7 +15,7 @@ import 'package:vestie/features/project_detail/domain/entities/member_entity.dar
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
 import '../navigation/open_project_from_card.dart';
-import '../navigation/project_detail_navigation_helpers.dart';
+import '../navigation/project_detail_navigation.dart';
 import '../widgets/project_member_vff_send_actions.dart';
 import '../widgets/project_detail_member_layout.dart';
 import 'package:vestie/user/features/project_detail/presentation/widgets/project_detail_user_completed_content.dart';
@@ -239,13 +239,13 @@ Future<void> _openMemberProfile(
   required ProjectDetailEntity project,
   required MemberEntity member,
 }) async {
-  final result = await ProjectDetailNavigationHelpers.openMemberProfile(
+  final result = await ProjectDetailNavigation.openMemberProfile(
     context,
     project: project,
     member: member,
   );
   if (!context.mounted) return;
-  ProjectDetailNavigationHelpers.refreshProjectDetailAfterMemberFlow(
+  ProjectDetailNavigation.refreshProjectDetailAfterMemberFlow(
     context,
     projectId: project.id,
     result: result,

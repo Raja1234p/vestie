@@ -11,7 +11,7 @@ import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/app/router/route_args/project_wallet_flow_args.dart';
 import 'package:vestie/user/features/contributions/data/models/contribution_submit_result_model.dart';
 import '../../domain/entities/project_detail_entity.dart';
-import '../navigation/project_detail_navigation_helpers.dart';
+import '../navigation/project_detail_navigation.dart';
 
 /// Contribute (+ Borrow) or [AppStrings.btnViewSuccessVotes] when vote is active.
 class ProjectDetailWalletActions extends StatelessWidget {
@@ -31,14 +31,14 @@ class ProjectDetailWalletActions extends StatelessWidget {
     if (showViewSuccessVotesCta) {
       return AppButton(
         text: AppStrings.btnViewSuccessVotes,
-        onPressed: () => ProjectDetailNavigationHelpers.openLeaderViewSuccessVotes(
+        onPressed: () => ProjectDetailNavigation.openLeaderViewSuccessVotes(
           context,
           project: project,
         ),
       );
     }
 
-    final walletArgs = ProjectDetailNavigationHelpers.walletArgs(project);
+    final walletArgs = ProjectDetailNavigation.walletArgs(project);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -53,7 +53,7 @@ class ProjectDetailWalletActions extends StatelessWidget {
               extra: walletArgs,
             );
             if (!context.mounted || result == null) return;
-            ProjectDetailNavigationHelpers.refreshAfterContribution(
+            ProjectDetailNavigation.refreshAfterContribution(
               context,
               projectId: project.id,
               submitResult: result,

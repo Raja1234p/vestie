@@ -10,7 +10,7 @@ import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
-import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
+import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/borrow_requests_empty_state.dart';
 
 import '../widgets/borrow_request_card.dart';
@@ -45,7 +45,7 @@ class BorrowRequestsScreen extends StatelessWidget {
     if (member == null) return null;
 
     return () {
-      ProjectDetailNavigationHelpers.openMemberProfile(
+      ProjectDetailNavigation.openMemberProfile(
         context,
         project: p,
         member: member,

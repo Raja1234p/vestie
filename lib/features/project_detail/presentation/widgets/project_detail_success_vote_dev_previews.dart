@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
-import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
+import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation.dart';
 
 import 'project_detail_preview_link.dart';
 
@@ -51,7 +51,7 @@ class ProjectDetailSuccessVoteDevPreviews extends StatelessWidget {
         ProjectDetailPreviewLink(
           label: AppStrings.btnPreviewVoteOutcomeApproved,
           onPressed: () =>
-              ProjectDetailNavigationHelpers.openMemberVoteOutcomePreview(
+              ProjectDetailNavigation.openMemberVoteOutcomePreview(
             context,
             project: project,
             approved: true,
@@ -60,7 +60,7 @@ class ProjectDetailSuccessVoteDevPreviews extends StatelessWidget {
         ProjectDetailPreviewLink(
           label: AppStrings.btnPreviewVoteOutcomeRejected,
           onPressed: () =>
-              ProjectDetailNavigationHelpers.openMemberVoteOutcomePreview(
+              ProjectDetailNavigation.openMemberVoteOutcomePreview(
             context,
             project: project,
             approved: false,

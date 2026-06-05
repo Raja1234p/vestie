@@ -36,8 +36,8 @@ import 'package:vestie/user/features/borrow/presentation/data/my_borrow_request_
 
 /// Shared navigation/route-arg helpers for project detail screens.
 /// Keeps screen widgets focused on layout while preserving identical behavior.
-class ProjectDetailNavigationHelpers {
-  const ProjectDetailNavigationHelpers._();
+class ProjectDetailNavigation {
+  const ProjectDetailNavigation._();
 
   static ProjectWalletFlowArgs walletArgs(ProjectDetailEntity project) {
     final dueBy = project.repaymentWindowDays > 0

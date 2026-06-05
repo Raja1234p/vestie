@@ -12,7 +12,7 @@ import 'package:vestie/core/widgets/common/leader_action_menu.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
-import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
+import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_load_error.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_loading_body.dart';
 import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
@@ -82,7 +82,7 @@ class _LeaderProjectSettingsBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     void onAction(LeaderMenuAction action) {
-      ProjectDetailNavigationHelpers.handleLeaderAction(
+      ProjectDetailNavigation.handleLeaderAction(
         context,
         project: project,
         action: action,

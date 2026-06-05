@@ -14,7 +14,7 @@ import 'package:vestie/features/project_detail/domain/entities/member_entity.dar
 import 'package:vestie/features/project_detail/domain/entities/member_entity_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/app/router/route_args/project_detail_flow_args.dart';
-import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
+import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_member_row.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_members_empty_state.dart';
 import 'package:vestie/features/project_detail/presentation/project_detail_reload_coordinator.dart';
@@ -107,7 +107,7 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
     required ProjectDetailEntity project,
     required MemberEntity member,
   }) async {
-    final result = await ProjectDetailNavigationHelpers.openMemberProfile(
+    final result = await ProjectDetailNavigation.openMemberProfile(
       context,
       project: project,
       member: member,

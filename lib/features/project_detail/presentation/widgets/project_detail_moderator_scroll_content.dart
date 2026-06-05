@@ -8,7 +8,7 @@ import 'package:vestie/core/widgets/common/post_auth_scroll_viewport.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart';
-import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
+import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/core/utils/app_snackbar.dart';
@@ -101,7 +101,7 @@ class _ProjectDetailModeratorScrollContentState
                       project: project,
                       pendingJoinRequestCount: widget.pendingJoinRequestCount,
                       onLeaderMenuSelected: (action) =>
-                          ProjectDetailNavigationHelpers.handleLeaderAction(
+                          ProjectDetailNavigation.handleLeaderAction(
                         context,
                         project: project,
                         action: action,
@@ -109,7 +109,7 @@ class _ProjectDetailModeratorScrollContentState
                         refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
                       ),
                       onMemberMenuSelected: (action) =>
-                          ProjectDetailNavigationHelpers.handleMemberAction(
+                          ProjectDetailNavigation.handleMemberAction(
                         context,
                         project: project,
                         action: action,

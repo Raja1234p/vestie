@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
+import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
@@ -107,7 +107,7 @@ class InvestmentDistributionScreen extends StatelessWidget {
               child: AppButton(
                 text: AppStrings.btnConfirmAndDistribute,
                 onPressed: () =>
-                    ProjectDetailNavigationHelpers.openFundsDistributedSuccess(
+                    ProjectDetailNavigation.openFundsDistributedSuccess(
                   context,
                   distributionData: data,
                 ),
