@@ -59,7 +59,9 @@ class ProjectsSignalRService {
         await _invokeJoin(projectId);
       }
     } catch (e) {
-      debugPrint('ProjectsSignalRService: connect failed ($e)');
+      if (kDebugMode) {
+        debugPrint('ProjectsSignalRService: connect failed ($e)');
+      }
     } finally {
       _connecting = false;
     }
@@ -87,7 +89,9 @@ class ProjectsSignalRService {
       try {
         await _connection!.invoke('LeaveProjectChannel', args: <Object>[id]);
       } catch (e) {
-        debugPrint('ProjectsSignalRService: leave failed ($e)');
+        if (kDebugMode) {
+          debugPrint('ProjectsSignalRService: leave failed ($e)');
+        }
       }
     }
   }
@@ -104,7 +108,9 @@ class ProjectsSignalRService {
     try {
       await _connection!.invoke('JoinProjectChannel', args: <Object>[projectId]);
     } catch (e) {
-      debugPrint('ProjectsSignalRService: join failed ($e)');
+      if (kDebugMode) {
+        debugPrint('ProjectsSignalRService: join failed ($e)');
+      }
     }
   }
 

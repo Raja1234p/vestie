@@ -11,12 +11,14 @@ import '../di/service_locator.dart';
 /// Top-level handler — required to be a plain static function by FCM.
 @pragma('vm:entry-point')
 Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
-  debugPrint(
-    'FcmPushService: background message received '
-    'id=${message.messageId ?? "null"} '
-    'title=${message.notification?.title ?? "(no-title)"} '
-    'type=${message.data['type'] ?? "(no-type)"}',
-  );
+  if (kDebugMode) {
+    debugPrint(
+      'FcmPushService: background message received '
+      'id=${message.messageId ?? "null"} '
+      'title=${message.notification?.title ?? "(no-title)"} '
+      'type=${message.data['type'] ?? "(no-type)"}',
+    );
+  }
 }
 
 /// Registers FCM device tokens with the Vestie API after login.
@@ -277,7 +279,9 @@ class FcmPushService {
   }
 
   static void _log(String message) {
-    debugPrint('$_logTag: $message');
+    if (kDebugMode) {
+      debugPrint('$_logTag: $message');
+    }
   }
 
   static String _maskToken(String token) {

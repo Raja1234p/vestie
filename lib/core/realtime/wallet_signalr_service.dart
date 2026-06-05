@@ -61,7 +61,9 @@ class WalletSignalRService {
       await connection.start();
       _connection = connection;
     } catch (e) {
-      debugPrint('WalletSignalRService: connect failed ($e)');
+      if (kDebugMode) {
+        debugPrint('WalletSignalRService: connect failed ($e)');
+      }
     } finally {
       _connecting = false;
     }
