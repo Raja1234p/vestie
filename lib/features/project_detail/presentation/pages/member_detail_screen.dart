@@ -432,7 +432,7 @@ class _MemberDetailView extends StatelessWidget {
                 activity?.vffConnectionState ?? VffConnectionState.none,
           );
 
-          final vffRequestSent =
+          final vffRequestSent = displayMember.hasPendingVffOutgoing ||
               vffConnectionState == VffConnectionState.pendingOutgoing;
 
           final isCoLeader = activity?.isCoLeader ??

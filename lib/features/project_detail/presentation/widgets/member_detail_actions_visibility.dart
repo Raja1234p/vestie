@@ -97,6 +97,10 @@ abstract final class MemberDetailActionsVisibility {
         member.isVffConnected) {
       return VffConnectionState.connected;
     }
+    if (activityVffConnectionState == VffConnectionState.pendingOutgoing ||
+        member.hasPendingVffOutgoing) {
+      return VffConnectionState.pendingOutgoing;
+    }
     if (activityVffConnectionState != VffConnectionState.none) {
       return activityVffConnectionState;
     }
@@ -142,6 +146,7 @@ abstract final class MemberDetailActionsVisibility {
     }
     if (vffConnectionState == VffConnectionState.pendingIncoming) return false;
     if (vffConnectionState == VffConnectionState.pendingOutgoing) return true;
+    if (member.hasPendingVffOutgoing) return true;
     return canShowSendVffOnMemberRow(project: project, member: member);
   }
 

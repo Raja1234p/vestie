@@ -40,14 +40,11 @@ class UserVffHubMyVffsTabShimmer extends StatelessWidget {
           SizedBox(height: 10.h),
           for (var i = 0; i < 2; i++) ...[
             _connectionRowShimmer(trailingWide: false),
-            SizedBox(height: 12.h),
+            SizedBox(height: AppDimens.v12),
           ],
-          SizedBox(height: AppDimens.v14),
-          _sectionHeaderShimmer(width: 140.w),
-          SizedBox(height: 10.h),
           for (var i = 0; i < 2; i++) ...[
             _connectionRowShimmer(trailingWide: true),
-            SizedBox(height: 12.h),
+            SizedBox(height: AppDimens.v12),
           ],
         ],
       ),
@@ -75,14 +72,14 @@ class UserVffHubRequestsTabShimmer extends StatelessWidget {
           SizedBox(height: 10.h),
           for (var i = 0; i < 2; i++) ...[
             _inboxRequestCardShimmer(),
-            SizedBox(height: 12.h),
+            SizedBox(height: AppDimens.v12),
           ],
           SizedBox(height: AppDimens.v14),
           _sectionHeaderShimmer(width: 130.w, withAction: true),
           SizedBox(height: 10.h),
           for (var i = 0; i < 2; i++) ...[
             _groupInviteCardShimmer(),
-            SizedBox(height: 12.h),
+            SizedBox(height: AppDimens.v12),
           ],
         ],
       ),
@@ -106,7 +103,7 @@ Widget _sectionHeaderShimmer({
 
 Widget _connectionRowShimmer({required bool trailingWide}) {
   return Container(
-    padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+    padding: EdgeInsets.all(AppDimens.p16),
     decoration: BoxDecoration(
       color: Colors.white.withValues(alpha: 0.45),
       borderRadius: BorderRadius.circular(12.r),
@@ -128,7 +125,7 @@ Widget _connectionRowShimmer({required bool trailingWide}) {
         AppShimmer.box(
           width: trailingWide ? 72.w : 22.w,
           height: trailingWide ? 28.h : 22.h,
-          borderRadius: 8.r,
+          borderRadius: 10.r,
         ),
       ],
     ),
@@ -137,48 +134,42 @@ Widget _connectionRowShimmer({required bool trailingWide}) {
 
 Widget _inboxRequestCardShimmer() {
   return Container(
-    padding: EdgeInsets.all(14.w),
-    decoration: BoxDecoration(
-      color: Colors.white.withValues(alpha: 0.45),
-      borderRadius: BorderRadius.circular(12.r),
-    ),
-    child: Column(
+    padding: EdgeInsets.all(AppDimens.p16),
+    decoration: _vffInboxListCardDecoration(),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            AppShimmer.box(width: 40.r, height: 40.r, borderRadius: 20.r),
-            SizedBox(width: 12.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        AppShimmer.box(width: 40.r, height: 40.r, borderRadius: 20.r),
+        SizedBox(width: 12.w),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AppShimmer.box(width: 120.w, height: 16.h, borderRadius: 4.r),
+              SizedBox(height: 6.h),
+              AppShimmer.box(width: 150.w, height: 12.h, borderRadius: 4.r),
+              SizedBox(height: 14.h),
+              Row(
                 children: [
-                  AppShimmer.box(width: 120.w, height: 16.h, borderRadius: 4.r),
-                  SizedBox(height: 6.h),
-                  AppShimmer.box(width: 150.w, height: 12.h, borderRadius: 4.r),
+                  Expanded(
+                    child: AppShimmer.box(
+                      width: double.infinity,
+                      height: 40.h,
+                      borderRadius: 10.r,
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                  Expanded(
+                    child: AppShimmer.box(
+                      width: double.infinity,
+                      height: 40.h,
+                      borderRadius: 10.r,
+                    ),
+                  ),
                 ],
               ),
-            ),
-          ],
-        ),
-        SizedBox(height: 14.h),
-        Row(
-          children: [
-            Expanded(
-              child: AppShimmer.box(
-                width: double.infinity,
-                height: 40.h,
-                borderRadius: 8.r,
-              ),
-            ),
-            SizedBox(width: 8.w),
-            Expanded(
-              child: AppShimmer.box(
-                width: double.infinity,
-                height: 40.h,
-                borderRadius: 8.r,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     ),
@@ -196,7 +187,7 @@ final class UserVffGroupInvitationListShimmer extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         padding: EdgeInsets.only(bottom: AppDimens.v24),
         itemCount: 4,
-        separatorBuilder: (_, __) => SizedBox(height: 12.h),
+        separatorBuilder: (_, __) => SizedBox(height: AppDimens.v12),
         itemBuilder: (_, __) => _vffGroupInvitationCardShimmer(),
       ),
     );
@@ -204,14 +195,14 @@ final class UserVffGroupInvitationListShimmer extends StatelessWidget {
 }
 
 BoxDecoration _vffInboxListCardDecoration() => BoxDecoration(
-      color: AppColors.grey100,
+      color: AppColors.vffInboxRequestCardBg,
       borderRadius: BorderRadius.circular(12.r),
-      border: Border.all(color: AppColors.neutral400, width: 1),
+      border: Border.all(color: AppColors.vffInboxRequestCardBorder, width: 1),
     );
 
 Widget _vffGroupInvitationCardShimmer() {
   return Container(
-    padding: EdgeInsets.all(14.w),
+    padding: EdgeInsets.all(AppDimens.p16),
     decoration: _vffInboxListCardDecoration(),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -226,7 +217,7 @@ Widget _vffGroupInvitationCardShimmer() {
               child: AppShimmer.box(
                 width: double.infinity,
                 height: 40.h,
-                borderRadius: 8.r,
+                borderRadius: 10.r,
               ),
             ),
             SizedBox(width: 8.w),
@@ -234,7 +225,7 @@ Widget _vffGroupInvitationCardShimmer() {
               child: AppShimmer.box(
                 width: double.infinity,
                 height: 40.h,
-                borderRadius: 8.r,
+                borderRadius: 10.r,
               ),
             ),
           ],
@@ -246,11 +237,8 @@ Widget _vffGroupInvitationCardShimmer() {
 
 Widget _groupInviteCardShimmer() {
   return Container(
-    padding: EdgeInsets.all(14.w),
-    decoration: BoxDecoration(
-      color: Colors.white.withValues(alpha: 0.45),
-      borderRadius: BorderRadius.circular(12.r),
-    ),
+    padding: EdgeInsets.all(AppDimens.p16),
+    decoration: _vffInboxListCardDecoration(),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -264,7 +252,7 @@ Widget _groupInviteCardShimmer() {
               child: AppShimmer.box(
                 width: double.infinity,
                 height: 40.h,
-                borderRadius: 8.r,
+                borderRadius: 10.r,
               ),
             ),
             SizedBox(width: 8.w),
@@ -272,7 +260,7 @@ Widget _groupInviteCardShimmer() {
               child: AppShimmer.box(
                 width: double.infinity,
                 height: 40.h,
-                borderRadius: 8.r,
+                borderRadius: 10.r,
               ),
             ),
           ],

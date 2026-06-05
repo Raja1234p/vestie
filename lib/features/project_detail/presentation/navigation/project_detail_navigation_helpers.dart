@@ -408,9 +408,24 @@ class ProjectDetailNavigationHelpers {
     BuildContext context, {
     required ProjectDetailEntity project,
     required LeaderMenuAction action,
+    bool refreshHomeOnPop = false,
+    bool refreshDiscoverOnPop = false,
   }) async {
     if (action == LeaderMenuAction.inviteMembers) {
       openInviteMembers(context, project: project);
+      return;
+    }
+
+    if (action == LeaderMenuAction.leaveProject) {
+      context.push(
+        AppRoutes.leaveProjectWarning,
+        extra: LeaveProjectRouteArgs(
+          projectId: project.id,
+          projectName: project.name,
+          refreshHomeOnPop: refreshHomeOnPop,
+          refreshDiscoverOnPop: refreshDiscoverOnPop,
+        ),
+      );
       return;
     }
 
@@ -510,6 +525,8 @@ class ProjectDetailNavigationHelpers {
             membersWithUnpaidBorrows: unpaid,
           ),
         );
+        break;
+      case LeaderMenuAction.leaveProject:
         break;
     }
   }

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 
-/// Accept / Join (lavender) + Decline (white, `#D9D9D9` border) — hub request cards.
+/// Accept / Join (lavender) + Decline (white, lavender border) — hub request cards.
 class UserVffHubRequestActionButtons extends StatelessWidget {
   final String primaryLabel;
   final VoidCallback? onPrimary;
@@ -22,13 +23,11 @@ class UserVffHubRequestActionButtons extends StatelessWidget {
     this.isDeclineLoading = false,
   });
 
-  static const _radius = 8.0;
-  static const _buttonHeight = 30.0;
+  static const _buttonHeight = 40.0;
 
   @override
   Widget build(BuildContext context) {
     final height = _buttonHeight.h;
-    final busy = isPrimaryLoading || isDeclineLoading;
 
     return Row(
       children: [
@@ -40,13 +39,13 @@ class UserVffHubRequestActionButtons extends StatelessWidget {
             useGradient: false,
             isLoading: isPrimaryLoading,
             isSecondary: true,
-            borderRadius: _radius.r,
+            borderRadius: AppRadius.vffHubRequestActionButton,
             secondaryFillColor: AppColors.purple400,
             secondaryBorderColor: Colors.transparent,
             secondaryLabelColor: AppColors.grey1100,
             secondaryLabelFontWeight: FontWeight.w600,
             labelFontSize: 13.sp,
-            onPressed: busy ? null : onPrimary,
+            onPressed: onPrimary,
           ),
         ),
         SizedBox(width: 10.w),
@@ -58,13 +57,13 @@ class UserVffHubRequestActionButtons extends StatelessWidget {
             useGradient: false,
             isLoading: isDeclineLoading,
             isSecondary: true,
-            borderRadius: _radius.r,
+            borderRadius: AppRadius.vffHubRequestActionButton,
             secondaryFillColor: AppColors.surface,
-            secondaryBorderColor: AppColors.neutral400,
+            secondaryBorderColor: AppColors.purple400,
             secondaryLabelColor: AppColors.grey1100,
             secondaryLabelFontWeight: FontWeight.w600,
             labelFontSize: 13.sp,
-            onPressed: busy ? null : onDecline,
+            onPressed: onDecline,
           ),
         ),
       ],

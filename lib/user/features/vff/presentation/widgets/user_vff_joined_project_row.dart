@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
@@ -51,7 +52,9 @@ class UserVffJoinedProjectRow extends StatelessWidget {
         return _ActionChip(
           label: AppStrings.userVffStatusRequestSentSmall,
           backgroundColor: AppColors.vffRequestSentChipBg,
-          labelColor: AppColors.neutral1200,
+          labelColor: AppColors.vffRequestSentChipLabel,
+          borderColor: AppColors.vffRequestSentChipBorder,
+          borderRadius: AppRadius.vffHubRequestActionButton,
         );
       case UserVffJoinedProjectAction.joined:
         return _ActionChip(
@@ -144,6 +147,7 @@ class _ActionChip extends StatelessWidget {
   final Color backgroundColor;
   final Color labelColor;
   final Color? borderColor;
+  final double? borderRadius;
   final VoidCallback? onTap;
   final bool isLoading;
 
@@ -152,17 +156,19 @@ class _ActionChip extends StatelessWidget {
     required this.backgroundColor,
     required this.labelColor,
     this.borderColor,
+    this.borderRadius,
     this.onTap,
     this.isLoading = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    final radius = borderRadius ?? 8.r;
     final child = Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: BorderRadius.circular(8.r),
+        borderRadius: BorderRadius.circular(radius),
         border: borderColor != null
             ? Border.all(color: borderColor!, width: 1)
             : null,
@@ -190,7 +196,7 @@ class _ActionChip extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(8.r),
+        borderRadius: BorderRadius.circular(radius),
         child: child,
       ),
     );

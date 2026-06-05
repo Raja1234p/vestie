@@ -36,33 +36,34 @@ final class UserVffHubRequestsTab extends StatelessWidget {
     final grpPrev = grp.length > cap ? grp.sublist(0, cap) : grp;
 
     final acting = hubState.actingRow;
-    final inboxBusy = hubState.isInboxActionBusy;
 
     Widget incomingCard(UserVffIncomingRequestUi r) =>
         UserVffIncomingRequestCard(
           item: r,
           actingRow: acting,
-          onAccept: inboxBusy ? null : () => cubit.acceptVffRequest(r),
-          onDecline: inboxBusy ? null : () => cubit.declineVffRequest(r),
+          onAccept: () => cubit.acceptVffRequest(r),
+          onDecline: () => cubit.declineVffRequest(r),
         );
 
     Widget groupCard(UserVffGroupInviteUi g) =>
         UserVffGroupInvitationCard(
           item: g,
           actingRow: acting,
-          onPrimary: inboxBusy
-              ? null
-              : () {
-                  if (g.kind == UserVffGroupInviteKind.memberRequestJoin) {
-                    return;
-                  }
-                  cubit.acceptProjectInvite(g);
-                },
-          onDecline: inboxBusy ? null : () => cubit.declineProjectInvite(g),
+          onPrimary: () {
+            if (g.kind == UserVffGroupInviteKind.memberRequestJoin) {
+              return;
+            }
+            cubit.acceptProjectInvite(g);
+          },
+          onDecline: () => cubit.declineProjectInvite(g),
         );
 
+    final inboxBusy = acting != null;
+
     return ListView(
-      physics: const BouncingScrollPhysics(),
+      physics: inboxBusy
+          ? const NeverScrollableScrollPhysics()
+          : const BouncingScrollPhysics(),
       padding: EdgeInsets.fromLTRB(
         AppDimens.p18,
         0,

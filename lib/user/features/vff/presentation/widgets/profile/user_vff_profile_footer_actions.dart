@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:vestie/app/router/route_args/user_vff_flow_args.dart';
+import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
@@ -56,9 +57,10 @@ final class UserVffProfileFooterActions extends StatelessWidget {
             isSecondary: true,
             useGradient: false,
             hasShadow: false,
+            borderRadius: AppRadius.vffHubRequestActionButton,
             secondaryFillColor: AppColors.vffRequestSentChipBg,
-            secondaryBorderColor: Colors.transparent,
-            secondaryLabelColor: AppColors.neutral1200,
+            secondaryBorderColor: AppColors.vffRequestSentChipBorder,
+            secondaryLabelColor: AppColors.vffRequestSentChipLabel,
             secondaryLabelFontWeight: FontWeight.w600,
           );
         }

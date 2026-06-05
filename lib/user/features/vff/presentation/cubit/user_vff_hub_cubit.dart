@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/error/failures.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
 
@@ -9,10 +10,11 @@ import '../mappers/user_vff_hub_mapper.dart';
 import '../models/user_vff_hub_ui_model.dart';
 import '../models/user_vff_inbox_action.dart';
 import 'user_vff_hub_state.dart';
+import 'user_vff_inbox_mutation_guard_mixin.dart';
 import 'user_vff_inbox_sync_mixin.dart';
 
 final class UserVffHubCubit extends Cubit<UserVffHubState>
-    with UserVffInboxSyncMixin {
+    with UserVffInboxSyncMixin, UserVffInboxMutationGuardMixin {
   UserVffHubCubit({
     required ListMyVffsUseCase listMyVffsUseCase,
     required GetVffReceivedInboxUseCase getVffReceivedInboxUseCase,
@@ -175,24 +177,51 @@ final class UserVffHubCubit extends Cubit<UserVffHubState>
   }
 
   Future<void> _syncAfterMutation({required bool refreshMyVffs}) async {
-    final inbox = await syncReceivedInbox();
+    final reloadFuture = reloadReceivedInbox();
+    final myVffsFuture = refreshMyVffs ? syncMyVffs() : Future.value(null);
+
+    final reloadResult = await reloadFuture;
+    final connections = await myVffsFuture;
     if (isClosed) return;
 
-    List<UserVffConnectionRowUi>? connections;
-    if (refreshMyVffs) {
-      connections = await syncMyVffs();
-    }
-    if (isClosed) return;
-
-    emit(
-      state.copyWith(
-        incomingVffRequests: inbox?.incoming ?? state.incomingVffRequests,
-        groupInvitations: inbox?.invites ?? state.groupInvitations,
-        myVffConnections: connections ?? state.myVffConnections,
-        requestsLoadStatus: UserVffHubRequestsLoadStatus.loaded,
-        loadStatus: UserVffHubLoadStatus.loaded,
-        clearRequestsError: true,
+    reloadResult.fold(
+      (failure) => emit(
+        state.copyWith(
+          myVffConnections: connections ?? state.myVffConnections,
+          requestsLoadStatus: UserVffHubRequestsLoadStatus.loaded,
+          loadStatus: UserVffHubLoadStatus.loaded,
+          requestsErrorMessage: FailureMapper.userMessage(failure),
+        ),
       ),
+      (inbox) => emit(
+        state.copyWith(
+          incomingVffRequests: inbox.incoming,
+          groupInvitations: inbox.invites,
+          myVffConnections: connections ?? state.myVffConnections,
+          requestsLoadStatus: UserVffHubRequestsLoadStatus.loaded,
+          loadStatus: UserVffHubLoadStatus.loaded,
+          clearRequestsError: true,
+        ),
+      ),
+    );
+  }
+
+  UserVffHubState _stateAfterRemovingInboxItem({
+    required String itemId,
+    required UserVffInboxItemKind kind,
+  }) {
+    return state.copyWith(
+      incomingVffRequests: kind == UserVffInboxItemKind.vffRequest
+          ? state.incomingVffRequests
+              .where((row) => row.id != itemId)
+              .toList(growable: false)
+          : state.incomingVffRequests,
+      groupInvitations: kind == UserVffInboxItemKind.projectInvite
+          ? state.groupInvitations
+              .where((row) => row.id != itemId)
+              .toList(growable: false)
+          : state.groupInvitations,
+      clearActingRow: true,
     );
   }
 
@@ -233,7 +262,10 @@ final class UserVffHubCubit extends Cubit<UserVffHubState>
   }
 
   Future<bool> acceptProjectInvite(UserVffGroupInviteUi row) {
-    if (row.projectId.isEmpty) return Future.value(false);
+    if (row.projectId.isEmpty) {
+      emit(state.copyWith(requestsErrorMessage: AppStrings.errorGeneric));
+      return Future.value(false);
+    }
     return _runInboxAction(
       call: () => _acceptVffProjectInviteUseCase(
         projectId: row.projectId,
@@ -247,7 +279,10 @@ final class UserVffHubCubit extends Cubit<UserVffHubState>
   }
 
   Future<bool> declineProjectInvite(UserVffGroupInviteUi row) {
-    if (row.projectId.isEmpty) return Future.value(false);
+    if (row.projectId.isEmpty) {
+      emit(state.copyWith(requestsErrorMessage: AppStrings.errorGeneric));
+      return Future.value(false);
+    }
     return _runInboxAction(
       call: () => _declineVffProjectInviteUseCase(
         projectId: row.projectId,
@@ -267,39 +302,47 @@ final class UserVffHubCubit extends Cubit<UserVffHubState>
     required bool isAccept,
     required bool refreshMyVffs,
   }) async {
-    if (state.actingRow != null) return false;
+    if (!beginInboxMutation()) return false;
+    if (state.actingRow != null) {
+      endInboxMutation();
+      return false;
+    }
 
-    emit(
-      state.copyWith(
-        actingRow: UserVffInboxRowAction(
-          itemId: itemId,
-          kind: kind,
-          isAccept: isAccept,
-        ),
-        clearError: true,
-        clearRequestsError: true,
-      ),
-    );
-
-    final result = await call();
-    if (isClosed) return false;
-
-    return await result.fold(
-      (failure) async {
-        emit(
-          state.copyWith(
-            clearActingRow: true,
-            errorMessage: FailureMapper.userMessage(failure),
+    try {
+      emit(
+        state.copyWith(
+          actingRow: UserVffInboxRowAction(
+            itemId: itemId,
+            kind: kind,
+            isAccept: isAccept,
           ),
-        );
-        return false;
-      },
-      (_) async {
-        await _syncAfterMutation(refreshMyVffs: refreshMyVffs);
-        if (isClosed) return false;
-        emit(state.copyWith(clearActingRow: true));
-        return true;
-      },
-    );
+          clearError: true,
+          clearRequestsError: true,
+        ),
+      );
+
+      final result = await call();
+      if (isClosed) return false;
+
+      return await result.fold(
+        (failure) async {
+          emit(
+            state.copyWith(
+              clearActingRow: true,
+              requestsErrorMessage: FailureMapper.userMessage(failure),
+            ),
+          );
+          return false;
+        },
+        (_) async {
+          emit(_stateAfterRemovingInboxItem(itemId: itemId, kind: kind));
+          await _syncAfterMutation(refreshMyVffs: refreshMyVffs);
+          if (isClosed) return false;
+          return true;
+        },
+      );
+    } finally {
+      endInboxMutation();
+    }
   }
 }

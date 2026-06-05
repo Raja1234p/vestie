@@ -15,7 +15,9 @@ import 'package:vestie/core/widgets/text/app_text.dart';
 import '../../cubit/user_vff_group_invitation_list_cubit.dart';
 import '../../models/user_vff_hub_ui_model.dart';
 import '../user_vff_group_invitation_card.dart';
+import '../user_vff_inbox_interaction_lock.dart';
 import '../user_vff_hub_empty_body.dart';
+import '../user_vff_inbox_interaction_lock.dart';
 import '../user_vff_shimmers.dart';
 
 /// Full group invitation list scaffold.
@@ -93,29 +95,30 @@ final class UserVffGroupInvitationsScaffold extends StatelessWidget {
                       final acting = state.actingRow;
                       final inboxBusy = acting != null;
 
-                      return ListView.builder(
-                        physics: const BouncingScrollPhysics(),
-                        padding: EdgeInsets.only(bottom: AppDimens.v24),
-                        itemCount: items.length,
-                        itemBuilder: (_, i) {
-                          final g = items[i];
-                          return UserVffGroupInvitationCard(
-                            item: g,
-                            actingRow: acting,
-                            onPrimary: inboxBusy
-                                ? null
-                                : () {
-                                    if (g.kind ==
-                                        UserVffGroupInviteKind
-                                            .memberRequestJoin) {
-                                      return;
-                                    }
-                                    cubit.accept(g);
-                                  },
-                            onDecline:
-                                inboxBusy ? null : () => cubit.decline(g),
-                          );
-                        },
+                      return UserVffInboxInteractionLock(
+                        locked: inboxBusy,
+                        child: ListView.builder(
+                          physics: inboxBusy
+                              ? const NeverScrollableScrollPhysics()
+                              : const BouncingScrollPhysics(),
+                          padding: EdgeInsets.only(bottom: AppDimens.v24),
+                          itemCount: items.length,
+                          itemBuilder: (_, i) {
+                            final g = items[i];
+                            return UserVffGroupInvitationCard(
+                              item: g,
+                              actingRow: acting,
+                              onPrimary: () {
+                                if (g.kind ==
+                                    UserVffGroupInviteKind.memberRequestJoin) {
+                                  return;
+                                }
+                                cubit.accept(g);
+                              },
+                              onDecline: () => cubit.decline(g),
+                            );
+                          },
+                        ),
                       );
                     },
                   ),

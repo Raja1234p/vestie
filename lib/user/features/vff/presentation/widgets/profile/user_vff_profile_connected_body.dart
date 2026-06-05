@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:vestie/app/router/app_routes.dart';
-import 'package:vestie/app/router/route_args/user_vff_flow_args.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
@@ -157,12 +154,22 @@ final class UserVffProfileConnectedBody extends StatelessWidget {
   ) async {
     final ok = await cubit.joinFromVff(row.projectId);
     if (!context.mounted || !ok) return;
-    context.push(
-      AppRoutes.userVffInvitesSent,
-      extra: UserVffInvitesSentRouteArgs(
-        inviteCount: 1,
+
+    if (row.action == UserVffJoinedProjectAction.requestToJoin) {
+      openProjectJoinRequestSentSuccess(
+        context,
+        projectId: row.projectId,
         projectName: row.title,
-      ),
+        isInvestment: row.isInvestment,
+      );
+      return;
+    }
+
+    openProjectJoinedSuccess(
+      context,
+      projectId: row.projectId,
+      projectName: row.title,
+      isInvestment: row.isInvestment,
     );
   }
 }

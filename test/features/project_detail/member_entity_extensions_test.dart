@@ -7,6 +7,7 @@ MemberEntity _member({
   VffConnectionState vffConnectionState = VffConnectionState.none,
   bool vffAdded = false,
   String id = 'u1',
+  String? pendingVffRequestId,
 }) {
   return MemberEntity(
     id: id,
@@ -18,6 +19,7 @@ MemberEntity _member({
     contributedAmount: 0,
     vffConnectionState: vffConnectionState,
     vffAdded: vffAdded,
+    pendingVffRequestId: pendingVffRequestId,
   );
 }
 
@@ -60,6 +62,35 @@ void main() {
 
       expect(merged.vffConnectionState, VffConnectionState.connected);
       expect(merged.vffAdded, isTrue);
+    });
+
+    test('normalizes pending request id to pending outgoing after reload', () {
+      final seed = _member();
+      final fromApi = _member(pendingVffRequestId: 'req-42');
+
+      final merged = seed.mergedWithActivity(fromApi);
+
+      expect(merged.hasPendingVffOutgoing, isTrue);
+      expect(merged.vffConnectionState, VffConnectionState.pendingOutgoing);
+      expect(merged.pendingVffRequestId, 'req-42');
+    });
+  });
+
+  group('MemberEntity.hasPendingVffOutgoing', () {
+    test('is true when pendingVffRequestId is set without enum state', () {
+      final member = _member(pendingVffRequestId: 'req-1');
+
+      expect(member.hasPendingVffOutgoing, isTrue);
+    });
+
+    test('is false when connected even if pending id is stale', () {
+      final member = _member(
+        vffConnectionState: VffConnectionState.connected,
+        pendingVffRequestId: 'req-1',
+        vffAdded: true,
+      );
+
+      expect(member.hasPendingVffOutgoing, isFalse);
     });
   });
 }

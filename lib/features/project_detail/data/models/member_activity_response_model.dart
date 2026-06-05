@@ -294,24 +294,7 @@ class MemberActivityResponseModel {
   }
 
   static VffConnectionState _readVffConnectionState(Map<String, dynamic> json) {
-    final root = VffConnectionState.parse(
-      json.safeStringNullable('vffConnectionState'),
-    );
-    if (root != VffConnectionState.none) return root;
-
-    final nested = _nested(json, const [
-      'membership',
-      'member',
-      'viewerMembership',
-      'profile',
-    ]);
-    if (nested != null) {
-      final fromNested = VffConnectionState.parse(
-        nested.safeStringNullable('vffConnectionState'),
-      );
-      if (fromNested != VffConnectionState.none) return fromNested;
-    }
-    return VffConnectionState.none;
+    return membershipVffConnectionStateFromJson(json);
   }
 
   static MemberActivityTransactionEntity _mapTransaction(

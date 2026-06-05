@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/core/constants/app_assets.dart';
+import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_network_avatar.dart';
@@ -26,7 +27,7 @@ class UserVffMyVffRow extends StatelessWidget {
     final canOpen = onOpen != null && !row.isPendingSent;
 
     return Padding(
-      padding: EdgeInsets.only(bottom: 12.h),
+      padding: EdgeInsets.only(bottom: AppDimens.v12),
       child: Material(
         color: AppColors.grey100,
         shape: RoundedRectangleBorder(
@@ -37,7 +38,7 @@ class UserVffMyVffRow extends StatelessWidget {
         child: InkWell(
           onTap: canOpen ? onOpen : null,
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+            padding: EdgeInsets.all(AppDimens.p16),
             child: Row(
               children: [
                 AppNetworkAvatar(
@@ -100,14 +101,15 @@ class _RequestSentBadge extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       decoration: BoxDecoration(
         color: AppColors.vffRequestSentChipBg,
-        borderRadius: BorderRadius.circular(8.r),
+        borderRadius: BorderRadius.circular(AppRadius.vffHubRequestActionButton),
+        border: Border.all(color: AppColors.vffRequestSentChipBorder, width: 1),
       ),
       child: AppText(
         AppStrings.userVffStatusRequestSentSmall,
         style: GoogleFonts.lato(
           fontSize: 13.sp,
           fontWeight: FontWeight.w600,
-          color: AppColors.neutral1200,
+          color: AppColors.vffRequestSentChipLabel,
         ),
       ),
     );

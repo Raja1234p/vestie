@@ -65,16 +65,10 @@ final class UserVffHubMyVffsTab extends StatelessWidget {
             ),
           ),
         ],
-        if (connected.isNotEmpty && sentOutgoing.isNotEmpty)
-          SizedBox(height: AppDimens.v14),
-        if (sentOutgoing.isNotEmpty) ...[
-          const UserVffSectionHeader(
-            title: AppStrings.userVffSectionSentVffRequests,
-          ),
+        if (sentOutgoing.isNotEmpty)
           ...sentOutgoing.map(
             (row) => UserVffMyVffRow(row: row),
           ),
-        ],
       ],
     );
   }

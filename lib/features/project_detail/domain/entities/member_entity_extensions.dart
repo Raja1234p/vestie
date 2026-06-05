@@ -61,13 +61,14 @@ extension MemberEntityApiIds on MemberEntity {
 
   /// Trust activity API for disconnect; keep route seed only for optimistic pending.
   VffConnectionState _mergedVffConnectionState(MemberEntity fromApi) {
-    if (fromApi.isVffConnected || fromApi.hasPendingVffOutgoing) {
-      return fromApi.vffConnectionState;
+    if (fromApi.isVffConnected) return VffConnectionState.connected;
+    if (fromApi.hasPendingVffOutgoing) {
+      return VffConnectionState.pendingOutgoing;
     }
     if (fromApi.vffConnectionState != VffConnectionState.none) {
       return fromApi.vffConnectionState;
     }
-    if (hasPendingVffOutgoing) return vffConnectionState;
+    if (hasPendingVffOutgoing) return VffConnectionState.pendingOutgoing;
     return VffConnectionState.none;
   }
 }

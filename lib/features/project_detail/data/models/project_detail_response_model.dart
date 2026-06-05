@@ -373,9 +373,7 @@ class _MembershipPayload {
         badge: _jsonString(json['badge']),
         photoUrl: membershipPhotoUrlFromJson(json),
         vffAdded: membershipVffAddedFromJson(json),
-        vffConnectionState: VffConnectionState.parse(
-          json.safeStringNullable('vffConnectionState'),
-        ),
+        vffConnectionState: membershipVffConnectionStateFromJson(json),
         canSendVffRequest: json.safeBool('canSendVffRequest'),
         pendingVffRequestId: membershipPendingVffRequestId(json),
       );

@@ -152,6 +152,8 @@ class AppRadius {
 
   static double get r4 => 4.0.r;
   static double get r8 => 8.0.r;
+  /// VFF hub Accept / Decline / Request Sent action corners.
+  static double get vffHubRequestActionButton => 10.0.r;
   /// [AppActionDialog] primary/secondary action corners (Figma: 24).
   static double get dialogActionButton => r24;
   static double get r12 => 12.0.r;

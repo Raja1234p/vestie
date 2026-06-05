@@ -9,6 +9,7 @@ import '../../domain/usecases/vff_usecases.dart';
 import '../mappers/user_vff_hub_mapper.dart';
 import '../models/user_vff_hub_ui_model.dart';
 import '../models/user_vff_inbox_action.dart';
+import 'user_vff_inbox_mutation_guard_mixin.dart';
 import 'user_vff_inbox_sync_mixin.dart';
 
 enum UserVffIncomingRequestListStatus { loading, loaded, error }
@@ -48,7 +49,7 @@ final class UserVffIncomingRequestListState extends Equatable {
 
 final class UserVffIncomingRequestListCubit
     extends Cubit<UserVffIncomingRequestListState>
-    with UserVffInboxSyncMixin {
+    with UserVffInboxSyncMixin, UserVffInboxMutationGuardMixin {
   UserVffIncomingRequestListCubit({
     required GetVffReceivedInboxUseCase getVffReceivedInboxUseCase,
     required AcceptVffRequestUseCase acceptVffRequestUseCase,
@@ -102,17 +103,6 @@ final class UserVffIncomingRequestListCubit
     );
   }
 
-  Future<void> _reloadSilent() async {
-    final inbox = await syncReceivedInbox();
-    if (isClosed || inbox == null) return;
-    emit(
-      state.copyWith(
-        status: UserVffIncomingRequestListStatus.loaded,
-        items: inbox.incoming,
-      ),
-    );
-  }
-
   Future<bool> accept(UserVffIncomingRequestUi row) {
     return _run(
       () => _acceptVffRequestUseCase(row.id),
@@ -137,41 +127,72 @@ final class UserVffIncomingRequestListCubit
     required bool isAccept,
     required bool refreshMyVffs,
   }) async {
-    if (state.actingRow != null) return false;
+    if (!beginInboxMutation()) return false;
+    if (state.actingRow != null) {
+      endInboxMutation();
+      return false;
+    }
 
-    emit(
-      state.copyWith(
-        actingRow: UserVffInboxRowAction(
-          itemId: row.id,
-          kind: UserVffInboxItemKind.vffRequest,
-          isAccept: isAccept,
-        ),
-        clearError: true,
-      ),
-    );
-
-    final result = await call();
-    if (isClosed) return false;
-
-    return await result.fold(
-      (failure) async {
-        emit(
-          state.copyWith(
-            clearActingRow: true,
-            errorMessage: FailureMapper.userMessage(failure),
+    try {
+      emit(
+        state.copyWith(
+          actingRow: UserVffInboxRowAction(
+            itemId: row.id,
+            kind: UserVffInboxItemKind.vffRequest,
+            isAccept: isAccept,
           ),
-        );
-        return false;
-      },
-      (_) async {
-        await _reloadSilent();
-        if (refreshMyVffs) {
-          await syncMyVffs();
-        }
-        if (isClosed) return false;
-        emit(state.copyWith(clearActingRow: true));
-        return true;
-      },
-    );
+          clearError: true,
+        ),
+      );
+
+      final result = await call();
+      if (isClosed) return false;
+
+      return await result.fold(
+        (failure) async {
+          emit(
+            state.copyWith(
+              clearActingRow: true,
+              errorMessage: FailureMapper.userMessage(failure),
+            ),
+          );
+          return false;
+        },
+        (_) async {
+          emit(
+            state.copyWith(
+              items: state.items
+                  .where((item) => item.id != row.id)
+                  .toList(growable: false),
+              clearActingRow: true,
+            ),
+          );
+          final reloadFuture = reloadReceivedInbox();
+          final myVffsFuture =
+              refreshMyVffs ? syncMyVffs() : Future.value(null);
+          final reloadResult = await reloadFuture;
+          await myVffsFuture;
+          if (isClosed) return false;
+
+          reloadResult.fold(
+            (failure) => emit(
+              state.copyWith(
+                errorMessage: FailureMapper.userMessage(failure),
+              ),
+            ),
+            (inbox) => emit(
+              state.copyWith(
+                status: UserVffIncomingRequestListStatus.loaded,
+                items: inbox.incoming,
+                clearError: true,
+              ),
+            ),
+          );
+          return true;
+        },
+      );
+    } finally {
+      endInboxMutation();
+    }
   }
 }

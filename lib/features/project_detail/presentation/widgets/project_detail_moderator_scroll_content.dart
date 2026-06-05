@@ -105,6 +105,8 @@ class _ProjectDetailModeratorScrollContentState
                         context,
                         project: project,
                         action: action,
+                        refreshHomeOnPop: widget.refreshHomeOnPop,
+                        refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
                       ),
                       onMemberMenuSelected: (action) =>
                           ProjectDetailNavigationHelpers.handleMemberAction(

@@ -285,8 +285,14 @@ class AppColors {
   static const Color vffJoinedProjectRequestBg = grey100;
   static const Color vffJoinedProjectRequestBorder = purple300;
 
-  /// Request Sent chip / disabled CTA (#F5F0FE).
-  static const Color vffRequestSentChipBg = purple100;
+  /// VFF hub — inbound request / invite card (#F8F7FA fill, #BFBFBF border).
+  static const Color vffInboxRequestCardBg = grey100;
+  static const Color vffInboxRequestCardBorder = neutral500;
+
+  /// Request Sent chip / disabled CTA — white, #D9D9D9 border, #737373 label.
+  static const Color vffRequestSentChipBg = surface;
+  static const Color vffRequestSentChipBorder = neutral400;
+  static const Color vffRequestSentChipLabel = neutral700;
   static const Color projectMemberAvatarBg = purple300;
   static const Color projectMemberAvatarInitials = neutral1200;
 

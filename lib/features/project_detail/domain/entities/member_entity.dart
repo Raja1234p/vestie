@@ -40,8 +40,13 @@ class MemberEntity {
 
   bool get isVffConnected => vffConnectionState == VffConnectionState.connected;
 
-  bool get hasPendingVffOutgoing =>
-      vffConnectionState == VffConnectionState.pendingOutgoing;
+  bool get hasPendingVffOutgoing {
+    if (isVffConnected) return false;
+    if (vffConnectionState == VffConnectionState.pendingOutgoing) return true;
+    if (vffConnectionState == VffConnectionState.pendingIncoming) return false;
+    final pendingId = pendingVffRequestId?.trim();
+    return pendingId != null && pendingId.isNotEmpty;
+  }
 
   /// Connected / VFF on this membership — row UI hides for viewer self via [ProjectMemberAddFriendVisibility].
   bool get showsVffBadgeOnMemberRow => isVffConnected || vffAdded;

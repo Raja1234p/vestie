@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
@@ -32,18 +33,20 @@ class UserVffGroupInvitationCard extends StatelessWidget {
                 item.primaryIsRequestToJoin
             ? AppStrings.userVffRequestToJoin
             : AppStrings.btnJoin;
-
     return Padding(
-      padding: EdgeInsets.only(bottom: 12.h),
+      padding: EdgeInsets.only(bottom: AppDimens.v12),
       child: Material(
-        color: AppColors.grey100,
+        color: AppColors.vffInboxRequestCardBg,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.r),
-          side: const BorderSide(color: AppColors.neutral400, width: 1),
+          side: const BorderSide(
+            color: AppColors.vffInboxRequestCardBorder,
+            width: 1,
+          ),
         ),
         clipBehavior: Clip.antiAlias,
         child: Padding(
-          padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 14.h),
+          padding: EdgeInsets.all(AppDimens.p16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

@@ -404,6 +404,12 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
         fetched.member.isVffConnected) {
       return fetched;
     }
+    final fetchedPendingId = fetched.pendingVffRequestId?.trim() ?? '';
+    if (fetched.member.hasPendingVffOutgoing || fetchedPendingId.isNotEmpty) {
+      return fetched.copyWith(
+        vffConnectionState: VffConnectionState.pendingOutgoing,
+      );
+    }
     if (previous.vffConnectionState != VffConnectionState.pendingOutgoing) {
       return fetched;
     }

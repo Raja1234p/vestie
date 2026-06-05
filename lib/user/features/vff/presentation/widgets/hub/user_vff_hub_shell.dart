@@ -15,6 +15,7 @@ import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import '../../cubit/user_vff_hub_cubit.dart';
 import '../../cubit/user_vff_hub_state.dart';
+import '../user_vff_inbox_interaction_lock.dart';
 import '../user_vff_shimmers.dart';
 import 'user_vff_hub_my_vffs_tab.dart';
 import 'user_vff_hub_requests_tab.dart';
@@ -47,58 +48,73 @@ final class UserVffHubShell extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.fromLTRB(
                       AppDimens.p16,
-                      AppDimens.v24,
+                      AppDimens.v12,
                       AppDimens.p16,
                       0,
                     ),
-                    child: BlocSelector<UserVffHubCubit, UserVffHubState, int>(
-                      selector: (s) => s.tabIndex,
-                      builder: (context, idx) => AppToggleTabBar(
-                        outerHeight:
-                            AppDimens.projectDetailToggleBarOuterHeight,
-                        innerTabHeight:
-                            AppDimens.projectDetailToggleTabInnerHeight,
-                        outerBorderRadius:
-                            AppDimens.projectDetailToggleBarOuterRadius,
-                        innerBorderRadius:
-                            AppDimens.projectDetailToggleTabInnerRadius,
-                        labelFontSize:
-                            AppDimens.projectDetailToggleLabelFontSize,
-                        labelFontWeight: FontWeight.w500,
-                        activeLabelColor: AppColors.surface,
-                        inactiveLabelColor: AppColors.grey1100,
-                        tabs: const [
-                          AppStrings.userVffTabMyVffs,
-                          AppStrings.userVffTabRequests,
-                        ],
-                        activeIndex: idx,
-                        onTabSelected: (i) =>
-                            context.read<UserVffHubCubit>().selectTab(i),
+                    child: BlocSelector<UserVffHubCubit, UserVffHubState,
+                        ({int tabIndex, bool inboxBusy})>(
+                      selector: (s) =>
+                          (tabIndex: s.tabIndex, inboxBusy: s.isInboxActionBusy),
+                      builder: (context, data) => IgnorePointer(
+                        ignoring: data.inboxBusy,
+                        child: AppToggleTabBar(
+                          outerHeight:
+                              AppDimens.projectDetailToggleBarOuterHeight,
+                          innerTabHeight:
+                              AppDimens.projectDetailToggleTabInnerHeight,
+                          outerBorderRadius:
+                              AppDimens.projectDetailToggleBarOuterRadius,
+                          innerBorderRadius:
+                              AppDimens.projectDetailToggleTabInnerRadius,
+                          labelFontSize:
+                              AppDimens.projectDetailToggleLabelFontSize,
+                          labelFontWeight: FontWeight.w500,
+                          activeLabelColor: AppColors.surface,
+                          inactiveLabelColor: AppColors.grey1100,
+                          tabs: const [
+                            AppStrings.userVffTabMyVffs,
+                            AppStrings.userVffTabRequests,
+                          ],
+                          activeIndex: data.tabIndex,
+                          onTabSelected: data.inboxBusy
+                              ? (_) {}
+                              : (i) => context
+                                  .read<UserVffHubCubit>()
+                                  .selectTab(i),
+                        ),
                       ),
                     ),
                   ),
                   SizedBox(height: 24.h),
                   Expanded(
-                    child: BlocConsumer<UserVffHubCubit, UserVffHubState>(
-                      listenWhen: (prev, curr) {
-                        final err = curr.errorMessage;
-                        final reqErr = curr.requestsErrorMessage;
-                        return (prev.errorMessage != err && err != null) ||
-                            (prev.requestsErrorMessage != reqErr &&
-                                reqErr != null);
-                      },
-                      listener: (context, hubState) {
-                        final message = hubState.errorMessage ??
-                            hubState.requestsErrorMessage;
-                        if (message == null || message.isEmpty) return;
-                        AppSnackBar.showError(context, message);
-                      },
-                      builder: (context, hubState) {
-                        if (hubState.tabIndex == 0) {
-                          return _buildMyVffsBody(context, hubState);
-                        }
-                        return _buildRequestsBody(context, hubState);
-                      },
+                    child: BlocSelector<UserVffHubCubit, UserVffHubState, bool>(
+                      selector: (s) => s.isInboxActionBusy,
+                      builder: (context, inboxBusy) =>
+                          UserVffInboxInteractionLock(
+                        locked: inboxBusy,
+                        child: BlocConsumer<UserVffHubCubit, UserVffHubState>(
+                          listenWhen: (prev, curr) {
+                            final err = curr.errorMessage;
+                            final reqErr = curr.requestsErrorMessage;
+                            return (prev.errorMessage != err && err != null) ||
+                                (prev.requestsErrorMessage != reqErr &&
+                                    reqErr != null);
+                          },
+                          listener: (context, hubState) {
+                            final message = hubState.errorMessage ??
+                                hubState.requestsErrorMessage;
+                            if (message == null || message.isEmpty) return;
+                            AppSnackBar.showError(context, message);
+                          },
+                          builder: (context, hubState) {
+                            if (hubState.tabIndex == 0) {
+                              return _buildMyVffsBody(context, hubState);
+                            }
+                            return _buildRequestsBody(context, hubState);
+                          },
+                        ),
+                      ),
                     ),
                   ),
                 ],

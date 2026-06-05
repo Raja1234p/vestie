@@ -19,6 +19,7 @@ enum LeaderMenuAction {
   markSuccessful,
   stopContributions,
   cancelProject,
+  leaveProject,
 }
 
 /// Storyboard distinction: primary owner sees success/cancel ownership actions.
@@ -118,6 +119,16 @@ class LeaderActionMenu extends StatelessWidget {
       LeaderMenuAction.inviteMembers,
       AppAssets.plusSign,
       AppStrings.menuInviteMembers,
+    );
+    if (out.isNotEmpty) out.add(_divider());
+    out.add(
+      _buildItem(
+        value: LeaderMenuAction.leaveProject,
+        iconPath: AppAssets.iconLeaveGroup,
+        label: AppStrings.menuLeaveProject,
+        iconColor: AppColors.red900,
+        labelColor: AppColors.red900,
+      ),
     );
 
     return out;

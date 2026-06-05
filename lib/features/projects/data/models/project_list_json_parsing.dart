@@ -1,5 +1,6 @@
 import '../../../../core/utils/roi_display_format.dart';
 import '../../../../core/utils/safe_parser.dart';
+import '../../../../user/features/vff/domain/entities/vff_enums.dart';
 
 /// Maps API enum integers to the string labels used in [ProjectSummaryEntity]
 /// and home [Project] mapping (see [ProjectsRepositoryImpl._mapCategory]).
@@ -28,6 +29,43 @@ String? membershipPendingVffRequestId(Map<String, dynamic> json) {
   final raw = json.safeStringNullable('pendingVffRequestId');
   if (raw == null || raw.trim().isEmpty) return null;
   return raw.trim();
+}
+
+/// Resolves VFF connection state from membership JSON; pending request id implies outgoing.
+VffConnectionState membershipVffConnectionStateFromJson(
+  Map<String, dynamic> json, {
+  List<String> nestedKeys = const [
+    'membership',
+    'member',
+    'viewerMembership',
+    'profile',
+  ],
+}) {
+  final root = VffConnectionState.parse(
+    json.safeStringNullable('vffConnectionState'),
+  );
+  if (root != VffConnectionState.none) return root;
+
+  for (final key in nestedKeys) {
+    final nested = json[key];
+    if (nested is! Map<String, dynamic>) continue;
+    final fromNested = VffConnectionState.parse(
+      nested.safeStringNullable('vffConnectionState'),
+    );
+    if (fromNested != VffConnectionState.none) return fromNested;
+  }
+
+  if (membershipPendingVffRequestId(json) != null) {
+    return VffConnectionState.pendingOutgoing;
+  }
+  for (final key in nestedKeys) {
+    final nested = json[key];
+    if (nested is! Map<String, dynamic>) continue;
+    if (membershipPendingVffRequestId(nested) != null) {
+      return VffConnectionState.pendingOutgoing;
+    }
+  }
+  return VffConnectionState.none;
 }
 
 String projectTypeApiValueToSummaryString(dynamic raw) {

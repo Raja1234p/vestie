@@ -15,6 +15,7 @@ import 'package:vestie/core/widgets/common/app_shimmer.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import '../../cubit/user_vff_incoming_request_list_cubit.dart';
 import '../user_vff_hub_empty_body.dart';
+import '../user_vff_inbox_interaction_lock.dart';
 import '../user_vff_incoming_request_card.dart';
 
 /// Full inbound VFF request list scaffold.
@@ -92,20 +93,24 @@ final class UserVffVffRequestsScaffold extends StatelessWidget {
                       final acting = state.actingRow;
                       final inboxBusy = acting != null;
 
-                      return ListView.builder(
-                        physics: const BouncingScrollPhysics(),
-                        padding: EdgeInsets.only(bottom: AppDimens.v24),
-                        itemCount: items.length,
-                        itemBuilder: (_, i) {
-                          final r = items[i];
-                          return UserVffIncomingRequestCard(
-                            item: r,
-                            actingRow: acting,
-                            onAccept: inboxBusy ? null : () => cubit.accept(r),
-                            onDecline:
-                                inboxBusy ? null : () => cubit.decline(r),
-                          );
-                        },
+                      return UserVffInboxInteractionLock(
+                        locked: inboxBusy,
+                        child: ListView.builder(
+                          physics: inboxBusy
+                              ? const NeverScrollableScrollPhysics()
+                              : const BouncingScrollPhysics(),
+                          padding: EdgeInsets.only(bottom: AppDimens.v24),
+                          itemCount: items.length,
+                          itemBuilder: (_, i) {
+                            final r = items[i];
+                            return UserVffIncomingRequestCard(
+                              item: r,
+                              actingRow: acting,
+                              onAccept: () => cubit.accept(r),
+                              onDecline: () => cubit.decline(r),
+                            );
+                          },
+                        ),
                       );
                     },
                   ),
