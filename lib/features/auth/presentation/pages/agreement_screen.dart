@@ -138,7 +138,7 @@ class _AgreementBody extends StatelessWidget {
                   // ── Continue button ───────────────────────────────────
                   AnimatedOpacity(
                     duration: const Duration(milliseconds: 250),
-                    opacity: (accepted && !state.isLoading) ? 1.0 : 0.45,
+                    opacity: accepted ? 1.0 : 0.45,
                     child: AppButton(
                       text: AppStrings.btnContinue,
                       isLoading: state.isLoading,

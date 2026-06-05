@@ -21,7 +21,9 @@ class AuthGradientButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isEnabled = onPressed != null && !isLoading;
+    final bool isEnabled = onPressed != null;
+    /// Keep gradient while [isLoading] — gray fill only when truly inactive.
+    final bool useActiveStyle = isEnabled || isLoading;
     final radius = BorderRadius.circular(borderRadius ?? 100.r);
 
     return SizedBox(
@@ -29,16 +31,18 @@ class AuthGradientButton extends StatelessWidget {
       height: 52.h,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          gradient: isEnabled
+          gradient: useActiveStyle
               ? const LinearGradient(
                   colors: [AppColors.authButtonStart, AppColors.authButtonEnd],
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
                 )
               : null,
-          color: isEnabled ? null : AppColors.authHint.withValues(alpha: 0.3),
+          color: useActiveStyle
+              ? null
+              : AppColors.authHint.withValues(alpha: 0.3),
           borderRadius: radius,
-          boxShadow: isEnabled
+          boxShadow: useActiveStyle
               ? [
                   BoxShadow(
                     color: AppColors.authButtonEnd.withValues(alpha: 0.35),
