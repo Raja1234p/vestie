@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import '../../features/bank_accounts/domain/bank_accounts_cache.dart';
 import '../di/service_locator.dart';
 
 /// Warms [BankAccountsCache] after login (Home/Dashboard) so withdraw flow is instant.
@@ -10,6 +11,8 @@ abstract final class BankAccountsPrefetch {
 
   /// Fetches bank accounts when cache is empty; no-op if already cached.
   static Future<void> warmIfNeeded() {
+    if (BankAccountsCache.value != null) return Future.value();
+
     final existing = _inFlight;
     if (existing != null) return existing;
 
