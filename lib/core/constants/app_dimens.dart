@@ -101,6 +101,10 @@ class AppDimens {
   /// Error icon medallion diameter in dialogs.
   static double get dialogErrorIconDiameter => 72.0.r;
 
+  /// [AppAssets.failureIcon] — Figma 132×145 (screens + dialogs).
+  static double get failureIconWidth => 132.0.w;
+  static double get failureIconHeight => 145.0.h;
+
   /// Project detail member row — avatar circle (equal width & height).
   static double get projectMemberAvatarSize => 48.0.r;
 

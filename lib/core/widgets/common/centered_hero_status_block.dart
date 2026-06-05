@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../constants/app_assets.dart';
 import '../../theme/app_colors.dart';
 import '../text/app_text.dart';
+import 'failure_icon.dart';
 
 /// Centered [Image.asset] + headline + body, vertically centered in free space
 /// with [SingleChildScrollView] when content is taller than the viewport.
@@ -39,11 +41,13 @@ class CenteredHeroStatusBlock extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    imageAsset,
-                    height: imageHeight.h,
-                    fit: BoxFit.contain,
-                  ),
+                  imageAsset == AppAssets.failureIcon
+                      ? const FailureIcon()
+                      : Image.asset(
+                          imageAsset,
+                          height: imageHeight.h,
+                          fit: BoxFit.contain,
+                        ),
                   SizedBox(height: 24.h),
                   AppText(
                     headline,

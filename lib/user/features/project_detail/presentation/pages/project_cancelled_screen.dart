@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_destructive_notice_bar.dart';
+import 'package:vestie/core/widgets/common/failure_icon.dart';
 import 'package:vestie/core/widgets/common/app_outline_neutral_button.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
@@ -42,11 +42,7 @@ class ProjectCancelledScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Image.asset(
-                            AppAssets.failureIcon,
-                            height: 140.h,
-                            fit: BoxFit.contain,
-                          ),
+                          const FailureIcon(),
                           SizedBox(height: 24.h),
                           AppText(
                             AppStrings.projectCancelledTitle,

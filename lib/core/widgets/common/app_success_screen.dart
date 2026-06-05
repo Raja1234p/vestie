@@ -5,6 +5,7 @@ import '../../constants/app_assets.dart';
 import '../../theme/app_colors.dart';
 import '../text/app_text.dart';
 import 'app_button.dart';
+import 'failure_icon.dart';
 import 'flow_screen_footer.dart';
 
 /// A globally reusable full-page success screen.
@@ -195,6 +196,9 @@ class _SuccessIllustration extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (path == AppAssets.failureIcon) {
+      return const FailureIcon();
+    }
     final s = 174.w;
     return Image.asset(
       path,

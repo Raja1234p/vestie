@@ -33,18 +33,35 @@ enum ViewerMembershipRole {
     }
   }
 
-  /// Detail UI uses [projectViewerRole] first, then [membershipRole].
+  /// Resolves the signed-in viewer's role from `project.viewerRole` and
+  /// `viewerMembership.role`, preferring the **highest** privilege.
+  ///
+  /// Some API payloads send `project.viewerRole: Member` for co-leaders while
+  /// `viewerMembership.role` is `CoLeader` — taking project first hid remove-member
+  /// and other moderator actions.
   static ViewerMembershipRole forProjectDetail({
     required String projectViewerRole,
     required String membershipRole,
   }) {
-    if (_hasExplicitRole(projectViewerRole)) {
-      return parse(projectViewerRole);
-    }
-    if (_hasExplicitRole(membershipRole)) {
-      return parse(membershipRole);
-    }
-    return ViewerMembershipRole.member;
+    final fromProject = _hasExplicitRole(projectViewerRole)
+        ? parse(projectViewerRole)
+        : ViewerMembershipRole.member;
+    final fromMembership = _hasExplicitRole(membershipRole)
+        ? parse(membershipRole)
+        : ViewerMembershipRole.member;
+    return _higherPrivilege(fromProject, fromMembership);
+  }
+
+  static ViewerMembershipRole _higherPrivilege(
+    ViewerMembershipRole a,
+    ViewerMembershipRole b,
+  ) {
+    int rank(ViewerMembershipRole role) => switch (role) {
+          ViewerMembershipRole.groupLeader => 3,
+          ViewerMembershipRole.coLeader => 2,
+          ViewerMembershipRole.member => 1,
+        };
+    return rank(a) >= rank(b) ? a : b;
   }
 
   static bool _hasExplicitRole(String raw) {

@@ -7,13 +7,10 @@ import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_failure_dialog.dart';
 import 'package:vestie/core/widgets/common/app_outline_neutral_button.dart';
 import 'package:vestie/core/widgets/common/centered_hero_status_block.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
-import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
-import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import '../navigation/open_project_from_card.dart';
 import '../widgets/leave_project_destructive_button.dart';
 import '../widgets/leave_project_dialogs.dart';
@@ -71,51 +68,43 @@ class _LeaveProjectWarningScreenState extends State<LeaveProjectWarningScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: PostAuthGradientBackground(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            PostAuthHeader(
-              title: widget.args.projectName,
-              leading: AppBackButton(
-                onPressed: () {
-                  if (!_isLeaving) context.pop();
-                },
-              ),
-            ),
-            Expanded(
+      backgroundColor: AppColors.surface,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: SafeArea(
+              bottom: false,
               child: CenteredHeroStatusBlock(
                 imageAsset: AppAssets.failureIcon,
                 headline: AppStrings.leaveProjectWarningTitle,
                 body: AppStrings.leaveProjectWarningBody,
-                imageHeight: 96,
                 bodyFontSize: 20,
                 bodyColor: AppColors.grey900,
               ),
             ),
-            FlowScreenFooter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  LeaveProjectDestructiveButton(
-                    label: AppStrings.leaveProjectWarningTitle,
-                    isLoading: _isLeaving,
-                    onPressed: _onLeaveProjectPressed,
-                  ),
-                  SizedBox(height: 12.h),
-                  AppOutlineNeutralButton(
-                    label: AppStrings.btnCancel,
-                    borderless: true,
-                    onPressed: () {
-                      if (!_isLeaving) context.pop();
-                    },
-                  ),
-                ],
-              ),
+          ),
+          FlowScreenFooter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                LeaveProjectDestructiveButton(
+                  label: AppStrings.leaveProjectWarningTitle,
+                  isLoading: _isLeaving,
+                  onPressed: _onLeaveProjectPressed,
+                ),
+                SizedBox(height: 12.h),
+                AppOutlineNeutralButton(
+                  label: AppStrings.btnCancel,
+                  borderless: true,
+                  onPressed: () {
+                    if (!_isLeaving) context.pop();
+                  },
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

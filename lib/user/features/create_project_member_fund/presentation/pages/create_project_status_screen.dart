@@ -4,11 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
-import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_success_screen.dart';
+import 'package:vestie/core/widgets/common/failure_icon.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 
 import '../models/create_project_status_screen_args.dart';
@@ -44,7 +44,7 @@ class CreateProjectStatusScreen extends StatelessWidget {
             child: Column(
               children: [
                 SizedBox(height: 24.h),
-                Image.asset(AppAssets.failureIcon, width: 120.w, height: 120.w),
+                const FailureIcon(),
                 SizedBox(height: 28.h),
                 Text(
                   AppStrings.transactionStatusFailureTitle,

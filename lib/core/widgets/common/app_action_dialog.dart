@@ -8,6 +8,7 @@ import '../../constants/app_strings.dart';
 import '../../theme/app_colors.dart';
 import '../text/app_text.dart';
 import 'app_svg_icon.dart';
+import 'failure_icon.dart';
 
 class AppActionDialog extends StatelessWidget {
   final String title;
@@ -185,6 +186,9 @@ class _DialogIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (iconAsset != null) {
+      if (iconAsset == AppAssets.failureIcon) {
+        return const FailureIcon();
+      }
       final isSvg = iconAsset!.toLowerCase().endsWith('.svg');
       return SizedBox(
         width: 100.w,
