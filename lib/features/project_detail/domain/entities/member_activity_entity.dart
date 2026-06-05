@@ -52,12 +52,14 @@ class MemberActivityEntity {
       (overdueAmount != null && overdueAmount! > 0);
 
   MemberActivityEntity copyWith({
+    MemberEntity? member,
     VffConnectionState? vffConnectionState,
     bool? canSendVffRequest,
     String? pendingVffRequestId,
+    bool clearPendingVffRequestId = false,
   }) {
     return MemberActivityEntity(
-      member: member,
+      member: member ?? this.member,
       isCoLeader: isCoLeader,
       totalContributed: totalContributed,
       contributionCount: contributionCount,
@@ -67,7 +69,9 @@ class MemberActivityEntity {
       totalReturned: totalReturned,
       vffConnectionState: vffConnectionState ?? this.vffConnectionState,
       canSendVffRequest: canSendVffRequest ?? this.canSendVffRequest,
-      pendingVffRequestId: pendingVffRequestId ?? this.pendingVffRequestId,
+      pendingVffRequestId: clearPendingVffRequestId
+          ? null
+          : (pendingVffRequestId ?? this.pendingVffRequestId),
       transactions: transactions,
     );
   }

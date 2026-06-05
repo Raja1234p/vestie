@@ -24,6 +24,7 @@ class AppActionDialog extends StatelessWidget {
   final String? iconAsset;
   final String? glyphAsset;
   final Color? iconColor;
+  final bool actionsInRow;
   final VoidCallback onPrimary;
   final VoidCallback onSecondary;
 
@@ -43,6 +44,7 @@ class AppActionDialog extends StatelessWidget {
     this.iconAsset,
     this.glyphAsset,
     this.iconColor,
+    this.actionsInRow = false,
   });
 
   static Future<void> show(
@@ -59,6 +61,7 @@ class AppActionDialog extends StatelessWidget {
     String? iconAsset,
     String? glyphAsset,
     Color? iconColor,
+    bool actionsInRow = false,
     required VoidCallback onPrimary,
   }) {
     return showDialog(
@@ -80,6 +83,7 @@ class AppActionDialog extends StatelessWidget {
           iconAsset: iconAsset,
           glyphAsset: glyphAsset,
           iconColor: iconColor,
+          actionsInRow: actionsInRow,
           onPrimary: onPrimary,
           onSecondary: () => Navigator.of(context).pop(),
         ),
@@ -160,25 +164,46 @@ class AppActionDialog extends StatelessWidget {
                 ),
           ),
           SizedBox(height: 35.h),
-          _DialogButton(
-            label: primaryLabel,
-            onTap: onPrimary,
-            textColor: primaryTextColor,
-            bgColor: primaryColor,
-            borderColor: primaryBorderColor ?? primaryColor,
-          ),
-          if (showSecondary) ...[
-            SizedBox(height: 10.h),
-            _DialogButton(
-              label: secondaryLabel,
-              onTap: onSecondary,
-              textColor: AppColors.neutral1200,
-              bgColor: Colors.transparent,
-              borderColor: AppColors.neutral1200,
-            ),
-          ],
+          _buildActions(),
         ],
       ),
+    );
+  }
+
+  Widget _buildActions() {
+    final primary = _DialogButton(
+      label: primaryLabel,
+      onTap: onPrimary,
+      textColor: primaryTextColor,
+      bgColor: primaryColor,
+      borderColor: primaryBorderColor ?? primaryColor,
+    );
+    if (!showSecondary) {
+      return primary;
+    }
+    final secondary = _DialogButton(
+      label: secondaryLabel,
+      onTap: onSecondary,
+      textColor: AppColors.neutral1200,
+      bgColor: Colors.transparent,
+      borderColor: AppColors.neutral1200,
+    );
+    if (actionsInRow) {
+      return Row(
+        children: [
+          Expanded(child: secondary),
+          SizedBox(width: 12.w),
+          Expanded(child: primary),
+        ],
+      );
+    }
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        primary,
+        SizedBox(height: 10.h),
+        secondary,
+      ],
     );
   }
 }

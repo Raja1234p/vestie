@@ -62,6 +62,7 @@ class MemberEntity {
     VffConnectionState? vffConnectionState,
     bool? canSendVffRequest,
     String? pendingVffRequestId,
+    bool clearPendingVffRequestId = false,
   }) {
     return MemberEntity(
       id: id ?? this.id,
@@ -78,7 +79,9 @@ class MemberEntity {
       vffAdded: vffAdded ?? this.vffAdded,
       vffConnectionState: vffConnectionState ?? this.vffConnectionState,
       canSendVffRequest: canSendVffRequest ?? this.canSendVffRequest,
-      pendingVffRequestId: pendingVffRequestId ?? this.pendingVffRequestId,
+      pendingVffRequestId: clearPendingVffRequestId
+          ? null
+          : (pendingVffRequestId ?? this.pendingVffRequestId),
     );
   }
 }

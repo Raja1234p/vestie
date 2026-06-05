@@ -62,7 +62,7 @@ class MemberDetailScreen extends StatelessWidget {
 
   final bool isLeaderView;
 
-  final VoidCallback? onProjectMembersChanged;
+  final Future<void> Function()? onProjectMembersChanged;
 
 
 
@@ -168,7 +168,7 @@ class _MemberDetailView extends StatelessWidget {
 
   final bool isLeaderView;
 
-  final VoidCallback? onProjectMembersChanged;
+  final Future<void> Function()? onProjectMembersChanged;
 
 
 
@@ -190,7 +190,11 @@ class _MemberDetailView extends StatelessWidget {
 
   void _onStateChanged(BuildContext context, MemberDetailState state) {
 
-    if (state.isActionLoading) return;
+    if (state.isActionLoading ||
+        state.isVffRequestLoading ||
+        state.isRemoveVffLoading) {
+      return;
+    }
 
 
 
@@ -227,8 +231,6 @@ class _MemberDetailView extends StatelessWidget {
 
       case MemberDetailAction.removeCoLeader:
 
-        onProjectMembersChanged?.call();
-
         if (completed == MemberDetailAction.assignCoLeader) {
           showCoLeaderAssignedSuccess(
             context,
@@ -248,15 +250,11 @@ class _MemberDetailView extends StatelessWidget {
 
       case MemberDetailAction.sendVffRequest:
 
-        onProjectMembersChanged?.call();
-
         context.read<MemberDetailCubit>().clearStatus();
 
         break;
 
       case MemberDetailAction.removeMember:
-
-        onProjectMembersChanged?.call();
 
         showMemberRemovedSuccess(
 
@@ -340,14 +338,18 @@ class _MemberDetailView extends StatelessWidget {
     if (!context.mounted || outcome == null) return;
 
     if (outcome == MemberPenaltyActionOutcome.memberRemoved) {
-      onProjectMembersChanged?.call();
+      await context.read<MemberDetailCubit>().syncWithProjectDetail(
+            refreshMember: false,
+          );
       if (!context.mounted) return;
       context.pop(MemberDetailPopResult.memberRemoved);
       return;
     }
 
-    final refreshed = await context.read<MemberDetailCubit>().refresh();
+    await context.read<MemberDetailCubit>().syncWithProjectDetail();
     if (!context.mounted) return;
+    final refreshed = context.read<MemberDetailCubit>().state.loadStatus ==
+        MemberDetailLoadStatus.loaded;
     if (!refreshed) {
       showMemberDetailErrorDialog(
         context,
@@ -407,11 +409,10 @@ class _MemberDetailView extends StatelessWidget {
     return BlocListener<MemberDetailCubit, MemberDetailState>(
 
       listenWhen: (prev, curr) =>
-
           prev.isActionLoading != curr.isActionLoading ||
-
+          prev.isVffRequestLoading != curr.isVffRequestLoading ||
+          prev.isRemoveVffLoading != curr.isRemoveVffLoading ||
           prev.failure != curr.failure ||
-
           prev.completedAction != curr.completedAction,
 
       listener: _onStateChanged,

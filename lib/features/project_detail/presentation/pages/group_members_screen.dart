@@ -17,6 +17,7 @@ import 'package:vestie/app/router/route_args/project_detail_flow_args.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation_helpers.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_member_row.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_members_empty_state.dart';
+import 'package:vestie/features/project_detail/presentation/project_detail_reload_coordinator.dart';
 import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
 import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
 
@@ -75,7 +76,6 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
       },
       (sent) async {
         setState(() {
-          _sendingVffUserId = null;
           _members = _members
               .map(
                 (m) => m.matchesIdentity(member)
@@ -90,12 +90,14 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
               .toList(growable: false);
         });
         try {
-          context.read<ProjectDetailBloc>().add(
-                LoadProjectDetailEvent(projectId: project.id),
-              );
+          await context
+              .read<ProjectDetailBloc>()
+              .reloadDetailAndWait(project.id);
         } on ProviderNotFoundException {
-          // Opened outside project detail.
+          await ProjectDetailReloadCoordinator.reload(project.id);
         }
+        if (!mounted) return;
+        setState(() => _sendingVffUserId = null);
       },
     );
   }

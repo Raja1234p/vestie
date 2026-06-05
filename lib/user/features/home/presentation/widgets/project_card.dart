@@ -50,10 +50,10 @@ class ProjectCard extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 12.h),
       padding: EdgeInsets.all(14.w),
       decoration: BoxDecoration(
-        color: AppColors.appBgBottom,
+        color: AppColors.projectCardBg,
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: AppColors.purple300.withValues(alpha: 0.65),
+          color: AppColors.projectCardBorder,
           width: 1,
         ),
         boxShadow: [

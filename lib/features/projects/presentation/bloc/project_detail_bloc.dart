@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -160,6 +162,7 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
   final GetProjectPotUseCase? _getProjectPotUseCase;
   final ListPendingJoinRequestsUseCase? _listPendingJoinRequests;
   final SendVffRequestUseCase? _sendVffRequestUseCase;
+  final List<Completer<void>> _detailLoadWaiters = [];
 
   ProjectDetailBloc({
     required this.repository,
@@ -178,6 +181,21 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
     on<ClearMemberVffSendErrorEvent>(_onClearMemberVffSendError);
   }
 
+  /// Reloads project detail and completes when this load finishes (silent or full).
+  Future<void> reloadDetailAndWait(String projectId) {
+    final waiter = Completer<void>();
+    _detailLoadWaiters.add(waiter);
+    add(LoadProjectDetailEvent(projectId: projectId));
+    return waiter.future;
+  }
+
+  void _completeDetailLoadWaiters() {
+    for (final waiter in _detailLoadWaiters) {
+      if (!waiter.isCompleted) waiter.complete();
+    }
+    _detailLoadWaiters.clear();
+  }
+
   Future<void> _onLoadProjectDetail(
     LoadProjectDetailEvent event,
     Emitter<ProjectDetailState> emit,
@@ -192,11 +210,12 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
     }
     final result = await repository.getProjectDetail(projectId: event.projectId);
 
-    await result.fold(
-      (failure) async {
-        emit(ProjectDetailError(message: _messageFor(failure)));
-      },
-      (project) async {
+    try {
+      await result.fold(
+        (failure) async {
+          emit(ProjectDetailError(message: _messageFor(failure)));
+        },
+        (project) async {
         var pendingCount = project.pendingJoinRequestCount;
         final listPending = _listPendingJoinRequests;
         if (project.showsJoinRequestsHeaderChip && listPending != null) {
@@ -215,15 +234,18 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
           });
         }
 
-        emit(
-          ProjectDetailLoaded(
-            project: loadedProject,
-            activeTab: preservedTab,
-            pendingJoinRequestCount: pendingCount,
-          ),
-        );
-      },
-    );
+          emit(
+            ProjectDetailLoaded(
+              project: loadedProject,
+              activeTab: preservedTab,
+              pendingJoinRequestCount: pendingCount,
+            ),
+          );
+        },
+      );
+    } finally {
+      _completeDetailLoadWaiters();
+    }
   }
 
   void _onApplyContributionSubmitResult(
@@ -310,6 +332,7 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
         );
       },
       (sent) async {
+        final projectId = afterSend.project.id;
         final optimistic = afterSend.project.withUpdatedMember(
           member,
           (m) => m.copyWith(
@@ -322,10 +345,13 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
         emit(
           afterSend.copyWith(
             project: optimistic,
-            clearSendingVffUserId: true,
           ),
         );
-        add(LoadProjectDetailEvent(projectId: afterSend.project.id));
+        await reloadDetailAndWait(projectId);
+        final latest = state;
+        if (latest is ProjectDetailLoaded && latest.project.id == projectId) {
+          emit(latest.copyWith(clearSendingVffUserId: true));
+        }
       },
     );
   }

@@ -161,19 +161,20 @@ class _DiscoverBody extends StatelessWidget {
                     if (!state.loading)
                       Column(
                         children: [
+                          SizedBox(height: 22.h),
                           Padding(
                             padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0),
                             child: DiscoverSearchBar(
                               onChanged: context.read<DiscoverCubit>().search,
                             ),
                           ),
-                          SizedBox(height: 12.h),
+                          SizedBox(height: 16.h),
                           DiscoverFilterRow(
                             selected: state.selectedFilter,
                             onSelect:
                                 context.read<DiscoverCubit>().selectFilter,
                           ),
-                          SizedBox(height: 8.h),
+                          SizedBox(height: 16.h),
                         ],
                       ),
                     Expanded(

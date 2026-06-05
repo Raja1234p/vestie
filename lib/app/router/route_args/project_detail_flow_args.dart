@@ -138,7 +138,7 @@ class ProjectFundsHistoryEntryArgs {
 
 class JoinRequestsRouteArgs {
   final String projectId;
-  final VoidCallback? onRefreshProjectDetail;
+  final Future<void> Function()? onRefreshProjectDetail;
 
   const JoinRequestsRouteArgs({
     required this.projectId,
@@ -162,7 +162,7 @@ class MemberDetailRouteArgs<T> {
   /// Leader or co-leader: moderation tools (overdue, borrow context).
   final bool isLeaderView;
   /// Called after co-leader assign/remove so project detail can reload members.
-  final VoidCallback? onProjectMembersChanged;
+  final Future<void> Function()? onProjectMembersChanged;
 
   const MemberDetailRouteArgs({
     required this.member,

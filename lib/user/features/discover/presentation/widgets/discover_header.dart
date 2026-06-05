@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/widgets/common/notification_favourite_header_actions.dart';
@@ -13,6 +14,8 @@ class DiscoverHeader extends StatelessWidget {
     return PostAuthHeader(
       title: AppStrings.discoverTitle,
       applyTopSafeArea: false,
+      padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0),
+      bottomGap: 0,
       trailing: const NotificationFavouriteHeaderActions(),
     );
   }

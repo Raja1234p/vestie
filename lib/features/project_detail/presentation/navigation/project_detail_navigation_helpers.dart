@@ -25,6 +25,7 @@ import '../models/investment_returns_ui_data.dart';
 import 'package:vestie/leader/features/project_detail/presentation/models/leader_success_vote_progress_ui_data.dart';
 import 'package:vestie/user/features/project_detail/presentation/models/member_vote_outcome_ui_data.dart';
 import '../widgets/distribute_funds_amount_sheet.dart';
+import 'package:vestie/features/project_detail/presentation/project_detail_reload_coordinator.dart';
 import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
 import 'package:vestie/core/services/home_project_list_sync.dart';
 import 'package:vestie/features/wallet/domain/wallet_balance_cache.dart';
@@ -58,7 +59,7 @@ class ProjectDetailNavigationHelpers {
   static MemberDetailRouteArgs memberDetailArgs(
     ProjectDetailEntity project,
     MemberEntity member, {
-    VoidCallback? onProjectMembersChanged,
+    Future<void> Function()? onProjectMembersChanged,
   }) {
     return MemberDetailRouteArgs(
       member: member,
@@ -80,8 +81,8 @@ class ProjectDetailNavigationHelpers {
       AppSnackBar.showError(context, AppStrings.errorForbidden);
       return null;
     }
-    void reloadProjectDetail() {
-      _reloadProjectDetailBloc(context, projectId: project.id);
+    Future<void> reloadProjectDetail() {
+      return reloadProjectDetailAndWait(context, projectId: project.id);
     }
 
     return context.push<MemberDetailPopResult>(
@@ -103,6 +104,22 @@ class ProjectDetailNavigationHelpers {
     if (result == null) return;
     if (!context.mounted) return;
     _reloadProjectDetailBloc(context, projectId: projectId);
+  }
+
+  static Future<void> reloadProjectDetailAndWait(
+    BuildContext context, {
+    required String projectId,
+  }) async {
+    if (!context.mounted) return;
+    try {
+      await context
+          .read<ProjectDetailBloc>()
+          .reloadDetailAndWait(projectId);
+      return;
+    } on ProviderNotFoundException {
+      // Opened outside project detail.
+    }
+    await ProjectDetailReloadCoordinator.reload(projectId);
   }
 
   static void _reloadProjectDetailBloc(
@@ -427,10 +444,10 @@ class ProjectDetailNavigationHelpers {
           extra: JoinRequestsRouteArgs(
             projectId: project.id,
             onRefreshProjectDetail: () {
-              if (!context.mounted) return;
-              context.read<ProjectDetailBloc>().add(
-                    LoadProjectDetailEvent(projectId: project.id),
-                  );
+              return reloadProjectDetailAndWait(
+                context,
+                projectId: project.id,
+              );
             },
           ),
         );

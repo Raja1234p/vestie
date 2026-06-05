@@ -14,54 +14,58 @@ class DiscoverSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final height = 44.h;
+    final height = 56.h;
     final radius = height / 2;
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(radius),
-      child: Container(
-        height: height,
-        decoration: BoxDecoration(
-          color: AppColors.searchBarBg,
-          borderRadius: BorderRadius.circular(radius),
-          border: Border.all(color: AppColors.inputFieldBorder),
-        ),
-        child: TextField(
-          onChanged: onChanged,
-          onTapOutside: (_) {
-            FocusManager.instance.primaryFocus?.unfocus();
-          },
-          style: GoogleFonts.lato(
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w500,
-            color: AppColors.inputFieldText,
-          ),
-          decoration: InputDecoration(
-            hintText: AppStrings.discoverSearchHint,
-            hintStyle: GoogleFonts.lato(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w400,
-              color: AppColors.grey800,
-            ),
-            isDense: true,
-            contentPadding: EdgeInsets.fromLTRB(16.w, 0, 4.w, 0),
-            border: InputBorder.none,
-            enabledBorder: InputBorder.none,
-            focusedBorder: InputBorder.none,
-            suffixIcon: Padding(
-              padding: EdgeInsets.only(right: 14.w),
-              child: AppSvgIcon(
-                assetPath: AppAssets.iconSearch,
-                size: 20.w,
-                color: AppColors.purple1000,
+    return Container(
+      height: height,
+      decoration: BoxDecoration(
+        color: AppColors.searchBarBg,
+        borderRadius: BorderRadius.circular(radius),
+        border: Border.all(color: AppColors.inputFieldBorder),
+      ),
+      alignment: Alignment.center,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: TextField(
+              onChanged: onChanged,
+              onTapOutside: (_) {
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
+              textAlignVertical: TextAlignVertical.center,
+              style: GoogleFonts.lato(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w500,
+                color: AppColors.inputFieldText,
+                height: 1.2,
+              ),
+              decoration: InputDecoration(
+                hintText: AppStrings.discoverSearchHint,
+                hintStyle: GoogleFonts.lato(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.grey800,
+                  height: 1.2,
+                ),
+                isCollapsed: true,
+                contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
               ),
             ),
-            suffixIconConstraints: BoxConstraints(
-              minWidth: 40.w,
-              minHeight: height,
+          ),
+          Padding(
+            padding: EdgeInsets.only(right: 16.w),
+            child: AppSvgIcon(
+              assetPath: AppAssets.iconSearch,
+              size: 20.w,
+              color: AppColors.purple1000,
             ),
           ),
-        ),
+        ],
       ),
     );
   }

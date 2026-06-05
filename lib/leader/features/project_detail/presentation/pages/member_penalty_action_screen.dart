@@ -11,6 +11,7 @@ import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
+import 'package:vestie/features/project_detail/presentation/project_detail_reload_coordinator.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/member_detail_actions_visibility.dart';
 import '../widgets/member_detail_actions.dart';
 import '../widgets/member_detail_result_dialogs.dart';
@@ -68,15 +69,19 @@ class _MemberPenaltyActionScreenState extends State<MemberPenaltyActionScreen> {
       userId: _userId,
     );
 
-    if (!mounted) return;
-    setState(() => _isRemoving = false);
-
-    result.fold(
-      (failure) => showMemberDetailErrorDialog(
-        context,
-        failure: failure,
-      ),
-      (_) {
+    await result.fold(
+      (failure) async {
+        if (!mounted) return;
+        setState(() => _isRemoving = false);
+        showMemberDetailErrorDialog(
+          context,
+          failure: failure,
+        );
+      },
+      (_) async {
+        await ProjectDetailReloadCoordinator.reload(widget.projectId);
+        if (!mounted) return;
+        setState(() => _isRemoving = false);
         showMemberRemovedSuccess(
           context,
           onOk: () {
@@ -97,15 +102,19 @@ class _MemberPenaltyActionScreenState extends State<MemberPenaltyActionScreen> {
       userId: _userId,
     );
 
-    if (!mounted) return;
-    setState(() => _isMarkingDefaulted = false);
-
-    result.fold(
-      (failure) => showMemberDetailErrorDialog(
-        context,
-        failure: failure,
-      ),
-      (_) {
+    await result.fold(
+      (failure) async {
+        if (!mounted) return;
+        setState(() => _isMarkingDefaulted = false);
+        showMemberDetailErrorDialog(
+          context,
+          failure: failure,
+        );
+      },
+      (_) async {
+        await ProjectDetailReloadCoordinator.reload(widget.projectId);
+        if (!mounted) return;
+        setState(() => _isMarkingDefaulted = false);
         showMemberMarkedDefaultedSuccess(
           context,
           onOk: () {

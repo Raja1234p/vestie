@@ -16,6 +16,7 @@ import '../../domain/entities/member_entity_extensions.dart';
 import '../../domain/usecases/get_member_activity_usecase.dart';
 
 import '../../domain/usecases/project_actions_usecases.dart';
+import '../project_detail_reload_coordinator.dart';
 
 import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
 import 'package:vestie/user/features/vff/domain/usecases/vff_usecases.dart';
@@ -268,6 +269,19 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
   /// Reloads activity without full-screen shimmer (e.g. after penalty / co-leader).
   Future<bool> refresh() => _fetchActivity(showLoading: false);
 
+  /// Member activity GET, then active project detail reload (when detail is open).
+  Future<void> syncWithProjectDetail({bool refreshMember = true}) =>
+      _syncConnectedApis(refreshMember: refreshMember);
+
+  Future<void> _syncConnectedApis({bool refreshMember = true}) async {
+    if (refreshMember) {
+      await refresh();
+    }
+    final projectId = _projectId;
+    if (projectId == null || projectId.trim().isEmpty) return;
+    await ProjectDetailReloadCoordinator.reload(projectId);
+  }
+
   Future<bool> _fetchActivity({required bool showLoading}) async {
     final projectId = _projectId;
     final userId = _userId;
@@ -356,7 +370,6 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
         if (current != null) {
           emit(
             state.copyWith(
-              isVffRequestLoading: false,
               activity: current.copyWith(
                 vffConnectionState: VffConnectionState.pendingOutgoing,
                 canSendVffRequest: false,
@@ -364,20 +377,20 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
                     ? sent.id
                     : current.pendingVffRequestId,
               ),
-              completedAction: MemberDetailAction.sendVffRequest,
               projectMembersChanged: true,
             ),
           );
         } else {
-          emit(
-            state.copyWith(
-              isVffRequestLoading: false,
-              completedAction: MemberDetailAction.sendVffRequest,
-              projectMembersChanged: true,
-            ),
-          );
+          emit(state.copyWith(projectMembersChanged: true));
         }
-        await refresh();
+        await _syncConnectedApis();
+        if (isClosed) return;
+        emit(
+          state.copyWith(
+            isVffRequestLoading: false,
+            completedAction: MemberDetailAction.sendVffRequest,
+          ),
+        );
       },
     );
   }
@@ -390,13 +403,6 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
     if (fetched.vffConnectionState == VffConnectionState.connected ||
         fetched.member.isVffConnected) {
       return fetched;
-    }
-    if (previous.vffConnectionState == VffConnectionState.connected ||
-        previous.member.isVffConnected) {
-      return fetched.copyWith(
-        vffConnectionState: VffConnectionState.connected,
-        canSendVffRequest: false,
-      );
     }
     if (previous.vffConnectionState != VffConnectionState.pendingOutgoing) {
       return fetched;
@@ -438,13 +444,30 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
         );
       },
       (_) async {
-        emit(
-          state.copyWith(
-            isRemoveVffLoading: false,
-            projectMembersChanged: true,
-          ),
-        );
-        await refresh();
+        final current = state.activity;
+        if (current != null) {
+          emit(
+            state.copyWith(
+              projectMembersChanged: true,
+              activity: current.copyWith(
+                member: current.member.copyWith(
+                  vffConnectionState: VffConnectionState.none,
+                  vffAdded: false,
+                  canSendVffRequest: true,
+                  clearPendingVffRequestId: true,
+                ),
+                vffConnectionState: VffConnectionState.none,
+                canSendVffRequest: true,
+                clearPendingVffRequestId: true,
+              ),
+            ),
+          );
+        } else {
+          emit(state.copyWith(projectMembersChanged: true));
+        }
+        await _syncConnectedApis();
+        if (isClosed) return;
+        emit(state.copyWith(isRemoveVffLoading: false));
       },
     );
   }
@@ -604,18 +627,16 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
         );
       },
       (_) async {
-        if (action != MemberDetailAction.removeMember) {
-          await refresh();
-        }
-        final coLeaderChanged = action == MemberDetailAction.assignCoLeader ||
-            action == MemberDetailAction.removeCoLeader;
+        await _syncConnectedApis(
+          refreshMember: action != MemberDetailAction.removeMember,
+        );
+        if (isClosed) return;
         emit(
           state.copyWith(
             isActionLoading: false,
             loadingAction: null,
             completedAction: action,
-            projectMembersChanged:
-                coLeaderChanged || state.projectMembersChanged,
+            projectMembersChanged: true,
           ),
         );
       },

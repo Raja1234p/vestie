@@ -431,9 +431,10 @@ class AppStrings {
 
   /// Remove VFF dialog
   static String userVffRemoveTitle(String username) =>
-      'Are you sure you want to remove @$username';
+      'Are you sure you want to remove $username?';
   static const String userVffRemoveBody =
-      'You can not view their joined projects after removing them.';
+      'You will no longer be able to view their joined projects.';
+  static const String btnYesRemoveVff = 'Yes, Remove VFF';
 
   /// Following menu
   static const String userVffFollowing = 'Following';

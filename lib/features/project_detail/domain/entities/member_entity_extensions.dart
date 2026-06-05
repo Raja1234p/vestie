@@ -1,3 +1,5 @@
+import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
+
 import 'member_entity.dart';
 
 extension MemberEntityApiIds on MemberEntity {
@@ -50,14 +52,22 @@ extension MemberEntityApiIds on MemberEntity {
       contributedAmount: fromApi.contributedAmount,
       overdueAmount: fromApi.overdueAmount ?? overdueAmount,
       photoUrl: useApiPhoto ? fromApi.photoUrl : photoUrl,
-      vffAdded: fromApi.vffAdded || vffAdded || fromApi.isVffConnected,
-      vffConnectionState: fromApi.isVffConnected
-          ? fromApi.vffConnectionState
-          : (isVffConnected
-              ? vffConnectionState
-              : fromApi.vffConnectionState),
+      vffAdded: fromApi.isVffConnected || fromApi.vffAdded,
+      vffConnectionState: _mergedVffConnectionState(fromApi),
       canSendVffRequest: fromApi.canSendVffRequest,
       pendingVffRequestId: fromApi.pendingVffRequestId ?? pendingVffRequestId,
     );
+  }
+
+  /// Trust activity API for disconnect; keep route seed only for optimistic pending.
+  VffConnectionState _mergedVffConnectionState(MemberEntity fromApi) {
+    if (fromApi.isVffConnected || fromApi.hasPendingVffOutgoing) {
+      return fromApi.vffConnectionState;
+    }
+    if (fromApi.vffConnectionState != VffConnectionState.none) {
+      return fromApi.vffConnectionState;
+    }
+    if (hasPendingVffOutgoing) return vffConnectionState;
+    return VffConnectionState.none;
   }
 }

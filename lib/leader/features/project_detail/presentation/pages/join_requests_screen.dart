@@ -23,7 +23,7 @@ import '../widgets/join_request_result_dialogs.dart';
 /// Week 3 — `GET /projects/{id}/memberships/pending` + approve/reject actions.
 class JoinRequestsScreen extends StatefulWidget {
   final String projectId;
-  final VoidCallback? onRefreshProjectDetail;
+  final Future<void> Function()? onRefreshProjectDetail;
 
   const JoinRequestsScreen({
     super.key,
@@ -40,11 +40,35 @@ class _JoinRequestsScreenState extends State<JoinRequestsScreen> {
   bool? _wasApproved;
   String? _actingMembershipId;
   bool? _actingIsApprove;
+  bool _isSyncingAfterModeration = false;
+
+  Future<void> _syncAfterModeration(BuildContext context) async {
+    setState(() => _isSyncingAfterModeration = true);
+    try {
+      await widget.onRefreshProjectDetail?.call();
+      if (!context.mounted) return;
+      await context.read<JoinRequestsCubit>().load(widget.projectId);
+    } finally {
+      if (mounted) {
+        setState(() => _isSyncingAfterModeration = false);
+      }
+    }
+  }
 
   void _onDialogOk(BuildContext context) {
     Navigator.of(context).pop();
-    widget.onRefreshProjectDetail?.call();
     context.read<JoinRequestsCubit>().load(widget.projectId);
+  }
+
+  Future<void> _handleModerationSuccess(BuildContext context) async {
+    await _syncAfterModeration(context);
+    if (!mounted) return;
+    setState(() {
+      _actingMembershipId = null;
+      _actingIsApprove = null;
+    });
+    if (!context.mounted) return;
+    _onModerationComplete(context);
   }
 
   void _onModerationComplete(BuildContext context) {
@@ -105,11 +129,7 @@ class _JoinRequestsScreenState extends State<JoinRequestsScreen> {
           }
 
           if (mState.isSuccess) {
-            setState(() {
-              _actingMembershipId = null;
-              _actingIsApprove = null;
-            });
-            _onModerationComplete(context);
+            _handleModerationSuccess(context);
           }
         },
         child: Scaffold(
@@ -154,7 +174,8 @@ class _JoinRequestsScreenState extends State<JoinRequestsScreen> {
                           );
                         }
                         if (state is JoinRequestsLoaded) {
-                          final isBusy = moderation.isLoading;
+                          final isBusy =
+                              moderation.isLoading || _isSyncingAfterModeration;
                           return SliverPadding(
                             padding:
                                 EdgeInsets.fromLTRB(16.w, 6.h, 16.w, 22.h),

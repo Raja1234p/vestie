@@ -66,8 +66,9 @@ class ProjectCardShimmer extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 16),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.projectCardBg,
           borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.projectCardBorder, width: 1),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
