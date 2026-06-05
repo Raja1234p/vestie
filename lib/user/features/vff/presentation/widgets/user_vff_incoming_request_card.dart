@@ -10,6 +10,7 @@ import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/user/features/vff/presentation/models/user_vff_hub_ui_model.dart';
 import 'package:vestie/user/features/vff/presentation/models/user_vff_inbox_action.dart';
 import 'package:vestie/user/features/vff/presentation/widgets/user_vff_hub_request_action_buttons.dart';
+import 'package:vestie/user/features/vff/presentation/widgets/user_vff_inbox_card_title_block.dart';
 
 /// **Flow: Hub / VFF-requests list → “VFF Requests”** — inbound connection request row.
 class UserVffIncomingRequestCard extends StatelessWidget {
@@ -17,6 +18,7 @@ class UserVffIncomingRequestCard extends StatelessWidget {
   final VoidCallback? onAccept;
   final VoidCallback? onDecline;
   final UserVffInboxRowAction? actingRow;
+  final double? bottomSpacing;
 
   const UserVffIncomingRequestCard({
     super.key,
@@ -24,6 +26,7 @@ class UserVffIncomingRequestCard extends StatelessWidget {
     required this.onAccept,
     required this.onDecline,
     this.actingRow,
+    this.bottomSpacing,
   });
 
   @override
@@ -31,7 +34,7 @@ class UserVffIncomingRequestCard extends StatelessWidget {
     final via = '${AppStrings.userVffViaProject} ${item.viaProjectName}';
 
     return Padding(
-      padding: EdgeInsets.only(bottom: AppDimens.v12),
+      padding: EdgeInsets.only(bottom: bottomSpacing ?? AppDimens.v12),
       child: Material(
         color: AppColors.vffInboxRequestCardBg,
         shape: RoundedRectangleBorder(
@@ -61,22 +64,9 @@ class UserVffIncomingRequestCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AppText(
-                      item.name,
-                      style: GoogleFonts.lato(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.neutral1200,
-                      ),
-                    ),
-                    SizedBox(height: 2.h),
-                    AppText(
-                      via,
-                      style: GoogleFonts.lato(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.grey800,
-                      ),
+                    UserVffInboxCardTitleBlock(
+                      title: item.name,
+                      subtitle: via,
                     ),
                     SizedBox(height: 14.h),
                     UserVffHubRequestActionButtons(

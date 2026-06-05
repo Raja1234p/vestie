@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
@@ -88,6 +89,7 @@ class _EmptyView extends StatelessWidget {
     return const UserVffHubEmptyBody(
       message: AppStrings.completedProjectsEmptyTitle,
       subtitle: AppStrings.completedProjectsEmptySubtitle,
+      illustrationAsset: AppAssets.borrowRequestsEmptyState,
     );
   }
 }

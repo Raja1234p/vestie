@@ -64,6 +64,14 @@ class AppDimens {
   static EdgeInsets get sheetInsetList =>
       EdgeInsets.fromLTRB(p18, v20, p18, v8);
 
+  /// VFF full-list screens (VFF Requests, Project Invitations).
+  static EdgeInsets get vffInboxFullListSheetInset =>
+      EdgeInsets.fromLTRB(p18, v6, p18, v8);
+
+  /// VFF full-list empty state — horizontal inset only so content stays centered.
+  static EdgeInsets get vffInboxFullListEmptyInset =>
+      EdgeInsets.symmetric(horizontal: p18);
+
   static EdgeInsets get sheetInsetProfile =>
       EdgeInsets.fromLTRB(p18, v16, p18, v16);
 
@@ -72,6 +80,9 @@ class AppDimens {
 
   /// Hero illustration square (VFF success / mocks).
   static double get illustrationLg => 200.0.w;
+
+  /// VFF hub / list empty state hero (`project_invitation_hero.png`).
+  static double get vffEmptyStateIllustration => 150.0.w;
 
   static EdgeInsets get removeDialogOuterInsets =>
       EdgeInsets.symmetric(horizontal: p22);

@@ -117,7 +117,7 @@ Widget _connectionRowShimmer({required bool trailingWide}) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               AppShimmer.box(width: 120.w, height: 16.h, borderRadius: 4.r),
-              SizedBox(height: 6.h),
+              SizedBox(height: 4.h),
               AppShimmer.box(width: 100.w, height: 12.h, borderRadius: 4.r),
             ],
           ),
@@ -146,7 +146,7 @@ Widget _inboxRequestCardShimmer() {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               AppShimmer.box(width: 120.w, height: 16.h, borderRadius: 4.r),
-              SizedBox(height: 6.h),
+              SizedBox(height: 4.h),
               AppShimmer.box(width: 150.w, height: 12.h, borderRadius: 4.r),
               SizedBox(height: 14.h),
               Row(
@@ -176,19 +176,52 @@ Widget _inboxRequestCardShimmer() {
   );
 }
 
-/// [UserVffGroupInvitationsScreen] — same padding as loaded [ListView] (no extra inset).
+Widget _vffFullListSectionTitleShimmer() {
+  return Padding(
+    padding: EdgeInsets.only(bottom: AppDimens.v16),
+    child: AppShimmer.box(width: 160.w, height: 18.h, borderRadius: 4.r),
+  );
+}
+
+/// [UserVffVffRequestsScreen] — matches loaded list (title + 16px card gaps).
+final class UserVffIncomingRequestListShimmer extends StatelessWidget {
+  const UserVffIncomingRequestListShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppShimmer(
+      child: ListView(
+        physics: const NeverScrollableScrollPhysics(),
+        padding: EdgeInsets.only(bottom: AppDimens.v24),
+        children: [
+          _vffFullListSectionTitleShimmer(),
+          for (var i = 0; i < 4; i++) ...[
+            _inboxRequestCardShimmer(),
+            if (i < 3) SizedBox(height: AppDimens.v16),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// [UserVffGroupInvitationsScreen] — matches loaded list (title + 16px card gaps).
 final class UserVffGroupInvitationListShimmer extends StatelessWidget {
   const UserVffGroupInvitationListShimmer({super.key});
 
   @override
   Widget build(BuildContext context) {
     return AppShimmer(
-      child: ListView.separated(
+      child: ListView(
         physics: const NeverScrollableScrollPhysics(),
         padding: EdgeInsets.only(bottom: AppDimens.v24),
-        itemCount: 4,
-        separatorBuilder: (_, __) => SizedBox(height: AppDimens.v12),
-        itemBuilder: (_, __) => _vffGroupInvitationCardShimmer(),
+        children: [
+          _vffFullListSectionTitleShimmer(),
+          for (var i = 0; i < 4; i++) ...[
+            _vffGroupInvitationCardShimmer(),
+            if (i < 3) SizedBox(height: AppDimens.v16),
+          ],
+        ],
       ),
     );
   }
@@ -208,7 +241,7 @@ Widget _vffGroupInvitationCardShimmer() {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         AppShimmer.box(width: 160.w, height: 16.h, borderRadius: 4.r),
-        SizedBox(height: 6.h),
+        SizedBox(height: 3.h),
         AppShimmer.box(width: 120.w, height: 12.h, borderRadius: 4.r),
         SizedBox(height: 14.h),
         Row(
@@ -243,7 +276,7 @@ Widget _groupInviteCardShimmer() {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         AppShimmer.box(width: 160.w, height: 16.h, borderRadius: 4.r),
-        SizedBox(height: 6.h),
+        SizedBox(height: 3.h),
         AppShimmer.box(width: 120.w, height: 12.h, borderRadius: 4.r),
         SizedBox(height: 14.h),
         Row(

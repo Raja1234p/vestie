@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
+import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_success_screen.dart';
@@ -23,6 +24,7 @@ final class UserVffInvitesSentScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppSuccessScreen(
+      illustrationAsset: AppAssets.projectJoinedSuccess,
       title: AppStrings.userVffInviteSuccessTitle,
       subtitleWidget: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.w),

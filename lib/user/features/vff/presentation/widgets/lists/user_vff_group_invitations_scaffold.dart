@@ -14,8 +14,8 @@ import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import '../../cubit/user_vff_group_invitation_list_cubit.dart';
 import '../../models/user_vff_hub_ui_model.dart';
+import '../user_vff_full_list_section_title.dart';
 import '../user_vff_group_invitation_card.dart';
-import '../user_vff_inbox_interaction_lock.dart';
 import '../user_vff_hub_empty_body.dart';
 import '../user_vff_inbox_interaction_lock.dart';
 import '../user_vff_shimmers.dart';
@@ -43,10 +43,8 @@ final class UserVffGroupInvitationsScaffold extends StatelessWidget {
             Expanded(
               child: ColoredBox(
                 color: AppColors.surface,
-                child: Padding(
-                  padding: AppDimens.sheetInsetList,
-                  child: BlocConsumer<UserVffGroupInvitationListCubit,
-                      UserVffGroupInvitationListState>(
+                child: BlocConsumer<UserVffGroupInvitationListCubit,
+                    UserVffGroupInvitationListState>(
                     listenWhen: (prev, curr) =>
                         prev.errorMessage != curr.errorMessage &&
                         curr.errorMessage != null,
@@ -58,7 +56,10 @@ final class UserVffGroupInvitationsScaffold extends StatelessWidget {
                     builder: (context, state) {
                       if (state.status ==
                           UserVffGroupInvitationListStatus.loading) {
-                        return const UserVffGroupInvitationListShimmer();
+                        return Padding(
+                          padding: AppDimens.vffInboxFullListSheetInset,
+                          child: const UserVffGroupInvitationListShimmer(),
+                        );
                       }
 
                       if (state.status ==
@@ -85,8 +86,11 @@ final class UserVffGroupInvitationsScaffold extends StatelessWidget {
 
                       final items = state.items;
                       if (items.isEmpty) {
-                        return const UserVffHubEmptyBody(
-                          message: AppStrings.userVffEmptyRequests,
+                        return Padding(
+                          padding: AppDimens.vffInboxFullListEmptyInset,
+                          child: const UserVffHubEmptyBody(
+                            message: AppStrings.userVffEmptyRequests,
+                          ),
                         );
                       }
 
@@ -95,16 +99,23 @@ final class UserVffGroupInvitationsScaffold extends StatelessWidget {
                       final acting = state.actingRow;
                       final inboxBusy = acting != null;
 
-                      return UserVffInboxInteractionLock(
-                        locked: inboxBusy,
-                        child: ListView.builder(
+                      return Padding(
+                        padding: AppDimens.vffInboxFullListSheetInset,
+                        child: UserVffInboxInteractionLock(
+                          locked: inboxBusy,
+                          child: ListView.builder(
                           physics: inboxBusy
                               ? const NeverScrollableScrollPhysics()
                               : const BouncingScrollPhysics(),
                           padding: EdgeInsets.only(bottom: AppDimens.v24),
-                          itemCount: items.length,
+                          itemCount: items.length + 1,
                           itemBuilder: (_, i) {
-                            final g = items[i];
+                            if (i == 0) {
+                              return const UserVffFullListSectionTitle(
+                                title: AppStrings.userVffGroupInvitationsTitle,
+                              );
+                            }
+                            final g = items[i - 1];
                             return UserVffGroupInvitationCard(
                               item: g,
                               actingRow: acting,
@@ -116,13 +127,14 @@ final class UserVffGroupInvitationsScaffold extends StatelessWidget {
                                 cubit.accept(g);
                               },
                               onDecline: () => cubit.decline(g),
+                              bottomSpacing: AppDimens.v16,
                             );
                           },
+                          ),
                         ),
                       );
                     },
                   ),
-                ),
               ),
             ),
           ],

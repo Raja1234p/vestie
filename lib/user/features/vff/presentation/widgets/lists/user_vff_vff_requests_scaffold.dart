@@ -11,12 +11,13 @@ import 'package:vestie/core/utils/app_snackbar.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
-import 'package:vestie/core/widgets/common/app_shimmer.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import '../../cubit/user_vff_incoming_request_list_cubit.dart';
+import '../user_vff_full_list_section_title.dart';
 import '../user_vff_hub_empty_body.dart';
 import '../user_vff_inbox_interaction_lock.dart';
 import '../user_vff_incoming_request_card.dart';
+import '../user_vff_shimmers.dart';
 
 /// Full inbound VFF request list scaffold.
 final class UserVffVffRequestsScaffold extends StatelessWidget {
@@ -41,10 +42,8 @@ final class UserVffVffRequestsScaffold extends StatelessWidget {
             Expanded(
               child: ColoredBox(
                 color: AppColors.surface,
-                child: Padding(
-                  padding: AppDimens.sheetInsetList,
-                  child: BlocConsumer<UserVffIncomingRequestListCubit,
-                      UserVffIncomingRequestListState>(
+                child: BlocConsumer<UserVffIncomingRequestListCubit,
+                    UserVffIncomingRequestListState>(
                     listenWhen: (prev, curr) =>
                         prev.errorMessage != curr.errorMessage &&
                         curr.errorMessage != null,
@@ -56,7 +55,10 @@ final class UserVffVffRequestsScaffold extends StatelessWidget {
                     builder: (context, state) {
                       if (state.status ==
                           UserVffIncomingRequestListStatus.loading) {
-                        return const JoinRequestsListShimmer();
+                        return Padding(
+                          padding: AppDimens.vffInboxFullListSheetInset,
+                          child: const UserVffIncomingRequestListShimmer(),
+                        );
                       }
 
                       if (state.status ==
@@ -83,8 +85,11 @@ final class UserVffVffRequestsScaffold extends StatelessWidget {
 
                       final items = state.items;
                       if (items.isEmpty) {
-                        return const UserVffHubEmptyBody(
-                          message: AppStrings.userVffEmptyRequests,
+                        return Padding(
+                          padding: AppDimens.vffInboxFullListEmptyInset,
+                          child: const UserVffHubEmptyBody(
+                            message: AppStrings.userVffEmptyRequests,
+                          ),
                         );
                       }
 
@@ -93,28 +98,36 @@ final class UserVffVffRequestsScaffold extends StatelessWidget {
                       final acting = state.actingRow;
                       final inboxBusy = acting != null;
 
-                      return UserVffInboxInteractionLock(
-                        locked: inboxBusy,
-                        child: ListView.builder(
+                      return Padding(
+                        padding: AppDimens.vffInboxFullListSheetInset,
+                        child: UserVffInboxInteractionLock(
+                          locked: inboxBusy,
+                          child: ListView.builder(
                           physics: inboxBusy
                               ? const NeverScrollableScrollPhysics()
                               : const BouncingScrollPhysics(),
                           padding: EdgeInsets.only(bottom: AppDimens.v24),
-                          itemCount: items.length,
+                          itemCount: items.length + 1,
                           itemBuilder: (_, i) {
-                            final r = items[i];
+                            if (i == 0) {
+                              return const UserVffFullListSectionTitle(
+                                title: AppStrings.userVffSectionVffRequests,
+                              );
+                            }
+                            final r = items[i - 1];
                             return UserVffIncomingRequestCard(
                               item: r,
                               actingRow: acting,
                               onAccept: () => cubit.accept(r),
                               onDecline: () => cubit.decline(r),
+                              bottomSpacing: AppDimens.v16,
                             );
                           },
+                          ),
                         ),
                       );
                     },
                   ),
-                ),
               ),
             ),
           ],

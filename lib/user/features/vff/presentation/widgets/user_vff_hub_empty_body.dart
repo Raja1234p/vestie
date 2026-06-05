@@ -3,37 +3,40 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/core/constants/app_assets.dart';
+import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 
-/// VFF hub empty state — parent must be [Expanded] so this column can center.
+/// VFF hub / list empty state — fills available space and centers content.
 class UserVffHubEmptyBody extends StatelessWidget {
   final String message;
   final String? subtitle;
+  final String illustrationAsset;
 
   const UserVffHubEmptyBody({
     super.key,
     required this.message,
     this.subtitle,
+    this.illustrationAsset = AppAssets.projectInvitationHero,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Image.asset(
-          AppAssets.borrowRequestsEmptyState,
-          width: 100.w,
-          height: 100.h,
-          fit: BoxFit.contain,
-        ),
-        SizedBox(height: 20.h),
-        Padding(
+    return SizedBox.expand(
+      child: Center(
+        child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 24.w),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              Image.asset(
+                illustrationAsset,
+                width: AppDimens.vffEmptyStateIllustration,
+                height: AppDimens.vffEmptyStateIllustration,
+                fit: BoxFit.contain,
+              ),
+              SizedBox(height: 20.h),
               AppText(
                 message,
                 textAlign: TextAlign.center,
@@ -60,7 +63,7 @@ class UserVffHubEmptyBody extends StatelessWidget {
             ],
           ),
         ),
-      ],
+      ),
     );
   }
 }

@@ -9,6 +9,7 @@ import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/user/features/vff/presentation/models/user_vff_hub_ui_model.dart';
 import 'package:vestie/user/features/vff/presentation/models/user_vff_inbox_action.dart';
 import 'package:vestie/user/features/vff/presentation/widgets/user_vff_hub_request_action_buttons.dart';
+import 'package:vestie/user/features/vff/presentation/widgets/user_vff_inbox_card_title_block.dart';
 
 /// **Flow: Hub Requests tab / group-invites list** — project or member-join invite.
 class UserVffGroupInvitationCard extends StatelessWidget {
@@ -16,6 +17,7 @@ class UserVffGroupInvitationCard extends StatelessWidget {
   final VoidCallback? onPrimary;
   final VoidCallback? onDecline;
   final UserVffInboxRowAction? actingRow;
+  final double? bottomSpacing;
 
   const UserVffGroupInvitationCard({
     super.key,
@@ -23,6 +25,7 @@ class UserVffGroupInvitationCard extends StatelessWidget {
     required this.onPrimary,
     required this.onDecline,
     this.actingRow,
+    this.bottomSpacing,
   });
 
   @override
@@ -34,7 +37,7 @@ class UserVffGroupInvitationCard extends StatelessWidget {
             ? AppStrings.userVffRequestToJoin
             : AppStrings.btnJoin;
     return Padding(
-      padding: EdgeInsets.only(bottom: AppDimens.v12),
+      padding: EdgeInsets.only(bottom: bottomSpacing ?? AppDimens.v12),
       child: Material(
         color: AppColors.vffInboxRequestCardBg,
         shape: RoundedRectangleBorder(
@@ -50,22 +53,10 @@ class UserVffGroupInvitationCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              AppText(
-                item.titleLine,
-                style: GoogleFonts.lato(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.neutral1200,
-                ),
-              ),
-              SizedBox(height: 2.h),
-              AppText(
-                subtitle,
-                style: GoogleFonts.lato(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.grey800,
-                ),
+              UserVffInboxCardTitleBlock(
+                title: item.titleLine,
+                subtitle: subtitle,
+                titleSubtitleGap: 3.h,
               ),
               SizedBox(height: 14.h),
               UserVffHubRequestActionButtons(
