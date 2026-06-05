@@ -45,7 +45,7 @@ class MemberProjectActionMenu extends StatelessWidget {
         height: 30.w,
         alignment: Alignment.center,
         child: SvgPicture.asset(
-          AppAssets.iconPopMenu,
+          AppAssets.iconMoreOptions,
           width: 30.w,
           height: 30.w,
           colorFilter: const ColorFilter.mode(

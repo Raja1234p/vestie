@@ -70,7 +70,7 @@ class ProfileHeaderMoreOptionsAction extends StatelessWidget {
         height: extent,
         child: Center(
           child: SvgPicture.asset(
-            AppAssets.iconProfileMoreOptions,
+            AppAssets.iconMoreOptions,
             width: extent,
             height: extent,
             fit: BoxFit.contain,

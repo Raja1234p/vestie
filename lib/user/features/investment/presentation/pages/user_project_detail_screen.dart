@@ -97,7 +97,7 @@ class _UserProjectDetailScreenState extends State<UserProjectDetailScreen> {
                   child: Padding(
                     padding: EdgeInsets.all(6.w),
                     child: AppSvgIcon(
-                      assetPath: AppAssets.iconPopMenu,
+                      assetPath: AppAssets.iconMoreOptions,
                       color: AppColors.textPrimary,
                       size: 30.r,
                     ),

@@ -65,9 +65,8 @@ class AppAssets {
   static const String iconNotification = '$_iconPath/notification-01.svg';
   /// Home / Discover header — favourite (VFF hub), design `favourite.svg`.
   static const String iconFavourite = '$_iconPath/favourite.svg';
-  /// Profile tab header — more options (three dots), Figma “More Options Container”.
-  static const String iconProfileMoreOptions =
-      '$_iconPath/profile_more_options.svg';
+  /// Overflow / more-options menu trigger (three dots).
+  static const String iconMoreOptions = '$_iconPath/icon_more_options.svg';
   /// List row graphic (notification item, design export “Frame 258”).
   static const String notificationRowIcon = '$_iconPath/Frame 258.png';
 
@@ -120,7 +119,6 @@ class AppAssets {
 
   // ── Arrow Direction Icons ────────────────────────────────────────────────
   static const String iconArrowUpBig   = '$_iconPath/arrow-up-big.svg';
-  static const String iconPopMenu      = '$_iconPath/popmenuicon.svg';
   /// Member “Project Actions” — funds history & leave project rows.
   static const String iconProjectFundHistory = '$_iconPath/project_fund_history.svg';
   static const String iconLeaveGroup = '$_iconPath/leave-group.svg';
