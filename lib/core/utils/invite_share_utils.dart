@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart' show Rect;
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 

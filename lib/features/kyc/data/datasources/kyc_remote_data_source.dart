@@ -35,8 +35,8 @@ class KycRemoteDataSourceImpl implements KycRemoteDataSource {
       ApiConstants.kycStart,
       data: {
         'country': country,
-        if (refreshUrl != null) 'refreshUrl': refreshUrl,
-        if (returnUrl != null) 'returnUrl': returnUrl,
+        'refreshUrl': ?refreshUrl,
+        'returnUrl': ?returnUrl,
       },
     );
     return KycStartResultModel.fromJson(response);

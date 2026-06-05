@@ -8,7 +8,6 @@ import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart';
-import 'package:vestie/user/features/vff/presentation/models/user_vff_profile_ui_types.dart';
 import 'package:vestie/user/features/vff/presentation/cubit/user_vff_profile_cubit.dart';
 import 'package:vestie/user/features/vff/presentation/cubit/user_vff_profile_state.dart';
 import '../../models/user_vff_profile_ui_model.dart';

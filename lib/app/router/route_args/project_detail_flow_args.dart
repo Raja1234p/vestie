@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/leader_voting_flow_kind.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
