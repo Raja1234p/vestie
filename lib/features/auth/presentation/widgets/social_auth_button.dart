@@ -41,8 +41,8 @@ class SocialAuthButton extends StatelessWidget {
             // ── Real SVG icon from assets ──────────────────────────
             SvgPicture.asset(
               provider == SocialProvider.google
-                  ? AppAssets.iconGoogle
-                  : AppAssets.iconApple,
+                  ? AppAssets.authGoogle
+                  : AppAssets.authApple,
               width: 20.w,
               height: 20.h,
               fit: BoxFit.contain,

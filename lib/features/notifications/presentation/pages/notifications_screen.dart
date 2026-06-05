@@ -141,7 +141,7 @@ class _EmptyNotifications extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              AppAssets.emptyNotification,
+              AppAssets.notificationsEmpty,
               width: 200.w,
               fit: BoxFit.contain,
             ),

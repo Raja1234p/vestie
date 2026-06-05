@@ -73,7 +73,7 @@ class ProjectMemberVffBadge extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   AppSvgIcon(
-                    assetPath: AppAssets.crown,
+                    assetPath: AppAssets.badgeLeaderCrown,
                     size: 11.w,
                     color: AppColors.surface,
                   ),

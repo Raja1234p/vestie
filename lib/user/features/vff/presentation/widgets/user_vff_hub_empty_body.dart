@@ -17,7 +17,7 @@ class UserVffHubEmptyBody extends StatelessWidget {
     super.key,
     required this.message,
     this.subtitle,
-    this.illustrationAsset = AppAssets.projectInvitationHero,
+    this.illustrationAsset = AppAssets.inviteProjectHero,
   });
 
   @override

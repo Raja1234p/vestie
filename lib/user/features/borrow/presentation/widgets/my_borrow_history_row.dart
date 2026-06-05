@@ -81,7 +81,7 @@ class _BorrowHistoryIcon extends StatelessWidget {
       ),
       alignment: Alignment.center,
       child: SvgPicture.asset(
-        AppAssets.iconCircleArrowUp02,
+        AppAssets.transactionTransferOut,
         width: 24.w,
         height: 24.w,
         fit: BoxFit.contain,

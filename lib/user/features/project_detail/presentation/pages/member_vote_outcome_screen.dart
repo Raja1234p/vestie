@@ -57,8 +57,8 @@ class MemberVoteOutcomeScreen extends StatelessWidget {
     return AppSuccessScreen(
       illustrationTopSpacing: 40.h,
       illustrationAsset: data.isApproved
-          ? AppAssets.projectCreatedImage
-          : AppAssets.failureIcon,
+          ? AppAssets.successProjectCreated
+          : AppAssets.statusFailure,
       title: data.isApproved
           ? AppStrings.projectVoteApprovedTitle
           : AppStrings.projectVoteNotApprovedTitle,

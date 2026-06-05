@@ -54,7 +54,7 @@ class AppAmountEntrySheetContent extends StatelessWidget {
                     onTap: onClose,
                     behavior: HitTestBehavior.opaque,
                     child: SvgPicture.asset(
-                      AppAssets.iconCreateProjectSheetClose,
+                      AppAssets.sheetClose,
                       width: AppDimens.iconLarge,
                       height: AppDimens.iconLarge,
                       fit: BoxFit.contain,

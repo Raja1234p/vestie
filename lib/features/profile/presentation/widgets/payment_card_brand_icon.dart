@@ -20,10 +20,10 @@ class PaymentCardBrandIcon extends StatelessWidget {
   static String assetFor(CardBrand brand) {
     switch (brand) {
       case CardBrand.visa:
-        return AppAssets.iconVisa;
+        return AppAssets.paymentVisa;
       case CardBrand.mastercard:
       case CardBrand.other:
-        return AppAssets.iconMastercard;
+        return AppAssets.paymentMastercard;
     }
   }
 

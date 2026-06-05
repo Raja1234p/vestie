@@ -41,7 +41,7 @@ class ProfileHeaderMoreOptionsAction extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SvgPicture.asset(
-                AppAssets.iconCancelProject,
+                AppAssets.leaderCancelProject,
                 width: 26.w,
                 height: 26.w,
                 fit: BoxFit.contain,

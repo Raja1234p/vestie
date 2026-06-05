@@ -45,7 +45,7 @@ class ProjectInfoCategoryChip extends StatelessWidget {
             )
           else
             AppSvgIcon(
-              assetPath: AppAssets.iconEmergencyFund,
+              assetPath: AppAssets.projectTypeEmergency,
               size: 13.w,
               color: AppColors.primary,
             ),

@@ -90,11 +90,11 @@ class DiscoverFilterRow extends StatelessWidget {
 String? _iconAssetForFilter(String filter) {
   switch (filter) {
     case AppStrings.filterVacations:
-      return AppAssets.iconVacationUmbrella;
+      return AppAssets.projectTypeVacation;
     case AppStrings.filterEmergency:
-      return AppAssets.iconEmergencyFund;
+      return AppAssets.projectTypeEmergency;
     case AppStrings.filterInvestments:
-      return AppAssets.iconInvestmentFund;
+      return AppAssets.projectTypeInvestment;
     default:
       return null;
   }

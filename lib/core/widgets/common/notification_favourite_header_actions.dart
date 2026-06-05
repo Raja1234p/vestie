@@ -22,7 +22,7 @@ class NotificationFavouriteHeaderActions extends StatelessWidget {
           extent: extent,
           onTap: () => context.push(AppRoutes.notifications),
           child: SvgPicture.asset(
-            AppAssets.iconNotification,
+            AppAssets.headerNotification,
             width: extent,
             height: extent,
             fit: BoxFit.contain,
@@ -33,7 +33,7 @@ class NotificationFavouriteHeaderActions extends StatelessWidget {
           extent: extent,
           onTap: () => context.push(AppRoutes.userVffMain),
           child: SvgPicture.asset(
-            AppAssets.iconFavourite,
+            AppAssets.headerVffHub,
             width: extent,
             height: extent,
             fit: BoxFit.contain,

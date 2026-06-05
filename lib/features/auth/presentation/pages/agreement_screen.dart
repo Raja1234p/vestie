@@ -65,7 +65,7 @@ class _AgreementBody extends StatelessWidget {
                       width: iconSide,
                       height: iconSide,
                       child: SvgPicture.asset(
-                        AppAssets.agreementIcon,
+                        AppAssets.authAgreementHero,
                         width: iconSide,
                         height: iconSide,
                         fit: BoxFit.contain,

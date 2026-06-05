@@ -124,7 +124,7 @@ Future<void> showUserProjectMembersModal(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       _ShareCircle(
-                        assetPath: AppAssets.iconChat,
+                        assetPath: AppAssets.shareChat,
                         label: 'WA',
                         onTap: () async {
                           final text =
@@ -138,7 +138,7 @@ Future<void> showUserProjectMembersModal(
                         },
                       ),
                       _ShareCircle(
-                        assetPath: AppAssets.iconLink,
+                        assetPath: AppAssets.shareLink,
                         label: 'Copy',
                         onTap: () {
                           Clipboard.setData(
@@ -153,7 +153,7 @@ Future<void> showUserProjectMembersModal(
                         },
                       ),
                       _ShareCircle(
-                        assetPath: AppAssets.iconFacebook,
+                        assetPath: AppAssets.shareFacebook,
                         label: 'FB',
                         onTap: () async {
                           final uri = Uri.parse(
@@ -168,7 +168,7 @@ Future<void> showUserProjectMembersModal(
                         },
                       ),
                       _ShareCircle(
-                        assetPath: AppAssets.iconInstagram,
+                        assetPath: AppAssets.shareInstagram,
                         label: 'IG',
                         onTap: () {
                           if (context.mounted) {

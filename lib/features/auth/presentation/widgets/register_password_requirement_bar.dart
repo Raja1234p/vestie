@@ -39,7 +39,7 @@ class RegisterPasswordRequirementBar extends StatelessWidget {
             width: 22.r,
             height: 22.r,
             child: Image.asset(
-              AppAssets.passwordRequirementMetIcon,
+              AppAssets.authPasswordMet,
               fit: BoxFit.contain,
               filterQuality: FilterQuality.high,
             ),

@@ -41,7 +41,7 @@ class CenteredHeroStatusBlock extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  imageAsset == AppAssets.failureIcon
+                  imageAsset == AppAssets.statusFailure
                       ? const FailureIcon()
                       : Image.asset(
                           imageAsset,

@@ -64,7 +64,7 @@ class HomeEmptyView extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage(AppAssets.emptyStateBackground),
+          image: AssetImage(AppAssets.successScreenBackground),
           fit: BoxFit.cover,
         ),
       ),
@@ -85,7 +85,7 @@ class HomeEmptyView extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Image.asset(
-                  AppAssets.homeDiscoverEmptyState,
+                  AppAssets.homeDiscoverEmpty,
                   width: 220.w,
                   height: 220.w,
                   fit: BoxFit.contain,

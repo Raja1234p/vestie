@@ -231,7 +231,7 @@ class _WithdrawInstantPill extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Image.asset(
-            AppAssets.withdrawInstantIllustration,
+            AppAssets.walletWithdrawInstant,
             width: 24.w,
             height: 24.w,
             fit: BoxFit.contain,

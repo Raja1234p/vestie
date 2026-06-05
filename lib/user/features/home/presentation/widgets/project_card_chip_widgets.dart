@@ -42,7 +42,7 @@ class ProjectCategoryChip extends StatelessWidget {
             )
           else
             AppSvgIcon(
-                assetPath: AppAssets.iconEmergencyFund,
+                assetPath: AppAssets.projectTypeEmergency,
                 size: 12.w,
                 color: AppColors.primary),
           SizedBox(width: 4.w),
@@ -106,7 +106,7 @@ class ProjectStatusBadge extends StatelessWidget {
         children: [
           if (completed) ...[
             AppSvgIcon(
-                assetPath: AppAssets.checkMarkSuccessful,
+                assetPath: AppAssets.iconCheckCircle,
                 size: 11.w,
                 color: AppColors.surface),
             SizedBox(width: 3.w),

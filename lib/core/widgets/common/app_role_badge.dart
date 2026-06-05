@@ -29,7 +29,7 @@ class AppRoleBadge extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SvgPicture.asset(AppAssets.crown),
+          SvgPicture.asset(AppAssets.badgeLeaderCrown),
           SizedBox(width: 3.w),
           Text(
             _label,

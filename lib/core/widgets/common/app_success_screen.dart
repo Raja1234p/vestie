@@ -10,7 +10,7 @@ import 'flow_screen_footer.dart';
 
 /// A globally reusable full-page success screen.
 ///
-/// Background: white + top [AppAssets.emptyStateBackground] (Home / Discover style).
+/// Background: white + top [AppAssets.successScreenBackground] (Home / Discover style).
 /// Bottom action uses 16.w horizontal / 24.h bottom inset (borrow terms footer).
 class AppSuccessScreen extends StatelessWidget {
   final String title;
@@ -22,7 +22,7 @@ class AppSuccessScreen extends StatelessWidget {
   final Widget? footer;
   final String? buttonText;
   final VoidCallback? onButtonPressed;
-  /// Hero image above the title; defaults to [AppAssets.projectCreatedImage].
+  /// Hero image above the title; defaults to [AppAssets.successProjectCreated].
   final String? illustrationAsset;
   /// When set, content aligns to the top with this gap below [SafeArea] before the hero image.
   final double? illustrationTopSpacing;
@@ -92,7 +92,7 @@ class AppSuccessScreen extends StatelessWidget {
                         children: [
                           _SuccessIllustration(
                             path: illustrationAsset ??
-                                AppAssets.projectCreatedImage,
+                                AppAssets.successProjectCreated,
                           ),
                           AppText(
                             title,
@@ -135,7 +135,7 @@ class AppSuccessScreen extends StatelessWidget {
   }
 }
 
-/// White screen + top [AppAssets.emptyStateBackground] only (Home / Discover).
+/// White screen + top [AppAssets.successScreenBackground] only (Home / Discover).
 class _HomeEmptyStateBackground extends StatelessWidget {
   const _HomeEmptyStateBackground();
 
@@ -150,7 +150,7 @@ class _HomeEmptyStateBackground extends StatelessWidget {
           left: 0,
           right: 0,
           child: Image(
-            image: AssetImage(AppAssets.emptyStateBackground),
+            image: AssetImage(AppAssets.successScreenBackground),
             fit: BoxFit.cover,
           ),
         ),
@@ -196,7 +196,7 @@ class _SuccessIllustration extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (path == AppAssets.failureIcon) {
+    if (path == AppAssets.statusFailure) {
       return const FailureIcon();
     }
     final s = 174.w;

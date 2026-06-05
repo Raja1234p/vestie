@@ -26,7 +26,7 @@ class AppSnackBar {
       context,
       message: message,
       backgroundColor: AppColors.validSuccess,
-      iconAsset: AppAssets.checkMarkSuccessful,
+      iconAsset: AppAssets.iconCheckCircle,
     );
   }
 

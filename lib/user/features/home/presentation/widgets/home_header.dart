@@ -25,7 +25,7 @@ class HomeHeader extends StatelessWidget {
         height: AppDimens.homeHeaderHeight,
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage(AppAssets.appGradient),
+            image: AssetImage(AppAssets.headerGradient),
             fit: BoxFit.cover,
             alignment: Alignment.topCenter,
           ),

@@ -100,15 +100,15 @@ class _TransactionTypeIcon extends StatelessWidget {
   String get _asset {
     switch (type) {
       case AppTransactionType.deposit:
-        return AppAssets.iconDeposit;
+        return AppAssets.transactionDeposit;
       case AppTransactionType.contribution:
-        return AppAssets.iconContribution;
+        return AppAssets.transactionContribution;
       case AppTransactionType.borrow:
-        return AppAssets.iconBorrow;
+        return AppAssets.transactionBorrow;
       case AppTransactionType.withdrawal:
-        return AppAssets.iconContribution;
+        return AppAssets.transactionContribution;
       case AppTransactionType.lend:
-        return AppAssets.iconContribution;
+        return AppAssets.transactionContribution;
     }
   }
 

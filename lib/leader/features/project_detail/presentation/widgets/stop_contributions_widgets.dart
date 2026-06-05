@@ -11,7 +11,7 @@ class StopContributionsHeroCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FlowHeroImageCard(
-      imageAsset: AppAssets.projectCreatedImage,
+      imageAsset: AppAssets.successProjectCreated,
       backgroundColor: AppColors.purple100,
       caption: AppStrings.menuStopContributions,
       captionColor: AppColors.grey900,

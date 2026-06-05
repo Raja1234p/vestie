@@ -29,7 +29,7 @@ class WithdrawInstantOptionCard extends StatelessWidget {
     if (!selected) {
       return WithdrawMethodOptionCard(
         selected: false,
-        iconAsset: AppAssets.withdrawInstantIllustration,
+        iconAsset: AppAssets.walletWithdrawInstant,
         title: AppStrings.withdrawInstantTitle,
         subtitle: AppStrings.withdrawInstantSubtitle,
         onTap: onTap,
@@ -71,7 +71,7 @@ class WithdrawInstantOptionCard extends StatelessWidget {
                   child: Row(
                     children: [
                       Image.asset(
-                        AppAssets.withdrawInstantIllustration,
+                        AppAssets.walletWithdrawInstant,
                         width: 64.w,
                         height: 64.w,
                         fit: BoxFit.contain,
@@ -125,7 +125,7 @@ class WithdrawInstantOptionCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         AppSvgIcon(
-                          assetPath: AppAssets.iconInformationCircle,
+                          assetPath: AppAssets.iconInfoCircle,
                           size: AppDimens.iconSmall,
                           color: AppColors.green900,
                         ),

@@ -161,10 +161,10 @@ class _SheetIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (iconAsset != null) {
-      if (iconAsset == AppAssets.failureIcon) {
+      if (iconAsset == AppAssets.statusFailure) {
         return const FailureIcon();
       }
-      if (iconAsset == AppAssets.projectCreatedImage) {
+      if (iconAsset == AppAssets.successProjectCreated) {
         return const SuccessDialogIcon();
       }
       final isSvg = iconAsset!.toLowerCase().endsWith('.svg');
@@ -185,7 +185,7 @@ class _SheetIcon extends StatelessWidget {
       ),
       child: Center(
         child: AppSvgIcon(
-          assetPath: glyphAsset ?? AppAssets.checkMarkSuccessful,
+          assetPath: glyphAsset ?? AppAssets.iconCheckCircle,
           size: 46.w,
           color: iconColor ?? AppColors.primary,
         ),

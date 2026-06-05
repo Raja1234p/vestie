@@ -42,7 +42,7 @@ class ProjectDetailJoinRequestsChip extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SvgPicture.asset(
-                  AppAssets.iconJoinRequest,
+                  AppAssets.leaderJoinRequests,
                   width: 20.w,
                   height: 20.h,
                   fit: BoxFit.contain,

@@ -35,7 +35,7 @@ class WithdrawMethodBody extends StatelessWidget {
             children: [
               WithdrawMethodOptionCard(
                 selected: selected == WithdrawDeliveryMethod.standard,
-                iconAsset: AppAssets.withdrawStandardIllustration,
+                iconAsset: AppAssets.walletWithdrawStandard,
                 title: AppStrings.withdrawStandardTitle,
                 subtitle: AppStrings.withdrawStandardSubtitle,
                 onTap: () => onSelect(WithdrawDeliveryMethod.standard),

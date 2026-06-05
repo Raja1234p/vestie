@@ -60,7 +60,7 @@ class ProjectMembersEmptyIllustration extends StatelessWidget {
               ),
               child: Center(
                 child: AppSvgIcon(
-                  assetPath: AppAssets.plusSign,
+                  assetPath: AppAssets.iconAdd,
                   size: plusSize,
                   color: AppColors.primary,
                 ),

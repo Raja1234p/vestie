@@ -44,7 +44,7 @@ class _DeleteAccountConfirmDialog extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Image.asset(
-            AppAssets.markCancel,
+            AppAssets.statusCancelWarning,
             fit: BoxFit.contain,
             height: 160.h,
           ),

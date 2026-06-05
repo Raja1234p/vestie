@@ -34,7 +34,7 @@ class AppVoteButtons extends StatelessWidget {
         Expanded(
           child: _VoteButton(
             label: AppStrings.downvoteLabel,
-            iconPath: AppAssets.iconThumbsDown,
+            iconPath: AppAssets.voteThumbsDown,
             isActive: hasDownvoted,
             isPrimary: false,
             onTap: onDownvote,
@@ -45,7 +45,7 @@ class AppVoteButtons extends StatelessWidget {
         Expanded(
           child: _VoteButton(
             label: AppStrings.upvoteLabel,
-            iconPath: AppAssets.iconThumbsUp,
+            iconPath: AppAssets.voteThumbsUp,
             isActive: hasUpvoted,
             isPrimary: true,
             onTap: onUpvote,

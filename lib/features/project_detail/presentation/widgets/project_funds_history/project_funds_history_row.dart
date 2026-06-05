@@ -107,7 +107,7 @@ class _LedgerIcon extends StatelessWidget {
       child: SvgPicture.asset(
         isContribution
             ? AppAssets.iconDollarCircle
-            : AppAssets.iconCircleArrowUp02,
+            : AppAssets.transactionTransferOut,
         width: 24.w,
         height: 24.h,
         fit: BoxFit.contain,

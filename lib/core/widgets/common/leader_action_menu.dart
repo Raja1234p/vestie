@@ -100,31 +100,31 @@ class LeaderActionMenu extends StatelessWidget {
 
     push(
       LeaderMenuAction.addAnnouncement,
-      AppAssets.iconAddAnnouncement,
+      AppAssets.leaderAddAnnouncement,
       AppStrings.menuAddAnnouncement,
     );
     push(
       LeaderMenuAction.projectFundsHistory,
-      AppAssets.iconProjectFundHistory,
+      AppAssets.memberFundsHistory,
       AppStrings.menuProjectFundsHistory,
     );
     if (includeMyBorrows) {
       push(
         LeaderMenuAction.myBorrows,
-        AppAssets.iconMyBorrows,
+        AppAssets.myBorrowsMenu,
         AppStrings.menuMyBorrows,
       );
     }
     push(
       LeaderMenuAction.inviteMembers,
-      AppAssets.plusSign,
+      AppAssets.iconAdd,
       AppStrings.menuInviteMembers,
     );
     if (out.isNotEmpty) out.add(_divider());
     out.add(
       _buildItem(
         value: LeaderMenuAction.leaveProject,
-        iconPath: AppAssets.iconLeaveGroup,
+        iconPath: AppAssets.memberLeaveProject,
         label: AppStrings.menuLeaveProject,
         iconColor: AppColors.red900,
         labelColor: AppColors.red900,
@@ -153,48 +153,48 @@ class LeaderActionMenu extends StatelessWidget {
 
     push(
       LeaderMenuAction.addAnnouncement,
-      AppAssets.iconAddAnnouncement,
+      AppAssets.leaderAddAnnouncement,
       AppStrings.menuAddAnnouncement,
     );
     push(
       LeaderMenuAction.editProject,
-      AppAssets.iconEditProject,
+      AppAssets.leaderEditProject,
       AppStrings.menuEditProject,
     );
     push(
       LeaderMenuAction.projectFundsHistory,
-      AppAssets.iconProjectFundHistory,
+      AppAssets.memberFundsHistory,
       AppStrings.menuProjectFundsHistory,
     );
     if (includeMyBorrows) {
       push(
         LeaderMenuAction.myBorrows,
-        AppAssets.iconMyBorrows,
+        AppAssets.myBorrowsMenu,
         AppStrings.menuMyBorrows,
       );
     }
     push(
       LeaderMenuAction.inviteMembers,
-      AppAssets.plusSign,
+      AppAssets.iconAdd,
       AppStrings.menuInviteMembers,
     );
     push(
       LeaderMenuAction.markSuccessful,
-      AppAssets.iconMarkSuccessful,
+      AppAssets.leaderMarkSuccessful,
       AppStrings.menuMarkSuccessful,
       iconColor: AppColors.green900,
       labelColor: AppColors.green900,
     );
     push(
       LeaderMenuAction.stopContributions,
-      AppAssets.iconStopContributions,
+      AppAssets.leaderStopContributions,
       AppStrings.menuStopContributions,
       iconColor: AppColors.actionStopContributions,
       labelColor: AppColors.actionStopContributions,
     );
     push(
       LeaderMenuAction.cancelProject,
-      AppAssets.iconCancelProject,
+      AppAssets.leaderCancelProject,
       AppStrings.menuCancelProject,
       iconColor: AppColors.red900,
       labelColor: AppColors.red900,

@@ -27,7 +27,7 @@ class AuthPasswordVisibilityIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     if (passwordVisible) {
       return AppSvgIcon(
-        assetPath: AppAssets.iconVisibility,
+        assetPath: AppAssets.authPasswordVisible,
         size: logicalSize,
         color: AppColors.inputFieldIcon,
       );
@@ -35,7 +35,7 @@ class AuthPasswordVisibilityIcon extends StatelessWidget {
     final dpr = MediaQuery.devicePixelRatioOf(context);
     final cachePx = math.max(1, (logicalSize * dpr).round());
     return Image.asset(
-      AppAssets.iconPasswordHiddenEye,
+      AppAssets.authPasswordHidden,
       width: logicalSize,
       height: logicalSize,
       fit: BoxFit.contain,

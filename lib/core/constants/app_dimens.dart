@@ -116,11 +116,11 @@ class AppDimens {
   static double get dialogHeroIconWidth => 132.0.w;
   static double get dialogHeroIconHeight => 145.0.h;
 
-  /// [AppAssets.failureIcon] — screens + dialogs.
+  /// [AppAssets.statusFailure] — screens + dialogs.
   static double get failureIconWidth => dialogHeroIconWidth;
   static double get failureIconHeight => dialogHeroIconHeight;
 
-  /// [AppAssets.projectCreatedImage] — success dialogs.
+  /// [AppAssets.successProjectCreated] — success dialogs.
   static double get successDialogIconWidth => dialogHeroIconWidth;
   static double get successDialogIconHeight => dialogHeroIconHeight;
 

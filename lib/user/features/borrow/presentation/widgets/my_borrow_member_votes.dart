@@ -37,7 +37,7 @@ class MyBorrowMemberVotes extends StatelessWidget {
           children: [
             Expanded(
               child: _VoteTile(
-                iconPath: AppAssets.iconThumbsUp,
+                iconPath: AppAssets.voteThumbsUp,
                 count: upvotes,
                 backgroundColor: AppColors.green100,
                 foregroundColor: AppColors.green900,
@@ -46,7 +46,7 @@ class MyBorrowMemberVotes extends StatelessWidget {
             SizedBox(width: 10.w),
             Expanded(
               child: _VoteTile(
-                iconPath: AppAssets.iconThumbsDown,
+                iconPath: AppAssets.voteThumbsDown,
                 count: downvotes,
                 backgroundColor: AppColors.borrowVoteDownBg,
                 foregroundColor: AppColors.red900,

@@ -11,17 +11,17 @@ class OnboardingCubit extends Cubit<int> {
     OnboardingPageModel(
       title: AppStrings.onboarding1Title,
       subtitle: AppStrings.onboarding1Subtitle,
-      imagePath: AppAssets.onboarding1,
+      imagePath: AppAssets.onboardingStep1,
     ),
     OnboardingPageModel(
       title: AppStrings.onboarding2Title,
       subtitle: AppStrings.onboarding2Subtitle,
-      imagePath: AppAssets.onboarding2,
+      imagePath: AppAssets.onboardingStep2,
     ),
     OnboardingPageModel(
       title: AppStrings.onboarding3Title,
       subtitle: AppStrings.onboarding3Subtitle,
-      imagePath: AppAssets.onboarding3,
+      imagePath: AppAssets.onboardingStep3,
     ),
   ];
 

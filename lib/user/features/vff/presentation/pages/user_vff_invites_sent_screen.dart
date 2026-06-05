@@ -24,7 +24,7 @@ final class UserVffInvitesSentScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppSuccessScreen(
-      illustrationAsset: AppAssets.projectJoinedSuccess,
+      illustrationAsset: AppAssets.successProjectJoined,
       title: AppStrings.userVffInviteSuccessTitle,
       subtitleWidget: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.w),

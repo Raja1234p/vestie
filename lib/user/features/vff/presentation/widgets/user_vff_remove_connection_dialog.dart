@@ -25,7 +25,7 @@ Future<bool?> showUserVffRemoveConnectionDialog(
         showSecondary: true,
         actionsInRow: true,
         primaryColor: AppColors.red800,
-        iconAsset: AppAssets.failureIcon,
+        iconAsset: AppAssets.statusFailure,
         onPrimary: () => Navigator.of(dialogCtx).pop(true),
         onSecondary: () => Navigator.of(dialogCtx).pop(false),
       ),

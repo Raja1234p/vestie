@@ -30,7 +30,7 @@ class BorrowRequestsEmptyState extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Image.asset(
-            AppAssets.borrowRequestsEmptyState,
+            AppAssets.borrowRequestsEmpty,
             width: 100.w,
             height: 100.h,
             fit: BoxFit.contain,

@@ -174,7 +174,7 @@ class _ProfileBody extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             _PickerTile(
-              glyphAsset: AppAssets.iconCamera,
+              glyphAsset: AppAssets.profileCamera,
               title: AppStrings.takePhoto,
               onTap: () {
                 Navigator.pop(sheetContext);
@@ -182,7 +182,7 @@ class _ProfileBody extends StatelessWidget {
               },
             ),
             _PickerTile(
-              glyphAsset: AppAssets.iconPhotoLibrary,
+              glyphAsset: AppAssets.profilePhotoLibrary,
               title: AppStrings.chooseFromGallery,
               onTap: () {
                 Navigator.pop(sheetContext);
@@ -311,7 +311,7 @@ class _ProfileBody extends StatelessWidget {
                                     },
                                   ),
                                   SettingsItem(
-                                    assetPath: AppAssets.iconPaymentMethods,
+                                    assetPath: AppAssets.profilePaymentMethods,
                                     label: AppStrings.menuPaymentMethods,
                                     onTap: () =>
                                         context.push(AppRoutes.paymentMethods),
@@ -323,7 +323,7 @@ class _ProfileBody extends StatelessWidget {
                                         context.push(AppRoutes.myAccounts),
                                   ),
                                   SettingsItem(
-                                    assetPath: AppAssets.iconCompleteProjects,
+                                    assetPath: AppAssets.profileCompletedProjects,
                                     label: AppStrings.menuCompletedProjects,
                                     onTap: () => context.push(
                                       AppRoutes.completedProjects,
@@ -337,7 +337,7 @@ class _ProfileBody extends StatelessWidget {
                                     ),
                                   ),
                                   SettingsItem(
-                                    assetPath: AppAssets.iconKeyGuidelines,
+                                    assetPath: AppAssets.profileGuidelines,
                                     label: AppStrings.menuKeyGuidelines,
                                     onTap: () =>
                                         context.push(AppRoutes.keyGuidelines),

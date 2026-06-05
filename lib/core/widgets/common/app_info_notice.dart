@@ -25,7 +25,7 @@ class AppInfoNotice extends StatelessWidget {
       ),
       child: Row(
         children: [
-          SvgPicture.asset(AppAssets.infoIcon),
+          SvgPicture.asset(AppAssets.iconAlertTriangle),
           SizedBox(width: 8.w),
           Expanded(
             child: AppText(

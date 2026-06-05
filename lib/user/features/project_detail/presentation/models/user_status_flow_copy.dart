@@ -21,25 +21,25 @@ class UserStatusFlowCopy {
     switch (kind) {
       case UserStatusFlowKind.joinApproved:
         return const UserStatusFlowUiData(
-          imageAsset: AppAssets.markSuccessfullProject,
+          imageAsset: AppAssets.markProjectSuccess,
           headline: AppStrings.userJoinRequestApprovedStatusTitle,
           body: AppStrings.userJoinRequestApprovedStatusBody,
         );
       case UserStatusFlowKind.joinRejected:
         return const UserStatusFlowUiData(
-          imageAsset: AppAssets.failureIcon,
+          imageAsset: AppAssets.statusFailure,
           headline: AppStrings.userJoinRequestRejectedStatusTitle,
           body: AppStrings.userJoinRequestRejectedStatusBody,
         );
       case UserStatusFlowKind.markVotedSuccess:
         return const UserStatusFlowUiData(
-          imageAsset: AppAssets.markSuccessfullProject,
+          imageAsset: AppAssets.markProjectSuccess,
           headline: AppStrings.markUserVotedSuccessTitle,
           body: AppStrings.markUserVotedSuccessBody,
         );
       case UserStatusFlowKind.markVotedIncomplete:
         return const UserStatusFlowUiData(
-          imageAsset: AppAssets.failureIcon,
+          imageAsset: AppAssets.statusFailure,
           headline: AppStrings.markUserVotedIncompleteTitle,
           body: AppStrings.markUserVotedIncompleteBody,
         );

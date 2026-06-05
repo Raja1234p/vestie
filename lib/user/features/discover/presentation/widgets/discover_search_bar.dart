@@ -60,7 +60,7 @@ class DiscoverSearchBar extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(right: 16.w),
             child: AppSvgIcon(
-              assetPath: AppAssets.iconSearch,
+              assetPath: AppAssets.navDiscover,
               size: 20.w,
               color: AppColors.purple1000,
             ),

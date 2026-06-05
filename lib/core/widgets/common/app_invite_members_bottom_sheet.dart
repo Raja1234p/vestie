@@ -368,7 +368,7 @@ class _VffGridTile extends StatelessWidget {
                         right: 0,
                         bottom: 0,
                         child: SvgPicture.asset(
-                          AppAssets.iconFriendSelected,
+                          AppAssets.vffFriendSelected,
                           width: badgeSize,
                           height: badgeSize,
                         ),

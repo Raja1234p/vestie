@@ -76,7 +76,7 @@ class _SplashScreenState extends State<SplashScreen> {
               children: [
                 // SVG is natively white (fill="white"), so no color filter needed.
                 SvgPicture.asset(
-                  AppAssets.logoSvg,
+                  AppAssets.splashLogo,
                   width: 200.w,
                 ).padding(EdgeInsets.only(bottom: AppDimens.p16)),
               ],

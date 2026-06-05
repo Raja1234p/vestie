@@ -68,7 +68,7 @@ Future<void> showJoinRequestDeclinedDialog(
     primaryColor: AppColors.neutral1200,
     primaryTextColor: AppColors.surface,
     primaryBorderColor: AppColors.neutral1200,
-    iconAsset: AppAssets.failureIcon,
+    iconAsset: AppAssets.statusFailure,
     onPrimary: onOk,
   );
 }

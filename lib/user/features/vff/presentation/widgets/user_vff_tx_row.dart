@@ -33,7 +33,7 @@ class UserVffTxRow extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: AppSvgIcon(
-              assetPath: AppAssets.iconArrowUpBig,
+              assetPath: AppAssets.voteArrowUp,
               size: 20.r,
               color: AppColors.primaryDark,
             ),

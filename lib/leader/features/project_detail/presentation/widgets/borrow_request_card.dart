@@ -313,8 +313,8 @@ class _VoteCount extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final iconPath = useThumbIcons
-        ? (isUpvote ? AppAssets.iconThumbsUp : AppAssets.iconThumbsDown)
-        : (isUpvote ? AppAssets.upWordArrow : AppAssets.downWordArrow);
+        ? (isUpvote ? AppAssets.voteThumbsUp : AppAssets.voteThumbsDown)
+        : (isUpvote ? AppAssets.voteArrowUp : AppAssets.voteArrowDown);
 
     return Row(
       children: [

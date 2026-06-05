@@ -112,7 +112,7 @@ Future<void> showRejectBorrowRequestFlow(
     primaryColor: AppColors.neutral1200,
     primaryTextColor: AppColors.surface,
     primaryBorderColor: AppColors.neutral1200,
-    iconAsset: AppAssets.failureIcon,
+    iconAsset: AppAssets.statusFailure,
     onPrimary: () => Navigator.of(context).pop(),
   );
 }

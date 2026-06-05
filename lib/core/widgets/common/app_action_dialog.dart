@@ -91,7 +91,7 @@ class AppActionDialog extends StatelessWidget {
     );
   }
 
-  /// Success result dialog with [AppAssets.projectCreatedImage] and filled primary CTA.
+  /// Success result dialog with [AppAssets.successProjectCreated] and filled primary CTA.
   static Future<void> showSuccessOk(
     BuildContext context, {
     required String title,
@@ -110,7 +110,7 @@ class AppActionDialog extends StatelessWidget {
       primaryColor: AppColors.neutral1200,
       primaryTextColor: AppColors.surface,
       primaryBorderColor: AppColors.neutral1200,
-      iconAsset: AppAssets.projectCreatedImage,
+      iconAsset: AppAssets.successProjectCreated,
       onPrimary: onPrimary,
     );
   }
@@ -218,10 +218,10 @@ class _DialogIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (iconAsset != null) {
-      if (iconAsset == AppAssets.failureIcon) {
+      if (iconAsset == AppAssets.statusFailure) {
         return const FailureIcon();
       }
-      if (iconAsset == AppAssets.projectCreatedImage) {
+      if (iconAsset == AppAssets.successProjectCreated) {
         return const SuccessDialogIcon();
       }
       final isSvg = iconAsset!.toLowerCase().endsWith('.svg');
@@ -242,7 +242,7 @@ class _DialogIcon extends StatelessWidget {
       ),
       child: Center(
         child: AppSvgIcon(
-          assetPath: glyphAsset ?? AppAssets.checkMarkSuccessful,
+          assetPath: glyphAsset ?? AppAssets.iconCheckCircle,
           size: 46.w,
           color: iconColor ?? AppColors.primary,
         ),

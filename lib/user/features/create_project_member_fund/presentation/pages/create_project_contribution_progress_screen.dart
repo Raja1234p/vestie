@@ -133,7 +133,7 @@ class CreateProjectContributionProgressScreen extends StatelessWidget {
                                   vertical: 4.h,
                                 ),
                                 leading: SvgPicture.asset(
-                                  AppAssets.iconDeposit,
+                                  AppAssets.transactionDeposit,
                                   width: 32.w,
                                   height: 32.w,
                                 ),
@@ -164,7 +164,7 @@ class CreateProjectContributionProgressScreen extends StatelessWidget {
                                       ),
                                     ),
                                     SvgPicture.asset(
-                                      AppAssets.iconArrowUpBig,
+                                      AppAssets.voteArrowUp,
                                       width: 18.w,
                                       height: 18.w,
                                     ),

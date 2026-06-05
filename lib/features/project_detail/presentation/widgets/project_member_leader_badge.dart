@@ -75,7 +75,7 @@ class ProjectMemberLeaderBadge extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   AppSvgIcon(
-                    assetPath: AppAssets.iconLeaderUser,
+                    assetPath: AppAssets.badgeLeader,
                     size: 12.w,
                     color: AppColors.surface,
                   ),

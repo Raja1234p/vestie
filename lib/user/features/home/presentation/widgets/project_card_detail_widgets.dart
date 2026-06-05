@@ -108,7 +108,7 @@ class ProjectDateRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         AppSvgIcon(
-          assetPath: AppAssets.iconCalendar02,
+          assetPath: AppAssets.projectCardCalendar,
           size: 12,
           color: endsInColor,
         ),

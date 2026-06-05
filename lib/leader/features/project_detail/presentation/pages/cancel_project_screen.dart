@@ -115,7 +115,7 @@ class _CancelProjectScreenState extends State<CancelProjectScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     FlowHeroImageCard(
-                      imageAsset: AppAssets.markCancel,
+                      imageAsset: AppAssets.statusCancelWarning,
                       backgroundColor: AppColors.red100,
                       borderRadius: 10.r,
                       caption: AppStrings.cancelProjectHeroWarning,

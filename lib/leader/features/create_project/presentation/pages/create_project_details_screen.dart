@@ -154,7 +154,7 @@ class _CreateProjectDetailsScreenState extends State<CreateProjectDetailsScreen>
                           fillColor: AppColors.searchBarBg,
                           labelTrailingGap: 6.w,
                           labelTrailing: AppSvgIcon(
-                            assetPath: AppAssets.iconInformationCircle,
+                            assetPath: AppAssets.iconInfoCircle,
                             size: 16,
                             color: AppColors.inputFieldIcon,
                           ),

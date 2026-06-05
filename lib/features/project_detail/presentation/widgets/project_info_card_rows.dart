@@ -134,7 +134,7 @@ class ProjectInfoDeadlineRow extends StatelessWidget {
     return Row(
       children: [
         AppSvgIcon(
-          assetPath: AppAssets.iconCalendar02,
+          assetPath: AppAssets.projectCardCalendar,
           size: 12,
           color: AppColors.grey800,
         ),

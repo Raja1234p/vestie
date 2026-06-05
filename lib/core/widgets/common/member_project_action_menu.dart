@@ -70,7 +70,7 @@ class MemberProjectActionMenu extends StatelessWidget {
     push(
       _item(
         value: MemberProjectMenuAction.projectFundsHistory,
-        iconPath: AppAssets.iconProjectFundHistory,
+        iconPath: AppAssets.memberFundsHistory,
         label: AppStrings.menuProjectFundsHistory,
         iconColor: AppColors.primary,
         labelColor: AppColors.grey900,
@@ -80,7 +80,7 @@ class MemberProjectActionMenu extends StatelessWidget {
       push(
         _item(
           value: MemberProjectMenuAction.myBorrows,
-          iconPath: AppAssets.iconMyBorrows,
+          iconPath: AppAssets.myBorrowsMenu,
           label: AppStrings.menuMyBorrows,
           iconColor: AppColors.primary,
           labelColor: AppColors.grey900,
@@ -90,7 +90,7 @@ class MemberProjectActionMenu extends StatelessWidget {
     push(
       _item(
         value: MemberProjectMenuAction.inviteMembers,
-        iconPath: AppAssets.plusSign,
+        iconPath: AppAssets.iconAdd,
         label: AppStrings.menuInviteMembers,
         iconColor: AppColors.primary,
         labelColor: AppColors.grey900,
@@ -99,7 +99,7 @@ class MemberProjectActionMenu extends StatelessWidget {
     push(
       _item(
         value: MemberProjectMenuAction.leaveProject,
-        iconPath: AppAssets.iconLeaveGroup,
+        iconPath: AppAssets.memberLeaveProject,
         label: AppStrings.menuLeaveProject,
         iconColor: AppColors.red900,
         labelColor: AppColors.red900,

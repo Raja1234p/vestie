@@ -89,7 +89,7 @@ class _EmptyView extends StatelessWidget {
     return const UserVffHubEmptyBody(
       message: AppStrings.completedProjectsEmptyTitle,
       subtitle: AppStrings.completedProjectsEmptySubtitle,
-      illustrationAsset: AppAssets.borrowRequestsEmptyState,
+      illustrationAsset: AppAssets.borrowRequestsEmpty,
     );
   }
 }

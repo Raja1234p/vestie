@@ -20,7 +20,7 @@ class WalletRecentActivityEmpty extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              AppAssets.borrowRequestsEmptyState,
+              AppAssets.borrowRequestsEmpty,
               width: 120.w,
               height: 120.h,
               fit: BoxFit.contain,

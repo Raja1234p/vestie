@@ -143,7 +143,7 @@ class _CreateProjectInvestmentSettingsScreenState
                                 width: 20.w,
                                 height: 20.h,
                                 child: SvgPicture.asset(
-                                  AppAssets.iconInformationCircle,
+                                  AppAssets.iconInfoCircle,
                                   fit: BoxFit.contain,
                                   colorFilter: ColorFilter.mode(
                                     AppColors.inputFieldIcon,

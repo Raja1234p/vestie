@@ -22,25 +22,25 @@ class _NavItem {
 
 const _items = [
   _NavItem(
-    AppAssets.iconHome,
+    AppAssets.navHome,
     AppStrings.navHome,
-    activeAsset: AppAssets.iconHomeActive,
+    activeAsset: AppAssets.navHomeActive,
   ),
   _NavItem(
-    AppAssets.iconSearch,
+    AppAssets.navDiscover,
     AppStrings.navSearch,
-    activeAsset: AppAssets.iconSearchActive,
+    activeAsset: AppAssets.navDiscoverActive,
   ),
-  _NavItem(AppAssets.iconAdd, AppStrings.navAdd),
+  _NavItem(AppAssets.navAdd, AppStrings.navAdd),
   _NavItem(
-    AppAssets.iconWallet,
+    AppAssets.navWallet,
     AppStrings.navWallet,
-    activeAsset: AppAssets.iconWalletActive,
+    activeAsset: AppAssets.navWalletActive,
   ),
   _NavItem(
-    AppAssets.iconProfile,
+    AppAssets.navProfile,
     AppStrings.navProfile,
-    activeAsset: AppAssets.iconProfileActive,
+    activeAsset: AppAssets.navProfileActive,
   ),
 ];
 

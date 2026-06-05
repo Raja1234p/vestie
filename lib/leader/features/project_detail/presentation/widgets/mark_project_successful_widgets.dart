@@ -11,7 +11,7 @@ class MarkSuccessfulHeroCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FlowHeroImageCard(
-      imageAsset: AppAssets.markSuccessfullProject,
+      imageAsset: AppAssets.markProjectSuccess,
       backgroundColor: AppColors.green100,
       caption: AppStrings.menuMarkSuccessful,
       captionColor: AppColors.green1000,

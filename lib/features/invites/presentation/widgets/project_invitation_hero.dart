@@ -10,7 +10,7 @@ class ProjectInvitationHero extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Image.asset(
-        AppAssets.projectInvitationHero,
+        AppAssets.inviteProjectHero,
         width: 150.w,
         height: 150.w,
         fit: BoxFit.contain,

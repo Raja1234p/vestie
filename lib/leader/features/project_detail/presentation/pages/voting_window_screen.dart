@@ -159,7 +159,7 @@ class _VotingWindowScreenState extends State<VotingWindowScreen> {
                         labelTrailing: GestureDetector(
                           onTap: () => _showVotingWindowInfo(context),
                           child: AppSvgIcon(
-                            assetPath: AppAssets.iconInformationCircle,
+                            assetPath: AppAssets.iconInfoCircle,
                             size: 20.w,
                             color: AppColors.neutral700,
                           ),

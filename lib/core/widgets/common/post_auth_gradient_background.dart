@@ -22,7 +22,7 @@ class PostAuthGradientBackground extends StatelessWidget {
           left: 0,
           right: 0,
           child: Image.asset(
-            AppAssets.appGradient,
+            AppAssets.headerGradient,
             fit: BoxFit.cover,
           ),
         ),

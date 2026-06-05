@@ -304,7 +304,7 @@ class MemberOverdueBanner extends StatelessWidget {
       child: Row(
         children: [
           AppSvgIcon(
-              assetPath: AppAssets.infoIcon,
+              assetPath: AppAssets.iconAlertTriangle,
               color: AppColors.red900,
               size: 20.w),
           SizedBox(width: 8.w),

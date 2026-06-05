@@ -28,7 +28,7 @@ class PaymentEmptyView extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Image.asset(
-              AppAssets.paymentMethodsEmptyIllustration,
+              AppAssets.profilePaymentMethodsEmpty,
               width: 240.w,
               height: 200.h,
               fit: BoxFit.contain,

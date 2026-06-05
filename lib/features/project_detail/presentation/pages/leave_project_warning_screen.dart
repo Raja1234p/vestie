@@ -76,7 +76,7 @@ class _LeaveProjectWarningScreenState extends State<LeaveProjectWarningScreen> {
             child: SafeArea(
               bottom: false,
               child: CenteredHeroStatusBlock(
-                imageAsset: AppAssets.failureIcon,
+                imageAsset: AppAssets.statusFailure,
                 headline: AppStrings.leaveProjectWarningTitle,
                 body: AppStrings.leaveProjectWarningBody,
                 bodyFontSize: 20,

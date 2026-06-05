@@ -20,11 +20,11 @@ extension ProjectCategoryX on ProjectCategory {
   String? get iconAsset {
     switch (this) {
       case ProjectCategory.vacations:
-        return AppAssets.iconVacationUmbrella;
+        return AppAssets.projectTypeVacation;
       case ProjectCategory.emergency:
-        return AppAssets.iconEmergencyFund;
+        return AppAssets.projectTypeEmergency;
       case ProjectCategory.investment:
-        return AppAssets.iconInvestmentFund;
+        return AppAssets.projectTypeInvestment;
     }
   }
 
@@ -32,11 +32,11 @@ extension ProjectCategoryX on ProjectCategory {
   String get cardImageAsset {
     switch (this) {
       case ProjectCategory.vacations:
-        return AppAssets.projectCardVacation;
+        return AppAssets.cardVacation;
       case ProjectCategory.emergency:
-        return AppAssets.projectCardEmergency;
+        return AppAssets.cardEmergency;
       case ProjectCategory.investment:
-        return AppAssets.projectCardInvestment;
+        return AppAssets.cardInvestment;
     }
   }
 

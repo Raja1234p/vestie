@@ -306,7 +306,7 @@ class _EmptyMembers extends StatelessWidget {
       child: Column(
         children: [
           AppSvgIcon(
-            assetPath: AppAssets.iconPeople,
+            assetPath: AppAssets.projectMembers,
             size: 40.r,
             color: AppColors.textBody,
           ),

@@ -195,7 +195,7 @@ class CPDeadlinePicker extends StatelessWidget {
                   ),
                 ],
                 AppSvgIcon(
-                  assetPath: AppAssets.iconCalendar,
+                  assetPath: AppAssets.createProjectCalendar,
                   size: 20.w,
                   color: AppColors.inputFieldIcon,
                 ),

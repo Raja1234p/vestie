@@ -110,7 +110,7 @@ void main() {
       );
 
       final image = tester.widget<Image>(find.byType(Image));
-      expect(image.image, const AssetImage(AppAssets.projectInvitationHero));
+      expect(image.image, const AssetImage(AppAssets.inviteProjectHero));
       expect(image.width, AppDimens.vffEmptyStateIllustration);
       expect(image.height, AppDimens.vffEmptyStateIllustration);
     });

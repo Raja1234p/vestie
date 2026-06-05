@@ -73,7 +73,7 @@ class ProjectMemberCoLeaderBadge extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   AppSvgIcon(
-                    assetPath: AppAssets.iconCoLeaderUsers,
+                    assetPath: AppAssets.badgeCoLeader,
                     size: 12.w,
                     color: AppColors.surface,
                   ),

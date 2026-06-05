@@ -56,7 +56,7 @@ class EditProfileAvatarPicker extends StatelessWidget {
           children: [
             ListTile(
               leading: AppSvgIcon(
-                assetPath: AppAssets.iconCamera,
+                assetPath: AppAssets.profileCamera,
                 size: 24.w,
                 color: AppColors.textPrimary,
               ),
@@ -68,7 +68,7 @@ class EditProfileAvatarPicker extends StatelessWidget {
             ),
             ListTile(
               leading: AppSvgIcon(
-                assetPath: AppAssets.iconPhotoLibrary,
+                assetPath: AppAssets.profilePhotoLibrary,
                 size: 24.w,
                 color: AppColors.textPrimary,
               ),
