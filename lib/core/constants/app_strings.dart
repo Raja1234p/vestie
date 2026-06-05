@@ -648,7 +648,7 @@ class AppStrings {
   static const String reviewLabelAutoSave       = 'Auto-save';
 
   // Borrowing path (Vacation / Emergency — production frames)
-  static const String createFundsBorrowingTitle = 'Funds Borrowing';
+  static const String createFundsBorrowingTitle = 'Borrowing Setup';
   static const String labelAnnualInterest      = 'Interest rate (Annual %)';
   static const String hintAnnualInterest       = '5%';
   /// Shown beside ROI / percent inputs (not stored in form state or API).

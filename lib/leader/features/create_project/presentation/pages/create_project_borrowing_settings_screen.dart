@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_strings.dart';
@@ -64,12 +65,11 @@ class _CreateProjectBorrowingSettingsScreenState
           return const Scaffold(body: SizedBox.shrink());
         }
 
-        final settingsLabelStyle =
-            Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.authLabel,
-                );
+        final settingsLabelStyle = GoogleFonts.lato(
+          fontSize: 18.sp,
+          fontWeight: FontWeight.w500,
+          color: AppColors.createProjectSettingsLabel,
+        );
 
         return Scaffold(
           backgroundColor: Colors.transparent,
@@ -91,7 +91,7 @@ class _CreateProjectBorrowingSettingsScreenState
                         ScrollViewKeyboardDismissBehavior.onDrag,
                     padding: EdgeInsets.fromLTRB(
                       20.w,
-                      20.h,
+                      0.h,
                       20.w,
                       16.h + MediaQuery.viewInsetsOf(context).bottom,
                     ),
