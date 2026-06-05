@@ -337,7 +337,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       return AuthTokenModel.fromJson(response.data);
     } on DioException catch (e) {
       AppLogger.error('API GoogleLogin Error: ${e.response?.statusCode}', error: e.response?.data);
-      _handleError(e, 'Google login failed');
+      _handleError(e, AppStrings.errorGoogleSignInFailed);
     }
   }
 }

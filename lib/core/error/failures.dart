@@ -49,3 +49,8 @@ class TimeoutFailure extends Failure {
 class UnknownFailure extends Failure {
   const UnknownFailure([super.message = 'An unknown error occurred.', super.title]);
 }
+
+/// User closed the Google account picker — not an error; UI should stay silent.
+class SignInCanceledFailure extends Failure {
+  const SignInCanceledFailure() : super('');
+}

@@ -3,6 +3,8 @@ import '../../../../core/constants/api_constants.dart';
 import '../../../../core/constants/storage_keys.dart';
 import '../../../../core/storage/onboarding_prefs.dart';
 import '../../../../core/di/service_locator.dart';
+import '../../../../core/error/failures.dart';
+import '../../../../core/error/failure_mapper.dart';
 import '../../../../core/bloc/form_submission_state.dart';
 import '../../../../core/bloc/base_form_bloc.dart';
 import '../../../../core/utils/validators.dart';
@@ -125,7 +127,14 @@ class LoginBloc extends BaseFormBloc<LoginEvent, LoginState> {
 
     await result.fold(
       (failure) async {
-        emit(LoginError(message: failure.message, title: failure.title));
+        if (failure is SignInCanceledFailure) {
+          emit(const LoginInitial());
+          return;
+        }
+        emit(LoginError(
+          message: FailureMapper.userMessage(failure),
+          title: FailureMapper.dialogTitle(failure),
+        ));
       },
       (user) async {
         if (user.accessToken != null) {

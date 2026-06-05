@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/service_locator.dart';
+import '../../../../core/error/failures.dart';
+import '../../../../core/error/failure_mapper.dart';
 import '../../../../core/utils/validation_utils.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/usecases/register_use_case.dart';
@@ -75,7 +77,14 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
     await result.fold(
       (failure) async {
-        emit(RegisterError(message: failure.message, title: failure.title));
+        if (failure is SignInCanceledFailure) {
+          emit(const RegisterInitial());
+          return;
+        }
+        emit(RegisterError(
+          message: FailureMapper.userMessage(failure),
+          title: FailureMapper.dialogTitle(failure),
+        ));
       },
       (user) async {
         // Save tokens

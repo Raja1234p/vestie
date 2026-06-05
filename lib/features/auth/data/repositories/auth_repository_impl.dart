@@ -345,7 +345,7 @@ class AuthRepositoryImpl implements AuthRepository {
           .authorizeScopes(['email', 'profile']);
       final idToken = googleUser.authentication.idToken;
       if (idToken == null || idToken.isEmpty) {
-        return const Left(ServerFailure('Failed to get Google ID token'));
+        return const Left(ServerFailure(AppStrings.errorGoogleSignInNoToken));
       }
 
       final userModel = await _remoteDataSource.loginWithGoogle(
@@ -354,11 +354,15 @@ class AuthRepositoryImpl implements AuthRepository {
 
       return Right(userModel);
     } on GoogleSignInException catch (e, stack) {
-      AppLogger.error('Google Sign-In platform error: ${e.code}', error: e, stackTrace: stack);
+      AppLogger.error(
+        'Google Sign-In platform error: ${e.code}',
+        error: e.description ?? e,
+        stackTrace: stack,
+      );
       if (e.code == GoogleSignInExceptionCode.canceled) {
-        return Left(ServerFailure(AppStrings.errorGoogleSignInCanceledLikelyConfig));
+        return const Left(SignInCanceledFailure());
       }
-      return Left(ServerFailure(e.description ?? e.toString()));
+      return const Left(ServerFailure(AppStrings.errorGoogleSignInFailed));
     } on UnauthorizedException catch (e, stack) {
       AppLogger.error('Google Sign-In Unauthorized', error: e, stackTrace: stack);
       return Left(ServerFailure(e.message, e.title));
@@ -367,7 +371,7 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(ServerFailure(e.message, e.title));
     } catch (e, stack) {
       AppLogger.error('Google Sign-In Unexpected Exception', error: e, stackTrace: stack);
-      return const Left(ServerFailure('An unexpected error occurred during Google sign-in'));
+      return const Left(ServerFailure(AppStrings.errorGoogleSignInFailed));
     }
   }
 
