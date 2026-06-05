@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/theme/app_text_styles.dart';
 import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import '../../domain/entities/project.dart';
 import 'project_card.dart';
@@ -40,11 +39,7 @@ class ProjectsSection extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.lato(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
-                  ),
+                  style: AppTextStyles.homeSectionTitle,
                 ),
                 const Spacer(),
                 AnimatedRotation(
@@ -67,13 +62,17 @@ class ProjectsSection extends StatelessWidget {
           crossFadeState: expanded
               ? CrossFadeState.showFirst
               : CrossFadeState.showSecond,
-          firstChild: Column(
-            children: projects
-                .map((p) => ProjectCard(
-                      project: p,
-                      onAction: () => onProjectAction(p),
-                    ))
-                .toList(),
+          firstChild: ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: projects.length,
+            itemBuilder: (context, index) {
+              final project = projects[index];
+              return ProjectCard(
+                project: project,
+                onAction: () => onProjectAction(project),
+              );
+            },
           ),
           secondChild: const SizedBox.shrink(),
         ),

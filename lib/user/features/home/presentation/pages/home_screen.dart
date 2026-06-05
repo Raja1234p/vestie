@@ -124,6 +124,8 @@ class _HomeBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeBloc, HomeState>(
+      buildWhen: (previous, current) =>
+          previous.runtimeType != current.runtimeType || previous != current,
       builder: (context, state) {
         if (state is HomeLoading || state is HomeInitial) {
           return Scaffold(
@@ -232,6 +234,7 @@ class _HomeContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeSectionsCubit, HomeSectionsState>(
+      buildWhen: (previous, current) => previous != current,
       builder: (context, sections) {
         final cubit = context.read<HomeSectionsCubit>();
         return Scaffold(

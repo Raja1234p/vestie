@@ -62,4 +62,11 @@ class AppTextStyles {
         fontWeight: FontWeight.w600,
         color: AppColors.neutral1200,
       );
+
+  /// Home / discover section headers (Figma 18 / w700).
+  static TextStyle get homeSectionTitle => GoogleFonts.lato(
+        fontSize: 18.sp,
+        fontWeight: FontWeight.w700,
+        color: AppColors.textPrimary,
+      );
 }

@@ -46,7 +46,9 @@ class ProjectCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final devicePixelRatio = MediaQuery.devicePixelRatioOf(context);
+    return RepaintBoundary(
+      child: Container(
       margin: EdgeInsets.only(bottom: 12.h),
       padding: EdgeInsets.all(14.w),
       decoration: BoxDecoration(
@@ -130,6 +132,8 @@ class ProjectCard extends StatelessWidget {
                   width: 100.w,
                   height: 69.h,
                   fit: BoxFit.contain,
+                  cacheWidth: (100.w * devicePixelRatio).round(),
+                  cacheHeight: (69.h * devicePixelRatio).round(),
                 ),
               ],
             ),
@@ -170,6 +174,7 @@ class ProjectCard extends StatelessWidget {
             ),
           ],
         ],
+      ),
       ),
     );
   }

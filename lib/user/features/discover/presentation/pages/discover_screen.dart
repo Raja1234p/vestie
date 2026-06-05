@@ -93,6 +93,14 @@ class _DiscoverBody extends StatelessWidget {
       body: PostAuthGradientBackground(
         child: DiscoverJoinEffectsListener(
           child: BlocBuilder<DiscoverCubit, DiscoverState>(
+            buildWhen: (previous, current) =>
+                previous.loading != current.loading ||
+                previous.errorMessage != current.errorMessage ||
+                previous.allProjects != current.allProjects ||
+                previous.filtered != current.filtered ||
+                previous.selectedFilter != current.selectedFilter ||
+                previous.searchQuery != current.searchQuery ||
+                previous.joiningProjectId != current.joiningProjectId,
             builder: (context, state) {
               final hasProjects = state.allProjects.isNotEmpty;
               final filteredEmpty = state.filtered.isEmpty;

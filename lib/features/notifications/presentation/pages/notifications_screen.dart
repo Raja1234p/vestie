@@ -52,6 +52,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<NotificationsCubit, NotificationsState>(
+      buildWhen: (previous, current) =>
+          previous.loading != current.loading ||
+          previous.loadingMore != current.loadingMore ||
+          previous.items != current.items ||
+          previous.unreadCount != current.unreadCount ||
+          previous.error != current.error ||
+          previous.silentRefreshing != current.silentRefreshing ||
+          previous.hasMore != current.hasMore,
       builder: (context, state) {
         return Scaffold(
           backgroundColor: Colors.transparent,
@@ -144,6 +152,8 @@ class _EmptyNotifications extends StatelessWidget {
               AppAssets.notificationsEmpty,
               width: 200.w,
               fit: BoxFit.contain,
+              cacheWidth:
+                  (200.w * MediaQuery.devicePixelRatioOf(context)).round(),
             ),
             SizedBox(height: 24.h),
             Text(
@@ -250,7 +260,10 @@ class _NotificationListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final isUnread = !item.isRead;
 
-    return Material(
+    final devicePixelRatio = MediaQuery.devicePixelRatioOf(context);
+
+    return RepaintBoundary(
+      child: Material(
       color: isUnread ? AppColors.purple100.withValues(alpha: 0.45) : Colors.transparent,
       borderRadius: BorderRadius.circular(12.r),
       child: InkWell(
@@ -279,6 +292,8 @@ class _NotificationListTile extends StatelessWidget {
                         height: 40.w,
                         fit: BoxFit.contain,
                         filterQuality: FilterQuality.high,
+                        cacheWidth: (40.w * devicePixelRatio).round(),
+                        cacheHeight: (40.w * devicePixelRatio).round(),
                       ),
                     ),
                   ),
@@ -368,6 +383,7 @@ class _NotificationListTile extends StatelessWidget {
             ],
           ),
         ),
+      ),
       ),
     );
   }

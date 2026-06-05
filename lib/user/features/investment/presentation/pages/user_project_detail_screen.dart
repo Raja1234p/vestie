@@ -148,20 +148,25 @@ class _UserProjectDetailScreenState extends State<UserProjectDetailScreen> {
                       ),
                     ),
                     SizedBox(height: 12.h),
-                    if (_s.members.isEmpty)
-                      _EmptyMembers()
-                    else
-                      ..._s.members.map(
-                        (m) => Padding(
-                          padding: EdgeInsets.only(bottom: 10.h),
-                          child: _MemberRowTile(member: m),
-                        ),
-                      ),
-                    SizedBox(height: 32.h),
+                    if (_s.members.isEmpty) _EmptyMembers(),
                   ],
                 ),
               ),
             ),
+            if (_s.members.isNotEmpty)
+              SliverPadding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) => Padding(
+                      padding: EdgeInsets.only(bottom: 10.h),
+                      child: _MemberRowTile(member: _s.members[index]),
+                    ),
+                    childCount: _s.members.length,
+                  ),
+                ),
+              ),
+            SliverToBoxAdapter(child: SizedBox(height: 32.h)),
           ],
         ),
       ),
