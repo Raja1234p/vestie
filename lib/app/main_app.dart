@@ -18,6 +18,7 @@ class MainApp extends StatefulWidget {
     this.enableDevicePreview = false,
   });
 
+  /// Only set to `true` from [main_dev.dart] (debug DevicePreview entry).
   final bool enableDevicePreview;
 
   @override
