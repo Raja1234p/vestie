@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../app/router/app_routes.dart';
+import '../../../../core/auth/app_auth_session.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../widgets/auth_go_back_button.dart';
@@ -88,6 +89,8 @@ class _VerifyScreenState extends State<VerifyScreen> {
             listener: (context, state) async {
               if (state.isSuccess) {
                 if (widget.flow == VerifyFlow.registration) {
+                  await AppAuthSession.instance.syncFromStorage();
+                  if (!context.mounted) return;
                   context.go(AppRoutes.agreement);
                 } else {
                   final code = _codeCtrl.text.trim();

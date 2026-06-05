@@ -56,7 +56,7 @@ class RegisterScreen extends StatelessWidget {
                 if (!context.mounted) return;
                 context.read<RegisterBloc>().add(const RegisterReset());
               } else if (state is RegisterGoogleSuccess) {
-                await AppAuthSession.instance.refresh();
+                await AppAuthSession.instance.syncFromStorage();
                 if (!context.mounted) return;
                 await ProjectInviteNavigation.goAfterAuth(
                   context,

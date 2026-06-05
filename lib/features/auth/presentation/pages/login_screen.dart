@@ -47,14 +47,14 @@ class LoginScreen extends StatelessWidget {
             listener: (context, state) async {
               if (state is LoginSuccess) {
                 AppLogger.info('Login success: ${state.user.email}');
-                await AppAuthSession.instance.refresh();
+                await AppAuthSession.instance.syncFromStorage();
                 if (!context.mounted) return;
                 await ProjectInviteNavigation.goAfterAuth(
                   context,
                   disclaimerAccepted: state.isDisclaimerAccepted,
                 );
               } else if (state is LoginGoogleSuccess) {
-                await AppAuthSession.instance.refresh();
+                await AppAuthSession.instance.syncFromStorage();
                 if (!context.mounted) return;
                 await ProjectInviteNavigation.goAfterAuth(
                   context,

@@ -5,7 +5,11 @@ import '../di/service_locator.dart';
 
 /// Cached login state for synchronous [GoRouter.redirect] and UI guards.
 ///
-/// Call [refresh] after splash, login, logout, and before invite navigation.
+/// This does **not** call `POST /auth/refresh`. Token renewal on API 401 is handled
+/// globally by `AuthInterceptor` on the shared `DioClient`.
+///
+/// Call [syncFromStorage] after splash, login, OTP verify, logout, and before invite
+/// navigation so the router sees tokens saved to local storage.
 final class AppAuthSession extends ChangeNotifier {
   AppAuthSession._();
 
@@ -16,7 +20,8 @@ final class AppAuthSession extends ChangeNotifier {
   /// Whether the user has a persisted session with a non-empty access token.
   bool get isAuthenticated => _isAuthenticated;
 
-  Future<void> refresh() async {
+  /// Reads `isLoggedIn` + access token from storage into memory (no network).
+  Future<void> syncFromStorage() async {
     final sl = ServiceLocator.instance;
     final isLoggedIn = await sl.sharedPrefs.getBool(StorageKeys.isLoggedIn);
     final token = await sl.secureStorage.getString(StorageKeys.accessToken);

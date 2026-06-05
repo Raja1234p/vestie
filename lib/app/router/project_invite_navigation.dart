@@ -40,7 +40,7 @@ final class ProjectInviteNavigation {
     BuildContext context, {
     required bool disclaimerAccepted,
   }) async {
-    await AppAuthSession.instance.refresh();
+    await AppAuthSession.instance.syncFromStorage();
     if (!context.mounted) return;
 
     if (!AppAuthSession.instance.isAuthenticated) {
@@ -90,7 +90,7 @@ final class ProjectInviteNavigation {
   }
 
   static Future<void> goMaybeLater(BuildContext context) async {
-    await AppAuthSession.instance.refresh();
+    await AppAuthSession.instance.syncFromStorage();
     if (!context.mounted) return;
     if (AppAuthSession.instance.isAuthenticated) {
       await PendingProjectInviteStore.clear();

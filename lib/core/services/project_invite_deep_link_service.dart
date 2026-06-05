@@ -61,7 +61,7 @@ final class ProjectInviteDeepLinkService {
     final code = parseProjectInviteCode(uri);
     if (code == null || code.isEmpty) return;
 
-    await AppAuthSession.instance.refresh();
+    await AppAuthSession.instance.syncFromStorage();
     if (!AppAuthSession.instance.isAuthenticated) {
       router.go(AppRoutes.login);
       return;

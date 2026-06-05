@@ -33,5 +33,25 @@ void main() {
         isNull,
       );
     });
+
+    test('redirects signed-out user on agreement to login', () {
+      expect(
+        SessionAuthRedirect.redirectForLocation(
+          matchedLocation: AppRoutes.agreement,
+          isAuthenticated: false,
+        ),
+        AppRoutes.login,
+      );
+    });
+
+    test('allows agreement when authenticated', () {
+      expect(
+        SessionAuthRedirect.redirectForLocation(
+          matchedLocation: AppRoutes.agreement,
+          isAuthenticated: true,
+        ),
+        isNull,
+      );
+    });
   });
 }

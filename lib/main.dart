@@ -35,7 +35,7 @@ void main() async {
   await FcmPushService.initialize();
 
   await ProjectInviteDeepLinkService.instance.captureInitialInviteIfAny();
-  await AppAuthSession.instance.refresh();
+  await AppAuthSession.instance.syncFromStorage();
 
   const enableDevicePreview = !kReleaseMode;
   runApp(

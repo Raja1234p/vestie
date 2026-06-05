@@ -13,7 +13,12 @@ import '../../utils/logger.dart';
 
 const _kAuthRetryExtraKey = 'auth_retry';
 
-/// Injects Bearer token; on 401 refreshes via [ApiConstants.refreshToken] and retries once.
+/// Injects Bearer token on every [DioClient] request.
+///
+/// On 401 from a protected endpoint: calls `POST /auth/refresh` once, saves new
+/// tokens, retries the original request. Screens must not call the refresh API
+/// manually — this interceptor handles it app-wide. Sign-out + login redirect
+/// only when the refresh call itself fails (see [SessionSignOut]).
 class AuthInterceptor extends QueuedInterceptor {
   final Dio _dio;
   final SecureStorageImpl _secureStorage;
@@ -46,7 +51,19 @@ class AuthInterceptor extends QueuedInterceptor {
     }
 
     final path = _normalizePath(err.requestOptions.path);
-    if (_isAuthEndpoint(path) || err.requestOptions.extra[_kAuthRetryExtraKey] == true) {
+
+    // Retried once after a successful refresh — surface 401 to the caller only.
+    if (err.requestOptions.extra[_kAuthRetryExtraKey] == true) {
+      return handler.next(err);
+    }
+
+    // Public auth calls (login, verify, etc.) — never refresh or sign out.
+    if (_skipsRefreshOn401(path)) {
+      return handler.next(err);
+    }
+
+    // Refresh endpoint failed on the shared client — session is dead.
+    if (path == ApiConstants.refreshToken) {
       await SessionSignOut.locally();
       return handler.next(err);
     }
@@ -82,8 +99,12 @@ class AuthInterceptor extends QueuedInterceptor {
       retryOptions.extra[_kAuthRetryExtraKey] = true;
       retryOptions.headers['Authorization'] = 'Bearer $newAccess';
 
-      final retryResponse = await _dio.fetch(retryOptions);
-      return handler.resolve(retryResponse);
+      try {
+        final retryResponse = await _dio.fetch(retryOptions);
+        return handler.resolve(retryResponse);
+      } on DioException catch (retryErr) {
+        return handler.next(retryErr);
+      }
     } catch (e, stack) {
       AppLogger.error(
         'Auth refresh failed',
@@ -108,14 +129,24 @@ class AuthInterceptor extends QueuedInterceptor {
     return p;
   }
 
-  static bool _isAuthEndpoint(String path) {
+  static bool _skipsRefreshOn401(String path) {
     final p = _normalizePath(path);
-    return p == ApiConstants.refreshToken ||
-        p == ApiConstants.login ||
+    return p == ApiConstants.login ||
         p == ApiConstants.googleLogin ||
         p == ApiConstants.appleLogin ||
         p == ApiConstants.verifyEmail ||
         p == ApiConstants.logout;
+  }
+
+  @visibleForTesting
+  static bool shouldSignOutOn401({
+    required String path,
+    required bool isAuthRetry,
+  }) {
+    if (isAuthRetry) return false;
+    final p = _normalizePath(path);
+    if (_skipsRefreshOn401(p)) return false;
+    return p == ApiConstants.refreshToken;
   }
 
   /// Returns (accessToken, refreshToken) from flat or `tokens`-wrapped JSON.

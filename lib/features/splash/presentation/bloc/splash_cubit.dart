@@ -27,7 +27,7 @@ class SplashCubit extends Cubit<SplashState> {
   Future<void> initializeApp() async {
     emit(SplashLoading());
 
-    await AppAuthSession.instance.refresh();
+    await AppAuthSession.instance.syncFromStorage();
     final isAuthenticated = AppAuthSession.instance.isAuthenticated;
     bool isDisclaimerAccepted = false;
 

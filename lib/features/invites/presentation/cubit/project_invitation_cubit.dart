@@ -46,7 +46,7 @@ class ProjectInvitationCubit extends Cubit<ProjectInvitationState> {
     final preview = state.preview;
     if (preview == null || state.joining) return;
 
-    await AppAuthSession.instance.refresh();
+    await AppAuthSession.instance.syncFromStorage();
     if (!AppAuthSession.instance.isAuthenticated) {
       await PendingProjectInviteStore.save(inviteCode);
       emit(state.copyWith(joinEffect: const ProjectInvitationJoinNeedsAuth()));
