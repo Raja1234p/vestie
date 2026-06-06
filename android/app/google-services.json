@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:106565886360:android:d17f5283e3152bc69dcbed",
         "android_client_info": {
-          "package_name": "com.example.vestie"
+          "package_name": "app.vestie"
         }
       },
       "oauth_client": [],

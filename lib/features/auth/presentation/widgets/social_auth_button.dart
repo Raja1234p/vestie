@@ -13,16 +13,24 @@ enum SocialProvider { google, apple }
 class SocialAuthButton extends StatelessWidget {
   final SocialProvider provider;
   final VoidCallback? onPressed;
+  final bool isLoading;
 
-  const SocialAuthButton({super.key, required this.provider, this.onPressed});
+  const SocialAuthButton({
+    super.key,
+    required this.provider,
+    this.onPressed,
+    this.isLoading = false,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final isEnabled = onPressed != null || isLoading;
+
     return SizedBox(
       width: double.infinity,
       height: 50.h,
       child: OutlinedButton(
-        onPressed: onPressed,
+        onPressed: isLoading ? null : onPressed,
         style: OutlinedButton.styleFrom(
           backgroundColor: Colors.white,
           side: BorderSide(color: AppColors.authSocialBorder, width: 1),
@@ -30,32 +38,44 @@ class SocialAuthButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(12.r),
           ),
           elevation: 0,
+          disabledBackgroundColor: Colors.white,
+          disabledForegroundColor: AppColors.authSocialText,
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // ── Real SVG icon from assets ──────────────────────────
-            SvgPicture.asset(
-              provider == SocialProvider.google
-                  ? AppAssets.authGoogle
-                  : AppAssets.authApple,
-              width: 20.w,
-              height: 20.h,
-              fit: BoxFit.contain,
-            ),
-            SizedBox(width: 10.w),
-            Text(
-              provider == SocialProvider.google
-                  ? AppStrings.btnGoogle
-                  : AppStrings.btnApple,
-              style: GoogleFonts.lato(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w500,
-                color: AppColors.authSocialText,
+        child: isLoading
+            ? SizedBox(
+                width: 22.w,
+                height: 22.w,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: isEnabled
+                      ? AppColors.primary
+                      : AppColors.authSocialText,
+                ),
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    provider == SocialProvider.google
+                        ? AppAssets.authGoogle
+                        : AppAssets.authApple,
+                    width: 20.w,
+                    height: 20.h,
+                    fit: BoxFit.contain,
+                  ),
+                  SizedBox(width: 10.w),
+                  Text(
+                    provider == SocialProvider.google
+                        ? AppStrings.btnGoogle
+                        : AppStrings.btnApple,
+                    style: GoogleFonts.lato(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.authSocialText,
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }

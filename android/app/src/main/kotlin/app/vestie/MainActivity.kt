@@ -1,4 +1,4 @@
-package com.example.vestie
+package app.vestie
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

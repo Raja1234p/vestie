@@ -18,7 +18,7 @@ class LoginLoading extends LoginState {
   const LoginLoading() : super(status: FormSubmissionStatus.submitting);
 }
 
-/// Google sign-in in progress ([AppLoadingDialog] on login screen).
+/// Google sign-in in progress (Google button inline loader).
 class LoginGoogleLoading extends LoginState {
   const LoginGoogleLoading() : super(status: FormSubmissionStatus.submitting);
 }
