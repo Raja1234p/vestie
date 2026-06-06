@@ -3,10 +3,12 @@ class CreateProjectSuccessRouteArgs {
   final String projectId;
   final String? projectName;
   final bool isInvestment;
+  final bool isEditFlow;
 
   const CreateProjectSuccessRouteArgs({
     required this.projectId,
     this.projectName,
     this.isInvestment = false,
+    this.isEditFlow = false,
   });
 }

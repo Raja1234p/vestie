@@ -144,4 +144,23 @@ class ProjectsRemoteDataSourceImpl implements ProjectsRemoteDataSource {
       _handleError(e, AppStrings.errorLaunchProject);
     }
   }
+
+  @override
+  Future<void> updateProject({
+    required String projectId,
+    required CreateProjectRequestModel request,
+  }) async {
+    try {
+      await _client.put(
+        ApiConstants.projectById(projectId),
+        data: request.toJson(),
+      );
+    } on DioException catch (e) {
+      AppLogger.error(
+        'API UpdateProject Error: ${e.response?.statusCode}',
+        error: e.response?.data,
+      );
+      _handleError(e, AppStrings.errorUpdateProject);
+    }
+  }
 }

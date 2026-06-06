@@ -16,6 +16,7 @@ class MyBorrowRequestArgsBuilder {
       walletFlowArgs: ProjectDetailNavigation.walletArgs(project),
       activeRequest: active,
       history: active != null ? _previewHistory() : const [],
+      borrowDisabledForViewer: project.isBorrowDisabledForViewer,
     );
   }
 
@@ -29,6 +30,7 @@ class MyBorrowRequestArgsBuilder {
       walletFlowArgs: ProjectDetailNavigation.walletArgs(project),
       activeRequest: _previewActiveRequest(),
       history: _previewHistory(),
+      borrowDisabledForViewer: project.isBorrowDisabledForViewer,
     );
   }
 

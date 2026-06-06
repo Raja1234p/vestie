@@ -1,7 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:vestie/core/utils/validation_utils.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import '../../domain/create_project_form.dart';
+import '../../domain/create_project_form_from_detail.dart';
 
 /// Wizard state — amount, details, flow-specific settings (saving vs borrowing vs simple).
 class CreateProjectCubit extends Cubit<CreateProjectForm> {
@@ -126,4 +128,9 @@ class CreateProjectCubit extends Cubit<CreateProjectForm> {
   }
 
   void reset() => emit(const CreateProjectForm());
+
+  /// Pre-fills wizard fields when leader opens Edit Project from detail.
+  void hydrateFromProjectDetail(ProjectDetailEntity project) {
+    emit(CreateProjectFormFromDetail.map(project));
+  }
 }

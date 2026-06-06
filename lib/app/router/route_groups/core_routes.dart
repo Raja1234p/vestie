@@ -217,6 +217,7 @@ List<RouteBase> buildCoreRoutes() {
             projectId: extra.projectId,
             projectName: extra.projectName,
             isInvestment: extra.isInvestment,
+            isEditFlow: extra.isEditFlow,
           );
         }
         final projectId = extra is String ? extra : '';

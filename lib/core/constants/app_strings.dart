@@ -12,6 +12,9 @@ class AppStrings {
       'No internet connection. Please check your network.';
   static const String errorLaunchProject =
       'Project was saved but could not be launched. Please try again.';
+  static const String errorUpdateProject =
+      'Could not update project. Please try again.';
+  static const String projectUpdatedSuccess = 'Project updated successfully.';
   static const String errorForbidden =
       'You do not have permission to view this.';
   static const String projectNotFound =
@@ -703,10 +706,12 @@ class AppStrings {
   static const String reviewSectionRoi = 'ROI';
   static const String btnEdit = 'Edit';
   static const String btnCreateProject2 = 'Create Project';
+  static const String btnEditProject = 'Edit';
   static const String reviewRoiNotSet = 'Not set';
 
   // Success
   static const String projectCreatedTitle = 'Project Created';
+  static const String projectEditedTitle = 'Project Edited';
   static const String shareViaWhatsapp = 'Share via Whatsapp';
   static const String btnGoToMyProject = 'Go to my Project';
   static const String linkCopied = 'Link copied!';

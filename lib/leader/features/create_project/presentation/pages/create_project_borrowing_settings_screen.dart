@@ -145,11 +145,6 @@ class _CreateProjectBorrowingSettingsScreenState
                       borderRadius: 10.r,
                       onPressed: () {
                         if (!cubit.validateFundsBorrowing()) return;
-                        if (widget.entryMode.isEditFlow) {
-                          context.pop();
-                          context.pop();
-                          return;
-                        }
                         context.push(AppRoutes.createProjectReview);
                       },
                     ),

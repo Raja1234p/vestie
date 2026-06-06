@@ -8,6 +8,7 @@ import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
+import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
@@ -103,6 +104,9 @@ class _MyBorrowRequestScreenState extends State<MyBorrowRequestScreen> {
       );
     }
 
+    final makeRequestBlocked =
+        widget.args.borrowDisabledForViewer && !_showsPending;
+
     return AppButton(
       text: _showsPending
           ? AppStrings.btnCancelBorrowRequest
@@ -110,7 +114,9 @@ class _MyBorrowRequestScreenState extends State<MyBorrowRequestScreen> {
       onPressed: () => _onPrimaryAction(context),
       useGradient: false,
       hasShadow: false,
-      color: _showsPending ? AppColors.red900 : AppColors.grey1200,
+      color: _showsPending
+          ? AppColors.red900
+          : (makeRequestBlocked ? AppColors.grey800 : AppColors.grey1200),
       borderRadius: 12.r,
     );
   }
@@ -181,6 +187,10 @@ class _MyBorrowRequestScreenState extends State<MyBorrowRequestScreen> {
           context.pop();
         },
       );
+      return;
+    }
+    if (widget.args.borrowDisabledForViewer) {
+      AppToast.showInfo(context, AppStrings.borrowRequiresCoLeaderMessage);
       return;
     }
     context.push(AppRoutes.borrowFlow, extra: widget.args.walletFlowArgs);

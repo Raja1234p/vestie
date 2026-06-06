@@ -168,11 +168,6 @@ class _CreateProjectInvestmentSettingsScreenState
                       borderRadius: 10.r,
                       onPressed: () {
                         if (!cubit.validateInvestmentOptionalRoi()) return;
-                        if (widget.entryMode.isEditFlow) {
-                          context.pop();
-                          context.pop();
-                          return;
-                        }
                         context.push(AppRoutes.createProjectReview);
                       },
                     ),

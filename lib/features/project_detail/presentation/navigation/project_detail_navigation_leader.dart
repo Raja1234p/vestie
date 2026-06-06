@@ -72,6 +72,7 @@ Future<void> _handleLeaderAction(
       }
       break;
     case LeaderMenuAction.editProject:
+      context.read<CreateProjectCubit>().hydrateFromProjectDetail(project);
       context.push(
         AppRoutes.createProjectDetails,
         extra: CreateProjectEntryMode.editFromProjectDetail,

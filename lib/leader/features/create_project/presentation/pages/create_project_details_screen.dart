@@ -115,7 +115,9 @@ class _CreateProjectDetailsScreenState
             child: Column(
               children: [
                 CreateProjectHeader(
-                  title: AppStrings.createDetailsTitle,
+                  title: widget.entryMode.isEditFlow
+                      ? AppStrings.menuEditProject
+                      : AppStrings.createDetailsTitle,
                   stepBadge: createProjectDetailsStepBadge(
                     form,
                     editMode: widget.entryMode.isEditFlow,
@@ -166,6 +168,7 @@ class _CreateProjectDetailsScreenState
                         CPCategoryDropdown(
                           value: form.category,
                           onChanged: cubit.setCategory,
+                          enabled: !widget.entryMode.isEditFlow,
                         ),
                         SizedBox(height: 16.h),
                         CPFieldLabel(AppStrings.labelDeadline),
@@ -185,6 +188,7 @@ class _CreateProjectDetailsScreenState
                         CPVisibilityToggle(
                           value: form.visibility,
                           onChanged: cubit.setVisibility,
+                          enabled: !widget.entryMode.isEditFlow,
                         ),
                       ],
                     ),

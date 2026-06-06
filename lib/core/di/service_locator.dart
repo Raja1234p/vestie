@@ -52,6 +52,7 @@ import '../../features/projects/data/datasources/projects_remote_data_source.dar
 import '../../features/projects/domain/repositories/project_repository.dart';
 import '../../features/projects/domain/repositories/projects_repository.dart';
 import '../../features/projects/domain/usecases/create_and_launch_project_use_case.dart';
+import '../../features/projects/domain/usecases/update_project_use_case.dart';
 import '../../features/projects/domain/usecases/create_project_use_case.dart';
 import '../../features/projects/domain/usecases/get_project_detail_usecase.dart';
 import '../../features/projects/domain/usecases/join_project_usecase.dart';
@@ -137,6 +138,7 @@ class ServiceLocator {
   late final ListProjectsUseCase listProjectsUseCase;
   late final CreateProjectUseCase createProjectUseCase;
   late final CreateAndLaunchProjectUseCase createAndLaunchProjectUseCase;
+  late final UpdateProjectUseCase updateProjectUseCase;
   late final PreviewInviteUseCase previewInviteUseCase;
   late final JoinProjectUseCase joinProjectUseCase;
 

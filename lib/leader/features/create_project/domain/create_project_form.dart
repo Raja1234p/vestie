@@ -61,6 +61,9 @@ extension ProjectCreationFlowTypeRouting on ProjectCreationFlowType {
 
 /// Immutable form state for the Create Project wizard.
 class CreateProjectForm extends Equatable {
+  // ── Edit project (PUT /projects/{id}) ───────────────────────────────────
+  final String? editingProjectId;
+
   // ── Step 0 – Amount ─────────────────────────────────────────────────────
   final String amountDigits;
 
@@ -92,6 +95,7 @@ class CreateProjectForm extends Equatable {
   final String? deadlineError;
 
   const CreateProjectForm({
+    this.editingProjectId,
     this.amountDigits = '',
     this.flowType = ProjectCreationFlowType.fundsBorrowing,
     this.projectName = '',
@@ -138,7 +142,11 @@ class CreateProjectForm extends Equatable {
     return '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
   }
 
+  bool get isEditingProject =>
+      editingProjectId != null && editingProjectId!.isNotEmpty;
+
   CreateProjectForm copyWith({
+    String? editingProjectId,
     String? amountDigits,
     ProjectCreationFlowType? flowType,
     String? projectName,
@@ -159,6 +167,7 @@ class CreateProjectForm extends Equatable {
     Object? deadlineError = _absent,
   }) {
     return CreateProjectForm(
+      editingProjectId: editingProjectId ?? this.editingProjectId,
       amountDigits: amountDigits ?? this.amountDigits,
       flowType: flowType ?? this.flowType,
       projectName: projectName ?? this.projectName,
@@ -196,6 +205,7 @@ class CreateProjectForm extends Equatable {
 
   @override
   List<Object?> get props => [
+    editingProjectId,
     amountDigits,
     flowType,
     projectName,
