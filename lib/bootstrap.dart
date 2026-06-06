@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -14,13 +15,16 @@ abstract final class AppBootstrap {
   AppBootstrap._();
 
   static Future<void> run() async {
+    _log('start');
     WidgetsFlutterBinding.ensureInitialized();
 
     await StripeSdkInitializer.initialize();
+    _log('stripe ready');
 
     await GoogleSignIn.instance.initialize(
       serverClientId: ApiConstants.googleServerClientId,
     );
+    _log('google sign-in ready');
 
     await SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -28,10 +32,21 @@ abstract final class AppBootstrap {
     ]);
 
     await ServiceLocator.instance.init();
+    _log('service locator ready');
 
     await FcmPushService.initialize();
+    _log('fcm ready');
 
     await ProjectInviteDeepLinkService.instance.captureInitialInviteIfAny();
+    _log('invite deep link capture done');
+
     await AppAuthSession.instance.syncFromStorage();
+    _log('auth session synced — bootstrap complete');
+  }
+
+  static void _log(String message) {
+    if (kDebugMode) {
+      debugPrint('AppBootstrap: $message');
+    }
   }
 }

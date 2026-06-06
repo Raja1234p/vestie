@@ -25,10 +25,23 @@ final class ProjectInviteDeepLinkService {
   bool _didCaptureInitialLink = false;
 
   /// Call from [main] before [runApp] so splash sees a pending code immediately.
+  ///
+  /// [AppLinks.getInitialLink] can hang indefinitely on some iOS simulators;
+  /// a short timeout keeps cold start from blocking [runApp] (black screen).
   Future<void> captureInitialInviteIfAny() async {
     if (_didCaptureInitialLink) return;
     _didCaptureInitialLink = true;
-    await _persistInviteFromUri(await _appLinks.getInitialLink());
+
+    Uri? uri;
+    try {
+      uri = await _appLinks.getInitialLink().timeout(
+        const Duration(seconds: 2),
+        onTimeout: () => null,
+      );
+    } catch (_) {
+      uri = null;
+    }
+    await _persistInviteFromUri(uri);
   }
 
   /// Warm-start links only; cold start is handled via [captureInitialInviteIfAny] + splash.
