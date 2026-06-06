@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
+import 'package:vestie/core/services/wallet_prefetch.dart';
 import 'package:vestie/features/profile/domain/entities/transaction.dart';
 import 'package:vestie/features/wallet/domain/entities/wallet_entity.dart';
 import 'package:vestie/features/wallet/domain/usecases/get_wallet_use_case.dart';
@@ -13,8 +14,30 @@ class WalletCubit extends Cubit<WalletState> {
 
   WalletCubit({required this.getWalletUseCase}) : super(const WalletState());
 
+  /// Loads wallet data. When [forceRefresh] is false, hydrates from
+  /// [WalletBalanceCache] or awaits [WalletPrefetch] (Home / Dashboard warm).
   Future<void> load({bool forceRefresh = false}) async {
+    if (!forceRefresh && state.wallet != null) return;
+
+    if (!forceRefresh) {
+      final cached = WalletBalanceCache.value;
+      if (cached != null) {
+        _emitWallet(cached);
+        return;
+      }
+    }
+
     emit(state.copyWith(isLoading: true, clearFailure: true));
+
+    if (!forceRefresh) {
+      await WalletPrefetch.warmIfNeeded();
+      final warmed = WalletBalanceCache.value;
+      if (warmed != null) {
+        _emitWallet(warmed);
+        return;
+      }
+    }
+
     final result = await getWalletUseCase(forceRefresh: forceRefresh);
     result.fold(
       (failure) {
@@ -25,15 +48,17 @@ class WalletCubit extends Cubit<WalletState> {
           recentActivity: const [],
         ));
       },
-      (wallet) {
-        emit(state.copyWith(
-          isLoading: false,
-          wallet: wallet,
-          recentActivity: _mapTransactions(wallet),
-          clearFailure: true,
-        ));
-      },
+      (wallet) => _emitWallet(wallet),
     );
+  }
+
+  void _emitWallet(WalletEntity wallet) {
+    emit(state.copyWith(
+      isLoading: false,
+      wallet: wallet,
+      recentActivity: _mapTransactions(wallet),
+      clearFailure: true,
+    ));
   }
 
   void invalidateCache() {
