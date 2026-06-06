@@ -6,12 +6,14 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+import '../../firebase_options.dart';
 import '../constants/storage_keys.dart';
 import '../di/service_locator.dart';
 
 /// Top-level handler — required to be a plain static function by FCM.
 @pragma('vm:entry-point')
 Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   if (kDebugMode) {
     debugPrint(
       'FcmPushService: background message received '
@@ -47,7 +49,9 @@ class FcmPushService {
     if (kIsWeb) return;
     _log('initialize() start');
     try {
-      await Firebase.initializeApp();
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
       _firebaseReady = true;
       _log('Firebase initialized');
 
