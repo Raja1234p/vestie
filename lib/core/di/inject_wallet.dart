@@ -10,15 +10,15 @@ import '../../features/payment_methods/domain/usecases/payment_methods_usecases.
 import '../../features/stripe/data/datasources/stripe_remote_data_source.dart';
 import '../../features/stripe/data/repositories/stripe_repository_impl.dart';
 import '../../features/stripe/domain/usecases/get_stripe_config_use_case.dart';
-import '../../wallet/data/datasources/wallet_deposit_remote_data_source.dart';
-import '../../wallet/data/datasources/wallet_remote_data_source.dart';
-import '../../wallet/data/datasources/wallet_withdrawal_remote_data_source.dart';
-import '../../wallet/data/repositories/wallet_deposit_repository_impl.dart';
-import '../../wallet/data/repositories/wallet_repository_impl.dart';
-import '../../wallet/data/repositories/wallet_withdrawal_repository_impl.dart';
-import '../../wallet/domain/usecases/get_wallet_use_case.dart';
-import '../../wallet/domain/usecases/run_wallet_deposit_use_case.dart';
-import '../../wallet/domain/usecases/wallet_withdrawal_usecases.dart';
+import '../../features/wallet/data/datasources/wallet_deposit_remote_data_source.dart';
+import '../../features/wallet/data/datasources/wallet_remote_data_source.dart';
+import '../../features/wallet/data/datasources/wallet_withdrawal_remote_data_source.dart';
+import '../../features/wallet/data/repositories/wallet_deposit_repository_impl.dart';
+import '../../features/wallet/data/repositories/wallet_repository_impl.dart';
+import '../../features/wallet/data/repositories/wallet_withdrawal_repository_impl.dart';
+import '../../features/wallet/domain/usecases/get_wallet_use_case.dart';
+import '../../features/wallet/domain/usecases/run_wallet_deposit_use_case.dart';
+import '../../features/wallet/domain/usecases/wallet_withdrawal_usecases.dart';
 import '../stripe/stripe_payment_service.dart';
 import 'service_locator.dart';
 

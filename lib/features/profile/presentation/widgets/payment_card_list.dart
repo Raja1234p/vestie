@@ -17,7 +17,7 @@ import 'package:vestie/features/profile/domain/entities/payment_card.dart';
 import 'package:vestie/features/profile/domain/entities/payment_method_picker_behavior.dart';
 import 'package:vestie/features/profile/domain/entities/payment_method_selection.dart';
 import 'package:vestie/features/profile/presentation/widgets/card_detail_sheet.dart';
-import 'package:vestie/wallet/presentation/cubit/wallet_transaction_cubit.dart';
+import 'package:vestie/features/wallet/presentation/cubit/wallet_transaction_cubit.dart';
 import 'package:vestie/features/profile/presentation/widgets/payment_card_brand_icon.dart';
 import 'package:vestie/features/profile/presentation/widgets/payment_method_select_row.dart';
 import 'package:vestie/features/profile/presentation/widgets/payment_primary_button.dart';

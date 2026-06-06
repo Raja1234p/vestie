@@ -84,7 +84,7 @@ WalletScreen → WithdrawScreen
 
 **Prefetch:** `payment_methods_prefetch.dart`, `bank_accounts_prefetch.dart` warm caches on tab focus.
 
-**Code:** `lib/wallet/`, `lib/core/stripe/`, `lib/core/realtime/wallet_signalr_service.dart`
+**Code:** `lib/features/wallet/`, `lib/core/stripe/`, `lib/core/realtime/wallet_signalr_service.dart`
 
 ---
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
-import 'package:vestie/wallet/presentation/cubit/wallet_cubit.dart';
+import 'package:vestie/features/wallet/presentation/cubit/wallet_cubit.dart';
 import 'package:vestie/core/theme/app_text_styles.dart';
 import 'package:vestie/core/widgets/common/app_text.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
@@ -10,7 +10,7 @@ import 'package:vestie/leader/features/create_project/presentation/widgets/creat
 import 'package:vestie/user/features/discover/presentation/pages/discover_screen.dart';
 import 'package:vestie/user/features/home/presentation/pages/home_screen.dart';
 import '../../../profile/presentation/pages/profile_screen.dart';
-import 'package:vestie/wallet/presentation/pages/wallet_screen.dart';
+import 'package:vestie/features/wallet/presentation/pages/wallet_screen.dart';
 import '../cubit/nav_cubit.dart';
 import '../models/dashboard_shell_args.dart';
 import '../../../../core/realtime/projects_signalr_service.dart';

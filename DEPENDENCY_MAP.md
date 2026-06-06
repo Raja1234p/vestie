@@ -80,7 +80,7 @@ Widget → Cubit/Bloc → UseCase → Repository → RemoteDataSource → BaseAp
 
 | Cache | File | Cleared on logout |
 |-------|------|-------------------|
-| Wallet balance | `features/wallet/domain/wallet_balance_cache.dart` | Yes |
+| Wallet balance | `wallet/domain/wallet_balance_cache.dart` | Yes |
 | Payment methods | `features/payment_methods/domain/payment_methods_cache.dart` | Yes |
 | Bank accounts | `features/bank_accounts/domain/bank_accounts_cache.dart` | Yes |
 | KYC status | `features/kyc/domain/kyc_status_cache.dart` | Yes |

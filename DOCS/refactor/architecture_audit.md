@@ -72,7 +72,7 @@ lib/
 |--------|----------|------|
 | Auth, splash, onboarding | `features/auth`, `features/splash`, `features/onboarding` | All users |
 | Dashboard shell | `features/dashboard` | All users |
-| Wallet, KYC, bank, Stripe, payments | `features/wallet`, `kyc`, `bank_accounts`, `payment_methods`, `stripe` | All users |
+| Wallet, KYC, bank, Stripe, payments | `wallet`, `kyc`, `bank_accounts`, `payment_methods`, `stripe` | All users |
 | Project list, join, invites | `features/projects`, `features/invites` | All users |
 | Project detail shell | `features/project_detail` | All users (UI branches by role) |
 | Notifications | `features/notifications` | All users |

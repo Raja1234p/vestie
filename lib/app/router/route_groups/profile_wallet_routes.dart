@@ -5,18 +5,18 @@ import '../../../features/profile/presentation/pages/key_guidelines_screen.dart'
 import '../../../features/profile/domain/entities/payment_method_picker_behavior.dart';
 import '../../../features/profile/presentation/pages/payment_methods_screen.dart';
 import '../../../features/profile/presentation/pages/transaction_history_screen.dart';
-import '../../../wallet/presentation/pages/transaction_amount_screen.dart';
-import '../../../wallet/presentation/pages/transaction_confirmation_screen.dart';
-import '../../../wallet/presentation/pages/wallet_recent_activity_screen.dart';
-import '../../../wallet/presentation/pages/transaction_success_screen.dart';
-import '../../../wallet/presentation/pages/withdraw_method_screen.dart';
+import '../../../features/wallet/presentation/pages/transaction_amount_screen.dart';
+import '../../../features/wallet/presentation/pages/transaction_confirmation_screen.dart';
+import '../../../features/wallet/presentation/pages/wallet_recent_activity_screen.dart';
+import '../../../features/wallet/presentation/pages/transaction_success_screen.dart';
+import '../../../features/wallet/presentation/pages/withdraw_method_screen.dart';
 import 'package:vestie/core/di/service_locator.dart';
-import 'package:vestie/wallet/presentation/cubit/wallet_deposit_cubit.dart';
-import 'package:vestie/wallet/presentation/cubit/wallet_withdraw_cubit.dart';
+import 'package:vestie/features/wallet/presentation/cubit/wallet_deposit_cubit.dart';
+import 'package:vestie/features/wallet/presentation/cubit/wallet_withdraw_cubit.dart';
 import 'package:vestie/features/bank_accounts/presentation/pages/bank_link_onboarding_screen.dart';
 import 'package:vestie/features/bank_accounts/presentation/pages/my_accounts_screen.dart';
 import 'package:vestie/features/kyc/presentation/pages/kyc_onboarding_screen.dart';
-import 'package:vestie/wallet/presentation/pages/select_bank_account_screen.dart';
+import 'package:vestie/features/wallet/presentation/pages/select_bank_account_screen.dart';
 import 'package:vestie/features/profile/presentation/pages/completed_projects_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

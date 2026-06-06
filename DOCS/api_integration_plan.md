@@ -149,7 +149,7 @@ static void reset();             // logout — clear all flags + caches
 ### Week 4 — Architecture (new / refactor)
 
 ```
-features/wallet/                    # GET /wallet
+wallet/                    # GET /wallet
 features/project_pot/               # GET /projects/{id}/pot
 user/features/contributions/        # REFACTOR → POST /projects/{id}/contributions
 ```
@@ -305,7 +305,7 @@ lib/
 ├── features/stripe_connect/             # optional product slice
 │   └── data/ ... connect account + onboarding link
 │
-├── features/wallet/                       # Week 4 + Week 5 deposit
+├── wallet/                       # Week 4 + Week 5 deposit
 │   ├── data/
 │   │   ├── wallet_remote_data_source.dart
 │   │   ├── wallet_deposit_remote_data_source.dart
@@ -545,7 +545,7 @@ lib/
 │   ├── data/ ... bank_accounts_remote_data_source.dart
 │   └── domain/ ... ListBankAccountsUseCase, LinkBankAccountUseCase, RemoveBankAccountUseCase
 │
-├── features/wallet_withdrawal/          # or extend features/wallet/
+├── features/wallet_withdrawal/          # or extend wallet/
 │   ├── data/ ... withdrawal preview, initiate, status models
 │   └── domain/ ... PreviewWithdrawalUseCase, InitiateWithdrawalUseCase, GetWithdrawalStatusUseCase
 │

@@ -23,7 +23,7 @@ import 'package:vestie/features/stripe/domain/stripe_config_cache.dart';
 import 'package:vestie/core/realtime/projects_signalr_service.dart';
 import 'package:vestie/core/realtime/wallet_signalr_service.dart';
 import 'package:vestie/core/services/fcm_push_service.dart';
-import 'package:vestie/wallet/domain/wallet_balance_cache.dart';
+import 'package:vestie/features/wallet/domain/wallet_balance_cache.dart';
 
 class ProfileState extends Equatable {
   final UserProfile profile;
