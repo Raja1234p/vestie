@@ -6,8 +6,19 @@ import UserNotifications
 @objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
   /// Keeps `delegate.window` set for UIScene apps — required by flutter_web_auth_2
   /// (Stripe KYC / bank linking ASWebAuthenticationSession).
+  private static let splashBackgroundColor = UIColor(
+    red: 76.0 / 255.0,
+    green: 36.0 / 255.0,
+    blue: 160.0 / 255.0,
+    alpha: 1.0
+  )
+
   func syncWindowFromScene(_ sceneWindow: UIWindow?) {
     guard let sceneWindow else { return }
+    sceneWindow.backgroundColor = Self.splashBackgroundColor
+    if let flutterViewController = sceneWindow.rootViewController as? FlutterViewController {
+      flutterViewController.view.backgroundColor = Self.splashBackgroundColor
+    }
     if window == nil {
       window = sceneWindow
     }

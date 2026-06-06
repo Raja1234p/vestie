@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/app_routes.dart';
 import '../../../../core/storage/pending_project_invite_store.dart';
 import '../../../../core/utils/app_permission_helper.dart';
 import '../../../../core/constants/app_assets.dart';
-import '../../../../core/constants/app_dimens.dart';
-import '../../../../core/extensions/widget_extensions.dart';
+import '../../../../core/widgets/layout/splash_brand_backdrop.dart';
 import '../bloc/splash_cubit.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -70,29 +68,7 @@ class _SplashScreenState extends State<SplashScreen> {
             context.go(AppRoutes.onboarding);
           }
         },
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Positioned.fill(
-              child: Image.asset(
-                AppAssets.splashBackground,
-                fit: BoxFit.cover,
-                alignment: Alignment.center,
-              ),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // SVG is natively white (fill="white"), so no color filter needed.
-                SvgPicture.asset(
-                  AppAssets.splashLogo,
-                  width: 200.w,
-                ).padding(EdgeInsets.only(bottom: AppDimens.p16)),
-              ],
-            ).center(),
-          ],
-        ),
+        child: SplashBrandBackdrop(logoWidth: 200.w),
       ),
     );
   }
