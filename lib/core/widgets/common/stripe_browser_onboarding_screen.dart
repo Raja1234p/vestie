@@ -81,7 +81,10 @@ class _StripeBrowserOnboardingScreenState
   /// App opened from `vestie://…` while not running (backend sample pattern).
   Future<void> _handleColdStartLink() async {
     try {
-      final uri = await _appLinks.getInitialLink();
+      final uri = await _appLinks.getInitialLink().timeout(
+        const Duration(seconds: 2),
+        onTimeout: () => null,
+      );
       if (uri != null && mounted) _onDeepLink(uri);
     } catch (e, st) {
       AppLogger.error(

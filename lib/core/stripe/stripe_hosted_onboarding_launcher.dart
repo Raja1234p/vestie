@@ -50,6 +50,16 @@ class StripeHostedOnboardingLauncher {
         );
         return null;
       }
+      if (e.code == 'ACQUIRE_ROOT_VIEW_CONTROLLER_FAILED') {
+        AppLogger.error(
+          'iOS could not present Stripe browser (UIScene window not visible to '
+          'flutter_web_auth_2). Rebuild after AppDelegate/SceneDelegate fix; '
+          'use "Return to app" if the session still fails.',
+          error: e,
+          name: _logTag,
+        );
+        return null;
+      }
       AppLogger.error(
         'FlutterWebAuth2 failed: ${e.code} ${e.message}',
         error: e,
