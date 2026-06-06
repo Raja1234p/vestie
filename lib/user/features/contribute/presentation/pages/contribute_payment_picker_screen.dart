@@ -51,8 +51,9 @@ class _ContributePaymentPickerScreenState
       _loading = true;
       _error = null;
     });
-    final result =
-        await ServiceLocator.instance.listPaymentMethodsUseCase(forceRefresh: true);
+    final result = await ServiceLocator.instance.listPaymentMethodsUseCase(
+      forceRefresh: true,
+    );
     if (!mounted) return;
     result.fold(
       (f) => setState(() {
@@ -109,59 +110,56 @@ class _ContributePaymentPickerScreenState
               child: _loading
                   ? const PaymentCardListShimmer()
                   : _error != null
-                      ? AppErrorView(
-                          message: _error,
-                          onRetry: _load,
-                        )
-                      : ListView(
-                          padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 0),
-                          children: [
-                            for (var i = 0; i < _cards.length; i++) ...[
-                              if (i > 0)
-                                SizedBox(height: AppDimens.paymentMethodRowGap),
-                              PaymentMethodSelectRow(
-                                selected: _selectedCardId == _cards[i].id,
-                                leading: SizedBox(
-                                  width: 32.w,
-                                  height: 32.h,
-                                  child: PaymentCardBrandIcon(
-                                    brand: _cards[i].brand,
-                                  ),
-                                ),
-                                title: _cards[i].brandName,
-                                subtitle: _cards[i].maskedNumber,
-                                onTap: () {
-                                  setState(() => _selectedCardId = _cards[i].id);
-                                  _selectCard(_cards[i]);
-                                },
+                  ? AppErrorView(message: _error, onRetry: _load)
+                  : ListView(
+                      padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 0),
+                      children: [
+                        for (var i = 0; i < _cards.length; i++) ...[
+                          if (i > 0)
+                            SizedBox(height: AppDimens.paymentMethodRowGap),
+                          PaymentMethodSelectRow(
+                            selected: _selectedCardId == _cards[i].id,
+                            leading: SizedBox(
+                              width: 32.w,
+                              height: 32.h,
+                              child: PaymentCardBrandIcon(
+                                brand: _cards[i].brand,
                               ),
-                            ],
-                            SizedBox(height: 16.h),
-                            const Divider(
-                              height: 1,
-                              thickness: 1,
-                              color: AppColors.neutral400,
                             ),
-                            SizedBox(height: 16.h),
-                            PaymentMethodSelectRow(
-                              selected: false,
-                              enabled: walletEnabled,
-                              leading: SizedBox(
-                                width: 32.w,
-                                height: 32.h,
-                                child: SvgPicture.asset(
-                                  AppAssets.iconDollarCircle,
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                              title: AppStrings.walletTitle,
-                              subtitle: walletEnabled
-                                  ? widget.args.walletAmountFormatted
-                                  : AppStrings.contributeWalletInsufficientSubtitle,
-                              onTap: _selectWallet,
-                            ),
-                          ],
+                            title: _cards[i].brandName,
+                            subtitle: _cards[i].maskedNumber,
+                            onTap: () {
+                              setState(() => _selectedCardId = _cards[i].id);
+                              _selectCard(_cards[i]);
+                            },
+                          ),
+                        ],
+                        SizedBox(height: 16.h),
+                        const Divider(
+                          height: 1,
+                          thickness: 1,
+                          color: AppColors.neutral400,
                         ),
+                        SizedBox(height: 16.h),
+                        PaymentMethodSelectRow(
+                          selected: false,
+                          enabled: walletEnabled,
+                          leading: SizedBox(
+                            width: 32.w,
+                            height: 32.h,
+                            child: SvgPicture.asset(
+                              AppAssets.iconDollarCircle,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                          title: AppStrings.walletTitle,
+                          subtitle: walletEnabled
+                              ? widget.args.walletAmountFormatted
+                              : AppStrings.contributeWalletInsufficientSubtitle,
+                          onTap: _selectWallet,
+                        ),
+                      ],
+                    ),
             ),
             FlowScreenFooter(
               child: PaymentPrimaryButton(

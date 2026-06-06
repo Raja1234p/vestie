@@ -54,8 +54,10 @@ void main() {
         declining.declineLoading('req-1', UserVffInboxItemKind.projectInvite),
         isFalse,
       );
-      expect(acting.declineLoading('req-1', UserVffInboxItemKind.vffRequest),
-          isFalse);
+      expect(
+        acting.declineLoading('req-1', UserVffInboxItemKind.vffRequest),
+        isFalse,
+      );
     });
 
     test('blocksRow is true only for the active row', () {
@@ -68,10 +70,7 @@ void main() {
         isFalse,
       );
       const UserVffInboxRowAction? idle = null;
-      expect(
-        idle.blocksRow('req-1', UserVffInboxItemKind.vffRequest),
-        isFalse,
-      );
+      expect(idle.blocksRow('req-1', UserVffInboxItemKind.vffRequest), isFalse);
     });
   });
 }

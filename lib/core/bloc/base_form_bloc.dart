@@ -3,7 +3,8 @@ import 'package:dartz/dartz.dart';
 import 'form_submission_state.dart';
 import '../error/failures.dart';
 
-abstract class BaseFormBloc<Event, TState extends FormSubmissionState> extends Bloc<Event, TState> {
+abstract class BaseFormBloc<Event, TState extends FormSubmissionState>
+    extends Bloc<Event, TState> {
   BaseFormBloc(super.initialState);
 
   /// Helper to safely execute a repository call and map it to the generic FormSubmissionState
@@ -16,7 +17,8 @@ abstract class BaseFormBloc<Event, TState extends FormSubmissionState> extends B
       String? errorTitle,
       Map<String, String>? errors,
       R? data,
-    ) stateBuilder,
+    )
+    stateBuilder,
   }) async {
     if (state.status == FormSubmissionStatus.submitting) return;
 
@@ -27,25 +29,33 @@ abstract class BaseFormBloc<Event, TState extends FormSubmissionState> extends B
     result.fold(
       (failure) {
         if (failure is ValidationFailure) {
-          final flatErrors = failure.errors?.map((k, v) => MapEntry(k, v.join(', ')));
-          emit(stateBuilder(
-            FormSubmissionStatus.failure,
-            failure.message,
-            failure.title,
-            flatErrors,
-            null,
-          ));
+          final flatErrors = failure.errors?.map(
+            (k, v) => MapEntry(k, v.join(', ')),
+          );
+          emit(
+            stateBuilder(
+              FormSubmissionStatus.failure,
+              failure.message,
+              failure.title,
+              flatErrors,
+              null,
+            ),
+          );
         } else {
-          emit(stateBuilder(
-            FormSubmissionStatus.failure,
-            failure.message,
-            failure.title,
-            null,
-            null,
-          ));
+          emit(
+            stateBuilder(
+              FormSubmissionStatus.failure,
+              failure.message,
+              failure.title,
+              null,
+              null,
+            ),
+          );
         }
       },
-      (data) => emit(stateBuilder(FormSubmissionStatus.success, null, null, null, data)),
+      (data) => emit(
+        stateBuilder(FormSubmissionStatus.success, null, null, null, data),
+      ),
     );
   }
 }

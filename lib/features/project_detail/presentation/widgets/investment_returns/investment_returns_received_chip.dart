@@ -27,9 +27,7 @@ class InvestmentReturnsReceivedChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.grey100,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: AppColors.cardBorder.withValues(alpha: 0.55),
-        ),
+        border: Border.all(color: AppColors.cardBorder.withValues(alpha: 0.55)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

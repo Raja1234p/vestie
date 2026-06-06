@@ -22,6 +22,7 @@ class AuthGradientButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isEnabled = onPressed != null;
+
     /// Keep gradient while [isLoading] — gray fill only when truly inactive.
     final bool useActiveStyle = isEnabled || isLoading;
     final radius = BorderRadius.circular(borderRadius ?? 100.r);

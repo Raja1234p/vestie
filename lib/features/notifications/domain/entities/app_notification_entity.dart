@@ -37,6 +37,11 @@ class NotificationsPageEntity extends Equatable {
   });
 
   @override
-  List<Object?> get props =>
-      [notifications, unreadCount, page, pageSize, totalCount];
+  List<Object?> get props => [
+    notifications,
+    unreadCount,
+    page,
+    pageSize,
+    totalCount,
+  ];
 }

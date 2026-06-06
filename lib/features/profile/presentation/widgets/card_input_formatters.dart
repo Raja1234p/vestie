@@ -4,7 +4,10 @@ class CardNumberInputFormatter extends TextInputFormatter {
   const CardNumberInputFormatter();
 
   @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
     final digits = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
     final parts = <String>[];
     for (var i = 0; i < digits.length; i += 4) {
@@ -23,7 +26,10 @@ class ExpiryInputFormatter extends TextInputFormatter {
   const ExpiryInputFormatter();
 
   @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
     final digits = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
     if (digits.length <= 2) {
       return TextEditingValue(

@@ -35,7 +35,8 @@ final class UserVffProfileMetricCard extends StatelessWidget {
           children: [
             AppText(
               label,
-              style: labelStyle ??
+              style:
+                  labelStyle ??
                   GoogleFonts.lato(
                     fontSize: 15.sp,
                     fontWeight: FontWeight.w400,
@@ -45,7 +46,8 @@ final class UserVffProfileMetricCard extends StatelessWidget {
             SizedBox(height: 8.h),
             AppText(
               value,
-              style: valueStyle ??
+              style:
+                  valueStyle ??
                   GoogleFonts.lato(
                     fontSize: 24.sp,
                     fontWeight: FontWeight.w600,

@@ -35,7 +35,10 @@ class KycBrowserOnboardingRunner {
         continue;
       }
       if (KycFlowConstants.isCompletionUrl(callback)) {
-        AppLogger.info('KYC complete redirect — checking status', name: _logTag);
+        AppLogger.info(
+          'KYC complete redirect — checking status',
+          name: _logTag,
+        );
         return _resultFromStatus();
       }
       AppLogger.error('Unknown KYC redirect: $callback', name: _logTag);

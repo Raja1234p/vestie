@@ -30,11 +30,11 @@ class AppDestructiveNoticeBar extends StatelessWidget {
         text,
         textAlign: TextAlign.center,
         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              fontSize: 15.sp,
-              fontWeight: FontWeight.w500,
-              color: textColor,
-              height: 1.4,
-            ),
+          fontSize: 15.sp,
+          fontWeight: FontWeight.w500,
+          color: textColor,
+          height: 1.4,
+        ),
       ),
     );
   }

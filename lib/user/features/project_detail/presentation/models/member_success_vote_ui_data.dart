@@ -55,8 +55,4 @@ class MemberSuccessVoteUiData {
 }
 
 /// Member’s own vote on the success ballot.
-enum MemberSuccessVoteChoice {
-  pending,
-  agreed,
-  disagreed,
-}
+enum MemberSuccessVoteChoice { pending, agreed, disagreed }

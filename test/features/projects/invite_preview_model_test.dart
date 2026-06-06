@@ -55,16 +55,10 @@ void main() {
     });
 
     test('parses roi from roi key and normalizes non-positive to null', () {
-      final withRoi = InvitePreviewModel.fromJson({
-        ..._baseJson(),
-        'roi': 4.5,
-      });
+      final withRoi = InvitePreviewModel.fromJson({..._baseJson(), 'roi': 4.5});
       expect(withRoi.roiPercentage, 4.5);
 
-      final zeroRoi = InvitePreviewModel.fromJson({
-        ..._baseJson(),
-        'roi': 0,
-      });
+      final zeroRoi = InvitePreviewModel.fromJson({..._baseJson(), 'roi': 0});
       expect(zeroRoi.roiPercentage, isNull);
     });
 
@@ -83,12 +77,12 @@ void main() {
 }
 
 Map<String, dynamic> _baseJson() => {
-      'projectId': 'id-1',
-      'projectName': 'deep',
-      'projectType': 'vacation',
-      'visibility': 'public',
-      'requiresApproval': false,
-      'expiresAtUtc': '2026-07-04T16:24:02+00:00',
-      'isExpired': false,
-      'isJoinable': true,
-    };
+  'projectId': 'id-1',
+  'projectName': 'deep',
+  'projectType': 'vacation',
+  'visibility': 'public',
+  'requiresApproval': false,
+  'expiresAtUtc': '2026-07-04T16:24:02+00:00',
+  'isExpired': false,
+  'isJoinable': true,
+};

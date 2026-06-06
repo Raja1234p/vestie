@@ -12,4 +12,3 @@ abstract class ProjectsRemoteDataSource {
   /// `POST /projects/{id}/launch` — activates a draft project (leader only).
   Future<void> launchProject(String projectId);
 }
-

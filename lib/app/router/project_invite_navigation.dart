@@ -16,23 +16,21 @@ final class ProjectInviteNavigation {
   static Future<bool> isRiskDisclaimerAccepted() async {
     if (DashboardPrefetch.riskDisclaimerAccepted) return true;
 
-    final cached = await ServiceLocator.instance.sharedPrefs
-        .getBool(StorageKeys.disclaimerAccepted);
+    final cached = await ServiceLocator.instance.sharedPrefs.getBool(
+      StorageKeys.disclaimerAccepted,
+    );
     if (cached == true) {
       DashboardPrefetch.markRiskDisclaimerAccepted();
       return true;
     }
 
     final result = await ServiceLocator.instance.getRiskDisclaimerUseCase();
-    return result.fold(
-      (_) => false,
-      (disclaimer) {
-        if (disclaimer.accepted) {
-          DashboardPrefetch.markRiskDisclaimerAccepted();
-        }
-        return disclaimer.accepted;
-      },
-    );
+    return result.fold((_) => false, (disclaimer) {
+      if (disclaimer.accepted) {
+        DashboardPrefetch.markRiskDisclaimerAccepted();
+      }
+      return disclaimer.accepted;
+    });
   }
 
   /// Post-login/register: agreement before invite; [consume] invite only after disclaimer.
@@ -48,8 +46,7 @@ final class ProjectInviteNavigation {
       return;
     }
 
-    final accepted =
-        disclaimerAccepted || await isRiskDisclaimerAccepted();
+    final accepted = disclaimerAccepted || await isRiskDisclaimerAccepted();
     if (!context.mounted) return;
 
     if (!accepted) {

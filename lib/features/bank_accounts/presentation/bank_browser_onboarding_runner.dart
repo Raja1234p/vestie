@@ -43,7 +43,10 @@ class BankBrowserOnboardingRunner {
         continue;
       }
       if (BankFlowConstants.isCompletionUrl(callback)) {
-        AppLogger.info('Bank return redirect — syncing accounts', name: _logTag);
+        AppLogger.info(
+          'Bank return redirect — syncing accounts',
+          name: _logTag,
+        );
         return _outcomeAfterReturn();
       }
       AppLogger.error('Unknown bank redirect: $callback', name: _logTag);

@@ -19,6 +19,12 @@ class ProjectInviteEntity extends Equatable {
   });
 
   @override
-  List<Object?> get props =>
-      [id, inviteCode, requiresApproval, expiresAtUtc, maxUses, usedCount];
+  List<Object?> get props => [
+    id,
+    inviteCode,
+    requiresApproval,
+    expiresAtUtc,
+    maxUses,
+    usedCount,
+  ];
 }

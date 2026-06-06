@@ -22,7 +22,9 @@ class ContributionRemoteDataSourceImpl implements ContributionRemoteDataSource {
   ContributionRemoteDataSourceImpl({required this.apiClient});
 
   @override
-  Future<ContributionConfigModel> getContributionConfig(String projectId) async {
+  Future<ContributionConfigModel> getContributionConfig(
+    String projectId,
+  ) async {
     return ContributionConfigModel(
       projectId: projectId,
       projectCurrency: 'USD',
@@ -43,13 +45,8 @@ class ContributionRemoteDataSourceImpl implements ContributionRemoteDataSource {
   }) async {
     final response = await apiClient.post<Map<String, dynamic>>(
       ApiConstants.projectContributions(projectId),
-      data: {
-        'amount': amount,
-        'confirmNonRefundable': confirmNonRefundable,
-      },
-      options: Options(
-        headers: {'Idempotency-Key': idempotencyKey},
-      ),
+      data: {'amount': amount, 'confirmNonRefundable': confirmNonRefundable},
+      options: Options(headers: {'Idempotency-Key': idempotencyKey}),
     );
     return ContributionSubmitResultModel.fromJson(response);
   }

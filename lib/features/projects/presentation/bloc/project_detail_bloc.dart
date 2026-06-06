@@ -88,12 +88,14 @@ abstract class ProjectDetailState extends Equatable {
 }
 
 class ProjectDetailInitial extends ProjectDetailState {}
+
 class ProjectDetailLoading extends ProjectDetailState {}
 
 class ProjectDetailLoaded extends ProjectDetailState {
   final ProjectDetailEntity project;
   final ViewerMembershipRole viewerRole;
   final ProjectDetailTab activeTab;
+
   /// From Week 3 `GET /projects/{id}/memberships/pending` when viewer can manage.
   final int pendingJoinRequestCount;
 
@@ -109,9 +111,9 @@ class ProjectDetailLoaded extends ProjectDetailState {
     int? pendingJoinRequestCount,
     this.sendingVffUserId,
     this.vffSendErrorMessage,
-  })  : viewerRole = project.viewerRole,
-        pendingJoinRequestCount =
-            pendingJoinRequestCount ?? project.pendingJoinRequestCount;
+  }) : viewerRole = project.viewerRole,
+       pendingJoinRequestCount =
+           pendingJoinRequestCount ?? project.pendingJoinRequestCount;
 
   bool get isGroupLeader => viewerRole.isGroupLeader;
 
@@ -140,13 +142,13 @@ class ProjectDetailLoaded extends ProjectDetailState {
 
   @override
   List<Object?> get props => [
-        project,
-        viewerRole,
-        activeTab,
-        pendingJoinRequestCount,
-        sendingVffUserId,
-        vffSendErrorMessage,
-      ];
+    project,
+    viewerRole,
+    activeTab,
+    pendingJoinRequestCount,
+    sendingVffUserId,
+    vffSendErrorMessage,
+  ];
 }
 
 class ProjectDetailError extends ProjectDetailState {
@@ -169,10 +171,10 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
     GetProjectPotUseCase? getProjectPotUseCase,
     ListPendingJoinRequestsUseCase? listPendingJoinRequests,
     SendVffRequestUseCase? sendVffRequestUseCase,
-  })  : _getProjectPotUseCase = getProjectPotUseCase,
-        _listPendingJoinRequests = listPendingJoinRequests,
-        _sendVffRequestUseCase = sendVffRequestUseCase,
-        super(ProjectDetailInitial()) {
+  }) : _getProjectPotUseCase = getProjectPotUseCase,
+       _listPendingJoinRequests = listPendingJoinRequests,
+       _sendVffRequestUseCase = sendVffRequestUseCase,
+       super(ProjectDetailInitial()) {
     on<LoadProjectDetailEvent>(_onLoadProjectDetail);
     on<RefreshProjectPotEvent>(_onRefreshProjectPot);
     on<ApplyContributionSubmitResultEvent>(_onApplyContributionSubmitResult);
@@ -208,7 +210,9 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
     if (!isSilentRefresh) {
       emit(ProjectDetailLoading());
     }
-    final result = await repository.getProjectDetail(projectId: event.projectId);
+    final result = await repository.getProjectDetail(
+      projectId: event.projectId,
+    );
 
     try {
       await result.fold(
@@ -216,23 +220,20 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
           emit(ProjectDetailError(message: _messageFor(failure)));
         },
         (project) async {
-        var pendingCount = project.pendingJoinRequestCount;
-        final listPending = _listPendingJoinRequests;
-        if (project.showsJoinRequestsHeaderChip && listPending != null) {
-          final pendingResult = await listPending(event.projectId);
-          pendingResult.fold(
-            (_) {},
-            (list) => pendingCount = list.length,
-          );
-        }
-        var loadedProject = project;
-        final potUseCase = _getProjectPotUseCase;
-        if (potUseCase != null) {
-          final potResult = await potUseCase(event.projectId);
-          potResult.fold((_) {}, (pot) {
-            loadedProject = project.withProjectPot(pot);
-          });
-        }
+          var pendingCount = project.pendingJoinRequestCount;
+          final listPending = _listPendingJoinRequests;
+          if (project.showsJoinRequestsHeaderChip && listPending != null) {
+            final pendingResult = await listPending(event.projectId);
+            pendingResult.fold((_) {}, (list) => pendingCount = list.length);
+          }
+          var loadedProject = project;
+          final potUseCase = _getProjectPotUseCase;
+          if (potUseCase != null) {
+            final potResult = await potUseCase(event.projectId);
+            potResult.fold((_) {}, (pot) {
+              loadedProject = project.withProjectPot(pot);
+            });
+          }
 
           emit(
             ProjectDetailLoaded(
@@ -277,17 +278,12 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
     if (potUseCase == null) return;
 
     final potResult = await potUseCase(event.projectId);
-    potResult.fold(
-      (_) {},
-      (pot) {
-        if (state is! ProjectDetailLoaded) return;
-        final loaded = state as ProjectDetailLoaded;
-        if (loaded.project.id != event.projectId) return;
-        emit(
-          loaded.copyWith(project: loaded.project.withProjectPot(pot)),
-        );
-      },
-    );
+    potResult.fold((_) {}, (pot) {
+      if (state is! ProjectDetailLoaded) return;
+      final loaded = state as ProjectDetailLoaded;
+      if (loaded.project.id != event.projectId) return;
+      emit(loaded.copyWith(project: loaded.project.withProjectPot(pot)));
+    });
   }
 
   Future<void> _onSendMemberVffRequest(
@@ -307,12 +303,7 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
     if (member.hasPendingVffOutgoing || member.isVffConnected) return;
     if (curr.sendingVffUserId != null) return;
 
-    emit(
-      curr.copyWith(
-        sendingVffUserId: userId,
-        clearVffSendError: true,
-      ),
-    );
+    emit(curr.copyWith(sendingVffUserId: userId, clearVffSendError: true));
 
     final result = await sendUseCase(
       projectId: curr.project.id,
@@ -338,15 +329,12 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
           (m) => m.copyWith(
             vffConnectionState: VffConnectionState.pendingOutgoing,
             canSendVffRequest: false,
-            pendingVffRequestId:
-                sent.id.isNotEmpty ? sent.id : m.pendingVffRequestId,
+            pendingVffRequestId: sent.id.isNotEmpty
+                ? sent.id
+                : m.pendingVffRequestId,
           ),
         );
-        emit(
-          afterSend.copyWith(
-            project: optimistic,
-          ),
-        );
+        emit(afterSend.copyWith(project: optimistic));
         await reloadDetailAndWait(projectId);
         final latest = state;
         if (latest is ProjectDetailLoaded && latest.project.id == projectId) {

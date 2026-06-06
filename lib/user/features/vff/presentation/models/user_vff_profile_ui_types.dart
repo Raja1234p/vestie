@@ -6,12 +6,7 @@ enum UserVffProfileFooterMode { sendRequest, requestSent, followingSheet }
 
 enum UserVffMetricsLayout { contributedPair, trioCounters }
 
-enum UserVffJoinedProjectAction {
-  join,
-  joined,
-  requestToJoin,
-  requestSentChip,
-}
+enum UserVffJoinedProjectAction { join, joined, requestToJoin, requestSentChip }
 
 class UserVffTxRowUi {
   final String title;

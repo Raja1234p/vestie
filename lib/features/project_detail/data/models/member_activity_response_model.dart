@@ -41,30 +41,34 @@ class MemberActivityResponseModel {
     required String projectName,
   }) {
     final summary = _summaryMap(json);
-    final totalContributed = _readDouble(
-      summary,
-      const ['totalContributed', 'contributedTotal', 'totalContributionAmount'],
-    );
-    final contributionCount = _readInt(
-      summary,
-      const ['contributionCount', 'contributionsCount', 'numberOfContributions'],
-    );
-    final totalBorrowed = _readDouble(
-      summary,
-      const ['totalBorrowed', 'borrowedTotal', 'totalBorrowAmount'],
-    );
-    final overdueBorrowCount = _readInt(
-      summary,
-      const ['overdueBorrowCount', 'overdueCount'],
-    );
-    final overdueAmount = _readDoubleNullable(
-      summary,
-      const ['overdueAmount', 'totalOverdue', 'overdueBorrowAmount'],
-    );
-    final totalReturned = _readDouble(
-      summary,
-      const ['totalReturned', 'returnedTotal'],
-    );
+    final totalContributed = _readDouble(summary, const [
+      'totalContributed',
+      'contributedTotal',
+      'totalContributionAmount',
+    ]);
+    final contributionCount = _readInt(summary, const [
+      'contributionCount',
+      'contributionsCount',
+      'numberOfContributions',
+    ]);
+    final totalBorrowed = _readDouble(summary, const [
+      'totalBorrowed',
+      'borrowedTotal',
+      'totalBorrowAmount',
+    ]);
+    final overdueBorrowCount = _readInt(summary, const [
+      'overdueBorrowCount',
+      'overdueCount',
+    ]);
+    final overdueAmount = _readDoubleNullable(summary, const [
+      'overdueAmount',
+      'totalOverdue',
+      'overdueBorrowAmount',
+    ]);
+    final totalReturned = _readDouble(summary, const [
+      'totalReturned',
+      'returnedTotal',
+    ]);
 
     final vffConnectionState = _readVffConnectionState(json);
     final canSendVffRequest = json.safeBool('canSendVffRequest');
@@ -81,12 +85,7 @@ class MemberActivityResponseModel {
       pendingVffRequestId: pendingVffRequestId,
     );
     final transactions = _transactionMaps(json)
-        .map(
-          (row) => _mapTransaction(
-            row,
-            projectName: projectName,
-          ),
-        )
+        .map((row) => _mapTransaction(row, projectName: projectName))
         .toList(growable: false);
 
     return MemberActivityResponseModel(
@@ -106,19 +105,19 @@ class MemberActivityResponseModel {
   }
 
   MemberActivityEntity toEntity() => MemberActivityEntity(
-        member: member,
-        isCoLeader: isCoLeader,
-        totalContributed: totalContributed,
-        contributionCount: contributionCount,
-        totalBorrowed: totalBorrowed,
-        overdueBorrowCount: overdueBorrowCount,
-        overdueAmount: overdueAmount,
-        totalReturned: totalReturned,
-        vffConnectionState: vffConnectionState,
-        canSendVffRequest: canSendVffRequest,
-        pendingVffRequestId: pendingVffRequestId,
-        transactions: transactions,
-      );
+    member: member,
+    isCoLeader: isCoLeader,
+    totalContributed: totalContributed,
+    contributionCount: contributionCount,
+    totalBorrowed: totalBorrowed,
+    overdueBorrowCount: overdueBorrowCount,
+    overdueAmount: overdueAmount,
+    totalReturned: totalReturned,
+    vffConnectionState: vffConnectionState,
+    canSendVffRequest: canSendVffRequest,
+    pendingVffRequestId: pendingVffRequestId,
+    transactions: transactions,
+  );
 
   static Map<String, dynamic> _summaryMap(Map<String, dynamic> json) {
     return _nested(json, const [
@@ -142,7 +141,9 @@ class MemberActivityResponseModel {
     return null;
   }
 
-  static List<Map<String, dynamic>> _transactionMaps(Map<String, dynamic> json) {
+  static List<Map<String, dynamic>> _transactionMaps(
+    Map<String, dynamic> json,
+  ) {
     for (final key in const [
       'transactions',
       'activities',
@@ -251,8 +252,8 @@ class MemberActivityResponseModel {
     final roleRaw = profile.containsKey('role')
         ? membershipRoleApiValueToString(profile['role'])
         : json.containsKey('role')
-            ? membershipRoleApiValueToString(json['role'])
-            : '';
+        ? membershipRoleApiValueToString(json['role'])
+        : '';
     final mappedRole = roleRaw.isEmpty
         ? MemberRole.member
         : switch (ViewerMembershipRole.parse(roleRaw)) {
@@ -265,13 +266,13 @@ class MemberActivityResponseModel {
         ? MemberRole.leader
         : (isCoLeader ? MemberRole.coLeader : MemberRole.member);
 
-    final contributed = _readDouble(
-      summary,
-      const ['totalContributed', 'contributedTotal'],
-    );
+    final contributed = _readDouble(summary, const [
+      'totalContributed',
+      'contributedTotal',
+    ]);
 
-    final photoUrl = membershipPhotoUrlFromJson(json) ??
-        membershipPhotoUrlFromJson(profile);
+    final photoUrl =
+        membershipPhotoUrlFromJson(json) ?? membershipPhotoUrlFromJson(profile);
 
     return MemberEntity(
       id: userId.isNotEmpty ? userId : membershipId,
@@ -285,7 +286,8 @@ class MemberActivityResponseModel {
       contributedAmount: contributed,
       overdueAmount: overdueAmount,
       photoUrl: photoUrl,
-      vffAdded: membershipVffAddedFromJson(json) ||
+      vffAdded:
+          membershipVffAddedFromJson(json) ||
           membershipVffAddedFromJson(profile),
       vffConnectionState: vffConnectionState,
       canSendVffRequest: canSendVffRequest,
@@ -326,7 +328,8 @@ class MemberActivityResponseModel {
 
   static MemberActivityTransactionKind _parseKind(String raw) {
     final t = raw.toLowerCase().trim();
-    if (t.contains('contrib')) return MemberActivityTransactionKind.contribution;
+    if (t.contains('contrib'))
+      return MemberActivityTransactionKind.contribution;
     if (t.contains('borrow') || t.contains('loan')) {
       return MemberActivityTransactionKind.borrow;
     }
@@ -338,7 +341,8 @@ class MemberActivityResponseModel {
     String projectName,
   ) {
     return switch (kind) {
-      MemberActivityTransactionKind.contribution => 'Contribution: $projectName',
+      MemberActivityTransactionKind.contribution =>
+        'Contribution: $projectName',
       MemberActivityTransactionKind.borrow => 'Borrow: $projectName',
       MemberActivityTransactionKind.other => projectName,
     };
@@ -352,8 +356,11 @@ class MemberActivityResponseModel {
   }
 
   static String _initials(String name) {
-    final parts =
-        name.trim().split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
+    final parts = name
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((p) => p.isNotEmpty)
+        .toList();
     if (parts.isEmpty) return 'NA';
     String c(String s) => s.isEmpty ? 'N' : s[0].toUpperCase();
     return '${c(parts.first)}${c(parts.length > 1 ? parts.last : parts.first)}';

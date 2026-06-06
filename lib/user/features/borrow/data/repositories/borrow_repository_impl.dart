@@ -20,20 +20,19 @@ class BorrowRepositoryImpl implements BorrowRepository {
     try {
       final model = await _remote.createBorrowRequest(
         projectId: projectId,
-        body: CreateBorrowRequestBody(
-          requestedAmount: amount,
-          reason: reason,
-        ),
+        body: CreateBorrowRequestBody(requestedAmount: amount, reason: reason),
       );
 
-      return Right(BorrowRequestResult(
-        id: model.id,
-        projectId: model.projectId,
-        requestedAmount: model.requestedAmount,
-        currency: model.currency,
-        status: model.status,
-        dueAtUtc: model.dueAtUtc,
-      ));
+      return Right(
+        BorrowRequestResult(
+          id: model.id,
+          projectId: model.projectId,
+          requestedAmount: model.requestedAmount,
+          currency: model.currency,
+          status: model.status,
+          dueAtUtc: model.dueAtUtc,
+        ),
+      );
     } on UnauthorizedException catch (e, stack) {
       AppLogger.error('Borrow Unauthorized', error: e, stackTrace: stack);
       return Left(ServerFailure(e.message, e.title));
@@ -41,7 +40,11 @@ class BorrowRepositoryImpl implements BorrowRepository {
       AppLogger.error('Borrow Server Exception', error: e, stackTrace: stack);
       return Left(ServerFailure(e.message, e.title));
     } catch (e, stack) {
-      AppLogger.error('Borrow Unexpected Exception', error: e, stackTrace: stack);
+      AppLogger.error(
+        'Borrow Unexpected Exception',
+        error: e,
+        stackTrace: stack,
+      );
       return const Left(ServerFailure('Failed to submit borrow request'));
     }
   }
@@ -58,13 +61,25 @@ class BorrowRepositoryImpl implements BorrowRepository {
       );
       return const Right(null);
     } on UnauthorizedException catch (e, stack) {
-      AppLogger.error('ApproveBorrowRequest Unauthorized', error: e, stackTrace: stack);
+      AppLogger.error(
+        'ApproveBorrowRequest Unauthorized',
+        error: e,
+        stackTrace: stack,
+      );
       return Left(ServerFailure(e.message, e.title));
     } on ServerException catch (e, stack) {
-      AppLogger.error('ApproveBorrowRequest Server Exception', error: e, stackTrace: stack);
+      AppLogger.error(
+        'ApproveBorrowRequest Server Exception',
+        error: e,
+        stackTrace: stack,
+      );
       return Left(ServerFailure(e.message, e.title));
     } catch (e, stack) {
-      AppLogger.error('ApproveBorrowRequest Unexpected Exception', error: e, stackTrace: stack);
+      AppLogger.error(
+        'ApproveBorrowRequest Unexpected Exception',
+        error: e,
+        stackTrace: stack,
+      );
       return const Left(ServerFailure('Failed to approve borrow request'));
     }
   }
@@ -81,15 +96,26 @@ class BorrowRepositoryImpl implements BorrowRepository {
       );
       return const Right(null);
     } on UnauthorizedException catch (e, stack) {
-      AppLogger.error('RejectBorrowRequest Unauthorized', error: e, stackTrace: stack);
+      AppLogger.error(
+        'RejectBorrowRequest Unauthorized',
+        error: e,
+        stackTrace: stack,
+      );
       return Left(ServerFailure(e.message, e.title));
     } on ServerException catch (e, stack) {
-      AppLogger.error('RejectBorrowRequest Server Exception', error: e, stackTrace: stack);
+      AppLogger.error(
+        'RejectBorrowRequest Server Exception',
+        error: e,
+        stackTrace: stack,
+      );
       return Left(ServerFailure(e.message, e.title));
     } catch (e, stack) {
-      AppLogger.error('RejectBorrowRequest Unexpected Exception', error: e, stackTrace: stack);
+      AppLogger.error(
+        'RejectBorrowRequest Unexpected Exception',
+        error: e,
+        stackTrace: stack,
+      );
       return const Left(ServerFailure('Failed to reject borrow request'));
     }
   }
 }
-

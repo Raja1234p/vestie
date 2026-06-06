@@ -5,6 +5,7 @@ class UserVffConnectionRowUi {
   final String initials;
   final String? photoUrl;
   final String mutualLabel;
+
   /// Trailing chip “Request Sent” vs chevron.
   final bool isPendingSent;
 
@@ -37,20 +38,19 @@ class UserVffIncomingRequestUi {
   });
 }
 
-enum UserVffGroupInviteKind {
-  project,
-  memberRequestJoin,
-}
+enum UserVffGroupInviteKind { project, memberRequestJoin }
 
 class UserVffGroupInviteUi {
   final String id;
   final String projectId;
   final UserVffGroupInviteKind kind;
   final String titleLine;
+
   /// For [UserVffGroupInviteKind.memberRequestJoin]; ignored for projects.
   final String personInitials;
   final String invitedByName;
   final int memberCount;
+
   /// Project invite CTA: [AppStrings.userVffRequestToJoin] vs [AppStrings.btnJoin].
   final bool primaryIsRequestToJoin;
 
@@ -106,58 +106,58 @@ class UserVffHubUiModel {
   );
 
   static UserVffHubUiModel demoFilled() => UserVffHubUiModel(
-        myVffConnections: const [
-          UserVffConnectionRowUi(
-            id: 'julian-1',
-            name: 'Julian Lee',
-            initials: 'JL',
-            mutualLabel: '3 mutual projects',
-          ),
-          UserVffConnectionRowUi(
-            id: 'julian-2',
-            name: 'Julian Lee',
-            initials: 'JL',
-            mutualLabel: '5 mutual projects',
-          ),
-          UserVffConnectionRowUi(
-            id: 'julian-3',
-            name: 'Julian Lee',
-            initials: 'JL',
-            mutualLabel: '3 mutual projects',
-            isPendingSent: true,
-          ),
-        ],
-        incomingVffRequests: const [
-          UserVffIncomingRequestUi(
-            id: 'r1',
-            name: 'Julian Lee',
-            initials: 'JL',
-            viaProjectName: 'Paris Trip 2025',
-          ),
-          UserVffIncomingRequestUi(
-            id: 'r2',
-            name: 'Julian Lee',
-            initials: 'JL',
-            viaProjectName: 'Paris Trip 2025',
-          ),
-        ],
-        groupInvitations: const [
-          UserVffGroupInviteUi(
-            id: 'g1',
-            kind: UserVffGroupInviteKind.project,
-            titleLine: 'Paris Trip 2025',
-            invitedByName: 'Amir Malik',
-            memberCount: 8,
-          ),
-          UserVffGroupInviteUi(
-            id: 'g2',
-            kind: UserVffGroupInviteKind.project,
-            titleLine: 'Emergency funds for NCop',
-            invitedByName: 'Amir Malik',
-            primaryIsRequestToJoin: true,
-          ),
-        ],
-      );
+    myVffConnections: const [
+      UserVffConnectionRowUi(
+        id: 'julian-1',
+        name: 'Julian Lee',
+        initials: 'JL',
+        mutualLabel: '3 mutual projects',
+      ),
+      UserVffConnectionRowUi(
+        id: 'julian-2',
+        name: 'Julian Lee',
+        initials: 'JL',
+        mutualLabel: '5 mutual projects',
+      ),
+      UserVffConnectionRowUi(
+        id: 'julian-3',
+        name: 'Julian Lee',
+        initials: 'JL',
+        mutualLabel: '3 mutual projects',
+        isPendingSent: true,
+      ),
+    ],
+    incomingVffRequests: const [
+      UserVffIncomingRequestUi(
+        id: 'r1',
+        name: 'Julian Lee',
+        initials: 'JL',
+        viaProjectName: 'Paris Trip 2025',
+      ),
+      UserVffIncomingRequestUi(
+        id: 'r2',
+        name: 'Julian Lee',
+        initials: 'JL',
+        viaProjectName: 'Paris Trip 2025',
+      ),
+    ],
+    groupInvitations: const [
+      UserVffGroupInviteUi(
+        id: 'g1',
+        kind: UserVffGroupInviteKind.project,
+        titleLine: 'Paris Trip 2025',
+        invitedByName: 'Amir Malik',
+        memberCount: 8,
+      ),
+      UserVffGroupInviteUi(
+        id: 'g2',
+        kind: UserVffGroupInviteKind.project,
+        titleLine: 'Emergency funds for NCop',
+        invitedByName: 'Amir Malik',
+        primaryIsRequestToJoin: true,
+      ),
+    ],
+  );
 
   /// Empty My VFFs but keep requests previews (screenshot parity toggle).
   static UserVffHubUiModel demoEmptyMyVffs(UserVffHubUiModel base) =>

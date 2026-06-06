@@ -22,8 +22,12 @@ class FormSubmissionState extends Equatable {
   }) {
     return FormSubmissionState(
       status: status ?? this.status,
-      errorMessage: clearErrorMessage ? null : (errorMessage ?? this.errorMessage),
-      validationErrors: clearValidationErrors ? null : (validationErrors ?? this.validationErrors),
+      errorMessage: clearErrorMessage
+          ? null
+          : (errorMessage ?? this.errorMessage),
+      validationErrors: clearValidationErrors
+          ? null
+          : (validationErrors ?? this.validationErrors),
     );
   }
 

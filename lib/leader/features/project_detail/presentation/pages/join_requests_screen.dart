@@ -124,7 +124,9 @@ class _JoinRequestsScreenState extends State<JoinRequestsScreen> {
               _actingIsApprove = null;
             });
             AppSnackBar.showError(context, mState.failure!.message);
-            context.read<ModerationBloc>().add(const ResetModerationStateEvent());
+            context.read<ModerationBloc>().add(
+              const ResetModerationStateEvent(),
+            );
             return;
           }
 
@@ -177,12 +179,10 @@ class _JoinRequestsScreenState extends State<JoinRequestsScreen> {
                           final isBusy =
                               moderation.isLoading || _isSyncingAfterModeration;
                           return SliverPadding(
-                            padding:
-                                EdgeInsets.fromLTRB(16.w, 6.h, 16.w, 22.h),
+                            padding: EdgeInsets.fromLTRB(16.w, 6.h, 16.w, 22.h),
                             sliver: SliverList.separated(
                               itemCount: state.requests.length,
-                              separatorBuilder: (_, _) =>
-                                  SizedBox(height: 2.h),
+                              separatorBuilder: (_, _) => SizedBox(height: 2.h),
                               itemBuilder: (_, i) {
                                 final r = state.requests[i];
                                 final username = r.username.isEmpty
@@ -195,35 +195,38 @@ class _JoinRequestsScreenState extends State<JoinRequestsScreen> {
                                   photoUrl: r.photoUrl,
                                   name: r.displayName,
                                   username: username,
-                                  isAcceptLoading: isBusy &&
+                                  isAcceptLoading:
+                                      isBusy &&
                                       isThisCard &&
                                       _actingIsApprove == true,
-                                  isDeclineLoading: isBusy &&
+                                  isDeclineLoading:
+                                      isBusy &&
                                       isThisCard &&
                                       _actingIsApprove == false,
                                   onAccept: isBusy
                                       ? null
                                       : () => _submit(
-                                            context,
-                                            membershipId: r.membershipId,
-                                            memberName: r.displayName,
-                                            approve: true,
-                                          ),
+                                          context,
+                                          membershipId: r.membershipId,
+                                          memberName: r.displayName,
+                                          approve: true,
+                                        ),
                                   onDecline: isBusy
                                       ? null
                                       : () => _submit(
-                                            context,
-                                            membershipId: r.membershipId,
-                                            memberName: r.displayName,
-                                            approve: false,
-                                          ),
+                                          context,
+                                          membershipId: r.membershipId,
+                                          memberName: r.displayName,
+                                          approve: false,
+                                        ),
                                 );
                               },
                             ),
                           );
                         }
                         return const SliverToBoxAdapter(
-                            child: SizedBox.shrink());
+                          child: SizedBox.shrink(),
+                        );
                       },
                     );
                   },
@@ -253,13 +256,11 @@ class _JoinRequestsScreenState extends State<JoinRequestsScreen> {
     _dialogMemberName = memberName;
     _wasApproved = approve;
     context.read<ModerationBloc>().add(
-          SubmitModerationActionEvent(
-            projectId: widget.projectId,
-            userId: membershipId,
-            action: approve
-                ? ModerationAction.approve
-                : ModerationAction.reject,
-          ),
-        );
+      SubmitModerationActionEvent(
+        projectId: widget.projectId,
+        userId: membershipId,
+        action: approve ? ModerationAction.approve : ModerationAction.reject,
+      ),
+    );
   }
 }

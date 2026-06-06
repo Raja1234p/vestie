@@ -18,56 +18,66 @@ import 'service_locator.dart';
 
 /// Registers member flows: contributions, borrow, VFF, home summary.
 void registerUserFeatureDependencies(ServiceLocator sl) {
-  sl.contributionRemoteDataSource =
-      ContributionRemoteDataSourceImpl(apiClient: sl.apiClient);
+  sl.contributionRemoteDataSource = ContributionRemoteDataSourceImpl(
+    apiClient: sl.apiClient,
+  );
   sl.contributionRepository = ContributionRepositoryImpl(
     remoteDataSource: sl.contributionRemoteDataSource,
     walletRepository: sl.walletRepository,
   );
-  sl.fetchContributionConfigUseCase =
-      FetchContributionConfigUseCase(sl.contributionRepository);
-  sl.previewContributionUseCase =
-      PreviewContributionUseCase(sl.contributionRepository);
-  sl.confirmContributionUseCase =
-      ConfirmContributionUseCase(sl.contributionRepository);
+  sl.fetchContributionConfigUseCase = FetchContributionConfigUseCase(
+    sl.contributionRepository,
+  );
+  sl.previewContributionUseCase = PreviewContributionUseCase(
+    sl.contributionRepository,
+  );
+  sl.confirmContributionUseCase = ConfirmContributionUseCase(
+    sl.contributionRepository,
+  );
 
   sl.borrowRemoteDataSource = BorrowRemoteDataSourceImpl(sl.dioClient);
   sl.borrowRepository = BorrowRepositoryImpl(sl.borrowRemoteDataSource);
-  sl.createBorrowRequestUseCase =
-      CreateBorrowRequestUseCase(sl.borrowRepository);
-  sl.approveBorrowRequestUseCase =
-      ApproveBorrowRequestUseCase(sl.borrowRepository);
-  sl.rejectBorrowRequestUseCase =
-      RejectBorrowRequestUseCase(sl.borrowRepository);
+  sl.createBorrowRequestUseCase = CreateBorrowRequestUseCase(
+    sl.borrowRepository,
+  );
+  sl.approveBorrowRequestUseCase = ApproveBorrowRequestUseCase(
+    sl.borrowRepository,
+  );
+  sl.rejectBorrowRequestUseCase = RejectBorrowRequestUseCase(
+    sl.borrowRepository,
+  );
 
   sl.vffRemoteDataSource = VffRemoteDataSourceImpl(apiClient: sl.apiClient);
-  sl.vffRepository =
-      VffRepositoryImpl(remoteDataSource: sl.vffRemoteDataSource);
+  sl.vffRepository = VffRepositoryImpl(
+    remoteDataSource: sl.vffRemoteDataSource,
+  );
   sl.listMyVffsUseCase = ListMyVffsUseCase(sl.vffRepository);
-  sl.getConnectedVffProfileUseCase =
-      GetConnectedVffProfileUseCase(sl.vffRepository);
+  sl.getConnectedVffProfileUseCase = GetConnectedVffProfileUseCase(
+    sl.vffRepository,
+  );
   sl.getPublicVffProfileUseCase = GetPublicVffProfileUseCase(sl.vffRepository);
-  sl.removeVffConnectionUseCase =
-      RemoveVffConnectionUseCase(sl.vffRepository);
-  sl.getVffReceivedInboxUseCase =
-      GetVffReceivedInboxUseCase(sl.vffRepository);
+  sl.removeVffConnectionUseCase = RemoveVffConnectionUseCase(sl.vffRepository);
+  sl.getVffReceivedInboxUseCase = GetVffReceivedInboxUseCase(sl.vffRepository);
   sl.getVffSentInboxUseCase = GetVffSentInboxUseCase(sl.vffRepository);
   sl.sendVffRequestUseCase = SendVffRequestUseCase(sl.vffRepository);
   sl.acceptVffRequestUseCase = AcceptVffRequestUseCase(sl.vffRepository);
   sl.declineVffRequestUseCase = DeclineVffRequestUseCase(sl.vffRepository);
-  sl.inviteVffsToProjectUseCase =
-      InviteVffsToProjectUseCase(sl.vffRepository);
-  sl.acceptVffProjectInviteUseCase =
-      AcceptVffProjectInviteUseCase(sl.vffRepository);
-  sl.declineVffProjectInviteUseCase =
-      DeclineVffProjectInviteUseCase(sl.vffRepository);
+  sl.inviteVffsToProjectUseCase = InviteVffsToProjectUseCase(sl.vffRepository);
+  sl.acceptVffProjectInviteUseCase = AcceptVffProjectInviteUseCase(
+    sl.vffRepository,
+  );
+  sl.declineVffProjectInviteUseCase = DeclineVffProjectInviteUseCase(
+    sl.vffRepository,
+  );
   sl.joinFromVffProfileUseCase = JoinFromVffProfileUseCase(sl.vffRepository);
 
-  sl.userMeSummaryRemoteDataSource =
-      UserMeSummaryRemoteDataSourceImpl(apiClient: sl.apiClient);
+  sl.userMeSummaryRemoteDataSource = UserMeSummaryRemoteDataSourceImpl(
+    apiClient: sl.apiClient,
+  );
   sl.userMeSummaryRepository = UserMeSummaryRepositoryImpl(
     remoteDataSource: sl.userMeSummaryRemoteDataSource,
   );
-  sl.getUserMeSummaryUseCase =
-      GetUserMeSummaryUseCase(sl.userMeSummaryRepository);
+  sl.getUserMeSummaryUseCase = GetUserMeSummaryUseCase(
+    sl.userMeSummaryRepository,
+  );
 }

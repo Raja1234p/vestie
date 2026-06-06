@@ -13,7 +13,10 @@ class PaymentCardNoisePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final random = math.Random(seed);
-    final pointCount = (size.width * size.height * 0.22).round().clamp(120, 2800);
+    final pointCount = (size.width * size.height * 0.22).round().clamp(
+      120,
+      2800,
+    );
     final paint = Paint()..style = PaintingStyle.fill;
 
     for (var i = 0; i < pointCount; i++) {

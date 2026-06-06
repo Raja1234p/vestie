@@ -26,16 +26,12 @@ class DiscoverJoinEffectsListener extends StatelessWidget {
 
         switch (effect) {
           case DiscoverJoinShowError(:final message, :final title):
-            AppFailureDialog.show(
-              context,
-              title: title,
-              message: message,
-            );
+            AppFailureDialog.show(context, title: title, message: message);
           case DiscoverJoinShowRequestSubmitted(
-              :final projectId,
-              :final projectName,
-              :final isInvestment,
-            ):
+            :final projectId,
+            :final projectName,
+            :final isInvestment,
+          ):
             openProjectJoinRequestSentSuccess(
               context,
               projectId: projectId,
@@ -43,10 +39,10 @@ class DiscoverJoinEffectsListener extends StatelessWidget {
               isInvestment: isInvestment,
             );
           case DiscoverJoinOpenDetail(
-              :final projectId,
-              :final projectName,
-              :final isInvestment,
-            ):
+            :final projectId,
+            :final projectName,
+            :final isInvestment,
+          ):
             openProjectDetailAfterJoinSuccess(
               context,
               projectId: projectId,

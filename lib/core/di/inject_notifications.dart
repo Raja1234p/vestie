@@ -5,17 +5,22 @@ import 'service_locator.dart';
 
 /// Registers push notification list and device token APIs.
 void registerNotificationsDependencies(ServiceLocator sl) {
-  sl.notificationsRemoteDataSource =
-      NotificationsRemoteDataSourceImpl(apiClient: sl.apiClient);
+  sl.notificationsRemoteDataSource = NotificationsRemoteDataSourceImpl(
+    apiClient: sl.apiClient,
+  );
   sl.notificationsRepository = NotificationsRepositoryImpl(
     remoteDataSource: sl.notificationsRemoteDataSource,
   );
-  sl.listNotificationsUseCase =
-      ListNotificationsUseCase(sl.notificationsRepository);
-  sl.markNotificationsReadUseCase =
-      MarkNotificationsReadUseCase(sl.notificationsRepository);
-  sl.registerDeviceTokenUseCase =
-      RegisterDeviceTokenUseCase(sl.notificationsRepository);
-  sl.unregisterDeviceTokenUseCase =
-      UnregisterDeviceTokenUseCase(sl.notificationsRepository);
+  sl.listNotificationsUseCase = ListNotificationsUseCase(
+    sl.notificationsRepository,
+  );
+  sl.markNotificationsReadUseCase = MarkNotificationsReadUseCase(
+    sl.notificationsRepository,
+  );
+  sl.registerDeviceTokenUseCase = RegisterDeviceTokenUseCase(
+    sl.notificationsRepository,
+  );
+  sl.unregisterDeviceTokenUseCase = UnregisterDeviceTokenUseCase(
+    sl.notificationsRepository,
+  );
 }

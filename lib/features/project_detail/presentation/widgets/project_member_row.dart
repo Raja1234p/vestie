@@ -92,10 +92,7 @@ class ProjectMemberRow extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AppText(
-                    member.name,
-                    style: AppTextStyles.projectMemberName,
-                  ),
+                  AppText(member.name, style: AppTextStyles.projectMemberName),
                   if (_showRoleBadge || _showVffBadge) ...[
                     SizedBox(height: AppDimens.projectMemberNameBadgeGap),
                     Wrap(

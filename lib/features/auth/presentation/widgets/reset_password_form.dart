@@ -18,11 +18,7 @@ import '../cubit/reset_password_form_cubit.dart';
 
 /// New password + confirm only — OTP was verified on the shared [VerifyScreen].
 class ResetPasswordForm extends StatefulWidget {
-  const ResetPasswordForm({
-    super.key,
-    required this.email,
-    required this.code,
-  });
+  const ResetPasswordForm({super.key, required this.email, required this.code});
 
   final String email;
   final String code;
@@ -44,18 +40,18 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
 
   void _submit(BuildContext context) {
     final valid = context.read<ResetPasswordFormCubit>().validate(
-          _newPassCtrl.text,
-          _confirmCtrl.text,
-        );
+      _newPassCtrl.text,
+      _confirmCtrl.text,
+    );
 
     if (valid && widget.code.length == 6) {
       context.read<ResetPasswordBloc>().add(
-            ResetPasswordSubmitted(
-              email: widget.email,
-              code: widget.code,
-              newPassword: _newPassCtrl.text,
-            ),
-          );
+        ResetPasswordSubmitted(
+          email: widget.email,
+          code: widget.code,
+          newPassword: _newPassCtrl.text,
+        ),
+      );
     }
   }
 
@@ -108,11 +104,9 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                 obscureText: !form.newPassVisible,
                 textInputAction: TextInputAction.next,
                 errorText: form.newPassError,
-                onChanged: (_) =>
-                    context.read<ResetPasswordFormCubit>().onFieldsChanged(
-                          _newPassCtrl.text,
-                          _confirmCtrl.text,
-                        ),
+                onChanged: (_) => context
+                    .read<ResetPasswordFormCubit>()
+                    .onFieldsChanged(_newPassCtrl.text, _confirmCtrl.text),
                 suffixIcon: ExcludeFocus(
                   child: IconButton(
                     icon: AuthPasswordVisibilityIcon(
@@ -132,11 +126,9 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                 obscureText: !form.confirmVisible,
                 textInputAction: TextInputAction.done,
                 errorText: form.confirmError,
-                onChanged: (_) =>
-                    context.read<ResetPasswordFormCubit>().onFieldsChanged(
-                          _newPassCtrl.text,
-                          _confirmCtrl.text,
-                        ),
+                onChanged: (_) => context
+                    .read<ResetPasswordFormCubit>()
+                    .onFieldsChanged(_newPassCtrl.text, _confirmCtrl.text),
                 suffixIcon: ExcludeFocus(
                   child: IconButton(
                     icon: AuthPasswordVisibilityIcon(

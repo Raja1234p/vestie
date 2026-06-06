@@ -2,8 +2,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:go_router/go_router.dart';
 
-
-
 import '../../../features/auth/presentation/pages/agreement_screen.dart';
 
 import '../../../features/auth/presentation/pages/forgot_password_screen.dart';
@@ -53,127 +51,92 @@ import '../../../features/invites/presentation/pages/project_invitation_screen.d
 
 import '../app_routes.dart';
 
-
-
 List<RouteBase> buildCoreRoutes() {
-
   return [
-
     GoRoute(
-
       path: AppRoutes.splash,
 
       builder: (context, _) => const SplashScreen(),
-
     ),
 
     GoRoute(
-
       path: AppRoutes.projectInvitationPath,
 
       builder: (context, state) {
         final code = state.pathParameters['inviteCode']?.trim() ?? '';
         return ProjectInvitationScreen(inviteCode: code);
       },
-
     ),
 
     GoRoute(
-
       path: AppRoutes.onboarding,
 
       builder: (context, _) => const OnboardingScreen(),
-
     ),
 
     GoRoute(
-
       path: AppRoutes.login,
 
       builder: (context, _) => const LoginScreen(),
-
     ),
 
     GoRoute(
-
       path: AppRoutes.register,
 
       builder: (context, _) => const RegisterScreen(),
-
     ),
 
     GoRoute(
-
       path: AppRoutes.verify,
 
       builder: (context, state) {
-
         final extra = state.extra;
 
         if (extra is VerifyScreenExtra) {
-
           return VerifyScreen(email: extra.email, flow: extra.flow);
-
         }
 
         if (extra is String) {
-
           return VerifyScreen(email: extra);
-
         }
 
         return const VerifyScreen(email: '');
-
       },
-
     ),
 
     GoRoute(
-
       path: AppRoutes.forgotPassword,
 
       builder: (context, _) => const ForgotPasswordScreen(),
-
     ),
 
     GoRoute(
-
       path: AppRoutes.resetPassword,
 
       builder: (context, state) {
-
         final extra = state.extra;
 
         if (extra is ResetPasswordExtra) {
-
           return ResetPasswordScreen(email: extra.email, code: extra.code);
-
         }
 
         return const ResetPasswordScreen(email: '', code: '');
-
       },
-
     ),
 
     GoRoute(
-
       path: AppRoutes.passwordUpdatedSuccess,
 
       builder: (context, _) => const PasswordUpdatedSuccessScreen(),
-
     ),
 
     GoRoute(
-
       path: AppRoutes.agreement,
 
       builder: (context, _) => const AgreementScreen(),
-
     ),
 
     GoRoute(
-
       path: AppRoutes.dashboard,
 
       builder: (context, state) {
@@ -183,15 +146,12 @@ List<RouteBase> buildCoreRoutes() {
             : const DashboardShellArgs();
         return DashboardScreen(shellArgs: args);
       },
-
     ),
 
     GoRoute(
-
       path: AppRoutes.notifications,
 
       builder: (context, _) => BlocProvider(
-
         create: (_) => NotificationsCubit(
           listNotificationsUseCase:
               ServiceLocator.instance.listNotificationsUseCase,
@@ -200,77 +160,54 @@ List<RouteBase> buildCoreRoutes() {
         ),
 
         child: const NotificationsScreen(),
-
       ),
-
     ),
 
     GoRoute(
-
       path: AppRoutes.createProjectAmount,
 
       builder: (context, _) => const CreateProjectAmountScreen(),
-
     ),
 
     GoRoute(
-
       path: AppRoutes.createProjectDetails,
 
       builder: (context, state) => CreateProjectDetailsScreen(
-
         entryMode: createProjectEntryModeFromExtra(state.extra),
-
       ),
-
     ),
 
     GoRoute(
-
       path: AppRoutes.createProjectSavingSettings,
 
       builder: (context, state) => CreateProjectSavingSettingsScreen(
-
         entryMode: createProjectEntryModeFromExtra(state.extra),
-
       ),
-
     ),
 
     GoRoute(
-
       path: AppRoutes.createProjectFundsBorrowing,
 
       builder: (context, state) => CreateProjectBorrowingSettingsScreen(
-
         entryMode: createProjectEntryModeFromExtra(state.extra),
-
       ),
-
     ),
 
     GoRoute(
-
       path: AppRoutes.createProjectInvestmentSettings,
 
       builder: (context, state) => CreateProjectInvestmentSettingsScreen(
-
         entryMode: createProjectEntryModeFromExtra(state.extra),
-
       ),
-
     ),
 
     GoRoute(
-
       path: AppRoutes.createProjectReview,
 
       builder: (context, _) => const CreateProjectReviewScreen(),
-
     ),
 
     GoRoute(
-
       path: AppRoutes.createProjectSuccess,
 
       builder: (context, state) {
@@ -285,10 +222,6 @@ List<RouteBase> buildCoreRoutes() {
         final projectId = extra is String ? extra : '';
         return CreateProjectSuccessScreen(projectId: projectId);
       },
-
     ),
-
   ];
-
 }
-

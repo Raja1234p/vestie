@@ -20,10 +20,10 @@ class LeaderSuccessVoteMemberList extends StatelessWidget {
         AppText(
           AppStrings.userSuccessVoteMemberVotesLabel,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.w700,
-                color: AppColors.grey1100,
-              ),
+            fontSize: 18.sp,
+            fontWeight: FontWeight.w700,
+            color: AppColors.grey1100,
+          ),
         ),
         SizedBox(height: 10.h),
         ...members.map(
@@ -46,23 +46,23 @@ class _MemberVoteRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final (label, fg, bg, border) = switch (member.status) {
       LeaderMemberVoteStatus.agreed => (
-          AppStrings.projectVoteAgreedLabel,
-          AppColors.green900,
-          AppColors.green100,
-          AppColors.green300,
-        ),
+        AppStrings.projectVoteAgreedLabel,
+        AppColors.green900,
+        AppColors.green100,
+        AppColors.green300,
+      ),
       LeaderMemberVoteStatus.disagreed => (
-          AppStrings.projectVoteDisagreedLabel,
-          AppColors.red800,
-          AppColors.red100,
-          AppColors.red300,
-        ),
+        AppStrings.projectVoteDisagreedLabel,
+        AppColors.red800,
+        AppColors.red100,
+        AppColors.red300,
+      ),
       LeaderMemberVoteStatus.waiting => (
-          AppStrings.leaderSuccessVoteStatusWaiting,
-          AppColors.neutral700,
-          AppColors.grey100,
-          AppColors.neutral500,
-        ),
+        AppStrings.leaderSuccessVoteStatusWaiting,
+        AppColors.neutral700,
+        AppColors.grey100,
+        AppColors.neutral500,
+      ),
     };
 
     return Container(
@@ -78,10 +78,10 @@ class _MemberVoteRow extends StatelessWidget {
             child: AppText(
               member.name,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.grey1100,
-                  ),
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w600,
+                color: AppColors.grey1100,
+              ),
             ),
           ),
           Container(
@@ -94,10 +94,10 @@ class _MemberVoteRow extends StatelessWidget {
             child: AppText(
               label,
               style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    fontSize: 13.sp,
-                    fontWeight: FontWeight.w600,
-                    color: fg,
-                  ),
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w600,
+                color: fg,
+              ),
             ),
           ),
         ],

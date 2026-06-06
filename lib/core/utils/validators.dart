@@ -4,18 +4,22 @@ class Validators {
   static const String emailRequiredMsg = 'Email is required';
   static const String emailInvalidMsg = 'Enter a valid email address';
   static const String passwordRequiredMsg = 'Password is required';
-  static const String passwordShortMsg = 'Password must be at least 8 characters long';
-  static const String passwordFormatMsg = 'Password must contain at least one letter and one number';
+  static const String passwordShortMsg =
+      'Password must be at least 8 characters long';
+  static const String passwordFormatMsg =
+      'Password must contain at least one letter and one number';
   static const String amountRequiredMsg = 'Amount is required';
   static const String amountInvalidMsg = 'Enter a valid amount';
 
-  static const String emailRegex = r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
+  static const String emailRegex =
+      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
   static const String amountRegex = r'^\d+(\.\d{1,2})?$';
 
   // central validation aliases matching user requirements
   static String? email(String? value) => validateEmail(value);
   static String? password(String? value) => validatePassword(value);
-  static String? amount(String? value, {double? min, double? max}) => validateAmount(value, min: min, max: max);
+  static String? amount(String? value, {double? min, double? max}) =>
+      validateAmount(value, min: min, max: max);
   static String? name(String? value) => validateRequired(value, 'Name');
 
   static String? validateEmail(String? value) {
@@ -38,7 +42,7 @@ class Validators {
     if (!RegExp(amountRegex).hasMatch(value)) {
       return amountInvalidMsg;
     }
-    
+
     final amt = double.tryParse(value);
     if (amt == null) {
       return amountInvalidMsg;

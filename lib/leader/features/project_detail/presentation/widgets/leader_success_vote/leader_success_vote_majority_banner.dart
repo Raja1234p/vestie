@@ -32,10 +32,10 @@ class LeaderSuccessVoteMajorityBanner extends StatelessWidget {
         ),
         textAlign: TextAlign.center,
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w600,
-              color: AppColors.borrowPendingBannerText,
-            ),
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w600,
+          color: AppColors.borrowPendingBannerText,
+        ),
       ),
     );
   }

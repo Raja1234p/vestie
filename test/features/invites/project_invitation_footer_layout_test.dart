@@ -6,7 +6,9 @@ import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 
 /// Verifies the invite screen footer pattern: [FlowScreenFooter] below [Expanded].
 void main() {
-  testWidgets('FlowScreenFooter sits at bottom of full-height column', (tester) async {
+  testWidgets('FlowScreenFooter sits at bottom of full-height column', (
+    tester,
+  ) async {
     const screenHeight = 800.0;
     const footerLabel = 'Join Project';
 

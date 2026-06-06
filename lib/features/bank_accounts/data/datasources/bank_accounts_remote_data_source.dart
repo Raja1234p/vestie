@@ -62,7 +62,10 @@ class BankAccountsRemoteDataSourceImpl implements BankAccountsRemoteDataSource {
   }
 
   @override
-  Future<void> setDefault(String bankAccountId, {required bool isDefault}) async {
+  Future<void> setDefault(
+    String bankAccountId, {
+    required bool isDefault,
+  }) async {
     await apiClient.patch<Map<String, dynamic>>(
       ApiConstants.bankAccountDefault(bankAccountId),
       data: {'isDefault': isDefault},

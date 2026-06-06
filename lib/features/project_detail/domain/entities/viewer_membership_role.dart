@@ -9,14 +9,16 @@ enum ViewerMembershipRole {
 
   /// API label for logging / display.
   String get apiLabel => switch (this) {
-        ViewerMembershipRole.groupLeader => 'GroupLeader',
-        ViewerMembershipRole.coLeader => 'CoLeader',
-        ViewerMembershipRole.member => 'Member',
-      };
+    ViewerMembershipRole.groupLeader => 'GroupLeader',
+    ViewerMembershipRole.coLeader => 'CoLeader',
+    ViewerMembershipRole.member => 'Member',
+  };
 
   static ViewerMembershipRole parse(String? role) {
-    final compact =
-        (role ?? '').toLowerCase().replaceAll(RegExp(r'[\s_-]'), '');
+    final compact = (role ?? '').toLowerCase().replaceAll(
+      RegExp(r'[\s_-]'),
+      '',
+    );
     switch (compact) {
       case '1':
       case 'groupleader':
@@ -57,10 +59,10 @@ enum ViewerMembershipRole {
     ViewerMembershipRole b,
   ) {
     int rank(ViewerMembershipRole role) => switch (role) {
-          ViewerMembershipRole.groupLeader => 3,
-          ViewerMembershipRole.coLeader => 2,
-          ViewerMembershipRole.member => 1,
-        };
+      ViewerMembershipRole.groupLeader => 3,
+      ViewerMembershipRole.coLeader => 2,
+      ViewerMembershipRole.member => 1,
+    };
     return rank(a) >= rank(b) ? a : b;
   }
 

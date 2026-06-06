@@ -36,8 +36,12 @@ class ProjectDetailModel extends ProjectDetailEntity {
       endsAtUtc: json.safeDateTimeUtc('endsAtUtc') ?? DateTime.now().toUtc(),
       launchedAtUtc: json.safeDateTimeUtc('launchedAtUtc'),
       borrowingEnabled: json.safeBool('borrowingEnabled'),
-      suggestedContributionAmount: json.safeDouble('suggestedContributionAmount'),
-      viewerMembership: ViewerMembershipModel.fromJson(json.safeMap('viewerMembership')),
+      suggestedContributionAmount: json.safeDouble(
+        'suggestedContributionAmount',
+      ),
+      viewerMembership: ViewerMembershipModel.fromJson(
+        json.safeMap('viewerMembership'),
+      ),
       rules: ProjectRulesModel.fromJson(json.safeMap('rules')),
     );
   }

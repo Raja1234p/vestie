@@ -18,7 +18,8 @@ class BorrowRemoteDataSourceImpl implements BorrowRemoteDataSource {
 
     if (e.response?.data != null && e.response?.data is Map) {
       final data = e.response!.data as Map;
-      message = data['detail']?.toString() ??
+      message =
+          data['detail']?.toString() ??
           data['message']?.toString() ??
           defaultMessage;
       title = data['title']?.toString();
@@ -92,4 +93,3 @@ class BorrowRemoteDataSourceImpl implements BorrowRemoteDataSource {
     }
   }
 }
-

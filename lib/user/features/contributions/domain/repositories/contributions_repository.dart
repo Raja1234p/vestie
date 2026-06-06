@@ -16,4 +16,3 @@ abstract class ContributionsRepository {
     required ContributionInput input,
   });
 }
-

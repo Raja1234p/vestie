@@ -2,6 +2,8 @@
 
 Quick index for onboarding: **where code lives**, **primary APIs**, **entry routes**.
 
+> **Start here:** [`ARCHITECTURE_OVERVIEW.md`](ARCHITECTURE_OVERVIEW.md) · **Flow traces:** [`PROJECT_FLOW_MAP.md`](PROJECT_FLOW_MAP.md) · **Per-feature:** `feature_overview.md` in each feature folder.
+
 > Paths use `AppRoutes` constants. Full route table: `lib/app/router/app_routes.dart`.
 
 ---
@@ -27,7 +29,7 @@ Quick index for onboarding: **where code lives**, **primary APIs**, **entry rout
 | Home | `user/features/home/` | `GET /projects?scope=mine` | `/dashboard` tab 0 |
 | Discover | `user/features/discover/` | `GET /projects?scope=discover` | tab 1 |
 | Create (+) | `leader/features/create_project/` | `POST /projects`, launch | wizard routes |
-| Wallet | `features/wallet/` | `GET /wallet` | tab 3 |
+| Wallet | `wallet/` | `GET /wallet` | tab 3 |
 | Profile | `features/profile/` | `GET /users/me` | tab 4 |
 
 ---
@@ -48,9 +50,9 @@ Quick index for onboarding: **where code lives**, **primary APIs**, **entry rout
 
 | Feature | Location | APIs |
 |---------|----------|------|
-| Wallet | `features/wallet/` | `/wallet` |
-| Deposit | `features/wallet/` | deposit intent, Stripe |
-| Withdraw | `features/wallet/` | preview + withdraw |
+| Wallet | `wallet/` | `/wallet` |
+| Deposit | `wallet/` | deposit intent, Stripe |
+| Withdraw | `wallet/` | preview + withdraw |
 | Payment methods | `features/payment_methods/` | Stripe SetupIntent |
 | KYC | `features/kyc/` | `/kyc/*` |
 | Bank accounts | `features/bank_accounts/` | link, list |

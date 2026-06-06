@@ -4,10 +4,9 @@ import 'package:vestie/features/projects/data/datasources/join_project_request_b
 void main() {
   group('buildJoinProjectRequestBody', () {
     test('invite join sends inviteCode only', () {
-      expect(
-        buildJoinProjectRequestBody(inviteCode: '4W26FFZP86'),
-        {'inviteCode': '4W26FFZP86'},
-      );
+      expect(buildJoinProjectRequestBody(inviteCode: '4W26FFZP86'), {
+        'inviteCode': '4W26FFZP86',
+      });
     });
 
     test('public join sends projectId only', () {
@@ -21,10 +20,7 @@ void main() {
 
     test('rejects both or neither', () {
       expect(
-        () => buildJoinProjectRequestBody(
-          projectId: 'a',
-          inviteCode: 'b',
-        ),
+        () => buildJoinProjectRequestBody(projectId: 'a', inviteCode: 'b'),
         throwsArgumentError,
       );
       expect(() => buildJoinProjectRequestBody(), throwsArgumentError);

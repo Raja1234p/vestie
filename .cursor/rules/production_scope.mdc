@@ -1,0 +1,73 @@
+---
+description: Vestie production-hardening mode — active scope, deferred work, validation (always follow).
+alwaysApply: true
+---
+
+# Vestie — production scope (active vs deferred)
+
+> **Before every task:** read all `.cursor/rules/*.mdc` files (start with `agent_workflow.mdc`) and follow them completely.
+
+**Mode:** production-hardening, not architecture-rewrite.
+
+**Final rule:** Prefer **stability** over cleanliness. If a change could alter behavior, routing, imports at scale, or release readiness — **do not do it**.
+
+---
+
+## Active scope (allowed)
+
+1. **Production stability** — zero regressions; no UI/visual, API contract, routing, Stripe, KYC, SignalR, or wallet flow changes unless explicitly requested.
+2. **Performance** — rebuild reduction, memory, startup, scroll/render (no UX/flow changes).
+3. **Documentation** — `README.md`, `FEATURE_MAP.md`, `DEPENDENCY_MAP.md`, `ARCHITECTURE_OVERVIEW.md`, `PROJECT_FLOW_MAP.md`, per-feature `feature_overview.md`.
+4. **Large-file decomposition** — **incremental only**, on files already being modified or pre-identified (`project_detail_navigation.dart`, `app_shimmer.dart`, oversized flow screens). Use `part`/`export` barrels to preserve public APIs.
+5. **Boy Scout Rule** — when touching a file: remove dead code/unused imports, improve local naming, add dartdoc if missing.
+
+---
+
+## Deferred (do NOT execute without explicit approval)
+
+| Wave | Topic | Rule |
+|------|--------|------|
+| E | Folder migration (~794 files) | One feature per PR later; compile + test each; no bulk moves |
+| B | Global naming | Rename only files/classes you are actively editing |
+| F | Shared widget extraction | Only if **3+ usages** and duplication hurts maintenance |
+| G | Project-wide tech debt | No cleanup campaigns |
+
+---
+
+## Validation (after meaningful code changes)
+
+```bash
+flutter analyze
+flutter test
+flutter build apk --release
+```
+
+Do not proceed on failing tests or analyze **errors**. Info lints on unchanged files are acceptable.
+
+**Debug entry:** `lib/main.dart` (default). `lib/main_dev.dart` = DevicePreview only (debug). Do not import `device_preview` from `main_app.dart`.
+
+---
+
+## Docs map (onboarding)
+
+| Need | Read |
+|------|------|
+| 30-min architecture | `ARCHITECTURE_OVERVIEW.md` |
+| Flow traces | `PROJECT_FLOW_MAP.md` |
+| Deep routes/joins | `DOCS/architecture_flows.md` |
+| Feature location | `FEATURE_MAP.md` |
+| DI | `DEPENDENCY_MAP.md` |
+| Feature ownership | `feature_overview.md` in feature root |
+
+---
+
+## File-size targets (when splitting touched files)
+
+| Type | Max lines |
+|------|-----------|
+| Screen | 400 |
+| Widget | 250 |
+| Service | 300 |
+| Cubit/Bloc | 300 |
+
+Split incrementally; validate after each extraction.

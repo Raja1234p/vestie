@@ -34,7 +34,12 @@ class LoginFormState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [passwordVisible, emailError, passwordError, isValid];
+  List<Object?> get props => [
+    passwordVisible,
+    emailError,
+    passwordError,
+    isValid,
+  ];
 }
 
 /// Manages login form UI state only.
@@ -54,19 +59,21 @@ class LoginFormCubit extends Cubit<LoginFormState> {
 
   void onFieldsChanged(String email, String password) {
     final emailErr = Validators.email(email);
-    final passErr  = Validators.password(password);
+    final passErr = Validators.password(password);
     emit(state.copyWith(isValid: emailErr == null && passErr == null));
   }
 
   /// Returns true if all fields pass validation.
   bool validate(String email, String password) {
     final emailErr = Validators.email(email);
-    final passErr  = Validators.password(password);
-    emit(state.copyWith(
-      emailError: emailErr,
-      passwordError: passErr,
-      isValid: emailErr == null && passErr == null,
-    ));
+    final passErr = Validators.password(password);
+    emit(
+      state.copyWith(
+        emailError: emailErr,
+        passwordError: passErr,
+        isValid: emailErr == null && passErr == null,
+      ),
+    );
     return emailErr == null && passErr == null;
   }
 }

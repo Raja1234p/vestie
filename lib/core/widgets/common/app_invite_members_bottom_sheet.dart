@@ -79,9 +79,9 @@ class _AppInviteMembersBottomSheetState
     if (ids.isEmpty) return;
 
     final count = await context.read<InviteMembersSheetCubit>().inviteSelected(
-          projectId: widget.projectId,
-          userIds: ids,
-        );
+      projectId: widget.projectId,
+      userIds: ids,
+    );
     if (!context.mounted || count == null) return;
 
     final args = UserVffInvitesSentRouteArgs(
@@ -106,7 +106,8 @@ class _AppInviteMembersBottomSheetState
       builder: (context, sheetState) {
         final vffs = sheetState.vffs;
         final media = MediaQuery.of(context);
-        final maxBodyHeight = (media.size.height -
+        final maxBodyHeight =
+            (media.size.height -
                 media.viewPadding.top -
                 media.viewPadding.bottom) *
             0.88;
@@ -178,7 +179,9 @@ class _AppInviteMembersBottomSheetState
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: sheetContentInset),
                   child: AppButton(
-                    text: AppStrings.inviteMembersInviteSelected(selectionCount),
+                    text: AppStrings.inviteMembersInviteSelected(
+                      selectionCount,
+                    ),
                     onPressed: isSubmitting
                         ? null
                         : () => _submitInvite(context),
@@ -244,7 +247,10 @@ class _AppInviteMembersBottomSheetState
 
     if (sheetState.status == InviteMembersSheetLoadStatus.error) {
       return Padding(
-        padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: sheetContentInset),
+        padding: EdgeInsets.symmetric(
+          vertical: 24.h,
+          horizontal: sheetContentInset,
+        ),
         child: Column(
           children: [
             AppText(
@@ -275,10 +281,7 @@ class _AppInviteMembersBottomSheetState
         child: AppText(
           message,
           textAlign: TextAlign.center,
-          style: GoogleFonts.lato(
-            fontSize: 14.sp,
-            color: AppColors.grey700,
-          ),
+          style: GoogleFonts.lato(fontSize: 14.sp, color: AppColors.grey700),
         ),
       );
     }
@@ -343,8 +346,9 @@ class _VffGridTile extends StatelessWidget {
                       imageUrl: vff.photoUrl,
                       initials: vff.initials,
                       size: avatarSide,
-                      backgroundColor:
-                          AppColors.purple300.withValues(alpha: 0.45),
+                      backgroundColor: AppColors.purple300.withValues(
+                        alpha: 0.45,
+                      ),
                       textColor: AppColors.grey1100,
                       fontSize: 20.sp,
                       fontWeight: FontWeight.w700,
@@ -380,20 +384,20 @@ class _VffGridTile extends StatelessWidget {
               SizedBox(
                 width: avatarSide,
                 child: AppText(
-              vff.displayName,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.lato(
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w600,
-                color: AppColors.grey1100,
-                height: 1.15,
+                  vff.displayName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.lato(
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.grey1100,
+                    height: 1.15,
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
         );
       },
     );

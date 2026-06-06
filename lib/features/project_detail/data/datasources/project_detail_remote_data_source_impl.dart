@@ -7,7 +7,8 @@ import '../../../../core/utils/logger.dart';
 import '../models/project_detail_response_model.dart';
 import 'project_detail_remote_data_source.dart';
 
-class ProjectDetailRemoteDataSourceImpl implements ProjectDetailRemoteDataSource {
+class ProjectDetailRemoteDataSourceImpl
+    implements ProjectDetailRemoteDataSource {
   final DioClient _client;
 
   ProjectDetailRemoteDataSourceImpl(this._client);
@@ -18,7 +19,8 @@ class ProjectDetailRemoteDataSourceImpl implements ProjectDetailRemoteDataSource
 
     if (e.response?.data != null && e.response?.data is Map) {
       final data = e.response!.data as Map;
-      message = data['detail']?.toString() ??
+      message =
+          data['detail']?.toString() ??
           data['message']?.toString() ??
           defaultMessage;
       title = data['title']?.toString();
@@ -62,4 +64,3 @@ class ProjectDetailRemoteDataSourceImpl implements ProjectDetailRemoteDataSource
     }
   }
 }
-

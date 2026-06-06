@@ -50,7 +50,10 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
   }) async {
     if (token.trim().isEmpty) return const Right(null);
     try {
-      await remoteDataSource.registerDeviceToken(token: token, platform: platform);
+      await remoteDataSource.registerDeviceToken(
+        token: token,
+        platform: platform,
+      );
       return const Right(null);
     } on Failure catch (f) {
       return Left(f);

@@ -73,10 +73,8 @@ class VffRepositoryImpl implements VffRepository {
     required String userId,
   }) async {
     return _map(
-      () => remoteDataSource.sendVffRequest(
-        projectId: projectId,
-        userId: userId,
-      ),
+      () =>
+          remoteDataSource.sendVffRequest(projectId: projectId, userId: userId),
       (model) => model.toEntity(),
     );
   }

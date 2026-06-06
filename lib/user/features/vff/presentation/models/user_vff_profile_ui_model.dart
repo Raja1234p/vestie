@@ -39,29 +39,29 @@ class UserVffProfileUiModel {
   });
 
   factory UserVffProfileUiModel.demoOliviaInitial() => UserVffProfileUiModel(
-        id: 'olivia',
-        usernameHandle: 'olivia-r',
-        displayName: 'Olivia Rojer',
-        initials: 'OR',
-        badgeMode: UserVffProfileBadgeMode.member,
-        metrics: const UserVffMetricsUi(
-          contributedDisplay: '\$1,200',
-          contributionsDisplay: '3',
-        ),
-        footerMode: UserVffProfileFooterMode.sendRequest,
-        transactions: const [
-          UserVffTxRowUi(
-            title: 'Family Vacation Fund…',
-            date: 'Mar 11',
-            amountDisplay: '+\$400',
-          ),
-          UserVffTxRowUi(
-            title: 'Weekend Pot…',
-            date: 'Mar 03',
-            amountDisplay: '+\$420',
-          ),
-        ],
-      );
+    id: 'olivia',
+    usernameHandle: 'olivia-r',
+    displayName: 'Olivia Rojer',
+    initials: 'OR',
+    badgeMode: UserVffProfileBadgeMode.member,
+    metrics: const UserVffMetricsUi(
+      contributedDisplay: '\$1,200',
+      contributionsDisplay: '3',
+    ),
+    footerMode: UserVffProfileFooterMode.sendRequest,
+    transactions: const [
+      UserVffTxRowUi(
+        title: 'Family Vacation Fund…',
+        date: 'Mar 11',
+        amountDisplay: '+\$400',
+      ),
+      UserVffTxRowUi(
+        title: 'Weekend Pot…',
+        date: 'Mar 03',
+        amountDisplay: '+\$420',
+      ),
+    ],
+  );
 
   factory UserVffProfileUiModel.demoOliviaRequestSent() =>
       UserVffProfileUiModel(
@@ -77,59 +77,59 @@ class UserVffProfileUiModel {
       );
 
   factory UserVffProfileUiModel.demoJulianLee() => UserVffProfileUiModel(
-        id: 'julian',
-        usernameHandle: 'julianl',
-        displayName: 'Julian Lee',
-        initials: 'JL',
-        badgeMode: UserVffProfileBadgeMode.member,
-        metrics: const UserVffMetricsUi(
-          contributedDisplay: '\$940',
-          contributionsDisplay: '2',
-        ),
-        footerMode: UserVffProfileFooterMode.sendRequest,
-        transactions: const [
-          UserVffTxRowUi(
-            title: 'Coffee Run Pot…',
-            date: 'Apr 09',
-            amountDisplay: '+\$40',
-          ),
-        ],
-      );
+    id: 'julian',
+    usernameHandle: 'julianl',
+    displayName: 'Julian Lee',
+    initials: 'JL',
+    badgeMode: UserVffProfileBadgeMode.member,
+    metrics: const UserVffMetricsUi(
+      contributedDisplay: '\$940',
+      contributionsDisplay: '2',
+    ),
+    footerMode: UserVffProfileFooterMode.sendRequest,
+    transactions: const [
+      UserVffTxRowUi(
+        title: 'Coffee Run Pot…',
+        date: 'Apr 09',
+        amountDisplay: '+\$40',
+      ),
+    ],
+  );
 
   factory UserVffProfileUiModel.demoOliviaFollowing() => UserVffProfileUiModel(
-        id: 'olivia',
-        usernameHandle: 'olivia-r',
-        displayName: 'Olivia Rojer',
-        initials: 'OR',
-        badgeMode: UserVffProfileBadgeMode.vffVerified,
-        metricsLayout: UserVffMetricsLayout.trioCounters,
-        metrics: const UserVffMetricsUi(
-          contributedDisplay: '\$1,200',
-          contributionsDisplay: '24',
-          projectsDisplay: '5',
-        ),
-        footerMode: UserVffProfileFooterMode.followingSheet,
-        joinedProjects: const [
-          UserVffJoinedProjectRowUi(
-            title: 'Paris Trip 2025',
-            memberCount: 8,
-            action: UserVffJoinedProjectAction.join,
-          ),
-          UserVffJoinedProjectRowUi(
-            title: 'Paris Trip 2025',
-            memberCount: 8,
-            action: UserVffJoinedProjectAction.joined,
-          ),
-          UserVffJoinedProjectRowUi(
-            title: 'Europe Trip 2025',
-            memberCount: 4,
-            action: UserVffJoinedProjectAction.requestToJoin,
-          ),
-          UserVffJoinedProjectRowUi(
-            title: 'Invest Trip',
-            memberCount: 2,
-            action: UserVffJoinedProjectAction.requestSentChip,
-          ),
-        ],
-      );
+    id: 'olivia',
+    usernameHandle: 'olivia-r',
+    displayName: 'Olivia Rojer',
+    initials: 'OR',
+    badgeMode: UserVffProfileBadgeMode.vffVerified,
+    metricsLayout: UserVffMetricsLayout.trioCounters,
+    metrics: const UserVffMetricsUi(
+      contributedDisplay: '\$1,200',
+      contributionsDisplay: '24',
+      projectsDisplay: '5',
+    ),
+    footerMode: UserVffProfileFooterMode.followingSheet,
+    joinedProjects: const [
+      UserVffJoinedProjectRowUi(
+        title: 'Paris Trip 2025',
+        memberCount: 8,
+        action: UserVffJoinedProjectAction.join,
+      ),
+      UserVffJoinedProjectRowUi(
+        title: 'Paris Trip 2025',
+        memberCount: 8,
+        action: UserVffJoinedProjectAction.joined,
+      ),
+      UserVffJoinedProjectRowUi(
+        title: 'Europe Trip 2025',
+        memberCount: 4,
+        action: UserVffJoinedProjectAction.requestToJoin,
+      ),
+      UserVffJoinedProjectRowUi(
+        title: 'Invest Trip',
+        memberCount: 2,
+        action: UserVffJoinedProjectAction.requestSentChip,
+      ),
+    ],
+  );
 }

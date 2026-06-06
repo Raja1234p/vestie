@@ -54,8 +54,9 @@ class _CardDetailSheetState extends State<CardDetailSheet> {
   }
 
   Future<void> _refreshFromApi() async {
-    final result =
-        await ServiceLocator.instance.getPaymentMethodUseCase(widget.card.id);
+    final result = await ServiceLocator.instance.getPaymentMethodUseCase(
+      widget.card.id,
+    );
     if (!mounted) return;
     result.fold(
       (_) => setState(() {
@@ -152,10 +153,7 @@ class _CardDetailSheetState extends State<CardDetailSheet> {
                       ),
               ),
               SizedBox(height: 20.h),
-              const AppPurpleDashedLine(
-                color: AppColors.purple300,
-                height: 1,
-              ),
+              const AppPurpleDashedLine(color: AppColors.purple300, height: 1),
               SizedBox(height: 20.h),
               _ActionRow(
                 title: AppStrings.removeCardLabel,
@@ -252,10 +250,7 @@ class _ActionRow extends StatelessWidget {
 }
 
 class _PrimaryToggleSwitch extends StatelessWidget {
-  const _PrimaryToggleSwitch({
-    required this.value,
-    required this.onChanged,
-  });
+  const _PrimaryToggleSwitch({required this.value, required this.onChanged});
 
   final bool value;
   final ValueChanged<bool>? onChanged;

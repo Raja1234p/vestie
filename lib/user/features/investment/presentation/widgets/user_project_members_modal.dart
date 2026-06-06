@@ -92,12 +92,11 @@ Future<void> showUserProjectMembersModal(
                           children: [
                             AppNetworkAvatar(
                               imageUrl: m.photoUrl,
-                              initials: m.name.isNotEmpty
-                                  ? m.name[0]
-                                  : '?',
+                              initials: m.name.isNotEmpty ? m.name[0] : '?',
                               size: 44.r,
-                              backgroundColor:
-                                  AppColors.purple300.withValues(alpha: 0.45),
+                              backgroundColor: AppColors.purple300.withValues(
+                                alpha: 0.45,
+                              ),
                               textColor: AppColors.textPrimary,
                               fontSize: 14.sp,
                             ),
@@ -218,9 +217,10 @@ class _ShareCircle extends StatelessWidget {
               border: Border.all(color: AppColors.cardBorder),
             ),
             child: AppSvgIcon(
-                assetPath: assetPath,
-                size: 22.r,
-                color: AppColors.textPrimary),
+              assetPath: assetPath,
+              size: 22.r,
+              color: AppColors.textPrimary,
+            ),
           ),
           SizedBox(height: 4.h),
           AppText(

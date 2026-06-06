@@ -22,15 +22,15 @@ final class UserVffHubMyVffsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final all = hubState.myVffConnections;
-    final connected =
-        all.where((row) => !row.isPendingSent).toList(growable: false);
-    final sentOutgoing =
-        all.where((row) => row.isPendingSent).toList(growable: false);
+    final connected = all
+        .where((row) => !row.isPendingSent)
+        .toList(growable: false);
+    final sentOutgoing = all
+        .where((row) => row.isPendingSent)
+        .toList(growable: false);
 
     if (connected.isEmpty && sentOutgoing.isEmpty) {
-      return const UserVffHubEmptyBody(
-        message: AppStrings.userVffEmptyMyVffs,
-      );
+      return const UserVffHubEmptyBody(message: AppStrings.userVffEmptyMyVffs);
     }
 
     Future<void> openProfile(UserVffConnectionRowUi row) async {
@@ -59,16 +59,11 @@ final class UserVffHubMyVffsTab extends StatelessWidget {
         if (connected.isNotEmpty) ...[
           const UserVffSectionHeader(title: AppStrings.userVffSectionMyVffs),
           ...connected.map(
-            (row) => UserVffMyVffRow(
-              row: row,
-              onOpen: () => openProfile(row),
-            ),
+            (row) => UserVffMyVffRow(row: row, onOpen: () => openProfile(row)),
           ),
         ],
         if (sentOutgoing.isNotEmpty)
-          ...sentOutgoing.map(
-            (row) => UserVffMyVffRow(row: row),
-          ),
+          ...sentOutgoing.map((row) => UserVffMyVffRow(row: row)),
       ],
     );
   }

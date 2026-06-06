@@ -22,13 +22,16 @@ class AppButton extends StatelessWidget {
   final double? width;
   final double? height;
   final Color? color;
+
   /// Stroke on flat primary buttons ([useGradient] false).
   final Color? borderColor;
   final Color? secondaryBorderColor;
   final Color? secondaryLabelColor;
   final FontWeight? secondaryLabelFontWeight;
+
   /// Label size; defaults to 18.sp.
   final double? labelFontSize;
+
   /// Outline button fill (e.g. white on gradient backgrounds).
   final Color? secondaryFillColor;
   final Widget? leading;
@@ -57,6 +60,7 @@ class AppButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isEnabled = onPressed != null;
+
     /// Keep fill/border while [isLoading] — disabled styling only when truly inactive.
     final bool useActiveStyle = isEnabled || isLoading;
     final bool showPrimaryShadow =
@@ -69,7 +73,11 @@ class AppButton extends StatelessWidget {
         ? const LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [AppColors.purple600, AppColors.purple800, AppColors.purple700],
+            colors: [
+              AppColors.purple600,
+              AppColors.purple800,
+              AppColors.purple700,
+            ],
             stops: [0.0, 0.55, 1.0],
           )
         : null;
@@ -82,8 +90,8 @@ class AppButton extends StatelessWidget {
           gradient: gradient,
           color: useActiveStyle
               ? (isSecondary
-                  ? (secondaryFillColor ?? Colors.transparent)
-                  : (gradient == null ? (color ?? AppColors.primary) : null))
+                    ? (secondaryFillColor ?? Colors.transparent)
+                    : (gradient == null ? (color ?? AppColors.primary) : null))
               : AppColors.textHint,
           borderRadius: radius,
           border: isSecondary
@@ -92,19 +100,16 @@ class AppButton extends StatelessWidget {
                   width: 1.w,
                 )
               : !useActiveStyle
-                  ? Border.all(
-                      color: AppColors.grey400,
-                      width: 1.w,
-                    )
-                  : useGradient
-                      ? Border.all(
-                          color: AppColors.surface.withValues(alpha: 0.42),
-                          width: 1.w,
-                        )
-                      : Border.all(
-                          color: borderColor ?? Colors.transparent,
-                          width: 1.w,
-                        ),
+              ? Border.all(color: AppColors.grey400, width: 1.w)
+              : useGradient
+              ? Border.all(
+                  color: AppColors.surface.withValues(alpha: 0.42),
+                  width: 1.w,
+                )
+              : Border.all(
+                  color: borderColor ?? Colors.transparent,
+                  width: 1.w,
+                ),
           boxShadow: showPrimaryShadow ? AppShadows.primaryButton : null,
         ),
         child: Material(
@@ -120,7 +125,9 @@ class AppButton extends StatelessWidget {
                       height: 22.h,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: isSecondary ? AppColors.primary : AppColors.surface,
+                        color: isSecondary
+                            ? AppColors.primary
+                            : AppColors.surface,
                       ),
                     )
                   : _labelRow(
@@ -149,10 +156,7 @@ class AppButton extends StatelessWidget {
           ? (secondaryLabelColor ?? AppColors.primary)
           : AppColors.surface,
     );
-    final label = AppText(
-      text,
-      style: style,
-    );
+    final label = AppText(text, style: style);
     if (leading == null) {
       return label;
     }

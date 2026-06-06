@@ -34,7 +34,9 @@ class _DashedLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      painter: _DashedLinePainter(color: AppColors.authOr.withValues(alpha: 0.5)),
+      painter: _DashedLinePainter(
+        color: AppColors.authOr.withValues(alpha: 0.5),
+      ),
     );
   }
 }

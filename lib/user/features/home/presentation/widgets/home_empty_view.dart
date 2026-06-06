@@ -21,12 +21,15 @@ class HomeEmptyView extends StatelessWidget {
     this.showNotificationFavouriteRow = true,
     this.applyTopSafeArea = true,
   }) : assert(
-          !showCreateProjectButton || onCreateProject != null,
-          'onCreateProject is required when showCreateProjectButton is true',
-        );
+         !showCreateProjectButton || onCreateProject != null,
+         'onCreateProject is required when showCreateProjectButton is true',
+       );
 
   /// Home tab — default copy + Create project.
-  factory HomeEmptyView.forHome({Key? key, required VoidCallback onCreateProject}) {
+  factory HomeEmptyView.forHome({
+    Key? key,
+    required VoidCallback onCreateProject,
+  }) {
     return HomeEmptyView(
       key: key,
       title: AppStrings.homeEmptyTitle,
@@ -54,8 +57,10 @@ class HomeEmptyView extends StatelessWidget {
   final String subtitle;
   final bool showCreateProjectButton;
   final VoidCallback? onCreateProject;
+
   /// When true, shows notification + favourite (required when Discover hides [DiscoverHeader]).
   final bool showNotificationFavouriteRow;
+
   /// Top [SafeArea] inset (use true when this view is the top of the screen).
   final bool applyTopSafeArea;
 

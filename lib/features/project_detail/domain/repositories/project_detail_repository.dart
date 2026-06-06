@@ -8,4 +8,3 @@ abstract class ProjectDetailRepository {
     required String projectId,
   });
 }
-

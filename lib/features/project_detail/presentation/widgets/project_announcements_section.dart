@@ -34,7 +34,8 @@ class ProjectAnnouncementsSection extends StatefulWidget {
       _ProjectAnnouncementsSectionState();
 }
 
-class _ProjectAnnouncementsSectionState extends State<ProjectAnnouncementsSection> {
+class _ProjectAnnouncementsSectionState
+    extends State<ProjectAnnouncementsSection> {
   late List<ProjectAnnouncementEntity> _visible;
 
   bool get _canDelete => widget.project.isModeratorView;

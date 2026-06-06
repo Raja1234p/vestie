@@ -39,8 +39,7 @@ class AppWalletPill extends StatelessWidget {
             color: backgroundColor ?? AppColors.purple100,
             borderRadius: radius,
             border: Border.all(
-              color: borderColor ??
-                  AppColors.purple300.withValues(alpha: 0.55),
+              color: borderColor ?? AppColors.purple300.withValues(alpha: 0.55),
               width: 1,
             ),
           ),

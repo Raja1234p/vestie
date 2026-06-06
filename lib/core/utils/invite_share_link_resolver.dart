@@ -35,8 +35,7 @@ String _extractInviteCode(String value) {
   );
   if (uri == null) return trimmed;
 
-  final segments =
-      uri.pathSegments.where((s) => s.trim().isNotEmpty).toList();
+  final segments = uri.pathSegments.where((s) => s.trim().isNotEmpty).toList();
   if (segments.length >= 2 && segments.first.toLowerCase() == 'join') {
     return segments[1];
   }

@@ -1,7 +1,9 @@
 /// Parses invite codes from `vestie.app/join/{code}` and related deep links.
 String? parseProjectInviteCode(Uri uri) {
-  final pathSegments =
-      uri.pathSegments.map((s) => s.trim()).where((s) => s.isNotEmpty).toList();
+  final pathSegments = uri.pathSegments
+      .map((s) => s.trim())
+      .where((s) => s.isNotEmpty)
+      .toList();
 
   if (pathSegments.length >= 2 && pathSegments.first.toLowerCase() == 'join') {
     return pathSegments[1];
@@ -13,7 +15,8 @@ String? parseProjectInviteCode(Uri uri) {
       final fragment = uri.fragment.trim();
       if (fragment.isNotEmpty) return fragment;
     }
-    if (pathSegments.length >= 2 && pathSegments.first.toLowerCase() == 'join') {
+    if (pathSegments.length >= 2 &&
+        pathSegments.first.toLowerCase() == 'join') {
       return pathSegments[1];
     }
   }

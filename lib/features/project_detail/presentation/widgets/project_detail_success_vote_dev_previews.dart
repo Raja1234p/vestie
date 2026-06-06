@@ -50,8 +50,7 @@ class ProjectDetailSuccessVoteDevPreviews extends StatelessWidget {
         ),
         ProjectDetailPreviewLink(
           label: AppStrings.btnPreviewVoteOutcomeApproved,
-          onPressed: () =>
-              ProjectDetailNavigation.openMemberVoteOutcomePreview(
+          onPressed: () => ProjectDetailNavigation.openMemberVoteOutcomePreview(
             context,
             project: project,
             approved: true,
@@ -59,8 +58,7 @@ class ProjectDetailSuccessVoteDevPreviews extends StatelessWidget {
         ),
         ProjectDetailPreviewLink(
           label: AppStrings.btnPreviewVoteOutcomeRejected,
-          onPressed: () =>
-              ProjectDetailNavigation.openMemberVoteOutcomePreview(
+          onPressed: () => ProjectDetailNavigation.openMemberVoteOutcomePreview(
             context,
             project: project,
             approved: false,

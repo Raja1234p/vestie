@@ -9,9 +9,9 @@ class ResetPasswordBloc extends Bloc<ResetPasswordEvent, ResetPasswordState> {
   final ResetPasswordUseCase _resetPasswordUseCase;
 
   ResetPasswordBloc({ResetPasswordUseCase? resetPasswordUseCase})
-      : _resetPasswordUseCase = resetPasswordUseCase ??
-            ServiceLocator.instance.resetPasswordUseCase,
-        super(const ResetPasswordInitial()) {
+    : _resetPasswordUseCase =
+          resetPasswordUseCase ?? ServiceLocator.instance.resetPasswordUseCase,
+      super(const ResetPasswordInitial()) {
     on<ResetPasswordSubmitted>(_onResetPasswordSubmitted);
     on<ResetPasswordReset>((_, emit) => emit(const ResetPasswordInitial()));
   }
@@ -30,7 +30,9 @@ class ResetPasswordBloc extends Bloc<ResetPasswordEvent, ResetPasswordState> {
     );
 
     result.fold(
-      (failure) => emit(ResetPasswordError(message: failure.message, title: failure.title)),
+      (failure) => emit(
+        ResetPasswordError(message: failure.message, title: failure.title),
+      ),
       (message) => emit(ResetPasswordSuccess(message: message)),
     );
   }

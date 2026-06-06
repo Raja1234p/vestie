@@ -5,6 +5,7 @@ class User extends Equatable {
   final String id;
   final String name;
   final String email;
+
   /// Handle from `GET/PUT /users/me` (`userName` in JSON).
   final String userName;
   final String? photoUrl;

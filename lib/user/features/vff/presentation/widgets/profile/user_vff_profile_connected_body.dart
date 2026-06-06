@@ -25,7 +25,8 @@ final class UserVffProfileConnectedBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<UserVffProfileCubit>();
-    final joinedList = profile.joinedProjects ?? const <UserVffJoinedProjectRowUi>[];
+    final joinedList =
+        profile.joinedProjects ?? const <UserVffJoinedProjectRowUi>[];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -33,74 +34,79 @@ final class UserVffProfileConnectedBody extends StatelessWidget {
         Expanded(
           child: ListView(
             physics: const BouncingScrollPhysics(),
-            padding: EdgeInsets.only(
-              top: AppDimens.v8,
-              bottom: AppDimens.v20,
-            ),
+            padding: EdgeInsets.only(top: AppDimens.v8, bottom: AppDimens.v20),
             children: [
-            Padding(
-              padding: EdgeInsets.fromLTRB(AppDimens.p18, 0, AppDimens.p18, 8.h),
-              child: UserVffProfileConnectedHeader(profile: profile),
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(
-                AppDimens.p18,
-                12.h,
-                AppDimens.p18,
-                AppDimens.v20,
+              Padding(
+                padding: EdgeInsets.fromLTRB(
+                  AppDimens.p18,
+                  0,
+                  AppDimens.p18,
+                  8.h,
+                ),
+                child: UserVffProfileConnectedHeader(profile: profile),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  UserVffProfileConnectedMetrics(profile: profile),
-                  if (joinedList.isNotEmpty) ...[
-                    SizedBox(height: 20.h),
-                    AppText(
-                      AppStrings.joinedProjects,
-                      style: GoogleFonts.lato(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.grey1100,
+              Padding(
+                padding: EdgeInsets.fromLTRB(
+                  AppDimens.p18,
+                  12.h,
+                  AppDimens.p18,
+                  AppDimens.v20,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    UserVffProfileConnectedMetrics(profile: profile),
+                    if (joinedList.isNotEmpty) ...[
+                      SizedBox(height: 20.h),
+                      AppText(
+                        AppStrings.joinedProjects,
+                        style: GoogleFonts.lato(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.grey1100,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 12.h),
-                    ...joinedList.map(
-                      (row) => BlocSelector<UserVffProfileCubit,
-                          UserVffProfileState, bool>(
-                        selector: (state) => state.isJoiningProject(row.projectId),
-                        builder: (context, isJoining) {
-                          return UserVffJoinedProjectRow(
-                            row: row,
-                            isLoading: isJoining,
-                            onCardTap: _canOpenProjectDetail(row)
-                                ? () => _openProjectDetail(context, row)
-                                : null,
-                            onJoin: _canJoinFromProfile(row, isJoining)
-                                ? () => _onJoinProject(context, cubit, row)
-                                : null,
-                            onRequestJoin: _canRequestJoinFromProfile(row, isJoining)
-                                ? () => _onJoinProject(context, cubit, row)
-                                : null,
-                          );
-                        },
+                      SizedBox(height: 12.h),
+                      ...joinedList.map(
+                        (row) =>
+                            BlocSelector<
+                              UserVffProfileCubit,
+                              UserVffProfileState,
+                              bool
+                            >(
+                              selector: (state) =>
+                                  state.isJoiningProject(row.projectId),
+                              builder: (context, isJoining) {
+                                return UserVffJoinedProjectRow(
+                                  row: row,
+                                  isLoading: isJoining,
+                                  onCardTap: _canOpenProjectDetail(row)
+                                      ? () => _openProjectDetail(context, row)
+                                      : null,
+                                  onJoin: _canJoinFromProfile(row, isJoining)
+                                      ? () =>
+                                            _onJoinProject(context, cubit, row)
+                                      : null,
+                                  onRequestJoin:
+                                      _canRequestJoinFromProfile(row, isJoining)
+                                      ? () =>
+                                            _onJoinProject(context, cubit, row)
+                                      : null,
+                                );
+                              },
+                            ),
                       ),
-                    ),
+                    ],
                   ],
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
           ),
         ),
         SafeArea(
           top: false,
           child: Padding(
-            padding: EdgeInsets.fromLTRB(
-              AppDimens.p18,
-              0,
-              AppDimens.p18,
-              8.h,
-            ),
+            padding: EdgeInsets.fromLTRB(AppDimens.p18, 0, AppDimens.p18, 8.h),
             child: const UserVffProfileFooterActions(),
           ),
         ),

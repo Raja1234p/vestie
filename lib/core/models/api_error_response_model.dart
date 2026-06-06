@@ -17,7 +17,9 @@ class ApiErrorResponseModel {
       parsedErrors = {};
       (json['errors'] as Map).forEach((key, value) {
         if (value is List) {
-          parsedErrors![key.toString()] = value.map((e) => e.toString()).toList();
+          parsedErrors![key.toString()] = value
+              .map((e) => e.toString())
+              .toList();
         }
       });
     }

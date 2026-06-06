@@ -24,10 +24,10 @@ class ProjectDetailPreviewLink extends StatelessWidget {
         child: AppText(
           label,
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w600,
-                color: AppColors.primary,
-              ),
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w600,
+            color: AppColors.primary,
+          ),
         ),
       ),
     );

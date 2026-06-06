@@ -20,9 +20,14 @@ class CreateProjectCubit extends Cubit<CreateProjectForm> {
 
   void removeAmountDigit() {
     if (state.amountDigits.isEmpty) return;
-    emit(state.copyWith(
-        amountDigits:
-            state.amountDigits.substring(0, state.amountDigits.length - 1)));
+    emit(
+      state.copyWith(
+        amountDigits: state.amountDigits.substring(
+          0,
+          state.amountDigits.length - 1,
+        ),
+      ),
+    );
   }
 
   // ── Details ────────────────────────────────────────────────────────────
@@ -35,7 +40,8 @@ class CreateProjectCubit extends Cubit<CreateProjectForm> {
   void setCategory(NewProjectCategory c) {
     var roi = state.roi;
     final ProjectCreationFlowType nextFlow = switch (c) {
-      NewProjectCategory.investment => ProjectCreationFlowType.investmentOptionalRoi,
+      NewProjectCategory.investment =>
+        ProjectCreationFlowType.investmentOptionalRoi,
       NewProjectCategory.vacation => ProjectCreationFlowType.fundsBorrowing,
       NewProjectCategory.emergency => ProjectCreationFlowType.fundsBorrowing,
     };
@@ -43,12 +49,9 @@ class CreateProjectCubit extends Cubit<CreateProjectForm> {
         nextFlow != ProjectCreationFlowType.investmentOptionalRoi) {
       roi = '';
     }
-    emit(state.copyWith(
-      category: c,
-      flowType: nextFlow,
-      roi: roi,
-      roiError: null,
-    ));
+    emit(
+      state.copyWith(category: c, flowType: nextFlow, roi: roi, roiError: null),
+    );
   }
 
   void setDeadline(DateTime d) {
@@ -71,11 +74,14 @@ class CreateProjectCubit extends Cubit<CreateProjectForm> {
     final digits = v.replaceAll(RegExp(r'[^0-9]'), '');
     emit(state.copyWith(roi: digits, roiError: null));
   }
-  void toggleBorrowing(bool v) => emit(state.copyWith(
-        borrowingEnabled: v,
-        repaymentWindowError: null,
-        penaltyError: null,
-      ));
+
+  void toggleBorrowing(bool v) => emit(
+    state.copyWith(
+      borrowingEnabled: v,
+      repaymentWindowError: null,
+      penaltyError: null,
+    ),
+  );
   void setRepaymentDays(String v) =>
       emit(state.copyWith(repaymentWindow: v, repaymentWindowError: null));
   void setPenalty(String v) =>
@@ -83,33 +89,38 @@ class CreateProjectCubit extends Cubit<CreateProjectForm> {
 
   // ── Validation ─────────────────────────────────────────────────────────
   bool validateDetails() {
-    final nameErr =
-        ValidationUtils.validateProjectName(state.projectName);
-    final descErr =
-        ValidationUtils.validateProjectDescription(state.description);
-    emit(state.copyWith(
-      nameError: nameErr,
-      descError: descErr,
-      deadlineError: null,
-    ));
+    final nameErr = ValidationUtils.validateProjectName(state.projectName);
+    final descErr = ValidationUtils.validateProjectDescription(
+      state.description,
+    );
+    emit(
+      state.copyWith(
+        nameError: nameErr,
+        descError: descErr,
+        deadlineError: null,
+      ),
+    );
     return nameErr == null && descErr == null;
   }
 
   bool validateFundsBorrowing() {
     if (!state.borrowingEnabled) return true;
-    final daysErr = ValidationUtils.validateRepaymentDays(state.repaymentWindow);
+    final daysErr = ValidationUtils.validateRepaymentDays(
+      state.repaymentWindow,
+    );
     final penErr = ValidationUtils.validatePenalty(state.penalty);
-    emit(state.copyWith(
-      repaymentWindowError: daysErr,
-      penaltyError: penErr,
-      roiError: null,
-    ));
+    emit(
+      state.copyWith(
+        repaymentWindowError: daysErr,
+        penaltyError: penErr,
+        roiError: null,
+      ),
+    );
     return daysErr == null && penErr == null;
   }
 
   bool validateInvestmentOptionalRoi() {
-    final roiErr =
-        ValidationUtils.validateOptionalAnnualRoiPercent(state.roi);
+    final roiErr = ValidationUtils.validateOptionalAnnualRoiPercent(state.roi);
     emit(state.copyWith(roiError: roiErr));
     return roiErr == null;
   }

@@ -23,8 +23,9 @@ class ProjectsSignalRService {
   Future<void> connectIfLoggedIn() async {
     if (kIsWeb) return;
 
-    final token = await ServiceLocator.instance.secureStorage
-        .getString(StorageKeys.accessToken);
+    final token = await ServiceLocator.instance.secureStorage.getString(
+      StorageKeys.accessToken,
+    );
     if (token == null || token.isEmpty) return;
 
     if (_connection?.state == HubConnectionState.Connected) return;
@@ -106,7 +107,10 @@ class ProjectsSignalRService {
 
   Future<void> _invokeJoin(String projectId) async {
     try {
-      await _connection!.invoke('JoinProjectChannel', args: <Object>[projectId]);
+      await _connection!.invoke(
+        'JoinProjectChannel',
+        args: <Object>[projectId],
+      );
     } catch (e) {
       if (kDebugMode) {
         debugPrint('ProjectsSignalRService: join failed ($e)');
@@ -128,8 +132,8 @@ class ProjectsSignalRService {
     final projectId = map != null
         ? (_stringFrom(map, 'projectId') ?? _stringFrom(map, 'ProjectId') ?? '')
         : (arguments != null && arguments.isNotEmpty
-            ? arguments.first?.toString().trim() ?? ''
-            : '');
+              ? arguments.first?.toString().trim() ?? ''
+              : '');
 
     if (projectId.isEmpty) return null;
 
@@ -147,7 +151,7 @@ class ProjectsSignalRService {
           : null,
       contributorCount: map != null
           ? (_intFrom(map, 'contributorCount') ??
-              _intFrom(map, 'ContributorCount'))
+                _intFrom(map, 'ContributorCount'))
           : null,
     );
   }

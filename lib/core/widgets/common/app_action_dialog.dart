@@ -143,24 +143,25 @@ class AppActionDialog extends StatelessWidget {
             title,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontSize: 26.sp,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.grey1100,
-                ),
+              fontSize: 26.sp,
+              fontWeight: FontWeight.w700,
+              color: AppColors.grey1100,
+            ),
           ),
           SizedBox(height: 6.h),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 3.w),
-            child: descriptionWidget ??
+            child:
+                descriptionWidget ??
                 AppText(
                   description,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.grey900,
-                        height: 1.5,
-                      ),
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.grey900,
+                    height: 1.5,
+                  ),
                 ),
           ),
           SizedBox(height: 35.h),
@@ -283,10 +284,10 @@ class _DialogButton extends StatelessWidget {
           child: AppText(
             label,
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.w600,
-                  color: textColor,
-                ),
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w600,
+              color: textColor,
+            ),
           ),
         ),
       ),

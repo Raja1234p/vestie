@@ -12,10 +12,10 @@ Widget _descriptionWithHighlightedName(
   required String memberName,
 }) {
   final base = Theme.of(context).textTheme.bodyLarge?.copyWith(
-        fontSize: 16.sp,
-        color: AppColors.grey900,
-        height: 1.5,
-      );
+    fontSize: 16.sp,
+    color: AppColors.grey900,
+    height: 1.5,
+  );
   final highlighted = base?.copyWith(
     fontWeight: FontWeight.w700,
     decoration: TextDecoration.underline,

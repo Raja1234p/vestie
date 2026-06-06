@@ -14,11 +14,7 @@ class SocialAuthButton extends StatelessWidget {
   final SocialProvider provider;
   final VoidCallback? onPressed;
 
-  const SocialAuthButton({
-    super.key,
-    required this.provider,
-    this.onPressed,
-  });
+  const SocialAuthButton({super.key, required this.provider, this.onPressed});
 
   @override
   Widget build(BuildContext context) {

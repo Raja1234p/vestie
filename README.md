@@ -34,10 +34,13 @@ flutter run
 
 ## Docs
 
+- **30-minute architecture overview:** [`ARCHITECTURE_OVERVIEW.md`](ARCHITECTURE_OVERVIEW.md)
+- **Primary flow traces** (auth, wallet, project, leader, member, VFF, payment, KYC): [`PROJECT_FLOW_MAP.md`](PROJECT_FLOW_MAP.md)
 - **Project scope & product overview:** [`DOCS/project_scope.md`](DOCS/project_scope.md)
 - **Feature index (onboarding):** [`FEATURE_MAP.md`](FEATURE_MAP.md)
 - **Dependency injection map:** [`DEPENDENCY_MAP.md`](DEPENDENCY_MAP.md)
-- **Architecture & flow map** (roles, routes, join paths, project types, navigation patterns): [`DOCS/architecture_flows.md`](DOCS/architecture_flows.md)
+- **Extended architecture & flow map** (roles, routes, join paths, project types): [`DOCS/architecture_flows.md`](DOCS/architecture_flows.md)
+- **Per-feature ownership:** `feature_overview.md` inside each feature root folder
 - **Group Vacation & Emergency member flows** (screens, routes, UI-only vs API, integration checklist): [`DOCS/group_vacation_emergency_member_flow.md`](DOCS/group_vacation_emergency_member_flow.md)
 - **Refactor audit & roadmap:** [`DOCS/refactor/architecture_audit.md`](DOCS/refactor/architecture_audit.md)
 

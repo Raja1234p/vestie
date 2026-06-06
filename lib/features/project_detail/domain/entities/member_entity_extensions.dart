@@ -37,16 +37,19 @@ extension MemberEntityApiIds on MemberEntity {
     };
 
     final mergedPhoto = fromApi.photoUrl?.trim();
-    final useApiPhoto =
-        mergedPhoto != null && mergedPhoto.isNotEmpty;
+    final useApiPhoto = mergedPhoto != null && mergedPhoto.isNotEmpty;
 
     return MemberEntity(
       id: fromApi.apiUserId.isNotEmpty ? fromApi.apiUserId : id,
-      membershipId: membershipId.isNotEmpty ? membershipId : fromApi.membershipId,
+      membershipId: membershipId.isNotEmpty
+          ? membershipId
+          : fromApi.membershipId,
       userId: fromApi.userId.isNotEmpty ? fromApi.userId : userId,
       initials: useApiName ? fromApi.initials : initials,
       name: useApiName ? fromApi.name : name,
-      username: fromApi.username.trim().isNotEmpty ? fromApi.username : username,
+      username: fromApi.username.trim().isNotEmpty
+          ? fromApi.username
+          : username,
       status: fromApi.status.trim().isNotEmpty ? fromApi.status : status,
       role: mergedRole,
       contributedAmount: fromApi.contributedAmount,

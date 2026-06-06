@@ -18,5 +18,12 @@ class BankAccountEntity extends Equatable {
   });
 
   @override
-  List<Object?> get props => [id, bankName, last4, currency, isDefault, displayName];
+  List<Object?> get props => [
+    id,
+    bankName,
+    last4,
+    currency,
+    isDefault,
+    displayName,
+  ];
 }

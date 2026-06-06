@@ -10,13 +10,17 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<LoadProfileEvent>(_onLoadProfile);
   }
 
-  Future<void> _onLoadProfile(LoadProfileEvent event, Emitter<ProfileState> emit) async {
+  Future<void> _onLoadProfile(
+    LoadProfileEvent event,
+    Emitter<ProfileState> emit,
+  ) async {
     emit(ProfileLoading());
 
     final result = await getMyProfileUseCase();
 
     result.fold(
-      (failure) => emit(ProfileError(message: failure.message, title: failure.title)),
+      (failure) =>
+          emit(ProfileError(message: failure.message, title: failure.title)),
       (profile) => emit(ProfileLoaded(profile: profile)),
     );
   }

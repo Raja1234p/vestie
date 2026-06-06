@@ -51,10 +51,12 @@ class ProjectMemberLeaderBadge extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      AppColors.actionInformationInnerShadow
-                          .withValues(alpha: 0.5),
-                      AppColors.actionInformationInnerShadow
-                          .withValues(alpha: 0),
+                      AppColors.actionInformationInnerShadow.withValues(
+                        alpha: 0.5,
+                      ),
+                      AppColors.actionInformationInnerShadow.withValues(
+                        alpha: 0,
+                      ),
                     ],
                     stops: const [0.0, 0.55],
                   ),

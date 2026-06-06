@@ -51,7 +51,9 @@ class MembersTab extends StatelessWidget {
         if (active.isEmpty)
           const ProjectMembersEmptyState(compactTop: true)
         else
-          ...active.take(2).map(
+          ...active
+              .take(2)
+              .map(
                 (member) => Padding(
                   padding: EdgeInsets.only(bottom: 12.h),
                   child: ProjectMemberRow(

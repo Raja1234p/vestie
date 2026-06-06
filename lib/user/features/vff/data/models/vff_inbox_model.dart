@@ -31,17 +31,16 @@ class VffInboxRequestModel {
           'senderPhotoUrl',
         ]),
         status: VffRequestStatus.parse(json.safeStringNullable('status')),
-        createdUtc: VffJsonParsing.parseUtc(json.safeStringNullable('createdUtc')),
+        createdUtc: VffJsonParsing.parseUtc(
+          json.safeStringNullable('createdUtc'),
+        ),
       ),
     );
   }
 
   VffInboxRequestEntity toEntity() => entity;
 
-  static String? _optionalPhoto(
-    Map<String, dynamic> json,
-    List<String> keys,
-  ) {
+  static String? _optionalPhoto(Map<String, dynamic> json, List<String> keys) {
     final raw = VffJsonParsing.readString(json, keys);
     return raw.isEmpty ? null : raw;
   }
@@ -65,7 +64,9 @@ class VffInboxSentRequestModel {
           'photoURL',
         ]),
         status: VffRequestStatus.parse(json.safeStringNullable('status')),
-        createdUtc: VffJsonParsing.parseUtc(json.safeStringNullable('createdUtc')),
+        createdUtc: VffJsonParsing.parseUtc(
+          json.safeStringNullable('createdUtc'),
+        ),
       ),
     );
   }
@@ -84,7 +85,9 @@ class VffProjectInviteModel {
         inviteId: VffJsonParsing.readString(json, const ['inviteId', 'id']),
         projectId: json.safeString('projectId'),
         projectName: json.safeString('projectName'),
-        visibility: VffProjectVisibility.parse(json.safeStringNullable('visibility')),
+        visibility: VffProjectVisibility.parse(
+          json.safeStringNullable('visibility'),
+        ),
         inviterUserId: json.safeString('inviterUserId'),
         inviterDisplayName: json.safeString('inviterDisplayName'),
         photoUrl: VffInboxRequestModel._optionalPhoto(json, const [
@@ -93,7 +96,9 @@ class VffProjectInviteModel {
         ]),
         status: VffRequestStatus.parse(json.safeStringNullable('status')),
         joinAction: _joinAction(json),
-        createdUtc: VffJsonParsing.parseUtc(json.safeStringNullable('createdUtc')),
+        createdUtc: VffJsonParsing.parseUtc(
+          json.safeStringNullable('createdUtc'),
+        ),
       ),
     );
   }
@@ -118,7 +123,9 @@ class VffSentProjectInviteModel {
         inviteId: VffJsonParsing.readString(json, const ['inviteId', 'id']),
         projectId: json.safeString('projectId'),
         projectName: json.safeString('projectName'),
-        visibility: VffProjectVisibility.parse(json.safeStringNullable('visibility')),
+        visibility: VffProjectVisibility.parse(
+          json.safeStringNullable('visibility'),
+        ),
         inviteeUserId: json.safeString('inviteeUserId'),
         inviteeDisplayName: json.safeString('inviteeDisplayName'),
         senderPhotoUrl: VffInboxRequestModel._optionalPhoto(json, const [
@@ -126,7 +133,9 @@ class VffSentProjectInviteModel {
           'photoURL',
         ]),
         status: VffRequestStatus.parse(json.safeStringNullable('status')),
-        createdUtc: VffJsonParsing.parseUtc(json.safeStringNullable('createdUtc')),
+        createdUtc: VffJsonParsing.parseUtc(
+          json.safeStringNullable('createdUtc'),
+        ),
       ),
     );
   }
@@ -145,9 +154,13 @@ class VffSentJoinRequestModel {
         membershipId: json.safeString('membershipId'),
         projectId: json.safeString('projectId'),
         projectName: json.safeString('projectName'),
-        visibility: VffProjectVisibility.parse(json.safeStringNullable('visibility')),
+        visibility: VffProjectVisibility.parse(
+          json.safeStringNullable('visibility'),
+        ),
         status: json.safeString('status'),
-        createdUtc: VffJsonParsing.parseUtc(json.safeStringNullable('createdUtc')),
+        createdUtc: VffJsonParsing.parseUtc(
+          json.safeStringNullable('createdUtc'),
+        ),
       ),
     );
   }
@@ -194,13 +207,17 @@ class VffSentInboxModel {
     final vffRequests = json
         .safeList('vffRequests')
         .whereType<Map>()
-        .map((m) => VffInboxSentRequestModel.fromJson(m.cast<String, dynamic>()))
+        .map(
+          (m) => VffInboxSentRequestModel.fromJson(m.cast<String, dynamic>()),
+        )
         .map((m) => m.toEntity())
         .toList(growable: false);
     final projectInvites = json
         .safeList('projectInvites')
         .whereType<Map>()
-        .map((m) => VffSentProjectInviteModel.fromJson(m.cast<String, dynamic>()))
+        .map(
+          (m) => VffSentProjectInviteModel.fromJson(m.cast<String, dynamic>()),
+        )
         .map((m) => m.toEntity())
         .toList(growable: false);
     final joinRequests = json

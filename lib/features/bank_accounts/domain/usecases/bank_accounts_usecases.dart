@@ -12,8 +12,7 @@ class ListBankAccountsUseCase {
 
   Future<Either<Failure, List<BankAccountEntity>>> call({
     bool forceRefresh = false,
-  }) =>
-      repository.list(forceRefresh: forceRefresh);
+  }) => repository.list(forceRefresh: forceRefresh);
 }
 
 class LinkBankAccountUseCase {
@@ -25,12 +24,11 @@ class LinkBankAccountUseCase {
     String? bankAccountToken,
     String? refreshUrl,
     String? returnUrl,
-  }) =>
-      repository.link(
-        bankAccountToken: bankAccountToken,
-        refreshUrl: refreshUrl,
-        returnUrl: returnUrl,
-      );
+  }) => repository.link(
+    bankAccountToken: bankAccountToken,
+    refreshUrl: refreshUrl,
+    returnUrl: returnUrl,
+  );
 }
 
 class RemoveBankAccountUseCase {
@@ -50,6 +48,5 @@ class SetDefaultBankAccountUseCase {
   Future<Either<Failure, void>> call(
     String bankAccountId, {
     required bool isDefault,
-  }) =>
-      repository.setDefault(bankAccountId, isDefault: isDefault);
+  }) => repository.setDefault(bankAccountId, isDefault: isDefault);
 }

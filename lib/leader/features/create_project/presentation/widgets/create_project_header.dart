@@ -11,7 +11,7 @@ import 'package:vestie/core/widgets/common/post_auth_header.dart';
 /// Shows "← Title" on the left and an optional step badge on the right.
 class CreateProjectHeader extends StatelessWidget {
   final String title;
-  final String? stepBadge;   // e.g. "1/3"
+  final String? stepBadge; // e.g. "1/3"
   final Color badgeColor;
   final VoidCallback? onBack;
 

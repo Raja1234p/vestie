@@ -33,10 +33,10 @@ class LeaderActionOutlineButton extends StatelessWidget {
           child: AppText(
             label,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.red900,
-                ),
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.red900,
+            ),
           ),
         ),
       ),

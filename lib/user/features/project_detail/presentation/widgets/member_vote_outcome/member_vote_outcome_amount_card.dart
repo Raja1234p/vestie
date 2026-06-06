@@ -15,14 +15,13 @@ class MemberVoteOutcomeAmountCard extends StatelessWidget {
   static BoxDecoration _cardDecoration({
     required BorderRadius radius,
     required bool isApproved,
-  }) =>
-      BoxDecoration(
-        color: isApproved ? AppColors.green100 : AppColors.red100,
-        borderRadius: radius,
-        border: Border.all(
-          color: isApproved ? AppColors.green300 : AppColors.red300,
-        ),
-      );
+  }) => BoxDecoration(
+    color: isApproved ? AppColors.green100 : AppColors.red100,
+    borderRadius: radius,
+    border: Border.all(
+      color: isApproved ? AppColors.green300 : AppColors.red300,
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -41,21 +40,19 @@ class MemberVoteOutcomeAmountCard extends StatelessWidget {
             caption,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.neutral700,
-                ),
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.neutral700,
+            ),
           ),
           SizedBox(height: 6.h),
           AppText(
             '\$${data.formattedAmountUsd}',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontSize: 32.sp,
-                  fontWeight: FontWeight.w700,
-                  color: data.isApproved
-                      ? AppColors.green900
-                      : AppColors.red900,
-                ),
+              fontSize: 32.sp,
+              fontWeight: FontWeight.w700,
+              color: data.isApproved ? AppColors.green900 : AppColors.red900,
+            ),
           ),
         ],
       ),

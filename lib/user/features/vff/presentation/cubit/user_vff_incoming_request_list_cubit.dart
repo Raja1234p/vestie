@@ -55,11 +55,11 @@ final class UserVffIncomingRequestListCubit
     required AcceptVffRequestUseCase acceptVffRequestUseCase,
     required DeclineVffRequestUseCase declineVffRequestUseCase,
     required ListMyVffsUseCase listMyVffsUseCase,
-  })  : _getVffReceivedInboxUseCase = getVffReceivedInboxUseCase,
-        _acceptVffRequestUseCase = acceptVffRequestUseCase,
-        _declineVffRequestUseCase = declineVffRequestUseCase,
-        _listMyVffsUseCase = listMyVffsUseCase,
-        super(const UserVffIncomingRequestListState()) {
+  }) : _getVffReceivedInboxUseCase = getVffReceivedInboxUseCase,
+       _acceptVffRequestUseCase = acceptVffRequestUseCase,
+       _declineVffRequestUseCase = declineVffRequestUseCase,
+       _listMyVffsUseCase = listMyVffsUseCase,
+       super(const UserVffIncomingRequestListState()) {
     load();
   }
 
@@ -168,17 +168,16 @@ final class UserVffIncomingRequestListCubit
             ),
           );
           final reloadFuture = reloadReceivedInbox();
-          final myVffsFuture =
-              refreshMyVffs ? syncMyVffs() : Future.value(null);
+          final myVffsFuture = refreshMyVffs
+              ? syncMyVffs()
+              : Future.value(null);
           final reloadResult = await reloadFuture;
           await myVffsFuture;
           if (isClosed) return false;
 
           reloadResult.fold(
             (failure) => emit(
-              state.copyWith(
-                errorMessage: FailureMapper.userMessage(failure),
-              ),
+              state.copyWith(errorMessage: FailureMapper.userMessage(failure)),
             ),
             (inbox) => emit(
               state.copyWith(

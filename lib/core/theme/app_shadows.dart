@@ -7,34 +7,34 @@ class AppShadows {
   AppShadows._();
 
   static List<BoxShadow> get primaryButton => [
-        BoxShadow(
-          color: AppColors.purple700.withValues(alpha: 0.36),
-          blurRadius: 4.r,
-          spreadRadius: 2.r,
-          offset: const Offset(0, 0),
-        ),
-        BoxShadow(
-          color: AppColors.purple900.withValues(alpha: 0.28),
-          blurRadius: 4.r,
-          offset: Offset(0, 5.h),
-        ),
-      ];
+    BoxShadow(
+      color: AppColors.purple700.withValues(alpha: 0.36),
+      blurRadius: 4.r,
+      spreadRadius: 2.r,
+      offset: const Offset(0, 0),
+    ),
+    BoxShadow(
+      color: AppColors.purple900.withValues(alpha: 0.28),
+      blurRadius: 4.r,
+      offset: Offset(0, 5.h),
+    ),
+  ];
 
   static List<BoxShadow> get cardShadow => [
-        BoxShadow(
-          color: AppColors.grey1100.withValues(alpha: 0.05),
-          blurRadius: 10.r,
-          offset: Offset(0, 2.h),
-        ),
-      ];
+    BoxShadow(
+      color: AppColors.grey1100.withValues(alpha: 0.05),
+      blurRadius: 10.r,
+      offset: Offset(0, 2.h),
+    ),
+  ];
 
   /// VFF Following → Remove overlay (Figma: #D09292 @ 20%, y 4, blur 17.5).
   static List<BoxShadow> get vffRemoveMenuOverlay => [
-        BoxShadow(
-          color: AppColors.vffRemoveOverlayShadow.withValues(alpha: 0.2),
-          offset: Offset(0, 4.h),
-          blurRadius: 17.5.r,
-          spreadRadius: 0,
-        ),
-      ];
+    BoxShadow(
+      color: AppColors.vffRemoveOverlayShadow.withValues(alpha: 0.2),
+      offset: Offset(0, 4.h),
+      blurRadius: 17.5.r,
+      spreadRadius: 0,
+    ),
+  ];
 }

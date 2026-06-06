@@ -44,27 +44,34 @@ abstract final class UserVffProfileMapper {
       metrics: _metrics(entity.stats, trio: connected),
       joinedProjects: connected
           ? entity.joinedProjects
-              .map((p) => _joinedProject(p))
-              .toList(growable: false)
+                .map((p) => _joinedProject(p))
+                .toList(growable: false)
           : null,
       footerMode: connected
           ? UserVffProfileFooterMode.followingSheet
           : (canSendVffRequest
-              ? UserVffProfileFooterMode.sendRequest
-              : UserVffProfileFooterMode.sendRequest),
+                ? UserVffProfileFooterMode.sendRequest
+                : UserVffProfileFooterMode.sendRequest),
       showFooter: connected || canSendVffRequest,
     );
   }
 
-  static UserVffMetricsUi _metrics(VffProfileStatsEntity stats, {required bool trio}) {
+  static UserVffMetricsUi _metrics(
+    VffProfileStatsEntity stats, {
+    required bool trio,
+  }) {
     return UserVffMetricsUi(
-      contributedDisplay: AppFormatters.formatCurrency(stats.totalContributedAmount),
+      contributedDisplay: AppFormatters.formatCurrency(
+        stats.totalContributedAmount,
+      ),
       contributionsDisplay: '${stats.contributionCount}',
       projectsDisplay: trio ? '${stats.joinedProjectsCount}' : null,
     );
   }
 
-  static UserVffJoinedProjectRowUi _joinedProject(VffJoinedProjectEntity entity) {
+  static UserVffJoinedProjectRowUi _joinedProject(
+    VffJoinedProjectEntity entity,
+  ) {
     return UserVffJoinedProjectRowUi(
       projectId: entity.projectId,
       title: entity.name,
@@ -82,9 +89,10 @@ abstract final class UserVffProfileMapper {
   static UserVffJoinedProjectAction _joinAction(VffProjectJoinState state) {
     return switch (state) {
       VffProjectJoinState.alreadyMember => UserVffJoinedProjectAction.joined,
-      VffProjectJoinState.requestToJoin => UserVffJoinedProjectAction.requestToJoin,
-      VffProjectJoinState.requestSent || VffProjectJoinState.pending =>
-        UserVffJoinedProjectAction.requestSentChip,
+      VffProjectJoinState.requestToJoin =>
+        UserVffJoinedProjectAction.requestToJoin,
+      VffProjectJoinState.requestSent ||
+      VffProjectJoinState.pending => UserVffJoinedProjectAction.requestSentChip,
       _ => UserVffJoinedProjectAction.join,
     };
   }
@@ -99,8 +107,11 @@ abstract final class UserVffProfileMapper {
 /// Shared initials helper for hub + profile mappers.
 abstract final class UserVffHubMapperInitials {
   static String initials(String name) {
-    final parts =
-        name.trim().split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
+    final parts = name
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((p) => p.isNotEmpty)
+        .toList();
     if (parts.isEmpty) return 'NA';
     String c(String s) => s.isEmpty ? 'N' : s[0].toUpperCase();
     return '${c(parts.first)}${c(parts.length > 1 ? parts.last : parts.first)}';

@@ -56,7 +56,8 @@ class StripeBrowserOnboardingScreen extends StatefulWidget {
       _StripeBrowserOnboardingScreenState();
 }
 
-class _StripeBrowserOnboardingScreenState extends State<StripeBrowserOnboardingScreen>
+class _StripeBrowserOnboardingScreenState
+    extends State<StripeBrowserOnboardingScreen>
     with WidgetsBindingObserver {
   static const _logTag = 'StripeOnboarding';
 
@@ -101,7 +102,10 @@ class _StripeBrowserOnboardingScreenState extends State<StripeBrowserOnboardingS
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    AppLogger.debug('lifecycle=$state awaitingManual=$_awaitingManualReturn', name: _logTag);
+    AppLogger.debug(
+      'lifecycle=$state awaitingManual=$_awaitingManualReturn',
+      name: _logTag,
+    );
     if (state == AppLifecycleState.resumed &&
         _awaitingManualReturn &&
         !_handlingReturn &&
@@ -160,10 +164,18 @@ class _StripeBrowserOnboardingScreenState extends State<StripeBrowserOnboardingS
         return;
       }
       setState(() => _bootstrapping = false);
-      AppLogger.info('POST /kyc/start OK — opening Stripe session', name: _logTag);
+      AppLogger.info(
+        'POST /kyc/start OK — opening Stripe session',
+        name: _logTag,
+      );
       await _runStripeSession(initialUrl: trimmed);
     } catch (e, st) {
-      AppLogger.error('Bootstrap failed', error: e, stackTrace: st, name: _logTag);
+      AppLogger.error(
+        'Bootstrap failed',
+        error: e,
+        stackTrace: st,
+        name: _logTag,
+      );
       if (!mounted) return;
       setState(() {
         _bootstrapping = false;

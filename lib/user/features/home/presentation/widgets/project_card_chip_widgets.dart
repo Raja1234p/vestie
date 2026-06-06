@@ -37,14 +37,17 @@ class ProjectCategoryChip extends StatelessWidget {
               _iconAsset!,
               width: 12.w,
               height: 12.w,
-              colorFilter:
-                  const ColorFilter.mode(AppColors.primary, BlendMode.srcIn),
+              colorFilter: const ColorFilter.mode(
+                AppColors.primary,
+                BlendMode.srcIn,
+              ),
             )
           else
             AppSvgIcon(
-                assetPath: AppAssets.projectTypeEmergency,
-                size: 12.w,
-                color: AppColors.primary),
+              assetPath: AppAssets.projectTypeEmergency,
+              size: 12.w,
+              color: AppColors.primary,
+            ),
           SizedBox(width: 4.w),
           Text(
             _label,
@@ -84,18 +87,19 @@ class ProjectStatusBadge extends StatelessWidget {
           colors: completed
               ? const [AppColors.green600, AppColors.green800]
               : isDraft
-                  ? const [AppColors.grey500, AppColors.grey700]
-                  : const [AppColors.blue600, AppColors.blue800],
+              ? const [AppColors.grey500, AppColors.grey700]
+              : const [AppColors.blue600, AppColors.blue800],
         ),
         borderRadius: BorderRadius.circular(100.r),
         boxShadow: [
           BoxShadow(
-            color: (completed
-                    ? AppColors.green800
-                    : isDraft
+            color:
+                (completed
+                        ? AppColors.green800
+                        : isDraft
                         ? AppColors.grey700
                         : AppColors.blue800)
-                .withValues(alpha: 0.24),
+                    .withValues(alpha: 0.24),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -106,9 +110,10 @@ class ProjectStatusBadge extends StatelessWidget {
         children: [
           if (completed) ...[
             AppSvgIcon(
-                assetPath: AppAssets.iconCheckCircle,
-                size: 11.w,
-                color: AppColors.surface),
+              assetPath: AppAssets.iconCheckCircle,
+              size: 11.w,
+              color: AppColors.surface,
+            ),
             SizedBox(width: 3.w),
           ],
           Text(

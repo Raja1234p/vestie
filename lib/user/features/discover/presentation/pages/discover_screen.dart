@@ -18,11 +18,13 @@ import 'package:vestie/user/features/home/presentation/widgets/home_empty_view.d
 import '../widgets/discover_filter_row.dart';
 import '../widgets/discover_header.dart';
 import '../widgets/discover_join_effects_listener.dart';
+import '../widgets/discover_loading_shimmer.dart';
 import '../widgets/discover_search_bar.dart';
 
 /// Discover tab. [activate] true when selected — loads API only then (see [DashboardScreen]).
 class DiscoverScreen extends StatefulWidget {
   final bool activate;
+
   /// From [DashboardShellArgs] — forces a fresh discover list the next time the tab loads.
   final bool reloadDiscoverProjectList;
 
@@ -105,8 +107,7 @@ class _DiscoverBody extends StatelessWidget {
               final hasProjects = state.allProjects.isNotEmpty;
               final filteredEmpty = state.filtered.isEmpty;
               final loadFailed = state.errorMessage != null;
-              final emptyIdle =
-                  !state.loading && !loadFailed && !hasProjects;
+              final emptyIdle = !state.loading && !loadFailed && !hasProjects;
 
               if (emptyIdle) {
                 return PostAuthScrollViewport(
@@ -166,25 +167,25 @@ class _DiscoverBody extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const DiscoverHeader(),
-                    if (!state.loading)
-                      Column(
-                        children: [
-                          SizedBox(height: 22.h),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0),
-                            child: DiscoverSearchBar(
-                              onChanged: context.read<DiscoverCubit>().search,
-                            ),
-                          ),
-                          SizedBox(height: 16.h),
-                          DiscoverFilterRow(
-                            selected: state.selectedFilter,
-                            onSelect:
-                                context.read<DiscoverCubit>().selectFilter,
-                          ),
-                          SizedBox(height: 16.h),
-                        ],
+                    SizedBox(height: 22.h),
+                    if (state.loading) ...[
+                      const DiscoverSearchBarShimmer(),
+                      SizedBox(height: 16.h),
+                      const DiscoverFilterRowShimmer(),
+                    ] else ...[
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0),
+                        child: DiscoverSearchBar(
+                          onChanged: context.read<DiscoverCubit>().search,
+                        ),
                       ),
+                      SizedBox(height: 16.h),
+                      DiscoverFilterRow(
+                        selected: state.selectedFilter,
+                        onSelect: context.read<DiscoverCubit>().selectFilter,
+                      ),
+                    ],
+                    SizedBox(height: 16.h),
                     Expanded(
                       child: RefreshIndicator(
                         color: AppColors.primary,
@@ -195,8 +196,7 @@ class _DiscoverBody extends StatelessWidget {
                           slivers: [
                             if (state.loading)
                               SliverPadding(
-                                padding:
-                                    EdgeInsets.symmetric(horizontal: 16.w),
+                                padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 0),
                                 sliver: SliverList(
                                   delegate: SliverChildBuilderDelegate(
                                     (context, index) =>
@@ -242,18 +242,19 @@ class _DiscoverBody extends StatelessWidget {
                               )
                             else
                               SliverPadding(
-                                padding:
-                                    EdgeInsets.symmetric(horizontal: 16.w),
+                                padding: EdgeInsets.symmetric(horizontal: 16.w),
                                 sliver: SliverList(
                                   delegate: SliverChildBuilderDelegate(
                                     (_, i) => ProjectCard(
                                       project: state.filtered[i],
                                       discoverCtaStyle: true,
-                                      actionLoading: state.joiningProjectId ==
+                                      actionLoading:
+                                          state.joiningProjectId ==
                                           state.filtered[i].id,
                                       onAction: () {
                                         final project = state.filtered[i];
-                                        final isJoinAction = project.status ==
+                                        final isJoinAction =
+                                            project.status ==
                                                 ProjectStatus.ongoing &&
                                             project.relation !=
                                                 ProjectRelation.owned &&

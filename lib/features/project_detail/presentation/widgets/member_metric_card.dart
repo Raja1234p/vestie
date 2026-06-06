@@ -8,11 +8,7 @@ class MemberMetricCard extends StatelessWidget {
   final String label;
   final String value;
 
-  const MemberMetricCard({
-    super.key,
-    required this.label,
-    required this.value,
-  });
+  const MemberMetricCard({super.key, required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -28,18 +24,18 @@ class MemberMetricCard extends StatelessWidget {
           AppText(
             label,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  fontSize: 12.sp,
-                  color: AppColors.projectDetailText,
-                ),
+              fontSize: 12.sp,
+              color: AppColors.projectDetailText,
+            ),
           ),
           SizedBox(height: 2.h),
           AppText(
             value,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontSize: 22.sp,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.projectDetailText,
-                ),
+              fontSize: 22.sp,
+              fontWeight: FontWeight.w700,
+              color: AppColors.projectDetailText,
+            ),
           ),
         ],
       ),

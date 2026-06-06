@@ -63,8 +63,7 @@ class _MemberPenaltyActionScreenState extends State<MemberPenaltyActionScreen> {
     if (_isRemoving || _isMarkingDefaulted) return;
     setState(() => _isRemoving = true);
 
-    final result =
-        await ServiceLocator.instance.removeForNonRepaymentUseCase(
+    final result = await ServiceLocator.instance.removeForNonRepaymentUseCase(
       projectId: widget.projectId,
       userId: _userId,
     );
@@ -73,10 +72,7 @@ class _MemberPenaltyActionScreenState extends State<MemberPenaltyActionScreen> {
       (failure) async {
         if (!mounted) return;
         setState(() => _isRemoving = false);
-        showMemberDetailErrorDialog(
-          context,
-          failure: failure,
-        );
+        showMemberDetailErrorDialog(context, failure: failure);
       },
       (_) async {
         await ProjectDetailReloadCoordinator.reload(widget.projectId);
@@ -106,10 +102,7 @@ class _MemberPenaltyActionScreenState extends State<MemberPenaltyActionScreen> {
       (failure) async {
         if (!mounted) return;
         setState(() => _isMarkingDefaulted = false);
-        showMemberDetailErrorDialog(
-          context,
-          failure: failure,
-        );
+        showMemberDetailErrorDialog(context, failure: failure);
       },
       (_) async {
         await ProjectDetailReloadCoordinator.reload(widget.projectId);
@@ -135,10 +128,7 @@ class _MemberPenaltyActionScreenState extends State<MemberPenaltyActionScreen> {
   }
 
   void _promptMarkDefaulted() {
-    showMarkDefaultedConfirm(
-      context,
-      onConfirmed: _markDefaulted,
-    );
+    showMarkDefaultedConfirm(context, onConfirmed: _markDefaulted);
   }
 
   @override
@@ -157,9 +147,7 @@ class _MemberPenaltyActionScreenState extends State<MemberPenaltyActionScreen> {
             ),
             SizedBox(height: 8.h),
             const Expanded(
-              child: SingleChildScrollView(
-                child: PenaltyActionContent(),
-              ),
+              child: SingleChildScrollView(child: PenaltyActionContent()),
             ),
             if (showFooter)
               PenaltyActionFooter(

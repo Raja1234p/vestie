@@ -88,7 +88,8 @@ String projectTypeApiValueToSummaryString(dynamic raw) {
 
 String projectVisibilityApiValueToSummaryString(dynamic raw) {
   if (raw == null) return '';
-  if (raw is double) return projectVisibilityApiValueToSummaryString(raw.toInt());
+  if (raw is double)
+    return projectVisibilityApiValueToSummaryString(raw.toInt());
   if (raw is int) {
     return switch (raw) {
       1 => 'Public',
@@ -208,8 +209,10 @@ String membershipRoleApiValueToString(dynamic raw) {
       _ => raw.toString(),
     };
   }
-  final compact =
-      raw.toString().trim().toLowerCase().replaceAll(RegExp(r'[\s_-]'), '');
+  final compact = raw.toString().trim().toLowerCase().replaceAll(
+    RegExp(r'[\s_-]'),
+    '',
+  );
   return switch (compact) {
     '1' || 'groupleader' || 'grouplead' || 'lead' || 'leader' => 'GroupLeader',
     '2' || 'coleader' => 'CoLeader',

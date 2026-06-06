@@ -6,7 +6,8 @@ abstract class HomeEvent extends Equatable {
 
 class HomeFetchStarted extends HomeEvent {
   const HomeFetchStarted();
-  @override List<Object> get props => [];
+  @override
+  List<Object> get props => [];
 }
 
 class HomeRefreshRequested extends HomeEvent {
@@ -15,7 +16,8 @@ class HomeRefreshRequested extends HomeEvent {
 
   const HomeRefreshRequested({this.silent = false});
 
-  @override List<Object> get props => [silent];
+  @override
+  List<Object> get props => [silent];
 }
 
 /// Updates raised amount on a project card after contribute (201 `projectPot`).
@@ -28,5 +30,6 @@ class HomeProjectPotPatched extends HomeEvent {
     required this.projectPot,
   });
 
-  @override List<Object> get props => [projectId, projectPot];
+  @override
+  List<Object> get props => [projectId, projectPot];
 }

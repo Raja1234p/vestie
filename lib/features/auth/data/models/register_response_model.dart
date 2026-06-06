@@ -11,12 +11,13 @@ class RegisterResponseModel {
   factory RegisterResponseModel.fromJson(Map<String, dynamic> json) {
     return RegisterResponseModel(
       userId: json['userId'] as String? ?? '',
-      requiresEmailVerification: json['requiresEmailVerification'] as bool? ?? false,
+      requiresEmailVerification:
+          json['requiresEmailVerification'] as bool? ?? false,
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'userId': userId,
-        'requiresEmailVerification': requiresEmailVerification,
-      };
+    'userId': userId,
+    'requiresEmailVerification': requiresEmailVerification,
+  };
 }

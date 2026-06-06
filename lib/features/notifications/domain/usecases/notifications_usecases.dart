@@ -12,8 +12,7 @@ class ListNotificationsUseCase {
   Future<Either<Failure, NotificationsPageEntity>> call({
     int page = 1,
     int pageSize = 20,
-  }) =>
-      repository.list(page: page, pageSize: pageSize);
+  }) => repository.list(page: page, pageSize: pageSize);
 }
 
 class MarkNotificationsReadUseCase {
@@ -33,8 +32,7 @@ class RegisterDeviceTokenUseCase {
   Future<Either<Failure, void>> call({
     required String token,
     required String platform,
-  }) =>
-      repository.registerDeviceToken(token: token, platform: platform);
+  }) => repository.registerDeviceToken(token: token, platform: platform);
 }
 
 class UnregisterDeviceTokenUseCase {

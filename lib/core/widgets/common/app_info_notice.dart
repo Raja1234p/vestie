@@ -9,10 +9,7 @@ import '../text/app_text.dart';
 class AppInfoNotice extends StatelessWidget {
   final String text;
 
-  const AppInfoNotice({
-    super.key,
-    required this.text,
-  });
+  const AppInfoNotice({super.key, required this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +28,9 @@ class AppInfoNotice extends StatelessWidget {
             child: AppText(
               text,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontSize: 14.sp,
-                    color: AppColors.blue900,
-                  ),
+                fontSize: 14.sp,
+                color: AppColors.blue900,
+              ),
             ),
           ),
         ],

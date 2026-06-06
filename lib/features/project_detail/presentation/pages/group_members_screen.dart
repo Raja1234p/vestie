@@ -82,17 +82,18 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
                     ? m.copyWith(
                         vffConnectionState: VffConnectionState.pendingOutgoing,
                         canSendVffRequest: false,
-                        pendingVffRequestId:
-                            sent.id.isNotEmpty ? sent.id : m.pendingVffRequestId,
+                        pendingVffRequestId: sent.id.isNotEmpty
+                            ? sent.id
+                            : m.pendingVffRequestId,
                       )
                     : m,
               )
               .toList(growable: false);
         });
         try {
-          await context
-              .read<ProjectDetailBloc>()
-              .reloadDetailAndWait(project.id);
+          await context.read<ProjectDetailBloc>().reloadDetailAndWait(
+            project.id,
+          );
         } on ProviderNotFoundException {
           await ProjectDetailReloadCoordinator.reload(project.id);
         }
@@ -144,36 +145,29 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
                       child: ProjectMembersEmptyState(centered: true),
                     )
                   : SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (_, i) {
-                          final member = active[i];
-                          return Padding(
-                            padding: EdgeInsets.only(bottom: 12.h),
-                            child: ProjectMemberRow(
-                              member: member,
-                              project: p,
-                              onTap: p != null && p.canReviewMemberProfiles
-                                  ? (_) => _openMemberProfile(
-                                        context,
-                                        project: p,
-                                        member: member,
-                                      )
-                                  : null,
-                              onAddFriend: p != null &&
-                                      p.canReviewMemberProfiles
-                                  ? () => _sendVff(
-                                        project: p,
-                                        member: member,
-                                      )
-                                  : null,
-                              isSendVffLoading:
-                                  _sendingVffUserId == member.apiUserId,
-                              vffRequestSent: member.hasPendingVffOutgoing,
-                            ),
-                          );
-                        },
-                        childCount: active.length,
-                      ),
+                      delegate: SliverChildBuilderDelegate((_, i) {
+                        final member = active[i];
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: 12.h),
+                          child: ProjectMemberRow(
+                            member: member,
+                            project: p,
+                            onTap: p != null && p.canReviewMemberProfiles
+                                ? (_) => _openMemberProfile(
+                                    context,
+                                    project: p,
+                                    member: member,
+                                  )
+                                : null,
+                            onAddFriend: p != null && p.canReviewMemberProfiles
+                                ? () => _sendVff(project: p, member: member)
+                                : null,
+                            isSendVffLoading:
+                                _sendingVffUserId == member.apiUserId,
+                            vffRequestSent: member.hasPendingVffOutgoing,
+                          ),
+                        );
+                      }, childCount: active.length),
                     ),
             ),
           ],

@@ -6,7 +6,8 @@ import 'package:vestie/features/project_announcements/domain/repositories/projec
 
 import '../datasources/project_announcements_remote_data_source.dart';
 
-class ProjectAnnouncementsRepositoryImpl implements ProjectAnnouncementsRepository {
+class ProjectAnnouncementsRepositoryImpl
+    implements ProjectAnnouncementsRepository {
   final ProjectAnnouncementsRemoteDataSource remoteDataSource;
 
   ProjectAnnouncementsRepositoryImpl({required this.remoteDataSource});

@@ -40,10 +40,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     if (e.response?.data != null && e.response?.data is Map) {
       final data = e.response!.data as Map;
       // Backend usually returns error in 'detail' or 'message' or 'title'
-      message = data['detail']?.toString() ?? 
-                data['message']?.toString() ?? 
-                defaultMessage;
-      
+      message =
+          data['detail']?.toString() ??
+          data['message']?.toString() ??
+          defaultMessage;
+
       title = data['title']?.toString();
     }
 
@@ -72,7 +73,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
       return AuthTokenModel.fromJson(response.data);
     } on DioException catch (e) {
-      AppLogger.error('API Login Error: ${e.response?.statusCode}', error: e.response?.data);
+      AppLogger.error(
+        'API Login Error: ${e.response?.statusCode}',
+        error: e.response?.data,
+      );
       _handleError(e, 'Login failed');
     }
   }
@@ -96,7 +100,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
       return RegisterResponseModel.fromJson(response.data);
     } on DioException catch (e) {
-      AppLogger.error('API Register Error: ${e.response?.statusCode}', error: e.response?.data);
+      AppLogger.error(
+        'API Register Error: ${e.response?.statusCode}',
+        error: e.response?.data,
+      );
       _handleError(e, 'Registration failed');
     }
   }
@@ -109,50 +116,48 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final response = await _client.post(
         ApiConstants.verifyEmail,
-        data: {
-          'email': email,
-          'code': code,
-        },
+        data: {'email': email, 'code': code},
       );
       return AuthTokenModel.fromJson(response.data);
     } on DioException catch (e) {
-      AppLogger.error('API VerifyEmail Error: ${e.response?.statusCode}', error: e.response?.data);
+      AppLogger.error(
+        'API VerifyEmail Error: ${e.response?.statusCode}',
+        error: e.response?.data,
+      );
       _handleError(e, 'Email verification failed');
     }
   }
 
   @override
-  Future<MessageResponseModel> resendCode({
-    required String email,
-  }) async {
+  Future<MessageResponseModel> resendCode({required String email}) async {
     try {
       final response = await _client.post(
         ApiConstants.resendCode,
-        data: {
-          'email': email,
-        },
+        data: {'email': email},
       );
       return MessageResponseModel.fromJson(response.data);
     } on DioException catch (e) {
-      AppLogger.error('API ResendCode Error: ${e.response?.statusCode}', error: e.response?.data);
+      AppLogger.error(
+        'API ResendCode Error: ${e.response?.statusCode}',
+        error: e.response?.data,
+      );
       _handleError(e, 'Resending code failed');
     }
   }
 
   @override
-  Future<MessageResponseModel> forgotPassword({
-    required String email,
-  }) async {
+  Future<MessageResponseModel> forgotPassword({required String email}) async {
     try {
       final response = await _client.post(
         ApiConstants.forgotPassword,
-        data: {
-          'email': email,
-        },
+        data: {'email': email},
       );
       return MessageResponseModel.fromJson(response.data);
     } on DioException catch (e) {
-      AppLogger.error('API ForgotPassword Error: ${e.response?.statusCode}', error: e.response?.data);
+      AppLogger.error(
+        'API ForgotPassword Error: ${e.response?.statusCode}',
+        error: e.response?.data,
+      );
       _handleError(e, 'Forgot password request failed');
     }
   }
@@ -176,15 +181,16 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
       return MessageResponseModel.fromJson(response.data);
     } on DioException catch (e) {
-      AppLogger.error('API ResetPassword Error: ${e.response?.statusCode}', error: e.response?.data);
+      AppLogger.error(
+        'API ResetPassword Error: ${e.response?.statusCode}',
+        error: e.response?.data,
+      );
       _handleError(e, 'Password reset failed');
     }
   }
 
   @override
-  Future<MessageResponseModel> logout({
-    required String refreshToken,
-  }) async {
+  Future<MessageResponseModel> logout({required String refreshToken}) async {
     try {
       final response = await _client.post(
         ApiConstants.logout,
@@ -192,7 +198,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
       return MessageResponseModel.fromJson(response.data);
     } on DioException catch (e) {
-      AppLogger.error('API Logout Error: ${e.response?.statusCode}', error: e.response?.data);
+      AppLogger.error(
+        'API Logout Error: ${e.response?.statusCode}',
+        error: e.response?.data,
+      );
       _handleError(e, 'Logout failed');
     }
   }
@@ -203,7 +212,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final response = await _client.get(ApiConstants.me);
       return UserModel.fromJson(response.data);
     } on DioException catch (e) {
-      AppLogger.error('API GetMe Error: ${e.response?.statusCode}', error: e.response?.data);
+      AppLogger.error(
+        'API GetMe Error: ${e.response?.statusCode}',
+        error: e.response?.data,
+      );
       _handleError(e, 'Failed to get user profile');
     }
   }
@@ -222,10 +234,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         userName: userName,
         photo: photo,
       );
-      final response = await _client.put(
-        ApiConstants.me,
-        data: formData,
-      );
+      final response = await _client.put(ApiConstants.me, data: formData);
       return UserModel.fromJson(response.data);
     } on DioException catch (e) {
       AppLogger.error(
@@ -296,7 +305,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final response = await _client.get(ApiConstants.riskDisclaimer);
       return RiskDisclaimerModel.fromJson(response.data);
     } on DioException catch (e) {
-      AppLogger.error('API GetRiskDisclaimer Status Error: ${e.response?.statusCode}', error: e.response?.data);
+      AppLogger.error(
+        'API GetRiskDisclaimer Status Error: ${e.response?.statusCode}',
+        error: e.response?.data,
+      );
       _handleError(e, 'Failed to get risk disclaimer status');
     }
   }
@@ -309,22 +321,20 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final response = await _client.post(
         ApiConstants.riskDisclaimer,
-        data: {
-          'disclaimerVersion': version,
-          'ipAddress': ipAddress,
-        },
+        data: {'disclaimerVersion': version, 'ipAddress': ipAddress},
       );
       return MessageResponseModel.fromJson(response.data);
     } on DioException catch (e) {
-      AppLogger.error('API AcceptRiskDisclaimer Error: ${e.response?.statusCode}', error: e.response?.data);
+      AppLogger.error(
+        'API AcceptRiskDisclaimer Error: ${e.response?.statusCode}',
+        error: e.response?.data,
+      );
       _handleError(e, 'Failed to accept risk disclaimer');
     }
   }
 
   @override
-  Future<AuthTokenModel> loginWithGoogle({
-    required String idToken,
-  }) async {
+  Future<AuthTokenModel> loginWithGoogle({required String idToken}) async {
     try {
       final response = await _client.post(
         ApiConstants.googleLogin,
@@ -336,7 +346,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
       return AuthTokenModel.fromJson(response.data);
     } on DioException catch (e) {
-      AppLogger.error('API GoogleLogin Error: ${e.response?.statusCode}', error: e.response?.data);
+      AppLogger.error(
+        'API GoogleLogin Error: ${e.response?.statusCode}',
+        error: e.response?.data,
+      );
       _handleError(e, AppStrings.errorGoogleSignInFailed);
     }
   }

@@ -2,8 +2,10 @@ part of 'voting_window_cubit.dart';
 
 class VotingWindowState extends Equatable {
   final String digits;
+
   /// Inline validation (e.g. empty / out of range days).
   final String? errorText;
+
   /// API failure — surfaced via [AppSnackBar] in the screen listener.
   final String? apiErrorMessage;
   final bool loading;

@@ -11,9 +11,9 @@ class AmountEntryState {
 
   String get formattedAmount {
     final intPart = amountUsd.toInt().toString().replaceAllMapped(
-          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-          (m) => '${m[1]},',
-        );
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (m) => '${m[1]},',
+    );
     return '\$$intPart.00';
   }
 
@@ -34,8 +34,10 @@ class AmountEntryCubit extends Cubit<AmountEntryState> {
     if (state.amountDigits.isEmpty) return;
     emit(
       state.copyWith(
-        amountDigits:
-            state.amountDigits.substring(0, state.amountDigits.length - 1),
+        amountDigits: state.amountDigits.substring(
+          0,
+          state.amountDigits.length - 1,
+        ),
       ),
     );
   }

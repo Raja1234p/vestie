@@ -53,15 +53,15 @@ abstract class PaymentMethodsRemoteDataSource {
   Future<void> remove(String paymentMethodId);
 }
 
-class PaymentMethodsRemoteDataSourceImpl implements PaymentMethodsRemoteDataSource {
+class PaymentMethodsRemoteDataSourceImpl
+    implements PaymentMethodsRemoteDataSource {
   final BaseApiClient apiClient;
 
   PaymentMethodsRemoteDataSourceImpl({required this.apiClient});
 
   @override
   Future<List<PaymentMethodApiModel>> list() async {
-    final response =
-        await apiClient.get<dynamic>(ApiConstants.paymentMethods);
+    final response = await apiClient.get<dynamic>(ApiConstants.paymentMethods);
     if (response is List) {
       return response
           .whereType<Map>()

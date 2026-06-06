@@ -19,23 +19,24 @@ class NotificationsCubit extends Cubit<NotificationsState> {
   }) : super(const NotificationsState(loading: true));
 
   Future<void> load() async {
-    emit(state.copyWith(
-      loading: true,
-      loadingMore: false,
-      silentRefreshing: false,
-      clearError: true,
-    ));
-    final result = await listNotificationsUseCase(
-      page: 1,
-      pageSize: _pageSize,
+    emit(
+      state.copyWith(
+        loading: true,
+        loadingMore: false,
+        silentRefreshing: false,
+        clearError: true,
+      ),
     );
+    final result = await listNotificationsUseCase(page: 1, pageSize: _pageSize);
     result.fold(
       (failure) {
-        emit(NotificationsState(
-          loading: false,
-          error: failure.message,
-          pageSize: _pageSize,
-        ));
+        emit(
+          NotificationsState(
+            loading: false,
+            error: failure.message,
+            pageSize: _pageSize,
+          ),
+        );
       },
       (page) => emit(_stateFromPage(page, replaceItems: true, loading: false)),
     );
@@ -61,15 +62,17 @@ class NotificationsCubit extends Cubit<NotificationsState> {
       },
       (page) {
         final newItems = _mapNotifications(page.notifications);
-        emit(state.copyWith(
-          items: [...state.items, ...newItems],
-          unreadCount: page.unreadCount,
-          currentPage: page.page,
-          pageSize: page.pageSize,
-          totalCount: page.totalCount,
-          loadingMore: false,
-          clearError: true,
-        ));
+        emit(
+          state.copyWith(
+            items: [...state.items, ...newItems],
+            unreadCount: page.unreadCount,
+            currentPage: page.page,
+            pageSize: page.pageSize,
+            totalCount: page.totalCount,
+            loadingMore: false,
+            clearError: true,
+          ),
+        );
       },
     );
   }
@@ -84,15 +87,9 @@ class NotificationsCubit extends Cubit<NotificationsState> {
     emit(state.copyWith(silentRefreshing: true, clearError: true));
 
     final markResult = await markNotificationsReadUseCase([notificationId]);
-    await markResult.fold(
-      (failure) async {
-        emit(state.copyWith(
-          silentRefreshing: false,
-          error: failure.message,
-        ));
-      },
-      (_) async => _silentRefreshList(),
-    );
+    await markResult.fold((failure) async {
+      emit(state.copyWith(silentRefreshing: false, error: failure.message));
+    }, (_) async => _silentRefreshList());
   }
 
   Future<void> _silentRefreshList() async {
@@ -102,18 +99,17 @@ class NotificationsCubit extends Cubit<NotificationsState> {
     );
     result.fold(
       (failure) {
-        emit(state.copyWith(
-          silentRefreshing: false,
-          error: failure.message,
-        ));
+        emit(state.copyWith(silentRefreshing: false, error: failure.message));
       },
       (page) {
-        emit(_stateFromPage(
-          page,
-          replaceItems: true,
-          loading: false,
-          silentRefreshing: false,
-        ));
+        emit(
+          _stateFromPage(
+            page,
+            replaceItems: true,
+            loading: false,
+            silentRefreshing: false,
+          ),
+        );
       },
     );
   }

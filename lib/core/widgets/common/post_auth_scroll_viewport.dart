@@ -13,9 +13,6 @@ final class PostAuthScrollViewport extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      bottom: false,
-      child: child,
-    );
+    return SafeArea(bottom: false, child: child);
   }
 }

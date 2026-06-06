@@ -8,10 +8,7 @@ import '../../theme/app_colors.dart';
 class AppGradientBackground extends StatelessWidget {
   final Widget child;
 
-  const AppGradientBackground({
-    super.key,
-    required this.child,
-  });
+  const AppGradientBackground({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +22,7 @@ class AppGradientBackground extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              AppColors.splashGradientTop,    // #7038E8 — vivid violet-purple
+              AppColors.splashGradientTop, // #7038E8 — vivid violet-purple
               AppColors.splashGradientBottom, // #4519A0 — deep primary purple
             ],
           ),

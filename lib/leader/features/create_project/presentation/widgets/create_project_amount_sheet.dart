@@ -19,9 +19,7 @@ void showCreateProjectAmountSheet(BuildContext context) {
     barrierColor: AppColors.modalBarrier,
     backgroundColor: AppColors.surface,
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(
-        top: Radius.circular(AppRadius.r24),
-      ),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.r24)),
     ),
     builder: (sheetContext) {
       return ClipRRect(

@@ -30,9 +30,7 @@ class PaymentMethodsCache {
     if (current == null) return;
     update(
       current
-          .map(
-            (c) => c.copyWith(isPrimary: c.id == paymentMethodId),
-          )
+          .map((c) => c.copyWith(isPrimary: c.id == paymentMethodId))
           .toList(growable: false),
     );
   }

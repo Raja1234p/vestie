@@ -19,11 +19,11 @@ class ProjectInvitationCubit extends Cubit<ProjectInvitationState> {
     required this.inviteCode,
     PreviewInviteUseCase? previewInviteUseCase,
     JoinProjectUseCase? joinProjectUseCase,
-  })  : _previewInviteUseCase =
-            previewInviteUseCase ?? ServiceLocator.instance.previewInviteUseCase,
-        _joinProjectUseCase =
-            joinProjectUseCase ?? ServiceLocator.instance.joinProjectUseCase,
-        super(const ProjectInvitationState(loading: true));
+  }) : _previewInviteUseCase =
+           previewInviteUseCase ?? ServiceLocator.instance.previewInviteUseCase,
+       _joinProjectUseCase =
+           joinProjectUseCase ?? ServiceLocator.instance.joinProjectUseCase,
+       super(const ProjectInvitationState(loading: true));
 
   Future<void> load() async {
     emit(state.copyWith(loading: true, clearError: true));
@@ -31,14 +31,13 @@ class ProjectInvitationCubit extends Cubit<ProjectInvitationState> {
 
     final result = await _previewInviteUseCase(inviteCode);
     result.fold(
-      (failure) => emit(state.copyWith(
-        loading: false,
-        errorMessage: FailureMapper.userMessage(failure),
-      )),
-      (preview) => emit(state.copyWith(
-        loading: false,
-        preview: preview,
-      )),
+      (failure) => emit(
+        state.copyWith(
+          loading: false,
+          errorMessage: FailureMapper.userMessage(failure),
+        ),
+      ),
+      (preview) => emit(state.copyWith(loading: false, preview: preview)),
     );
   }
 
@@ -60,39 +59,45 @@ class ProjectInvitationCubit extends Cubit<ProjectInvitationState> {
     final result = await _joinProjectUseCase(inviteCode: inviteCode);
 
     result.fold(
-      (failure) => emit(state.copyWith(
-        joining: false,
-        joinEffect: ProjectInvitationJoinShowError(
-          FailureMapper.userMessage(failure),
-          title: failure.title,
+      (failure) => emit(
+        state.copyWith(
+          joining: false,
+          joinEffect: ProjectInvitationJoinShowError(
+            FailureMapper.userMessage(failure),
+            title: failure.title,
+          ),
         ),
-      )),
+      ),
       (joinResult) {
         if (joinResult.isPendingMembership) {
-          emit(state.copyWith(
-            joining: false,
-            joinEffect: ProjectInvitationJoinShowRequestSubmitted(
-              projectId: joinResult.projectId.isNotEmpty
-                  ? joinResult.projectId
-                  : preview.projectId,
-              projectName: preview.projectName,
-              isInvestment: preview.isInvestment,
+          emit(
+            state.copyWith(
+              joining: false,
+              joinEffect: ProjectInvitationJoinShowRequestSubmitted(
+                projectId: joinResult.projectId.isNotEmpty
+                    ? joinResult.projectId
+                    : preview.projectId,
+                projectName: preview.projectName,
+                isInvestment: preview.isInvestment,
+              ),
             ),
-          ));
+          );
           return;
         }
 
         final projectId = joinResult.projectId.isNotEmpty
             ? joinResult.projectId
             : preview.projectId;
-        emit(state.copyWith(
-          joining: false,
-          joinEffect: ProjectInvitationJoinOpenDetail(
-            projectId: projectId,
-            projectName: preview.projectName,
-            isInvestment: preview.isInvestment,
+        emit(
+          state.copyWith(
+            joining: false,
+            joinEffect: ProjectInvitationJoinOpenDetail(
+              projectId: projectId,
+              projectName: preview.projectName,
+              isInvestment: preview.isInvestment,
+            ),
           ),
-        ));
+        );
       },
     );
   }

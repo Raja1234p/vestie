@@ -43,20 +43,12 @@ class AppToast {
     fToast.removeCustomToast();
 
     fToast.showToast(
-      child: _ToastBody(
-        message: text,
-        backgroundColor: backgroundColor,
-      ),
+      child: _ToastBody(message: text, backgroundColor: backgroundColor),
       gravity: ToastGravity.TOP,
       toastDuration: _duration,
       positionedToastBuilder: (ctx, child, gravity) {
         final top = MediaQuery.paddingOf(ctx).top + 8.h;
-        return Positioned(
-          top: top,
-          left: 16.w,
-          right: 16.w,
-          child: child,
-        );
+        return Positioned(top: top, left: 16.w, right: 16.w, child: child);
       },
     );
   }
@@ -66,10 +58,7 @@ class _ToastBody extends StatelessWidget {
   final String message;
   final Color backgroundColor;
 
-  const _ToastBody({
-    required this.message,
-    required this.backgroundColor,
-  });
+  const _ToastBody({required this.message, required this.backgroundColor});
 
   @override
   Widget build(BuildContext context) {

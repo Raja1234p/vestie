@@ -68,17 +68,23 @@ class ContributeState extends Equatable {
       args: args ?? this.args,
       step: step ?? this.step,
       amountDigits: amountDigits ?? this.amountDigits,
-      nonRefundableAccepted: nonRefundableAccepted ?? this.nonRefundableAccepted,
+      nonRefundableAccepted:
+          nonRefundableAccepted ?? this.nonRefundableAccepted,
       isPreviewLoading: isPreviewLoading ?? this.isPreviewLoading,
       isSubmitLoading: isSubmitLoading ?? this.isSubmitLoading,
       isConfigLoading: isConfigLoading ?? this.isConfigLoading,
       selectedWalletId: selectedWalletId ?? this.selectedWalletId,
-      selectedCard:
-          clearSelectedCard ? null : (selectedCard ?? this.selectedCard),
+      selectedCard: clearSelectedCard
+          ? null
+          : (selectedCard ?? this.selectedCard),
       payFromWallet: payFromWallet ?? this.payFromWallet,
       preview: clearPreview ? null : (preview ?? this.preview),
-      previewFailure: clearPreviewFailure ? null : (previewFailure ?? this.previewFailure),
-      submitFailure: clearSubmitFailure ? null : (submitFailure ?? this.submitFailure),
+      previewFailure: clearPreviewFailure
+          ? null
+          : (previewFailure ?? this.previewFailure),
+      submitFailure: clearSubmitFailure
+          ? null
+          : (submitFailure ?? this.submitFailure),
       isSubmitSuccess: isSubmitSuccess ?? this.isSubmitSuccess,
       submitResult: submitResult ?? this.submitResult,
     );
@@ -102,7 +108,8 @@ class ContributeState extends Equatable {
   String get totalDeductionFormatted =>
       (preview?.totalDeduction ?? (amountValue + vestieFee)).toStringAsFixed(2);
 
-  bool get canSubmit => preview != null && !isPreviewLoading && previewFailure == null;
+  bool get canSubmit =>
+      preview != null && !isPreviewLoading && previewFailure == null;
 
   double get walletBalance => args?.walletBalance ?? 0;
 
@@ -130,20 +137,20 @@ class ContributeState extends Equatable {
 
   @override
   List<Object?> get props => [
-        args,
-        step,
-        amountDigits,
-        nonRefundableAccepted,
-        isPreviewLoading,
-        isSubmitLoading,
-        isConfigLoading,
-        selectedWalletId,
-        selectedCard,
-        payFromWallet,
-        preview,
-        previewFailure,
-        submitFailure,
-        isSubmitSuccess,
-        submitResult,
-      ];
+    args,
+    step,
+    amountDigits,
+    nonRefundableAccepted,
+    isPreviewLoading,
+    isSubmitLoading,
+    isConfigLoading,
+    selectedWalletId,
+    selectedCard,
+    payFromWallet,
+    preview,
+    previewFailure,
+    submitFailure,
+    isSubmitSuccess,
+    submitResult,
+  ];
 }

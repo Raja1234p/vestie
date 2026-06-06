@@ -23,11 +23,9 @@ class AuthInterceptor extends QueuedInterceptor {
   final Dio _dio;
   final SecureStorageImpl _secureStorage;
 
-  AuthInterceptor({
-    required Dio dio,
-    required SecureStorageImpl secureStorage,
-  })  : _dio = dio,
-        _secureStorage = secureStorage;
+  AuthInterceptor({required Dio dio, required SecureStorageImpl secureStorage})
+    : _dio = dio,
+      _secureStorage = secureStorage;
 
   @override
   Future<void> onRequest(
@@ -68,8 +66,9 @@ class AuthInterceptor extends QueuedInterceptor {
       return handler.next(err);
     }
 
-    final refreshToken =
-        await _secureStorage.getString(StorageKeys.refreshToken);
+    final refreshToken = await _secureStorage.getString(
+      StorageKeys.refreshToken,
+    );
     if (refreshToken == null || refreshToken.isEmpty) {
       AppLogger.error(
         'Auth refresh skipped: no refresh token in secure storage',
@@ -93,7 +92,9 @@ class AuthInterceptor extends QueuedInterceptor {
         await _secureStorage.saveString(StorageKeys.refreshToken, newRefresh);
       }
 
-      AppLogger.info('Auth refresh succeeded; retrying ${err.requestOptions.method} $path');
+      AppLogger.info(
+        'Auth refresh succeeded; retrying ${err.requestOptions.method} $path',
+      );
 
       final retryOptions = err.requestOptions;
       retryOptions.extra[_kAuthRetryExtraKey] = true;
@@ -106,11 +107,7 @@ class AuthInterceptor extends QueuedInterceptor {
         return handler.next(retryErr);
       }
     } catch (e, stack) {
-      AppLogger.error(
-        'Auth refresh failed',
-        error: e,
-        stackTrace: stack,
-      );
+      AppLogger.error('Auth refresh failed', error: e, stackTrace: stack);
       await SessionSignOut.locally();
       return handler.next(err);
     }
@@ -152,9 +149,7 @@ class AuthInterceptor extends QueuedInterceptor {
   /// Returns (accessToken, refreshToken) from flat or `tokens`-wrapped JSON.
   static (String?, String?) _parseTokenPair(dynamic data) {
     if (data is! Map) return (null, null);
-    final map = unwrapApiResponseBody(
-      Map<String, dynamic>.from(data),
-    );
+    final map = unwrapApiResponseBody(Map<String, dynamic>.from(data));
     final tokenData = map['tokens'] is Map
         ? Map<String, dynamic>.from(map['tokens'] as Map)
         : map;
@@ -181,11 +176,11 @@ class AuthInterceptor extends QueuedInterceptor {
     if (kDebugMode && refreshDio.httpClientAdapter is IOHttpClientAdapter) {
       (refreshDio.httpClientAdapter as IOHttpClientAdapter).createHttpClient =
           () {
-        final client = HttpClient();
-        client.badCertificateCallback =
-            (X509Certificate cert, String host, int port) => true;
-        return client;
-      };
+            final client = HttpClient();
+            client.badCertificateCallback =
+                (X509Certificate cert, String host, int port) => true;
+            return client;
+          };
     }
 
     final refreshResponse = await refreshDio.post(

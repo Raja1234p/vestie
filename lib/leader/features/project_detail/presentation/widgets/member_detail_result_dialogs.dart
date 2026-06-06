@@ -22,7 +22,10 @@ Future<void> showCoLeaderAssignedSuccess(
   return AppActionDialog.showSuccessOk(
     context,
     title: AppStrings.coLeaderAssignedTitle,
-    description: AppStrings.coLeaderAssignedDescription(memberName, projectName),
+    description: AppStrings.coLeaderAssignedDescription(
+      memberName,
+      projectName,
+    ),
     onPrimary: onOk,
   );
 }

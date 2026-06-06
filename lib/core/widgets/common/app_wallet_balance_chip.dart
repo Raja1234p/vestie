@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../constants/app_strings.dart';
 import '../../theme/app_colors.dart';
+
 /// "Wallet Balance: \$2,400" pill for contribute amount / confirm payment rows.
 class AppWalletBalanceChip extends StatelessWidget {
   const AppWalletBalanceChip({
@@ -78,11 +79,7 @@ class AppWalletBalanceChip extends StatelessWidget {
 
     return Material(
       type: MaterialType.transparency,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: radius,
-        child: pill,
-      ),
+      child: InkWell(onTap: onTap, borderRadius: radius, child: pill),
     );
   }
 }

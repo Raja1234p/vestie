@@ -15,4 +15,3 @@ class PreviewContributionUseCase {
     return _repository.preview(input: input);
   }
 }
-

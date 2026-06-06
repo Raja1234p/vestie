@@ -25,21 +25,18 @@ abstract final class AddCardStripeLauncher {
     try {
       if (context.mounted) {
         preparingDialogOpen = true;
-        await AppLoadingDialog.show(
-          context,
-          message: AppStrings.loading,
-        );
+        await AppLoadingDialog.show(context, message: AppStrings.loading);
       }
 
-      final result =
-          await ServiceLocator.instance.savePaymentCardViaSetupUseCase(
-        onBeforePresentPaymentSheet: () async {
-          dismissPreparing();
-          if (context.mounted) {
-            await WidgetsBinding.instance.endOfFrame;
-          }
-        },
-      );
+      final result = await ServiceLocator.instance
+          .savePaymentCardViaSetupUseCase(
+            onBeforePresentPaymentSheet: () async {
+              dismissPreparing();
+              if (context.mounted) {
+                await WidgetsBinding.instance.endOfFrame;
+              }
+            },
+          );
 
       dismissPreparing();
 

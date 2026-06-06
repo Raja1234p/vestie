@@ -13,14 +13,11 @@ class ProjectActionsRepositoryImpl implements ProjectActionsRepository {
   ProjectActionsRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<Either<Failure, List<PendingJoinRequestEntity>>> listPendingJoinRequests(
-    String projectId,
-  ) async {
+  Future<Either<Failure, List<PendingJoinRequestEntity>>>
+  listPendingJoinRequests(String projectId) async {
     try {
       final models = await remoteDataSource.listPendingJoinRequests(projectId);
-      return Right(
-        models.map((m) => m.toEntity()).toList(growable: false),
-      );
+      return Right(models.map((m) => m.toEntity()).toList(growable: false));
     } on Failure catch (f) {
       return Left(f);
     } catch (e) {
@@ -69,17 +66,28 @@ class ProjectActionsRepositoryImpl implements ProjectActionsRepository {
   }
 
   @override
-  Future<Either<Failure, void>> removeMember(String projectId, String userId) async {
+  Future<Either<Failure, void>> removeMember(
+    String projectId,
+    String userId,
+  ) async {
     return _execute(() => remoteDataSource.removeMember(projectId, userId));
   }
 
   @override
-  Future<Either<Failure, void>> promoteToCoLeader(String projectId, String userId) async {
-    return _execute(() => remoteDataSource.promoteToCoLeader(projectId, userId));
+  Future<Either<Failure, void>> promoteToCoLeader(
+    String projectId,
+    String userId,
+  ) async {
+    return _execute(
+      () => remoteDataSource.promoteToCoLeader(projectId, userId),
+    );
   }
 
   @override
-  Future<Either<Failure, void>> demoteCoLeader(String projectId, String userId) async {
+  Future<Either<Failure, void>> demoteCoLeader(
+    String projectId,
+    String userId,
+  ) async {
     return _execute(() => remoteDataSource.demoteCoLeader(projectId, userId));
   }
 
@@ -110,12 +118,16 @@ class ProjectActionsRepositoryImpl implements ProjectActionsRepository {
   }
 
   @override
-  Future<Either<Failure, void>> cancelProject({required String projectId}) async {
+  Future<Either<Failure, void>> cancelProject({
+    required String projectId,
+  }) async {
     return _execute(() => remoteDataSource.cancelProject(projectId: projectId));
   }
 
   @override
-  Future<Either<Failure, void>> leaveProject({required String projectId}) async {
+  Future<Either<Failure, void>> leaveProject({
+    required String projectId,
+  }) async {
     return _execute(() => remoteDataSource.leaveProject(projectId: projectId));
   }
 
@@ -146,10 +158,10 @@ class ProjectActionsRepositoryImpl implements ProjectActionsRepository {
     required String projectId,
     required String userId,
   }) async {
-    return _execute(() => remoteDataSource.markDefaulted(
-          projectId: projectId,
-          userId: userId,
-        ));
+    return _execute(
+      () =>
+          remoteDataSource.markDefaulted(projectId: projectId, userId: userId),
+    );
   }
 
   @override
@@ -157,10 +169,12 @@ class ProjectActionsRepositoryImpl implements ProjectActionsRepository {
     required String projectId,
     required String userId,
   }) async {
-    return _execute(() => remoteDataSource.removeForNonRepayment(
-          projectId: projectId,
-          userId: userId,
-        ));
+    return _execute(
+      () => remoteDataSource.removeForNonRepayment(
+        projectId: projectId,
+        userId: userId,
+      ),
+    );
   }
 
   @override
@@ -168,10 +182,12 @@ class ProjectActionsRepositoryImpl implements ProjectActionsRepository {
     required String projectId,
     required bool voteForSuccess,
   }) async {
-    return _execute(() => remoteDataSource.castClosureVote(
-          projectId: projectId,
-          voteForSuccess: voteForSuccess,
-        ));
+    return _execute(
+      () => remoteDataSource.castClosureVote(
+        projectId: projectId,
+        voteForSuccess: voteForSuccess,
+      ),
+    );
   }
 
   @override
@@ -179,17 +195,21 @@ class ProjectActionsRepositoryImpl implements ProjectActionsRepository {
     required String projectId,
     required int extraDays,
   }) async {
-    return _execute(() => remoteDataSource.extendClosureVoting(
-          projectId: projectId,
-          extraDays: extraDays,
-        ));
+    return _execute(
+      () => remoteDataSource.extendClosureVoting(
+        projectId: projectId,
+        extraDays: extraDays,
+      ),
+    );
   }
 
   @override
   Future<Either<Failure, void>> finalizeClosureVoting({
     required String projectId,
   }) async {
-    return _execute(() => remoteDataSource.finalizeClosureVoting(projectId: projectId));
+    return _execute(
+      () => remoteDataSource.finalizeClosureVoting(projectId: projectId),
+    );
   }
 
   @override
@@ -202,15 +222,21 @@ class ProjectActionsRepositoryImpl implements ProjectActionsRepository {
     required String projectId,
     required int extraDays,
   }) async {
-    return _execute(() => remoteDataSource.extendDeadline(
-          projectId: projectId,
-          extraDays: extraDays,
-        ));
+    return _execute(
+      () => remoteDataSource.extendDeadline(
+        projectId: projectId,
+        extraDays: extraDays,
+      ),
+    );
   }
 
   @override
-  Future<Either<Failure, void>> completeProject({required String projectId}) async {
-    return _execute(() => remoteDataSource.completeProject(projectId: projectId));
+  Future<Either<Failure, void>> completeProject({
+    required String projectId,
+  }) async {
+    return _execute(
+      () => remoteDataSource.completeProject(projectId: projectId),
+    );
   }
 
   Future<Either<Failure, void>> _execute(Future<void> Function() action) async {

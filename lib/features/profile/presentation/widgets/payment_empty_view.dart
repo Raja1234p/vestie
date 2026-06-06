@@ -9,11 +9,7 @@ import 'package:vestie/core/widgets/text/app_text.dart';
 
 /// Centered empty state (Figma illustration + copy). Defaults to payment methods.
 class PaymentEmptyView extends StatelessWidget {
-  const PaymentEmptyView({
-    super.key,
-    this.title,
-    this.subtitle,
-  });
+  const PaymentEmptyView({super.key, this.title, this.subtitle});
 
   final String? title;
   final String? subtitle;

@@ -14,7 +14,8 @@ class BankAccountModel extends BankAccountEntity {
   factory BankAccountModel.fromJson(Map<String, dynamic> json) {
     final bankName = json.safeString('bankName');
     final last4 = json.safeString('last4');
-    final display = json.safeStringNullable('displayName') ??
+    final display =
+        json.safeStringNullable('displayName') ??
         (bankName.isNotEmpty && last4.isNotEmpty
             ? '$bankName - $last4'
             : bankName);

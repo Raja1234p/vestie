@@ -21,7 +21,9 @@ class ProjectRepositoryImpl implements ProjectRepository {
   });
 
   @override
-  Future<Either<Failure, List<ProjectSummaryEntity>>> getProjects({required String scope}) async {
+  Future<Either<Failure, List<ProjectSummaryEntity>>> getProjects({
+    required String scope,
+  }) async {
     if (await networkInfo.isConnected) {
       try {
         final remoteProjects = await remoteDataSource.getProjects(scope: scope);
@@ -43,7 +45,9 @@ class ProjectRepositoryImpl implements ProjectRepository {
   }
 
   @override
-  Future<Either<Failure, ProjectDetailEntity>> getProjectDetail(String projectId) async {
+  Future<Either<Failure, ProjectDetailEntity>> getProjectDetail(
+    String projectId,
+  ) async {
     if (await networkInfo.isConnected) {
       try {
         final detail = await remoteDataSource.getProjectDetail(projectId);
@@ -85,7 +89,9 @@ class ProjectRepositoryImpl implements ProjectRepository {
   }
 
   @override
-  Future<Either<Failure, InvitePreviewEntity>> previewInvite(String inviteCode) async {
+  Future<Either<Failure, InvitePreviewEntity>> previewInvite(
+    String inviteCode,
+  ) async {
     if (!await networkInfo.isConnected) return const Left(NetworkFailure());
     try {
       final preview = await remoteDataSource.previewInvite(inviteCode);

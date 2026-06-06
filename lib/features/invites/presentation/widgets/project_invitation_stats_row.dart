@@ -43,24 +43,30 @@ class ProjectInvitationStatsRow extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(child: _StatColumn(
-              label: AppStrings.projectInvitationProjectType,
-              child: _CategoryChip(preview: preview),
-            )),
-            Expanded(child: _StatColumn(
-              label: AppStrings.projectInvitationMembers,
-              child: _StatValue(
-                preview.memberCount != null
-                    ? AppStrings.projectInvitationMembersCount(
-                        preview.memberCount!,
-                      )
-                    : '—',
+            Expanded(
+              child: _StatColumn(
+                label: AppStrings.projectInvitationProjectType,
+                child: _CategoryChip(preview: preview),
               ),
-            )),
-            Expanded(child: _StatColumn(
-              label: AppStrings.projectInvitationContributions,
-              child: _StatValue(_contributionsDisplay(preview)),
-            )),
+            ),
+            Expanded(
+              child: _StatColumn(
+                label: AppStrings.projectInvitationMembers,
+                child: _StatValue(
+                  preview.memberCount != null
+                      ? AppStrings.projectInvitationMembersCount(
+                          preview.memberCount!,
+                        )
+                      : '—',
+                ),
+              ),
+            ),
+            Expanded(
+              child: _StatColumn(
+                label: AppStrings.projectInvitationContributions,
+                child: _StatValue(_contributionsDisplay(preview)),
+              ),
+            ),
           ],
         ),
         SizedBox(height: 20.h),

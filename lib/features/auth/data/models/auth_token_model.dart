@@ -7,17 +7,17 @@ class AuthTokenModel extends User {
     required String accessToken,
     required String refreshToken,
   }) : super(
-          id: '',
-          name: '',
-          email: '',
-          accessToken: accessToken,
-          refreshToken: refreshToken,
-        );
+         id: '',
+         name: '',
+         email: '',
+         accessToken: accessToken,
+         refreshToken: refreshToken,
+       );
 
   factory AuthTokenModel.fromJson(Map<String, dynamic> json) {
     // API v1 wraps tokens in a 'tokens' object for login/verify, but not for refresh.
-    final tokenData = json['tokens'] != null 
-        ? json['tokens'] as Map<String, dynamic> 
+    final tokenData = json['tokens'] != null
+        ? json['tokens'] as Map<String, dynamic>
         : json;
 
     return AuthTokenModel(
@@ -27,7 +27,7 @@ class AuthTokenModel extends User {
   }
 
   Map<String, dynamic> toJson() => {
-        'accessToken': accessToken ?? '',
-        'refreshToken': refreshToken ?? '',
-      };
+    'accessToken': accessToken ?? '',
+    'refreshToken': refreshToken ?? '',
+  };
 }

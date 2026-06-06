@@ -55,17 +55,17 @@ class JoinRequestCard extends StatelessWidget {
                   AppText(
                     name,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.grey1100,
-                        ),
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.grey1100,
+                    ),
                   ),
                   AppText(
                     username,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontSize: 14.sp,
-                          color: AppColors.grey800,
-                        ),
+                      fontSize: 14.sp,
+                      color: AppColors.grey800,
+                    ),
                   ),
                 ],
               ),
@@ -132,10 +132,10 @@ class _ActionOutlineButton extends StatelessWidget {
               : AppText(
                   label,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.grey700,
-                      ),
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.grey700,
+                  ),
                 ),
         ),
       ),
@@ -178,10 +178,10 @@ class _ActionPrimaryButton extends StatelessWidget {
               : AppText(
                   label,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.surface,
-                      ),
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.surface,
+                  ),
                 ),
         ),
       ),

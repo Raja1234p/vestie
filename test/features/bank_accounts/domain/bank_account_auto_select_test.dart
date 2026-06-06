@@ -3,13 +3,13 @@ import 'package:vestie/features/bank_accounts/domain/bank_account_auto_select.da
 import 'package:vestie/features/bank_accounts/domain/entities/bank_account_entity.dart';
 
 BankAccountEntity _account({required bool isDefault}) => BankAccountEntity(
-      id: 'ba_1',
-      bankName: 'Test',
-      last4: '1234',
-      currency: 'usd',
-      isDefault: isDefault,
-      displayName: 'Test - 1234',
-    );
+  id: 'ba_1',
+  bankName: 'Test',
+  last4: '1234',
+  currency: 'usd',
+  isDefault: isDefault,
+  displayName: 'Test - 1234',
+);
 
 void main() {
   test('auto-selects single default account', () {

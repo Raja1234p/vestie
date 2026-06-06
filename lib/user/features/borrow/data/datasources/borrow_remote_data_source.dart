@@ -10,9 +10,9 @@ class CreateBorrowRequestBody {
   });
 
   Map<String, dynamic> toJson() => {
-        'requestedAmount': requestedAmount,
-        'reason': reason,
-      };
+    'requestedAmount': requestedAmount,
+    'reason': reason,
+  };
 }
 
 abstract class BorrowRemoteDataSource {
@@ -31,4 +31,3 @@ abstract class BorrowRemoteDataSource {
     required String borrowRequestId,
   });
 }
-

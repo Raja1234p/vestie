@@ -7,12 +7,14 @@ abstract class HomeState extends Equatable {
 
 class HomeInitial extends HomeState {
   const HomeInitial();
-  @override List<Object> get props => [];
+  @override
+  List<Object> get props => [];
 }
 
 class HomeLoading extends HomeState {
   const HomeLoading();
-  @override List<Object> get props => [];
+  @override
+  List<Object> get props => [];
 }
 
 class HomeLoaded extends HomeState {
@@ -33,5 +35,6 @@ class HomeLoaded extends HomeState {
 class HomeError extends HomeState {
   final String message;
   const HomeError({required this.message});
-  @override List<Object> get props => [message];
+  @override
+  List<Object> get props => [message];
 }

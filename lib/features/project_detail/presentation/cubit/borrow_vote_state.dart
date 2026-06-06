@@ -17,11 +17,10 @@ class BorrowVoteState {
     bool? hasDownvoted,
     int? upvotes,
     int? downvotes,
-  }) =>
-      BorrowVoteState(
-        hasUpvoted: hasUpvoted ?? this.hasUpvoted,
-        hasDownvoted: hasDownvoted ?? this.hasDownvoted,
-        upvotes: upvotes ?? this.upvotes,
-        downvotes: downvotes ?? this.downvotes,
-      );
+  }) => BorrowVoteState(
+    hasUpvoted: hasUpvoted ?? this.hasUpvoted,
+    hasDownvoted: hasDownvoted ?? this.hasDownvoted,
+    upvotes: upvotes ?? this.upvotes,
+    downvotes: downvotes ?? this.downvotes,
+  );
 }

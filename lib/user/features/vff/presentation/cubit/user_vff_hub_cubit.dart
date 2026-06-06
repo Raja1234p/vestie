@@ -22,13 +22,13 @@ final class UserVffHubCubit extends Cubit<UserVffHubState>
     required DeclineVffRequestUseCase declineVffRequestUseCase,
     required AcceptVffProjectInviteUseCase acceptVffProjectInviteUseCase,
     required DeclineVffProjectInviteUseCase declineVffProjectInviteUseCase,
-  })  : _listMyVffsUseCase = listMyVffsUseCase,
-        _getVffReceivedInboxUseCase = getVffReceivedInboxUseCase,
-        _acceptVffRequestUseCase = acceptVffRequestUseCase,
-        _declineVffRequestUseCase = declineVffRequestUseCase,
-        _acceptVffProjectInviteUseCase = acceptVffProjectInviteUseCase,
-        _declineVffProjectInviteUseCase = declineVffProjectInviteUseCase,
-        super(const UserVffHubState());
+  }) : _listMyVffsUseCase = listMyVffsUseCase,
+       _getVffReceivedInboxUseCase = getVffReceivedInboxUseCase,
+       _acceptVffRequestUseCase = acceptVffRequestUseCase,
+       _declineVffRequestUseCase = declineVffRequestUseCase,
+       _acceptVffProjectInviteUseCase = acceptVffProjectInviteUseCase,
+       _declineVffProjectInviteUseCase = declineVffProjectInviteUseCase,
+       super(const UserVffHubState());
 
   final ListMyVffsUseCase _listMyVffsUseCase;
   final GetVffReceivedInboxUseCase _getVffReceivedInboxUseCase;
@@ -74,7 +74,10 @@ final class UserVffHubCubit extends Cubit<UserVffHubState>
     );
   }
 
-  Future<void> loadReceivedInbox({bool force = false, bool silent = false}) async {
+  Future<void> loadReceivedInbox({
+    bool force = false,
+    bool silent = false,
+  }) async {
     if (!silent &&
         state.requestsLoadStatus == UserVffHubRequestsLoadStatus.loading) {
       return;
@@ -105,8 +108,9 @@ final class UserVffHubCubit extends Cubit<UserVffHubState>
 
     vffsResult.fold(
       (f) => errorMessage = FailureMapper.userMessage(f),
-      (list) => connections =
-          list.map(UserVffHubMapper.connection).toList(growable: false),
+      (list) => connections = list
+          .map(UserVffHubMapper.connection)
+          .toList(growable: false),
     );
 
     emit(
@@ -164,9 +168,8 @@ final class UserVffHubCubit extends Cubit<UserVffHubState>
 
     emit(
       state.copyWith(
-        requestsLoadStatus: requestsErrorMessage != null &&
-                incoming.isEmpty &&
-                invites.isEmpty
+        requestsLoadStatus:
+            requestsErrorMessage != null && incoming.isEmpty && invites.isEmpty
             ? UserVffHubRequestsLoadStatus.error
             : UserVffHubRequestsLoadStatus.loaded,
         requestsErrorMessage: requestsErrorMessage,
@@ -213,13 +216,13 @@ final class UserVffHubCubit extends Cubit<UserVffHubState>
     return state.copyWith(
       incomingVffRequests: kind == UserVffInboxItemKind.vffRequest
           ? state.incomingVffRequests
-              .where((row) => row.id != itemId)
-              .toList(growable: false)
+                .where((row) => row.id != itemId)
+                .toList(growable: false)
           : state.incomingVffRequests,
       groupInvitations: kind == UserVffInboxItemKind.projectInvite
           ? state.groupInvitations
-              .where((row) => row.id != itemId)
-              .toList(growable: false)
+                .where((row) => row.id != itemId)
+                .toList(growable: false)
           : state.groupInvitations,
       clearActingRow: true,
     );
@@ -231,8 +234,7 @@ final class UserVffHubCubit extends Cubit<UserVffHubState>
       final alreadyLoaded =
           state.requestsLoadStatus == UserVffHubRequestsLoadStatus.loaded;
       loadReceivedInbox(force: alreadyLoaded, silent: alreadyLoaded);
-    } else if (index == 0 &&
-        state.loadStatus == UserVffHubLoadStatus.loaded) {
+    } else if (index == 0 && state.loadStatus == UserVffHubLoadStatus.loaded) {
       _fetchMyVffs(silent: true);
     }
   }

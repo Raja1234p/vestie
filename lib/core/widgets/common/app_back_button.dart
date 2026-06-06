@@ -10,11 +10,7 @@ class AppBackButton extends StatelessWidget {
   final VoidCallback onPressed;
   final Color? color;
 
-  const AppBackButton({
-    super.key,
-    required this.onPressed,
-    this.color,
-  });
+  const AppBackButton({super.key, required this.onPressed, this.color});
 
   @override
   Widget build(BuildContext context) {

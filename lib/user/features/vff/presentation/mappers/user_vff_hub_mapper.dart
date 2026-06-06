@@ -35,7 +35,9 @@ abstract final class UserVffHubMapper {
       projectId: entity.projectId,
       kind: UserVffGroupInviteKind.project,
       titleLine: entity.projectName,
-      personInitials: UserVffHubMapperInitials.initials(entity.inviterDisplayName),
+      personInitials: UserVffHubMapperInitials.initials(
+        entity.inviterDisplayName,
+      ),
       invitedByName: entity.inviterDisplayName,
       primaryIsRequestToJoin:
           entity.joinAction == VffProjectJoinState.requestToJoin ||
@@ -88,5 +90,4 @@ abstract final class UserVffHubMapper {
       _ => 'Pending',
     };
   }
-
 }

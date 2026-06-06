@@ -23,7 +23,7 @@ import 'package:vestie/features/stripe/domain/stripe_config_cache.dart';
 import 'package:vestie/core/realtime/projects_signalr_service.dart';
 import 'package:vestie/core/realtime/wallet_signalr_service.dart';
 import 'package:vestie/core/services/fcm_push_service.dart';
-import 'package:vestie/features/wallet/domain/wallet_balance_cache.dart';
+import 'package:vestie/wallet/domain/wallet_balance_cache.dart';
 
 class ProfileState extends Equatable {
   final UserProfile profile;
@@ -46,21 +46,25 @@ class ProfileState extends Equatable {
     bool? isLoggingOut,
     bool? isLogoutSuccess,
     String? error,
-  }) =>
-      ProfileState(
-        profile: profile ?? this.profile,
-        isLoading: isLoading ?? this.isLoading,
-        isLoggingOut: isLoggingOut ?? this.isLoggingOut,
-        isLogoutSuccess: isLogoutSuccess ?? this.isLogoutSuccess,
-        error: error,
-      );
+  }) => ProfileState(
+    profile: profile ?? this.profile,
+    isLoading: isLoading ?? this.isLoading,
+    isLoggingOut: isLoggingOut ?? this.isLoggingOut,
+    isLogoutSuccess: isLogoutSuccess ?? this.isLogoutSuccess,
+    error: error,
+  );
 
   bool get hasProfilePhoto =>
       profile.photoUrl != null && profile.photoUrl!.trim().isNotEmpty;
 
   @override
-  List<Object?> get props =>
-      [profile, isLoading, isLoggingOut, isLogoutSuccess, error];
+  List<Object?> get props => [
+    profile,
+    isLoading,
+    isLoggingOut,
+    isLogoutSuccess,
+    error,
+  ];
 }
 
 class ProfileCubit extends Cubit<ProfileState> {
@@ -69,15 +73,18 @@ class ProfileCubit extends Cubit<ProfileState> {
     UpdateMeUseCase? updateMeUseCase,
     DeleteMeProfilePictureUseCase? deleteMeProfilePictureUseCase,
     GetMeUseCase? getMeUseCase,
-  })  : _logoutUseCase = logoutUseCase ?? ServiceLocator.instance.logoutUseCase,
-        _updateMeUseCase =
-            updateMeUseCase ?? ServiceLocator.instance.updateMeUseCase,
-        _deleteMeProfilePictureUseCase = deleteMeProfilePictureUseCase ??
-            ServiceLocator.instance.deleteMeProfilePictureUseCase,
-        _getMeUseCase = getMeUseCase ?? ServiceLocator.instance.getMeUseCase,
-        super(const ProfileState(
-          profile: UserProfile(fullName: '', username: '', email: ''),
-        ));
+  }) : _logoutUseCase = logoutUseCase ?? ServiceLocator.instance.logoutUseCase,
+       _updateMeUseCase =
+           updateMeUseCase ?? ServiceLocator.instance.updateMeUseCase,
+       _deleteMeProfilePictureUseCase =
+           deleteMeProfilePictureUseCase ??
+           ServiceLocator.instance.deleteMeProfilePictureUseCase,
+       _getMeUseCase = getMeUseCase ?? ServiceLocator.instance.getMeUseCase,
+       super(
+         const ProfileState(
+           profile: UserProfile(fullName: '', username: '', email: ''),
+         ),
+       );
 
   final LogoutUseCase _logoutUseCase;
   final UpdateMeUseCase _updateMeUseCase;
@@ -116,10 +123,12 @@ class ProfileCubit extends Cubit<ProfileState> {
 
     result.fold(
       (failure) {
-        emit(state.copyWith(
-          isLoading: false,
-          error: FailureMapper.userMessage(failure),
-        ));
+        emit(
+          state.copyWith(
+            isLoading: false,
+            error: FailureMapper.userMessage(failure),
+          ),
+        );
       },
       (user) async {
         final profile = ProfilePrefs.fromUser(user);
@@ -197,8 +206,9 @@ class ProfileCubit extends Cubit<ProfileState> {
   Future<void> logout() async {
     emit(state.copyWith(isLoggingOut: true));
 
-    final refreshToken = await ServiceLocator.instance.secureStorage
-        .getString(StorageKeys.refreshToken);
+    final refreshToken = await ServiceLocator.instance.secureStorage.getString(
+      StorageKeys.refreshToken,
+    );
 
     if (refreshToken == null || refreshToken.isEmpty) {
       await _clearLocalData();
@@ -231,10 +241,16 @@ class ProfileCubit extends Cubit<ProfileState> {
     StripeConfigCache.clear();
     KycStatusCache.clear();
     BankAccountsCache.clear();
-    await ServiceLocator.instance.authRepository.clearRiskDisclaimerLocalCache();
+    await ServiceLocator.instance.authRepository
+        .clearRiskDisclaimerLocalCache();
     await ServiceLocator.instance.secureStorage.remove(StorageKeys.accessToken);
-    await ServiceLocator.instance.secureStorage.remove(StorageKeys.refreshToken);
-    await ServiceLocator.instance.sharedPrefs.saveBool(StorageKeys.isLoggedIn, false);
+    await ServiceLocator.instance.secureStorage.remove(
+      StorageKeys.refreshToken,
+    );
+    await ServiceLocator.instance.sharedPrefs.saveBool(
+      StorageKeys.isLoggedIn,
+      false,
+    );
     await OnboardingPrefs.markCompleted();
     AppAuthSession.instance.markLoggedOut();
   }

@@ -20,8 +20,7 @@ class InvestmentFundsDistributedSuccessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final formattedAmount =
-        InvestmentReturnsUiData.formatMoney(args.amountUsd);
+    final formattedAmount = InvestmentReturnsUiData.formatMoney(args.amountUsd);
 
     return AppSuccessScreen(
       title: AppStrings.fundsDistributedSuccessTitle,
@@ -41,7 +40,9 @@ class InvestmentFundsDistributedSuccessScreen extends StatelessWidget {
                 style: const TextStyle(fontWeight: FontWeight.w700),
               ),
               TextSpan(
-                text: AppStrings.fundsDistributedSentToMembers(args.memberCount),
+                text: AppStrings.fundsDistributedSentToMembers(
+                  args.memberCount,
+                ),
               ),
             ],
           ),
@@ -49,8 +50,7 @@ class InvestmentFundsDistributedSuccessScreen extends StatelessWidget {
         ),
       ),
       buttonText: AppStrings.btnBackToProject,
-      onButtonPressed: () =>
-          ProjectDetailNavigation.popAfterFundsDistributed(
+      onButtonPressed: () => ProjectDetailNavigation.popAfterFundsDistributed(
         context,
         projectId: args.projectId,
         projectName: args.projectName,

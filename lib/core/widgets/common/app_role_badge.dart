@@ -14,8 +14,7 @@ class AppRoleBadge extends StatelessWidget {
 
   const AppRoleBadge({super.key, required this.role});
 
-  String get _label =>
-      role == AppRoleType.leader ? 'Leader' : 'Co Leader';
+  String get _label => role == AppRoleType.leader ? 'Leader' : 'Co Leader';
 
   @override
   Widget build(BuildContext context) {

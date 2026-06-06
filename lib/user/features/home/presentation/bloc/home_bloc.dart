@@ -24,12 +24,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     ListProjectsUseCase? listProjectsUseCase,
     GetMeUseCase? getMeUseCase,
     GetUserMeSummaryUseCase? getUserMeSummaryUseCase,
-  })  : _listProjectsUseCase =
-            listProjectsUseCase ?? ServiceLocator.instance.listProjectsUseCase,
-        _getMeUseCase = getMeUseCase ?? ServiceLocator.instance.getMeUseCase,
-        _getUserMeSummaryUseCase = getUserMeSummaryUseCase ??
-            ServiceLocator.instance.getUserMeSummaryUseCase,
-        super(const HomeInitial()) {
+  }) : _listProjectsUseCase =
+           listProjectsUseCase ?? ServiceLocator.instance.listProjectsUseCase,
+       _getMeUseCase = getMeUseCase ?? ServiceLocator.instance.getMeUseCase,
+       _getUserMeSummaryUseCase =
+           getUserMeSummaryUseCase ??
+           ServiceLocator.instance.getUserMeSummaryUseCase,
+       super(const HomeInitial()) {
     on<HomeFetchStarted>(_onFetch);
     on<HomeRefreshRequested>(_onFetch);
     on<HomeProjectPotPatched>(_onProjectPotPatched);
@@ -66,11 +67,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     required double projectPot,
   }) {
     var updated = false;
-    final next = projects.map((p) {
-      if (p.id != projectId) return p;
-      updated = true;
-      return p.copyWith(currentAmount: projectPot);
-    }).toList(growable: false);
+    final next = projects
+        .map((p) {
+          if (p.id != projectId) return p;
+          updated = true;
+          return p.copyWith(currentAmount: projectPot);
+        })
+        .toList(growable: false);
     return updated ? next : projects;
   }
 
@@ -87,34 +90,37 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     if (!DashboardPrefetch.userMeLoadedOnDashboard) {
       final meResult = await _getMeUseCase();
-      meResult.fold(
-        (_) {},
-        (User user) {
-          final userName = user.userName.isNotEmpty
-              ? user.userName
-              : (user.email.contains('@')
-                  ? user.email.split('@').first
-                  : '');
-          ServiceLocator.instance.sharedPrefs
-              .saveString(StorageKeys.userName, user.name);
-          ServiceLocator.instance.sharedPrefs
-              .saveString(StorageKeys.userEmail, user.email);
-          ServiceLocator.instance.sharedPrefs
-              .saveString(StorageKeys.userUsername, userName);
-          DashboardPrefetch.markUserMeLoaded();
-        },
-      );
+      meResult.fold((_) {}, (User user) {
+        final userName = user.userName.isNotEmpty
+            ? user.userName
+            : (user.email.contains('@') ? user.email.split('@').first : '');
+        ServiceLocator.instance.sharedPrefs.saveString(
+          StorageKeys.userName,
+          user.name,
+        );
+        ServiceLocator.instance.sharedPrefs.saveString(
+          StorageKeys.userEmail,
+          user.email,
+        );
+        ServiceLocator.instance.sharedPrefs.saveString(
+          StorageKeys.userUsername,
+          userName,
+        );
+        DashboardPrefetch.markUserMeLoaded();
+      });
     }
 
     final mine = mineResult.fold((_) => null, (List<Project> v) => v);
     if (mine == null) {
       if (silent) return;
       final failure = mineResult.fold((f) => f, (_) => null);
-      emit(HomeError(
-        message: failure == null
-            ? 'Failed to load projects'
-            : _userFacingFailureMessage(failure),
-      ));
+      emit(
+        HomeError(
+          message: failure == null
+              ? 'Failed to load projects'
+              : _userFacingFailureMessage(failure),
+        ),
+      );
       return;
     }
 
@@ -134,11 +140,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       (summary) => summary.totalContributed,
     );
 
-    emit(HomeLoaded(
-      totalContributed: totalContributed,
-      myProjects: myProjects,
-      joinedProjects: joinedProjects,
-    ));
+    emit(
+      HomeLoaded(
+        totalContributed: totalContributed,
+        myProjects: myProjects,
+        joinedProjects: joinedProjects,
+      ),
+    );
   }
 
   String _userFacingFailureMessage(Failure failure) {

@@ -8,7 +8,9 @@ class GetProjectsUseCase {
 
   GetProjectsUseCase(this.repository);
 
-  Future<Either<Failure, List<ProjectSummaryEntity>>> call({required String scope}) async {
+  Future<Either<Failure, List<ProjectSummaryEntity>>> call({
+    required String scope,
+  }) async {
     return await repository.getProjects(scope: scope);
   }
 }

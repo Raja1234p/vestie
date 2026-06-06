@@ -22,8 +22,7 @@ abstract final class ProjectMemberAddFriendVisibility {
     required MemberEntity member,
   }) {
     if (!member.showsVffBadgeOnMemberRow) return false;
-    if (project != null &&
-        isViewerSelf(project: project, member: member)) {
+    if (project != null && isViewerSelf(project: project, member: member)) {
       return false;
     }
     return true;

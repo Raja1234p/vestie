@@ -73,10 +73,7 @@ class BankAccountsRepositoryImpl implements BankAccountsRepository {
     required bool isDefault,
   }) async {
     try {
-      await remoteDataSource.setDefault(
-        bankAccountId,
-        isDefault: isDefault,
-      );
+      await remoteDataSource.setDefault(bankAccountId, isDefault: isDefault);
       BankAccountsCache.updateDefault(bankAccountId, isDefault: isDefault);
       return const Right(null);
     } on Failure catch (f) {

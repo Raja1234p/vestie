@@ -36,27 +36,47 @@ class ResetPasswordFormState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [newPassVisible, confirmVisible, newPassError, confirmError, isValid];
+  List<Object?> get props => [
+    newPassVisible,
+    confirmVisible,
+    newPassError,
+    confirmError,
+    isValid,
+  ];
 }
 
 class ResetPasswordFormCubit extends Cubit<ResetPasswordFormState> {
   ResetPasswordFormCubit() : super(const ResetPasswordFormState());
 
-  void toggleNewPass()  => emit(state.copyWith(newPassVisible: !state.newPassVisible));
-  void toggleConfirm()  => emit(state.copyWith(confirmVisible: !state.confirmVisible));
-  void clearNewError()  => emit(state.copyWith(clearNew: true));
+  void toggleNewPass() =>
+      emit(state.copyWith(newPassVisible: !state.newPassVisible));
+  void toggleConfirm() =>
+      emit(state.copyWith(confirmVisible: !state.confirmVisible));
+  void clearNewError() => emit(state.copyWith(clearNew: true));
   void clearConfirmError() => emit(state.copyWith(clearConfirm: true));
 
   void onFieldsChanged(String password, String confirm) {
-    final passErr    = ValidationUtils.validatePassword(password);
-    final confirmErr = ValidationUtils.validateConfirmPassword(confirm, password);
+    final passErr = ValidationUtils.validatePassword(password);
+    final confirmErr = ValidationUtils.validateConfirmPassword(
+      confirm,
+      password,
+    );
     emit(state.copyWith(isValid: passErr == null && confirmErr == null));
   }
 
   bool validate(String password, String confirm) {
-    final passErr    = ValidationUtils.validatePassword(password);
-    final confirmErr = ValidationUtils.validateConfirmPassword(confirm, password);
-    emit(state.copyWith(newPassError: passErr, confirmError: confirmErr, isValid: passErr == null && confirmErr == null));
+    final passErr = ValidationUtils.validatePassword(password);
+    final confirmErr = ValidationUtils.validateConfirmPassword(
+      confirm,
+      password,
+    );
+    emit(
+      state.copyWith(
+        newPassError: passErr,
+        confirmError: confirmErr,
+        isValid: passErr == null && confirmErr == null,
+      ),
+    );
     return passErr == null && confirmErr == null;
   }
 

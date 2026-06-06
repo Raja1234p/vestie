@@ -26,46 +26,55 @@ class LeaderProjectSettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ServiceLocator.instance.createProjectDetailBloc()
-        ..add(LoadProjectDetailEvent(projectId: projectId)),
+      create: (_) =>
+          ServiceLocator.instance.createProjectDetailBloc()
+            ..add(LoadProjectDetailEvent(projectId: projectId)),
       child: BlocBuilder<ProjectDetailBloc, ProjectDetailState>(
         builder: (context, state) {
           return Scaffold(
             backgroundColor: Colors.transparent,
             body: PostAuthGradientBackground(
-              child: state is ProjectDetailLoading ||
-                      state is ProjectDetailInitial
-                  ? ProjectDetailLoadingBody(
-                      onBack: () => context.pop(),
-                    )
+              child:
+                  state is ProjectDetailLoading || state is ProjectDetailInitial
+                  ? ProjectDetailLoadingBody(onBack: () => context.pop())
                   : CustomScrollView(
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: PostAuthHeader(
-                      title: AppStrings.leaderProjectSettingsTitle,
-                      leading: AppBackButton(onPressed: () => context.pop()),
-                    ),
-                  ),
-                  if (state is ProjectDetailError)
-                    SliverFillRemaining(
-                      child: ProjectDetailLoadError(
-                        message: state.message,
-                        onRetry: () => context.read<ProjectDetailBloc>().add(
-                              LoadProjectDetailEvent(projectId: projectId),
+                      slivers: [
+                        SliverToBoxAdapter(
+                          child: PostAuthHeader(
+                            title: AppStrings.leaderProjectSettingsTitle,
+                            leading: AppBackButton(
+                              onPressed: () => context.pop(),
                             ),
-                      ),
-                    ),
-                  if (state is ProjectDetailLoaded)
-                    SliverPadding(
-                      padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 32.h),
-                      sliver: SliverToBoxAdapter(
-                        child: _LeaderProjectSettingsBody(
-                          project: state.project,
+                          ),
                         ),
-                      ),
+                        if (state is ProjectDetailError)
+                          SliverFillRemaining(
+                            child: ProjectDetailLoadError(
+                              message: state.message,
+                              onRetry: () =>
+                                  context.read<ProjectDetailBloc>().add(
+                                    LoadProjectDetailEvent(
+                                      projectId: projectId,
+                                    ),
+                                  ),
+                            ),
+                          ),
+                        if (state is ProjectDetailLoaded)
+                          SliverPadding(
+                            padding: EdgeInsets.fromLTRB(
+                              16.w,
+                              12.h,
+                              16.w,
+                              32.h,
+                            ),
+                            sliver: SliverToBoxAdapter(
+                              child: _LeaderProjectSettingsBody(
+                                project: state.project,
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
-                ],
-              ),
             ),
           );
         },

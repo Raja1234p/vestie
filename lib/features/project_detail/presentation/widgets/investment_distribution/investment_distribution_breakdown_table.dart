@@ -42,22 +42,21 @@ class InvestmentDistributionBreakdownTable extends StatelessWidget {
   }
 
   static TextStyle get _headerStyle => GoogleFonts.lato(
-        fontSize: 10.sp,
-        fontWeight: FontWeight.w600,
-        color: AppColors.neutral1200,
-        height: 1.2,
-      );
+    fontSize: 10.sp,
+    fontWeight: FontWeight.w600,
+    color: AppColors.neutral1200,
+    height: 1.2,
+  );
 
   static TextStyle _valueStyle({
     Color color = AppColors.grey800,
     FontWeight fontWeight = FontWeight.w600,
-  }) =>
-      GoogleFonts.lato(
-        fontSize: 12.sp,
-        fontWeight: fontWeight,
-        color: color,
-        height: 1.2,
-      );
+  }) => GoogleFonts.lato(
+    fontSize: 12.sp,
+    fontWeight: fontWeight,
+    color: color,
+    height: 1.2,
+  );
 
   BorderRadius get _borderRadius => BorderRadius.circular(AppRadius.r12);
 
@@ -108,10 +107,7 @@ class InvestmentDistributionBreakdownTable extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           for (var i = 0; i < 4; i++)
-            Expanded(
-              flex: _columnFlex[i],
-              child: _headerLabelWidget(i),
-            ),
+            Expanded(flex: _columnFlex[i], child: _headerLabelWidget(i)),
         ],
       ),
     );

@@ -49,132 +49,129 @@ class ProjectCard extends StatelessWidget {
     final devicePixelRatio = MediaQuery.devicePixelRatioOf(context);
     return RepaintBoundary(
       child: Container(
-      margin: EdgeInsets.only(bottom: 12.h),
-      padding: EdgeInsets.all(14.w),
-      decoration: BoxDecoration(
-        color: AppColors.projectCardBg,
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(
-          color: AppColors.projectCardBorder,
-          width: 1,
+        margin: EdgeInsets.only(bottom: 12.h),
+        padding: EdgeInsets.all(14.w),
+        decoration: BoxDecoration(
+          color: AppColors.projectCardBg,
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(color: AppColors.projectCardBorder, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.textBody.withValues(alpha: 0.03),
+              blurRadius: 8,
+              spreadRadius: 0,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.textBody.withValues(alpha: 0.03),
-            blurRadius: 8,
-            spreadRadius: 0,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // ── Category / project-name chip + status badge ───
-          Row(
-            children: [
-              ProjectCategoryChip(project: project),
-              const Spacer(),
-              ProjectStatusBadge(
-                status: project.status,
-                label: project.statusLabel,
-                isDraft: project.isDraft,
-              ),
-            ],
-          ),
-          SizedBox(height: 8.h),
-
-          // ── Main content differs by status ────────────────
-          if (project.status == ProjectStatus.ongoing) ...[
-            // Project name
-            Text(
-              project.name,
-              style: GoogleFonts.lato(
-                fontSize: 20.sp,
-                fontWeight: FontWeight.w800,
-                color: AppColors.textPrimary,
-              ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ── Category / project-name chip + status badge ───
+            Row(
+              children: [
+                ProjectCategoryChip(project: project),
+                const Spacer(),
+                ProjectStatusBadge(
+                  status: project.status,
+                  label: project.statusLabel,
+                  isDraft: project.isDraft,
+                ),
+              ],
             ),
             SizedBox(height: 8.h),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (project.description != null) ...[
-                  Expanded(
-                    child: DottedBorder(
-                      options: RoundedRectDottedBorderOptions(
-                        radius: Radius.circular(8.r),
-                        color: AppColors.projectCardDescriptionBorder,
-                        strokeWidth: 1,
-                        dashPattern: AppDimens.dottedBorderDashPattern,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 10.w,
-                          vertical: 8.h,
+
+            // ── Main content differs by status ────────────────
+            if (project.status == ProjectStatus.ongoing) ...[
+              // Project name
+              Text(
+                project.name,
+                style: GoogleFonts.lato(
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              SizedBox(height: 8.h),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (project.description != null) ...[
+                    Expanded(
+                      child: DottedBorder(
+                        options: RoundedRectDottedBorderOptions(
+                          radius: Radius.circular(8.r),
+                          color: AppColors.projectCardDescriptionBorder,
+                          strokeWidth: 1,
+                          dashPattern: AppDimens.dottedBorderDashPattern,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10.w,
+                            vertical: 8.h,
+                          ),
                         ),
-                      ),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: Text(
-                          project.description!,
-                          style: GoogleFonts.lato(
-                            fontSize: 11.sp,
-                            color: AppColors.textBody,
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: Text(
+                            project.description!,
+                            style: GoogleFonts.lato(
+                              fontSize: 11.sp,
+                              color: AppColors.textBody,
+                            ),
                           ),
                         ),
                       ),
                     ),
+                    SizedBox(width: 8.w),
+                  ] else
+                    const Spacer(),
+                  Image.asset(
+                    project.category.cardImageAsset,
+                    width: 100.w,
+                    height: 69.h,
+                    fit: BoxFit.contain,
+                    cacheWidth: (100.w * devicePixelRatio).round(),
+                    cacheHeight: (69.h * devicePixelRatio).round(),
                   ),
-                  SizedBox(width: 8.w),
-                ] else
-                  const Spacer(),
-                Image.asset(
-                  project.category.cardImageAsset,
-                  width: 100.w,
-                  height: 69.h,
-                  fit: BoxFit.contain,
-                  cacheWidth: (100.w * devicePixelRatio).round(),
-                  cacheHeight: (69.h * devicePixelRatio).round(),
-                ),
-              ],
-            ),
-            if (project.goalAmount != null) ...[
-              SizedBox(height: 8.h),
-              ProjectGoalRow(project: project),
-              SizedBox(height: 6.h),
-              ProjectProgressBar(progress: project.progress),
-              SizedBox(height: 6.h),
-              if (_showEndOrRoiRow(project))
-                ProjectEndAndRoiRow(
-                  endsInRaw: project.endsIn ?? '',
-                  roiPercentage: project.roiPercentage,
-                  showRoi: project.category.isInvestment,
-                ),
-            ],
-          ] else ...[
-            // Completed — project name + raised/invested amount (+ ROI)
-            AppText(
-              project.name,
-              style: GoogleFonts.lato(
-                fontSize: 20.sp,
-                fontWeight: FontWeight.w800,
-                color: AppColors.textPrimary,
+                ],
               ),
-            ),
-            SizedBox(height: 6.h),
-            _CompletedAmountRow(project: project),
-          ],
+              if (project.goalAmount != null) ...[
+                SizedBox(height: 8.h),
+                ProjectGoalRow(project: project),
+                SizedBox(height: 6.h),
+                ProjectProgressBar(progress: project.progress),
+                SizedBox(height: 6.h),
+                if (_showEndOrRoiRow(project))
+                  ProjectEndAndRoiRow(
+                    endsInRaw: project.endsIn ?? '',
+                    roiPercentage: project.roiPercentage,
+                    showRoi: project.category.isInvestment,
+                  ),
+              ],
+            ] else ...[
+              // Completed — project name + raised/invested amount (+ ROI)
+              AppText(
+                project.name,
+                style: GoogleFonts.lato(
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              SizedBox(height: 6.h),
+              _CompletedAmountRow(project: project),
+            ],
 
-          if (_showActionButton) ...[
-            SizedBox(height: 12.h),
-            ProjectActionButton(
-              project: project,
-              onTap: onAction,
-              discoverCtaStyle: discoverCtaStyle,
-              isLoading: actionLoading,
-            ),
+            if (_showActionButton) ...[
+              SizedBox(height: 12.h),
+              ProjectActionButton(
+                project: project,
+                onTap: onAction,
+                discoverCtaStyle: discoverCtaStyle,
+                isLoading: actionLoading,
+              ),
+            ],
           ],
-        ],
-      ),
+        ),
       ),
     );
   }
@@ -194,8 +191,7 @@ class _CompletedAmountRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final roiValue = formatRoiPercentDisplay(project.roiPercentage);
-    final showRoi =
-        project.category.isInvestment && roiValue.isNotEmpty;
+    final showRoi = project.category.isInvestment && roiValue.isNotEmpty;
 
     final amountStyle = GoogleFonts.lato(
       fontSize: 22.sp,
@@ -220,10 +216,7 @@ class _CompletedAmountRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Expanded(
-          child: AppText(
-            projectRaisedText(project),
-            style: amountStyle,
-          ),
+          child: AppText(projectRaisedText(project), style: amountStyle),
         ),
         if (showRoi)
           Text.rich(

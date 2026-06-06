@@ -44,7 +44,8 @@ class PostAuthHeader extends StatelessWidget {
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: titleStyle ??
+                  style:
+                      titleStyle ??
                       GoogleFonts.lato(
                         fontSize: 28.sp,
                         fontWeight: FontWeight.w600,
@@ -63,9 +64,6 @@ class PostAuthHeader extends StatelessWidget {
 
     if (!applyTopSafeArea) return content;
 
-    return SafeArea(
-      bottom: false,
-      child: content,
-    );
+    return SafeArea(bottom: false, child: content);
   }
 }

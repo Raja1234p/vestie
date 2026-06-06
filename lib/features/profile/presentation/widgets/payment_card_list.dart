@@ -17,7 +17,7 @@ import 'package:vestie/features/profile/domain/entities/payment_card.dart';
 import 'package:vestie/features/profile/domain/entities/payment_method_picker_behavior.dart';
 import 'package:vestie/features/profile/domain/entities/payment_method_selection.dart';
 import 'package:vestie/features/profile/presentation/widgets/card_detail_sheet.dart';
-import 'package:vestie/features/wallet/presentation/cubit/wallet_transaction_cubit.dart';
+import 'package:vestie/wallet/presentation/cubit/wallet_transaction_cubit.dart';
 import 'package:vestie/features/profile/presentation/widgets/payment_card_brand_icon.dart';
 import 'package:vestie/features/profile/presentation/widgets/payment_method_select_row.dart';
 import 'package:vestie/features/profile/presentation/widgets/payment_primary_button.dart';
@@ -172,11 +172,7 @@ class _SelectionList extends StatelessWidget {
               ],
               if (showWalletOption) ...[
                 SizedBox(height: 16.h),
-                Divider(
-                  height: 1,
-                  thickness: 1,
-                  color: AppColors.neutral400,
-                ),
+                Divider(height: 1, thickness: 1, color: AppColors.neutral400),
                 SizedBox(height: 16.h),
                 PaymentMethodSelectRow(
                   selected: walletSelected,
@@ -242,50 +238,50 @@ class _ManageCardItem extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                    AppText(
-                      card.brandName,
-                      style: GoogleFonts.lato(
-                        fontSize: 17.sp,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.textPrimary,
+                      AppText(
+                        card.brandName,
+                        style: GoogleFonts.lato(
+                          fontSize: 17.sp,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
-                    ),
-                    AppText(
-                      card.maskedNumber,
-                      style: GoogleFonts.lato(
-                        fontSize: 14.sp,
-                        color: AppColors.neutral500,
+                      AppText(
+                        card.maskedNumber,
+                        style: GoogleFonts.lato(
+                          fontSize: 14.sp,
+                          color: AppColors.neutral500,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                const Spacer(),
-                if (card.isPrimary) ...[
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 8.w,
-                      vertical: 3.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.badgeOnGoingBg,
-                      borderRadius: BorderRadius.circular(100.r),
-                    ),
-                    child: AppText(
-                      AppStrings.cardPrimary,
-                      style: GoogleFonts.lato(
-                        fontSize: 10.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.badgeOnGoingText,
-                      ),
-                    ),
+                    ],
                   ),
-                  SizedBox(width: 8.w),
-                ],
-                AppSvgIcon(
-                  assetPath: AppAssets.iconChevronRight,
-                  size: 18.w,
-                  color: AppColors.primary,
-                ),
+                  const Spacer(),
+                  if (card.isPrimary) ...[
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 8.w,
+                        vertical: 3.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.badgeOnGoingBg,
+                        borderRadius: BorderRadius.circular(100.r),
+                      ),
+                      child: AppText(
+                        AppStrings.cardPrimary,
+                        style: GoogleFonts.lato(
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.badgeOnGoingText,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 8.w),
+                  ],
+                  AppSvgIcon(
+                    assetPath: AppAssets.iconChevronRight,
+                    size: 18.w,
+                    color: AppColors.primary,
+                  ),
                 ],
               ),
             ),

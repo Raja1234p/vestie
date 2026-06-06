@@ -62,7 +62,8 @@ class AppAmountEntrySheetContent extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  height: AppDimens.createProjectAmountSheetIconTitleVerticalGap,
+                  height:
+                      AppDimens.createProjectAmountSheetIconTitleVerticalGap,
                 ),
                 AppText(
                   title,
@@ -91,10 +92,7 @@ class AppAmountEntrySheetContent extends StatelessWidget {
             borderRadius: BorderRadius.vertical(
               top: Radius.circular(AppRadius.r16),
             ),
-            child: AppNumpad(
-              onDigit: onDigit,
-              onBackspace: onBackspace,
-            ),
+            child: AppNumpad(onDigit: onDigit, onBackspace: onBackspace),
           ),
         ],
       ),

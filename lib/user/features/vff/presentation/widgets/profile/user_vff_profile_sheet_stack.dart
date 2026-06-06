@@ -45,7 +45,8 @@ final class UserVffProfileSheetStack extends StatelessWidget {
               SizedBox(height: AppDimens.v18),
               UserVffProfileMetricStrip(profile: p),
               SizedBox(height: AppDimens.v20),
-              if (showTx) ...(p.transactions ?? []).map((r) => UserVffTxRow(row: r)),
+              if (showTx)
+                ...(p.transactions ?? []).map((r) => UserVffTxRow(row: r)),
               if (!showTx) SizedBox(height: AppDimens.v20),
             ],
           ),
@@ -53,12 +54,7 @@ final class UserVffProfileSheetStack extends StatelessWidget {
         SafeArea(
           top: false,
           child: Padding(
-            padding: EdgeInsets.fromLTRB(
-              AppDimens.p18,
-              0,
-              AppDimens.p18,
-              8.h,
-            ),
+            padding: EdgeInsets.fromLTRB(AppDimens.p18, 0, AppDimens.p18, 8.h),
             child: const UserVffProfileFooterActions(),
           ),
         ),

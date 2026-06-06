@@ -64,8 +64,10 @@ class InvestmentDistributionUiData {
     required double distributeAmountUsd,
     double undistributedPoolUsd = 9500,
   }) {
-    final totalContributed =
-        _previewContributions.fold<double>(0, (a, b) => a + b);
+    final totalContributed = _previewContributions.fold<double>(
+      0,
+      (a, b) => a + b,
+    );
     final rows = <DistributionMemberRowUi>[];
     var allocated = 0.0;
     for (var i = 0; i < _previewNames.length; i++) {

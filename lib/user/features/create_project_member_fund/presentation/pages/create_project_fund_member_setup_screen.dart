@@ -18,10 +18,7 @@ import '../models/create_project_fund_draft.dart';
 class CreateProjectFundMemberSetupScreen extends StatefulWidget {
   final CreateProjectFundKind kind;
 
-  const CreateProjectFundMemberSetupScreen({
-    super.key,
-    required this.kind,
-  });
+  const CreateProjectFundMemberSetupScreen({super.key, required this.kind});
 
   @override
   State<CreateProjectFundMemberSetupScreen> createState() =>
@@ -42,11 +39,10 @@ class _CreateProjectFundMemberSetupScreenState
   String? _endError;
 
   String get _fundHeaderTitle => switch (widget.kind) {
-        CreateProjectFundKind.vacation =>
-          AppStrings.createProjectVacationFundTitle,
-        CreateProjectFundKind.emergency =>
-          AppStrings.createProjectEmergencyFundTitle,
-      };
+    CreateProjectFundKind.vacation => AppStrings.createProjectVacationFundTitle,
+    CreateProjectFundKind.emergency =>
+      AppStrings.createProjectEmergencyFundTitle,
+  };
 
   @override
   void initState() {
@@ -78,9 +74,9 @@ class _CreateProjectFundMemberSetupScreenState
       firstDate: DateTime(2020),
       lastDate: DateTime(2035),
       builder: (c, child) => Theme(
-        data: Theme.of(c).copyWith(
-          colorScheme: ColorScheme.light(primary: AppColors.primary),
-        ),
+        data: Theme.of(
+          c,
+        ).copyWith(colorScheme: ColorScheme.light(primary: AppColors.primary)),
         child: child!,
       ),
     );
@@ -101,15 +97,12 @@ class _CreateProjectFundMemberSetupScreenState
       _goalCtrl.text.replaceAll(',', '').trim(),
     );
     final goalOk = parsedGoal != null && parsedGoal > 0;
-    final datesOk =
-        !_end.isBefore(_start.add(const Duration(days: 1)));
+    final datesOk = !_end.isBefore(_start.add(const Duration(days: 1)));
 
     setState(() {
       _nameError = nameOk ? null : AppStrings.validationProjectNameRequired;
       _goalError = goalOk ? null : AppStrings.validationGoalUsdInvalid;
-      _endError = datesOk
-          ? null
-          : AppStrings.validationEndAfterStartRequired;
+      _endError = datesOk ? null : AppStrings.validationEndAfterStartRequired;
     });
     return nameOk && goalOk && datesOk;
   }
@@ -119,8 +112,7 @@ class _CreateProjectFundMemberSetupScreenState
     final draft = CreateProjectFundDraft(
       kind: widget.kind,
       projectName: _nameCtrl.text.trim(),
-      goalAmountUsd:
-          double.parse(_goalCtrl.text.replaceAll(',', '').trim()),
+      goalAmountUsd: double.parse(_goalCtrl.text.replaceAll(',', '').trim()),
       startDate: _start,
       endDate: _end,
       description: _descCtrl.text.trim(),
@@ -167,8 +159,9 @@ class _CreateProjectFundMemberSetupScreenState
                     MemberFundTextField(
                       controller: _goalCtrl,
                       hint: AppStrings.hintGoalAmountUsd,
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                       textInputAction: TextInputAction.next,
                       errorText: _goalError,
                       onChanged: (_) {},
@@ -283,10 +276,7 @@ class _DateTile extends StatelessWidget {
             padding: EdgeInsets.only(top: 4.h, left: 4.w),
             child: Text(
               errorText!,
-              style: GoogleFonts.lato(
-                fontSize: 11.sp,
-                color: AppColors.error,
-              ),
+              style: GoogleFonts.lato(fontSize: 11.sp, color: AppColors.error),
             ),
           ),
       ],

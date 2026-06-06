@@ -45,12 +45,12 @@ class ConfirmContributionParams extends Equatable {
 
   @override
   List<Object?> get props => [
-        projectId,
-        membershipId,
-        amount,
-        walletId,
-        currency,
-        externalReference,
-        confirmNonRefundable,
-      ];
+    projectId,
+    membershipId,
+    amount,
+    walletId,
+    currency,
+    externalReference,
+    confirmNonRefundable,
+  ];
 }

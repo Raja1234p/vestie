@@ -5,7 +5,9 @@ import '../entities/contribution_config_entity.dart';
 import '../entities/contribution_preview_entity.dart';
 
 abstract class ContributionRepository {
-  Future<Either<Failure, ContributionConfigEntity>> getContributionConfig(String projectId);
+  Future<Either<Failure, ContributionConfigEntity>> getContributionConfig(
+    String projectId,
+  );
   Future<Either<Failure, ContributionPreviewEntity>> previewContribution({
     required String projectId,
     required String membershipId,

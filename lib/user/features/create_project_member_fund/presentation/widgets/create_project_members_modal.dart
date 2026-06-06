@@ -5,7 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 
 Future<void> showCreateProjectMembersModal(
-    BuildContext context, List<String> memberNames,) {
+  BuildContext context,
+  List<String> memberNames,
+) {
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
@@ -66,7 +68,9 @@ Future<void> showCreateProjectMembersModal(
                           children: [
                             CircleAvatar(
                               radius: 28.r,
-                              backgroundColor: AppColors.purple300.withValues(alpha: 0.45),
+                              backgroundColor: AppColors.purple300.withValues(
+                                alpha: 0.45,
+                              ),
                               child: Text(
                                 name.isNotEmpty ? name[0].toUpperCase() : '?',
                                 style: GoogleFonts.lato(

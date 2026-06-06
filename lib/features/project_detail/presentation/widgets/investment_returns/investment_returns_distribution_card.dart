@@ -69,11 +69,7 @@ class InvestmentReturnsDistributionCard extends StatelessWidget {
               ],
             ),
           ),
-          Divider(
-            height: 1,
-            thickness: 1,
-            color: AppColors.neutral500,
-          ),
+          Divider(height: 1, thickness: 1, color: AppColors.neutral500),
           Padding(
             padding: EdgeInsets.fromLTRB(14.w, 12.h, 14.w, 14.h),
             child: Row(

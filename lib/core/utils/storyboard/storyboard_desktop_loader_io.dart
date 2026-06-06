@@ -12,8 +12,10 @@ Widget? implLoadStoryboardDesktopImage(
   BoxFit fit = BoxFit.cover,
 }) {
   try {
-    final path =
-        '$basePath${Platform.pathSeparator}$filename'.replaceAll('/', Platform.pathSeparator);
+    final path = '$basePath${Platform.pathSeparator}$filename'.replaceAll(
+      '/',
+      Platform.pathSeparator,
+    );
     final file = File(path);
     if (!file.existsSync()) return null;
     return Image.file(file, fit: fit);

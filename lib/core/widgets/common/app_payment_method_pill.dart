@@ -16,16 +16,16 @@ class AppPaymentMethodPill extends StatelessWidget {
     required this.formattedBalance,
     this.showChevron = false,
     this.onTap,
-  })  : card = null,
-        _isWallet = true;
+  }) : card = null,
+       _isWallet = true;
 
   const AppPaymentMethodPill.card({
     super.key,
     required this.card,
     this.showChevron = false,
     this.onTap,
-  })  : formattedBalance = '',
-        _isWallet = false;
+  }) : formattedBalance = '',
+       _isWallet = false;
 
   final bool _isWallet;
   final String formattedBalance;
@@ -53,10 +53,7 @@ class AppPaymentMethodPill extends StatelessWidget {
           Flexible(child: child),
           if (showChevron) ...[
             SizedBox(width: 8.w),
-            AppSvgIcon(
-              assetPath: AppAssets.walletPaymentChevron,
-              size: 8.sp,
-            ),
+            AppSvgIcon(assetPath: AppAssets.walletPaymentChevron, size: 8.sp),
           ],
         ],
       ),
@@ -66,16 +63,15 @@ class AppPaymentMethodPill extends StatelessWidget {
 
     return Material(
       type: MaterialType.transparency,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: radius,
-        child: pill,
-      ),
+      child: InkWell(onTap: onTap, borderRadius: radius, child: pill),
     );
   }
 
   Widget _walletContent() {
-    final base = GoogleFonts.lato(fontSize: 14.sp, color: AppColors.neutral1200);
+    final base = GoogleFonts.lato(
+      fontSize: 14.sp,
+      color: AppColors.neutral1200,
+    );
     return Text.rich(
       TextSpan(
         style: base.copyWith(height: 1.0),

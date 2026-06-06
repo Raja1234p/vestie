@@ -24,10 +24,8 @@ class UserVffJoinedProjectRow extends StatelessWidget {
     this.isLoading = false,
   });
 
-  static TextStyle get _actionTextStyle => GoogleFonts.lato(
-        fontSize: 13.sp,
-        fontWeight: FontWeight.w600,
-      );
+  static TextStyle get _actionTextStyle =>
+      GoogleFonts.lato(fontSize: 13.sp, fontWeight: FontWeight.w600);
 
   Widget _actionChip() {
     switch (row.action) {
@@ -79,10 +77,7 @@ class UserVffJoinedProjectRow extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
-            child: _JoinedProjectCardBody(
-              row: row,
-              onTap: onCardTap,
-            ),
+            child: _JoinedProjectCardBody(row: row, onTap: onCardTap),
           ),
           SizedBox(width: 8.w),
           _actionChip(),
@@ -96,10 +91,7 @@ class _JoinedProjectCardBody extends StatelessWidget {
   final UserVffJoinedProjectRowUi row;
   final VoidCallback? onTap;
 
-  const _JoinedProjectCardBody({
-    required this.row,
-    this.onTap,
-  });
+  const _JoinedProjectCardBody({required this.row, this.onTap});
 
   @override
   Widget build(BuildContext context) {

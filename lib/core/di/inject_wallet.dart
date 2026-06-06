@@ -10,88 +10,109 @@ import '../../features/payment_methods/domain/usecases/payment_methods_usecases.
 import '../../features/stripe/data/datasources/stripe_remote_data_source.dart';
 import '../../features/stripe/data/repositories/stripe_repository_impl.dart';
 import '../../features/stripe/domain/usecases/get_stripe_config_use_case.dart';
-import '../../features/wallet/data/datasources/wallet_deposit_remote_data_source.dart';
-import '../../features/wallet/data/datasources/wallet_remote_data_source.dart';
-import '../../features/wallet/data/datasources/wallet_withdrawal_remote_data_source.dart';
-import '../../features/wallet/data/repositories/wallet_deposit_repository_impl.dart';
-import '../../features/wallet/data/repositories/wallet_repository_impl.dart';
-import '../../features/wallet/data/repositories/wallet_withdrawal_repository_impl.dart';
-import '../../features/wallet/domain/usecases/get_wallet_use_case.dart';
-import '../../features/wallet/domain/usecases/run_wallet_deposit_use_case.dart';
-import '../../features/wallet/domain/usecases/wallet_withdrawal_usecases.dart';
+import '../../wallet/data/datasources/wallet_deposit_remote_data_source.dart';
+import '../../wallet/data/datasources/wallet_remote_data_source.dart';
+import '../../wallet/data/datasources/wallet_withdrawal_remote_data_source.dart';
+import '../../wallet/data/repositories/wallet_deposit_repository_impl.dart';
+import '../../wallet/data/repositories/wallet_repository_impl.dart';
+import '../../wallet/data/repositories/wallet_withdrawal_repository_impl.dart';
+import '../../wallet/domain/usecases/get_wallet_use_case.dart';
+import '../../wallet/domain/usecases/run_wallet_deposit_use_case.dart';
+import '../../wallet/domain/usecases/wallet_withdrawal_usecases.dart';
 import '../stripe/stripe_payment_service.dart';
 import 'service_locator.dart';
 
 /// Registers wallet, Stripe, payment methods, KYC, and bank accounts.
 void registerWalletDependencies(ServiceLocator sl) {
-  sl.walletRemoteDataSource =
-      WalletRemoteDataSourceImpl(apiClient: sl.apiClient);
-  sl.walletRepository =
-      WalletRepositoryImpl(remoteDataSource: sl.walletRemoteDataSource);
+  sl.walletRemoteDataSource = WalletRemoteDataSourceImpl(
+    apiClient: sl.apiClient,
+  );
+  sl.walletRepository = WalletRepositoryImpl(
+    remoteDataSource: sl.walletRemoteDataSource,
+  );
   sl.getWalletUseCase = GetWalletUseCase(sl.walletRepository);
 
-  sl.stripeRemoteDataSource =
-      StripeRemoteDataSourceImpl(apiClient: sl.apiClient);
-  sl.stripeRepository =
-      StripeRepositoryImpl(remoteDataSource: sl.stripeRemoteDataSource);
+  sl.stripeRemoteDataSource = StripeRemoteDataSourceImpl(
+    apiClient: sl.apiClient,
+  );
+  sl.stripeRepository = StripeRepositoryImpl(
+    remoteDataSource: sl.stripeRemoteDataSource,
+  );
   sl.getStripeConfigUseCase = GetStripeConfigUseCase(sl.stripeRepository);
   sl.stripePaymentService = StripePaymentService();
 
-  sl.paymentMethodsRemoteDataSource =
-      PaymentMethodsRemoteDataSourceImpl(apiClient: sl.apiClient);
+  sl.paymentMethodsRemoteDataSource = PaymentMethodsRemoteDataSourceImpl(
+    apiClient: sl.apiClient,
+  );
   sl.paymentMethodsRepository = PaymentMethodsRepositoryImpl(
     remoteDataSource: sl.paymentMethodsRemoteDataSource,
     getStripeConfigUseCase: sl.getStripeConfigUseCase,
     stripePaymentService: sl.stripePaymentService,
   );
-  sl.listPaymentMethodsUseCase =
-      ListPaymentMethodsUseCase(sl.paymentMethodsRepository);
-  sl.savePaymentCardViaSetupUseCase =
-      SavePaymentCardViaSetupUseCase(sl.paymentMethodsRepository);
-  sl.getPaymentMethodUseCase =
-      GetPaymentMethodUseCase(sl.paymentMethodsRepository);
-  sl.setPrimaryPaymentMethodUseCase =
-      SetPrimaryPaymentMethodUseCase(sl.paymentMethodsRepository);
-  sl.removePaymentMethodUseCase =
-      RemovePaymentMethodUseCase(sl.paymentMethodsRepository);
+  sl.listPaymentMethodsUseCase = ListPaymentMethodsUseCase(
+    sl.paymentMethodsRepository,
+  );
+  sl.savePaymentCardViaSetupUseCase = SavePaymentCardViaSetupUseCase(
+    sl.paymentMethodsRepository,
+  );
+  sl.getPaymentMethodUseCase = GetPaymentMethodUseCase(
+    sl.paymentMethodsRepository,
+  );
+  sl.setPrimaryPaymentMethodUseCase = SetPrimaryPaymentMethodUseCase(
+    sl.paymentMethodsRepository,
+  );
+  sl.removePaymentMethodUseCase = RemovePaymentMethodUseCase(
+    sl.paymentMethodsRepository,
+  );
 
-  sl.walletDepositRemoteDataSource =
-      WalletDepositRemoteDataSourceImpl(apiClient: sl.apiClient);
+  sl.walletDepositRemoteDataSource = WalletDepositRemoteDataSourceImpl(
+    apiClient: sl.apiClient,
+  );
   sl.walletDepositRepository = WalletDepositRepositoryImpl(
     remoteDataSource: sl.walletDepositRemoteDataSource,
     walletRepository: sl.walletRepository,
     getStripeConfigUseCase: sl.getStripeConfigUseCase,
     stripePaymentService: sl.stripePaymentService,
   );
-  sl.runWalletDepositUseCase =
-      RunWalletDepositUseCase(sl.walletDepositRepository);
+  sl.runWalletDepositUseCase = RunWalletDepositUseCase(
+    sl.walletDepositRepository,
+  );
 
   sl.kycRemoteDataSource = KycRemoteDataSourceImpl(apiClient: sl.apiClient);
-  sl.kycRepository =
-      KycRepositoryImpl(remoteDataSource: sl.kycRemoteDataSource);
+  sl.kycRepository = KycRepositoryImpl(
+    remoteDataSource: sl.kycRemoteDataSource,
+  );
   sl.getKycStatusUseCase = GetKycStatusUseCase(sl.kycRepository);
   sl.startKycUseCase = StartKycUseCase(sl.kycRepository);
 
-  sl.bankAccountsRemoteDataSource =
-      BankAccountsRemoteDataSourceImpl(apiClient: sl.apiClient);
-  sl.bankAccountsRepository =
-      BankAccountsRepositoryImpl(remoteDataSource: sl.bankAccountsRemoteDataSource);
-  sl.listBankAccountsUseCase =
-      ListBankAccountsUseCase(sl.bankAccountsRepository);
+  sl.bankAccountsRemoteDataSource = BankAccountsRemoteDataSourceImpl(
+    apiClient: sl.apiClient,
+  );
+  sl.bankAccountsRepository = BankAccountsRepositoryImpl(
+    remoteDataSource: sl.bankAccountsRemoteDataSource,
+  );
+  sl.listBankAccountsUseCase = ListBankAccountsUseCase(
+    sl.bankAccountsRepository,
+  );
   sl.linkBankAccountUseCase = LinkBankAccountUseCase(sl.bankAccountsRepository);
-  sl.removeBankAccountUseCase =
-      RemoveBankAccountUseCase(sl.bankAccountsRepository);
-  sl.setDefaultBankAccountUseCase =
-      SetDefaultBankAccountUseCase(sl.bankAccountsRepository);
+  sl.removeBankAccountUseCase = RemoveBankAccountUseCase(
+    sl.bankAccountsRepository,
+  );
+  sl.setDefaultBankAccountUseCase = SetDefaultBankAccountUseCase(
+    sl.bankAccountsRepository,
+  );
 
-  sl.walletWithdrawalRemoteDataSource =
-      WalletWithdrawalRemoteDataSourceImpl(apiClient: sl.apiClient);
+  sl.walletWithdrawalRemoteDataSource = WalletWithdrawalRemoteDataSourceImpl(
+    apiClient: sl.apiClient,
+  );
   sl.walletWithdrawalRepository = WalletWithdrawalRepositoryImpl(
     remoteDataSource: sl.walletWithdrawalRemoteDataSource,
     walletRepository: sl.walletRepository,
   );
-  sl.previewWithdrawalUseCase =
-      PreviewWithdrawalUseCase(sl.walletWithdrawalRepository);
-  sl.runWalletWithdrawUseCase =
-      RunWalletWithdrawUseCase(sl.walletWithdrawalRepository);
+  sl.previewWithdrawalUseCase = PreviewWithdrawalUseCase(
+    sl.walletWithdrawalRepository,
+  );
+  sl.runWalletWithdrawUseCase = RunWalletWithdrawUseCase(
+    sl.walletWithdrawalRepository,
+  );
 }

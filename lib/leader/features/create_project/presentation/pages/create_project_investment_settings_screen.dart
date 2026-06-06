@@ -42,9 +42,7 @@ class _CreateProjectInvestmentSettingsScreenState
     final f = context.read<CreateProjectCubit>().state;
     final roiDigits = f.roi.replaceAll(RegExp(r'[^0-9]'), '');
     _roiCtrl = TextEditingController(
-      text: roiDigits.isEmpty
-          ? ''
-          : '$roiDigits${AppStrings.percentSign}',
+      text: roiDigits.isEmpty ? '' : '$roiDigits${AppStrings.percentSign}',
     );
   }
 
@@ -67,24 +65,22 @@ class _CreateProjectInvestmentSettingsScreenState
           return const Scaffold(body: SizedBox.shrink());
         }
 
-        final roiLabelStyle =
-            Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.authLabel, // #443F63 — same as Project Details labels
-                );
-        final roiHelperStyle =
-            Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.grey800, // #5E5783
-                );
-        final roiHintStyle =
-            Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w500,
-                  color: const Color(0xFF141414).withValues(alpha: 0.5),
-                );
+        final roiLabelStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
+          fontSize: 18.sp,
+          fontWeight: FontWeight.w500,
+          color:
+              AppColors.authLabel, // #443F63 — same as Project Details labels
+        );
+        final roiHelperStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
+          fontSize: 16.sp,
+          fontWeight: FontWeight.w500,
+          color: AppColors.grey800, // #5E5783
+        );
+        final roiHintStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
+          fontSize: 16.sp,
+          fontWeight: FontWeight.w500,
+          color: const Color(0xFF141414).withValues(alpha: 0.5),
+        );
 
         return Scaffold(
           backgroundColor: Colors.transparent,
@@ -122,9 +118,7 @@ class _CreateProjectInvestmentSettingsScreenState
                             controller: _roiCtrl,
                             keyboardType: TextInputType.number,
                             textInputAction: TextInputAction.done,
-                            inputFormatters: [
-                              PercentDigitsInputFormatter(),
-                            ],
+                            inputFormatters: [PercentDigitsInputFormatter()],
                             errorText: form.roiError,
                             onChanged: (value) => cubit.setRoi(value),
                             labelStyle: roiLabelStyle,

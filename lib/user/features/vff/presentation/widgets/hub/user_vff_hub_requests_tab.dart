@@ -45,18 +45,17 @@ final class UserVffHubRequestsTab extends StatelessWidget {
           onDecline: () => cubit.declineVffRequest(r),
         );
 
-    Widget groupCard(UserVffGroupInviteUi g) =>
-        UserVffGroupInvitationCard(
-          item: g,
-          actingRow: acting,
-          onPrimary: () {
-            if (g.kind == UserVffGroupInviteKind.memberRequestJoin) {
-              return;
-            }
-            cubit.acceptProjectInvite(g);
-          },
-          onDecline: () => cubit.declineProjectInvite(g),
-        );
+    Widget groupCard(UserVffGroupInviteUi g) => UserVffGroupInvitationCard(
+      item: g,
+      actingRow: acting,
+      onPrimary: () {
+        if (g.kind == UserVffGroupInviteKind.memberRequestJoin) {
+          return;
+        }
+        cubit.acceptProjectInvite(g);
+      },
+      onDecline: () => cubit.declineProjectInvite(g),
+    );
 
     final inboxBusy = acting != null;
 
@@ -93,7 +92,9 @@ final class UserVffHubRequestsTab extends StatelessWidget {
             onAction: () async {
               await context.push(AppRoutes.userVffGroupInvitesAll);
               if (!context.mounted) return;
-              await context.read<UserVffHubCubit>().refreshReceivedInboxSilently();
+              await context
+                  .read<UserVffHubCubit>()
+                  .refreshReceivedInboxSilently();
             },
           ),
           ...grpPrev.map(groupCard),

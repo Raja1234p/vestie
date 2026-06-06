@@ -111,20 +111,20 @@ class AppActionBottomSheet extends StatelessWidget {
               title,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontSize: 38.sp,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.grey1100,
-                  ),
+                fontSize: 38.sp,
+                fontWeight: FontWeight.w700,
+                color: AppColors.grey1100,
+              ),
             ),
             SizedBox(height: 10.h),
             AppText(
               description,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontSize: 16.sp,
-                    color: AppColors.grey900,
-                    height: 1.5,
-                  ),
+                fontSize: 16.sp,
+                color: AppColors.grey900,
+                height: 1.5,
+              ),
             ),
             SizedBox(height: 22.h),
             _SheetButton(
@@ -226,10 +226,10 @@ class _SheetButton extends StatelessWidget {
           child: AppText(
             label,
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600,
-                  color: textColor,
-                ),
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w600,
+              color: textColor,
+            ),
           ),
         ),
       ),

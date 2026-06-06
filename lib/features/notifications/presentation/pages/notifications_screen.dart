@@ -152,8 +152,8 @@ class _EmptyNotifications extends StatelessWidget {
               AppAssets.notificationsEmpty,
               width: 200.w,
               fit: BoxFit.contain,
-              cacheWidth:
-                  (200.w * MediaQuery.devicePixelRatioOf(context)).round(),
+              cacheWidth: (200.w * MediaQuery.devicePixelRatioOf(context))
+                  .round(),
             ),
             SizedBox(height: 24.h),
             Text(
@@ -235,9 +235,9 @@ class _NotificationListView extends StatelessWidget {
             child: _NotificationListTile(
               item: items[i],
               onTap: interactionsEnabled && !items[i].isRead
-                  ? () => context
-                      .read<NotificationsCubit>()
-                      .markAsRead(items[i].id)
+                  ? () => context.read<NotificationsCubit>().markAsRead(
+                      items[i].id,
+                    )
                   : null,
             ),
           ),
@@ -248,10 +248,7 @@ class _NotificationListView extends StatelessWidget {
 }
 
 class _NotificationListTile extends StatelessWidget {
-  const _NotificationListTile({
-    required this.item,
-    required this.onTap,
-  });
+  const _NotificationListTile({required this.item, required this.onTap});
 
   final NotificationListEntry item;
   final VoidCallback? onTap;
@@ -264,126 +261,129 @@ class _NotificationListTile extends StatelessWidget {
 
     return RepaintBoundary(
       child: Material(
-      color: isUnread ? AppColors.purple100.withValues(alpha: 0.45) : Colors.transparent,
-      borderRadius: BorderRadius.circular(12.r),
-      child: InkWell(
-        onTap: onTap,
+        color: isUnread
+            ? AppColors.purple100.withValues(alpha: 0.45)
+            : Colors.transparent,
         borderRadius: BorderRadius.circular(12.r),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 10.h),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Container(
-                    width: 48.w,
-                    height: 48.w,
-                    decoration: BoxDecoration(
-                      color: isUnread ? AppColors.purple200 : AppColors.grey100,
-                      shape: BoxShape.circle,
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: Center(
-                      child: Image.asset(
-                        AppAssets.notificationRowIcon,
-                        width: 40.w,
-                        height: 40.w,
-                        fit: BoxFit.contain,
-                        filterQuality: FilterQuality.high,
-                        cacheWidth: (40.w * devicePixelRatio).round(),
-                        cacheHeight: (40.w * devicePixelRatio).round(),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12.r),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 10.h),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Container(
+                      width: 48.w,
+                      height: 48.w,
+                      decoration: BoxDecoration(
+                        color: isUnread
+                            ? AppColors.purple200
+                            : AppColors.grey100,
+                        shape: BoxShape.circle,
                       ),
-                    ),
-                  ),
-                  if (isUnread)
-                    Positioned(
-                      top: 0,
-                      right: 0,
-                      child: Container(
-                        width: 10.w,
-                        height: 10.w,
-                        decoration: BoxDecoration(
-                          color: AppColors.purple900,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.white,
-                            width: 1.5,
-                          ),
+                      clipBehavior: Clip.antiAlias,
+                      child: Center(
+                        child: Image.asset(
+                          AppAssets.notificationRowIcon,
+                          width: 40.w,
+                          height: 40.w,
+                          fit: BoxFit.contain,
+                          filterQuality: FilterQuality.high,
+                          cacheWidth: (40.w * devicePixelRatio).round(),
+                          cacheHeight: (40.w * devicePixelRatio).round(),
                         ),
                       ),
                     ),
-                ],
-              ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.lato(
-                        fontSize: 16.sp,
-                        fontWeight:
-                            isUnread ? FontWeight.w800 : FontWeight.w500,
-                        color: isUnread
-                            ? AppColors.grey1100
-                            : AppColors.navInactive,
-                        height: 1.2,
+                    if (isUnread)
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: Container(
+                          width: 10.w,
+                          height: 10.w,
+                          decoration: BoxDecoration(
+                            color: AppColors.purple900,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 1.5),
+                          ),
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 4.h),
-                    Text(
-                      item.body,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.lato(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w400,
-                        color: isUnread
-                            ? AppColors.grey900
-                            : AppColors.navInactive,
-                        height: 1.35,
-                      ),
-                    ),
                   ],
                 ),
-              ),
-              SizedBox(width: 8.w),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    item.timeLabel,
-                    style: GoogleFonts.lato(
-                      fontSize: 12.sp,
-                      fontWeight:
-                          isUnread ? FontWeight.w700 : FontWeight.w500,
-                      color: isUnread
-                          ? AppColors.purple900
-                          : AppColors.navInactive,
-                    ),
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.lato(
+                          fontSize: 16.sp,
+                          fontWeight: isUnread
+                              ? FontWeight.w800
+                              : FontWeight.w500,
+                          color: isUnread
+                              ? AppColors.grey1100
+                              : AppColors.navInactive,
+                          height: 1.2,
+                        ),
+                      ),
+                      SizedBox(height: 4.h),
+                      Text(
+                        item.body,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.lato(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w400,
+                          color: isUnread
+                              ? AppColors.grey900
+                              : AppColors.navInactive,
+                          height: 1.35,
+                        ),
+                      ),
+                    ],
                   ),
-                  if (isUnread) ...[
-                    SizedBox(height: 6.h),
+                ),
+                SizedBox(width: 8.w),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
                     Text(
-                      'New',
+                      item.timeLabel,
                       style: GoogleFonts.lato(
-                        fontSize: 10.sp,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.purple900,
+                        fontSize: 12.sp,
+                        fontWeight: isUnread
+                            ? FontWeight.w700
+                            : FontWeight.w500,
+                        color: isUnread
+                            ? AppColors.purple900
+                            : AppColors.navInactive,
                       ),
                     ),
+                    if (isUnread) ...[
+                      SizedBox(height: 6.h),
+                      Text(
+                        'New',
+                        style: GoogleFonts.lato(
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.purple900,
+                        ),
+                      ),
+                    ],
                   ],
-                ],
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
         ),
-      ),
       ),
     );
   }

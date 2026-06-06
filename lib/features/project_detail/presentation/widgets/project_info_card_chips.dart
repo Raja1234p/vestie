@@ -9,7 +9,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_svg_icon.dart';
 import '../../../../core/widgets/text/app_text.dart';
 import '../../domain/entities/project_detail_entity.dart';
-import 'package:vestie/user/features/home/domain/entities/project.dart' show ProjectStatus;
+import 'package:vestie/user/features/home/domain/entities/project.dart'
+    show ProjectStatus;
 import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
 
 class ProjectInfoCategoryChip extends StatelessWidget {
@@ -86,8 +87,8 @@ class ProjectInfoStatusBadge extends StatelessWidget {
           colors: completed
               ? const [AppColors.green600, AppColors.green800]
               : isDraft
-                  ? const [AppColors.grey500, AppColors.grey700]
-                  : const [AppColors.blue600, AppColors.blue800],
+              ? const [AppColors.grey500, AppColors.grey700]
+              : const [AppColors.blue600, AppColors.blue800],
         ),
         borderRadius: BorderRadius.circular(100.r),
       ),

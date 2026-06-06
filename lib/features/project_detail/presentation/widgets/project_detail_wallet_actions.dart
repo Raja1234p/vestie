@@ -62,10 +62,7 @@ class ProjectDetailWalletActions extends StatelessWidget {
         ),
         if (project.showsBorrowAction) ...[
           SizedBox(height: 13.h),
-          _BorrowButton(
-            project: project,
-            walletArgs: walletArgs,
-          ),
+          _BorrowButton(project: project, walletArgs: walletArgs),
         ],
       ],
     );
@@ -76,10 +73,7 @@ class _BorrowButton extends StatelessWidget {
   final ProjectDetailEntity project;
   final ProjectWalletFlowArgs walletArgs;
 
-  const _BorrowButton({
-    required this.project,
-    required this.walletArgs,
-  });
+  const _BorrowButton({required this.project, required this.walletArgs});
 
   @override
   Widget build(BuildContext context) {

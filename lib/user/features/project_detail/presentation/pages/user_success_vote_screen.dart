@@ -27,14 +27,11 @@ class UserSuccessVoteScreen extends StatelessWidget {
     if (projectId == null || projectId.isEmpty) return true;
 
     final bloc = context.read<VotingBloc>();
-    bloc.add(SubmitVoteActionEvent(
-      projectId: projectId,
-      isPositive: voteForSuccess,
-    ));
-
-    final next = await bloc.stream.firstWhere(
-      (s) => !s.isLoading,
+    bloc.add(
+      SubmitVoteActionEvent(projectId: projectId, isPositive: voteForSuccess),
     );
+
+    final next = await bloc.stream.firstWhere((s) => !s.isLoading);
     if (next.failure != null) {
       if (context.mounted) {
         AppSnackBar.showError(context, next.failure!.message);

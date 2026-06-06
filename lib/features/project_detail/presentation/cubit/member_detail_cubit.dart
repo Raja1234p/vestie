@@ -4,8 +4,6 @@ import 'package:equatable/equatable.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
-
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/error/failure_mapper.dart';
 import '../../../../core/error/failures.dart';
@@ -21,8 +19,6 @@ import '../project_detail_reload_coordinator.dart';
 import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
 import 'package:vestie/user/features/vff/domain/usecases/vff_usecases.dart';
 
-
-
 enum MemberDetailAction {
   assignCoLeader,
   removeCoLeader,
@@ -30,14 +26,9 @@ enum MemberDetailAction {
   sendVffRequest,
 }
 
-
-
 enum MemberDetailLoadStatus { initial, loading, loaded, error }
 
-
-
 class MemberDetailState extends Equatable {
-
   final MemberDetailLoadStatus loadStatus;
 
   final MemberActivityEntity? activity;
@@ -58,10 +49,7 @@ class MemberDetailState extends Equatable {
 
   final bool isRemoveVffLoading;
 
-
-
   const MemberDetailState({
-
     this.loadStatus = MemberDetailLoadStatus.initial,
 
     this.activity,
@@ -81,23 +69,14 @@ class MemberDetailState extends Equatable {
     this.isVffRequestLoading = false,
 
     this.isRemoveVffLoading = false,
-
   });
-
-
 
   bool get isLoading => isActionLoading;
 
-
-
   bool isLoadingAction(MemberDetailAction action) =>
-
       isActionLoading && loadingAction == action;
 
-
-
   MemberDetailState copyWith({
-
     MemberDetailLoadStatus? loadStatus,
 
     MemberActivityEntity? activity,
@@ -125,18 +104,15 @@ class MemberDetailState extends Equatable {
     bool clearCompleted = false,
 
     bool clearActivity = false,
-
   }) {
-
     return MemberDetailState(
-
       loadStatus: loadStatus ?? this.loadStatus,
 
       activity: clearActivity ? null : (activity ?? this.activity),
 
-      loadErrorMessage:
-
-          clearLoadError ? null : (loadErrorMessage ?? this.loadErrorMessage),
+      loadErrorMessage: clearLoadError
+          ? null
+          : (loadErrorMessage ?? this.loadErrorMessage),
 
       isActionLoading: isActionLoading ?? this.isActionLoading,
 
@@ -144,62 +120,45 @@ class MemberDetailState extends Equatable {
 
       failure: clearFailure ? null : (failure ?? this.failure),
 
-      completedAction:
-
-          clearCompleted ? null : (completedAction ?? this.completedAction),
+      completedAction: clearCompleted
+          ? null
+          : (completedAction ?? this.completedAction),
 
       projectMembersChanged:
-
           projectMembersChanged ?? this.projectMembersChanged,
 
-      isVffRequestLoading:
+      isVffRequestLoading: isVffRequestLoading ?? this.isVffRequestLoading,
 
-          isVffRequestLoading ?? this.isVffRequestLoading,
-
-      isRemoveVffLoading:
-
-          isRemoveVffLoading ?? this.isRemoveVffLoading,
-
+      isRemoveVffLoading: isRemoveVffLoading ?? this.isRemoveVffLoading,
     );
-
   }
 
-
-
   @override
-
   List<Object?> get props => [
+    loadStatus,
 
-        loadStatus,
+    activity,
 
-        activity,
+    loadErrorMessage,
 
-        loadErrorMessage,
+    isActionLoading,
 
-        isActionLoading,
+    loadingAction,
 
-        loadingAction,
+    failure,
 
-        failure,
+    completedAction,
 
-        completedAction,
+    projectMembersChanged,
 
-        projectMembersChanged,
+    isVffRequestLoading,
 
-        isVffRequestLoading,
-
-        isRemoveVffLoading,
-
-      ];
-
+    isRemoveVffLoading,
+  ];
 }
 
-
-
 class MemberDetailCubit extends Cubit<MemberDetailState> {
-
   MemberDetailCubit({
-
     required GetMemberActivityUseCase getMemberActivityUseCase,
 
     required UpdateCoLeaderRoleUseCase updateCoLeaderRoleUseCase,
@@ -209,20 +168,17 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
     required SendVffRequestUseCase sendVffRequestUseCase,
 
     required RemoveVffConnectionUseCase removeVffConnectionUseCase,
+  }) : _getMemberActivityUseCase = getMemberActivityUseCase,
 
-  })  : _getMemberActivityUseCase = getMemberActivityUseCase,
+       _updateCoLeaderRoleUseCase = updateCoLeaderRoleUseCase,
 
-        _updateCoLeaderRoleUseCase = updateCoLeaderRoleUseCase,
+       _removeMemberUseCase = removeMemberUseCase,
 
-        _removeMemberUseCase = removeMemberUseCase,
+       _sendVffRequestUseCase = sendVffRequestUseCase,
 
-        _sendVffRequestUseCase = sendVffRequestUseCase,
+       _removeVffConnectionUseCase = removeVffConnectionUseCase,
 
-        _removeVffConnectionUseCase = removeVffConnectionUseCase,
-
-        super(const MemberDetailState());
-
-
+       super(const MemberDetailState());
 
   final GetMemberActivityUseCase _getMemberActivityUseCase;
 
@@ -239,28 +195,22 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
   String? _projectName;
 
   Future<void> load({
-
     required String projectId,
 
     required String userId,
 
     required String projectName,
-
   }) async {
     _projectId = projectId;
     _userId = userId;
     _projectName = projectName;
 
     emit(
-
       state.copyWith(
-
         loadStatus: MemberDetailLoadStatus.loading,
 
         clearLoadError: true,
-
       ),
-
     );
 
     await _fetchActivity(showLoading: true);
@@ -330,8 +280,6 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
     return ok;
   }
 
-
-
   /// Sends a VFF request in place — UI switches to “VFF Request Sent” (no navigation).
   Future<void> sendVffRequest() async {
     if (state.isVffRequestLoading) return;
@@ -358,12 +306,7 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
 
     await result.fold(
       (failure) async {
-        emit(
-          state.copyWith(
-            isVffRequestLoading: false,
-            failure: failure,
-          ),
-        );
+        emit(state.copyWith(isVffRequestLoading: false, failure: failure));
       },
       (sent) async {
         final current = state.activity;
@@ -442,12 +385,7 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
 
     await result.fold(
       (failure) async {
-        emit(
-          state.copyWith(
-            isRemoveVffLoading: false,
-            failure: failure,
-          ),
-        );
+        emit(state.copyWith(isRemoveVffLoading: false, failure: failure));
       },
       (_) async {
         final current = state.activity;
@@ -479,133 +417,78 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
   }
 
   Future<void> assignCoLeader({
-
     required String projectId,
 
     required String userId,
-
   }) {
-
-    return _setCoLeaderRole(
-
-      projectId: projectId,
-
-      userId: userId,
-
-      assign: true,
-
-    );
-
+    return _setCoLeaderRole(projectId: projectId, userId: userId, assign: true);
   }
 
-
-
   Future<void> removeCoLeader({
-
     required String projectId,
 
     required String userId,
-
   }) {
-
     return _setCoLeaderRole(
-
       projectId: projectId,
 
       userId: userId,
 
       assign: false,
-
     );
-
   }
 
-
-
   Future<void> _setCoLeaderRole({
-
     required String projectId,
 
     required String userId,
 
     required bool assign,
-
   }) async {
     final resolvedUserId = userId.trim().isNotEmpty
         ? userId.trim()
         : (_userId ?? '').trim();
     if (resolvedUserId.isEmpty) {
       emit(
-        state.copyWith(
-          failure: const ServerFailure(AppStrings.errorGeneric),
-        ),
+        state.copyWith(failure: const ServerFailure(AppStrings.errorGeneric)),
       );
       return;
     }
 
     await _run(
-
       action: assign
-
           ? MemberDetailAction.assignCoLeader
-
           : MemberDetailAction.removeCoLeader,
 
       task: () => _updateCoLeaderRoleUseCase(
-
         projectId: projectId,
 
         userId: resolvedUserId,
 
         assign: assign,
-
       ),
-
     );
   }
 
-
-
   Future<void> removeMember({
-
     required String projectId,
 
     required String userId,
+  }) => _run(
+    action: MemberDetailAction.removeMember,
 
-  }) =>
-
-      _run(
-
-        action: MemberDetailAction.removeMember,
-
-        task: () => _removeMemberUseCase(
-
-          projectId: projectId,
-
-          userId: userId,
-
-        ),
-
-      );
-
-
+    task: () => _removeMemberUseCase(projectId: projectId, userId: userId),
+  );
 
   Future<void> _run({
-
     required MemberDetailAction action,
 
     required Future<Either<Failure, void>> Function() task,
-
   }) async {
-
     if (state.isActionLoading) return;
 
-
-
     emit(
-
       state.copyWith(
-
         isActionLoading: true,
 
         loadingAction: action,
@@ -613,12 +496,8 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
         clearFailure: true,
 
         clearCompleted: true,
-
       ),
-
     );
-
-
 
     final result = await task();
 
@@ -649,14 +528,9 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
     );
   }
 
-
-
   void clearStatus() {
-
     emit(
-
       state.copyWith(
-
         clearFailure: true,
 
         clearCompleted: true,
@@ -664,21 +538,13 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
         loadingAction: null,
 
         isActionLoading: false,
-
       ),
-
     );
-
   }
-
-
 
   static String messageForFailure(Failure failure) =>
       FailureMapper.userMessage(failure);
 
   static String titleForFailure(Failure failure) =>
       FailureMapper.dialogTitle(failure);
-
 }
-
-

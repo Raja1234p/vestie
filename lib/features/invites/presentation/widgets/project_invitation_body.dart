@@ -21,65 +21,59 @@ class ProjectInvitationBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final showRoiCard = preview.isInvestment &&
-        isDisplayableRoi(preview.roiPercentage);
+    final showRoiCard =
+        preview.isInvestment && isDisplayableRoi(preview.roiPercentage);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-          SizedBox(height: 58.h),
-          const ProjectInvitationHero(),
-          SizedBox(height: AppDimens.v16),
-          AppText(
-            preview.projectName,
-            style: GoogleFonts.lato(
-              fontSize: 26.sp,
-              fontWeight: FontWeight.bold,
-              color: AppColors.neutral1200,
-              height: 1.25,
-            ),
-            textAlign: TextAlign.center,
+        SizedBox(height: 58.h),
+        const ProjectInvitationHero(),
+        SizedBox(height: AppDimens.v16),
+        AppText(
+          preview.projectName,
+          style: GoogleFonts.lato(
+            fontSize: 26.sp,
+            fontWeight: FontWeight.bold,
+            color: AppColors.neutral1200,
+            height: 1.25,
           ),
-          if (showRoiCard) ...[
-            SizedBox(height: 16.h),
-            ProjectInvitationExpectedRoiCard(
-              roiPercentage: preview.roiPercentage!,
-            ),
-          ],
+          textAlign: TextAlign.center,
+        ),
+        if (showRoiCard) ...[
           SizedBox(height: 16.h),
-          ProjectInvitationStatsRow(preview: preview),
-          SizedBox(height: 16.h),
-          if (preview.description != null)
-            ProjectInvitationDescriptionSection(
-              description: preview.description!,
-            ),
-          if (preview.isExpired)
-            Padding(
-              padding: EdgeInsets.only(top: AppDimens.v16),
-              child: AppText(
-                AppStrings.projectInvitationExpired,
-                style: GoogleFonts.lato(
-                  fontSize: 14.sp,
-                  color: AppColors.red700,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            )
-          else if (!preview.isJoinable)
-            Padding(
-              padding: EdgeInsets.only(top: AppDimens.v16),
-              child: AppText(
-                AppStrings.projectInvitationNotJoinable,
-                style: GoogleFonts.lato(
-                  fontSize: 14.sp,
-                  color: AppColors.red700,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          SizedBox(height: AppDimens.v24),
+          ProjectInvitationExpectedRoiCard(
+            roiPercentage: preview.roiPercentage!,
+          ),
         ],
+        SizedBox(height: 16.h),
+        ProjectInvitationStatsRow(preview: preview),
+        SizedBox(height: 16.h),
+        if (preview.description != null)
+          ProjectInvitationDescriptionSection(
+            description: preview.description!,
+          ),
+        if (preview.isExpired)
+          Padding(
+            padding: EdgeInsets.only(top: AppDimens.v16),
+            child: AppText(
+              AppStrings.projectInvitationExpired,
+              style: GoogleFonts.lato(fontSize: 14.sp, color: AppColors.red700),
+              textAlign: TextAlign.center,
+            ),
+          )
+        else if (!preview.isJoinable)
+          Padding(
+            padding: EdgeInsets.only(top: AppDimens.v16),
+            child: AppText(
+              AppStrings.projectInvitationNotJoinable,
+              style: GoogleFonts.lato(fontSize: 14.sp, color: AppColors.red700),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        SizedBox(height: AppDimens.v24),
+      ],
     );
   }
 }

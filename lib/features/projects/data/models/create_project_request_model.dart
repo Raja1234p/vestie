@@ -31,15 +31,15 @@ class CreateProjectRequestModel {
     final ends = _endsAtUtcIso(form.deadline);
 
     String mapType(NewProjectCategory c) => switch (c) {
-          NewProjectCategory.vacation => 'Vacation',
-          NewProjectCategory.emergency => 'Emergency',
-          NewProjectCategory.investment => 'Investment',
-        };
+      NewProjectCategory.vacation => 'Vacation',
+      NewProjectCategory.emergency => 'Emergency',
+      NewProjectCategory.investment => 'Investment',
+    };
 
     String mapVisibility(ProjectVisibility v) => switch (v) {
-          ProjectVisibility.public => 'Public',
-          ProjectVisibility.private => 'Private',
-        };
+      ProjectVisibility.public => 'Public',
+      ProjectVisibility.private => 'Private',
+    };
 
     double parseDouble(String s) => double.tryParse(s.trim()) ?? 0.0;
     int parseInt(String s) => int.tryParse(s.trim()) ?? 0;
@@ -71,8 +71,8 @@ class CreateProjectRequestModel {
       penaltyPercentage: investmentRoiOnly
           ? null
           : (form.borrowingEnabled
-              ? parseDouble(form.penalty.replaceAll('%', ''))
-              : null),
+                ? parseDouble(form.penalty.replaceAll('%', ''))
+                : null),
     );
   }
 
@@ -80,21 +80,28 @@ class CreateProjectRequestModel {
   static String? _endsAtUtcIso(DateTime? deadline) {
     if (deadline == null) return null;
     final d = DateTime(deadline.year, deadline.month, deadline.day);
-    return DateTime.utc(d.year, d.month, d.day, 23, 59, 59, 999)
-        .toIso8601String();
+    return DateTime.utc(
+      d.year,
+      d.month,
+      d.day,
+      23,
+      59,
+      59,
+      999,
+    ).toIso8601String();
   }
 
   Map<String, dynamic> toJson() => {
-        'name': name,
-        'description': description,
-        'type': type,
-        'visibility': visibility,
-        'targetAmount': targetAmount,
-        'endsAtUtc': endsAtUtc,
-        'borrowingEnabled': borrowingEnabled,
-        'joinApprovalRequired': joinApprovalRequired,
-        'roiPercentage': roiPercentage,
-        'repaymentWindowDays': repaymentWindowDays,
-        'penaltyPercentage': penaltyPercentage,
-      };
+    'name': name,
+    'description': description,
+    'type': type,
+    'visibility': visibility,
+    'targetAmount': targetAmount,
+    'endsAtUtc': endsAtUtc,
+    'borrowingEnabled': borrowingEnabled,
+    'joinApprovalRequired': joinApprovalRequired,
+    'roiPercentage': roiPercentage,
+    'repaymentWindowDays': repaymentWindowDays,
+    'penaltyPercentage': penaltyPercentage,
+  };
 }

@@ -36,7 +36,8 @@ class CreateProjectDetailsScreen extends StatefulWidget {
       _CreateProjectDetailsScreenState();
 }
 
-class _CreateProjectDetailsScreenState extends State<CreateProjectDetailsScreen> {
+class _CreateProjectDetailsScreenState
+    extends State<CreateProjectDetailsScreen> {
   late final TextEditingController _nameCtrl;
   late final TextEditingController _descCtrl;
 
@@ -61,8 +62,9 @@ class _CreateProjectDetailsScreenState extends State<CreateProjectDetailsScreen>
     final lastDay = DateTime(today.year + 20, today.month, today.day);
 
     final stored = cubit.state.deadline;
-    final storedDay =
-        stored != null ? CreateProjectCubit.calendarDate(stored) : null;
+    final storedDay = stored != null
+        ? CreateProjectCubit.calendarDate(stored)
+        : null;
 
     DateTime initial;
     if (storedDay != null) {
@@ -100,12 +102,12 @@ class _CreateProjectDetailsScreenState extends State<CreateProjectDetailsScreen>
     return BlocBuilder<CreateProjectCubit, CreateProjectForm>(
       builder: (context, form) {
         final cubit = context.read<CreateProjectCubit>();
-        final detailsLabelStyle =
-            Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.authLabel,
-                );
+        final detailsLabelStyle = Theme.of(context).textTheme.bodyLarge
+            ?.copyWith(
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w500,
+              color: AppColors.authLabel,
+            );
         return Scaffold(
           backgroundColor: Colors.transparent,
           resizeToAvoidBottomInset: false,
@@ -199,10 +201,10 @@ class _CreateProjectDetailsScreenState extends State<CreateProjectDetailsScreen>
                       color: AppColors.neutral1200,
                       borderRadius: 10.r,
                       onPressed: () => pushNextAfterDetailsStep(
-                            context,
-                            cubit,
-                            entryMode: widget.entryMode,
-                          ),
+                        context,
+                        cubit,
+                        entryMode: widget.entryMode,
+                      ),
                     ),
                   ),
                 ),

@@ -47,22 +47,23 @@ class _MyBorrowRequestScreenState extends State<MyBorrowRequestScreen> {
       !_showsApproved &&
       (_hasRealActiveRequest || _previewKind == _MyBorrowPreviewKind.pending);
 
-  bool get _canShowDevPreviews =>
-      !_hasRealApproved && !_hasRealActiveRequest;
+  bool get _canShowDevPreviews => !_hasRealApproved && !_hasRealActiveRequest;
 
   String get _headerTitle => _showsApproved
       ? AppStrings.myBorrowTitle
       : AppStrings.myBorrowRequestTitle;
 
   BorrowRequestEntity get _displayRequest =>
-      widget.args.activeRequest ?? MyBorrowRequestArgsBuilder.pendingPreviewRequest();
+      widget.args.activeRequest ??
+      MyBorrowRequestArgsBuilder.pendingPreviewRequest();
 
   List<MyBorrowHistoryEntry> get _displayHistory => _hasRealActiveRequest
       ? widget.args.history
       : MyBorrowRequestArgsBuilder.pendingPreviewHistory();
 
   MyBorrowApprovedUiData get _displayApproved =>
-      widget.args.approvedBorrow ?? MyBorrowRequestArgsBuilder.approvedPreview();
+      widget.args.approvedBorrow ??
+      MyBorrowRequestArgsBuilder.approvedPreview();
 
   @override
   Widget build(BuildContext context) {
@@ -136,15 +137,13 @@ class _MyBorrowRequestScreenState extends State<MyBorrowRequestScreen> {
         if (_canShowDevPreviews) ...[
           ProjectDetailPreviewLink(
             label: AppStrings.btnPreviewPendingBorrowRequest,
-            onPressed: () => setState(
-              () => _previewKind = _MyBorrowPreviewKind.pending,
-            ),
+            onPressed: () =>
+                setState(() => _previewKind = _MyBorrowPreviewKind.pending),
           ),
           ProjectDetailPreviewLink(
             label: AppStrings.btnPreviewApprovedBorrowRequest,
-            onPressed: () => setState(
-              () => _previewKind = _MyBorrowPreviewKind.approved,
-            ),
+            onPressed: () =>
+                setState(() => _previewKind = _MyBorrowPreviewKind.approved),
           ),
         ],
         const Expanded(

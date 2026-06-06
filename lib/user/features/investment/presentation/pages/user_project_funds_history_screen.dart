@@ -50,9 +50,7 @@ class UserProjectFundsHistoryScreen extends StatelessWidget {
                       currentPotBalance: snapshot.totalProjectFundsUsd,
                       layout: ProjectFundsHistorySummaryLayout.investment,
                     ),
-                    ...entries.map(
-                      (e) => ProjectFundsHistoryRow(entry: e),
-                    ),
+                    ...entries.map((e) => ProjectFundsHistoryRow(entry: e)),
                   ],
                 ),
               ),

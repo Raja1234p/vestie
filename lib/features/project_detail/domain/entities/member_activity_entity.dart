@@ -48,8 +48,7 @@ class MemberActivityEntity {
   });
 
   bool get hasOverdue =>
-      overdueBorrowCount > 0 ||
-      (overdueAmount != null && overdueAmount! > 0);
+      overdueBorrowCount > 0 || (overdueAmount != null && overdueAmount! > 0);
 
   MemberActivityEntity copyWith({
     MemberEntity? member,

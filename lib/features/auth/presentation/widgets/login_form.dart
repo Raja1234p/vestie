@@ -28,7 +28,7 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   final _emailCtrl = TextEditingController();
-  final _passCtrl  = TextEditingController();
+  final _passCtrl = TextEditingController();
 
   @override
   void dispose() {
@@ -45,10 +45,9 @@ class _LoginFormState extends State<LoginForm> {
     final formCubit = context.read<LoginFormCubit>();
     final valid = formCubit.validate(_emailCtrl.text, _passCtrl.text);
     if (valid) {
-      context.read<LoginBloc>().add(LoginSubmitted(
-        email: _emailCtrl.text.trim(),
-        password: _passCtrl.text,
-      ));
+      context.read<LoginBloc>().add(
+        LoginSubmitted(email: _emailCtrl.text.trim(), password: _passCtrl.text),
+      );
     }
   }
 
@@ -82,7 +81,7 @@ class _LoginFormState extends State<LoginForm> {
                       fontSize: 18.sp,
                       color: AppColors.authSubtitle,
                       height: 1.5,
-                      fontWeight: FontWeight.w500
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                   SizedBox(height: 12.h),
@@ -92,11 +91,9 @@ class _LoginFormState extends State<LoginForm> {
                     controller: _emailCtrl,
                     keyboardType: TextInputType.emailAddress,
                     errorText: form.emailError,
-                    onChanged: (_) =>
-                        context.read<LoginFormCubit>().onFieldsChanged(
-                              _emailCtrl.text,
-                              _passCtrl.text,
-                            ),
+                    onChanged: (_) => context
+                        .read<LoginFormCubit>()
+                        .onFieldsChanged(_emailCtrl.text, _passCtrl.text),
                   ),
                   SizedBox(height: 12.h),
                   AppTextField(
@@ -106,11 +103,9 @@ class _LoginFormState extends State<LoginForm> {
                     obscureText: !form.passwordVisible,
                     textInputAction: TextInputAction.done,
                     errorText: form.passwordError,
-                    onChanged: (_) =>
-                        context.read<LoginFormCubit>().onFieldsChanged(
-                              _emailCtrl.text,
-                              _passCtrl.text,
-                            ),
+                    onChanged: (_) => context
+                        .read<LoginFormCubit>()
+                        .onFieldsChanged(_emailCtrl.text, _passCtrl.text),
                     suffixIcon: ExcludeFocus(
                       child: IconButton(
                         icon: AuthPasswordVisibilityIcon(
@@ -156,7 +151,8 @@ class _LoginFormState extends State<LoginForm> {
                   AppButton(
                     text: AppStrings.btnContinue,
                     isLoading: isEmailLoading,
-                    onPressed: isEmailLoading || isGoogleLoading || !form.isValid
+                    onPressed:
+                        isEmailLoading || isGoogleLoading || !form.isValid
                         ? null
                         : () => _submit(context),
                   ),
@@ -167,9 +163,9 @@ class _LoginFormState extends State<LoginForm> {
                     provider: SocialProvider.google,
                     onPressed: isEmailLoading || isGoogleLoading
                         ? null
-                        : () => context
-                            .read<LoginBloc>()
-                            .add(const GoogleLoginRequested()),
+                        : () => context.read<LoginBloc>().add(
+                            const GoogleLoginRequested(),
+                          ),
                   ),
                   SizedBox(height: 12.h),
                   SocialAuthButton(
@@ -183,7 +179,12 @@ class _LoginFormState extends State<LoginForm> {
             SliverFillRemaining(
               hasScrollBody: false,
               child: Padding(
-                padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 16.h + bottomInset),
+                padding: EdgeInsets.fromLTRB(
+                  24.w,
+                  8.h,
+                  24.w,
+                  16.h + bottomInset,
+                ),
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: Wrap(

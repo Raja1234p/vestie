@@ -13,7 +13,9 @@ abstract class VffRepository {
     String userId,
   );
 
-  Future<Either<Failure, VffPublicProfileEntity>> getPublicProfile(String userId);
+  Future<Either<Failure, VffPublicProfileEntity>> getPublicProfile(
+    String userId,
+  );
 
   Future<Either<Failure, VffRemoveConnectionResultEntity>> removeConnection(
     String userId,

@@ -25,13 +25,9 @@ abstract class AuthRemoteDataSource {
     required String code,
   });
 
-  Future<MessageResponseModel> resendCode({
-    required String email,
-  });
+  Future<MessageResponseModel> resendCode({required String email});
 
-  Future<MessageResponseModel> forgotPassword({
-    required String email,
-  });
+  Future<MessageResponseModel> forgotPassword({required String email});
 
   Future<MessageResponseModel> resetPassword({
     required String email,
@@ -40,9 +36,7 @@ abstract class AuthRemoteDataSource {
     required String confirmNewPassword,
   });
 
-  Future<MessageResponseModel> logout({
-    required String refreshToken,
-  });
+  Future<MessageResponseModel> logout({required String refreshToken});
 
   Future<UserModel> getMe();
 
@@ -63,7 +57,5 @@ abstract class AuthRemoteDataSource {
     required String ipAddress,
   });
 
-  Future<AuthTokenModel> loginWithGoogle({
-    required String idToken,
-  });
+  Future<AuthTokenModel> loginWithGoogle({required String idToken});
 }

@@ -34,9 +34,7 @@ class BankAccountsCache {
   static void removeById(String bankAccountId) {
     final current = _cached;
     if (current == null) return;
-    update(
-      current.where((a) => a.id != bankAccountId).toList(growable: false),
-    );
+    update(current.where((a) => a.id != bankAccountId).toList(growable: false));
   }
 
   static void clear() => _cached = null;

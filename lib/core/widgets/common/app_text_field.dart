@@ -23,18 +23,25 @@ class AppTextField extends StatelessWidget {
   final int minLines;
   final int maxLines;
   final FocusNode? focusNode;
+
   /// Shown on the same row as [label] (e.g. info icon) — optional.
   final Widget? labelTrailing;
+
   /// Horizontal gap between [label] text and [labelTrailing] (e.g. up to `10.w`).
   final double? labelTrailingGap;
+
   /// Space to the right of [labelTrailing] after label + icon.
   final double? labelTrailingEndGap;
+
   /// When set, overrides default label typography (e.g. create-project details).
   final TextStyle? labelStyle;
+
   /// When set, overrides default input fill ([AppColors.authInputBg]).
   final Color? fillColor;
+
   /// When set, overrides default hint style (e.g. ROI field).
   final TextStyle? hintStyle;
+
   /// When set with [suffixIcon], overrides M3’s default 48×48 suffix slot (shrinks small glyphs).
   final BoxConstraints? suffixIconConstraints;
   final bool readOnly;
@@ -69,22 +76,24 @@ class AppTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isMultiline = maxLines > 1 || minLines > 1;
-    final effectiveKeyboardType =
-        isMultiline ? TextInputType.multiline : keyboardType;
+    final effectiveKeyboardType = isMultiline
+        ? TextInputType.multiline
+        : keyboardType;
     // Multiline fields default to Enter for new lines; pass [textInputAction:
     // TextInputAction.done] to show a Done key and dismiss on submit instead.
     final effectiveTextInputAction = isMultiline
         ? (textInputAction == TextInputAction.done
-            ? TextInputAction.done
-            : TextInputAction.newline)
+              ? TextInputAction.done
+              : TextInputAction.newline)
         : textInputAction;
 
-    final effectiveLabelStyle = labelStyle ??
+    final effectiveLabelStyle =
+        labelStyle ??
         Theme.of(context).textTheme.bodyLarge?.copyWith(
-              fontSize: 15.sp,
-              fontWeight: FontWeight.w500,
-              color: AppColors.authLabel,
-            );
+          fontSize: 15.sp,
+          fontWeight: FontWeight.w500,
+          color: AppColors.authLabel,
+        );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,13 +132,14 @@ class AppTextField extends StatelessWidget {
           minLines: minLines,
           maxLines: maxLines,
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w500,
-                color: AppColors.inputFieldText,
-              ),
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w500,
+            color: AppColors.inputFieldText,
+          ),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: hintStyle ??
+            hintStyle:
+                hintStyle ??
                 Theme.of(context).textTheme.bodyLarge?.copyWith(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w500,
@@ -142,8 +152,10 @@ class AppTextField extends StatelessWidget {
             counterText: '',
             suffixIconColor: AppColors.inputFieldIcon,
             prefixIconColor: AppColors.inputFieldIcon,
-            contentPadding:
-                EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 16.w,
+              vertical: 14.h,
+            ),
             border: _border(AppColors.inputFieldBorder, 1),
             enabledBorder: _border(AppColors.inputFieldBorder, 1),
             focusedBorder: _border(AppColors.inputFieldBorder, 1.5),
@@ -167,7 +179,7 @@ class AppTextField extends StatelessWidget {
   }
 
   OutlineInputBorder _border(Color color, double width) => OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.r),
-        borderSide: BorderSide(color: color, width: width),
-      );
+    borderRadius: BorderRadius.circular(12.r),
+    borderSide: BorderSide(color: color, width: width),
+  );
 }

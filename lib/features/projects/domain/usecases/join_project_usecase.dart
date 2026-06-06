@@ -13,10 +13,6 @@ class JoinProjectUseCase {
     String? projectId,
     String? inviteCode,
   }) async {
-    return repository.joinProject(
-      projectId: projectId,
-      inviteCode: inviteCode,
-    );
+    return repository.joinProject(projectId: projectId, inviteCode: inviteCode);
   }
 }
-

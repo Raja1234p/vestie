@@ -117,7 +117,10 @@ abstract final class AppPermissionHelper {
           description: AppStrings.permissionNotificationsSettingsBody,
         );
       } else if (context.mounted) {
-        AppSnackBar.showError(context, AppStrings.permissionNotificationsDenied);
+        AppSnackBar.showError(
+          context,
+          AppStrings.permissionNotificationsDenied,
+        );
       }
       return false;
     }
@@ -148,7 +151,9 @@ abstract final class AppPermissionHelper {
     }
 
     final prefs = ServiceLocator.instance.sharedPrefs;
-    if (await prefs.getBool(StorageKeys.notificationPermissionPromptDismissed) ==
+    if (await prefs.getBool(
+          StorageKeys.notificationPermissionPromptDismissed,
+        ) ==
         true) {
       return;
     }
@@ -177,8 +182,8 @@ abstract final class AppPermissionHelper {
 
   static Future<bool> _notificationsAlreadyGranted() async {
     if (Platform.isIOS) {
-      final settings =
-          await FirebaseMessaging.instance.getNotificationSettings();
+      final settings = await FirebaseMessaging.instance
+          .getNotificationSettings();
       return _iosNotificationsGranted(settings.authorizationStatus);
     }
     if (Platform.isAndroid) {

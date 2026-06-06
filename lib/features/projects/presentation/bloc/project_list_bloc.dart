@@ -6,11 +6,15 @@ import 'project_list_state.dart';
 class ProjectListBloc extends Bloc<ProjectListEvent, ProjectListState> {
   final GetProjectsUseCase getProjectsUseCase;
 
-  ProjectListBloc({required this.getProjectsUseCase}) : super(ProjectListInitial()) {
+  ProjectListBloc({required this.getProjectsUseCase})
+    : super(ProjectListInitial()) {
     on<LoadProjectsEvent>(_onLoadProjects);
   }
 
-  Future<void> _onLoadProjects(LoadProjectsEvent event, Emitter<ProjectListState> emit) async {
+  Future<void> _onLoadProjects(
+    LoadProjectsEvent event,
+    Emitter<ProjectListState> emit,
+  ) async {
     if (!event.isRefresh) {
       emit(ProjectListLoading());
     }
@@ -18,10 +22,9 @@ class ProjectListBloc extends Bloc<ProjectListEvent, ProjectListState> {
     final result = await getProjectsUseCase(scope: event.scope);
 
     result.fold(
-      (failure) => emit(ProjectListFailure(
-        message: failure.message,
-        title: failure.title,
-      )),
+      (failure) => emit(
+        ProjectListFailure(message: failure.message, title: failure.title),
+      ),
       (projects) => emit(ProjectListLoaded(projects: projects)),
     );
   }

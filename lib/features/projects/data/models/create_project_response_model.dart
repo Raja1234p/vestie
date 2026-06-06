@@ -22,15 +22,18 @@ class CreateProjectResponseModel extends Equatable {
         description: json.safeString('description'),
         type: projectTypeToApiInt(typeRaw) ?? json.safeInt('type'),
         visibility:
-            projectVisibilityToApiInt(visibilityRaw) ?? json.safeInt('visibility'),
+            projectVisibilityToApiInt(visibilityRaw) ??
+            json.safeInt('visibility'),
         state: projectStateToApiInt(stateRaw) ?? json.safeInt('state'),
         targetAmount: json.safeDouble('targetAmount'),
         endsAtUtc: json.safeDateTimeUtc('endsAtUtc') ?? DateTime.now().toUtc(),
         launchedAtUtc: json.safeDateTimeUtc('launchedAtUtc'),
         borrowingEnabled: json.safeBool('borrowingEnabled'),
-        suggestedContributionAmount:
-            json.safeDoubleNullable('suggestedContributionAmount'),
-        createdUtc: json.safeDateTimeUtc('createdUtc') ?? DateTime.now().toUtc(),
+        suggestedContributionAmount: json.safeDoubleNullable(
+          'suggestedContributionAmount',
+        ),
+        createdUtc:
+            json.safeDateTimeUtc('createdUtc') ?? DateTime.now().toUtc(),
       ),
     );
   }

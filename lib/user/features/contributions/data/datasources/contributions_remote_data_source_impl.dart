@@ -10,7 +10,8 @@ import '../models/contribution_preview_model.dart';
 import '../models/contribution_record_model.dart';
 import 'contributions_remote_data_source.dart';
 
-class ContributionsRemoteDataSourceImpl implements ContributionsRemoteDataSource {
+class ContributionsRemoteDataSourceImpl
+    implements ContributionsRemoteDataSource {
   final DioClient _client;
 
   ContributionsRemoteDataSourceImpl(this._client);
@@ -21,7 +22,8 @@ class ContributionsRemoteDataSourceImpl implements ContributionsRemoteDataSource
 
     if (e.response?.data != null && e.response?.data is Map) {
       final data = e.response!.data as Map;
-      message = data['detail']?.toString() ??
+      message =
+          data['detail']?.toString() ??
           data['message']?.toString() ??
           defaultMessage;
       title = data['title']?.toString();
@@ -118,9 +120,9 @@ class ContributionsRemoteDataSourceImpl implements ContributionsRemoteDataSource
       if (data is! List) return const [];
       return data
           .whereType<Map>()
-          .map((e) => ContributionRecordModel.fromJson(
-                e.cast<String, dynamic>(),
-              ))
+          .map(
+            (e) => ContributionRecordModel.fromJson(e.cast<String, dynamic>()),
+          )
           .toList(growable: false);
     } on DioException catch (e) {
       _handleError(e, 'Failed to load contribution list');
@@ -185,4 +187,3 @@ class ContributionsRemoteDataSourceImpl implements ContributionsRemoteDataSource
     }
   }
 }
-

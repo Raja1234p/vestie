@@ -34,21 +34,22 @@ class TxFilterBar extends StatelessWidget {
             ..._filters.map((filter) {
               final active = filter == activeFilter;
               return GestureDetector(
-                onTap: () =>
-                    context.read<TransactionHistoryCubit>().selectFilter(filter),
+                onTap: () => context
+                    .read<TransactionHistoryCubit>()
+                    .selectFilter(filter),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   margin: EdgeInsets.only(right: 8.w),
-                  padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 7.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 14.w,
+                    vertical: 7.h,
+                  ),
                   decoration: BoxDecoration(
                     color: active
                         ? AppColors.actionPrimaryPressed
                         : AppColors.chipInactiveBg,
                     borderRadius: BorderRadius.circular(24.r),
-                    border: Border.all(
-                      color: AppColors.purple300,
-                      width: 1,
-                    ),
+                    border: Border.all(color: AppColors.purple300, width: 1),
                   ),
                   child: AppText(
                     filter,

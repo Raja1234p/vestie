@@ -7,76 +7,85 @@ import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import '../../domain/entities/project.dart';
 import 'project_card.dart';
 
-/// Collapsible section showing a list of project cards.
-class ProjectsSection extends StatelessWidget {
-  final String title;
-  final List<Project> projects;
-  final bool expanded;
-  final VoidCallback onToggle;
-  final void Function(Project) onProjectAction;
+/// Collapsible home project sections as [CustomScrollView] slivers.
+///
+/// Uses [SliverList] + [SliverChildBuilderDelegate] so 20+ cards lazy-build
+/// without [ListView.shrinkWrap] viewport expansion inside the parent scroll view.
+class ProjectsSection {
+  ProjectsSection._();
 
-  const ProjectsSection({
-    super.key,
-    required this.title,
-    required this.projects,
-    required this.expanded,
-    required this.onToggle,
-    required this.onProjectAction,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // ── Section header ─────────────────────────────────
-        GestureDetector(
-          onTap: onToggle,
-          behavior: HitTestBehavior.opaque,
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 12.h),
-            child: Row(
-              children: [
-                Text(
-                  title,
-                  style: AppTextStyles.homeSectionTitle,
-                ),
-                const Spacer(),
-                AnimatedRotation(
-                  turns: expanded ? 0 : -0.25,
-                  duration: const Duration(milliseconds: 250),
-                  child: AppSvgIcon(
-                    assetPath: AppAssets.iconChevronDown,
-                    size: 22.w,
-                    color: AppColors.textBody,
-                  ),
-                ),
-              ],
+  static List<Widget> buildSlivers({
+    required String title,
+    required List<Project> projects,
+    required bool expanded,
+    required VoidCallback onToggle,
+    required void Function(Project) onProjectAction,
+  }) {
+    return [
+      SliverPadding(
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        sliver: SliverToBoxAdapter(
+          child: _ProjectsSectionHeader(
+            title: title,
+            expanded: expanded,
+            onToggle: onToggle,
+          ),
+        ),
+      ),
+      if (expanded && projects.isNotEmpty)
+        SliverPadding(
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                final project = projects[index];
+                return ProjectCard(
+                  project: project,
+                  onAction: () => onProjectAction(project),
+                );
+              },
+              childCount: projects.length,
             ),
           ),
         ),
+    ];
+  }
+}
 
-        // ── Cards ──────────────────────────────────────────
-        AnimatedCrossFade(
-          duration: const Duration(milliseconds: 280),
-          crossFadeState: expanded
-              ? CrossFadeState.showFirst
-              : CrossFadeState.showSecond,
-          firstChild: ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: projects.length,
-            itemBuilder: (context, index) {
-              final project = projects[index];
-              return ProjectCard(
-                project: project,
-                onAction: () => onProjectAction(project),
-              );
-            },
-          ),
-          secondChild: const SizedBox.shrink(),
+class _ProjectsSectionHeader extends StatelessWidget {
+  const _ProjectsSectionHeader({
+    required this.title,
+    required this.expanded,
+    required this.onToggle,
+  });
+
+  final String title;
+  final bool expanded;
+  final VoidCallback onToggle;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onToggle,
+      behavior: HitTestBehavior.opaque,
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 12.h),
+        child: Row(
+          children: [
+            Text(title, style: AppTextStyles.homeSectionTitle),
+            const Spacer(),
+            AnimatedRotation(
+              turns: expanded ? 0 : -0.25,
+              duration: const Duration(milliseconds: 250),
+              child: AppSvgIcon(
+                assetPath: AppAssets.iconChevronDown,
+                size: 22.w,
+                color: AppColors.textBody,
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

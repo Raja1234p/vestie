@@ -11,14 +11,27 @@ import 'app_svg_icon.dart';
 class AppNumpad extends StatelessWidget {
   final ValueChanged<String> onDigit;
   final VoidCallback onBackspace;
-  
+
   const AppNumpad({
     super.key,
     required this.onDigit,
     required this.onBackspace,
   });
 
-  static const _keys = ['1','2','3','4','5','6','7','8','9','','0','⌫'];
+  static const _keys = [
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '',
+    '0',
+    '⌫',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -46,9 +59,10 @@ class AppNumpad extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10.r),
                 boxShadow: [
                   BoxShadow(
-                      color: AppColors.textBody.withValues(alpha: 0.05),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2)),
+                    color: AppColors.textBody.withValues(alpha: 0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
                 ],
               ),
               child: Center(
@@ -58,11 +72,14 @@ class AppNumpad extends StatelessWidget {
                         size: 20.w,
                         color: AppColors.textPrimary,
                       )
-                    : AppText(k,
+                    : AppText(
+                        k,
                         style: GoogleFonts.lato(
-                            fontSize: 22.sp,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary)),
+                          fontSize: 22.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
               ),
             ),
           );

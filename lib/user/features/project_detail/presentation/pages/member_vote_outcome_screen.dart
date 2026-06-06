@@ -30,7 +30,9 @@ class MemberVoteOutcomeScreen extends StatelessWidget {
         if (project != null) {
           ProjectDetailNavigation.openDistributeFundsFlow(
             context,
-            returnsData: InvestmentReturnsUiData.previewLeaderForProject(project),
+            returnsData: InvestmentReturnsUiData.previewLeaderForProject(
+              project,
+            ),
           );
         } else if (context.canPop()) {
           context.pop();
@@ -50,8 +52,8 @@ class MemberVoteOutcomeScreen extends StatelessWidget {
 
     final buttonText = isGroupLeader
         ? (data.isApproved
-            ? AppStrings.btnStartDistributing
-            : AppStrings.btnResumeContributions)
+              ? AppStrings.btnStartDistributing
+              : AppStrings.btnResumeContributions)
         : AppStrings.btnViewDetails;
 
     return AppSuccessScreen(

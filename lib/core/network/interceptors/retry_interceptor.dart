@@ -7,7 +7,10 @@ class RetryInterceptor extends Interceptor {
   RetryInterceptor({required this.dio, this.maxRetries = 3});
 
   @override
-  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
+  Future<void> onError(
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
     if (_shouldRetry(err)) {
       int retries = err.requestOptions.extra['retries'] as int? ?? 0;
       if (retries < maxRetries) {
@@ -25,10 +28,12 @@ class RetryInterceptor extends Interceptor {
 
   bool _shouldRetry(DioException err) {
     if (err.requestOptions.method != 'GET') return false;
-    if (err.type == DioExceptionType.connectionTimeout || err.type == DioExceptionType.receiveTimeout) {
+    if (err.type == DioExceptionType.connectionTimeout ||
+        err.type == DioExceptionType.receiveTimeout) {
       return true;
     }
-    if (err.response?.statusCode != null && (err.response!.statusCode! >= 500)) {
+    if (err.response?.statusCode != null &&
+        (err.response!.statusCode! >= 500)) {
       return true;
     }
     return false;

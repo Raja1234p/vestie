@@ -2,10 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:vestie/core/services/home_project_list_sync.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 
-Project _project({
-  required String id,
-  double? currentAmount,
-}) {
+Project _project({required String id, double? currentAmount}) {
   return Project(
     id: id,
     name: 'Test',
@@ -19,10 +16,7 @@ Project _project({
 
 void main() {
   test('applyPendingPots updates matching project currentAmount', () {
-    HomeProjectListSync.recordContribution(
-      projectId: 'p1',
-      projectPot: 250,
-    );
+    HomeProjectListSync.recordContribution(projectId: 'p1', projectPot: 250);
 
     final list = HomeProjectListSync.applyPendingPots([
       _project(id: 'p1', currentAmount: 100),
@@ -34,19 +28,13 @@ void main() {
   });
 
   test('consumeRefreshHomeOnPop returns true once after contribution', () {
-    HomeProjectListSync.recordContribution(
-      projectId: 'p1',
-      projectPot: 100,
-    );
+    HomeProjectListSync.recordContribution(projectId: 'p1', projectPot: 100);
     expect(HomeProjectListSync.consumeRefreshHomeOnPop(), isTrue);
     expect(HomeProjectListSync.consumeRefreshHomeOnPop(), isFalse);
   });
 
   test('reconcileAfterFetch clears pending when API matches', () {
-    HomeProjectListSync.recordContribution(
-      projectId: 'p1',
-      projectPot: 300,
-    );
+    HomeProjectListSync.recordContribution(projectId: 'p1', projectPot: 300);
     HomeProjectListSync.reconcileAfterFetch([
       _project(id: 'p1', currentAmount: 300),
     ]);

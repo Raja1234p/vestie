@@ -60,8 +60,9 @@ class InvestmentProjectDetailScreen extends StatelessWidget {
         );
       },
       child: BlocProvider(
-        create: (_) => ServiceLocator.instance.createProjectDetailBloc()
-          ..add(LoadProjectDetailEvent(projectId: projectId)),
+        create: (_) =>
+            ServiceLocator.instance.createProjectDetailBloc()
+              ..add(LoadProjectDetailEvent(projectId: projectId)),
         child: ProjectDetailReloadScope(
           projectId: projectId,
           child: ProjectRealtimeScope(
@@ -104,24 +105,21 @@ class _InvestmentProjectDetailBodyState
   bool _previewSuccessVote = false;
 
   Future<bool> _deleteAnnouncement(String announcementId) async {
-    final result =
-        await ServiceLocator.instance.deleteProjectAnnouncementUseCase(
-      projectId: widget.projectId,
-      announcementId: announcementId,
-    );
+    final result = await ServiceLocator.instance
+        .deleteProjectAnnouncementUseCase(
+          projectId: widget.projectId,
+          announcementId: announcementId,
+        );
     if (!mounted) return false;
     return result.fold(
       (failure) {
-        AppSnackBar.showError(
-          context,
-          FailureMapper.userMessage(failure),
-        );
+        AppSnackBar.showError(context, FailureMapper.userMessage(failure));
         return false;
       },
       (_) {
         context.read<ProjectDetailBloc>().add(
-              LoadProjectDetailEvent(projectId: widget.projectId),
-            );
+          LoadProjectDetailEvent(projectId: widget.projectId),
+        );
         return true;
       },
     );
@@ -137,18 +135,21 @@ class _InvestmentProjectDetailBodyState
               curr is ProjectDetailLoaded &&
               curr.vffSendErrorMessage != null &&
               curr.vffSendErrorMessage !=
-                  (prev is ProjectDetailLoaded ? prev.vffSendErrorMessage : null),
+                  (prev is ProjectDetailLoaded
+                      ? prev.vffSendErrorMessage
+                      : null),
           listener: (context, state) {
             if (state is! ProjectDetailLoaded) return;
             final message = state.vffSendErrorMessage;
             if (message == null || message.isEmpty) return;
             AppSnackBar.showError(context, message);
-            context
-                .read<ProjectDetailBloc>()
-                .add(const ClearMemberVffSendErrorEvent());
+            context.read<ProjectDetailBloc>().add(
+              const ClearMemberVffSendErrorEvent(),
+            );
           },
           builder: (context, state) {
-            if (state is ProjectDetailLoading || state is ProjectDetailInitial) {
+            if (state is ProjectDetailLoading ||
+                state is ProjectDetailInitial) {
               return ProjectDetailLoadingBody(
                 title: widget.initialProjectName,
                 onBack: () => popProjectDetailNavigation(
@@ -163,8 +164,8 @@ class _InvestmentProjectDetailBodyState
               return ProjectDetailLoadError(
                 message: state.message,
                 onRetry: () => context.read<ProjectDetailBloc>().add(
-                      LoadProjectDetailEvent(projectId: widget.projectId),
-                    ),
+                  LoadProjectDetailEvent(projectId: widget.projectId),
+                ),
               );
             }
 
@@ -174,20 +175,19 @@ class _InvestmentProjectDetailBodyState
               final isCompleted = project.status == ProjectStatus.completed;
               final showCompletedLayout =
                   isCompleted || _previewCompletedInvestment;
-              final showMemberSuccessVotePreview = project.isMemberView &&
+              final showMemberSuccessVotePreview =
+                  project.isMemberView &&
                   !showCompletedLayout &&
                   _previewSuccessVote;
 
               Future<void> openMemberDetail(MemberEntity member) async {
-                final result =
-                    await ProjectDetailNavigation.openMemberProfile(
+                final result = await ProjectDetailNavigation.openMemberProfile(
                   context,
                   project: project,
                   member: member,
                 );
                 if (!context.mounted) return;
-                ProjectDetailNavigation
-                    .refreshProjectDetailAfterMemberFlow(
+                ProjectDetailNavigation.refreshProjectDetailAfterMemberFlow(
                   context,
                   projectId: widget.projectId,
                   result: result,
@@ -210,20 +210,22 @@ class _InvestmentProjectDetailBodyState
                           pendingJoinRequestCount: pendingCount,
                           onLeaderMenuSelected: (action) =>
                               ProjectDetailNavigation.handleLeaderAction(
-                            context,
-                            project: project,
-                            action: action,
-                            refreshHomeOnPop: widget.refreshHomeOnPop,
-                            refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
-                          ),
+                                context,
+                                project: project,
+                                action: action,
+                                refreshHomeOnPop: widget.refreshHomeOnPop,
+                                refreshDiscoverOnPop:
+                                    widget.refreshDiscoverOnPop,
+                              ),
                           onMemberMenuSelected: (action) =>
                               ProjectDetailNavigation.handleMemberAction(
-                            context,
-                            project: project,
-                            action: action,
-                            refreshHomeOnPop: widget.refreshHomeOnPop,
-                            refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
-                          ),
+                                context,
+                                project: project,
+                                action: action,
+                                refreshHomeOnPop: widget.refreshHomeOnPop,
+                                refreshDiscoverOnPop:
+                                    widget.refreshDiscoverOnPop,
+                              ),
                         )
                       : null,
                 );
@@ -250,13 +252,11 @@ class _InvestmentProjectDetailBodyState
                 color: AppColors.primary,
                 onRefresh: () async {
                   context.read<ProjectDetailBloc>().add(
-                        LoadProjectDetailEvent(projectId: widget.projectId),
-                      );
+                    LoadProjectDetailEvent(projectId: widget.projectId),
+                  );
                   await context.read<ProjectDetailBloc>().stream.firstWhere(
-                        (s) =>
-                            s is ProjectDetailLoaded ||
-                            s is ProjectDetailError,
-                      );
+                    (s) => s is ProjectDetailLoaded || s is ProjectDetailError,
+                  );
                 },
                 child: CustomScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
@@ -280,9 +280,9 @@ class _InvestmentProjectDetailBodyState
                                 onMemberTap: (m) => openMemberDetail(m),
                                 onSendVffRequest: (member) =>
                                     sendMemberVffFromProjectDetail(
-                                  context,
-                                  member: member,
-                                ),
+                                      context,
+                                      member: member,
+                                    ),
                                 sendingVffUserId: state.sendingVffUserId,
                                 onDeleteAnnouncement: project.isModeratorView
                                     ? _deleteAnnouncement
@@ -308,8 +308,10 @@ class _InvestmentProjectDetailBodyState
                                   SizedBox(height: 16.h),
                                   ProjectDetailWalletActions(project: project),
                                   SizedBox(height: 16.h),
-                                  BlocBuilder<ProjectDetailBloc,
-                                      ProjectDetailState>(
+                                  BlocBuilder<
+                                    ProjectDetailBloc,
+                                    ProjectDetailState
+                                  >(
                                     buildWhen: (prev, curr) =>
                                         prev is ProjectDetailLoaded &&
                                         curr is ProjectDetailLoaded &&
@@ -318,16 +320,16 @@ class _InvestmentProjectDetailBodyState
                                             prev.sendingVffUserId !=
                                                 curr.sendingVffUserId),
                                     builder: (context, detailState) {
-                                      final loaded = detailState
-                                          as ProjectDetailLoaded;
+                                      final loaded =
+                                          detailState as ProjectDetailLoaded;
                                       return ProjectMembersPreviewSection(
                                         project: loaded.project,
                                         onMemberTap: openMemberDetail,
                                         onSendVffRequest: (member) =>
                                             sendMemberVffFromProjectDetail(
-                                          context,
-                                          member: member,
-                                        ),
+                                              context,
+                                              member: member,
+                                            ),
                                         sendingVffUserId:
                                             loaded.sendingVffUserId,
                                       );

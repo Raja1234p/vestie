@@ -21,14 +21,14 @@ class ContributionConfigEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        projectId,
-        projectCurrency,
-        platformFeeRatePercent,
-        minimumContributionAmount,
-        isNonRefundable,
-        suggestedContributionAmount,
-        wallets,
-      ];
+    projectId,
+    projectCurrency,
+    platformFeeRatePercent,
+    minimumContributionAmount,
+    isNonRefundable,
+    suggestedContributionAmount,
+    wallets,
+  ];
 }
 
 class WalletSummaryEntity extends Equatable {

@@ -3,25 +3,31 @@ import 'package:vestie/features/project_detail/domain/entities/viewer_membership
 
 void main() {
   group('ViewerMembershipRole.forProjectDetail', () {
-    test('prefers CoLeader from membership when project viewerRole is Member', () {
-      expect(
-        ViewerMembershipRole.forProjectDetail(
-          projectViewerRole: 'Member',
-          membershipRole: 'CoLeader',
-        ),
-        ViewerMembershipRole.coLeader,
-      );
-    });
+    test(
+      'prefers CoLeader from membership when project viewerRole is Member',
+      () {
+        expect(
+          ViewerMembershipRole.forProjectDetail(
+            projectViewerRole: 'Member',
+            membershipRole: 'CoLeader',
+          ),
+          ViewerMembershipRole.coLeader,
+        );
+      },
+    );
 
-    test('prefers GroupLeader when project says leader and membership says member', () {
-      expect(
-        ViewerMembershipRole.forProjectDetail(
-          projectViewerRole: 'GroupLeader',
-          membershipRole: 'Member',
-        ),
-        ViewerMembershipRole.groupLeader,
-      );
-    });
+    test(
+      'prefers GroupLeader when project says leader and membership says member',
+      () {
+        expect(
+          ViewerMembershipRole.forProjectDetail(
+            projectViewerRole: 'GroupLeader',
+            membershipRole: 'Member',
+          ),
+          ViewerMembershipRole.groupLeader,
+        );
+      },
+    );
 
     test('falls back to membership when project viewerRole is empty', () {
       expect(

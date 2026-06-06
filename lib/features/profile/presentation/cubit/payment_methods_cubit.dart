@@ -32,29 +32,28 @@ class PaymentMethodsState extends Equatable {
     bool clearRemovingCard = false,
     String? errorMessage,
     bool clearError = false,
-  }) =>
-      PaymentMethodsState(
-        cards: cards ?? this.cards,
-        loading: loading ?? this.loading,
-        addingCard: addingCard ?? this.addingCard,
-        settingPrimaryCardId: clearSettingPrimary
-            ? null
-            : (settingPrimaryCardId ?? this.settingPrimaryCardId),
-        removingCardId: clearRemovingCard
-            ? null
-            : (removingCardId ?? this.removingCardId),
-        errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
-      );
+  }) => PaymentMethodsState(
+    cards: cards ?? this.cards,
+    loading: loading ?? this.loading,
+    addingCard: addingCard ?? this.addingCard,
+    settingPrimaryCardId: clearSettingPrimary
+        ? null
+        : (settingPrimaryCardId ?? this.settingPrimaryCardId),
+    removingCardId: clearRemovingCard
+        ? null
+        : (removingCardId ?? this.removingCardId),
+    errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+  );
 
   @override
   List<Object?> get props => [
-        cards,
-        loading,
-        addingCard,
-        settingPrimaryCardId,
-        removingCardId,
-        errorMessage,
-      ];
+    cards,
+    loading,
+    addingCard,
+    settingPrimaryCardId,
+    removingCardId,
+    errorMessage,
+  ];
 }
 
 class PaymentMethodsCubit extends Cubit<PaymentMethodsState> {

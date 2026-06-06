@@ -42,23 +42,24 @@ class CreateProjectSubmitCubit extends Cubit<CreateProjectSubmitState> {
   final CreateAndLaunchProjectUseCase _useCase;
 
   CreateProjectSubmitCubit({CreateAndLaunchProjectUseCase? useCase})
-      : _useCase =
-            useCase ?? ServiceLocator.instance.createAndLaunchProjectUseCase,
-        super(const CreateProjectSubmitState());
+    : _useCase =
+          useCase ?? ServiceLocator.instance.createAndLaunchProjectUseCase,
+      super(const CreateProjectSubmitState());
 
   Future<void> submit(CreateProjectForm form) async {
     emit(state.copyWith(loading: true, clearError: true));
     final result = await _useCase(form: form);
     result.fold(
-      (failure) => emit(state.copyWith(
-            loading: false,
-            error: failure.message,
-            errorTitle: failure.title,
-          )),
-      (project) => emit(CreateProjectSubmitState(
-            loading: false,
-            createdProject: project,
-          )),
+      (failure) => emit(
+        state.copyWith(
+          loading: false,
+          error: failure.message,
+          errorTitle: failure.title,
+        ),
+      ),
+      (project) => emit(
+        CreateProjectSubmitState(loading: false, createdProject: project),
+      ),
     );
   }
 
@@ -68,4 +69,3 @@ class CreateProjectSubmitCubit extends Cubit<CreateProjectSubmitState> {
     }
   }
 }
-

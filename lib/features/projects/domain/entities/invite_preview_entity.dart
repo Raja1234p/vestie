@@ -31,23 +31,22 @@ class InvitePreviewEntity extends Equatable {
     this.roiPercentage,
   });
 
-  bool get isInvestment =>
-      projectType.toLowerCase().contains('invest');
+  bool get isInvestment => projectType.toLowerCase().contains('invest');
 
   @override
   List<Object?> get props => [
-        projectId,
-        projectName,
-        projectType,
-        visibility,
-        requiresApproval,
-        expiresAtUtc,
-        isExpired,
-        isJoinable,
-        description,
-        memberCount,
-        raisedAmount,
-        contributionCount,
-        roiPercentage,
-      ];
+    projectId,
+    projectName,
+    projectType,
+    visibility,
+    requiresApproval,
+    expiresAtUtc,
+    isExpired,
+    isJoinable,
+    description,
+    memberCount,
+    raisedAmount,
+    contributionCount,
+    roiPercentage,
+  ];
 }

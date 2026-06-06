@@ -23,10 +23,7 @@ enum LeaderMenuAction {
 }
 
 /// Storyboard distinction: primary owner sees success/cancel ownership actions.
-enum LeaderMenuAudience {
-  primaryLeader,
-  coLeader,
-}
+enum LeaderMenuAudience { primaryLeader, coLeader }
 
 /// Reusable "..." popup for project moderators (`LeaderMenuAudience`).
 class LeaderActionMenu extends StatelessWidget {
@@ -66,10 +63,7 @@ class LeaderActionMenu extends StatelessWidget {
           AppAssets.iconMoreOptions,
           width: 30.w,
           height: 30.w,
-          colorFilter: ColorFilter.mode(
-            AppColors.grey1000,
-            BlendMode.srcIn,
-          ),
+          colorFilter: ColorFilter.mode(AppColors.grey1000, BlendMode.srcIn),
         ),
       ),
     );
@@ -137,8 +131,13 @@ class LeaderActionMenu extends StatelessWidget {
   List<PopupMenuEntry<LeaderMenuAction>> _primaryLeaderEntries() {
     final out = <PopupMenuEntry<LeaderMenuAction>>[];
 
-    void push(LeaderMenuAction action, String icon, String label,
-        {Color? iconColor, Color? labelColor}) {
+    void push(
+      LeaderMenuAction action,
+      String icon,
+      String label, {
+      Color? iconColor,
+      Color? labelColor,
+    }) {
       if (out.isNotEmpty) out.add(_divider());
       out.add(
         _buildItem(

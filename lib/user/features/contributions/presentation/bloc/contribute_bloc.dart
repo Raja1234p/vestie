@@ -5,8 +5,8 @@ import 'package:vestie/core/error/failures.dart';
 import 'package:vestie/core/utils/contribution_fee_policy.dart';
 import 'package:vestie/features/payment_methods/domain/usecases/payment_methods_usecases.dart';
 import 'package:vestie/features/profile/domain/entities/payment_card.dart';
-import 'package:vestie/features/wallet/domain/usecases/get_wallet_use_case.dart';
-import 'package:vestie/features/wallet/domain/wallet_balance_cache.dart';
+import 'package:vestie/wallet/domain/usecases/get_wallet_use_case.dart';
+import 'package:vestie/wallet/domain/wallet_balance_cache.dart';
 import '../../domain/usecases/confirm_contribution_usecase.dart';
 import '../../domain/usecases/fetch_contribution_config_usecase.dart';
 import '../../domain/usecases/preview_contribution_usecase.dart';
@@ -63,27 +63,29 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
     on<ConfirmSubmitEvent>(_onConfirmSubmit);
   }
 
-  Future<void> _onInitArgs(InitArgsEvent event, Emitter<ContributeState> emit) async {
+  Future<void> _onInitArgs(
+    InitArgsEvent event,
+    Emitter<ContributeState> emit,
+  ) async {
     final cachedWallet = WalletBalanceCache.value;
     var walletBalance =
         cachedWallet?.availableBalance ?? event.args.walletBalance;
     var walletId = cachedWallet?.walletId ?? '';
 
-    emit(state.copyWith(
-      args: event.args.copyWithWalletBalance(walletBalance),
-      isConfigLoading: true,
-      clearPreviewFailure: true,
-      clearSubmitFailure: true,
-    ));
+    emit(
+      state.copyWith(
+        args: event.args.copyWithWalletBalance(walletBalance),
+        isConfigLoading: true,
+        clearPreviewFailure: true,
+        clearSubmitFailure: true,
+      ),
+    );
 
     final walletResult = await getWalletUseCase();
-    walletResult.fold(
-      (_) {},
-      (w) {
-        walletBalance = w.availableBalance;
-        walletId = w.walletId;
-      },
-    );
+    walletResult.fold((_) {}, (w) {
+      walletBalance = w.availableBalance;
+      walletId = w.walletId;
+    });
 
     final cardsResult = await listPaymentMethodsUseCase();
     cardsResult.fold(
@@ -91,34 +93,40 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
       (cards) => _savedCards = cards,
     );
 
-    final configResult =
-        await configUseCase(projectId: event.args.projectId);
+    final configResult = await configUseCase(projectId: event.args.projectId);
     configResult.fold(
       (_) {
-        emit(state.copyWith(
-          isConfigLoading: false,
-          selectedWalletId: walletId.isNotEmpty ? walletId : 'wallet',
-          args: event.args.copyWithWalletBalance(walletBalance),
-        ));
+        emit(
+          state.copyWith(
+            isConfigLoading: false,
+            selectedWalletId: walletId.isNotEmpty ? walletId : 'wallet',
+            args: event.args.copyWithWalletBalance(walletBalance),
+          ),
+        );
       },
       (config) {
         final id = config.wallets.isNotEmpty
             ? config.wallets.first.walletId
             : walletId;
-        emit(state.copyWith(
-          isConfigLoading: false,
-          selectedWalletId: id.isNotEmpty ? id : 'wallet',
-          args: event.args.copyWithWalletBalance(
-            config.wallets.isNotEmpty
-                ? config.wallets.first.availableBalance
-                : walletBalance,
+        emit(
+          state.copyWith(
+            isConfigLoading: false,
+            selectedWalletId: id.isNotEmpty ? id : 'wallet',
+            args: event.args.copyWithWalletBalance(
+              config.wallets.isNotEmpty
+                  ? config.wallets.first.availableBalance
+                  : walletBalance,
+            ),
           ),
-        ));
+        );
       },
     );
   }
 
-  Future<void> _onGoToConfirm(GoToConfirmEvent event, Emitter<ContributeState> emit) async {
+  Future<void> _onGoToConfirm(
+    GoToConfirmEvent event,
+    Emitter<ContributeState> emit,
+  ) async {
     final args = state.args;
     if (args == null || state.amountValue <= 0) return;
 
@@ -128,11 +136,13 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
       return;
     }
 
-    emit(state.copyWith(
-      isPreviewLoading: true,
-      clearPreviewFailure: true,
-      clearSubmitFailure: true,
-    ));
+    emit(
+      state.copyWith(
+        isPreviewLoading: true,
+        clearPreviewFailure: true,
+        clearSubmitFailure: true,
+      ),
+    );
 
     final result = await previewUseCase(
       PreviewContributionParams(
@@ -149,20 +159,19 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
 
     await result.fold(
       (failure) async {
-        emit(state.copyWith(
-          isPreviewLoading: false,
-          previewFailure: failure,
-        ));
+        emit(state.copyWith(isPreviewLoading: false, previewFailure: failure));
       },
       (preview) async {
         final next = _paymentMethodForTotal(state.copyWith(preview: preview));
-        emit(state.copyWith(
-          isPreviewLoading: false,
-          preview: preview,
-          step: ContributeStep.confirm,
-          selectedCard: next.$1,
-          payFromWallet: next.$2,
-        ));
+        emit(
+          state.copyWith(
+            isPreviewLoading: false,
+            preview: preview,
+            step: ContributeStep.confirm,
+            selectedCard: next.$1,
+            payFromWallet: next.$2,
+          ),
+        );
       },
     );
   }
@@ -171,11 +180,13 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
     ContributePaymentMethodSelectedEvent event,
     Emitter<ContributeState> emit,
   ) {
-    emit(state.copyWith(
-      selectedCard: event.card,
-      payFromWallet: event.payFromWallet,
-      clearSelectedCard: event.payFromWallet,
-    ));
+    emit(
+      state.copyWith(
+        selectedCard: event.card,
+        payFromWallet: event.payFromWallet,
+        clearSelectedCard: event.payFromWallet,
+      ),
+    );
   }
 
   (PaymentCard?, bool) _paymentMethodForTotal(ContributeState s) {
@@ -197,27 +208,37 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
     return _savedCards.first;
   }
 
-  Future<void> _onAmountChanged(AmountChangedEvent event, Emitter<ContributeState> emit) async {
+  Future<void> _onAmountChanged(
+    AmountChangedEvent event,
+    Emitter<ContributeState> emit,
+  ) async {
     if (event.amount <= 0) {
       emit(state.copyWith(clearPreview: true, clearPreviewFailure: true));
     }
   }
 
-  Future<void> _onConfirmSubmit(ConfirmSubmitEvent event, Emitter<ContributeState> emit) async {
+  Future<void> _onConfirmSubmit(
+    ConfirmSubmitEvent event,
+    Emitter<ContributeState> emit,
+  ) async {
     final args = state.args;
     if (args == null || state.preview == null) return;
 
     if (!state.canConfirmSubmit) return;
 
     if (!state.payFromWallet) {
-      final shortfall =
-          (state.totalDeductionValue - state.walletBalance).clamp(0.0, double.infinity);
+      final shortfall = (state.totalDeductionValue - state.walletBalance).clamp(
+        0.0,
+        double.infinity,
+      );
       final shortfallFormatted = '\$${shortfall.toStringAsFixed(2)}';
-      emit(state.copyWith(
-        submitFailure: ValidationFailure(
-          AppStrings.contributeDepositForWalletMessage(shortfallFormatted),
+      emit(
+        state.copyWith(
+          submitFailure: ValidationFailure(
+            AppStrings.contributeDepositForWalletMessage(shortfallFormatted),
+          ),
         ),
-      ));
+      );
       return;
     }
 
@@ -237,21 +258,23 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
     if (isClosed) return;
 
     result.fold(
-      (failure) => emit(state.copyWith(
-        isSubmitLoading: false,
-        submitFailure: failure,
-      )),
+      (failure) =>
+          emit(state.copyWith(isSubmitLoading: false, submitFailure: failure)),
       (submitResult) {
         WalletBalanceCache.patchAvailableBalance(
           submitResult.walletAvailableBalance,
         );
-        emit(state.copyWith(
-          isSubmitLoading: false,
-          isSubmitSuccess: true,
-          step: ContributeStep.success,
-          submitResult: submitResult,
-          args: args.copyWithWalletBalance(submitResult.walletAvailableBalance),
-        ));
+        emit(
+          state.copyWith(
+            isSubmitLoading: false,
+            isSubmitSuccess: true,
+            step: ContributeStep.success,
+            submitResult: submitResult,
+            args: args.copyWithWalletBalance(
+              submitResult.walletAvailableBalance,
+            ),
+          ),
+        );
       },
     );
   }

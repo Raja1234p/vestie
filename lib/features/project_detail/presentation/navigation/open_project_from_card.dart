@@ -107,7 +107,9 @@ ProjectDetailRouteArgs _routeArgs({
 }) {
   return ProjectDetailRouteArgs(
     projectId: projectId,
-    initialProjectName: ProjectDetailRouteArgs.normalizedName(initialProjectName),
+    initialProjectName: ProjectDetailRouteArgs.normalizedName(
+      initialProjectName,
+    ),
     refreshHomeOnPop: refreshHomeOnPop,
     refreshDiscoverOnPop: refreshDiscoverOnPop,
   );

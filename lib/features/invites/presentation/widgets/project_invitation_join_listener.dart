@@ -30,16 +30,12 @@ class ProjectInvitationJoinListener extends StatelessWidget {
 
         switch (effect) {
           case ProjectInvitationJoinShowError(:final message, :final title):
-            AppFailureDialog.show(
-              context,
-              title: title,
-              message: message,
-            );
+            AppFailureDialog.show(context, title: title, message: message);
           case ProjectInvitationJoinShowRequestSubmitted(
-              :final projectId,
-              :final projectName,
-              :final isInvestment,
-            ):
+            :final projectId,
+            :final projectName,
+            :final isInvestment,
+          ):
             await PendingProjectInviteStore.clear();
             if (!context.mounted) return;
             openProjectJoinRequestSentSuccess(
@@ -50,10 +46,10 @@ class ProjectInvitationJoinListener extends StatelessWidget {
               fromInviteLink: true,
             );
           case ProjectInvitationJoinOpenDetail(
-              :final projectId,
-              :final projectName,
-              :final isInvestment,
-            ):
+            :final projectId,
+            :final projectName,
+            :final isInvestment,
+          ):
             await PendingProjectInviteStore.clear();
             if (!context.mounted) return;
             openProjectJoinedSuccess(

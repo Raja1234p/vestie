@@ -54,8 +54,9 @@ final class UserVffProfileState extends Equatable {
       profile: profile ?? this.profile,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
       projectId: projectId ?? this.projectId,
-      footerOverride:
-          clearFooterOverride ? null : (footerOverride ?? this.footerOverride),
+      footerOverride: clearFooterOverride
+          ? null
+          : (footerOverride ?? this.footerOverride),
       isActionLoading: isActionLoading ?? this.isActionLoading,
       isRemoveVffLoading: isRemoveVffLoading ?? this.isRemoveVffLoading,
       vffRequestSent: vffRequestSent ?? this.vffRequestSent,
@@ -72,14 +73,14 @@ final class UserVffProfileState extends Equatable {
 
   @override
   List<Object?> get props => [
-        loadStatus,
-        profile,
-        errorMessage,
-        projectId,
-        footerOverride,
-        isActionLoading,
-        isRemoveVffLoading,
-        vffRequestSent,
-        joiningProjectId,
-      ];
+    loadStatus,
+    profile,
+    errorMessage,
+    projectId,
+    footerOverride,
+    isActionLoading,
+    isRemoveVffLoading,
+    vffRequestSent,
+    joiningProjectId,
+  ];
 }

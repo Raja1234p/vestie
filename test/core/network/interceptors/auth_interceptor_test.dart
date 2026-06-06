@@ -4,15 +4,18 @@ import 'package:vestie/core/network/interceptors/auth_interceptor.dart';
 
 void main() {
   group('AuthInterceptor.shouldSignOutOn401', () {
-    test('does not sign out when request was already retried after refresh', () {
-      expect(
-        AuthInterceptor.shouldSignOutOn401(
-          path: '/projects/1',
-          isAuthRetry: true,
-        ),
-        isFalse,
-      );
-    });
+    test(
+      'does not sign out when request was already retried after refresh',
+      () {
+        expect(
+          AuthInterceptor.shouldSignOutOn401(
+            path: '/projects/1',
+            isAuthRetry: true,
+          ),
+          isFalse,
+        );
+      },
+    );
 
     test('does not sign out for login or verify failures', () {
       expect(

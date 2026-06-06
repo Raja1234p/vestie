@@ -36,9 +36,7 @@ class _KycOnboardingScreenState extends State<KycOnboardingScreen> {
   Widget build(BuildContext context) {
     return const Scaffold(
       backgroundColor: Colors.transparent,
-      body: PostAuthGradientBackground(
-        child: Center(child: AppLoader()),
-      ),
+      body: PostAuthGradientBackground(child: Center(child: AppLoader())),
     );
   }
 }

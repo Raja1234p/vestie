@@ -16,7 +16,10 @@ class ProjectLocalDataSourceImpl implements ProjectLocalDataSource {
   ProjectLocalDataSourceImpl({required this.localStorage});
 
   @override
-  Future<void> cacheProjects(String scope, List<ProjectSummaryModel> projects) async {
+  Future<void> cacheProjects(
+    String scope,
+    List<ProjectSummaryModel> projects,
+  ) async {
     final key = '$cachedProjectsPrefix$scope';
     final jsonList = projects.map((p) => p.toJson()).toList();
     await localStorage.saveString(key, jsonEncode(jsonList));
@@ -26,10 +29,12 @@ class ProjectLocalDataSourceImpl implements ProjectLocalDataSource {
   Future<List<ProjectSummaryModel>> getCachedProjects(String scope) async {
     final key = '$cachedProjectsPrefix$scope';
     final jsonString = await localStorage.getString(key);
-    
+
     if (jsonString != null && jsonString.isNotEmpty) {
       final List<dynamic> decoded = jsonDecode(jsonString);
-      return decoded.map((e) => ProjectSummaryModel.fromJson(e as Map<String, dynamic>)).toList();
+      return decoded
+          .map((e) => ProjectSummaryModel.fromJson(e as Map<String, dynamic>))
+          .toList();
     } else {
       throw const CacheFailure();
     }

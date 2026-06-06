@@ -7,7 +7,8 @@ abstract class UserMeSummaryRemoteDataSource {
   Future<UserMeSummaryModel> getSummary();
 }
 
-class UserMeSummaryRemoteDataSourceImpl implements UserMeSummaryRemoteDataSource {
+class UserMeSummaryRemoteDataSourceImpl
+    implements UserMeSummaryRemoteDataSource {
   final BaseApiClient apiClient;
 
   UserMeSummaryRemoteDataSourceImpl({required this.apiClient});

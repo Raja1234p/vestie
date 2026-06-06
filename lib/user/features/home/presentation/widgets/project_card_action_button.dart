@@ -68,7 +68,9 @@ class ProjectActionButton extends StatelessWidget {
     final radius = BorderRadius.circular(10.r);
 
     return Material(
-      color: isCompletedViewStyle ? Colors.transparent : AppColors.cardActionBtn,
+      color: isCompletedViewStyle
+          ? Colors.transparent
+          : AppColors.cardActionBtn,
       borderRadius: radius,
       shape: isCompletedViewStyle
           ? RoundedRectangleBorder(

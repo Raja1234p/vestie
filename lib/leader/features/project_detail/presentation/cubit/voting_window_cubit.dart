@@ -21,24 +21,27 @@ class VotingWindowCubit extends Cubit<VotingWindowState> {
     required this.flowKind,
     OpenClosureVotingUseCase? openClosureVotingUseCase,
     OpenStopContributionsVotingUseCase? openStopContributionsVotingUseCase,
-  })  : _openClosureVotingUseCase =
-            openClosureVotingUseCase ??
-            ServiceLocator.instance.openClosureVotingUseCase,
-        _openStopContributionsVotingUseCase =
-            openStopContributionsVotingUseCase ??
-            ServiceLocator.instance.openStopContributionsVotingUseCase,
-        super(const VotingWindowState());
+  }) : _openClosureVotingUseCase =
+           openClosureVotingUseCase ??
+           ServiceLocator.instance.openClosureVotingUseCase,
+       _openStopContributionsVotingUseCase =
+           openStopContributionsVotingUseCase ??
+           ServiceLocator.instance.openStopContributionsVotingUseCase,
+       super(const VotingWindowState());
 
   void setDigitsFromField(String value) {
     if (state.loading) return;
     final filtered = value.replaceAll(RegExp(r'[^0-9]'), '');
-    final trimmed =
-        filtered.length > maxDigits ? filtered.substring(0, maxDigits) : filtered;
-    emit(state.copyWith(
-      digits: trimmed,
-      clearErrorText: true,
-      clearApiErrorMessage: true,
-    ));
+    final trimmed = filtered.length > maxDigits
+        ? filtered.substring(0, maxDigits)
+        : filtered;
+    emit(
+      state.copyWith(
+        digits: trimmed,
+        clearErrorText: true,
+        clearApiErrorMessage: true,
+      ),
+    );
   }
 
   Future<bool> submit() async {
@@ -50,11 +53,13 @@ class VotingWindowCubit extends Cubit<VotingWindowState> {
       return false;
     }
 
-    emit(state.copyWith(
-      loading: true,
-      clearErrorText: true,
-      clearApiErrorMessage: true,
-    ));
+    emit(
+      state.copyWith(
+        loading: true,
+        clearErrorText: true,
+        clearApiErrorMessage: true,
+      ),
+    );
     final days = int.parse(state.digits);
     final result = switch (flowKind) {
       LeaderVotingFlowKind.markProjectSuccessful =>
@@ -71,10 +76,7 @@ class VotingWindowCubit extends Cubit<VotingWindowState> {
 
     return result.fold(
       (failure) {
-        emit(state.copyWith(
-          loading: false,
-          apiErrorMessage: failure.message,
-        ));
+        emit(state.copyWith(loading: false, apiErrorMessage: failure.message));
         return false;
       },
       (_) {

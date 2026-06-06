@@ -10,15 +10,20 @@ class VotingBloc extends Bloc<VotingEvent, VotingState> {
     on<SubmitVoteActionEvent>(_onSubmitVoteAction);
   }
 
-  Future<void> _onSubmitVoteAction(SubmitVoteActionEvent event, Emitter<VotingState> emit) async {
+  Future<void> _onSubmitVoteAction(
+    SubmitVoteActionEvent event,
+    Emitter<VotingState> emit,
+  ) async {
     if (state.isLoading) return; // double-submit prevention
 
     emit(state.copyWith(isLoading: true, clearFailure: true));
 
-    final result = await submitVoteUseCase(SubmitVoteParams(
-      projectId: event.projectId,
-      isPositive: event.isPositive,
-    ));
+    final result = await submitVoteUseCase(
+      SubmitVoteParams(
+        projectId: event.projectId,
+        isPositive: event.isPositive,
+      ),
+    );
 
     result.fold(
       (failure) => emit(state.copyWith(isLoading: false, failure: failure)),

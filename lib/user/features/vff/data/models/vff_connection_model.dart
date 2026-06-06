@@ -15,10 +15,11 @@ class VffConnectionModel {
         userId: VffJsonParsing.readString(json, const ['userId', 'UserId']),
         fullName: VffJsonParsing.readString(json, const ['fullName', 'name']),
         username: json.safeStringNullable('username'),
-        profilePhotoUrl: VffJsonParsing.readString(json, const [
-          'profilePhotoUrl',
-          'photoURL',
-        ]).isEmpty
+        profilePhotoUrl:
+            VffJsonParsing.readString(json, const [
+              'profilePhotoUrl',
+              'photoURL',
+            ]).isEmpty
             ? null
             : VffJsonParsing.readString(json, const [
                 'profilePhotoUrl',

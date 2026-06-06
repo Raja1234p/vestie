@@ -41,7 +41,8 @@ final class ProjectInviteRouteGuard {
       return AppRoutes.login;
     }
 
-    final disclaimerOk = isDisclaimerAccepted ??
+    final disclaimerOk =
+        isDisclaimerAccepted ??
         await ProjectInviteNavigation.isRiskDisclaimerAccepted();
     if (!disclaimerOk) {
       unawaited(PendingProjectInviteStore.save(inviteCode));

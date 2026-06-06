@@ -48,7 +48,8 @@ class NotificationsPageModel extends NotificationsPageEntity {
   });
 
   factory NotificationsPageModel.fromJson(Map<String, dynamic> json) {
-    final list = (json['notifications'] as List<dynamic>?)
+    final list =
+        (json['notifications'] as List<dynamic>?)
             ?.whereType<Map>()
             .map(
               (e) => AppNotificationModel.fromJson(e.cast<String, dynamic>()),

@@ -21,4 +21,3 @@ abstract class ProjectsRepository {
     required CreateProjectForm form,
   });
 }
-

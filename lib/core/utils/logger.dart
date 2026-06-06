@@ -17,7 +17,12 @@ class AppLogger {
     }
   }
 
-  static void error(String message, {Object? error, StackTrace? stackTrace, String name = 'ERROR'}) {
+  static void error(
+    String message, {
+    Object? error,
+    StackTrace? stackTrace,
+    String name = 'ERROR',
+  }) {
     dev.log('🔴 $message', name: name, error: error, stackTrace: stackTrace);
     // TODO: Send to Crashlytics / Sentry here in production
   }

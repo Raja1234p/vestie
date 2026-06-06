@@ -37,19 +37,32 @@ class ProjectDetailRepositoryImpl implements ProjectDetailRepository {
       }
       return const Left(ServerFailure('Failed to load project'));
     } on UnauthorizedException catch (e, stack) {
-      AppLogger.error('ProjectDetail Unauthorized', error: e, stackTrace: stack);
+      AppLogger.error(
+        'ProjectDetail Unauthorized',
+        error: e,
+        stackTrace: stack,
+      );
       return Left(ServerFailure(e.message, e.title));
     } on ServerException catch (e, stack) {
-      AppLogger.error('ProjectDetail Server Exception', error: e, stackTrace: stack);
+      AppLogger.error(
+        'ProjectDetail Server Exception',
+        error: e,
+        stackTrace: stack,
+      );
       final msg = e.message.toLowerCase();
-      if (msg.contains('network') || msg.contains('connection') || msg.contains('socket')) {
+      if (msg.contains('network') ||
+          msg.contains('connection') ||
+          msg.contains('socket')) {
         return const Left(NetworkFailure());
       }
       return Left(ServerFailure(e.message, e.title));
     } catch (e, stack) {
-      AppLogger.error('ProjectDetail Unexpected Exception', error: e, stackTrace: stack);
+      AppLogger.error(
+        'ProjectDetail Unexpected Exception',
+        error: e,
+        stackTrace: stack,
+      );
       return const Left(ServerFailure('Failed to load project'));
     }
   }
 }
-

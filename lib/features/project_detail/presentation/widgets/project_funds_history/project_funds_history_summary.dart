@@ -9,16 +9,14 @@ import 'package:vestie/core/widgets/common/app_metric_tile.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 
 /// Investment: pot balance + Breakdown. Pooled: balance, metrics, list section.
-enum ProjectFundsHistorySummaryLayout {
-  investment,
-  pooled,
-}
+enum ProjectFundsHistorySummaryLayout { investment, pooled }
 
 class ProjectFundsHistorySummary extends StatelessWidget {
   final double currentPotBalance;
   final ProjectFundsHistorySummaryLayout layout;
   final double totalContribution;
   final double activeBorrows;
+
   /// Co-leader + investment use “Breakdown”; group leader pooled uses contribution history.
   final bool useBreakdownSectionTitle;
 
@@ -33,7 +31,8 @@ class ProjectFundsHistorySummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final listTitle = useBreakdownSectionTitle ||
+    final listTitle =
+        useBreakdownSectionTitle ||
             layout == ProjectFundsHistorySummaryLayout.investment
         ? AppStrings.labelBreakdown
         : AppStrings.projectFundsContributionHistory;

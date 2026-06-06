@@ -32,6 +32,7 @@ class HomeSectionsCubit extends Cubit<HomeSectionsState> {
   void toggleMyProjects() =>
       emit(state.copyWith(myProjectsExpanded: !state.myProjectsExpanded));
 
-  void toggleJoined() =>
-      emit(state.copyWith(joinedProjectsExpanded: !state.joinedProjectsExpanded));
+  void toggleJoined() => emit(
+    state.copyWith(joinedProjectsExpanded: !state.joinedProjectsExpanded),
+  );
 }

@@ -10,5 +10,4 @@ Widget? loadStoryboardDesktopImage(
   String filename, {
   String basePath = kStoryboardDesktopImagesPath,
   BoxFit fit = BoxFit.cover,
-}) =>
-    implLoadStoryboardDesktopImage(filename, basePath: basePath, fit: fit);
+}) => implLoadStoryboardDesktopImage(filename, basePath: basePath, fit: fit);

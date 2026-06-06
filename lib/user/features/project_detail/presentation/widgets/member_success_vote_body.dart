@@ -76,17 +76,17 @@ class _StatusBanner extends StatelessWidget {
 
     final (title, body) = switch (choice) {
       MemberSuccessVoteChoice.pending => (
-          AppStrings.userSuccessVoteBannerTitle,
-          AppStrings.userSuccessVoteBannerBody,
-        ),
+        AppStrings.userSuccessVoteBannerTitle,
+        AppStrings.userSuccessVoteBannerBody,
+      ),
       MemberSuccessVoteChoice.agreed => (
-          AppStrings.userSuccessVoteAgreedTitle,
-          AppStrings.userSuccessVoteAgreedBody,
-        ),
+        AppStrings.userSuccessVoteAgreedTitle,
+        AppStrings.userSuccessVoteAgreedBody,
+      ),
       MemberSuccessVoteChoice.disagreed => (
-          AppStrings.userSuccessVoteDisagreedTitle,
-          AppStrings.userSuccessVoteDisagreedBody,
-        ),
+        AppStrings.userSuccessVoteDisagreedTitle,
+        AppStrings.userSuccessVoteDisagreedBody,
+      ),
     };
 
     return Container(
@@ -100,17 +100,9 @@ class _StatusBanner extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          AppText(
-            title,
-            textAlign: TextAlign.center,
-            style: titleStyle,
-          ),
+          AppText(title, textAlign: TextAlign.center, style: titleStyle),
           SizedBox(height: 6.h),
-          AppText(
-            body,
-            textAlign: TextAlign.center,
-            style: bodyStyle,
-          ),
+          AppText(body, textAlign: TextAlign.center, style: bodyStyle),
         ],
       ),
     );
@@ -253,6 +245,6 @@ class _SummaryRow extends StatelessWidget {
 }
 
 Widget _divider() => Padding(
-      padding: EdgeInsets.symmetric(vertical: 10.h),
-      child: Divider(height: 1, color: AppColors.neutral400),
-    );
+  padding: EdgeInsets.symmetric(vertical: 10.h),
+  child: Divider(height: 1, color: AppColors.neutral400),
+);

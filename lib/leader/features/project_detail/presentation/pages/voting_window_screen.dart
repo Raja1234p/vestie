@@ -79,7 +79,8 @@ class _VotingWindowScreenState extends State<VotingWindowScreen> {
   }
 
   void _showVotingWindowInfo(BuildContext context) {
-    final description = widget.flowKind == LeaderVotingFlowKind.stopContributions
+    final description =
+        widget.flowKind == LeaderVotingFlowKind.stopContributions
         ? AppStrings.stopContributionsVotingWindowInfo
         : AppStrings.votingWindowDaysInfo;
 
@@ -112,89 +113,89 @@ class _VotingWindowScreenState extends State<VotingWindowScreen> {
         },
         child: BlocBuilder<VotingWindowCubit, VotingWindowState>(
           builder: (context, state) {
-          final cubit = context.read<VotingWindowCubit>();
-          final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
-          final labelStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w500,
-                color: AppColors.authLabel,
-              );
+            final cubit = context.read<VotingWindowCubit>();
+            final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
+            final labelStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w500,
+              color: AppColors.authLabel,
+            );
 
-          return Scaffold(
-            resizeToAvoidBottomInset: false,
-            backgroundColor: Colors.transparent,
-            body: PostAuthGradientBackground(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  PostAuthHeader(
-                    title: AppStrings.votingWindowTitle,
-                    padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 8.h),
-                    leading: AppBackButton(
-                      onPressed: state.loading ? () {} : () => context.pop(),
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      keyboardDismissBehavior:
-                          ScrollViewKeyboardDismissBehavior.onDrag,
-                      padding: EdgeInsets.fromLTRB(
-                        20.w,
-                        12.h,
-                        20.w,
-                        16.h + bottomInset,
+            return Scaffold(
+              resizeToAvoidBottomInset: false,
+              backgroundColor: Colors.transparent,
+              body: PostAuthGradientBackground(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    PostAuthHeader(
+                      title: AppStrings.votingWindowTitle,
+                      padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 8.h),
+                      leading: AppBackButton(
+                        onPressed: state.loading ? () {} : () => context.pop(),
+                        color: AppColors.textPrimary,
                       ),
-                      child: AppTextField(
-                        label: AppStrings.labelEnterVotingWindowDays,
-                        hint: AppStrings.hintVotingWindowDays,
-                        controller: _daysController,
-                        focusNode: _daysFocus,
-                        keyboardType: TextInputType.number,
-                        textInputAction: TextInputAction.done,
-                        maxLength: VotingWindowCubit.maxDigits,
-                        errorText: state.errorText,
-                        labelStyle: labelStyle,
-                        fillColor: AppColors.searchBarBg,
-                        labelTrailing: GestureDetector(
-                          onTap: () => _showVotingWindowInfo(context),
-                          child: AppSvgIcon(
-                            assetPath: AppAssets.iconInfoCircle,
-                            size: 20.w,
-                            color: AppColors.neutral700,
-                          ),
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        keyboardDismissBehavior:
+                            ScrollViewKeyboardDismissBehavior.onDrag,
+                        padding: EdgeInsets.fromLTRB(
+                          20.w,
+                          12.h,
+                          20.w,
+                          16.h + bottomInset,
                         ),
-                        labelTrailingGap: 6.w,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(
-                            VotingWindowCubit.maxDigits,
+                        child: AppTextField(
+                          label: AppStrings.labelEnterVotingWindowDays,
+                          hint: AppStrings.hintVotingWindowDays,
+                          controller: _daysController,
+                          focusNode: _daysFocus,
+                          keyboardType: TextInputType.number,
+                          textInputAction: TextInputAction.done,
+                          maxLength: VotingWindowCubit.maxDigits,
+                          errorText: state.errorText,
+                          labelStyle: labelStyle,
+                          fillColor: AppColors.searchBarBg,
+                          labelTrailing: GestureDetector(
+                            onTap: () => _showVotingWindowInfo(context),
+                            child: AppSvgIcon(
+                              assetPath: AppAssets.iconInfoCircle,
+                              size: 20.w,
+                              color: AppColors.neutral700,
+                            ),
                           ),
-                        ],
-                        onChanged: cubit.setDigitsFromField,
-                        onSubmitted: (_) {
-                          if (state.canSubmit) _onStartVoting(cubit);
-                        },
+                          labelTrailingGap: 6.w,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(
+                              VotingWindowCubit.maxDigits,
+                            ),
+                          ],
+                          onChanged: cubit.setDigitsFromField,
+                          onSubmitted: (_) {
+                            if (state.canSubmit) _onStartVoting(cubit);
+                          },
+                        ),
                       ),
                     ),
-                  ),
-                  FlowScreenFooter(
-                    child: AppButton(
-                      text: AppStrings.btnStartVoting,
-                      isLoading: state.loading,
-                      useGradient: false,
-                      hasShadow: false,
-                      color: AppColors.green800,
-                      borderRadius: AppRadius.r8,
-                      onPressed: state.canSubmit
-                          ? () => _onStartVoting(cubit)
-                          : null,
+                    FlowScreenFooter(
+                      child: AppButton(
+                        text: AppStrings.btnStartVoting,
+                        isLoading: state.loading,
+                        useGradient: false,
+                        hasShadow: false,
+                        color: AppColors.green800,
+                        borderRadius: AppRadius.r8,
+                        onPressed: state.canSubmit
+                            ? () => _onStartVoting(cubit)
+                            : null,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
+            );
           },
         ),
       ),

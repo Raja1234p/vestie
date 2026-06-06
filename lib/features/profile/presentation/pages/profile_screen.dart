@@ -130,7 +130,10 @@ class _ProfileBody extends StatelessWidget {
   }
 
   Future<void> _pickAndUpload(BuildContext context, ImageSource source) async {
-    final allowed = await AppPermissionHelper.ensureImageSource(context, source);
+    final allowed = await AppPermissionHelper.ensureImageSource(
+      context,
+      source,
+    );
     if (!allowed) return;
 
     final picked = await imagePicker.pickImage(
@@ -298,51 +301,58 @@ class _ProfileBody extends StatelessWidget {
                                   ),
                                 ),
                                 SizedBox(height: 8.h),
-                                SettingsSection(items: [
-                                  SettingsItem(
-                                    assetPath: AppAssets.iconPerson,
-                                    label: AppStrings.menuEditProfile,
-                                    onTap: () async {
-                                      await context.push(AppRoutes.editProfile);
-                                      if (!context.mounted) return;
-                                      await context
-                                          .read<ProfileCubit>()
-                                          .refreshProfile();
-                                    },
-                                  ),
-                                  SettingsItem(
-                                    assetPath: AppAssets.profilePaymentMethods,
-                                    label: AppStrings.menuPaymentMethods,
-                                    onTap: () =>
-                                        context.push(AppRoutes.paymentMethods),
-                                  ),
-                                  SettingsItem(
-                                    assetPath: AppAssets.iconDollarCircle,
-                                    label: AppStrings.menuMyAccounts,
-                                    onTap: () =>
-                                        context.push(AppRoutes.myAccounts),
-                                  ),
-                                  SettingsItem(
-                                    assetPath: AppAssets.profileCompletedProjects,
-                                    label: AppStrings.menuCompletedProjects,
-                                    onTap: () => context.push(
-                                      AppRoutes.completedProjects,
+                                SettingsSection(
+                                  items: [
+                                    SettingsItem(
+                                      assetPath: AppAssets.iconPerson,
+                                      label: AppStrings.menuEditProfile,
+                                      onTap: () async {
+                                        await context.push(
+                                          AppRoutes.editProfile,
+                                        );
+                                        if (!context.mounted) return;
+                                        await context
+                                            .read<ProfileCubit>()
+                                            .refreshProfile();
+                                      },
                                     ),
-                                  ),
-                                  SettingsItem(
-                                    assetPath: AppAssets.iconDollarCircle,
-                                    label: AppStrings.menuTransactionHistory,
-                                    onTap: () => context.push(
-                                      AppRoutes.transactionHistory,
+                                    SettingsItem(
+                                      assetPath:
+                                          AppAssets.profilePaymentMethods,
+                                      label: AppStrings.menuPaymentMethods,
+                                      onTap: () => context.push(
+                                        AppRoutes.paymentMethods,
+                                      ),
                                     ),
-                                  ),
-                                  SettingsItem(
-                                    assetPath: AppAssets.profileGuidelines,
-                                    label: AppStrings.menuKeyGuidelines,
-                                    onTap: () =>
-                                        context.push(AppRoutes.keyGuidelines),
-                                  ),
-                                ]),
+                                    SettingsItem(
+                                      assetPath: AppAssets.iconDollarCircle,
+                                      label: AppStrings.menuMyAccounts,
+                                      onTap: () =>
+                                          context.push(AppRoutes.myAccounts),
+                                    ),
+                                    SettingsItem(
+                                      assetPath:
+                                          AppAssets.profileCompletedProjects,
+                                      label: AppStrings.menuCompletedProjects,
+                                      onTap: () => context.push(
+                                        AppRoutes.completedProjects,
+                                      ),
+                                    ),
+                                    SettingsItem(
+                                      assetPath: AppAssets.iconDollarCircle,
+                                      label: AppStrings.menuTransactionHistory,
+                                      onTap: () => context.push(
+                                        AppRoutes.transactionHistory,
+                                      ),
+                                    ),
+                                    SettingsItem(
+                                      assetPath: AppAssets.profileGuidelines,
+                                      label: AppStrings.menuKeyGuidelines,
+                                      onTap: () =>
+                                          context.push(AppRoutes.keyGuidelines),
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
                           ),

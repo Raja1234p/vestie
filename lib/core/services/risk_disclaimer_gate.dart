@@ -12,16 +12,13 @@ class RiskDisclaimerGate {
   static Future<bool> ensureAccepted(BuildContext context) async {
     final useCase = ServiceLocator.instance.getRiskDisclaimerUseCase;
     final result = await useCase();
-    return result.fold(
-      (_) => true,
-      (d) {
-        if (d.accepted) return true;
-        if (context.mounted) {
-          context.push(AppRoutes.agreement);
-        }
-        return false;
-      },
-    );
+    return result.fold((_) => true, (d) {
+      if (d.accepted) return true;
+      if (context.mounted) {
+        context.push(AppRoutes.agreement);
+      }
+      return false;
+    });
   }
 
   static bool isDisclaimerForbidden(Failure failure) =>

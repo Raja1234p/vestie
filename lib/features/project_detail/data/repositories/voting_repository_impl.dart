@@ -11,13 +11,22 @@ class VotingRepositoryImpl implements VotingRepository {
   VotingRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<Either<Failure, void>> submitVote(String projectId, bool isPositive) async {
+  Future<Either<Failure, void>> submitVote(
+    String projectId,
+    bool isPositive,
+  ) async {
     return _execute(() => remoteDataSource.submitVote(projectId, isPositive));
   }
 
   @override
-  Future<Either<Failure, void>> requestVoteExtension(String projectId, int extraDays, String reason) async {
-    return _execute(() => remoteDataSource.requestVoteExtension(projectId, extraDays, reason));
+  Future<Either<Failure, void>> requestVoteExtension(
+    String projectId,
+    int extraDays,
+    String reason,
+  ) async {
+    return _execute(
+      () => remoteDataSource.requestVoteExtension(projectId, extraDays, reason),
+    );
   }
 
   @override
@@ -26,7 +35,10 @@ class VotingRepositoryImpl implements VotingRepository {
   }
 
   @override
-  Future<Either<Failure, void>> cancelProject(String projectId, String reason) async {
+  Future<Either<Failure, void>> cancelProject(
+    String projectId,
+    String reason,
+  ) async {
     return _execute(() => remoteDataSource.cancelProject(projectId, reason));
   }
 

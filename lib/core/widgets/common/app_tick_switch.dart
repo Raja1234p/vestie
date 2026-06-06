@@ -51,10 +51,7 @@ class AppTickSwitch extends StatelessWidget {
                       // and on light grey card backgrounds (avoids “lost” 1px hairlines).
                       color: AppColors.grey200,
                       borderRadius: BorderRadius.circular(radius),
-                      border: Border.all(
-                        color: AppColors.grey500,
-                        width: 1.5,
-                      ),
+                      border: Border.all(color: AppColors.grey500, width: 1.5),
                     ),
                   ),
           ),

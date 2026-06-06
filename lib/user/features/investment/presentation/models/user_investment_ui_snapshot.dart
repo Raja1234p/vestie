@@ -36,6 +36,7 @@ class UserInvestmentFundsRowUi {
 class UserInvestmentUiSnapshot {
   final String projectName;
   final String? announcementOverride;
+
   /// Shown in the members modal title (`Project Members (n)`).
   final int headlineMemberCount;
   final List<UserInvestmentMemberUi> members;
@@ -96,8 +97,16 @@ class UserInvestmentUiSnapshot {
       ],
       totalProjectFundsUsd: 8240,
       fundsHistory: const [
-        UserInvestmentFundsRowUi(memberName: 'Lien', dateLabel: 'Mar 12', amount: 500),
-        UserInvestmentFundsRowUi(memberName: 'John', dateLabel: 'Mar 12', amount: 650),
+        UserInvestmentFundsRowUi(
+          memberName: 'Lien',
+          dateLabel: 'Mar 12',
+          amount: 500,
+        ),
+        UserInvestmentFundsRowUi(
+          memberName: 'John',
+          dateLabel: 'Mar 12',
+          amount: 650,
+        ),
       ],
       inviteShareLink: 'https://vestie.app-invite/mock/ocean-trip',
     );

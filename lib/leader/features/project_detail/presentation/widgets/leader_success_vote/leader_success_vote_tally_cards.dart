@@ -21,10 +21,10 @@ class LeaderSuccessVoteTallyCards extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final labelStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
-          fontSize: 13.sp,
-          fontWeight: FontWeight.w500,
-          color: AppColors.grey800,
-        );
+      fontSize: 13.sp,
+      fontWeight: FontWeight.w500,
+      color: AppColors.grey800,
+    );
 
     return Row(
       children: [
@@ -103,10 +103,10 @@ class _TallyCard extends StatelessWidget {
           AppText(
             '$count',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontSize: 30.sp,
-                  fontWeight: FontWeight.w700,
-                  color: countColor,
-                ),
+              fontSize: 30.sp,
+              fontWeight: FontWeight.w700,
+              color: countColor,
+            ),
           ),
         ],
       ),

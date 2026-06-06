@@ -27,35 +27,47 @@ class LoginSuccess extends LoginState {
   final User user;
   final bool isDisclaimerAccepted;
 
-  const LoginSuccess({
-    required this.user,
-    this.isDisclaimerAccepted = false,
-  }) : super(status: FormSubmissionStatus.success);
+  const LoginSuccess({required this.user, this.isDisclaimerAccepted = false})
+    : super(status: FormSubmissionStatus.success);
 
   @override
-  List<Object?> get props => [status, errorMessage, validationErrors, user, isDisclaimerAccepted];
+  List<Object?> get props => [
+    status,
+    errorMessage,
+    validationErrors,
+    user,
+    isDisclaimerAccepted,
+  ];
 }
 
 class LoginGoogleSuccess extends LoginState {
   final bool isDisclaimerAccepted;
 
   const LoginGoogleSuccess({required this.isDisclaimerAccepted})
-      : super(status: FormSubmissionStatus.success);
+    : super(status: FormSubmissionStatus.success);
 
   @override
-  List<Object?> get props => [status, errorMessage, validationErrors, isDisclaimerAccepted];
+  List<Object?> get props => [
+    status,
+    errorMessage,
+    validationErrors,
+    isDisclaimerAccepted,
+  ];
 }
 
 class LoginError extends LoginState {
   final String message;
   final String? title;
 
-  const LoginError({
-    required this.message,
-    this.title,
-    super.validationErrors,
-  }) : super(status: FormSubmissionStatus.failure, errorMessage: message);
+  const LoginError({required this.message, this.title, super.validationErrors})
+    : super(status: FormSubmissionStatus.failure, errorMessage: message);
 
   @override
-  List<Object?> get props => [status, errorMessage, validationErrors, message, title];
+  List<Object?> get props => [
+    status,
+    errorMessage,
+    validationErrors,
+    message,
+    title,
+  ];
 }

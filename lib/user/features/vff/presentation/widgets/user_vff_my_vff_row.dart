@@ -16,11 +16,7 @@ class UserVffMyVffRow extends StatelessWidget {
   final UserVffConnectionRowUi row;
   final VoidCallback? onOpen;
 
-  const UserVffMyVffRow({
-    super.key,
-    required this.row,
-    this.onOpen,
-  });
+  const UserVffMyVffRow({super.key, required this.row, this.onOpen});
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +97,9 @@ class _RequestSentBadge extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       decoration: BoxDecoration(
         color: AppColors.vffRequestSentChipBg,
-        borderRadius: BorderRadius.circular(AppRadius.vffHubRequestActionButton),
+        borderRadius: BorderRadius.circular(
+          AppRadius.vffHubRequestActionButton,
+        ),
         border: Border.all(color: AppColors.vffRequestSentChipBorder, width: 1),
       ),
       child: AppText(

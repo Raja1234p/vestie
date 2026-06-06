@@ -1,9 +1,11 @@
 ---
-description: Pre-commit / coding standards for Vestie Flutter app (align with README & codebase).
-alwaysApply: false
+description: Vestie Flutter coding standards — UI, architecture, state, navigation (always follow).
+alwaysApply: true
 ---
 
 # Vestie — engineering rules (pre-commit / AI)
+
+> **Before every task:** read all `.cursor/rules/*.mdc` files (start with `agent_workflow.mdc`) and follow them completely.
 
 Principal Flutter engineer mindset: **scalable, testable, team-ready**. Prefer matching **Figma** for UI work.
 
@@ -37,8 +39,10 @@ Principal Flutter engineer mindset: **scalable, testable, team-ready**. Prefer m
 
 ## 4. File size & structure
 
-- **Target** ≤ **150 lines per file** for **new** screens/widgets; split into `widgets/` subfiles when a screen grows.
-- **Legacy files** may exceed this — **refactor opportunistically** when you touch them for a feature (do not block PRs solely for line count).
+- **New code** — keep screens/widgets reasonably small; split into `widgets/` when growing.
+- **Legacy / large files** — split **only when actively modifying** or when pre-approved (see `production_scope.mdc`). Do **not** run global file-split campaigns.
+- **Split limits** (when decomposing): screen 400, widget 250, service 300, cubit/bloc 300 lines.
+- **Preserve public APIs** — use barrel `export` or Dart `part` files so call sites and imports stay stable.
 
 ---
 
@@ -70,9 +74,11 @@ Prefer **`lib/core/widgets/common/`**:
 - **Top-level `lib/`** (actual repo shape):
   - **`app/`** — `MainApp`, `GoRouter`, route tables, `AppRoutes`.
   - **`core/`** — constants, theme, DI, shared utils, **`core/widgets/common/`**.
-  - **`features/`** — cross-cutting modules (e.g. auth, profile, projects) when not split by role.
-  - **`leader/`** — leader-only flows (e.g. **`leader/features/create_project/`** — create-project wizard Cubit + screens).
-  - **`user/`** — member/user flows (home, discover, contributions, member fund setup, etc.).
+  - **`features/`** — shared modules (auth, wallet, project_detail, …).
+  - **`leader/features/`** — leader-only (create wizard, moderation).
+  - **`user/features/`** — member-only (home, discover, contribute, VFF, …).
+- **No bulk folder migration** — deferred; one feature per PR when approved (`production_scope.mdc`).
+- **New / touched features** — add or update `feature_overview.md` in the feature root.
 
 ---
 
@@ -99,19 +105,25 @@ Prefer **`lib/core/widgets/common/`**:
 
 ## 11. Quality bar before merge / before ending a task
 
-1. **`dart analyze`** (or IDE equivalent) — **no errors** on changed files.
-2. Imports resolved; no dead code left from refactors.
-3. Null-safety and types sound; avoid unnecessary `!`.
-4. New user-visible strings and colors wired through **`AppStrings`** / **`AppColors`** where applicable.
+1. **`flutter analyze`** — **no errors** on changed files.
+2. **`flutter test`** — all tests pass before proceeding.
+3. **Release build** — `flutter build apk --release` after significant changes (see `production_scope.mdc`).
+4. Imports resolved; no dead code left from refactors.
+5. Null-safety and types sound; avoid unnecessary `!`.
+6. New user-visible strings and colors wired through **`AppStrings`** / **`AppColors`** where applicable.
+7. **No unintended UI/UX/API/navigation changes** — structural/docs/perf-only unless the task explicitly requests feature work.
 
 ---
 
 ## 12. Agent / codegen note
 
-When producing patches: **prioritize correct, minimal diffs** and **verify compilation**. Brief notes to the author are fine; avoid huge unrelated refactors.
+- **Minimal diffs** — correct, focused patches; verify compilation.
+- **No** mass `dart format .` unless the task explicitly asks for formatting.
+- **No** global renames, import rewrites, or multi-feature folder moves.
+- Brief notes to the author are fine.
 
 ---
 
 ## 13. Reuse
 
-If UI repeats **three+** times or a pattern is clearly shared → extract a widget under the feature’s `widgets/` or `core/widgets/common/`.
+Extract shared widgets **only** when the same UI appears **3+** times **and** duplication is causing maintenance pain. Do not abstract single-use widgets proactively.

@@ -53,10 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
     HomeProjectListSync.onProjectPotUpdated = (projectId, projectPot) {
       if (!mounted) return;
       _homeBloc.add(
-        HomeProjectPotPatched(
-          projectId: projectId,
-          projectPot: projectPot,
-        ),
+        HomeProjectPotPatched(projectId: projectId, projectPot: projectPot),
       );
     };
     if (widget.reloadHomeProjectList) {
@@ -135,27 +132,28 @@ class _HomeBody extends StatelessWidget {
               children: [
                 const HomeHeader(totalContributed: 0),
                 Expanded(
-                    child: ColoredBox(
-                      color: Colors.white,
-                      child: CustomScrollView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        slivers: [
-                          SliverPadding(
-                            padding: EdgeInsets.symmetric(horizontal: 16.w),
-                            sliver: SliverList(
-                              delegate: SliverChildBuilderDelegate(
-                                (context, index) =>
-                                    const ProjectCardShimmer(),
-                                childCount: 3,
-                              ),
+                  child: ColoredBox(
+                    color: Colors.white,
+                    child: CustomScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      slivers: [
+                        // Match [_HomeContent]: 4.h inset + section header block.
+                        SliverToBoxAdapter(child: SizedBox(height: 4.h)),
+                        SliverPadding(
+                          padding: EdgeInsets.fromLTRB(16.w, 48.h, 16.w, 0),
+                          sliver: SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (context, index) => const ProjectCardShimmer(),
+                              childCount: 3,
                             ),
                           ),
-                          SliverToBoxAdapter(child: SizedBox(height: 16.h)),
-                        ],
-                      ),
+                        ),
+                        SliverToBoxAdapter(child: SizedBox(height: 16.h)),
+                      ],
                     ),
                   ),
-                ],
+                ),
+              ],
             ),
           );
         }
@@ -166,41 +164,41 @@ class _HomeBody extends StatelessWidget {
             body: SafeArea(
               bottom: false,
               child: CustomScrollView(
-                  physics: const NeverScrollableScrollPhysics(),
-                  slivers: [
-                    SliverFillRemaining(
-                      hasScrollBody: false,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 28.w),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            AppText(
-                              state.message,
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.lato(
-                                fontSize: 15.sp,
-                                height: 1.45,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.textBody,
-                              ),
+                physics: const NeverScrollableScrollPhysics(),
+                slivers: [
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 28.w),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          AppText(
+                            state.message,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.lato(
+                              fontSize: 15.sp,
+                              height: 1.45,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.textBody,
                             ),
-                            SizedBox(height: 20.h),
-                            AppButton(
-                              text: AppStrings.btnRetry,
-                              width: 280.w,
-                              onPressed: () => context
-                                  .read<HomeBloc>()
-                                  .add(const HomeFetchStarted()),
+                          ),
+                          SizedBox(height: 20.h),
+                          AppButton(
+                            text: AppStrings.btnRetry,
+                            width: 280.w,
+                            onPressed: () => context.read<HomeBloc>().add(
+                              const HomeFetchStarted(),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
+            ),
           );
         }
 
@@ -244,50 +242,39 @@ class _HomeContent extends StatelessWidget {
             children: [
               HomeHeader(totalContributed: data.totalContributed),
               Expanded(
-                  child: ColoredBox(
-                    color: Colors.white,
-                    child: RefreshIndicator(
-                      color: AppColors.primary,
-                      onRefresh: () async => context
-                          .read<HomeBloc>()
-                          .add(const HomeRefreshRequested()),
-                      child: CustomScrollView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        slivers: [
-                          SliverPadding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 16.w,
-                              vertical: 4.h,
-                            ),
-                            sliver: SliverToBoxAdapter(
-                              child: Column(
-                                children: [
-                                  ProjectsSection(
-                                    title: AppStrings.myProjects,
-                                    projects: data.myProjects,
-                                    expanded: sections.myProjectsExpanded,
-                                    onToggle: cubit.toggleMyProjects,
-                                    onProjectAction: (p) =>
-                                        _openProjectDetail(context, p),
-                                  ),
-                                  ProjectsSection(
-                                    title: AppStrings.joinedProjects,
-                                    projects: data.joinedProjects,
-                                    expanded: sections.joinedProjectsExpanded,
-                                    onToggle: cubit.toggleJoined,
-                                    onProjectAction: (p) =>
-                                        _openProjectDetail(context, p),
-                                  ),
-                                  SizedBox(height: 16.h),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                child: ColoredBox(
+                  color: Colors.white,
+                  child: RefreshIndicator(
+                    color: AppColors.primary,
+                    onRefresh: () async => context.read<HomeBloc>().add(
+                      const HomeRefreshRequested(),
+                    ),
+                    child: CustomScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      slivers: [
+                        SliverToBoxAdapter(child: SizedBox(height: 4.h)),
+                        ...ProjectsSection.buildSlivers(
+                          title: AppStrings.myProjects,
+                          projects: data.myProjects,
+                          expanded: sections.myProjectsExpanded,
+                          onToggle: cubit.toggleMyProjects,
+                          onProjectAction: (p) =>
+                              _openProjectDetail(context, p),
+                        ),
+                        ...ProjectsSection.buildSlivers(
+                          title: AppStrings.joinedProjects,
+                          projects: data.joinedProjects,
+                          expanded: sections.joinedProjectsExpanded,
+                          onToggle: cubit.toggleJoined,
+                          onProjectAction: (p) =>
+                              _openProjectDetail(context, p),
+                        ),
+                        SliverToBoxAdapter(child: SizedBox(height: 16.h)),
+                      ],
                     ),
                   ),
                 ),
+              ),
             ],
           ),
         );

@@ -18,7 +18,8 @@ class LeaderSuccessVoteCountdown extends StatefulWidget {
       _LeaderSuccessVoteCountdownState();
 }
 
-class _LeaderSuccessVoteCountdownState extends State<LeaderSuccessVoteCountdown> {
+class _LeaderSuccessVoteCountdownState
+    extends State<LeaderSuccessVoteCountdown> {
   late Duration _remaining;
   Timer? _timer;
 
@@ -49,18 +50,15 @@ class _LeaderSuccessVoteCountdownState extends State<LeaderSuccessVoteCountdown>
     final seconds = _remaining.inSeconds.remainder(60);
 
     final titleStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
-          fontSize: 14.sp,
-          fontWeight: FontWeight.w500,
-          color: AppColors.grey1100,
-        );
+      fontSize: 14.sp,
+      fontWeight: FontWeight.w500,
+      color: AppColors.grey1100,
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AppText(
-          AppStrings.leaderSuccessVoteWindowClosesIn,
-          style: titleStyle,
-        ),
+        AppText(AppStrings.leaderSuccessVoteWindowClosesIn, style: titleStyle),
         SizedBox(height: 10.h),
         Container(
           decoration: BoxDecoration(
@@ -124,20 +122,20 @@ class _TimerSegment extends StatelessWidget {
           AppText(
             value.toString().padLeft(2, '0'),
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontSize: 32.sp,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.grey1100,
-                  height: 1.1,
-                ),
+              fontSize: 32.sp,
+              fontWeight: FontWeight.w700,
+              color: AppColors.grey1100,
+              height: 1.1,
+            ),
           ),
           SizedBox(height: 4.h),
           AppText(
             unit,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.grey1100,
-                ),
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w500,
+              color: AppColors.grey1100,
+            ),
           ),
         ],
       ),

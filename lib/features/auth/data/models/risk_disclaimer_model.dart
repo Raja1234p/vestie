@@ -13,14 +13,16 @@ class RiskDisclaimerModel {
   factory RiskDisclaimerModel.fromJson(Map<String, dynamic> json) {
     return RiskDisclaimerModel(
       version: json['version'] as String? ?? '1.0',
-      guidelines: (json['guidelines'] as List?)?.map((e) => e.toString()).toList() ?? [],
+      guidelines:
+          (json['guidelines'] as List?)?.map((e) => e.toString()).toList() ??
+          [],
       accepted: json['accepted'] as bool? ?? false,
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'version': version,
-        'guidelines': guidelines,
-        'accepted': accepted,
-      };
+    'version': version,
+    'guidelines': guidelines,
+    'accepted': accepted,
+  };
 }

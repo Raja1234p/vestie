@@ -30,11 +30,16 @@ class CreateProjectReviewScreen extends StatelessWidget {
       create: (_) => CreateProjectSubmitCubit(),
       child: BlocBuilder<CreateProjectCubit, CreateProjectForm>(
         builder: (context, form) {
-          return BlocListener<CreateProjectSubmitCubit, CreateProjectSubmitState>(
+          return BlocListener<
+            CreateProjectSubmitCubit,
+            CreateProjectSubmitState
+          >(
             listenWhen: (previous, current) {
-              final idReady = (current.createdProject?.id ?? '').isNotEmpty &&
+              final idReady =
+                  (current.createdProject?.id ?? '').isNotEmpty &&
                   current.createdProject?.id != previous.createdProject?.id;
-              final errReady = (current.error ?? '').isNotEmpty &&
+              final errReady =
+                  (current.error ?? '').isNotEmpty &&
                   current.error != previous.error &&
                   !current.loading;
               return idReady || errReady;
@@ -95,7 +100,9 @@ class CreateProjectReviewScreen extends StatelessWidget {
                               ),
                               rows: buildProjectDetailsReviewRows(form),
                             ),
-                            if (form.flowType.usesInvestmentRoiOnlySettings) ...[
+                            if (form
+                                .flowType
+                                .usesInvestmentRoiOnlySettings) ...[
                               SizedBox(height: 12.h),
                               CreateProjectReviewSectionCard(
                                 title: AppStrings.reviewSectionRoi,
@@ -110,25 +117,28 @@ class CreateProjectReviewScreen extends StatelessWidget {
                       top: false,
                       child: Padding(
                         padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 20.h),
-                        child: BlocBuilder<CreateProjectSubmitCubit,
-                            CreateProjectSubmitState>(
-                          buildWhen: (p, c) => p.loading != c.loading,
-                          builder: (context, submit) {
-                            return AppButton(
-                              text: AppStrings.btnCreateProject2,
-                              useGradient: false,
-                              hasShadow: false,
-                              color: AppColors.neutral1200,
-                              borderRadius: 10.r,
-                              isLoading: submit.loading,
-                              onPressed: submit.loading
-                                  ? () {}
-                                  : () => context
-                                      .read<CreateProjectSubmitCubit>()
-                                      .submit(form),
-                            );
-                          },
-                        ),
+                        child:
+                            BlocBuilder<
+                              CreateProjectSubmitCubit,
+                              CreateProjectSubmitState
+                            >(
+                              buildWhen: (p, c) => p.loading != c.loading,
+                              builder: (context, submit) {
+                                return AppButton(
+                                  text: AppStrings.btnCreateProject2,
+                                  useGradient: false,
+                                  hasShadow: false,
+                                  color: AppColors.neutral1200,
+                                  borderRadius: 10.r,
+                                  isLoading: submit.loading,
+                                  onPressed: submit.loading
+                                      ? () {}
+                                      : () => context
+                                            .read<CreateProjectSubmitCubit>()
+                                            .submit(form),
+                                );
+                              },
+                            ),
                       ),
                     ),
                   ],

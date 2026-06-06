@@ -68,7 +68,8 @@ enum VffProjectJoinState {
     final key = raw?.trim().replaceAll(RegExp(r'[\s_-]'), '').toLowerCase();
     if (key == null || key.isEmpty) return VffProjectJoinState.join;
     return switch (key) {
-      'requesttojoin' || 'canrequesttojoin' => VffProjectJoinState.requestToJoin,
+      'requesttojoin' ||
+      'canrequesttojoin' => VffProjectJoinState.requestToJoin,
       'requestsent' => VffProjectJoinState.requestSent,
       'alreadymember' => VffProjectJoinState.alreadyMember,
       'pending' => VffProjectJoinState.pending,

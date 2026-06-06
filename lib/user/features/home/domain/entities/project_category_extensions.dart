@@ -44,8 +44,7 @@ extension ProjectCategoryX on ProjectCategory {
 
   /// Co-leader role is supported on Vacation and Emergency groups only.
   bool get supportsCoLeader =>
-      this == ProjectCategory.vacations ||
-      this == ProjectCategory.emergency;
+      this == ProjectCategory.vacations || this == ProjectCategory.emergency;
 
   /// Label used in project detail chips/content.
   /// Kept explicit to preserve current UI copy exactly.
@@ -60,4 +59,3 @@ extension ProjectCategoryX on ProjectCategory {
     }
   }
 }
-

@@ -58,7 +58,9 @@ class InvestmentDistributionScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 4.h),
                     AppText(
-                      AppStrings.investmentDistributingToMembers(data.memberCount),
+                      AppStrings.investmentDistributingToMembers(
+                        data.memberCount,
+                      ),
                       style: GoogleFonts.lato(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w500,
@@ -108,9 +110,9 @@ class InvestmentDistributionScreen extends StatelessWidget {
                 text: AppStrings.btnConfirmAndDistribute,
                 onPressed: () =>
                     ProjectDetailNavigation.openFundsDistributedSuccess(
-                  context,
-                  distributionData: data,
-                ),
+                      context,
+                      distributionData: data,
+                    ),
               ),
             ),
           ],

@@ -33,16 +33,16 @@ class ProjectDetailTrailingActions extends StatelessWidget {
 
     final Widget menu = switch (project.overflowMenuKind) {
       ProjectDetailOverflowMenuKind.member => MemberProjectActionMenu(
-          onSelected: onMemberMenuSelected,
-          includeMyBorrows: project.memberProjectMenuIncludesMyBorrows,
-        ),
+        onSelected: onMemberMenuSelected,
+        includeMyBorrows: project.memberProjectMenuIncludesMyBorrows,
+      ),
       ProjectDetailOverflowMenuKind.leader => LeaderActionMenu(
-          audience: project.isGroupLeader
-              ? LeaderMenuAudience.primaryLeader
-              : LeaderMenuAudience.coLeader,
-          includeMyBorrows: project.isVacationOrEmergency,
-          onSelected: onLeaderMenuSelected,
-        ),
+        audience: project.isGroupLeader
+            ? LeaderMenuAudience.primaryLeader
+            : LeaderMenuAudience.coLeader,
+        includeMyBorrows: project.isVacationOrEmergency,
+        onSelected: onLeaderMenuSelected,
+      ),
     };
 
     return Row(

@@ -25,7 +25,8 @@ class BorrowRepayNavigation {
     if (!context.mounted || selection == null) return;
 
     final paymentLabel = switch (selection) {
-      CardPaymentMethodSelection(:final card) => '${card.brandName} - ${card.last4}',
+      CardPaymentMethodSelection(:final card) =>
+        '${card.brandName} - ${card.last4}',
       WalletPaymentMethodSelection() => AppStrings.walletTitle,
     };
 

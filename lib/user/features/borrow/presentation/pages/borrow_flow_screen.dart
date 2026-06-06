@@ -64,8 +64,9 @@ class _BorrowAmountViewState extends State<_BorrowAmountView> {
   void initState() {
     super.initState();
     final cubitState = context.read<BorrowCubit>().state;
-    _amountDigitsController =
-        TextEditingController(text: cubitState.amountDigits);
+    _amountDigitsController = TextEditingController(
+      text: cubitState.amountDigits,
+    );
     _noteController = TextEditingController(text: cubitState.note);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -112,8 +113,7 @@ class _BorrowAmountViewState extends State<_BorrowAmountView> {
   }
 
   void _syncAmountFieldFromState(String digits) {
-    if (!_amountFieldFocus.hasFocus &&
-        _amountDigitsController.text != digits) {
+    if (!_amountFieldFocus.hasFocus && _amountDigitsController.text != digits) {
       _amountDigitsController.value = TextEditingValue(
         text: digits,
         selection: TextSelection.collapsed(offset: digits.length),
@@ -431,7 +431,7 @@ class _BorrowConfirmView extends StatelessWidget {
               style: GoogleFonts.lato(
                 fontSize: 14.sp,
                 color: AppColors.neutral700,
-                fontWeight: FontWeight.w400
+                fontWeight: FontWeight.w400,
               ),
             ),
           ),

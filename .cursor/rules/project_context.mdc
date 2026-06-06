@@ -1,0 +1,60 @@
+---
+description: Vestie product scope & domain — always know what this app is before any task.
+alwaysApply: true
+---
+
+# Vestie — project context (always in scope)
+
+> New chats have **no memory** of prior conversations. This file + linked docs are the source of truth.
+
+## What Vestie is
+
+**Collaborative group savings** Flutter app (Android & iOS). Users create/join **projects** (vacation, emergency, investment), contribute from a **wallet**, borrow from group pots (vacation/emergency), pay via **Stripe**, connect via **VFF**, and complete **KYC** for withdraw.
+
+Vestie is **not a bank** — risk disclaimers required; leaders set repayment terms.
+
+## Roles & code folders
+
+| Role | API `viewerRole` | Code |
+|------|------------------|------|
+| Group Leader | `GroupLeader` | `lib/leader/features/` |
+| Co-Leader | `CoLeader` | vacation/emergency only |
+| Member | `Member` | `lib/user/features/` |
+| Shared | all | `lib/features/`, `lib/core/`, `lib/app/` |
+
+## Project categories
+
+| Category | Borrow | Co-leader | Detail route |
+|----------|--------|-----------|--------------|
+| Vacation | Yes | Yes | `/project/detail` |
+| Emergency | Yes | Yes | `/project/detail` |
+| Investment | No | No | `/project/investment-detail` |
+
+Public join → instant active membership. Private → pending until leader approves.
+
+## Must-not-break flows (unless task explicitly changes them)
+
+- Auth → agreement → dashboard (`/dashboard` tabs: Home, Discover, +, Wallet, Profile)
+- Wallet: deposit, withdraw, Stripe PaymentSheet, SignalR `/hubs/wallet`
+- Contribute, borrow (vacation/emergency), KYC, bank link (`vestie://kyc/*`, `vestie://bank/*`)
+- Invite deep links `/join/:inviteCode`
+- Project detail, leader moderation, investment distribution
+- VFF hub `/user/vff`
+- Routes: **`AppRoutes` only** — typed `GoRouter` extras
+
+## Before feature / product / flow work
+
+**Read** (in order):
+
+1. `DOCS/project_scope.md` — full product & technical scope
+2. `ARCHITECTURE_OVERVIEW.md` — layout & layers
+3. `PROJECT_FLOW_MAP.md` or `FEATURE_MAP.md` — locate code & traces
+4. `feature_overview.md` in the feature folder you touch
+
+## Tech stack (fixed)
+
+Flutter 3.x · Cubit/Bloc · go_router · Dio · Stripe · Firebase FCM · SignalR · ScreenUtil 390×844 · Inter (Google Fonts)
+
+## Current engineering mode
+
+**Production-hardening** — see `production_scope.mdc`. Stability over refactors. No bulk folder migration or global renames unless user explicitly approves.

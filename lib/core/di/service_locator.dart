@@ -61,15 +61,15 @@ import '../../features/projects/presentation/bloc/project_detail_bloc.dart';
 import '../../features/stripe/data/datasources/stripe_remote_data_source.dart';
 import '../../features/stripe/domain/repositories/stripe_repository.dart';
 import '../../features/stripe/domain/usecases/get_stripe_config_use_case.dart';
-import '../../features/wallet/data/datasources/wallet_deposit_remote_data_source.dart';
-import '../../features/wallet/data/datasources/wallet_remote_data_source.dart';
-import '../../features/wallet/data/datasources/wallet_withdrawal_remote_data_source.dart';
-import '../../features/wallet/domain/repositories/wallet_deposit_repository.dart';
-import '../../features/wallet/domain/repositories/wallet_repository.dart';
-import '../../features/wallet/domain/repositories/wallet_withdrawal_repository.dart';
-import '../../features/wallet/domain/usecases/get_wallet_use_case.dart';
-import '../../features/wallet/domain/usecases/run_wallet_deposit_use_case.dart';
-import '../../features/wallet/domain/usecases/wallet_withdrawal_usecases.dart';
+import '../../wallet/data/datasources/wallet_deposit_remote_data_source.dart';
+import '../../wallet/data/datasources/wallet_remote_data_source.dart';
+import '../../wallet/data/datasources/wallet_withdrawal_remote_data_source.dart';
+import '../../wallet/domain/repositories/wallet_deposit_repository.dart';
+import '../../wallet/domain/repositories/wallet_repository.dart';
+import '../../wallet/domain/repositories/wallet_withdrawal_repository.dart';
+import '../../wallet/domain/usecases/get_wallet_use_case.dart';
+import '../../wallet/domain/usecases/run_wallet_deposit_use_case.dart';
+import '../../wallet/domain/usecases/wallet_withdrawal_usecases.dart';
 import 'package:vestie/user/features/borrow/data/datasources/borrow_remote_data_source.dart';
 import 'package:vestie/user/features/borrow/domain/repositories/borrow_repository.dart';
 import 'package:vestie/user/features/borrow/domain/usecases/approve_borrow_request_use_case.dart';
@@ -146,7 +146,8 @@ class ServiceLocator {
   late final ProjectActionsRemoteDataSource projectActionsRemoteDataSource;
   late final ProjectActionsRepository projectActionsRepository;
   late final OpenClosureVotingUseCase openClosureVotingUseCase;
-  late final OpenStopContributionsVotingUseCase openStopContributionsVotingUseCase;
+  late final OpenStopContributionsVotingUseCase
+  openStopContributionsVotingUseCase;
   late final CancelProjectUseCase cancelProjectUseCase;
   late final LeaveProjectUseCase leaveProjectUseCase;
   late final ListPendingJoinRequestsUseCase listPendingJoinRequestsUseCase;
@@ -208,7 +209,8 @@ class ServiceLocator {
   late final PreviewWithdrawalUseCase previewWithdrawalUseCase;
   late final RunWalletWithdrawUseCase runWalletWithdrawUseCase;
 
-  late final ProjectAnnouncementsRemoteDataSource projectAnnouncementsRemoteDataSource;
+  late final ProjectAnnouncementsRemoteDataSource
+  projectAnnouncementsRemoteDataSource;
   late final ProjectAnnouncementsRepository projectAnnouncementsRepository;
   late final CreateProjectAnnouncementUseCase createProjectAnnouncementUseCase;
   late final DeleteProjectAnnouncementUseCase deleteProjectAnnouncementUseCase;
@@ -271,17 +273,17 @@ class ServiceLocator {
   }
 
   ContributeBloc createContributeBloc() => ContributeBloc(
-        configUseCase: fetchContributionConfigUseCase,
-        previewUseCase: previewContributionUseCase,
-        confirmUseCase: confirmContributionUseCase,
-        getWalletUseCase: getWalletUseCase,
-        listPaymentMethodsUseCase: listPaymentMethodsUseCase,
-      );
+    configUseCase: fetchContributionConfigUseCase,
+    previewUseCase: previewContributionUseCase,
+    confirmUseCase: confirmContributionUseCase,
+    getWalletUseCase: getWalletUseCase,
+    listPaymentMethodsUseCase: listPaymentMethodsUseCase,
+  );
 
   ProjectDetailBloc createProjectDetailBloc() => ProjectDetailBloc(
-        repository: projectDetailRepository,
-        getProjectPotUseCase: getProjectPotUseCase,
-        listPendingJoinRequests: listPendingJoinRequestsUseCase,
-        sendVffRequestUseCase: sendVffRequestUseCase,
-      );
+    repository: projectDetailRepository,
+    getProjectPotUseCase: getProjectPotUseCase,
+    listPendingJoinRequests: listPendingJoinRequestsUseCase,
+    sendVffRequestUseCase: sendVffRequestUseCase,
+  );
 }

@@ -14,8 +14,9 @@ class StripeRemoteDataSourceImpl implements StripeRemoteDataSource {
 
   @override
   Future<StripeConfigModel> getConfig() async {
-    final response =
-        await apiClient.get<Map<String, dynamic>>(ApiConstants.stripeConfig);
+    final response = await apiClient.get<Map<String, dynamic>>(
+      ApiConstants.stripeConfig,
+    );
     return StripeConfigModel.fromJson(response);
   }
 }

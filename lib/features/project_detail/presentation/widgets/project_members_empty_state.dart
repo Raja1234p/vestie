@@ -11,6 +11,7 @@ import 'package:vestie/core/widgets/text/app_text.dart';
 class ProjectMembersEmptyState extends StatelessWidget {
   /// Full-screen list — vertically centered under the header.
   final bool centered;
+
   /// Tab preview with "View All" above — less top inset.
   final bool compactTop;
 
@@ -26,15 +27,15 @@ class ProjectMembersEmptyState extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         ProjectMembersEmptyIllustration(size: 120.w),
-          SizedBox(height: 16.h),
-          AppText(
-            AppStrings.userInvestmentMembersEmpty,
-            style: GoogleFonts.lato(
-              fontSize: 18.sp,
-              fontWeight: FontWeight.w800,
-              color: AppColors.neutral1200,
-            ),
+        SizedBox(height: 16.h),
+        AppText(
+          AppStrings.userInvestmentMembersEmpty,
+          style: GoogleFonts.lato(
+            fontSize: 18.sp,
+            fontWeight: FontWeight.w800,
+            color: AppColors.neutral1200,
           ),
+        ),
       ],
     );
 

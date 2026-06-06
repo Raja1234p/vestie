@@ -2,17 +2,11 @@ import 'package:flutter/material.dart';
 
 extension WidgetExtensions on Widget {
   Widget padding(EdgeInsetsGeometry padding) {
-    return Padding(
-      padding: padding,
-      child: this,
-    );
+    return Padding(padding: padding, child: this);
   }
 
   Widget paddingAll(double value) {
-    return Padding(
-      padding: EdgeInsets.all(value),
-      child: this,
-    );
+    return Padding(padding: EdgeInsets.all(value), child: this);
   }
 
   Widget paddingSymmetric({double horizontal = 0, double vertical = 0}) {
@@ -23,15 +17,10 @@ extension WidgetExtensions on Widget {
   }
 
   Widget center() {
-    return Center(
-      child: this,
-    );
+    return Center(child: this);
   }
 
   Widget expand([int flex = 1]) {
-    return Expanded(
-      flex: flex,
-      child: this,
-    );
+    return Expanded(flex: flex, child: this);
   }
 }

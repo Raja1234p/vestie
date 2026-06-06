@@ -24,10 +24,7 @@ void main() {
       );
 
       expect(failure, isA<UnauthorizedFailure>());
-      expect(
-        FailureMapper.userMessage(failure),
-        'Invalid or expired token.',
-      );
+      expect(FailureMapper.userMessage(failure), 'Invalid or expired token.');
     });
 
     test('401 with empty body maps to session expired, not network', () {
@@ -44,10 +41,7 @@ void main() {
       );
 
       expect(failure, isA<UnauthorizedFailure>());
-      expect(
-        FailureMapper.userMessage(failure),
-        AppStrings.errorUnauthorized,
-      );
+      expect(FailureMapper.userMessage(failure), AppStrings.errorUnauthorized);
       expect(failure, isNot(isA<NetworkFailure>()));
     });
 

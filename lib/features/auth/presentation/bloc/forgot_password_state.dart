@@ -6,12 +6,14 @@ abstract class ForgotPasswordState extends Equatable {
 
 class ForgotPasswordInitial extends ForgotPasswordState {
   const ForgotPasswordInitial();
-  @override List<Object> get props => [];
+  @override
+  List<Object> get props => [];
 }
 
 class ForgotPasswordLoading extends ForgotPasswordState {
   const ForgotPasswordLoading();
-  @override List<Object> get props => [];
+  @override
+  List<Object> get props => [];
 }
 
 /// Reset email sent successfully — navigate to shared OTP ([AppRoutes.verify]) screen.
@@ -27,5 +29,6 @@ class ForgotPasswordError extends ForgotPasswordState {
   final String message;
   final String? title;
   const ForgotPasswordError({required this.message, this.title});
-  @override List<Object?> get props => [message, title];
+  @override
+  List<Object?> get props => [message, title];
 }

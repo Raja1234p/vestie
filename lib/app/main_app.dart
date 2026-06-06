@@ -1,25 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:device_preview/device_preview.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../core/constants/app_strings.dart';
 import '../core/theme/app_theme.dart';
 import 'package:vestie/leader/features/create_project/presentation/cubit/create_project_cubit.dart';
 import '../core/di/service_locator.dart';
-import '../features/wallet/presentation/cubit/wallet_cubit.dart';
-import '../features/wallet/presentation/cubit/wallet_transaction_cubit.dart';
+import '../wallet/presentation/cubit/wallet_cubit.dart';
+import '../wallet/presentation/cubit/wallet_transaction_cubit.dart';
 import '../core/services/project_invite_deep_link_service.dart';
 import 'router/app_router.dart';
 
 class MainApp extends StatefulWidget {
   const MainApp({
     super.key,
-    this.enableDevicePreview = false,
+    this.previewLocale,
+    this.previewAppBuilder,
   });
 
-  /// Only set to `true` from [main_dev.dart] (debug DevicePreview entry).
-  final bool enableDevicePreview;
+  /// Set from [main_dev.dart] only — keeps [device_preview] out of this file.
+  final Locale? previewLocale;
+  final Widget Function(BuildContext context, Widget? child)? previewAppBuilder;
 
   @override
   State<MainApp> createState() => _MainAppState();
@@ -61,13 +62,11 @@ class _MainAppState extends State<MainApp> {
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,
             routerConfig: AppRouter.router,
-            locale: widget.enableDevicePreview
-                ? DevicePreview.locale(context)
-                : null,
+            locale: widget.previewLocale,
             builder: (context, child) {
               final app = child ?? const SizedBox.shrink();
-              final wrapped = widget.enableDevicePreview
-                  ? DevicePreview.appBuilder(context, app)
+              final wrapped = widget.previewAppBuilder != null
+                  ? widget.previewAppBuilder!(context, app)
                   : app;
               return FToastBuilder()(context, wrapped);
             },

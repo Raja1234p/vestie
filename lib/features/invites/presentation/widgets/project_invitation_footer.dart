@@ -32,7 +32,8 @@ class ProjectInvitationFooter extends StatelessWidget {
         final cubit = context.read<ProjectInvitationCubit>();
         final preview = state.preview;
         final showPrimary = preview != null && state.errorMessage == null;
-        final useRequestCta = preview != null &&
+        final useRequestCta =
+            preview != null &&
             (preview.isPrivateInvite || preview.requiresApproval);
         final primaryLabel = useRequestCta
             ? AppStrings.projectInvitationRequestToJoin
@@ -56,10 +57,10 @@ class ProjectInvitationFooter extends StatelessWidget {
                 child: InkWell(
                   onTap: () => ProjectInviteNavigation.goMaybeLater(context),
                   borderRadius: BorderRadius.circular(8.r),
-                  splashColor:
-                      AppColors.guidelineTitle.withValues(alpha: 0.12),
-                  highlightColor:
-                      AppColors.guidelineTitle.withValues(alpha: 0.06),
+                  splashColor: AppColors.guidelineTitle.withValues(alpha: 0.12),
+                  highlightColor: AppColors.guidelineTitle.withValues(
+                    alpha: 0.06,
+                  ),
                   child: Padding(
                     padding: EdgeInsets.only(bottom: 12.h),
                     child: Center(

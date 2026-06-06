@@ -63,20 +63,20 @@ class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
               pendingJoinRequestCount: widget.pendingJoinRequestCount,
               onLeaderMenuSelected: (action) =>
                   ProjectDetailNavigation.handleLeaderAction(
-                context,
-                project: widget.project,
-                action: action,
-                refreshHomeOnPop: widget.refreshHomeOnPop,
-                refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
-              ),
+                    context,
+                    project: widget.project,
+                    action: action,
+                    refreshHomeOnPop: widget.refreshHomeOnPop,
+                    refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
+                  ),
               onMemberMenuSelected: (action) =>
                   ProjectDetailNavigation.handleMemberAction(
-                context,
-                project: widget.project,
-                action: action,
-                refreshHomeOnPop: widget.refreshHomeOnPop,
-                refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
-              ),
+                    context,
+                    project: widget.project,
+                    action: action,
+                    refreshHomeOnPop: widget.refreshHomeOnPop,
+                    refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
+                  ),
             )
           : null,
     );
@@ -109,27 +109,26 @@ class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
             SliverToBoxAdapter(child: _header(context)),
-          SliverPadding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
-            sliver: SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  if (_canPreviewSuccessVote)
-                    ProjectDetailSuccessVoteDevPreviews(
-                      project: widget.project,
-                      onPreviewSuccessVoteInPlace: () => setState(
-                        () => _previewSuccessVote = true,
+            SliverPadding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (_canPreviewSuccessVote)
+                      ProjectDetailSuccessVoteDevPreviews(
+                        project: widget.project,
+                        onPreviewSuccessVoteInPlace: () =>
+                            setState(() => _previewSuccessVote = true),
                       ),
+                    ProjectDetailMemberScrollContent(
+                      project: widget.project,
+                      onMemberTap: widget.onMemberTap,
                     ),
-                  ProjectDetailMemberScrollContent(
-                    project: widget.project,
-                    onMemberTap: widget.onMemberTap,
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
           ],
         ),
       ),

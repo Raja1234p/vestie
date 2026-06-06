@@ -11,7 +11,10 @@ Future<void> main() async {
   runApp(
     DevicePreview(
       enabled: true,
-      builder: (_) => const MainApp(enableDevicePreview: true),
+      builder: (context) => MainApp(
+        previewLocale: DevicePreview.locale(context),
+        previewAppBuilder: DevicePreview.appBuilder,
+      ),
     ),
   );
 }

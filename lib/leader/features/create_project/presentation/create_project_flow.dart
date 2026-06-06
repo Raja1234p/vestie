@@ -6,7 +6,10 @@ import '../domain/create_project_form.dart';
 import 'create_project_entry_mode.dart';
 import 'cubit/create_project_cubit.dart';
 
-String? createProjectDetailsStepBadge(CreateProjectForm form, {required bool editMode}) {
+String? createProjectDetailsStepBadge(
+  CreateProjectForm form, {
+  required bool editMode,
+}) {
   if (editMode) return null;
   // Amount is outside 1/3–3/3 (vacation·borrow, emergency·borrow, investment·ROI).
   if (form.flowType == ProjectCreationFlowType.fundsBorrowing ||
@@ -72,7 +75,10 @@ void pushNextAfterDetailsStep(
       case ProjectCreationFlowType.streamlined:
         context.pop();
       case ProjectCreationFlowType.investmentOptionalRoi:
-        context.push(AppRoutes.createProjectInvestmentSettings, extra: entryMode);
+        context.push(
+          AppRoutes.createProjectInvestmentSettings,
+          extra: entryMode,
+        );
     }
     return;
   }

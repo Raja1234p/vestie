@@ -10,9 +10,9 @@ final class InviteMembersSheetCubit extends Cubit<InviteMembersSheetState> {
   InviteMembersSheetCubit({
     required ListMyVffsUseCase listMyVffsUseCase,
     required InviteVffsToProjectUseCase inviteVffsToProjectUseCase,
-  })  : _listMyVffsUseCase = listMyVffsUseCase,
-        _inviteVffsToProjectUseCase = inviteVffsToProjectUseCase,
-        super(const InviteMembersSheetState());
+  }) : _listMyVffsUseCase = listMyVffsUseCase,
+       _inviteVffsToProjectUseCase = inviteVffsToProjectUseCase,
+       super(const InviteMembersSheetState());
 
   final ListMyVffsUseCase _listMyVffsUseCase;
   final InviteVffsToProjectUseCase _inviteVffsToProjectUseCase;
@@ -84,9 +84,7 @@ final class InviteMembersSheetCubit extends Cubit<InviteMembersSheetState> {
       ),
       (invites) {
         count = invites.length;
-        emit(
-          state.copyWith(status: InviteMembersSheetLoadStatus.loaded),
-        );
+        emit(state.copyWith(status: InviteMembersSheetLoadStatus.loaded));
       },
     );
     return count;

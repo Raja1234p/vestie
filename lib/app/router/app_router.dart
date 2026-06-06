@@ -13,9 +13,8 @@ import 'route_groups/create_project_member_flow_routes.dart';
 import 'route_groups/user_vff_routes.dart';
 
 class AppRouter {
-  static Widget _invalidRouteScreen() => const Scaffold(
-        body: Center(child: Text(AppStrings.routeNotFound)),
-      );
+  static Widget _invalidRouteScreen() =>
+      const Scaffold(body: Center(child: Text(AppStrings.routeNotFound)));
 
   static final GoRouter router = GoRouter(
     initialLocation: AppRoutes.splash,
@@ -32,8 +31,7 @@ class AppRouter {
       ...buildCreateProjectMemberFlowRoutes(),
       ...buildUserVffRoutes(invalidRouteScreen: _invalidRouteScreen),
     ],
-    errorBuilder: (context, _) => const Scaffold(
-      body: Center(child: Text(AppStrings.routeNotFound)),
-    ),
+    errorBuilder: (context, _) =>
+        const Scaffold(body: Center(child: Text(AppStrings.routeNotFound))),
   );
 }

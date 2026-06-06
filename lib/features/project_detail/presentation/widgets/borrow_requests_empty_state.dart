@@ -11,6 +11,7 @@ import 'package:vestie/core/widgets/text/app_text.dart';
 class BorrowRequestsEmptyState extends StatelessWidget {
   /// Full-screen lists — vertically centered under the header.
   final bool centered;
+
   /// Inline tab preview — less top inset when list is empty.
   final bool compactTop;
   final String title;
@@ -27,40 +28,40 @@ class BorrowRequestsEmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final content = Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Image.asset(
-            AppAssets.borrowRequestsEmpty,
-            width: 100.w,
-            height: 100.h,
-            fit: BoxFit.contain,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Image.asset(
+          AppAssets.borrowRequestsEmpty,
+          width: 100.w,
+          height: 100.h,
+          fit: BoxFit.contain,
+        ),
+        SizedBox(height: 20.h),
+        AppText(
+          title,
+          textAlign: TextAlign.center,
+          style: GoogleFonts.lato(
+            fontSize: 20.sp,
+            fontWeight: FontWeight.w900,
+            color: AppColors.projectDetailText,
+            height: 1.25,
           ),
-          SizedBox(height: 20.h),
+        ),
+        if (subtitle != null) ...[
+          SizedBox(height: 8.h),
           AppText(
-            title,
+            subtitle!,
             textAlign: TextAlign.center,
             style: GoogleFonts.lato(
               fontSize: 20.sp,
-              fontWeight: FontWeight.w900,
-              color: AppColors.projectDetailText,
-              height: 1.25,
+              fontWeight: FontWeight.w500,
+              color: AppColors.grey800,
+              height: 1.4,
             ),
           ),
-          if (subtitle != null) ...[
-            SizedBox(height: 8.h),
-            AppText(
-              subtitle!,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.lato(
-                fontSize: 20.sp,
-                fontWeight: FontWeight.w500,
-                color: AppColors.grey800,
-                height: 1.4,
-              ),
-            ),
-          ],
         ],
-      );
+      ],
+    );
 
     if (centered) {
       return Center(
@@ -72,12 +73,7 @@ class BorrowRequestsEmptyState extends StatelessWidget {
     }
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(
-        24.w,
-        compactTop ? 16.h : 56.h,
-        24.w,
-        48.h,
-      ),
+      padding: EdgeInsets.fromLTRB(24.w, compactTop ? 16.h : 56.h, 24.w, 48.h),
       child: content,
     );
   }

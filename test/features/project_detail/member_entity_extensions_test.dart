@@ -25,34 +25,39 @@ MemberEntity _member({
 
 void main() {
   group('MemberEntity.mergedWithActivity VFF state', () {
-    test('uses API disconnected state after VFF remove (ignores stale route seed)',
-        () {
-      final seed = _member(
-        vffConnectionState: VffConnectionState.connected,
-        vffAdded: true,
-      );
-      final fromApi = _member(
-        vffConnectionState: VffConnectionState.none,
-        vffAdded: false,
-      );
+    test(
+      'uses API disconnected state after VFF remove (ignores stale route seed)',
+      () {
+        final seed = _member(
+          vffConnectionState: VffConnectionState.connected,
+          vffAdded: true,
+        );
+        final fromApi = _member(
+          vffConnectionState: VffConnectionState.none,
+          vffAdded: false,
+        );
 
-      final merged = seed.mergedWithActivity(fromApi);
+        final merged = seed.mergedWithActivity(fromApi);
 
-      expect(merged.vffConnectionState, VffConnectionState.none);
-      expect(merged.isVffConnected, isFalse);
-      expect(merged.vffAdded, isFalse);
-    });
+        expect(merged.vffConnectionState, VffConnectionState.none);
+        expect(merged.isVffConnected, isFalse);
+        expect(merged.vffAdded, isFalse);
+      },
+    );
 
-    test('keeps route pending outgoing when activity API has not caught up', () {
-      final seed = _member(
-        vffConnectionState: VffConnectionState.pendingOutgoing,
-      );
-      final fromApi = _member(vffConnectionState: VffConnectionState.none);
+    test(
+      'keeps route pending outgoing when activity API has not caught up',
+      () {
+        final seed = _member(
+          vffConnectionState: VffConnectionState.pendingOutgoing,
+        );
+        final fromApi = _member(vffConnectionState: VffConnectionState.none);
 
-      final merged = seed.mergedWithActivity(fromApi);
+        final merged = seed.mergedWithActivity(fromApi);
 
-      expect(merged.vffConnectionState, VffConnectionState.pendingOutgoing);
-    });
+        expect(merged.vffConnectionState, VffConnectionState.pendingOutgoing);
+      },
+    );
 
     test('uses API connected state when available', () {
       final seed = _member(vffConnectionState: VffConnectionState.none);

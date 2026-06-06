@@ -5,12 +5,7 @@ import 'package:vestie/features/kyc/domain/entities/kyc_status_entity.dart';
 /// Stripe Account Links: `return_url` only means the user left hosted onboarding
 /// (completed, saved for later, or exited). Check account requirements via API.
 /// https://docs.stripe.com/connect/custom/hosted-onboarding
-enum KycReturnUrlOutcome {
-  withdrawReady,
-  underReview,
-  incomplete,
-  rejected,
-}
+enum KycReturnUrlOutcome { withdrawReady, underReview, incomplete, rejected }
 
 extension KycStatusEntityReturnUrl on KycStatusEntity {
   KycReturnUrlOutcome get returnUrlOutcome {

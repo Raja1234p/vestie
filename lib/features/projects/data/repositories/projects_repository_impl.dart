@@ -16,31 +16,33 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
   ProjectsRepositoryImpl(this.remoteDataSource);
 
   @override
-  Future<Either<Failure, List<Project>>> listProjects({required String scope}) async {
+  Future<Either<Failure, List<Project>>> listProjects({
+    required String scope,
+  }) async {
     try {
       final models = await remoteDataSource.listProjects(scope: scope);
-      return Right(models.map((m) {
-        final statusLabel =
-            m.displayStatus.isNotEmpty ? m.displayStatus : m.state;
-        return Project(
-          id: m.id,
-          name: m.name,
-          category: _mapCategory(m.type),
-          status: _mapStatus(statusLabel),
-          relation: _mapRelation(
-            scope: scope,
-            viewerRole: m.viewerRole,
-          ),
-          goalAmount: m.targetAmount,
-          currentAmount: m.raisedAmount,
-          description: m.description,
-          endsIn: m.endsAtUtc?.toIso8601String(),
-          roiPercentage: m.roiPercentage,
-          displayStatus: m.displayStatus.isNotEmpty ? m.displayStatus : null,
-          projectInviteCode: m.projectInviteCode,
-          isPublic: _isPublicVisibility(m.visibility),
-        );
-      }).toList());
+      return Right(
+        models.map((m) {
+          final statusLabel = m.displayStatus.isNotEmpty
+              ? m.displayStatus
+              : m.state;
+          return Project(
+            id: m.id,
+            name: m.name,
+            category: _mapCategory(m.type),
+            status: _mapStatus(statusLabel),
+            relation: _mapRelation(scope: scope, viewerRole: m.viewerRole),
+            goalAmount: m.targetAmount,
+            currentAmount: m.raisedAmount,
+            description: m.description,
+            endsIn: m.endsAtUtc?.toIso8601String(),
+            roiPercentage: m.roiPercentage,
+            displayStatus: m.displayStatus.isNotEmpty ? m.displayStatus : null,
+            projectInviteCode: m.projectInviteCode,
+            isPublic: _isPublicVisibility(m.visibility),
+          );
+        }).toList(),
+      );
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message, e.title));
     } on UnauthorizedException catch (e) {
@@ -53,7 +55,9 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
   }
 
   @override
-  Future<Either<Failure, CreatedProjectEntity>> createProject({required CreateProjectForm form}) async {
+  Future<Either<Failure, CreatedProjectEntity>> createProject({
+    required CreateProjectForm form,
+  }) async {
     try {
       final response = await remoteDataSource.createProject(
         request: CreateProjectRequestModel.fromForm(form),
@@ -94,19 +98,13 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
     required CreateProjectForm form,
   }) async {
     final created = await createProject(form: form);
-    return created.fold(
-      Left.new,
-      (entity) async {
-        if (entity.id.isEmpty) {
-          return const Left(ServerFailure(AppStrings.errorGeneric));
-        }
-        final launched = await launchProject(entity.id);
-        return launched.fold(
-          (failure) => Left(failure),
-          (_) => Right(entity),
-        );
-      },
-    );
+    return created.fold(Left.new, (entity) async {
+      if (entity.id.isEmpty) {
+        return const Left(ServerFailure(AppStrings.errorGeneric));
+      }
+      final launched = await launchProject(entity.id);
+      return launched.fold((failure) => Left(failure), (_) => Right(entity));
+    });
   }
 
   bool _isPublicVisibility(String visibility) {

@@ -9,7 +9,13 @@ abstract final class VffJsonParsing {
     var data = raw;
     if (data is Map) {
       final map = data.cast<String, dynamic>();
-      for (final key in const ['data', 'items', 'value', 'results', 'connections']) {
+      for (final key in const [
+        'data',
+        'items',
+        'value',
+        'results',
+        'connections',
+      ]) {
         final nested = map[key];
         if (nested is List) {
           data = nested;
@@ -49,15 +55,14 @@ abstract final class VffJsonParsing {
   }
 
   static VffJoinedProjectEntity mapJoinedProject(Map<String, dynamic> json) {
-    final joinRaw = readString(json, const [
-      'joinState',
-      'viewerJoinState',
-    ]);
+    final joinRaw = readString(json, const ['joinState', 'viewerJoinState']);
     return VffJoinedProjectEntity(
       projectId: readString(json, const ['projectId']),
       name: readString(json, const ['name', 'projectName']),
       type: json.safeStringNullable('type'),
-      visibility: VffProjectVisibility.parse(json.safeStringNullable('visibility')),
+      visibility: VffProjectVisibility.parse(
+        json.safeStringNullable('visibility'),
+      ),
       state: json.safeStringNullable('state'),
       joinState: VffProjectJoinState.parse(joinRaw),
       memberCount: json.safeInt('memberCount'),

@@ -39,10 +39,12 @@ abstract final class InviteMembersMapper {
   }) {
     return connections
         .where((c) => !c.isPendingOutgoing)
-        .where((c) => !isExcludedFromInvite(
-              connection: c,
-              excludeUserIds: excludeUserIds,
-            ))
+        .where(
+          (c) => !isExcludedFromInvite(
+            connection: c,
+            excludeUserIds: excludeUserIds,
+          ),
+        )
         .map(fromConnection)
         .toList(growable: false);
   }

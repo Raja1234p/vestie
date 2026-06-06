@@ -15,4 +15,3 @@ class GetContributionConfigUseCase {
     return _repository.getConfig(projectId: projectId);
   }
 }
-

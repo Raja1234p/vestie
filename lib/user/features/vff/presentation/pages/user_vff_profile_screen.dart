@@ -118,10 +118,10 @@ final class UserVffProfileScreen extends StatelessWidget {
                 SizedBox(height: 16.h),
                 TextButton(
                   onPressed: () => context.read<UserVffProfileCubit>().load(
-                        userId: args.userId,
-                        loadAsConnected: args.isConnectedProfile,
-                        projectId: args.projectId,
-                      ),
+                    userId: args.userId,
+                    loadAsConnected: args.isConnectedProfile,
+                    projectId: args.projectId,
+                  ),
                   child: AppText(AppStrings.btnRetry),
                 ),
               ],

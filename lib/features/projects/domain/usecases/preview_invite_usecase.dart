@@ -13,4 +13,3 @@ class PreviewInviteUseCase {
     return repository.previewInvite(inviteCode);
   }
 }
-

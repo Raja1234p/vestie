@@ -43,10 +43,7 @@ class InvestmentCompletedDetailContent extends StatelessWidget {
           onDeleteAnnouncement: onDeleteAnnouncement,
           gapAfter: 12.h,
         ),
-        ProjectInfoCard(
-          project: project,
-          displayAsCompleted: true,
-        ),
+        ProjectInfoCard(project: project, displayAsCompleted: true),
         SizedBox(height: 16.h),
         AppButton(
           text: project.isModeratorView

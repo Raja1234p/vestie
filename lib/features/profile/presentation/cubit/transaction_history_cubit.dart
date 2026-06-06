@@ -37,7 +37,7 @@ class TransactionHistoryState extends Equatable {
 
 class TransactionHistoryCubit extends Cubit<TransactionHistoryState> {
   TransactionHistoryCubit()
-      : super(const TransactionHistoryState(loading: true)) {
+    : super(const TransactionHistoryState(loading: true)) {
     _load();
   }
 

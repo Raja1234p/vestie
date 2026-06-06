@@ -6,7 +6,8 @@ import 'package:dio/dio.dart';
 /// Pretty console logging for Dio (debug-friendly layout, JSON indented).
 class LoggingInterceptor extends Interceptor {
   static const int _maxBodyChars = 16000;
-  static const String _bar = '────────────────────────────────────────────────────────────';
+  static const String _bar =
+      '────────────────────────────────────────────────────────────';
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
@@ -107,7 +108,9 @@ class LoggingInterceptor extends Interceptor {
       final parts = <String>[];
       if (fieldKeys.isNotEmpty) parts.add('fields: $fieldKeys');
       if (fileKeys.isNotEmpty) parts.add('files: $fileKeys');
-      return parts.isEmpty ? '(FormData, empty)' : 'FormData (${parts.join(' | ')})';
+      return parts.isEmpty
+          ? '(FormData, empty)'
+          : 'FormData (${parts.join(' | ')})';
     }
     if (data is Map || data is List) {
       try {

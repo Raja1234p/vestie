@@ -50,8 +50,12 @@ class AppToggleTabBar extends StatelessWidget {
     final trackHeight = outerHeight ?? 48.h;
     final defaultInset = 5.w;
     final pillHeight =
-        innerTabHeight ?? (trackHeight - defaultInset * 2).clamp(0.0, trackHeight);
-    final verticalInset = ((trackHeight - pillHeight) / 2).clamp(0.0, trackHeight);
+        innerTabHeight ??
+        (trackHeight - defaultInset * 2).clamp(0.0, trackHeight);
+    final verticalInset = ((trackHeight - pillHeight) / 2).clamp(
+      0.0,
+      trackHeight,
+    );
     final outerRadius = outerBorderRadius ?? 100.r;
     final innerRadius = innerBorderRadius ?? 100.r;
     final fontSize = labelFontSize ?? 13.sp;

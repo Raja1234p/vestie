@@ -70,8 +70,7 @@ class UserVffTxRow extends StatelessWidget {
             style: GoogleFonts.lato(
               fontSize: 15.sp,
               fontWeight: FontWeight.w900,
-              color:
-                  row.positive ? AppColors.txPositive : AppColors.txNegative,
+              color: row.positive ? AppColors.txPositive : AppColors.txNegative,
             ),
           ),
         ],

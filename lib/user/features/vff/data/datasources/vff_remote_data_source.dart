@@ -56,9 +56,9 @@ class VffRemoteDataSourceImpl implements VffRemoteDataSource {
   @override
   Future<List<VffConnectionModel>> listMyVffs() async {
     final response = await apiClient.get<dynamic>(ApiConstants.userMeVffs);
-    return VffJsonParsing.parseObjectList(response)
-        .map(VffConnectionModel.fromJson)
-        .toList(growable: false);
+    return VffJsonParsing.parseObjectList(
+      response,
+    ).map(VffConnectionModel.fromJson).toList(growable: false);
   }
 
   @override

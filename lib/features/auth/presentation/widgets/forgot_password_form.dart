@@ -32,12 +32,13 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
   }
 
   void _submit(BuildContext context) {
-    final valid =
-        context.read<ForgotPasswordFormCubit>().validate(_emailCtrl.text);
+    final valid = context.read<ForgotPasswordFormCubit>().validate(
+      _emailCtrl.text,
+    );
     if (valid) {
       context.read<ForgotPasswordBloc>().add(
-            ForgotPasswordSubmitted(email: _emailCtrl.text.trim()),
-          );
+        ForgotPasswordSubmitted(email: _emailCtrl.text.trim()),
+      );
     }
   }
 
@@ -89,7 +90,9 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.done,
                 errorText: form.emailError,
-                onChanged: (_) => context.read<ForgotPasswordFormCubit>().onFieldsChanged(_emailCtrl.text),
+                onChanged: (_) => context
+                    .read<ForgotPasswordFormCubit>()
+                    .onFieldsChanged(_emailCtrl.text),
               ),
               SizedBox(height: 28.h),
 

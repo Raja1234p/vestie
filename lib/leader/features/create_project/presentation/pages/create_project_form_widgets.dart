@@ -30,16 +30,25 @@ class CPDashedDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (_, constraints) {
-      const dashW = 6.0;
-      const gap   = 4.0;
-      final count = (constraints.maxWidth / (dashW + gap)).floor();
-      return Row(
-        children: List.generate(count, (_) => Padding(
-          padding: const EdgeInsets.only(right: gap),
-          child: Container(width: dashW, height: 1, color: AppColors.cardBorder),
-        )),
-      );
-    });
+    return LayoutBuilder(
+      builder: (_, constraints) {
+        const dashW = 6.0;
+        const gap = 4.0;
+        final count = (constraints.maxWidth / (dashW + gap)).floor();
+        return Row(
+          children: List.generate(
+            count,
+            (_) => Padding(
+              padding: const EdgeInsets.only(right: gap),
+              child: Container(
+                width: dashW,
+                height: 1,
+                color: AppColors.cardBorder,
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }

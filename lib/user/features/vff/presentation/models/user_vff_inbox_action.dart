@@ -1,10 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 /// Inbox row kinds that share accept / decline actions.
-enum UserVffInboxItemKind {
-  vffRequest,
-  projectInvite,
-}
+enum UserVffInboxItemKind { vffRequest, projectInvite }
 
 /// Which inbox row button is in flight (per-card loader).
 final class UserVffInboxRowAction extends Equatable {

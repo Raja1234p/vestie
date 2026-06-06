@@ -16,10 +16,15 @@ class ContributionPreviewModel extends ContributionPreviewEntity {
 
     return ContributionPreviewModel(
       // Week4 keys with backward-safe fallbacks.
-      amount: contributionAmount > 0 ? contributionAmount : json.safeDouble('amount'),
-      platformFee: platformFeeAmount > 0 ? platformFeeAmount : json.safeDouble('platformFee'),
-      totalDeduction:
-          walletDeductionAmount > 0 ? walletDeductionAmount : json.safeDouble('totalDeduction'),
+      amount: contributionAmount > 0
+          ? contributionAmount
+          : json.safeDouble('amount'),
+      platformFee: platformFeeAmount > 0
+          ? platformFeeAmount
+          : json.safeDouble('platformFee'),
+      totalDeduction: walletDeductionAmount > 0
+          ? walletDeductionAmount
+          : json.safeDouble('totalDeduction'),
       currency: json.safeString('currency', defaultValue: 'USD'),
     );
   }

@@ -20,9 +20,9 @@ class MemberFundFieldLabel extends StatelessWidget {
       child: AppText(
         text,
         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: AppColors.textBody,
-            ),
+          fontWeight: FontWeight.w600,
+          color: AppColors.textBody,
+        ),
       ),
     );
   }
@@ -75,20 +75,22 @@ class MemberFundTextField extends StatelessWidget {
             keyboardType: keyboardType,
             textInputAction: textInputAction,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.inputFieldText,
-                ),
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w500,
+              color: AppColors.inputFieldText,
+            ),
             decoration: InputDecoration(
               hintText: hint,
               hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.authHint,
-                  ),
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w500,
+                color: AppColors.authHint,
+              ),
               border: InputBorder.none,
-              contentPadding:
-                  EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 14.w,
+                vertical: 12.h,
+              ),
               suffixIcon: suffixIcon,
             ),
           ),
@@ -99,9 +101,9 @@ class MemberFundTextField extends StatelessWidget {
             child: AppText(
               errorText!,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontSize: 11.sp,
-                    color: AppColors.error,
-                  ),
+                fontSize: 11.sp,
+                color: AppColors.error,
+              ),
             ),
           ),
       ],
@@ -122,9 +124,6 @@ class MemberFundPrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppButton(
-      text: label,
-      onPressed: onPressed,
-    );
+    return AppButton(text: label, onPressed: onPressed);
   }
 }

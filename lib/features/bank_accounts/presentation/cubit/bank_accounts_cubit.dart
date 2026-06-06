@@ -32,29 +32,28 @@ class BankAccountsState extends Equatable {
     bool clearRemovingAccount = false,
     String? errorMessage,
     bool clearError = false,
-  }) =>
-      BankAccountsState(
-        accounts: accounts ?? this.accounts,
-        loading: loading ?? this.loading,
-        linking: linking ?? this.linking,
-        settingDefaultAccountId: clearSettingDefault
-            ? null
-            : (settingDefaultAccountId ?? this.settingDefaultAccountId),
-        removingAccountId: clearRemovingAccount
-            ? null
-            : (removingAccountId ?? this.removingAccountId),
-        errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
-      );
+  }) => BankAccountsState(
+    accounts: accounts ?? this.accounts,
+    loading: loading ?? this.loading,
+    linking: linking ?? this.linking,
+    settingDefaultAccountId: clearSettingDefault
+        ? null
+        : (settingDefaultAccountId ?? this.settingDefaultAccountId),
+    removingAccountId: clearRemovingAccount
+        ? null
+        : (removingAccountId ?? this.removingAccountId),
+    errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+  );
 
   @override
   List<Object?> get props => [
-        accounts,
-        loading,
-        linking,
-        settingDefaultAccountId,
-        removingAccountId,
-        errorMessage,
-      ];
+    accounts,
+    loading,
+    linking,
+    settingDefaultAccountId,
+    removingAccountId,
+    errorMessage,
+  ];
 }
 
 class BankAccountsCubit extends Cubit<BankAccountsState> {
@@ -80,8 +79,7 @@ class BankAccountsCubit extends Cubit<BankAccountsState> {
           errorMessage: FailureMapper.userMessage(failure),
         ),
       ),
-      (accounts) =>
-          emit(BankAccountsState(accounts: accounts, loading: false)),
+      (accounts) => emit(BankAccountsState(accounts: accounts, loading: false)),
     );
   }
 
@@ -90,10 +88,7 @@ class BankAccountsCubit extends Cubit<BankAccountsState> {
 
   Future<String?> setDefault(String id, {required bool isDefault}) async {
     emit(state.copyWith(settingDefaultAccountId: id, clearError: true));
-    final result = await setDefaultBankAccountUseCase(
-      id,
-      isDefault: isDefault,
-    );
+    final result = await setDefaultBankAccountUseCase(id, isDefault: isDefault);
     return result.fold(
       (failure) {
         emit(state.copyWith(clearSettingDefault: true));

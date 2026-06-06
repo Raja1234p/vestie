@@ -16,7 +16,8 @@ abstract class NotificationsRemoteDataSource {
   Future<void> unregisterDeviceToken({required String token});
 }
 
-class NotificationsRemoteDataSourceImpl implements NotificationsRemoteDataSource {
+class NotificationsRemoteDataSourceImpl
+    implements NotificationsRemoteDataSource {
   final BaseApiClient apiClient;
 
   NotificationsRemoteDataSourceImpl({required this.apiClient});

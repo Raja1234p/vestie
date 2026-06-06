@@ -30,9 +30,7 @@ class BankAccountManageRow extends StatelessWidget {
         : account.bankName;
 
     return ConstrainedBox(
-      constraints: BoxConstraints(
-        minHeight: AppDimens.paymentMethodRowHeight,
-      ),
+      constraints: BoxConstraints(minHeight: AppDimens.paymentMethodRowHeight),
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.appBgBottom,

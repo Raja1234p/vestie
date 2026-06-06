@@ -28,7 +28,10 @@ class CreateProjectContributionProgressScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final pct = draft.mockPercentTowardGoal;
-    final raised = NumberFormat('#,##0.00', 'en_US').format(draft.mockRaisedUsd);
+    final raised = NumberFormat(
+      '#,##0.00',
+      'en_US',
+    ).format(draft.mockRaisedUsd);
     final goal = NumberFormat('#,##0.00', 'en_US').format(draft.goalAmountUsd);
 
     final history = [
@@ -60,8 +63,9 @@ class CreateProjectContributionProgressScreen extends StatelessWidget {
                             child: CircularProgressIndicator(
                               value: pct / 100,
                               strokeWidth: 10,
-                              backgroundColor:
-                                  AppColors.purple300.withValues(alpha: 0.25),
+                              backgroundColor: AppColors.purple300.withValues(
+                                alpha: 0.25,
+                              ),
                               color: AppColors.primary,
                             ),
                           ),
@@ -116,8 +120,7 @@ class CreateProjectContributionProgressScreen extends StatelessWidget {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(14.r),
                         border: Border.all(
-                          color:
-                              AppColors.cardBorder.withValues(alpha: 0.55),
+                          color: AppColors.cardBorder.withValues(alpha: 0.55),
                         ),
                       ),
                       child: Column(
@@ -127,8 +130,7 @@ class CreateProjectContributionProgressScreen extends StatelessWidget {
                           return Column(
                             children: [
                               ListTile(
-                                contentPadding:
-                                    EdgeInsets.symmetric(
+                                contentPadding: EdgeInsets.symmetric(
                                   horizontal: 14.w,
                                   vertical: 4.h,
                                 ),
@@ -152,8 +154,7 @@ class CreateProjectContributionProgressScreen extends StatelessWidget {
                                   ),
                                 ),
                                 trailing: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     Text(

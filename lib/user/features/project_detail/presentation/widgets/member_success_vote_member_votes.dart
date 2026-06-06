@@ -117,10 +117,10 @@ class _VoteStatCard extends StatelessWidget {
           AppText(
             '$count',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontSize: 30.sp,
-                  fontWeight: FontWeight.w700,
-                  color: countColor,
-                ),
+              fontSize: 30.sp,
+              fontWeight: FontWeight.w700,
+              color: countColor,
+            ),
           ),
         ],
       ),

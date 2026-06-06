@@ -33,25 +33,21 @@ class FlowHeroImageCard extends StatelessWidget {
     final theme = Theme.of(context);
     return Container(
       width: double.infinity,
-      padding:
-          padding ?? EdgeInsets.fromLTRB(12.w, 20.h, 12.w, 20.h),
+      padding: padding ?? EdgeInsets.fromLTRB(12.w, 20.h, 12.w, 20.h),
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(borderRadius ?? 24.r),
       ),
       child: Column(
         children: [
-          Image.asset(
-            imageAsset,
-            fit: BoxFit.contain,
-            height: imageHeight.h,
-          ),
+          Image.asset(imageAsset, fit: BoxFit.contain, height: imageHeight.h),
           if (caption != null && caption!.isNotEmpty) ...[
             SizedBox(height: 16.h),
             AppText(
               caption!,
               textAlign: TextAlign.center,
-              style: captionStyle ??
+              style:
+                  captionStyle ??
                   theme.textTheme.titleLarge?.copyWith(
                     fontSize: 20.sp,
                     fontWeight: captionFontWeight,

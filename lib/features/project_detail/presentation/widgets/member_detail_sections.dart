@@ -66,19 +66,19 @@ class MemberIdentitySection extends StatelessWidget {
               AppText(
                 member.name,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontSize: 17.sp,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.grey1100,
-                    ),
+                  fontSize: 17.sp,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.grey1100,
+                ),
               ),
               SizedBox(height: 2.h),
               AppText(
                 username,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.grey800,
-                    ),
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.grey800,
+                ),
               ),
             ],
           ),
@@ -91,8 +91,8 @@ class MemberIdentitySection extends StatelessWidget {
             onTap: isCoLeaderActionLoading
                 ? null
                 : () => isCoLeader
-                    ? onRemoveCoLeader?.call()
-                    : onAssignCoLeader?.call(),
+                      ? onRemoveCoLeader?.call()
+                      : onAssignCoLeader?.call(),
           ),
         ],
       ],
@@ -188,10 +188,7 @@ class MemberMetricsSection extends StatelessWidget {
 class MemberTransactionsSection extends StatelessWidget {
   final List<MemberActivityTransactionEntity> transactions;
 
-  const MemberTransactionsSection({
-    super.key,
-    required this.transactions,
-  });
+  const MemberTransactionsSection({super.key, required this.transactions});
 
   @override
   Widget build(BuildContext context) {
@@ -201,19 +198,19 @@ class MemberTransactionsSection extends StatelessWidget {
         AppText(
           AppStrings.transactionHistoryTitle,
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.w700,
-                color: AppColors.grey1100,
-              ),
+            fontSize: 18.sp,
+            fontWeight: FontWeight.w700,
+            color: AppColors.grey1100,
+          ),
         ),
         SizedBox(height: 14.h),
         if (transactions.isEmpty)
           AppText(
             AppStrings.memberActivityEmptyTransactions,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontSize: 15.sp,
-                  color: AppColors.grey800,
-                ),
+              fontSize: 15.sp,
+              color: AppColors.grey800,
+            ),
           )
         else
           ...transactions.map(_buildRow),
@@ -255,15 +252,13 @@ abstract final class MemberActivityDisplay {
   static String formatLedgerAmount(double value) {
     final abs = value.abs();
     if (abs == abs.roundToDouble()) {
-      return abs.toStringAsFixed(0).replaceAllMapped(
-            RegExp(r'\B(?=(\d{3})+(?!\d))'),
-            (_) => ',',
-          );
+      return abs
+          .toStringAsFixed(0)
+          .replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (_) => ',');
     }
-    return abs.toStringAsFixed(2).replaceAllMapped(
-          RegExp(r'\B(?=(\d{3})+(?!\d))'),
-          (_) => ',',
-        );
+    return abs
+        .toStringAsFixed(2)
+        .replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (_) => ',');
   }
 }
 
@@ -304,17 +299,18 @@ class MemberOverdueBanner extends StatelessWidget {
       child: Row(
         children: [
           AppSvgIcon(
-              assetPath: AppAssets.iconAlertTriangle,
-              color: AppColors.red900,
-              size: 20.w),
+            assetPath: AppAssets.iconAlertTriangle,
+            color: AppColors.red900,
+            size: 20.w,
+          ),
           SizedBox(width: 8.w),
           Expanded(
             child: AppText(
               AppStrings.memberOverdueBorrowNotice(overdueBorrowCount),
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontSize: 15.sp,
-                    color: AppColors.red900,
-                  ),
+                fontSize: 15.sp,
+                color: AppColors.red900,
+              ),
             ),
           ),
           if (_showTakeAction) ...[
@@ -334,4 +330,3 @@ class MemberOverdueBanner extends StatelessWidget {
     );
   }
 }
-

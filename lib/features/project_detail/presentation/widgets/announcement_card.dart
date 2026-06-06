@@ -132,10 +132,7 @@ class _AnnouncementDeleteIcon extends StatelessWidget {
       width: 22.w,
       height: 22.w,
       fit: BoxFit.contain,
-      colorFilter: const ColorFilter.mode(
-        AppColors.red900,
-        BlendMode.srcIn,
-      ),
+      colorFilter: const ColorFilter.mode(AppColors.red900, BlendMode.srcIn),
     );
   }
 }

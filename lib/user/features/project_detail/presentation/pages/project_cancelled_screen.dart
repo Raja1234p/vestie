@@ -14,10 +14,7 @@ import 'package:vestie/core/widgets/text/app_text.dart';
 class ProjectCancelledScreen extends StatelessWidget {
   final String projectName;
 
-  const ProjectCancelledScreen({
-    super.key,
-    required this.projectName,
-  });
+  const ProjectCancelledScreen({super.key, required this.projectName});
 
   @override
   Widget build(BuildContext context) {
@@ -55,9 +52,7 @@ class ProjectCancelledScreen extends StatelessWidget {
                           ),
                           SizedBox(height: 12.h),
                           AppText(
-                            AppStrings.projectCancelledDescription(
-                              projectName,
-                            ),
+                            AppStrings.projectCancelledDescription(projectName),
                             textAlign: TextAlign.center,
                             style: theme.textTheme.bodyLarge?.copyWith(
                               fontSize: 16.sp,

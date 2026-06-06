@@ -29,8 +29,9 @@ class ProjectEndAndRoiRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final showEndColumn = ProjectEndRelativeLabel.hasActiveDeadline(endsInRaw);
-    final emphasis =
-        showEndColumn ? ProjectEndRelativeLabel.emphasis(endsInRaw) : '';
+    final emphasis = showEndColumn
+        ? ProjectEndRelativeLabel.emphasis(endsInRaw)
+        : '';
 
     final roiValue = formatRoiPercentDisplay(roiPercentage);
     final showRoiColumn = showRoi && roiValue.isNotEmpty;
@@ -39,8 +40,8 @@ class ProjectEndAndRoiRow extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    final full = showEndColumn &&
-        ProjectEndRelativeLabel.isFullSentence(endsInRaw);
+    final full =
+        showEndColumn && ProjectEndRelativeLabel.isFullSentence(endsInRaw);
     final fontSize = compact ? 13.sp : 16.sp;
     const labelColor = AppColors.grey800;
     const valueColor = Color(0xFF000000);

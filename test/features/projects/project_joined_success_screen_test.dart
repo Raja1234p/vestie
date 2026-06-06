@@ -24,7 +24,9 @@ void main() {
 
       expect(find.text(AppStrings.projectJoinedSuccessTitle), findsOneWidget);
       expect(
-        find.text(AppStrings.projectJoinedWelcomeSubtitle('Crypto Growth Pool')),
+        find.text(
+          AppStrings.projectJoinedWelcomeSubtitle('Crypto Growth Pool'),
+        ),
         findsOneWidget,
       );
       expect(find.text(AppStrings.btnOpenProject), findsOneWidget);
@@ -47,7 +49,10 @@ void main() {
       );
 
       expect(find.text(AppStrings.projectJoinRequestSentTitle), findsOneWidget);
-      expect(find.text(AppStrings.projectJoinRequestSentSubtitle), findsOneWidget);
+      expect(
+        find.text(AppStrings.projectJoinRequestSentSubtitle),
+        findsOneWidget,
+      );
       expect(find.text(AppStrings.btnDone), findsOneWidget);
     });
 

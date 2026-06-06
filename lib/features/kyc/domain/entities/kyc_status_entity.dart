@@ -34,12 +34,12 @@ class KycStatusEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        status,
-        stripeConnectAccountId,
-        chargesEnabled,
-        payoutsEnabled,
-        requirementsCurrentlyDue,
-      ];
+    status,
+    stripeConnectAccountId,
+    chargesEnabled,
+    payoutsEnabled,
+    requirementsCurrentlyDue,
+  ];
 }
 
 class KycStartResultEntity extends Equatable {

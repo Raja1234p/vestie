@@ -39,7 +39,13 @@ class AgreementState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [isAccepted, isLoading, error, isSuccess, disclaimer];
+  List<Object?> get props => [
+    isAccepted,
+    isLoading,
+    error,
+    isSuccess,
+    disclaimer,
+  ];
 }
 
 class AgreementCubit extends Cubit<AgreementState> {
@@ -49,11 +55,13 @@ class AgreementCubit extends Cubit<AgreementState> {
   AgreementCubit({
     AcceptRiskDisclaimerUseCase? acceptRiskDisclaimerUseCase,
     GetRiskDisclaimerUseCase? getRiskDisclaimerUseCase,
-  })  : _acceptRiskDisclaimerUseCase = acceptRiskDisclaimerUseCase ??
-            ServiceLocator.instance.acceptRiskDisclaimerUseCase,
-        _getRiskDisclaimerUseCase = getRiskDisclaimerUseCase ??
-            ServiceLocator.instance.getRiskDisclaimerUseCase,
-        super(const AgreementState()) {
+  }) : _acceptRiskDisclaimerUseCase =
+           acceptRiskDisclaimerUseCase ??
+           ServiceLocator.instance.acceptRiskDisclaimerUseCase,
+       _getRiskDisclaimerUseCase =
+           getRiskDisclaimerUseCase ??
+           ServiceLocator.instance.getRiskDisclaimerUseCase,
+       super(const AgreementState()) {
     fetchDisclaimer();
   }
 
@@ -61,8 +69,10 @@ class AgreementCubit extends Cubit<AgreementState> {
     emit(state.copyWith(isLoading: true, error: null));
     final result = await _getRiskDisclaimerUseCase();
     result.fold(
-      (failure) => emit(state.copyWith(isLoading: false, error: failure.message)),
-      (disclaimer) => emit(state.copyWith(isLoading: false, disclaimer: disclaimer)),
+      (failure) =>
+          emit(state.copyWith(isLoading: false, error: failure.message)),
+      (disclaimer) =>
+          emit(state.copyWith(isLoading: false, disclaimer: disclaimer)),
     );
   }
 
@@ -79,7 +89,8 @@ class AgreementCubit extends Cubit<AgreementState> {
     );
 
     result.fold(
-      (failure) => emit(state.copyWith(isLoading: false, error: failure.message)),
+      (failure) =>
+          emit(state.copyWith(isLoading: false, error: failure.message)),
       (_) {
         DashboardPrefetch.markRiskDisclaimerAccepted();
         emit(state.copyWith(isLoading: false, isSuccess: true));

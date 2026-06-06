@@ -38,11 +38,10 @@ class CompletedProjectsCubit extends Cubit<CompletedProjectsState> {
   /// Set `false` when API-backed list is ready for production.
   static const bool previewDemoWhenEmpty = true;
 
-  CompletedProjectsCubit({
-    ListProjectsUseCase? listProjectsUseCase,
-  })  : _listProjectsUseCase =
-            listProjectsUseCase ?? ServiceLocator.instance.listProjectsUseCase,
-        super(const CompletedProjectsState(loading: true)) {
+  CompletedProjectsCubit({ListProjectsUseCase? listProjectsUseCase})
+    : _listProjectsUseCase =
+          listProjectsUseCase ?? ServiceLocator.instance.listProjectsUseCase,
+      super(const CompletedProjectsState(loading: true)) {
     load();
   }
 
@@ -52,27 +51,17 @@ class CompletedProjectsCubit extends Cubit<CompletedProjectsState> {
     emit(state.copyWith(loading: true, clearError: true));
     final result = await _listProjectsUseCase(scope: 'mine');
     result.fold(
-      (failure) => emit(
-        state.copyWith(
-          loading: false,
-          errorMessage: failure.message,
-        ),
-      ),
+      (failure) =>
+          emit(state.copyWith(loading: false, errorMessage: failure.message)),
       (projects) {
-        var completed = projects
-            .where((p) => p.status == ProjectStatus.completed)
-            .toList()
-          ..sort((a, b) => a.name.compareTo(b.name));
+        var completed =
+            projects.where((p) => p.status == ProjectStatus.completed).toList()
+              ..sort((a, b) => a.name.compareTo(b.name));
         if (completed.isEmpty && previewDemoWhenEmpty) {
           completed = List<Project>.of(MockProjects.previewCompletedProjects)
             ..sort((a, b) => a.name.compareTo(b.name));
         }
-        emit(
-          state.copyWith(
-            loading: false,
-            projects: completed,
-          ),
-        );
+        emit(state.copyWith(loading: false, projects: completed));
       },
     );
   }

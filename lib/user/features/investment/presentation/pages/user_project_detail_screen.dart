@@ -62,8 +62,7 @@ class _UserProjectDetailScreenState extends State<UserProjectDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final nextDate =
-        DateFormat('d MMM yyyy').format(_s.nextContributionDate);
+    final nextDate = DateFormat('d MMM yyyy').format(_s.nextContributionDate);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -108,49 +107,47 @@ class _UserProjectDetailScreenState extends State<UserProjectDetailScreen> {
             SliverPadding(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               sliver: SliverList(
-                delegate: SliverChildListDelegate(
-                  [
-                    AnnouncementCard(
-                      text: _s.announcementOverride,
-                      canDeleteAnnouncement: false,
+                delegate: SliverChildListDelegate([
+                  AnnouncementCard(
+                    text: _s.announcementOverride,
+                    canDeleteAnnouncement: false,
+                  ),
+                  SizedBox(height: 12.h),
+                  _UserInvestmentGoalCard(
+                    simulatedHasContributed: _simulatedHasContributed,
+                    goalLine: AppStrings.userInvestmentGoalMonthlyAmount(
+                      _fmtUsd(_s.monthlyGoalUsd),
                     ),
-                    SizedBox(height: 12.h),
-                    _UserInvestmentGoalCard(
-                      simulatedHasContributed: _simulatedHasContributed,
-                      goalLine: AppStrings.userInvestmentGoalMonthlyAmount(
-                        _fmtUsd(_s.monthlyGoalUsd),
-                      ),
-                      raisedLine: AppStrings.userInvestmentRaisedAmount(
-                        _fmtUsd(_s.raisedAfterContributeUsd),
-                      ),
-                      nextContributionLine:
-                          AppStrings.userInvestmentNextContribution(nextDate),
-                      onPrimaryPressed: () {
-                        if (!_simulatedHasContributed) {
-                          setState(() => _simulatedHasContributed = true);
-                          return;
-                        }
-                        context.push(
-                          AppRoutes.userInvestmentReturns,
-                          extra: InvestmentReturnsRouteArgs(
-                            data: InvestmentReturnsUiData.fromLegacySnapshot(_s),
-                          ),
-                        );
-                      },
+                    raisedLine: AppStrings.userInvestmentRaisedAmount(
+                      _fmtUsd(_s.raisedAfterContributeUsd),
                     ),
-                    SizedBox(height: 20.h),
-                    AppText(
-                      AppStrings.userInvestmentMembersTitle,
-                      style: GoogleFonts.lato(
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.grey1100,
-                      ),
+                    nextContributionLine:
+                        AppStrings.userInvestmentNextContribution(nextDate),
+                    onPrimaryPressed: () {
+                      if (!_simulatedHasContributed) {
+                        setState(() => _simulatedHasContributed = true);
+                        return;
+                      }
+                      context.push(
+                        AppRoutes.userInvestmentReturns,
+                        extra: InvestmentReturnsRouteArgs(
+                          data: InvestmentReturnsUiData.fromLegacySnapshot(_s),
+                        ),
+                      );
+                    },
+                  ),
+                  SizedBox(height: 20.h),
+                  AppText(
+                    AppStrings.userInvestmentMembersTitle,
+                    style: GoogleFonts.lato(
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.grey1100,
                     ),
-                    SizedBox(height: 12.h),
-                    if (_s.members.isEmpty) _EmptyMembers(),
-                  ],
-                ),
+                  ),
+                  SizedBox(height: 12.h),
+                  if (_s.members.isEmpty) _EmptyMembers(),
+                ]),
               ),
             ),
             if (_s.members.isNotEmpty)
@@ -257,8 +254,9 @@ class _MemberRowTile extends StatelessWidget {
         children: [
           AppNetworkAvatar(
             imageUrl: member.photoUrl,
-            initials:
-                member.name.isNotEmpty ? member.name[0].toUpperCase() : '?',
+            initials: member.name.isNotEmpty
+                ? member.name[0].toUpperCase()
+                : '?',
             size: 52.r,
             backgroundColor: AppColors.purple300.withValues(alpha: 0.4),
             textColor: AppColors.textPrimary,

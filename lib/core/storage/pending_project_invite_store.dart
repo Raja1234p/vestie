@@ -32,8 +32,9 @@ final class PendingProjectInviteStore {
     final staged = _stagedCode?.trim();
     if (staged != null && staged.isNotEmpty) return staged;
 
-    final code = await ServiceLocator.instance.sharedPrefs
-        .getString(StorageKeys.pendingProjectInviteCode);
+    final code = await ServiceLocator.instance.sharedPrefs.getString(
+      StorageKeys.pendingProjectInviteCode,
+    );
     final trimmed = code?.trim();
     if (trimmed == null || trimmed.isEmpty) return null;
     _stagedCode = trimmed;
@@ -42,8 +43,9 @@ final class PendingProjectInviteStore {
 
   static Future<void> clear() async {
     _stagedCode = null;
-    await ServiceLocator.instance.sharedPrefs
-        .remove(StorageKeys.pendingProjectInviteCode);
+    await ServiceLocator.instance.sharedPrefs.remove(
+      StorageKeys.pendingProjectInviteCode,
+    );
   }
 
   /// Returns the stored code and clears it (one-shot after auth routing).

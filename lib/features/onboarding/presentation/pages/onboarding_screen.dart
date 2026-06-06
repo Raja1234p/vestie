@@ -65,12 +65,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return BlocProvider(
       create: (_) => OnboardingCubit(),
       child: Scaffold(
-        body:  SafeArea(
+        body: SafeArea(
           child: BlocBuilder<OnboardingCubit, int>(
             builder: (context, currentIndex) {
               final cubit = context.read<OnboardingCubit>();
               final page = OnboardingCubit.pages[currentIndex];
-          
+
               return Column(
                 children: [
                   // ── Page Indicators ─────────────────────────────────
@@ -81,13 +81,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       currentIndex: currentIndex,
                     ),
                   ),
-          
+
                   // ── Illustration in medium-purple circle ─────────────
                   Expanded(
                     flex: 6,
                     child: Padding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: 32.w, vertical: 24.h),
+                        horizontal: 32.w,
+                        vertical: 24.h,
+                      ),
                       child: AspectRatio(
                         aspectRatio: 1,
                         child: Container(
@@ -113,7 +115,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                     ),
                   ),
-          
+
                   // ── Title ────────────────────────────────────────────
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 32.w),
@@ -134,9 +136,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                     ),
                   ),
-          
+
                   const Spacer(),
-          
+
                   // ── Continue / Get Started button ────────────────────
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 28.w),
@@ -148,7 +150,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ),
                   ),
                   SizedBox(height: 12.h),
-          
+
                   // ── Skip ─────────────────────────────────────────────
                   if (!cubit.isLastPage)
                     TextButton(
@@ -162,7 +164,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       },
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.symmetric(
-                            horizontal: 16.w, vertical: 4.h),
+                          horizontal: 16.w,
+                          vertical: 4.h,
+                        ),
                         minimumSize: Size(0, 36.h),
                       ),
                       child: Text(
@@ -176,7 +180,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     )
                   else
                     SizedBox(height: 36.h),
-          
+
                   SizedBox(height: 20.h),
                 ],
               );

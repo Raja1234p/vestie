@@ -6,12 +6,14 @@ abstract class ResetPasswordState extends Equatable {
 
 class ResetPasswordInitial extends ResetPasswordState {
   const ResetPasswordInitial();
-  @override List<Object> get props => [];
+  @override
+  List<Object> get props => [];
 }
 
 class ResetPasswordLoading extends ResetPasswordState {
   const ResetPasswordLoading();
-  @override List<Object> get props => [];
+  @override
+  List<Object> get props => [];
 }
 
 class ResetPasswordSuccess extends ResetPasswordState {
@@ -25,5 +27,6 @@ class ResetPasswordError extends ResetPasswordState {
   final String message;
   final String? title;
   const ResetPasswordError({required this.message, this.title});
-  @override List<Object?> get props => [message, title];
+  @override
+  List<Object?> get props => [message, title];
 }

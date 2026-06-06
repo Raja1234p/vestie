@@ -18,10 +18,10 @@ class BankFlowConstants {
         StripeConnectRedirectMatcher.isVestieCompletion(uri, host: 'bank')) {
       return true;
     }
-    return StripeConnectRedirectMatcher.matchesAny(
-      url,
-      [returnUrl, appSchemeReturnUrl],
-    );
+    return StripeConnectRedirectMatcher.matchesAny(url, [
+      returnUrl,
+      appSchemeReturnUrl,
+    ]);
   }
 
   static bool isRefreshUrl(String? url) {
@@ -30,9 +30,9 @@ class BankFlowConstants {
         StripeConnectRedirectMatcher.isVestieRefresh(uri, host: 'bank')) {
       return true;
     }
-    return StripeConnectRedirectMatcher.matchesAny(
-      url,
-      [refreshUrl, appSchemeRefreshUrl],
-    );
+    return StripeConnectRedirectMatcher.matchesAny(url, [
+      refreshUrl,
+      appSchemeRefreshUrl,
+    ]);
   }
 }

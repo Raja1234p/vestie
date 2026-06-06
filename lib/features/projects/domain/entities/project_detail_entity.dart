@@ -39,10 +39,23 @@ class ProjectDetailEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        id, name, description, type, visibility, state, targetAmount,
-        currentAmount, maxMembers, currentMembers, endsAtUtc, launchedAtUtc,
-        borrowingEnabled, suggestedContributionAmount, viewerMembership, rules
-      ];
+    id,
+    name,
+    description,
+    type,
+    visibility,
+    state,
+    targetAmount,
+    currentAmount,
+    maxMembers,
+    currentMembers,
+    endsAtUtc,
+    launchedAtUtc,
+    borrowingEnabled,
+    suggestedContributionAmount,
+    viewerMembership,
+    rules,
+  ];
 }
 
 class ViewerMembershipEntity extends Equatable {
@@ -67,5 +80,8 @@ class ProjectRulesEntity extends Equatable {
   });
 
   @override
-  List<Object?> get props => [minimumContributionAmount, platformFeeRatePercent];
+  List<Object?> get props => [
+    minimumContributionAmount,
+    platformFeeRatePercent,
+  ];
 }

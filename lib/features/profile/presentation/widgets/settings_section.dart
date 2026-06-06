@@ -7,16 +7,14 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_text.dart';
 
 /// Row icon: tinted SVG or raster (design export).
-enum SettingsIconKind {
-  svg,
-  png,
-}
+enum SettingsIconKind { svg, png }
 
 class SettingsItem {
   final String assetPath;
   final SettingsIconKind iconKind;
   final String label;
   final VoidCallback onTap;
+
   /// When [iconKind] is [SettingsIconKind.png], used if the PNG fails to load.
   final String? svgFallbackPath;
 
@@ -101,8 +99,10 @@ class SettingsSection extends StatelessWidget {
                 ),
                 onTap: item.onTap,
                 child: Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 14.w,
+                    vertical: 14.h,
+                  ),
                   child: Row(
                     children: [
                       _leading(item),
@@ -122,11 +122,7 @@ class SettingsSection extends StatelessWidget {
                 ),
               ),
               if (!isLast)
-                Divider(
-                  height: 1,
-                  thickness: 1,
-                  color: AppColors.divider,
-                ),
+                Divider(height: 1, thickness: 1, color: AppColors.divider),
             ],
           );
         }),

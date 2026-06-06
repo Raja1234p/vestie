@@ -11,15 +11,24 @@ abstract class Failure extends Equatable {
 }
 
 class ServerFailure extends Failure {
-  const ServerFailure([super.message = 'A server error occurred.', super.title]);
+  const ServerFailure([
+    super.message = 'A server error occurred.',
+    super.title,
+  ]);
 }
 
 class CacheFailure extends Failure {
-  const CacheFailure([super.message = 'A local storage error occurred.', super.title]);
+  const CacheFailure([
+    super.message = 'A local storage error occurred.',
+    super.title,
+  ]);
 }
 
 class NetworkFailure extends Failure {
-  const NetworkFailure([super.message = 'Please check your internet connection.', super.title]);
+  const NetworkFailure([
+    super.message = 'Please check your internet connection.',
+    super.title,
+  ]);
 }
 
 class ValidationFailure extends Failure {
@@ -47,7 +56,10 @@ class TimeoutFailure extends Failure {
 }
 
 class UnknownFailure extends Failure {
-  const UnknownFailure([super.message = 'An unknown error occurred.', super.title]);
+  const UnknownFailure([
+    super.message = 'An unknown error occurred.',
+    super.title,
+  ]);
 }
 
 /// User closed the Google account picker — not an error; UI should stay silent.

@@ -15,13 +15,15 @@ import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
+
 class CreateAnnouncementScreen extends StatefulWidget {
   final String projectId;
 
   const CreateAnnouncementScreen({super.key, required this.projectId});
 
   @override
-  State<CreateAnnouncementScreen> createState() => _CreateAnnouncementScreenState();
+  State<CreateAnnouncementScreen> createState() =>
+      _CreateAnnouncementScreenState();
 }
 
 class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
@@ -57,8 +59,12 @@ class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
   }
 
   bool _validate() {
-    final h = ValidationUtils.validateAnnouncementHeading(_headingController.text);
-    final c = ValidationUtils.validateAnnouncementContent(_contentController.text);
+    final h = ValidationUtils.validateAnnouncementHeading(
+      _headingController.text,
+    );
+    final c = ValidationUtils.validateAnnouncementContent(
+      _contentController.text,
+    );
     setState(() {
       _headingError = h;
       _contentError = c;
@@ -70,11 +76,12 @@ class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
     if (!_validate()) return;
     _unfocusKeyboard();
     setState(() => _submitting = true);
-    final result = await ServiceLocator.instance.createProjectAnnouncementUseCase(
-      projectId: widget.projectId,
-      heading: _headingController.text.trim(),
-      content: _contentController.text.trim(),
-    );
+    final result = await ServiceLocator.instance
+        .createProjectAnnouncementUseCase(
+          projectId: widget.projectId,
+          heading: _headingController.text.trim(),
+          content: _contentController.text.trim(),
+        );
     if (!mounted) return;
     setState(() => _submitting = false);
     result.fold(

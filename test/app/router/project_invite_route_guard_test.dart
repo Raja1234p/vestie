@@ -27,18 +27,20 @@ void main() {
       );
     });
 
-    test('sends signed-in users on /join to agreement when disclaimer missing',
-        () async {
-      expect(
-        await ProjectInviteRouteGuard.redirectForInvite(
-          uri: Uri.parse('https://vestie.app/join/summer-squad'),
-          pathParameters: const {'inviteCode': 'summer-squad'},
-          isAuthenticated: true,
-          isDisclaimerAccepted: false,
-        ),
-        AppRoutes.agreement,
-      );
-    });
+    test(
+      'sends signed-in users on /join to agreement when disclaimer missing',
+      () async {
+        expect(
+          await ProjectInviteRouteGuard.redirectForInvite(
+            uri: Uri.parse('https://vestie.app/join/summer-squad'),
+            pathParameters: const {'inviteCode': 'summer-squad'},
+            isAuthenticated: true,
+            isDisclaimerAccepted: false,
+          ),
+          AppRoutes.agreement,
+        );
+      },
+    );
 
     test('normalizes vestie scheme uri to /join path', () async {
       expect(

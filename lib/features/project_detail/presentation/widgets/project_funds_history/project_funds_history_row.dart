@@ -19,9 +19,9 @@ class ProjectFundsHistoryRow extends StatelessWidget {
   static String formatSignedAmount(double amount) {
     final n = amount.abs().round();
     final formatted = n.toString().replaceAllMapped(
-          RegExp(r'\B(?=(\d{3})+(?!\d))'),
-          (_) => ',',
-        );
+      RegExp(r'\B(?=(\d{3})+(?!\d))'),
+      (_) => ',',
+    );
     return amount >= 0 ? '+\$$formatted' : '-\$$formatted';
   }
 
@@ -33,10 +33,7 @@ class ProjectFundsHistoryRow extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.projectFundsLedgerCardBg,
         borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(
-          color: AppColors.projectFundsLedgerBorder,
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.projectFundsLedgerBorder, width: 1),
       ),
       child: Row(
         children: [
@@ -98,10 +95,7 @@ class _LedgerIcon extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.projectFundsLedgerIconTileBg,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: AppColors.projectFundsLedgerBorder,
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.projectFundsLedgerBorder, width: 1),
       ),
       alignment: Alignment.center,
       child: SvgPicture.asset(

@@ -39,8 +39,9 @@ class ProjectSummaryModel extends ProjectSummaryEntity {
       endsAtUtc: json.safeDateTimeUtc('endsAtUtc'),
       launchedAtUtc: json.safeDateTimeUtc('launchedAtUtc'),
       borrowingEnabled: json.safeBool('borrowingEnabled'),
-      suggestedContributionAmount:
-          json.safeDoubleNullable('suggestedContributionAmount'),
+      suggestedContributionAmount: json.safeDoubleNullable(
+        'suggestedContributionAmount',
+      ),
       createdUtc: json.safeDateTimeUtc('createdUtc') ?? DateTime.now().toUtc(),
       viewerRole: projectListItemViewerRole(json),
       displayStatus: json.safeString('displayStatus'),

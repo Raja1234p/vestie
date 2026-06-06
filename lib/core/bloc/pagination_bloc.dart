@@ -8,6 +8,7 @@ abstract class PaginationEvent extends Equatable {
 }
 
 class RefreshListEvent extends PaginationEvent {}
+
 class LoadMoreListEvent extends PaginationEvent {}
 
 class PaginationState<T> extends Equatable {
@@ -43,10 +44,17 @@ class PaginationState<T> extends Equatable {
   }
 
   @override
-  List<Object?> get props => [items, isLoading, isFetchingMore, hasReachedMax, errorMessage];
+  List<Object?> get props => [
+    items,
+    isLoading,
+    isFetchingMore,
+    hasReachedMax,
+    errorMessage,
+  ];
 }
 
-abstract class BasePaginationBloc<T> extends Bloc<PaginationEvent, PaginationState<T>> {
+abstract class BasePaginationBloc<T>
+    extends Bloc<PaginationEvent, PaginationState<T>> {
   int _currentPage = 1;
 
   BasePaginationBloc() : super(PaginationState<T>()) {
@@ -54,24 +62,33 @@ abstract class BasePaginationBloc<T> extends Bloc<PaginationEvent, PaginationSta
     on<LoadMoreListEvent>(_onLoadMore);
   }
 
-  Future<void> _onRefresh(RefreshListEvent event, Emitter<PaginationState<T>> emit) async {
+  Future<void> _onRefresh(
+    RefreshListEvent event,
+    Emitter<PaginationState<T>> emit,
+  ) async {
     _currentPage = 1;
     emit(state.copyWith(isLoading: true, clearError: true));
     try {
       final result = await fetchItems(page: _currentPage);
-      emit(state.copyWith(
-        isLoading: false,
-        items: result,
-        hasReachedMax: result.isEmpty, // Simplified, override if backend provides totalPages
-      ));
+      emit(
+        state.copyWith(
+          isLoading: false,
+          items: result,
+          hasReachedMax: result
+              .isEmpty, // Simplified, override if backend provides totalPages
+        ),
+      );
     } catch (e) {
       emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
     }
   }
 
-  Future<void> _onLoadMore(LoadMoreListEvent event, Emitter<PaginationState<T>> emit) async {
+  Future<void> _onLoadMore(
+    LoadMoreListEvent event,
+    Emitter<PaginationState<T>> emit,
+  ) async {
     if (state.hasReachedMax || state.isFetchingMore || state.isLoading) return;
-    
+
     _currentPage++;
     emit(state.copyWith(isFetchingMore: true, clearError: true));
     try {
@@ -79,10 +96,12 @@ abstract class BasePaginationBloc<T> extends Bloc<PaginationEvent, PaginationSta
       if (result.isEmpty) {
         emit(state.copyWith(isFetchingMore: false, hasReachedMax: true));
       } else {
-        emit(state.copyWith(
-          isFetchingMore: false,
-          items: List.of(state.items)..addAll(result),
-        ));
+        emit(
+          state.copyWith(
+            isFetchingMore: false,
+            items: List.of(state.items)..addAll(result),
+          ),
+        );
       }
     } catch (e) {
       _currentPage--;

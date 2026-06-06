@@ -12,12 +12,11 @@ class CreateProjectAnnouncementUseCase {
     required String projectId,
     required String heading,
     required String content,
-  }) =>
-      repository.create(
-        projectId: projectId,
-        heading: heading,
-        content: content,
-      );
+  }) => repository.create(
+    projectId: projectId,
+    heading: heading,
+    content: content,
+  );
 }
 
 class DeleteProjectAnnouncementUseCase {
@@ -28,9 +27,5 @@ class DeleteProjectAnnouncementUseCase {
   Future<Either<Failure, void>> call({
     required String projectId,
     required String announcementId,
-  }) =>
-      repository.delete(
-        projectId: projectId,
-        announcementId: announcementId,
-      );
+  }) => repository.delete(projectId: projectId, announcementId: announcementId);
 }

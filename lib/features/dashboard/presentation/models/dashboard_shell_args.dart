@@ -7,10 +7,13 @@ import 'package:equatable/equatable.dart';
 final class DashboardShellArgs extends Equatable {
   final bool reloadHomeProjectList;
   final bool reloadDiscoverProjectList;
+
   /// Bottom-nav tab to show when the shell opens (0 = Home, 1 = Discover, …).
   final int initialTabIndex;
+
   /// After deposit/withdraw success — refetch `GET /wallet` on the wallet tab.
   final bool reloadWallet;
+
   /// Monotonic-ish id (e.g. `DateTime.now().microsecondsSinceEpoch`) when forcing reload.
   final int navigationMark;
 
@@ -24,10 +27,10 @@ final class DashboardShellArgs extends Equatable {
 
   @override
   List<Object?> get props => [
-        reloadHomeProjectList,
-        reloadDiscoverProjectList,
-        initialTabIndex,
-        reloadWallet,
-        navigationMark,
-      ];
+    reloadHomeProjectList,
+    reloadDiscoverProjectList,
+    initialTabIndex,
+    reloadWallet,
+    navigationMark,
+  ];
 }

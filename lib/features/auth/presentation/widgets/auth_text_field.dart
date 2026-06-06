@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/widgets/common/app_text_field.dart';
 
-/// Wrapped Auth text field to redirect all usages to the central AppTextField 
+/// Wrapped Auth text field to redirect all usages to the central AppTextField
 /// strictly adhering to Enterprise Rules.
 class AuthTextField extends StatelessWidget {
   final String label;

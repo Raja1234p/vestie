@@ -111,10 +111,7 @@ class _RemoveOverlay extends StatelessWidget {
   final VoidCallback? onTap;
   final bool isLoading;
 
-  const _RemoveOverlay({
-    required this.onTap,
-    this.isLoading = false,
-  });
+  const _RemoveOverlay({required this.onTap, this.isLoading = false});
 
   @override
   Widget build(BuildContext context) {

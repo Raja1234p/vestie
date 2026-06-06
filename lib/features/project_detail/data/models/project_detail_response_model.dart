@@ -26,34 +26,37 @@ class ProjectDetailResponseModel {
     required List<_MembershipPayload> members,
     required List<_InvitePayload> invites,
     required List<_AnnouncementPayload> announcements,
-  })  : _project = project,
-        _rules = rules,
-        _viewerMembership = viewerMembership,
-        _members = members,
-        _invites = invites,
-        _announcements = announcements;
+  }) : _project = project,
+       _rules = rules,
+       _viewerMembership = viewerMembership,
+       _members = members,
+       _invites = invites,
+       _announcements = announcements;
 
   factory ProjectDetailResponseModel.fromJson(Map<String, dynamic> json) {
     final projectJson =
         (json['project'] as Map?)?.cast<String, dynamic>() ??
-            const <String, dynamic>{};
+        const <String, dynamic>{};
     final rulesJson =
         (json['rules'] as Map?)?.cast<String, dynamic>() ??
-            const <String, dynamic>{};
+        const <String, dynamic>{};
     final viewerMembershipJson =
         (json['viewerMembership'] as Map?)?.cast<String, dynamic>() ??
-            const <String, dynamic>{};
-    final membersJson = (json['members'] as List?)
+        const <String, dynamic>{};
+    final membersJson =
+        (json['members'] as List?)
             ?.whereType<Map>()
             .map((m) => m.cast<String, dynamic>())
             .toList() ??
         const <Map<String, dynamic>>[];
-    final invitesJson = (json['invites'] as List?)
+    final invitesJson =
+        (json['invites'] as List?)
             ?.whereType<Map>()
             .map((m) => m.cast<String, dynamic>())
             .toList() ??
         const <Map<String, dynamic>>[];
-    final announcementsJson = (json['announcements'] as List?)
+    final announcementsJson =
+        (json['announcements'] as List?)
             ?.whereType<Map>()
             .map((m) => m.cast<String, dynamic>())
             .toList() ??
@@ -63,7 +66,9 @@ class ProjectDetailResponseModel {
       project: _ProjectPayload.fromJson(projectJson),
       rules: _RulesPayload.fromJson(rulesJson),
       viewerMembership: _MembershipPayload.fromJson(viewerMembershipJson),
-      members: membersJson.map(_MembershipPayload.fromJson).toList(growable: false),
+      members: membersJson
+          .map(_MembershipPayload.fromJson)
+          .toList(growable: false),
       invites: invitesJson.map(_InvitePayload.fromJson).toList(growable: false),
       announcements: announcementsJson
           .map(_AnnouncementPayload.fromJson)
@@ -111,8 +116,7 @@ class ProjectDetailResponseModel {
       displayStatusLabel: _project.displayStatus.isNotEmpty
           ? _project.displayStatus
           : _project.lifecycleState,
-      borrowingEnabled:
-          _project.borrowingEnabled && _rules.borrowingAllowed,
+      borrowingEnabled: _project.borrowingEnabled && _rules.borrowingAllowed,
       pendingJoinRequestCount: _project.pendingRequestCount,
       projectInviteCode: _project.projectInviteCode,
       roiPercentage: _rules.roiPercentage ?? _project.roi,
@@ -170,8 +174,11 @@ class ProjectDetailResponseModel {
   }
 
   static String _initials(String name) {
-    final parts =
-        name.trim().split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
+    final parts = name
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((p) => p.isNotEmpty)
+        .toList();
     if (parts.isEmpty) return 'NA';
     String firstChar(String s) => s.isEmpty ? 'N' : s[0].toUpperCase();
     final first = firstChar(parts.first);
@@ -308,20 +315,19 @@ class _RulesPayload {
   });
 
   factory _RulesPayload.fromJson(Map<String, dynamic> json) => _RulesPayload(
-        roiPercentage: parseApiRoiPercent(json),
-        joinApprovalRequired: json['joinApprovalRequired'] == true,
-        borrowingAllowed: json['borrowingAllowed'] == true,
-        successVoteWindowHours:
-            (json['successVoteWindowHours'] as num?)?.toInt() ?? 0,
-        repaymentWindowDays:
-            (json['repaymentWindowDays'] as num?)?.toInt() ?? 0,
-        repaymentGraceDays: (json['repaymentGraceDays'] as num?)?.toInt() ?? 0,
-        penaltyPercentage: _jsonDoubleNullable(json['penaltyPercentage']),
-        minimumContributionAmount:
-            (json['minimumContributionAmount'] as num?)?.toDouble() ?? 0.0,
-        contributionsAreNonRefundable:
-            json['contributionsAreNonRefundable'] == true,
-      );
+    roiPercentage: parseApiRoiPercent(json),
+    joinApprovalRequired: json['joinApprovalRequired'] == true,
+    borrowingAllowed: json['borrowingAllowed'] == true,
+    successVoteWindowHours:
+        (json['successVoteWindowHours'] as num?)?.toInt() ?? 0,
+    repaymentWindowDays: (json['repaymentWindowDays'] as num?)?.toInt() ?? 0,
+    repaymentGraceDays: (json['repaymentGraceDays'] as num?)?.toInt() ?? 0,
+    penaltyPercentage: _jsonDoubleNullable(json['penaltyPercentage']),
+    minimumContributionAmount:
+        (json['minimumContributionAmount'] as num?)?.toDouble() ?? 0.0,
+    contributionsAreNonRefundable:
+        json['contributionsAreNonRefundable'] == true,
+  );
 }
 
 class _MembershipPayload {
@@ -397,13 +403,13 @@ class _InvitePayload {
   });
 
   factory _InvitePayload.fromJson(Map<String, dynamic> json) => _InvitePayload(
-        id: _jsonString(json['id']),
-        inviteCode: _jsonString(json['inviteCode']),
-        requiresApproval: json['requiresApproval'] == true,
-        expiresAtUtc: _jsonString(json['expiresAtUtc']),
-        maxUses: (json['maxUses'] as num?)?.toInt(),
-        usedCount: (json['usedCount'] as num?)?.toInt() ?? 0,
-      );
+    id: _jsonString(json['id']),
+    inviteCode: _jsonString(json['inviteCode']),
+    requiresApproval: json['requiresApproval'] == true,
+    expiresAtUtc: _jsonString(json['expiresAtUtc']),
+    maxUses: (json['maxUses'] as num?)?.toInt(),
+    usedCount: (json['usedCount'] as num?)?.toInt() ?? 0,
+  );
 }
 
 class _AnnouncementPayload {
@@ -424,7 +430,8 @@ class _AnnouncementPayload {
         id: _jsonString(json['id']),
         heading: _jsonString(json['heading']),
         content: _jsonString(json['content']),
-        createdAtUtc: _nullableString(json['createdAtUtc']) ??
+        createdAtUtc:
+            _nullableString(json['createdAtUtc']) ??
             _nullableString(json['createdUtc']),
       );
 }

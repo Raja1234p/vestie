@@ -20,10 +20,7 @@ import '../widgets/create_project_members_modal.dart';
 class CreateProjectFundDetailScreen extends StatelessWidget {
   final CreateProjectFundDraft draft;
 
-  const CreateProjectFundDetailScreen({
-    super.key,
-    required this.draft,
-  });
+  const CreateProjectFundDetailScreen({super.key, required this.draft});
 
   static const List<String> _placeholderMembers = [
     'Alex',
@@ -89,8 +86,9 @@ class CreateProjectFundDetailScreen extends StatelessWidget {
                         children: [
                           CircleAvatar(
                             radius: 26.r,
-                            backgroundColor:
-                                AppColors.purple300.withValues(alpha: 0.55),
+                            backgroundColor: AppColors.purple300.withValues(
+                              alpha: 0.55,
+                            ),
                             child: AppSvgIcon(
                               assetPath: AppAssets.iconPerson,
                               color: AppColors.textPrimary,
@@ -217,8 +215,7 @@ class CreateProjectFundDetailScreen extends StatelessWidget {
                                 ),
                                 child: CircleAvatar(
                                   radius: 28.r,
-                                  backgroundColor:
-                                      AppColors.searchBarBg,
+                                  backgroundColor: AppColors.searchBarBg,
                                   child: Text(
                                     _placeholderMembers[i][0],
                                     style: GoogleFonts.lato(
@@ -239,8 +236,9 @@ class CreateProjectFundDetailScreen extends StatelessWidget {
                               ),
                               child: CircleAvatar(
                                 radius: 28.r,
-                                backgroundColor: AppColors.grey500
-                                    .withValues(alpha: 0.35),
+                                backgroundColor: AppColors.grey500.withValues(
+                                  alpha: 0.35,
+                                ),
                                 child: Text(
                                   '+$rest',
                                   style: GoogleFonts.lato(

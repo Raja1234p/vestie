@@ -25,10 +25,7 @@ class MyBorrowHistoryRow extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.projectFundsLedgerCardBg,
         borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(
-          color: AppColors.projectFundsLedgerBorder,
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.projectFundsLedgerBorder, width: 1),
       ),
       child: Row(
         children: [
@@ -74,10 +71,7 @@ class _BorrowHistoryIcon extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.projectFundsLedgerIconTileBg,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: AppColors.purple300,
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.purple300, width: 1),
       ),
       alignment: Alignment.center,
       child: SvgPicture.asset(
@@ -97,7 +91,9 @@ class _StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = approved ? AppColors.badgeCompletedBg : AppColors.borrowVoteDownBg;
+    final bg = approved
+        ? AppColors.badgeCompletedBg
+        : AppColors.borrowVoteDownBg;
     final fg = approved ? AppColors.badgeCompletedText : AppColors.red900;
     final label = approved
         ? AppStrings.borrowHistoryApproved

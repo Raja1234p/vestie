@@ -34,8 +34,9 @@ final class ProjectInviteDeepLinkService {
   /// Warm-start links only; cold start is handled via [captureInitialInviteIfAny] + splash.
   Future<void> start(GoRouter router) async {
     _router = router;
-    _subscription ??=
-        _appLinks.uriLinkStream.listen((uri) => _handleUri(uri, navigate: true));
+    _subscription ??= _appLinks.uriLinkStream.listen(
+      (uri) => _handleUri(uri, navigate: true),
+    );
   }
 
   Future<void> dispose() async {

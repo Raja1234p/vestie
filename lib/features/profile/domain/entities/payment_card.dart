@@ -5,7 +5,7 @@ class PaymentCard {
   final String holderName;
   final String last4;
   final String maskedNumber; // e.g. "•••• 0283"
-  final String expiry;       // MM/YY
+  final String expiry; // MM/YY
   final CardBrand brand;
   final bool isPrimary;
 
@@ -33,9 +33,12 @@ class PaymentCard {
 
   String get brandName {
     switch (brand) {
-      case CardBrand.visa:        return 'Visa';
-      case CardBrand.mastercard:  return 'Master';
-      case CardBrand.other:       return 'Card';
+      case CardBrand.visa:
+        return 'Visa';
+      case CardBrand.mastercard:
+        return 'Master';
+      case CardBrand.other:
+        return 'Card';
     }
   }
 }

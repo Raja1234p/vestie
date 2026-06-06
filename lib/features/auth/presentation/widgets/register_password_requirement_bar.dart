@@ -20,32 +20,32 @@ class RegisterPasswordRequirementBar extends StatelessWidget {
           color: AppColors.registerPasswordRequirementPillBg,
           borderRadius: BorderRadius.circular(999.r),
         ),
-      child: Row(
-        children: [
-          Expanded(
-            child: AppText(
-              AppStrings.passwordHint,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.registerPasswordRequirementAccent,
-                  ),
+        child: Row(
+          children: [
+            Expanded(
+              child: AppText(
+                AppStrings.passwordHint,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.registerPasswordRequirementAccent,
+                ),
+              ),
             ),
-          ),
-          SizedBox(width: 8.w),
-          SizedBox(
-            width: 22.r,
-            height: 22.r,
-            child: Image.asset(
-              AppAssets.authPasswordMet,
-              fit: BoxFit.contain,
-              filterQuality: FilterQuality.high,
+            SizedBox(width: 8.w),
+            SizedBox(
+              width: 22.r,
+              height: 22.r,
+              child: Image.asset(
+                AppAssets.authPasswordMet,
+                fit: BoxFit.contain,
+                filterQuality: FilterQuality.high,
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
       ),
     );
   }

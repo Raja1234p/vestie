@@ -24,8 +24,10 @@ class Project {
   final String? displayStatus;
   final String? projectInviteCode;
   final bool requestPending;
+
   /// Discover join CTA — `true` when API visibility is Public (1).
   final bool isPublic;
+
   /// Mock: member-only — which full-screen flow opens instead of project detail.
   final UserFlowOnOpen? userFlow;
 
@@ -51,9 +53,7 @@ class Project {
     this.successVoteApproved,
   });
 
-  Project copyWith({
-    double? currentAmount,
-  }) {
+  Project copyWith({double? currentAmount}) {
     return Project(
       id: id,
       name: name,
@@ -134,6 +134,6 @@ class Project {
 
   double get progress =>
       (goalAmount != null && currentAmount != null && goalAmount! > 0)
-          ? (currentAmount! / goalAmount!).clamp(0.0, 1.0)
-          : 0.0;
+      ? (currentAmount! / goalAmount!).clamp(0.0, 1.0)
+      : 0.0;
 }

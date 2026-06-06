@@ -108,7 +108,8 @@ class _AgreementBody extends StatelessWidget {
                     const Center(child: CircularProgressIndicator())
                   else
                     _AgreementGuidelinesBox(
-                      guidelines: state.disclaimer?.guidelines ??
+                      guidelines:
+                          state.disclaimer?.guidelines ??
                           AppStrings.agreementItems,
                     ),
                   SizedBox(height: 20.h),
@@ -119,7 +120,8 @@ class _AgreementBody extends StatelessWidget {
                     children: [
                       AppTickSwitch(
                         value: accepted,
-                        onChanged: (_) => context.read<AgreementCubit>().toggle(),
+                        onChanged: (_) =>
+                            context.read<AgreementCubit>().toggle(),
                       ),
                       SizedBox(width: 10.w),
                       Expanded(
@@ -232,11 +234,7 @@ class _AgreementHorizontalDashPainter extends CustomPainter {
     final y = size.height / 2;
 
     while (startX < size.width) {
-      canvas.drawLine(
-        Offset(startX, y),
-        Offset(startX + dashWidth, y),
-        paint,
-      );
+      canvas.drawLine(Offset(startX, y), Offset(startX + dashWidth, y), paint);
       startX += dashWidth + dashSpace;
     }
   }

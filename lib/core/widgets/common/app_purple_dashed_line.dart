@@ -22,10 +22,7 @@ class AppPurpleDashedLine extends StatelessWidget {
         final strokeWidth = height <= 1 ? 1.0 : 1.5;
         return CustomPaint(
           size: Size(c.maxWidth, height.h),
-          painter: _PurpleDashPainter(
-            color: color,
-            strokeWidth: strokeWidth,
-          ),
+          painter: _PurpleDashPainter(color: color, strokeWidth: strokeWidth),
         );
       },
     );

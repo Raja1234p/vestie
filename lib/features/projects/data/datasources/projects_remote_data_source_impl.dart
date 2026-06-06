@@ -42,7 +42,8 @@ class ProjectsRemoteDataSourceImpl implements ProjectsRemoteDataSource {
     if (e.response?.data != null && e.response?.data is Map) {
       final data = e.response!.data as Map;
       final fromErrors = _problemDetailsErrorsToMessage(data['errors']);
-      message = data['detail']?.toString() ??
+      message =
+          data['detail']?.toString() ??
           data['message']?.toString() ??
           fromErrors ??
           (data['title'] != null && data['title'].toString().trim().isNotEmpty
@@ -78,7 +79,9 @@ class ProjectsRemoteDataSourceImpl implements ProjectsRemoteDataSource {
   }
 
   @override
-  Future<List<ProjectSummaryModel>> listProjects({required String scope}) async {
+  Future<List<ProjectSummaryModel>> listProjects({
+    required String scope,
+  }) async {
     try {
       final response = await _client.get(
         ApiConstants.projects,
@@ -89,9 +92,11 @@ class ProjectsRemoteDataSourceImpl implements ProjectsRemoteDataSource {
       if (data is! List) return const <ProjectSummaryModel>[];
       return data
           .whereType<Map>()
-          .map((m) => ProjectSummaryModel.fromJson(
-                m.map((k, v) => MapEntry(k.toString(), v)),
-              ))
+          .map(
+            (m) => ProjectSummaryModel.fromJson(
+              m.map((k, v) => MapEntry(k.toString(), v)),
+            ),
+          )
           .toList(growable: false);
     } on DioException catch (e) {
       AppLogger.error(
@@ -140,4 +145,3 @@ class ProjectsRemoteDataSourceImpl implements ProjectsRemoteDataSource {
     }
   }
 }
-

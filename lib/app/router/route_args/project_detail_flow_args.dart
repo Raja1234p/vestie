@@ -85,6 +85,7 @@ class BorrowRequestsRouteArgs<T> {
   final bool isLeaderMode;
   final String projectId;
   final String? screenTitle;
+
   /// Full project context — member profile navigation from borrow cards.
   final ProjectDetailEntity? project;
 
@@ -103,8 +104,10 @@ class ProjectFundsHistoryRouteArgs {
   final double totalContribution;
   final double activeBorrows;
   final List<ProjectFundsHistoryEntryArgs> entries;
+
   /// Investment projects: balance + Breakdown only (Figma).
   final bool isInvestment;
+
   /// Co-leader (and investment) fund history list title — [AppStrings.labelBreakdown].
   final bool useBreakdownSectionTitle;
 
@@ -155,10 +158,13 @@ class MemberDetailRouteArgs<T> {
   final T member;
   final String projectId;
   final String projectName;
+
   /// Viewer project context — leader actions & VFF CTA visibility.
   final ProjectDetailEntity? project;
+
   /// Leader or co-leader: moderation tools (overdue, borrow context).
   final bool isLeaderView;
+
   /// Called after co-leader assign/remove so project detail can reload members.
   final Future<void> Function()? onProjectMembersChanged;
 
@@ -175,6 +181,7 @@ class MemberDetailRouteArgs<T> {
 class MemberPenaltyActionRouteArgs<T> {
   final T member;
   final String projectId;
+
   /// Viewer project context — same action visibility as [MemberDetailScreen].
   final ProjectDetailEntity? project;
 
@@ -189,6 +196,7 @@ class MemberPenaltyActionRouteArgs<T> {
 enum MemberDetailPopResult {
   /// Member was removed — pop group-members (if open) and refresh project detail.
   memberRemoved,
+
   /// Co-leader changed — refresh project detail when caller handles the result.
   membersUpdated,
 }
@@ -197,6 +205,7 @@ enum MemberDetailPopResult {
 enum MemberPenaltyActionOutcome {
   /// Member remains in the project — caller should reload member activity.
   memberUpdated,
+
   /// Member was removed — caller should pop member profile and refresh project.
   memberRemoved,
 }
@@ -226,7 +235,6 @@ class VotingWindowRouteArgs {
     this.flowKind = LeaderVotingFlowKind.markProjectSuccessful,
   });
 }
-
 
 class CancelProjectRouteArgs {
   final String projectId;
@@ -277,10 +285,7 @@ class UserStatusFlowArgs {
   final String projectName;
   final UserStatusFlowKind kind;
 
-  const UserStatusFlowArgs({
-    required this.projectName,
-    required this.kind,
-  });
+  const UserStatusFlowArgs({required this.projectName, required this.kind});
 }
 
 /// Group leader monitors active success vote (Figma voting window).
@@ -331,4 +336,3 @@ class UserSuccessVoteArgs {
     required this.daysRemaining,
   });
 }
-

@@ -42,10 +42,12 @@ class MyBorrowRequestArgsBuilder {
   /// Figma pending / request-sent state (My Borrow Request dev preview).
   static BorrowRequestEntity pendingPreviewRequest() => _previewActiveRequest();
 
-  static List<MyBorrowHistoryEntry> pendingPreviewHistory() => _previewHistory();
+  static List<MyBorrowHistoryEntry> pendingPreviewHistory() =>
+      _previewHistory();
 
   /// Figma approved borrow — “My Borrow” repayment screen.
-  static MyBorrowApprovedUiData approvedPreview() => const MyBorrowApprovedUiData(
+  static MyBorrowApprovedUiData approvedPreview() =>
+      const MyBorrowApprovedUiData(
         borrowAmount: 300,
         borrowDateLabel: 'May 24, 2025',
         dueDateLabel: 'May 1, 2025',
@@ -71,16 +73,8 @@ class MyBorrowRequestArgsBuilder {
   /// Figma preview history until my-borrow-history API is wired.
   static List<MyBorrowHistoryEntry> _previewHistory() {
     return const [
-      MyBorrowHistoryEntry(
-        amount: 115,
-        dateLabel: 'Mar 11',
-        isApproved: true,
-      ),
-      MyBorrowHistoryEntry(
-        amount: 500,
-        dateLabel: 'Mar 11',
-        isApproved: false,
-      ),
+      MyBorrowHistoryEntry(amount: 115, dateLabel: 'Mar 11', isApproved: true),
+      MyBorrowHistoryEntry(amount: 500, dateLabel: 'Mar 11', isApproved: false),
     ];
   }
 }

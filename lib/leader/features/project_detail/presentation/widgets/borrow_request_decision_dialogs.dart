@@ -15,10 +15,10 @@ Widget _borrowDescription(
   required BorrowRequestEntity request,
 }) {
   final base = Theme.of(context).textTheme.bodyLarge?.copyWith(
-        fontSize: 16.sp,
-        color: AppColors.grey900,
-        height: 1.5,
-      );
+    fontSize: 16.sp,
+    color: AppColors.grey900,
+    height: 1.5,
+  );
   final highlighted = base?.copyWith(
     fontWeight: FontWeight.w700,
     decoration: TextDecoration.underline,
@@ -42,17 +42,18 @@ Widget _borrowDescription(
 
 Future<void> showApproveBorrowRequestFlow(
   BuildContext context,
-  BorrowRequestEntity request,
-  [
+  BorrowRequestEntity request, [
   Future<bool> Function()? onConfirmed,
-  ]
-) async {
+]) async {
   await AppActionDialog.show(
     context,
     title: AppStrings.approveBorrowRequestTitle,
     description: '',
-    descriptionWidget:
-        _borrowDescription(context, isApprove: true, request: request),
+    descriptionWidget: _borrowDescription(
+      context,
+      isApprove: true,
+      request: request,
+    ),
     primaryLabel: AppStrings.approveLabel,
     primaryColor: AppColors.green800,
     onPrimary: () async {
@@ -69,25 +70,29 @@ Future<void> showApproveBorrowRequestFlow(
   await AppActionDialog.showSuccessOk(
     context,
     title: AppStrings.borrowApprovedTitle,
-    descriptionWidget:
-        _borrowDescription(context, isApprove: true, request: request),
+    descriptionWidget: _borrowDescription(
+      context,
+      isApprove: true,
+      request: request,
+    ),
     onPrimary: () => Navigator.of(context).pop(),
   );
 }
 
 Future<void> showRejectBorrowRequestFlow(
   BuildContext context,
-  BorrowRequestEntity request,
-  [
+  BorrowRequestEntity request, [
   Future<bool> Function()? onConfirmed,
-  ]
-) async {
+]) async {
   await AppActionDialog.show(
     context,
     title: AppStrings.rejectBorrowRequestTitle,
     description: '',
-    descriptionWidget:
-        _borrowDescription(context, isApprove: false, request: request),
+    descriptionWidget: _borrowDescription(
+      context,
+      isApprove: false,
+      request: request,
+    ),
     primaryLabel: AppStrings.rejectShortLabel,
     primaryColor: AppColors.red800,
     onPrimary: () async {
@@ -105,8 +110,11 @@ Future<void> showRejectBorrowRequestFlow(
     context,
     title: AppStrings.borrowRejectedTitle,
     description: '',
-    descriptionWidget:
-        _borrowDescription(context, isApprove: false, request: request),
+    descriptionWidget: _borrowDescription(
+      context,
+      isApprove: false,
+      request: request,
+    ),
     primaryLabel: AppStrings.btnBackToProject,
     showSecondary: false,
     primaryColor: AppColors.neutral1200,

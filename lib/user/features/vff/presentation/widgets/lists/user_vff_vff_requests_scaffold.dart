@@ -42,92 +42,95 @@ final class UserVffVffRequestsScaffold extends StatelessWidget {
             Expanded(
               child: ColoredBox(
                 color: AppColors.surface,
-                child: BlocConsumer<UserVffIncomingRequestListCubit,
-                    UserVffIncomingRequestListState>(
-                    listenWhen: (prev, curr) =>
-                        prev.errorMessage != curr.errorMessage &&
-                        curr.errorMessage != null,
-                    listener: (context, state) {
-                      final message = state.errorMessage;
-                      if (message == null || message.isEmpty) return;
-                      AppSnackBar.showError(context, message);
-                    },
-                    builder: (context, state) {
-                      if (state.status ==
-                          UserVffIncomingRequestListStatus.loading) {
+                child:
+                    BlocConsumer<
+                      UserVffIncomingRequestListCubit,
+                      UserVffIncomingRequestListState
+                    >(
+                      listenWhen: (prev, curr) =>
+                          prev.errorMessage != curr.errorMessage &&
+                          curr.errorMessage != null,
+                      listener: (context, state) {
+                        final message = state.errorMessage;
+                        if (message == null || message.isEmpty) return;
+                        AppSnackBar.showError(context, message);
+                      },
+                      builder: (context, state) {
+                        if (state.status ==
+                            UserVffIncomingRequestListStatus.loading) {
+                          return Padding(
+                            padding: AppDimens.vffInboxFullListSheetInset,
+                            child: const UserVffIncomingRequestListShimmer(),
+                          );
+                        }
+
+                        if (state.status ==
+                            UserVffIncomingRequestListStatus.error) {
+                          return Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                AppText(
+                                  state.errorMessage ?? AppStrings.errorGeneric,
+                                  textAlign: TextAlign.center,
+                                ),
+                                SizedBox(height: 12.h),
+                                TextButton(
+                                  onPressed: () => context
+                                      .read<UserVffIncomingRequestListCubit>()
+                                      .load(),
+                                  child: AppText(AppStrings.btnRetry),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+
+                        final items = state.items;
+                        if (items.isEmpty) {
+                          return Padding(
+                            padding: AppDimens.vffInboxFullListEmptyInset,
+                            child: const UserVffHubEmptyBody(
+                              message: AppStrings.userVffEmptyRequests,
+                            ),
+                          );
+                        }
+
+                        final cubit = context
+                            .read<UserVffIncomingRequestListCubit>();
+                        final acting = state.actingRow;
+                        final inboxBusy = acting != null;
+
                         return Padding(
                           padding: AppDimens.vffInboxFullListSheetInset,
-                          child: const UserVffIncomingRequestListShimmer(),
-                        );
-                      }
-
-                      if (state.status ==
-                          UserVffIncomingRequestListStatus.error) {
-                        return Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              AppText(
-                                state.errorMessage ?? AppStrings.errorGeneric,
-                                textAlign: TextAlign.center,
-                              ),
-                              SizedBox(height: 12.h),
-                              TextButton(
-                                onPressed: () => context
-                                    .read<UserVffIncomingRequestListCubit>()
-                                    .load(),
-                                child: AppText(AppStrings.btnRetry),
-                              ),
-                            ],
+                          child: UserVffInboxInteractionLock(
+                            locked: inboxBusy,
+                            child: ListView.builder(
+                              physics: inboxBusy
+                                  ? const NeverScrollableScrollPhysics()
+                                  : const BouncingScrollPhysics(),
+                              padding: EdgeInsets.only(bottom: AppDimens.v24),
+                              itemCount: items.length + 1,
+                              itemBuilder: (_, i) {
+                                if (i == 0) {
+                                  return const UserVffFullListSectionTitle(
+                                    title: AppStrings.userVffSectionVffRequests,
+                                  );
+                                }
+                                final r = items[i - 1];
+                                return UserVffIncomingRequestCard(
+                                  item: r,
+                                  actingRow: acting,
+                                  onAccept: () => cubit.accept(r),
+                                  onDecline: () => cubit.decline(r),
+                                  bottomSpacing: AppDimens.v16,
+                                );
+                              },
+                            ),
                           ),
                         );
-                      }
-
-                      final items = state.items;
-                      if (items.isEmpty) {
-                        return Padding(
-                          padding: AppDimens.vffInboxFullListEmptyInset,
-                          child: const UserVffHubEmptyBody(
-                            message: AppStrings.userVffEmptyRequests,
-                          ),
-                        );
-                      }
-
-                      final cubit =
-                          context.read<UserVffIncomingRequestListCubit>();
-                      final acting = state.actingRow;
-                      final inboxBusy = acting != null;
-
-                      return Padding(
-                        padding: AppDimens.vffInboxFullListSheetInset,
-                        child: UserVffInboxInteractionLock(
-                          locked: inboxBusy,
-                          child: ListView.builder(
-                          physics: inboxBusy
-                              ? const NeverScrollableScrollPhysics()
-                              : const BouncingScrollPhysics(),
-                          padding: EdgeInsets.only(bottom: AppDimens.v24),
-                          itemCount: items.length + 1,
-                          itemBuilder: (_, i) {
-                            if (i == 0) {
-                              return const UserVffFullListSectionTitle(
-                                title: AppStrings.userVffSectionVffRequests,
-                              );
-                            }
-                            final r = items[i - 1];
-                            return UserVffIncomingRequestCard(
-                              item: r,
-                              actingRow: acting,
-                              onAccept: () => cubit.accept(r),
-                              onDecline: () => cubit.decline(r),
-                              bottomSpacing: AppDimens.v16,
-                            );
-                          },
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                      },
+                    ),
               ),
             ),
           ],

@@ -15,12 +15,12 @@ final class UserVffProfileCubit extends Cubit<UserVffProfileState> {
     required SendVffRequestUseCase sendVffRequestUseCase,
     required RemoveVffConnectionUseCase removeVffConnectionUseCase,
     required JoinFromVffProfileUseCase joinFromVffProfileUseCase,
-  })  : _getConnectedVffProfileUseCase = getConnectedVffProfileUseCase,
-        _getPublicVffProfileUseCase = getPublicVffProfileUseCase,
-        _sendVffRequestUseCase = sendVffRequestUseCase,
-        _removeVffConnectionUseCase = removeVffConnectionUseCase,
-        _joinFromVffProfileUseCase = joinFromVffProfileUseCase,
-        super(const UserVffProfileState());
+  }) : _getConnectedVffProfileUseCase = getConnectedVffProfileUseCase,
+       _getPublicVffProfileUseCase = getPublicVffProfileUseCase,
+       _sendVffRequestUseCase = sendVffRequestUseCase,
+       _removeVffConnectionUseCase = removeVffConnectionUseCase,
+       _joinFromVffProfileUseCase = joinFromVffProfileUseCase,
+       super(const UserVffProfileState());
 
   final GetConnectedVffProfileUseCase _getConnectedVffProfileUseCase;
   final GetPublicVffProfileUseCase _getPublicVffProfileUseCase;
@@ -64,7 +64,7 @@ final class UserVffProfileCubit extends Cubit<UserVffProfileState> {
       ),
     );
 
-  if (loadAsConnected) {
+    if (loadAsConnected) {
       final result = await _getConnectedVffProfileUseCase(userId);
       if (isClosed) return;
       result.fold(
@@ -94,7 +94,8 @@ final class UserVffProfileCubit extends Cubit<UserVffProfileState> {
         ),
       ),
       (entity) {
-        final canSend = projectId != null &&
+        final canSend =
+            projectId != null &&
             projectId.trim().isNotEmpty &&
             !entity.isVffConnected;
         emit(
@@ -154,9 +155,7 @@ final class UserVffProfileCubit extends Cubit<UserVffProfileState> {
 
   Future<bool> removeVffConnection() async {
     final userId = _userId?.trim();
-    if (userId == null ||
-        userId.isEmpty ||
-        state.isFooterBusy) {
+    if (userId == null || userId.isEmpty || state.isFooterBusy) {
       return false;
     }
 
@@ -253,7 +252,8 @@ final class UserVffProfileCubit extends Cubit<UserVffProfileState> {
         ),
       ),
       (entity) {
-        final canSend = projectId != null &&
+        final canSend =
+            projectId != null &&
             projectId.trim().isNotEmpty &&
             !entity.isVffConnected;
         emit(

@@ -48,8 +48,14 @@ class AuthRepositoryImpl implements AuthRepository {
       AppLogger.error('Login Server Exception', error: e, stackTrace: stack);
       return Left(ServerFailure(e.message, e.title));
     } catch (e, stack) {
-      AppLogger.error('Login Unexpected Exception', error: e, stackTrace: stack);
-      return const Left(ServerFailure('An unexpected error occurred during login'));
+      AppLogger.error(
+        'Login Unexpected Exception',
+        error: e,
+        stackTrace: stack,
+      );
+      return const Left(
+        ServerFailure('An unexpected error occurred during login'),
+      );
     }
   }
 
@@ -67,16 +73,28 @@ class AuthRepositoryImpl implements AuthRepository {
         password: password,
         confirmPassword: confirmPassword,
       );
-      return Right(RegisterResult(
-        userId: model.userId,
-        requiresEmailVerification: model.requiresEmailVerification,
-      ));
+      return Right(
+        RegisterResult(
+          userId: model.userId,
+          requiresEmailVerification: model.requiresEmailVerification,
+        ),
+      );
     } on ServerException catch (e, stack) {
-      AppLogger.error('Registration Server Exception', error: e, stackTrace: stack);
+      AppLogger.error(
+        'Registration Server Exception',
+        error: e,
+        stackTrace: stack,
+      );
       return Left(ServerFailure(e.message, e.title));
     } catch (e, stack) {
-      AppLogger.error('Registration Unexpected Exception', error: e, stackTrace: stack);
-      return const Left(ServerFailure('An unexpected error occurred during registration'));
+      AppLogger.error(
+        'Registration Unexpected Exception',
+        error: e,
+        stackTrace: stack,
+      );
+      return const Left(
+        ServerFailure('An unexpected error occurred during registration'),
+      );
     }
   }
 
@@ -86,30 +104,51 @@ class AuthRepositoryImpl implements AuthRepository {
     required String code,
   }) async {
     try {
-      final userModel = await _remoteDataSource.verifyEmail(email: email, code: code);
+      final userModel = await _remoteDataSource.verifyEmail(
+        email: email,
+        code: code,
+      );
       return Right(userModel);
     } on ServerException catch (e, stack) {
-      AppLogger.error('Verify Email Server Exception', error: e, stackTrace: stack);
+      AppLogger.error(
+        'Verify Email Server Exception',
+        error: e,
+        stackTrace: stack,
+      );
       return Left(ServerFailure(e.message, e.title));
     } catch (e, stack) {
-      AppLogger.error('Verify Email Unexpected Exception', error: e, stackTrace: stack);
-      return const Left(ServerFailure('An unexpected error occurred during email verification'));
+      AppLogger.error(
+        'Verify Email Unexpected Exception',
+        error: e,
+        stackTrace: stack,
+      );
+      return const Left(
+        ServerFailure('An unexpected error occurred during email verification'),
+      );
     }
   }
 
   @override
-  Future<Either<Failure, String>> resendCode({
-    required String email,
-  }) async {
+  Future<Either<Failure, String>> resendCode({required String email}) async {
     try {
       final model = await _remoteDataSource.resendCode(email: email);
       return Right(model.message);
     } on ServerException catch (e, stack) {
-      AppLogger.error('Resend Code Server Exception', error: e, stackTrace: stack);
+      AppLogger.error(
+        'Resend Code Server Exception',
+        error: e,
+        stackTrace: stack,
+      );
       return Left(ServerFailure(e.message, e.title));
     } catch (e, stack) {
-      AppLogger.error('Resend Code Unexpected Exception', error: e, stackTrace: stack);
-      return const Left(ServerFailure('An unexpected error occurred while resending code'));
+      AppLogger.error(
+        'Resend Code Unexpected Exception',
+        error: e,
+        stackTrace: stack,
+      );
+      return const Left(
+        ServerFailure('An unexpected error occurred while resending code'),
+      );
     }
   }
 
@@ -121,11 +160,23 @@ class AuthRepositoryImpl implements AuthRepository {
       final model = await _remoteDataSource.forgotPassword(email: email);
       return Right(model.message);
     } on ServerException catch (e, stack) {
-      AppLogger.error('Forgot Password Server Exception', error: e, stackTrace: stack);
+      AppLogger.error(
+        'Forgot Password Server Exception',
+        error: e,
+        stackTrace: stack,
+      );
       return Left(ServerFailure(e.message, e.title));
     } catch (e, stack) {
-      AppLogger.error('Forgot Password Unexpected Exception', error: e, stackTrace: stack);
-      return const Left(ServerFailure('An unexpected error occurred while processing forgot password request'));
+      AppLogger.error(
+        'Forgot Password Unexpected Exception',
+        error: e,
+        stackTrace: stack,
+      );
+      return const Left(
+        ServerFailure(
+          'An unexpected error occurred while processing forgot password request',
+        ),
+      );
     }
   }
 
@@ -145,18 +196,26 @@ class AuthRepositoryImpl implements AuthRepository {
       );
       return Right(model.message);
     } on ServerException catch (e, stack) {
-      AppLogger.error('Reset Password Server Exception', error: e, stackTrace: stack);
+      AppLogger.error(
+        'Reset Password Server Exception',
+        error: e,
+        stackTrace: stack,
+      );
       return Left(ServerFailure(e.message, e.title));
     } catch (e, stack) {
-      AppLogger.error('Reset Password Unexpected Exception', error: e, stackTrace: stack);
-      return const Left(ServerFailure('An unexpected error occurred while resetting password'));
+      AppLogger.error(
+        'Reset Password Unexpected Exception',
+        error: e,
+        stackTrace: stack,
+      );
+      return const Left(
+        ServerFailure('An unexpected error occurred while resetting password'),
+      );
     }
   }
 
   @override
-  Future<Either<Failure, String>> logout({
-    required String refreshToken,
-  }) async {
+  Future<Either<Failure, String>> logout({required String refreshToken}) async {
     try {
       final model = await _remoteDataSource.logout(refreshToken: refreshToken);
       return Right(model.message);
@@ -164,8 +223,14 @@ class AuthRepositoryImpl implements AuthRepository {
       AppLogger.error('Logout Server Exception', error: e, stackTrace: stack);
       return Left(ServerFailure(e.message, e.title));
     } catch (e, stack) {
-      AppLogger.error('Logout Unexpected Exception', error: e, stackTrace: stack);
-      return const Left(ServerFailure('An unexpected error occurred during logout'));
+      AppLogger.error(
+        'Logout Unexpected Exception',
+        error: e,
+        stackTrace: stack,
+      );
+      return const Left(
+        ServerFailure('An unexpected error occurred during logout'),
+      );
     } finally {
       await clearRiskDisclaimerLocalCache();
     }
@@ -183,8 +248,16 @@ class AuthRepositoryImpl implements AuthRepository {
       AppLogger.error('GetMe Server Exception', error: e, stackTrace: stack);
       return Left(ServerFailure(e.message, e.title));
     } catch (e, stack) {
-      AppLogger.error('GetMe Unexpected Exception', error: e, stackTrace: stack);
-      return const Left(ServerFailure('An unexpected error occurred while fetching user profile'));
+      AppLogger.error(
+        'GetMe Unexpected Exception',
+        error: e,
+        stackTrace: stack,
+      );
+      return const Left(
+        ServerFailure(
+          'An unexpected error occurred while fetching user profile',
+        ),
+      );
     }
   }
 
@@ -207,8 +280,16 @@ class AuthRepositoryImpl implements AuthRepository {
       AppLogger.error('UpdateMe Server Exception', error: e, stackTrace: stack);
       return Left(ServerFailure(e.message, e.title));
     } catch (e, stack) {
-      AppLogger.error('UpdateMe Unexpected Exception', error: e, stackTrace: stack);
-      return const Left(ServerFailure('An unexpected error occurred while updating user profile'));
+      AppLogger.error(
+        'UpdateMe Unexpected Exception',
+        error: e,
+        stackTrace: stack,
+      );
+      return const Left(
+        ServerFailure(
+          'An unexpected error occurred while updating user profile',
+        ),
+      );
     }
   }
 
@@ -231,7 +312,9 @@ class AuthRepositoryImpl implements AuthRepository {
         stackTrace: stack,
       );
       return const Left(
-        ServerFailure('An unexpected error occurred while removing profile photo'),
+        ServerFailure(
+          'An unexpected error occurred while removing profile photo',
+        ),
       );
     }
   }
@@ -259,11 +342,23 @@ class AuthRepositoryImpl implements AuthRepository {
       _sessionDisclaimer = entity;
       return Right(entity);
     } on ServerException catch (e, stack) {
-      AppLogger.error('Get Risk Disclaimer Server Exception', error: e, stackTrace: stack);
+      AppLogger.error(
+        'Get Risk Disclaimer Server Exception',
+        error: e,
+        stackTrace: stack,
+      );
       return Left(ServerFailure(e.message, e.title));
     } catch (e, stack) {
-      AppLogger.error('Get Risk Disclaimer Unexpected Exception', error: e, stackTrace: stack);
-      return const Left(ServerFailure('An unexpected error occurred while checking risk disclaimer status'));
+      AppLogger.error(
+        'Get Risk Disclaimer Unexpected Exception',
+        error: e,
+        stackTrace: stack,
+      );
+      return const Left(
+        ServerFailure(
+          'An unexpected error occurred while checking risk disclaimer status',
+        ),
+      );
     }
   }
 
@@ -293,8 +388,11 @@ class AuthRepositoryImpl implements AuthRepository {
     final accepted = await _prefs.getBool(StorageKeys.disclaimerAccepted);
     if (!accepted) return null;
 
-    final version = await _prefs.getString(StorageKeys.riskDisclaimerVersion) ?? '1.0';
-    final raw = await _prefs.getString(StorageKeys.riskDisclaimerGuidelinesJson);
+    final version =
+        await _prefs.getString(StorageKeys.riskDisclaimerVersion) ?? '1.0';
+    final raw = await _prefs.getString(
+      StorageKeys.riskDisclaimerGuidelinesJson,
+    );
     var guidelines = <String>[];
     if (raw != null && raw.isNotEmpty) {
       try {
@@ -304,7 +402,11 @@ class AuthRepositoryImpl implements AuthRepository {
         }
       } catch (_) {}
     }
-    return RiskDisclaimer(version: version, guidelines: guidelines, accepted: true);
+    return RiskDisclaimer(
+      version: version,
+      guidelines: guidelines,
+      accepted: true,
+    );
   }
 
   @override
@@ -327,11 +429,23 @@ class AuthRepositoryImpl implements AuthRepository {
       _sessionDisclaimer = accepted;
       return Right(model.message);
     } on ServerException catch (e, stack) {
-      AppLogger.error('Accept Risk Disclaimer Server Exception', error: e, stackTrace: stack);
+      AppLogger.error(
+        'Accept Risk Disclaimer Server Exception',
+        error: e,
+        stackTrace: stack,
+      );
       return Left(ServerFailure(e.message, e.title));
     } catch (e, stack) {
-      AppLogger.error('Accept Risk Disclaimer Unexpected Exception', error: e, stackTrace: stack);
-      return const Left(ServerFailure('An unexpected error occurred while accepting risk disclaimer'));
+      AppLogger.error(
+        'Accept Risk Disclaimer Unexpected Exception',
+        error: e,
+        stackTrace: stack,
+      );
+      return const Left(
+        ServerFailure(
+          'An unexpected error occurred while accepting risk disclaimer',
+        ),
+      );
     }
   }
 
@@ -341,8 +455,10 @@ class AuthRepositoryImpl implements AuthRepository {
       // Google Cloud Console OAuth (Web client ID set as [GoogleSignIn] serverClientId in main.dart).
       // No Firebase — backend verifies `idToken` via Google's tokeninfo / libraries.
       final googleUser = await GoogleSignIn.instance.authenticate();
-      await googleUser.authorizationClient
-          .authorizeScopes(['email', 'profile']);
+      await googleUser.authorizationClient.authorizeScopes([
+        'email',
+        'profile',
+      ]);
       final idToken = googleUser.authentication.idToken;
       if (idToken == null || idToken.isEmpty) {
         return const Left(ServerFailure(AppStrings.errorGoogleSignInNoToken));
@@ -364,13 +480,25 @@ class AuthRepositoryImpl implements AuthRepository {
       }
       return const Left(ServerFailure(AppStrings.errorGoogleSignInFailed));
     } on UnauthorizedException catch (e, stack) {
-      AppLogger.error('Google Sign-In Unauthorized', error: e, stackTrace: stack);
+      AppLogger.error(
+        'Google Sign-In Unauthorized',
+        error: e,
+        stackTrace: stack,
+      );
       return Left(ServerFailure(e.message, e.title));
     } on ServerException catch (e, stack) {
-      AppLogger.error('Google Sign-In Server Exception', error: e, stackTrace: stack);
+      AppLogger.error(
+        'Google Sign-In Server Exception',
+        error: e,
+        stackTrace: stack,
+      );
       return Left(ServerFailure(e.message, e.title));
     } catch (e, stack) {
-      AppLogger.error('Google Sign-In Unexpected Exception', error: e, stackTrace: stack);
+      AppLogger.error(
+        'Google Sign-In Unexpected Exception',
+        error: e,
+        stackTrace: stack,
+      );
       return const Left(ServerFailure(AppStrings.errorGoogleSignInFailed));
     }
   }

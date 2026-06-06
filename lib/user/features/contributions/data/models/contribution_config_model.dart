@@ -19,9 +19,14 @@ class ContributionConfigModel extends ContributionConfigEntity {
       platformFeeRatePercent: json.safeDouble('platformFeeRatePercent'),
       minimumContributionAmount: json.safeDouble('minimumContributionAmount'),
       isNonRefundable: json.safeBool('isNonRefundable'),
-      suggestedContributionAmount: json.safeDouble('suggestedContributionAmount'),
-      wallets: (json['wallets'] as List<dynamic>?)
-              ?.map((e) => WalletSummaryModel.fromJson(e as Map<String, dynamic>))
+      suggestedContributionAmount: json.safeDouble(
+        'suggestedContributionAmount',
+      ),
+      wallets:
+          (json['wallets'] as List<dynamic>?)
+              ?.map(
+                (e) => WalletSummaryModel.fromJson(e as Map<String, dynamic>),
+              )
               .toList() ??
           [],
     );

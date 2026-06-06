@@ -13,11 +13,7 @@ class ProjectDetailLoadingBody extends StatelessWidget {
   final String? title;
   final VoidCallback onBack;
 
-  const ProjectDetailLoadingBody({
-    super.key,
-    required this.onBack,
-    this.title,
-  });
+  const ProjectDetailLoadingBody({super.key, required this.onBack, this.title});
 
   bool get _hasTitle => title != null && title!.trim().isNotEmpty;
 

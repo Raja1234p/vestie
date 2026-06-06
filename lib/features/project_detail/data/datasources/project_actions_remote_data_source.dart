@@ -6,7 +6,9 @@ import '../models/pending_membership_model.dart';
 
 abstract class ProjectActionsRemoteDataSource {
   /// Week 3 — `GET /projects/{id}/memberships/pending`
-  Future<List<PendingMembershipModel>> listPendingJoinRequests(String projectId);
+  Future<List<PendingMembershipModel>> listPendingJoinRequests(
+    String projectId,
+  );
 
   /// `GET /projects/{projectId}/members/{userId}/activity`
   Future<MemberActivityResponseModel> getMemberActivity({
@@ -61,7 +63,8 @@ abstract class ProjectActionsRemoteDataSource {
   Future<void> completeProject({required String projectId});
 }
 
-class ProjectActionsRemoteDataSourceImpl implements ProjectActionsRemoteDataSource {
+class ProjectActionsRemoteDataSourceImpl
+    implements ProjectActionsRemoteDataSource {
   final BaseApiClient apiClient;
 
   ProjectActionsRemoteDataSourceImpl({required this.apiClient});
@@ -89,10 +92,7 @@ class ProjectActionsRemoteDataSourceImpl implements ProjectActionsRemoteDataSour
       ApiConstants.projectMemberActivity(projectId, userId),
     );
     final map = _unwrapActivityPayload(response);
-    return MemberActivityResponseModel.fromJson(
-      map,
-      projectName: projectName,
-    );
+    return MemberActivityResponseModel.fromJson(map, projectName: projectName);
   }
 
   @override
@@ -111,7 +111,9 @@ class ProjectActionsRemoteDataSourceImpl implements ProjectActionsRemoteDataSour
 
   @override
   Future<void> removeMember(String projectId, String userId) async {
-    await apiClient.delete('${ApiConstants.projects}/$projectId/members/$userId');
+    await apiClient.delete(
+      '${ApiConstants.projects}/$projectId/members/$userId',
+    );
   }
 
   @override
@@ -121,7 +123,9 @@ class ProjectActionsRemoteDataSourceImpl implements ProjectActionsRemoteDataSour
 
   @override
   Future<void> demoteCoLeader(String projectId, String userId) async {
-    await apiClient.delete(ApiConstants.projectMemberCoLeader(projectId, userId));
+    await apiClient.delete(
+      ApiConstants.projectMemberCoLeader(projectId, userId),
+    );
   }
 
   @override
@@ -171,12 +175,10 @@ class ProjectActionsRemoteDataSourceImpl implements ProjectActionsRemoteDataSour
         'maxUses': maxUses,
       },
     );
-    final url = (response['inviteUrl'] ??
-            response['shareUrl'] ??
-            response['url'] ??
-            '')
-        .toString()
-        .trim();
+    final url =
+        (response['inviteUrl'] ?? response['shareUrl'] ?? response['url'] ?? '')
+            .toString()
+            .trim();
     if (url.isNotEmpty) return url;
 
     return (response['inviteCode'] ?? response['code'] ?? '').toString();
@@ -226,7 +228,9 @@ class ProjectActionsRemoteDataSourceImpl implements ProjectActionsRemoteDataSour
 
   @override
   Future<void> finalizeClosureVoting({required String projectId}) async {
-    await apiClient.post('${ApiConstants.projects}/$projectId/closure-voting/finalize');
+    await apiClient.post(
+      '${ApiConstants.projects}/$projectId/closure-voting/finalize',
+    );
   }
 
   @override

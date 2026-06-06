@@ -47,10 +47,7 @@ class DiscoverFilterRow extends StatelessWidget {
                       ? AppColors.actionPrimaryPressed
                       : AppColors.chipInactiveBg,
                   borderRadius: BorderRadius.circular(24.r),
-                  border: Border.all(
-                    color: AppColors.purple300,
-                    width: 1,
-                  ),
+                  border: Border.all(color: AppColors.purple300, width: 1),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,

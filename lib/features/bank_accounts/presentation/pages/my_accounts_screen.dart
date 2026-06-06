@@ -86,7 +86,8 @@ class _MyAccountsBody extends StatelessWidget {
       },
       builder: (context, state) {
         final isEmpty = !state.loading && state.accounts.isEmpty;
-        final loadFailed = !state.loading &&
+        final loadFailed =
+            !state.loading &&
             state.errorMessage != null &&
             state.accounts.isEmpty;
 
@@ -100,23 +101,21 @@ class _MyAccountsBody extends StatelessWidget {
                   child: state.loading
                       ? const PaymentCardListShimmer()
                       : loadFailed || isEmpty
-                          ? const PaymentEmptyView(
-                              title: AppStrings.emptyMyAccountsTitle,
-                              subtitle: AppStrings.emptyMyAccountsSubtitle,
-                            )
-                          : BankAccountList(
-                              accounts: state.accounts,
-                              onAdd: () => _addBank(context),
-                              addLoading: state.linking,
-                            ),
+                      ? const PaymentEmptyView(
+                          title: AppStrings.emptyMyAccountsTitle,
+                          subtitle: AppStrings.emptyMyAccountsSubtitle,
+                        )
+                      : BankAccountList(
+                          accounts: state.accounts,
+                          onAdd: () => _addBank(context),
+                          addLoading: state.linking,
+                        ),
                 ),
                 if (isEmpty)
                   FlowScreenFooter(
                     child: PaymentPrimaryButton(
                       label: AppStrings.btnAddBankAccount,
-                      onTap: state.linking
-                          ? null
-                          : () => _addBank(context),
+                      onTap: state.linking ? null : () => _addBank(context),
                       loading: state.linking,
                     ),
                   ),

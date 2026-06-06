@@ -34,8 +34,7 @@ class ContributionConfirmModel {
       projectId: (json['projectId'] as String?) ?? '',
       contributionAmount:
           (json['contributionAmount'] as num?)?.toDouble() ?? 0.0,
-      platformFeeAmount:
-          (json['platformFeeAmount'] as num?)?.toDouble() ?? 0.0,
+      platformFeeAmount: (json['platformFeeAmount'] as num?)?.toDouble() ?? 0.0,
       walletDeductionAmount:
           (json['walletDeductionAmount'] as num?)?.toDouble() ?? 0.0,
       projectPotCreditAmount:
@@ -50,4 +49,3 @@ class ContributionConfirmModel {
     );
   }
 }
-

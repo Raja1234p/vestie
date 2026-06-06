@@ -22,12 +22,17 @@ class ProjectDeadlinePickerResult {
   final ProjectDeadlinePickerAction action;
   final DateTime? date;
 
-  static const cancelled =
-      ProjectDeadlinePickerResult._(ProjectDeadlinePickerAction.cancelled);
-  static const cleared =
-      ProjectDeadlinePickerResult._(ProjectDeadlinePickerAction.cleared);
+  static const cancelled = ProjectDeadlinePickerResult._(
+    ProjectDeadlinePickerAction.cancelled,
+  );
+  static const cleared = ProjectDeadlinePickerResult._(
+    ProjectDeadlinePickerAction.cleared,
+  );
   static ProjectDeadlinePickerResult confirmed(DateTime date) =>
-      ProjectDeadlinePickerResult._(ProjectDeadlinePickerAction.confirmed, date);
+      ProjectDeadlinePickerResult._(
+        ProjectDeadlinePickerAction.confirmed,
+        date,
+      );
 }
 
 /// OK saves the picked day; Cancel dismisses without changing form/API; Remove deadline clears it.
@@ -104,21 +109,19 @@ class _ProjectDeadlinePickerDialogState
       actions: [
         if (widget.allowClear)
           TextButton(
-            onPressed: () => Navigator.of(context).pop(
-              ProjectDeadlinePickerResult.cleared,
-            ),
+            onPressed: () =>
+                Navigator.of(context).pop(ProjectDeadlinePickerResult.cleared),
             child: Text(AppStrings.btnRemoveDeadline),
           ),
         TextButton(
-          onPressed: () => Navigator.of(context).pop(
-            ProjectDeadlinePickerResult.cancelled,
-          ),
+          onPressed: () =>
+              Navigator.of(context).pop(ProjectDeadlinePickerResult.cancelled),
           child: Text(AppStrings.btnCancel),
         ),
         TextButton(
-          onPressed: () => Navigator.of(context).pop(
-            ProjectDeadlinePickerResult.confirmed(_selected),
-          ),
+          onPressed: () => Navigator.of(
+            context,
+          ).pop(ProjectDeadlinePickerResult.confirmed(_selected)),
           child: Text(AppStrings.btnOk),
         ),
       ],
@@ -169,7 +172,9 @@ class CPDeadlinePicker extends StatelessWidget {
                     style: GoogleFonts.lato(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w500,
-                      color: isEmpty ? AppColors.authHint : AppColors.inputFieldText,
+                      color: isEmpty
+                          ? AppColors.authHint
+                          : AppColors.inputFieldText,
                     ),
                   ),
                 ),
@@ -235,16 +240,16 @@ class _CPCategoryDropdownState extends State<CPCategoryDropdown> {
   bool _expanded = false;
 
   BoxDecoration _boxDecoration(Color fill) => BoxDecoration(
-        color: fill,
-        borderRadius: _categoryDropdownRadius,
-        border: Border.all(color: AppColors.inputFieldBorder),
-      );
+    color: fill,
+    borderRadius: _categoryDropdownRadius,
+    border: Border.all(color: AppColors.inputFieldBorder),
+  );
 
   TextStyle get _optionTextStyle => GoogleFonts.lato(
-        fontSize: 16.sp,
-        fontWeight: FontWeight.w500,
-        color: AppColors.inputFieldText,
-      );
+    fontSize: 16.sp,
+    fontWeight: FontWeight.w500,
+    color: AppColors.inputFieldText,
+  );
 
   void _toggleExpanded() => setState(() => _expanded = !_expanded);
 
@@ -262,7 +267,10 @@ class _CPCategoryDropdownState extends State<CPCategoryDropdown> {
           onTap: _toggleExpanded,
           behavior: HitTestBehavior.opaque,
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: AppDimens.p16, vertical: 14.h),
+            padding: EdgeInsets.symmetric(
+              horizontal: AppDimens.p16,
+              vertical: 14.h,
+            ),
             decoration: _boxDecoration(AppColors.searchBarBg),
             child: Row(
               children: [
@@ -346,7 +354,11 @@ class _CategoryOptionTile extends StatelessWidget {
 class CPVisibilityToggle extends StatelessWidget {
   final ProjectVisibility value;
   final ValueChanged<ProjectVisibility> onChanged;
-  const CPVisibilityToggle({super.key, required this.value, required this.onChanged});
+  const CPVisibilityToggle({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {

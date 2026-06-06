@@ -6,10 +6,7 @@ class SubmitVoteParams {
   final String projectId;
   final bool isPositive;
 
-  const SubmitVoteParams({
-    required this.projectId,
-    required this.isPositive,
-  });
+  const SubmitVoteParams({required this.projectId, required this.isPositive});
 }
 
 class SubmitVoteUseCase {

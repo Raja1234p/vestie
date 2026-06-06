@@ -62,10 +62,7 @@ class UserVffIncomingRequestCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    UserVffInboxCardTitleBlock(
-                      title: item.name,
-                      subtitle: via,
-                    ),
+                    UserVffInboxCardTitleBlock(title: item.name, subtitle: via),
                     SizedBox(height: 14.h),
                     UserVffHubRequestActionButtons(
                       primaryLabel: AppStrings.btnAccept,

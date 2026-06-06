@@ -10,14 +10,11 @@ import '../../../../core/theme/app_colors.dart';
 class _NavItem {
   final String asset;
   final String label;
+
   /// When set, used on the active tab instead of [asset] + tint.
   final String? activeAsset;
 
-  const _NavItem(
-    this.asset,
-    this.label, {
-    this.activeAsset,
-  });
+  const _NavItem(this.asset, this.label, {this.activeAsset});
 }
 
 const _items = [
@@ -128,10 +125,7 @@ class AppBottomNavBar extends StatelessWidget {
                                 ]
                               : null,
                           border: active
-                              ? Border.all(
-                                  color: AppColors.primary,
-                                  width: 1,
-                                )
+                              ? Border.all(color: AppColors.primary, width: 1)
                               : Border.all(
                                   color: AppColors.cardBorder,
                                   width: 1,
@@ -144,13 +138,10 @@ class AppBottomNavBar extends StatelessWidget {
                                 : _items[i].asset,
                             width: 22.w,
                             height: 22.w,
-                            colorFilter: active &&
-                                    _items[i].activeAsset != null
+                            colorFilter: active && _items[i].activeAsset != null
                                 ? null
                                 : ColorFilter.mode(
-                                    active
-                                        ? Colors.white
-                                        : AppColors.grey800,
+                                    active ? Colors.white : AppColors.grey800,
                                     BlendMode.srcIn,
                                   ),
                           ),
@@ -161,8 +152,9 @@ class AppBottomNavBar extends StatelessWidget {
                         _items[i].label,
                         style: GoogleFonts.lato(
                           fontSize: 14.sp,
-                          fontWeight:
-                              active ? FontWeight.w600 : FontWeight.w400,
+                          fontWeight: active
+                              ? FontWeight.w600
+                              : FontWeight.w400,
                           color: active
                               ? AppColors.grey1100
                               : AppColors.navInactive,

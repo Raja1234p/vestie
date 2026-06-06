@@ -7,9 +7,7 @@ class LogoutUseCase {
 
   LogoutUseCase(this._repository);
 
-  Future<Either<Failure, String>> call({
-    required String refreshToken,
-  }) {
+  Future<Either<Failure, String>> call({required String refreshToken}) {
     return _repository.logout(refreshToken: refreshToken);
   }
 }

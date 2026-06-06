@@ -42,9 +42,7 @@ class ForgotPasswordScreen extends StatelessWidget {
               title: state.title,
               message: state.message,
             );
-            context
-                .read<ForgotPasswordBloc>()
-                .add(const ForgotPasswordReset());
+            context.read<ForgotPasswordBloc>().add(const ForgotPasswordReset());
           }
         },
         child: const AuthBackground(child: ForgotPasswordForm()),

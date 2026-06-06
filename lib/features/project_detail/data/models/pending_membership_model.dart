@@ -57,7 +57,9 @@ class PendingMembershipModel {
   /// Enrich from [MemberEntity] when detail aggregate includes pending rows.
   PendingJoinRequestEntity enrichFromMember(MemberEntity member) {
     return PendingJoinRequestEntity(
-      membershipId: membershipId.isNotEmpty ? membershipId : member.membershipId,
+      membershipId: membershipId.isNotEmpty
+          ? membershipId
+          : member.membershipId,
       userId: userId.isNotEmpty ? userId : member.userId,
       status: status,
       displayName: member.name,
@@ -68,8 +70,11 @@ class PendingMembershipModel {
   }
 
   static String _initials(String name) {
-    final parts =
-        name.trim().split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
+    final parts = name
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((p) => p.isNotEmpty)
+        .toList();
     if (parts.isEmpty) return 'NA';
     String c(String s) => s.isEmpty ? 'N' : s[0].toUpperCase();
     return '${c(parts.first)}${c(parts.length > 1 ? parts.last : parts.first)}';

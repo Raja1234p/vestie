@@ -18,6 +18,7 @@ class DiscoverState extends Equatable {
   final String searchQuery;
   final bool loading;
   final String? errorMessage;
+
   /// Project id while join / request-to-join API is in flight (button spinner).
   final String? joiningProjectId;
   final DiscoverJoinEffect? joinEffect;
@@ -52,8 +53,9 @@ class DiscoverState extends Equatable {
       selectedFilter: selectedFilter ?? this.selectedFilter,
       searchQuery: searchQuery ?? this.searchQuery,
       loading: loading ?? this.loading,
-      errorMessage:
-          clearErrorMessage ? null : (errorMessage ?? this.errorMessage),
+      errorMessage: clearErrorMessage
+          ? null
+          : (errorMessage ?? this.errorMessage),
       joiningProjectId: clearJoiningProjectId
           ? null
           : (joiningProjectId ?? this.joiningProjectId),
@@ -63,15 +65,15 @@ class DiscoverState extends Equatable {
 
   @override
   List<Object?> get props => [
-        allProjects,
-        filtered,
-        selectedFilter,
-        searchQuery,
-        loading,
-        errorMessage,
-        joiningProjectId,
-        joinEffect,
-      ];
+    allProjects,
+    filtered,
+    selectedFilter,
+    searchQuery,
+    loading,
+    errorMessage,
+    joiningProjectId,
+    joinEffect,
+  ];
 }
 
 class DiscoverCubit extends Cubit<DiscoverState> {
@@ -84,12 +86,12 @@ class DiscoverCubit extends Cubit<DiscoverState> {
     ListProjectsUseCase? listProjectsUseCase,
     JoinProjectUseCase? joinProjectUseCase,
     bool reloadDiscoverProjectList = false,
-  })  : _listProjectsUseCase =
-            listProjectsUseCase ?? ServiceLocator.instance.listProjectsUseCase,
-        _joinProjectUseCase =
-            joinProjectUseCase ?? ServiceLocator.instance.joinProjectUseCase,
-        _reloadDiscoverRequested = reloadDiscoverProjectList,
-        super(const DiscoverState());
+  }) : _listProjectsUseCase =
+           listProjectsUseCase ?? ServiceLocator.instance.listProjectsUseCase,
+       _joinProjectUseCase =
+           joinProjectUseCase ?? ServiceLocator.instance.joinProjectUseCase,
+       _reloadDiscoverRequested = reloadDiscoverProjectList,
+       super(const DiscoverState());
 
   bool _loadStarted = false;
 
@@ -109,10 +111,12 @@ class DiscoverCubit extends Cubit<DiscoverState> {
   }
 
   Future<void> _load({bool showLoadingIndicator = true}) async {
-    emit(state.copyWith(
-      loading: showLoadingIndicator,
-      clearErrorMessage: showLoadingIndicator,
-    ));
+    emit(
+      state.copyWith(
+        loading: showLoadingIndicator,
+        clearErrorMessage: showLoadingIndicator,
+      ),
+    );
     final result = await _listProjectsUseCase(scope: 'discover');
     result.fold(
       (failure) {
@@ -120,12 +124,14 @@ class DiscoverCubit extends Cubit<DiscoverState> {
           emit(state.copyWith(loading: false));
           return;
         }
-        emit(state.copyWith(
-          loading: false,
-          allProjects: const [],
-          filtered: const [],
-          errorMessage: _userFacingFailureMessage(failure),
-        ));
+        emit(
+          state.copyWith(
+            loading: false,
+            allProjects: const [],
+            filtered: const [],
+            errorMessage: _userFacingFailureMessage(failure),
+          ),
+        );
       },
       (projects) {
         final filtered = _applyFilters(
@@ -133,12 +139,14 @@ class DiscoverCubit extends Cubit<DiscoverState> {
           filter: state.selectedFilter,
           searchQuery: state.searchQuery,
         );
-        emit(state.copyWith(
-          loading: false,
-          allProjects: projects,
-          filtered: filtered,
-          clearErrorMessage: true,
-        ));
+        emit(
+          state.copyWith(
+            loading: false,
+            allProjects: projects,
+            filtered: filtered,
+            clearErrorMessage: true,
+          ),
+        );
       },
     );
   }
@@ -154,9 +162,11 @@ class DiscoverCubit extends Cubit<DiscoverState> {
     final q = searchQuery.toLowerCase().trim();
     if (q.isNotEmpty) {
       list = list
-          .where((p) =>
-              p.name.toLowerCase().contains(q) ||
-              p.categoryLabel.toLowerCase().contains(q))
+          .where(
+            (p) =>
+                p.name.toLowerCase().contains(q) ||
+                p.categoryLabel.toLowerCase().contains(q),
+          )
           .toList();
     }
     return list;
@@ -177,57 +187,62 @@ class DiscoverCubit extends Cubit<DiscoverState> {
   Future<void> retry() => _load();
 
   void selectFilter(String filter) {
-    emit(state.copyWith(
-      selectedFilter: filter,
-      filtered: _applyFilters(
-        projects: state.allProjects,
-        filter: filter,
-        searchQuery: state.searchQuery,
+    emit(
+      state.copyWith(
+        selectedFilter: filter,
+        filtered: _applyFilters(
+          projects: state.allProjects,
+          filter: filter,
+          searchQuery: state.searchQuery,
+        ),
       ),
-    ));
+    );
   }
 
   void search(String query) {
-    emit(state.copyWith(
-      searchQuery: query,
-      filtered: _applyFilters(
-        projects: state.allProjects,
-        filter: state.selectedFilter,
+    emit(
+      state.copyWith(
         searchQuery: query,
+        filtered: _applyFilters(
+          projects: state.allProjects,
+          filter: state.selectedFilter,
+          searchQuery: query,
+        ),
       ),
-    ));
+    );
   }
 
   Future<void> joinProject(Project project) async {
     if (state.joiningProjectId != null) return;
-    emit(state.copyWith(
-      joiningProjectId: project.id,
-      clearJoinEffect: true,
-    ));
+    emit(state.copyWith(joiningProjectId: project.id, clearJoinEffect: true));
 
     final result = await _joinProjectUseCase(projectId: project.id);
 
     result.fold(
-      (failure) => emit(state.copyWith(
-        clearJoiningProjectId: true,
-        joinEffect: DiscoverJoinShowError(
-          _userFacingFailureMessage(failure),
-          title: failure.title,
+      (failure) => emit(
+        state.copyWith(
+          clearJoiningProjectId: true,
+          joinEffect: DiscoverJoinShowError(
+            _userFacingFailureMessage(failure),
+            title: failure.title,
+          ),
         ),
-      )),
+      ),
       (joinResult) async {
         if (joinResult.isPendingMembership) {
           final projectId = joinResult.projectId.isNotEmpty
               ? joinResult.projectId
               : project.id;
-          emit(state.copyWith(
-            clearJoiningProjectId: true,
-            joinEffect: DiscoverJoinShowRequestSubmitted(
-              projectId: projectId,
-              projectName: project.name,
-              isInvestment: project.category.isInvestment,
+          emit(
+            state.copyWith(
+              clearJoiningProjectId: true,
+              joinEffect: DiscoverJoinShowRequestSubmitted(
+                projectId: projectId,
+                projectName: project.name,
+                isInvestment: project.category.isInvestment,
+              ),
             ),
-          ));
+          );
           await refresh(silent: true);
           return;
         }
@@ -235,14 +250,16 @@ class DiscoverCubit extends Cubit<DiscoverState> {
         final projectId = joinResult.projectId.isNotEmpty
             ? joinResult.projectId
             : project.id;
-        emit(state.copyWith(
-          clearJoiningProjectId: true,
-          joinEffect: DiscoverJoinOpenDetail(
-            projectId: projectId,
-            projectName: project.name,
-            isInvestment: project.category.isInvestment,
+        emit(
+          state.copyWith(
+            clearJoiningProjectId: true,
+            joinEffect: DiscoverJoinOpenDetail(
+              projectId: projectId,
+              projectName: project.name,
+              isInvestment: project.category.isInvestment,
+            ),
           ),
-        ));
+        );
       },
     );
   }

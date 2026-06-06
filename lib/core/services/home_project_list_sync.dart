@@ -8,7 +8,8 @@ class HomeProjectListSync {
   static final Map<String, double> _pendingPotByProjectId = {};
 
   /// Set from [HomeScreen] while mounted — applies pot patches to [HomeBloc].
-  static void Function(String projectId, double projectPot)? onProjectPotUpdated;
+  static void Function(String projectId, double projectPot)?
+  onProjectPotUpdated;
 
   static bool _refreshHomeOnNextDetailPop = false;
 

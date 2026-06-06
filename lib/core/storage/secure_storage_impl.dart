@@ -7,9 +7,7 @@ class SecureStorageImpl implements LocalStorage {
   final FlutterSecureStorage _storage;
 
   SecureStorageImpl()
-      : _storage = const FlutterSecureStorage(
-          aOptions: AndroidOptions(),
-        );
+    : _storage = const FlutterSecureStorage(aOptions: AndroidOptions());
 
   @override
   Future<void> saveString(String key, String value) =>

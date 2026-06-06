@@ -13,6 +13,7 @@ abstract class ProjectRemoteDataSource {
   Future<void> launchProject(String projectId);
   Future<void> completeProject(String projectId);
   Future<InvitePreviewModel> previewInvite(String inviteCode);
+
   /// Exactly one of [projectId] (public discover join) or [inviteCode] (invite link).
   Future<JoinProjectResultModel> joinProject({
     String? projectId,
@@ -31,12 +32,18 @@ class ProjectRemoteDataSourceImpl implements ProjectRemoteDataSource {
       ApiConstants.projects,
       queryParameters: {'scope': scope},
     );
-    return response.map((json) => ProjectSummaryModel.fromJson(json as Map<String, dynamic>)).toList();
+    return response
+        .map(
+          (json) => ProjectSummaryModel.fromJson(json as Map<String, dynamic>),
+        )
+        .toList();
   }
 
   @override
   Future<ProjectDetailModel> getProjectDetail(String projectId) async {
-    final response = await apiClient.get<Map<String, dynamic>>('${ApiConstants.projects}/$projectId');
+    final response = await apiClient.get<Map<String, dynamic>>(
+      '${ApiConstants.projects}/$projectId',
+    );
     return ProjectDetailModel.fromJson(response);
   }
 

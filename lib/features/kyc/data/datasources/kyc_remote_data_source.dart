@@ -20,8 +20,9 @@ class KycRemoteDataSourceImpl implements KycRemoteDataSource {
 
   @override
   Future<KycStatusModel> getStatus() async {
-    final response =
-        await apiClient.get<Map<String, dynamic>>(ApiConstants.kycStatus);
+    final response = await apiClient.get<Map<String, dynamic>>(
+      ApiConstants.kycStatus,
+    );
     return KycStatusModel.fromJson(response);
   }
 

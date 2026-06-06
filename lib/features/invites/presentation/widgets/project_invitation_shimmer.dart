@@ -15,59 +15,51 @@ class ProjectInvitationBodyShimmer extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-            SizedBox(height: 58.h),
-            Center(
-              child: AppShimmer.box(
-                width: 150.w,
-                height: 150.w,
-                borderRadius: 75.r,
-              ),
+          SizedBox(height: 58.h),
+          Center(
+            child: AppShimmer.box(
+              width: 150.w,
+              height: 150.w,
+              borderRadius: 75.r,
             ),
-            SizedBox(height: AppDimens.v16),
-            AppShimmer.box(
-              width: 220.w,
-              height: 28.h,
-              borderRadius: 6.r,
-            ),
-            SizedBox(height: AppDimens.v28),
-            AppShimmer.box(
-              width: double.infinity,
-              height: 1.h,
-              borderRadius: 0,
-            ),
-            SizedBox(height: 20.h),
-            Row(
-              children: [
-                Expanded(child: _statColumnShimmer()),
-                Expanded(child: _statColumnShimmer()),
-                Expanded(child: _statColumnShimmer()),
-              ],
-            ),
-            SizedBox(height: 20.h),
-            AppShimmer.box(
-              width: double.infinity,
-              height: 1.h,
-              borderRadius: 0,
-            ),
-            SizedBox(height: 16.h),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: AppShimmer.box(width: 100.w, height: 12.h, borderRadius: 4.r),
-            ),
-            SizedBox(height: 8.h),
-            AppShimmer.box(
-              width: double.infinity,
-              height: 13.h,
+          ),
+          SizedBox(height: AppDimens.v16),
+          AppShimmer.box(width: 220.w, height: 28.h, borderRadius: 6.r),
+          SizedBox(height: AppDimens.v28),
+          AppShimmer.box(width: double.infinity, height: 1.h, borderRadius: 0),
+          SizedBox(height: 20.h),
+          Row(
+            children: [
+              Expanded(child: _statColumnShimmer()),
+              Expanded(child: _statColumnShimmer()),
+              Expanded(child: _statColumnShimmer()),
+            ],
+          ),
+          SizedBox(height: 20.h),
+          AppShimmer.box(width: double.infinity, height: 1.h, borderRadius: 0),
+          SizedBox(height: 16.h),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: AppShimmer.box(
+              width: 100.w,
+              height: 12.h,
               borderRadius: 4.r,
             ),
-            SizedBox(height: 8.h),
-            AppShimmer.box(
-              width: double.infinity,
-              height: 13.h,
-              borderRadius: 4.r,
-            ),
-            SizedBox(height: AppDimens.v24),
-          ],
+          ),
+          SizedBox(height: 8.h),
+          AppShimmer.box(
+            width: double.infinity,
+            height: 13.h,
+            borderRadius: 4.r,
+          ),
+          SizedBox(height: 8.h),
+          AppShimmer.box(
+            width: double.infinity,
+            height: 13.h,
+            borderRadius: 4.r,
+          ),
+          SizedBox(height: AppDimens.v24),
+        ],
       ),
     );
   }
@@ -90,7 +82,11 @@ class ProjectInvitationFooterShimmerContent extends StatelessWidget {
           ),
           SizedBox(height: 16.h),
           Center(
-            child: AppShimmer.box(width: 120.w, height: 18.h, borderRadius: 4.r),
+            child: AppShimmer.box(
+              width: 120.w,
+              height: 18.h,
+              borderRadius: 4.r,
+            ),
           ),
         ],
       ),
@@ -107,4 +103,3 @@ Widget _statColumnShimmer() {
     ],
   );
 }
-

@@ -32,8 +32,9 @@ class WalletSignalRService {
   Future<void> connectIfLoggedIn() async {
     if (kIsWeb) return;
 
-    final token = await ServiceLocator.instance.secureStorage
-        .getString(StorageKeys.accessToken);
+    final token = await ServiceLocator.instance.secureStorage.getString(
+      StorageKeys.accessToken,
+    );
     if (token == null || token.isEmpty) return;
 
     if (_connection?.state == HubConnectionState.Connected) return;

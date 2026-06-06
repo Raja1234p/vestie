@@ -127,10 +127,7 @@ class PaymentMethodsRepositoryImpl implements PaymentMethodsRepository {
     required bool isPrimary,
   }) async {
     try {
-      await remoteDataSource.setPrimary(
-        paymentMethodId,
-        isPrimary: isPrimary,
-      );
+      await remoteDataSource.setPrimary(paymentMethodId, isPrimary: isPrimary);
       if (isPrimary) {
         PaymentMethodsCache.setPrimary(paymentMethodId);
       } else {

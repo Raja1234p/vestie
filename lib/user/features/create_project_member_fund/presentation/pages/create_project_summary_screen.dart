@@ -59,7 +59,10 @@ class CreateProjectSummaryScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _summaryRow(AppStrings.summaryLabelGoal, draft.formattedGoalUsd),
+                          _summaryRow(
+                            AppStrings.summaryLabelGoal,
+                            draft.formattedGoalUsd,
+                          ),
                           _divider(),
                           _summaryRow(
                             AppStrings.summaryLabelStarts,
@@ -146,9 +149,9 @@ class CreateProjectSummaryScreen extends StatelessWidget {
   }
 
   Widget _divider() => Padding(
-        padding: EdgeInsets.symmetric(vertical: 12.h),
-        child: const Divider(height: 1, color: AppColors.cardBorder),
-      );
+    padding: EdgeInsets.symmetric(vertical: 12.h),
+    child: const Divider(height: 1, color: AppColors.cardBorder),
+  );
 }
 
 class _StoryCard extends StatelessWidget {

@@ -32,10 +32,10 @@ class MemberVoteOutcomeVoteSummary extends StatelessWidget {
         AppText(
           AppStrings.projectVoteSummaryLabel,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.w700,
-                color: AppColors.grey1100,
-              ),
+            fontSize: 18.sp,
+            fontWeight: FontWeight.w700,
+            color: AppColors.grey1100,
+          ),
         ),
         SizedBox(height: 12.h),
         ...rows,

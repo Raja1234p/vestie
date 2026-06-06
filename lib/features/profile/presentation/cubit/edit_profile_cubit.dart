@@ -67,62 +67,65 @@ class EditProfileState extends Equatable {
 
   @override
   List<Object?> get props => [
-        fullName,
-        username,
-        email,
-        isSaving,
-        fullNameError,
-        usernameError,
-        emailError,
-        error,
-      ];
+    fullName,
+    username,
+    email,
+    isSaving,
+    fullNameError,
+    usernameError,
+    emailError,
+    error,
+  ];
 }
 
 class EditProfileCubit extends Cubit<EditProfileState> {
   EditProfileCubit(UserProfile initial)
-      : _updateMeUseCase = ServiceLocator.instance.updateMeUseCase,
-        _getMeUseCase = ServiceLocator.instance.getMeUseCase,
-        super(EditProfileState(
+    : _updateMeUseCase = ServiceLocator.instance.updateMeUseCase,
+      _getMeUseCase = ServiceLocator.instance.getMeUseCase,
+      super(
+        EditProfileState(
           fullName: initial.fullName,
           username: initial.username,
           email: initial.email,
-        ));
+        ),
+      );
 
   final UpdateMeUseCase _updateMeUseCase;
   final GetMeUseCase _getMeUseCase;
 
-  void setFullName(String v) => emit(state.copyWith(
-        fullName: v,
-        clearFullNameError: true,
-        clearError: true,
-      ));
+  void setFullName(String v) => emit(
+    state.copyWith(fullName: v, clearFullNameError: true, clearError: true),
+  );
 
-  void setUsername(String v) => emit(state.copyWith(
-        username: v,
-        clearUsernameError: true,
-        clearError: true,
-      ));
+  void setUsername(String v) => emit(
+    state.copyWith(username: v, clearUsernameError: true, clearError: true),
+  );
 
   Future<UserProfile?> save() async {
     final nameErr = ValidationUtils.validateFullName(state.fullName);
-    final userErr =
-        ValidationUtils.validateProfileUsernameHandle(state.username);
+    final userErr = ValidationUtils.validateProfileUsernameHandle(
+      state.username,
+    );
     final emailErr = ValidationUtils.validateEmail(state.email);
 
     if (nameErr != null || userErr != null || emailErr != null) {
-      emit(state.copyWith(
-        fullNameError: nameErr,
-        usernameError: userErr,
-        emailError: emailErr,
-      ));
+      emit(
+        state.copyWith(
+          fullNameError: nameErr,
+          usernameError: userErr,
+          emailError: emailErr,
+        ),
+      );
       return null;
     }
 
-    emit(state.copyWith(
-      isSaving: true,
-      clearError: true,
-      clearAllFieldErrors: true,
-    ));
+    emit(
+      state.copyWith(
+        isSaving: true,
+        clearError: true,
+        clearAllFieldErrors: true,
+      ),
+    );
 
     final parts = state.fullName.trim().split(RegExp(r'\s+'));
     final firstName = parts.isEmpty ? '' : parts.first;
@@ -137,10 +140,12 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     User? updatedUser;
     final updateFailed = updateResult.fold(
       (failure) {
-        emit(state.copyWith(
-          isSaving: false,
-          error: FailureMapper.userMessage(failure),
-        ));
+        emit(
+          state.copyWith(
+            isSaving: false,
+            error: FailureMapper.userMessage(failure),
+          ),
+        );
         return true;
       },
       (user) {
@@ -168,13 +173,15 @@ class EditProfileCubit extends Cubit<EditProfileState> {
 
     await ProfilePrefs.persist(profile);
 
-    emit(state.copyWith(
-      fullName: profile.fullName,
-      username: profile.username,
-      email: profile.email,
-      isSaving: false,
-      clearAllFieldErrors: true,
-    ));
+    emit(
+      state.copyWith(
+        fullName: profile.fullName,
+        username: profile.username,
+        email: profile.email,
+        isSaving: false,
+        clearAllFieldErrors: true,
+      ),
+    );
     return profile;
   }
 }

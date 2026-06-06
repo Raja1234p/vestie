@@ -9,8 +9,9 @@ class ListPaymentMethodsUseCase {
 
   ListPaymentMethodsUseCase(this.repository);
 
-  Future<Either<Failure, List<PaymentCard>>> call({bool forceRefresh = false}) =>
-      repository.list(forceRefresh: forceRefresh);
+  Future<Either<Failure, List<PaymentCard>>> call({
+    bool forceRefresh = false,
+  }) => repository.list(forceRefresh: forceRefresh);
 }
 
 class SavePaymentCardViaSetupUseCase {
@@ -20,10 +21,9 @@ class SavePaymentCardViaSetupUseCase {
 
   Future<Either<Failure, PaymentCard>> call({
     Future<void> Function()? onBeforePresentPaymentSheet,
-  }) =>
-      repository.saveCardViaSetupIntent(
-        onBeforePresentPaymentSheet: onBeforePresentPaymentSheet,
-      );
+  }) => repository.saveCardViaSetupIntent(
+    onBeforePresentPaymentSheet: onBeforePresentPaymentSheet,
+  );
 }
 
 class GetPaymentMethodUseCase {
@@ -43,8 +43,7 @@ class SetPrimaryPaymentMethodUseCase {
   Future<Either<Failure, void>> call(
     String paymentMethodId, {
     required bool isPrimary,
-  }) =>
-      repository.setPrimary(paymentMethodId, isPrimary: isPrimary);
+  }) => repository.setPrimary(paymentMethodId, isPrimary: isPrimary);
 }
 
 class RemovePaymentMethodUseCase {

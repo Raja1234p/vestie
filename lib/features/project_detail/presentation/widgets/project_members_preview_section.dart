@@ -29,10 +29,7 @@ class ProjectMembersPreviewSection extends StatelessWidget {
   });
 
   VoidCallback _openViewAll(BuildContext context) =>
-      () => ProjectDetailNavigation.openGroupMembers(
-            context,
-            project: project,
-          );
+      () => ProjectDetailNavigation.openGroupMembers(context, project: project);
 
   @override
   Widget build(BuildContext context) {

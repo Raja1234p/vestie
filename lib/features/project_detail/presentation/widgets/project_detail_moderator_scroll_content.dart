@@ -51,11 +51,11 @@ class _ProjectDetailModeratorScrollContentState
   Future<bool> _deleteAnnouncement(String announcementId) async {
     if (_deletingAnnouncement) return false;
     setState(() => _deletingAnnouncement = true);
-    final result =
-        await ServiceLocator.instance.deleteProjectAnnouncementUseCase(
-      projectId: widget.project.id,
-      announcementId: announcementId,
-    );
+    final result = await ServiceLocator.instance
+        .deleteProjectAnnouncementUseCase(
+          projectId: widget.project.id,
+          announcementId: announcementId,
+        );
     if (!mounted) return false;
     setState(() => _deletingAnnouncement = false);
     return result.fold(
@@ -89,72 +89,72 @@ class _ProjectDetailModeratorScrollContentState
               child: PostAuthHeader(
                 applyTopSafeArea: false,
                 title: project.name,
-              leading: AppBackButton(
-                onPressed: () => popProjectDetailNavigation(
-                  context,
-                  refreshHomeOnPop: widget.refreshHomeOnPop,
-                  refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
+                leading: AppBackButton(
+                  onPressed: () => popProjectDetailNavigation(
+                    context,
+                    refreshHomeOnPop: widget.refreshHomeOnPop,
+                    refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
+                  ),
+                ),
+                trailing: project.showsProjectDetailOverflowMenu
+                    ? ProjectDetailTrailingActions(
+                        project: project,
+                        pendingJoinRequestCount: widget.pendingJoinRequestCount,
+                        onLeaderMenuSelected: (action) =>
+                            ProjectDetailNavigation.handleLeaderAction(
+                              context,
+                              project: project,
+                              action: action,
+                              refreshHomeOnPop: widget.refreshHomeOnPop,
+                              refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
+                            ),
+                        onMemberMenuSelected: (action) =>
+                            ProjectDetailNavigation.handleMemberAction(
+                              context,
+                              project: project,
+                              action: action,
+                              refreshHomeOnPop: widget.refreshHomeOnPop,
+                              refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
+                            ),
+                      )
+                    : null,
+              ),
+            ),
+            SliverPadding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    SizedBox(height: 12.h),
+                    ProjectAnnouncementsSection(
+                      project: project,
+                      onDeleteAnnouncement: _deleteAnnouncement,
+                      gapAfter: 12.h,
+                    ),
+                    ProjectInfoCard(project: project),
+                    if (project.showsSuccessVoteDevPreviews) ...[
+                      ProjectDetailSuccessVoteDevPreviews(
+                        project: project,
+                        onPreviewViewSuccessVotesScenario: () => setState(
+                          () => _previewViewSuccessVotesScenario = true,
+                        ),
+                      ),
+                    ],
+                    SizedBox(height: 16.h),
+                    ProjectDetailWalletActions(
+                      project: project,
+                      showViewSuccessVotesCta: _showViewSuccessVotesCta,
+                    ),
+                    SizedBox(height: 20.h),
+                    ProjectDetailTabSection(
+                      project: project,
+                      onMemberTap: widget.onMemberTap,
+                    ),
+                    SizedBox(height: 32.h),
+                  ],
                 ),
               ),
-              trailing: project.showsProjectDetailOverflowMenu
-                  ? ProjectDetailTrailingActions(
-                      project: project,
-                      pendingJoinRequestCount: widget.pendingJoinRequestCount,
-                      onLeaderMenuSelected: (action) =>
-                          ProjectDetailNavigation.handleLeaderAction(
-                        context,
-                        project: project,
-                        action: action,
-                        refreshHomeOnPop: widget.refreshHomeOnPop,
-                        refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
-                      ),
-                      onMemberMenuSelected: (action) =>
-                          ProjectDetailNavigation.handleMemberAction(
-                        context,
-                        project: project,
-                        action: action,
-                        refreshHomeOnPop: widget.refreshHomeOnPop,
-                        refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
-                      ),
-                    )
-                  : null,
             ),
-          ),
-          SliverPadding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
-            sliver: SliverToBoxAdapter(
-              child: Column(
-                children: [
-                  SizedBox(height: 12.h),
-                  ProjectAnnouncementsSection(
-                    project: project,
-                    onDeleteAnnouncement: _deleteAnnouncement,
-                    gapAfter: 12.h,
-                  ),
-                  ProjectInfoCard(project: project),
-                  if (project.showsSuccessVoteDevPreviews) ...[
-                    ProjectDetailSuccessVoteDevPreviews(
-                      project: project,
-                      onPreviewViewSuccessVotesScenario: () => setState(
-                        () => _previewViewSuccessVotesScenario = true,
-                      ),
-                    ),
-                  ],
-                  SizedBox(height: 16.h),
-                  ProjectDetailWalletActions(
-                    project: project,
-                    showViewSuccessVotesCta: _showViewSuccessVotesCta,
-                  ),
-                  SizedBox(height: 20.h),
-                  ProjectDetailTabSection(
-                    project: project,
-                    onMemberTap: widget.onMemberTap,
-                  ),
-                  SizedBox(height: 32.h),
-                ],
-              ),
-            ),
-          ),
           ],
         ),
       ),

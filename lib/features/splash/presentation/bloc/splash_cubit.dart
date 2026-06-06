@@ -7,7 +7,9 @@ import '../../../../core/storage/onboarding_prefs.dart';
 abstract class SplashState {}
 
 class SplashInitial extends SplashState {}
+
 class SplashLoading extends SplashState {}
+
 class SplashCompleted extends SplashState {
   final bool isAuthenticated;
   final bool isDisclaimerAccepted;
@@ -32,8 +34,8 @@ class SplashCubit extends Cubit<SplashState> {
     bool isDisclaimerAccepted = false;
 
     if (isAuthenticated) {
-      final disclaimerResult =
-          await ServiceLocator.instance.getRiskDisclaimerUseCase();
+      final disclaimerResult = await ServiceLocator.instance
+          .getRiskDisclaimerUseCase();
       isDisclaimerAccepted = disclaimerResult.fold(
         (_) => false,
         (disclaimer) => disclaimer.accepted,
@@ -42,10 +44,12 @@ class SplashCubit extends Cubit<SplashState> {
 
     final hasSeenOnboarding = await OnboardingPrefs.hasCompleted();
 
-    emit(SplashCompleted(
-      isAuthenticated: isAuthenticated,
-      isDisclaimerAccepted: isDisclaimerAccepted,
-      hasSeenOnboarding: hasSeenOnboarding,
-    ));
+    emit(
+      SplashCompleted(
+        isAuthenticated: isAuthenticated,
+        isDisclaimerAccepted: isDisclaimerAccepted,
+        hasSeenOnboarding: hasSeenOnboarding,
+      ),
+    );
   }
 }

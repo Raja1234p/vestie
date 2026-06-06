@@ -25,16 +25,16 @@ class CompletedProjectNoticeBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final titleStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
-          fontSize: 17.sp,
-          fontWeight: FontWeight.w700,
-          color: AppColors.projectDetailText,
-        );
+      fontSize: 17.sp,
+      fontWeight: FontWeight.w700,
+      color: AppColors.projectDetailText,
+    );
     final bodyStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
-          fontSize: 12.sp,
-          fontWeight: FontWeight.w500,
-          height: 1.45,
-          color: AppColors.projectDetailText,
-        );
+      fontSize: 12.sp,
+      fontWeight: FontWeight.w500,
+      height: 1.45,
+      color: AppColors.projectDetailText,
+    );
 
     return Container(
       width: double.infinity,
@@ -55,21 +55,13 @@ class CompletedProjectNoticeBar extends StatelessWidget {
                 color: AppColors.grey800,
               ),
               SizedBox(width: _iconGap),
-              Expanded(
-                child: AppText(
-                  title,
-                  style: titleStyle,
-                ),
-              ),
+              Expanded(child: AppText(title, style: titleStyle)),
             ],
           ),
           SizedBox(height: 4.h),
           Padding(
             padding: EdgeInsets.only(left: _iconSize + _iconGap),
-            child: AppText(
-              body,
-              style: bodyStyle,
-            ),
+            child: AppText(body, style: bodyStyle),
           ),
         ],
       ),

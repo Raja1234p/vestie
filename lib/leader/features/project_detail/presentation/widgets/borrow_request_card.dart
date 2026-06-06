@@ -127,10 +127,7 @@ class _BorrowRequestCardBody extends StatelessWidget {
           // ── Requested amount label ──────────────────────────
           AppText(
             AppStrings.requestedAmount,
-            style: GoogleFonts.lato(
-              fontSize: 14.sp,
-              color: AppColors.textBody,
-            ),
+            style: GoogleFonts.lato(fontSize: 14.sp, color: AppColors.textBody),
           ),
           SizedBox(height: 4.h),
 
@@ -197,10 +194,7 @@ class _BorrowRequestCardBody extends StatelessWidget {
               },
             )
           else
-            _DecisionButtons(
-              onReject: onReject,
-              onAccept: onAccept,
-            ),
+            _DecisionButtons(onReject: onReject, onAccept: onAccept),
         ],
       ),
     );
@@ -211,10 +205,7 @@ class _VoteStatusBanner extends StatelessWidget {
   final String message;
   final Color color;
 
-  const _VoteStatusBanner({
-    required this.message,
-    required this.color,
-  });
+  const _VoteStatusBanner({required this.message, required this.color});
 
   @override
   Widget build(BuildContext context) {

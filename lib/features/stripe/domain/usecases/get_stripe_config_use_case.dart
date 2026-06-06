@@ -9,6 +9,7 @@ class GetStripeConfigUseCase {
 
   GetStripeConfigUseCase(this.repository);
 
-  Future<Either<Failure, StripeConfigEntity>> call({bool forceRefresh = false}) =>
-      repository.getConfig(forceRefresh: forceRefresh);
+  Future<Either<Failure, StripeConfigEntity>> call({
+    bool forceRefresh = false,
+  }) => repository.getConfig(forceRefresh: forceRefresh);
 }

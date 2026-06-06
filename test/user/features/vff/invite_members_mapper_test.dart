@@ -43,10 +43,9 @@ void main() {
         membershipId: 'm-viewer',
       );
 
-      final rows = InviteMembersMapper.fromConnections(
-        const [connection],
-        excludeUserIds: InviteMembersMapper.excludeUserIdsForProject(project),
-      );
+      final rows = InviteMembersMapper.fromConnections(const [
+        connection,
+      ], excludeUserIds: InviteMembersMapper.excludeUserIdsForProject(project));
 
       expect(rows, hasLength(1));
       expect(rows.first.id, vffUserId);
@@ -87,10 +86,9 @@ void main() {
         membershipId: 'm-viewer',
       );
 
-      final rows = InviteMembersMapper.fromConnections(
-        const [connection],
-        excludeUserIds: InviteMembersMapper.excludeUserIdsForProject(project),
-      );
+      final rows = InviteMembersMapper.fromConnections(const [
+        connection,
+      ], excludeUserIds: InviteMembersMapper.excludeUserIdsForProject(project));
 
       expect(rows, isEmpty);
     });

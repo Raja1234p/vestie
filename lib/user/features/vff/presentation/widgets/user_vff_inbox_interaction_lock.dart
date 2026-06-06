@@ -22,11 +22,7 @@ class UserVffInboxInteractionLock extends StatelessWidget {
       fit: StackFit.expand,
       children: [
         child,
-        const Positioned.fill(
-          child: AbsorbPointer(
-            child: SizedBox.expand(),
-          ),
-        ),
+        const Positioned.fill(child: AbsorbPointer(child: SizedBox.expand())),
       ],
     );
   }

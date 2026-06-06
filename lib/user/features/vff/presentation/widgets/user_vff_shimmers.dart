@@ -87,10 +87,7 @@ class UserVffHubRequestsTabShimmer extends StatelessWidget {
   }
 }
 
-Widget _sectionHeaderShimmer({
-  required double width,
-  bool withAction = false,
-}) {
+Widget _sectionHeaderShimmer({required double width, bool withAction = false}) {
   return Row(
     children: [
       AppShimmer.box(width: width, height: 18.h, borderRadius: 4.r),
@@ -228,10 +225,10 @@ final class UserVffGroupInvitationListShimmer extends StatelessWidget {
 }
 
 BoxDecoration _vffInboxListCardDecoration() => BoxDecoration(
-      color: AppColors.vffInboxRequestCardBg,
-      borderRadius: BorderRadius.circular(12.r),
-      border: Border.all(color: AppColors.vffInboxRequestCardBorder, width: 1),
-    );
+  color: AppColors.vffInboxRequestCardBg,
+  borderRadius: BorderRadius.circular(12.r),
+  border: Border.all(color: AppColors.vffInboxRequestCardBorder, width: 1),
+);
 
 Widget _vffGroupInvitationCardShimmer() {
   return Container(
@@ -307,10 +304,7 @@ Widget _groupInviteCardShimmer() {
 class UserVffProfileShimmer extends StatelessWidget {
   final bool connectedLayout;
 
-  const UserVffProfileShimmer({
-    super.key,
-    this.connectedLayout = false,
-  });
+  const UserVffProfileShimmer({super.key, this.connectedLayout = false});
 
   @override
   Widget build(BuildContext context) {
@@ -325,19 +319,35 @@ class UserVffProfileShimmer extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Center(
-            child: AppShimmer.box(width: 100.r, height: 100.r, borderRadius: 50.r),
+            child: AppShimmer.box(
+              width: 100.r,
+              height: 100.r,
+              borderRadius: 50.r,
+            ),
           ),
           SizedBox(height: 10.h),
           Center(
-            child: AppShimmer.box(width: 88.w, height: 22.h, borderRadius: 11.r),
+            child: AppShimmer.box(
+              width: 88.w,
+              height: 22.h,
+              borderRadius: 11.r,
+            ),
           ),
           SizedBox(height: 10.h),
           Center(
-            child: AppShimmer.box(width: 160.w, height: 22.h, borderRadius: 4.r),
+            child: AppShimmer.box(
+              width: 160.w,
+              height: 22.h,
+              borderRadius: 4.r,
+            ),
           ),
           SizedBox(height: 6.h),
           Center(
-            child: AppShimmer.box(width: 100.w, height: 14.h, borderRadius: 4.r),
+            child: AppShimmer.box(
+              width: 100.w,
+              height: 14.h,
+              borderRadius: 4.r,
+            ),
           ),
         ],
       ),
@@ -362,9 +372,17 @@ class UserVffProfileShimmer extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      AppShimmer.box(width: 72.w, height: 20.h, borderRadius: 10.r),
+                      AppShimmer.box(
+                        width: 72.w,
+                        height: 20.h,
+                        borderRadius: 10.r,
+                      ),
                       SizedBox(height: 8.h),
-                      AppShimmer.box(width: 140.w, height: 20.h, borderRadius: 4.r),
+                      AppShimmer.box(
+                        width: 140.w,
+                        height: 20.h,
+                        borderRadius: 4.r,
+                      ),
                     ],
                   ),
                 ),
@@ -397,14 +415,7 @@ class UserVffProfileShimmer extends StatelessWidget {
     return AppShimmer(
       child: SingleChildScrollView(
         physics: const NeverScrollableScrollPhysics(),
-        child: connectedLayout
-            ? Column(
-                children: [
-                  hero,
-                  body,
-                ],
-              )
-            : body,
+        child: connectedLayout ? Column(children: [hero, body]) : body,
       ),
     );
   }

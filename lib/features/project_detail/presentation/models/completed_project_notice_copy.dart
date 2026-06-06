@@ -8,10 +8,7 @@ class CompletedProjectNoticeCopy {
   final String title;
   final String body;
 
-  const CompletedProjectNoticeCopy({
-    required this.title,
-    required this.body,
-  });
+  const CompletedProjectNoticeCopy({required this.title, required this.body});
 
   /// Investment vs pooled funds use different copy (see [AppStrings]).
   static CompletedProjectNoticeCopy forCategory(ProjectCategory category) {

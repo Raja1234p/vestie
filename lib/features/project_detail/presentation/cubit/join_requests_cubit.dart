@@ -48,9 +48,9 @@ class JoinRequestsCubit extends Cubit<JoinRequestsState> {
   JoinRequestsCubit({
     required ListPendingJoinRequestsUseCase listPending,
     required ProjectDetailRepository detailRepository,
-  })  : _listPending = listPending,
-        _detailRepository = detailRepository,
-        super(JoinRequestsInitial());
+  }) : _listPending = listPending,
+       _detailRepository = detailRepository,
+       super(JoinRequestsInitial());
 
   Future<void> load(String projectId) async {
     emit(JoinRequestsLoading());
@@ -80,7 +80,8 @@ class JoinRequestsCubit extends Cubit<JoinRequestsState> {
     List<MemberEntity> members,
   ) {
     for (final m in members) {
-      final matchByMembership = pending.membershipId.isNotEmpty &&
+      final matchByMembership =
+          pending.membershipId.isNotEmpty &&
           m.membershipId == pending.membershipId;
       final matchByUser =
           pending.userId.isNotEmpty && m.userId == pending.userId;

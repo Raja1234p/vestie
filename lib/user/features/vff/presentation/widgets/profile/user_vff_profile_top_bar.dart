@@ -29,10 +29,7 @@ final class UserVffProfileTopBar extends StatelessWidget {
       ),
       child: Row(
         children: [
-          AppBackButton(
-            onPressed: onBack,
-            color: AppColors.guidelineTitle,
-          ),
+          AppBackButton(onPressed: onBack, color: AppColors.guidelineTitle),
           SizedBox(width: AppDimens.p8),
           Expanded(
             child: AppText(

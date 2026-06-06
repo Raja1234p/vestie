@@ -22,10 +22,10 @@ class KycFlowConstants {
         StripeConnectRedirectMatcher.isVestieCompletion(uri, host: 'kyc')) {
       return true;
     }
-    return StripeConnectRedirectMatcher.matchesAny(
-      url,
-      [returnUrl, appSchemeReturnUrl],
-    );
+    return StripeConnectRedirectMatcher.matchesAny(url, [
+      returnUrl,
+      appSchemeReturnUrl,
+    ]);
   }
 
   static bool isRefreshUrl(String? url) {
@@ -34,9 +34,9 @@ class KycFlowConstants {
         StripeConnectRedirectMatcher.isVestieRefresh(uri, host: 'kyc')) {
       return true;
     }
-    return StripeConnectRedirectMatcher.matchesAny(
-      url,
-      [refreshUrl, appSchemeRefreshUrl],
-    );
+    return StripeConnectRedirectMatcher.matchesAny(url, [
+      refreshUrl,
+      appSchemeRefreshUrl,
+    ]);
   }
 }

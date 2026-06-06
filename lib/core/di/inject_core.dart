@@ -18,6 +18,7 @@ Future<void> registerCoreDependencies(ServiceLocator sl) async {
   sl.apiClient = BaseApiClient(dio: sl.dioClient.dio);
   sl.connectivity = Connectivity();
   sl.networkInfo = NetworkInfoImpl(sl.connectivity);
-  sl.projectLocalDataSource =
-      ProjectLocalDataSourceImpl(localStorage: sl.sharedPrefs);
+  sl.projectLocalDataSource = ProjectLocalDataSourceImpl(
+    localStorage: sl.sharedPrefs,
+  );
 }

@@ -61,7 +61,8 @@ extension SafeJsonParsing on Map<String, dynamic> {
 
   Map<String, dynamic> safeMap(String key) {
     if (this[key] == null) return {};
-    if (this[key] is Map<String, dynamic>) return this[key] as Map<String, dynamic>;
+    if (this[key] is Map<String, dynamic>)
+      return this[key] as Map<String, dynamic>;
     return {};
   }
 }

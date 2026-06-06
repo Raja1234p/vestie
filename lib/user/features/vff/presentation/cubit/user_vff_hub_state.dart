@@ -1,26 +1,15 @@
 import 'package:equatable/equatable.dart';
 
-
-
 import '../models/user_vff_hub_ui_model.dart';
 
 import '../models/user_vff_inbox_action.dart';
 
-
-
 enum UserVffHubLoadStatus { initial, loading, loaded, error }
-
-
 
 enum UserVffHubRequestsLoadStatus { initial, loading, loaded, error }
 
-
-
 final class UserVffHubState extends Equatable {
-
   static const previewCap = 2;
-
-
 
   final UserVffHubLoadStatus loadStatus;
 
@@ -40,10 +29,7 @@ final class UserVffHubState extends Equatable {
 
   final UserVffInboxRowAction? actingRow;
 
-
-
   const UserVffHubState({
-
     this.loadStatus = UserVffHubLoadStatus.initial,
 
     this.requestsLoadStatus = UserVffHubRequestsLoadStatus.initial,
@@ -61,37 +47,27 @@ final class UserVffHubState extends Equatable {
     this.groupInvitations = const [],
 
     this.actingRow,
-
   });
 
-
-
   factory UserVffHubState.fromHub(UserVffHubUiModel hub) => UserVffHubState(
+    loadStatus: UserVffHubLoadStatus.loaded,
 
-        loadStatus: UserVffHubLoadStatus.loaded,
+    requestsLoadStatus: UserVffHubRequestsLoadStatus.loaded,
 
-        requestsLoadStatus: UserVffHubRequestsLoadStatus.loaded,
+    tabIndex: 0,
 
-        tabIndex: 0,
+    myVffConnections: List<UserVffConnectionRowUi>.of(hub.myVffConnections),
 
-        myVffConnections: List<UserVffConnectionRowUi>.of(hub.myVffConnections),
+    incomingVffRequests: List<UserVffIncomingRequestUi>.of(
+      hub.incomingVffRequests,
+    ),
 
-        incomingVffRequests:
-
-            List<UserVffIncomingRequestUi>.of(hub.incomingVffRequests),
-
-        groupInvitations: List<UserVffGroupInviteUi>.of(hub.groupInvitations),
-
-      );
-
-
+    groupInvitations: List<UserVffGroupInviteUi>.of(hub.groupInvitations),
+  );
 
   bool get isInboxActionBusy => actingRow != null;
 
-
-
   UserVffHubState copyWith({
-
     UserVffHubLoadStatus? loadStatus,
 
     UserVffHubRequestsLoadStatus? requestsLoadStatus,
@@ -115,11 +91,8 @@ final class UserVffHubState extends Equatable {
     UserVffInboxRowAction? actingRow,
 
     bool clearActingRow = false,
-
   }) {
-
     return UserVffHubState(
-
       loadStatus: loadStatus ?? this.loadStatus,
 
       requestsLoadStatus: requestsLoadStatus ?? this.requestsLoadStatus,
@@ -127,51 +100,39 @@ final class UserVffHubState extends Equatable {
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
 
       requestsErrorMessage: clearRequestsError
-
           ? null
-
           : (requestsErrorMessage ?? this.requestsErrorMessage),
 
       tabIndex: tabIndex ?? this.tabIndex,
 
       myVffConnections: myVffConnections ?? this.myVffConnections,
 
-      incomingVffRequests:
-
-          incomingVffRequests ?? this.incomingVffRequests,
+      incomingVffRequests: incomingVffRequests ?? this.incomingVffRequests,
 
       groupInvitations: groupInvitations ?? this.groupInvitations,
 
       actingRow: clearActingRow ? null : (actingRow ?? this.actingRow),
-
     );
-
   }
 
-
-
   @override
-
   List<Object?> get props => [
+    loadStatus,
 
-        loadStatus,
+    requestsLoadStatus,
 
-        requestsLoadStatus,
+    errorMessage,
 
-        errorMessage,
+    requestsErrorMessage,
 
-        requestsErrorMessage,
+    tabIndex,
 
-        tabIndex,
+    myVffConnections,
 
-        myVffConnections,
+    incomingVffRequests,
 
-        incomingVffRequests,
+    groupInvitations,
 
-        groupInvitations,
-
-        actingRow,
-
-      ];
-
+    actingRow,
+  ];
 }

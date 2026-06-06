@@ -10,18 +10,19 @@ class MockSecureStorage extends Mock implements SecureStorageImpl {}
 void main() {
   // This is an integration test that hits the real local API.
   // We use testWidgets or just a regular test but we need flutter environment.
-  
+
   test('Auth Flow Integration Test', () async {
     debugPrint('--- Starting Auth Flow Integration Test ---');
-    
+
     final mockStorage = MockSecureStorage();
     when(() => mockStorage.getString(any())).thenAnswer((_) async => null);
     when(() => mockStorage.saveString(any(), any())).thenAnswer((_) async {});
-    
+
     final client = DioClient(secureStorage: mockStorage);
     final dataSource = AuthRemoteDataSourceImpl(client);
-    
-    final testEmail = 'test_${DateTime.now().millisecondsSinceEpoch}@example.com';
+
+    final testEmail =
+        'test_${DateTime.now().millisecondsSinceEpoch}@example.com';
     final testPass = 'Password123!';
     final testName = 'Integration Test User';
 
@@ -49,14 +50,15 @@ void main() {
         debugPrint('Login Success!');
         debugPrint('Access Token: ${tokens.accessToken?.substring(0, 10)}...');
       } catch (e) {
-        debugPrint('Login failed (Expected if email verification is mandatory): $e');
+        debugPrint(
+          'Login failed (Expected if email verification is mandatory): $e',
+        );
       }
 
       // 3. Forgot Password
       debugPrint('\nTesting Forgot Password: $testEmail');
       await dataSource.forgotPassword(email: testEmail);
       debugPrint('Forgot password request sent.');
-
     } catch (e) {
       debugPrint('\n[ERROR] Test failed: $e');
       fail('Integration test failed with error: $e');

@@ -8,10 +8,7 @@ import 'project_invite_entity.dart';
 import 'viewer_membership_role.dart';
 
 /// Header ⋯ on project detail (investment, vacation, emergency).
-enum ProjectDetailOverflowMenuKind {
-  member,
-  leader,
-}
+enum ProjectDetailOverflowMenuKind { member, leader }
 
 /// Full project detail entity extending the base Project card data.
 class ProjectDetailEntity {
@@ -21,14 +18,17 @@ class ProjectDetailEntity {
   final ProjectStatus status;
   final double goalAmount;
   final double currentAmount;
+
   /// From `GET /projects/{id}/pot` (`contributorCount`).
   final int contributorCount;
   final String endsIn;
+
   /// Legacy field — project `description` from API (not leader announcements).
   final String announcement;
   final List<ProjectAnnouncementEntity> announcements;
   final List<MemberEntity> members;
   final List<BorrowRequestEntity> borrowRequests;
+
   /// API `project.viewerRole`: `GroupLeader` | `CoLeader` | `Member`.
   final ViewerMembershipRole viewerRole;
   final String membershipId;
@@ -36,9 +36,11 @@ class ProjectDetailEntity {
   final int repaymentWindowDays;
   final int repaymentGraceDays;
   final bool contributionsAreNonRefundable;
+
   /// From API `displayStatus` (e.g. Draft, On Going).
   final String displayStatusLabel;
   final bool borrowingEnabled;
+
   /// From API `project.pendingRequestCount` (join requests awaiting approval).
   final int pendingJoinRequestCount;
   final String projectInviteCode;
@@ -140,16 +142,14 @@ class ProjectDetailEntity {
   bool get isDraftStatus => displayStatusLabel.toLowerCase() == 'draft';
 
   /// Investment projects: Contribute only (Figma). Others: Contribute + Borrow when enabled.
-  bool get showsBorrowAction =>
-      !category.isInvestment && borrowingEnabled;
+  bool get showsBorrowAction => !category.isInvestment && borrowingEnabled;
 
   /// Vacation / emergency group leaders cannot borrow until a co-leader is assigned.
   bool get isBorrowDisabledForViewer =>
       isVacationOrEmergency && isGroupLeader && !hasCoLeader;
 
   /// Whether the current viewer may open the borrow flow.
-  bool get canViewerBorrow =>
-      showsBorrowAction && !isBorrowDisabledForViewer;
+  bool get canViewerBorrow => showsBorrowAction && !isBorrowDisabledForViewer;
 
   bool get isVacationOrEmergency =>
       category == ProjectCategory.vacations ||

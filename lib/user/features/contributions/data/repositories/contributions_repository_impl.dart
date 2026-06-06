@@ -20,13 +20,25 @@ class ContributionsRepositoryImpl implements ContributionsRepository {
       final model = await _remote.getConfig(projectId: projectId);
       return Right(ContributionConfig.fromModel(model));
     } on UnauthorizedException catch (e, stack) {
-      AppLogger.error('ContributionConfig Unauthorized', error: e, stackTrace: stack);
+      AppLogger.error(
+        'ContributionConfig Unauthorized',
+        error: e,
+        stackTrace: stack,
+      );
       return Left(ServerFailure(e.message, e.title));
     } on ServerException catch (e, stack) {
-      AppLogger.error('ContributionConfig Server Exception', error: e, stackTrace: stack);
+      AppLogger.error(
+        'ContributionConfig Server Exception',
+        error: e,
+        stackTrace: stack,
+      );
       return Left(ServerFailure(e.message, e.title));
     } catch (e, stack) {
-      AppLogger.error('ContributionConfig Unexpected Exception', error: e, stackTrace: stack);
+      AppLogger.error(
+        'ContributionConfig Unexpected Exception',
+        error: e,
+        stackTrace: stack,
+      );
       return const Left(ServerFailure('Failed to load contribution config'));
     }
   }
@@ -39,13 +51,25 @@ class ContributionsRepositoryImpl implements ContributionsRepository {
       final model = await _remote.preview(request: input.toRequest());
       return Right(ContributionPreview.fromModel(model));
     } on UnauthorizedException catch (e, stack) {
-      AppLogger.error('ContributionPreview Unauthorized', error: e, stackTrace: stack);
+      AppLogger.error(
+        'ContributionPreview Unauthorized',
+        error: e,
+        stackTrace: stack,
+      );
       return Left(ServerFailure(e.message, e.title));
     } on ServerException catch (e, stack) {
-      AppLogger.error('ContributionPreview Server Exception', error: e, stackTrace: stack);
+      AppLogger.error(
+        'ContributionPreview Server Exception',
+        error: e,
+        stackTrace: stack,
+      );
       return Left(ServerFailure(e.message, e.title));
     } catch (e, stack) {
-      AppLogger.error('ContributionPreview Unexpected Exception', error: e, stackTrace: stack);
+      AppLogger.error(
+        'ContributionPreview Unexpected Exception',
+        error: e,
+        stackTrace: stack,
+      );
       return const Left(ServerFailure('Failed to preview contribution'));
     }
   }
@@ -58,15 +82,26 @@ class ContributionsRepositoryImpl implements ContributionsRepository {
       final model = await _remote.confirm(request: input.toRequest());
       return Right(ContributionResult.fromModel(model));
     } on UnauthorizedException catch (e, stack) {
-      AppLogger.error('ContributionConfirm Unauthorized', error: e, stackTrace: stack);
+      AppLogger.error(
+        'ContributionConfirm Unauthorized',
+        error: e,
+        stackTrace: stack,
+      );
       return Left(ServerFailure(e.message, e.title));
     } on ServerException catch (e, stack) {
-      AppLogger.error('ContributionConfirm Server Exception', error: e, stackTrace: stack);
+      AppLogger.error(
+        'ContributionConfirm Server Exception',
+        error: e,
+        stackTrace: stack,
+      );
       return Left(ServerFailure(e.message, e.title));
     } catch (e, stack) {
-      AppLogger.error('ContributionConfirm Unexpected Exception', error: e, stackTrace: stack);
+      AppLogger.error(
+        'ContributionConfirm Unexpected Exception',
+        error: e,
+        stackTrace: stack,
+      );
       return const Left(ServerFailure('Failed to confirm contribution'));
     }
   }
 }
-

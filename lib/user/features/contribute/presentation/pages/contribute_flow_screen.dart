@@ -91,8 +91,7 @@ class _ContributeAmountViewState extends State<_ContributeAmountView> {
   }
 
   void _syncAmountFieldFromState(String digits) {
-    if (!_amountFieldFocus.hasFocus &&
-        _amountDigitsController.text != digits) {
+    if (!_amountFieldFocus.hasFocus && _amountDigitsController.text != digits) {
       _amountDigitsController.value = TextEditingValue(
         text: digits,
         selection: TextSelection.collapsed(offset: digits.length),
@@ -145,9 +144,8 @@ class _ContributeAmountViewState extends State<_ContributeAmountView> {
                                       : state.displayAmountDollar,
                                   controller: _amountDigitsController,
                                   focusNode: _amountFieldFocus,
-                                  onDigitsChanged: (raw) => bloc.add(
-                                    DigitsChangedEvent(digits: raw),
-                                  ),
+                                  onDigitsChanged: (raw) =>
+                                      bloc.add(DigitsChangedEvent(digits: raw)),
                                 ),
                               ),
                               SizedBox(height: 12.h),
@@ -226,7 +224,8 @@ class _ContributeConfirmView extends StatelessWidget {
                           SizedBox(height: 10.h),
                           AppText(
                             state.payFromWallet
-                                ? AppStrings.contributeWalletInsufficientSubtitle
+                                ? AppStrings
+                                      .contributeWalletInsufficientSubtitle
                                 : AppStrings.contributeSelectCardRequired,
                             style: GoogleFonts.lato(
                               fontSize: 13.sp,
@@ -246,25 +245,25 @@ class _ContributeConfirmView extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        SizedBox(height: 22.h,),
+                        SizedBox(height: 22.h),
                         _row(
                           '${AppStrings.labelContributionAmount}:',
                           state.displayAmountDollar,
                         ),
-                        SizedBox(height:12.h,),
+                        SizedBox(height: 12.h),
                         _row(
                           AppStrings.labelVestieFee3,
                           '-\$${state.vestieFeeFormatted}',
                         ),
-                        SizedBox(height:24.h,),
+                        SizedBox(height: 24.h),
                         const _BreakdownDivider(),
-                        SizedBox(height:24.h,),
+                        SizedBox(height: 24.h),
                         _row(
                           AppStrings.labelTotalDeduction,
                           '\$${state.totalDeductionFormatted}',
-                          color: AppColors.projectDetailText
+                          color: AppColors.projectDetailText,
                         ),
-                        SizedBox(height:12.h,),
+                        SizedBox(height: 12.h),
                       ],
                     ),
                   ),
@@ -300,11 +299,13 @@ class _ContributeConfirmView extends StatelessWidget {
                 isLoading: state.isSubmitLoading,
                 onPressed: !state.canConfirmSubmit
                     ? null
-                    : () => bloc.add(ConfirmSubmitEvent(
+                    : () => bloc.add(
+                        ConfirmSubmitEvent(
                           projectId: args?.projectId ?? '',
                           amount: state.amountValue,
                           walletId: state.selectedWalletId,
-                        )),
+                        ),
+                      ),
               ),
             ),
           ],
@@ -338,7 +339,7 @@ class _ContributeConfirmView extends StatelessWidget {
 
   Widget _row(String left, String right, {Color? color}) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, ),
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -348,8 +349,8 @@ class _ContributeConfirmView extends StatelessWidget {
               left,
               style: GoogleFonts.lato(
                 fontSize: 14.sp,
-                color: color??AppColors.neutral700,
-                fontWeight: FontWeight.w400
+                color: color ?? AppColors.neutral700,
+                fontWeight: FontWeight.w400,
               ),
             ),
           ),
@@ -394,10 +395,7 @@ class _BreakdownDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 1,
-      color: AppColors.neutral400,
-    );
+    return Container(height: 1, color: AppColors.neutral400);
   }
 }
 
@@ -436,10 +434,7 @@ void _openContributePaymentPicker(
 }
 
 class _ContributePaymentPill extends StatelessWidget {
-  const _ContributePaymentPill({
-    required this.state,
-    required this.forConfirm,
-  });
+  const _ContributePaymentPill({required this.state, required this.forConfirm});
 
   final ContributeState state;
   final bool forConfirm;
@@ -501,9 +496,7 @@ class _ContributeSuccessView extends StatelessWidget {
                 text: state.displayAmountDollar,
                 style: const TextStyle(fontWeight: FontWeight.w700),
               ),
-              TextSpan(
-                text: ' contribution has been added to $projectName.',
-              ),
+              TextSpan(text: ' contribution has been added to $projectName.'),
             ],
           ),
           textAlign: TextAlign.center,

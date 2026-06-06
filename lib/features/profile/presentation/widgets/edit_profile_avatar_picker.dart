@@ -32,7 +32,10 @@ class EditProfileAvatarPicker extends StatelessWidget {
   static final _picker = ImagePicker();
 
   Future<void> _pick(BuildContext context, ImageSource source) async {
-    final allowed = await AppPermissionHelper.ensureImageSource(context, source);
+    final allowed = await AppPermissionHelper.ensureImageSource(
+      context,
+      source,
+    );
     if (!allowed) return;
 
     final picked = await _picker.pickImage(

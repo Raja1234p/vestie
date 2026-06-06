@@ -23,14 +23,14 @@ class ContributionRequest {
   });
 
   Map<String, dynamic> toJson() => {
-        'projectId': projectId,
-        'membershipId': membershipId,
-        'walletId': walletId,
-        'amount': amount,
-        'currency': currency,
-        'externalReference': externalReference,
-        'confirmNonRefundable': confirmNonRefundable,
-      };
+    'projectId': projectId,
+    'membershipId': membershipId,
+    'walletId': walletId,
+    'amount': amount,
+    'currency': currency,
+    'externalReference': externalReference,
+    'confirmNonRefundable': confirmNonRefundable,
+  };
 }
 
 abstract class ContributionsRemoteDataSource {
@@ -44,7 +44,9 @@ abstract class ContributionsRemoteDataSource {
     required ContributionRequest request,
   });
 
-  Future<List<ContributionRecordModel>> listByProject({required String projectId});
+  Future<List<ContributionRecordModel>> listByProject({
+    required String projectId,
+  });
 
   Future<ContributionRecordModel> getById({required String id});
 
@@ -54,4 +56,3 @@ abstract class ContributionsRemoteDataSource {
 
   Future<String> awardVffBadge({required String projectId});
 }
-

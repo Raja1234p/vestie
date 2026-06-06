@@ -12,7 +12,8 @@ class ContributionSubmitResultModel {
   });
 
   factory ContributionSubmitResultModel.fromJson(Map<String, dynamic> json) {
-    final vff = (json['vffMemberUserIds'] as List<dynamic>?)
+    final vff =
+        (json['vffMemberUserIds'] as List<dynamic>?)
             ?.map((e) => e.toString())
             .toList(growable: false) ??
         const <String>[];

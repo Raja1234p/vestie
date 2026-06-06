@@ -34,9 +34,7 @@ class ProjectDetailJoinRequestsChip extends StatelessWidget {
         child: SizedBox(
           height: 32.h,
           child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: _showsCount ? 10.w : 6.w,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: _showsCount ? 10.w : 6.w),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,

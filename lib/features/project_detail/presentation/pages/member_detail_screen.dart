@@ -6,8 +6,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:go_router/go_router.dart';
 
-
-
 import '../../../../app/router/app_routes.dart';
 import '../../../../app/router/route_args/project_detail_flow_args.dart';
 import '../../../../core/constants/app_strings.dart';
@@ -48,10 +46,7 @@ import '../widgets/member_detail_sections.dart';
 
 import '../widgets/project_detail_load_error.dart';
 
-
-
 class MemberDetailScreen extends StatelessWidget {
-
   final MemberEntity member;
 
   final String projectId;
@@ -64,10 +59,7 @@ class MemberDetailScreen extends StatelessWidget {
 
   final Future<void> Function()? onProjectMembersChanged;
 
-
-
   const MemberDetailScreen({
-
     super.key,
 
     required this.member,
@@ -81,41 +73,35 @@ class MemberDetailScreen extends StatelessWidget {
     this.isLeaderView = false,
 
     this.onProjectMembersChanged,
-
   });
 
-
-
   @override
-
   Widget build(BuildContext context) {
-
     return BlocProvider(
+      create: (_) =>
+          MemberDetailCubit(
+            getMemberActivityUseCase:
+                ServiceLocator.instance.getMemberActivityUseCase,
 
-      create: (_) => MemberDetailCubit(
+            updateCoLeaderRoleUseCase:
+                ServiceLocator.instance.updateCoLeaderRoleUseCase,
 
-        getMemberActivityUseCase: ServiceLocator.instance.getMemberActivityUseCase,
+            removeMemberUseCase: ServiceLocator.instance.removeMemberUseCase,
 
-        updateCoLeaderRoleUseCase: ServiceLocator.instance.updateCoLeaderRoleUseCase,
+            sendVffRequestUseCase:
+                ServiceLocator.instance.sendVffRequestUseCase,
 
-        removeMemberUseCase: ServiceLocator.instance.removeMemberUseCase,
+            removeVffConnectionUseCase:
+                ServiceLocator.instance.removeVffConnectionUseCase,
+          )..load(
+            projectId: projectId,
 
-        sendVffRequestUseCase: ServiceLocator.instance.sendVffRequestUseCase,
+            userId: member.apiUserId,
 
-        removeVffConnectionUseCase: ServiceLocator.instance.removeVffConnectionUseCase,
-
-      )..load(
-
-          projectId: projectId,
-
-          userId: member.apiUserId,
-
-          projectName: projectName,
-
-        ),
+            projectName: projectName,
+          ),
 
       child: _MemberDetailView(
-
         member: member,
 
         projectId: projectId,
@@ -127,21 +113,13 @@ class MemberDetailScreen extends StatelessWidget {
         isLeaderView: isLeaderView,
 
         onProjectMembersChanged: onProjectMembersChanged,
-
       ),
-
     );
-
   }
-
 }
 
-
-
 class _MemberDetailView extends StatelessWidget {
-
   const _MemberDetailView({
-
     required this.member,
 
     required this.projectId,
@@ -153,10 +131,7 @@ class _MemberDetailView extends StatelessWidget {
     required this.isLeaderView,
 
     this.onProjectMembersChanged,
-
   });
-
-
 
   final MemberEntity member;
 
@@ -170,15 +145,11 @@ class _MemberDetailView extends StatelessWidget {
 
   final Future<void> Function()? onProjectMembersChanged;
 
-
-
   String _userIdForApi(MemberDetailState state) {
     final resolved = _displayMember(state).apiUserId.trim();
     if (resolved.isNotEmpty) return resolved;
     return member.apiUserId.trim();
   }
-
-
 
   MemberEntity _displayMember(MemberDetailState state) {
     final loaded = state.activity?.member;
@@ -186,51 +157,32 @@ class _MemberDetailView extends StatelessWidget {
     return member.mergedWithActivity(loaded);
   }
 
-
-
   void _onStateChanged(BuildContext context, MemberDetailState state) {
-
     if (state.isActionLoading ||
         state.isVffRequestLoading ||
         state.isRemoveVffLoading) {
       return;
     }
 
-
-
     final failure = state.failure;
 
     if (failure != null) {
-
-      showMemberDetailErrorDialog(
-        context,
-        failure: failure,
-      );
+      showMemberDetailErrorDialog(context, failure: failure);
 
       context.read<MemberDetailCubit>().clearStatus();
 
       return;
-
     }
-
-
 
     final completed = state.completedAction;
 
     if (completed == null) return;
 
-
-
     final displayName = _displayMember(state).name;
 
-
-
     switch (completed) {
-
       case MemberDetailAction.assignCoLeader:
-
       case MemberDetailAction.removeCoLeader:
-
         if (completed == MemberDetailAction.assignCoLeader) {
           showCoLeaderAssignedSuccess(
             context,
@@ -249,36 +201,24 @@ class _MemberDetailView extends StatelessWidget {
         break;
 
       case MemberDetailAction.sendVffRequest:
-
         context.read<MemberDetailCubit>().clearStatus();
 
         break;
 
       case MemberDetailAction.removeMember:
-
         showMemberRemovedSuccess(
-
           context,
 
           onOk: () {
-
             Navigator.of(context).pop();
 
             context.pop(MemberDetailPopResult.memberRemoved);
-
           },
-
         );
-
     }
 
-
-
     context.read<MemberDetailCubit>().clearStatus();
-
   }
-
-
 
   void _promptAssignCoLeader(BuildContext context) {
     final p = project;
@@ -292,14 +232,10 @@ class _MemberDetailView extends StatelessWidget {
     showMakeCoLeaderConfirm(
       context,
       memberName: memberName,
-      onConfirmed: () => cubit.assignCoLeader(
-        projectId: projectId,
-        userId: userId,
-      ),
+      onConfirmed: () =>
+          cubit.assignCoLeader(projectId: projectId, userId: userId),
     );
   }
-
-
 
   void _promptRemoveCoLeader(BuildContext context) {
     final p = project;
@@ -313,14 +249,10 @@ class _MemberDetailView extends StatelessWidget {
     showRemoveCoLeaderConfirm(
       context,
       memberName: memberName,
-      onConfirmed: () => cubit.removeCoLeader(
-        projectId: projectId,
-        userId: userId,
-      ),
+      onConfirmed: () =>
+          cubit.removeCoLeader(projectId: projectId, userId: userId),
     );
   }
-
-
 
   Future<void> _openPenaltyAction(BuildContext context) async {
     final p = project;
@@ -339,8 +271,8 @@ class _MemberDetailView extends StatelessWidget {
 
     if (outcome == MemberPenaltyActionOutcome.memberRemoved) {
       await context.read<MemberDetailCubit>().syncWithProjectDetail(
-            refreshMember: false,
-          );
+        refreshMember: false,
+      );
       if (!context.mounted) return;
       context.pop(MemberDetailPopResult.memberRemoved);
       return;
@@ -348,7 +280,8 @@ class _MemberDetailView extends StatelessWidget {
 
     await context.read<MemberDetailCubit>().syncWithProjectDetail();
     if (!context.mounted) return;
-    final refreshed = context.read<MemberDetailCubit>().state.loadStatus ==
+    final refreshed =
+        context.read<MemberDetailCubit>().state.loadStatus ==
         MemberDetailLoadStatus.loaded;
     if (!refreshed) {
       showMemberDetailErrorDialog(
@@ -363,8 +296,9 @@ class _MemberDetailView extends StatelessWidget {
     MemberEntity member,
   ) async {
     final handle = member.username.replaceFirst(RegExp(r'^@'), '').trim();
-    final usernameWithoutAt =
-        handle.isNotEmpty ? handle : member.name.replaceAll(' ', '').toLowerCase();
+    final usernameWithoutAt = handle.isNotEmpty
+        ? handle
+        : member.name.replaceAll(' ', '').toLowerCase();
 
     final ok = await showUserVffRemoveConnectionDialog(
       context,
@@ -375,39 +309,26 @@ class _MemberDetailView extends StatelessWidget {
   }
 
   void _promptRemoveMember(BuildContext context) {
-
     showRemoveMemberConfirm(
-
       context,
 
       memberName: _displayMember(context.read<MemberDetailCubit>().state).name,
 
       onConfirmed: () {
-        final userId = _userIdForApi(
-          context.read<MemberDetailCubit>().state,
-        );
+        final userId = _userIdForApi(context.read<MemberDetailCubit>().state);
         context.read<MemberDetailCubit>().removeMember(
           projectId: projectId,
           userId: userId,
         );
       },
-
     );
-
   }
 
-
-
   @override
-
   Widget build(BuildContext context) {
-
     final p = project;
 
-
-
     return BlocListener<MemberDetailCubit, MemberDetailState>(
-
       listenWhen: (prev, curr) =>
           prev.isActionLoading != curr.isActionLoading ||
           prev.isVffRequestLoading != curr.isVffRequestLoading ||
@@ -418,136 +339,102 @@ class _MemberDetailView extends StatelessWidget {
       listener: _onStateChanged,
 
       child: BlocBuilder<MemberDetailCubit, MemberDetailState>(
-
         builder: (context, state) {
-
           final displayMember = _displayMember(state);
 
           final activity = state.activity;
 
           final vffConnectionState =
               MemberDetailActionsVisibility.effectiveVffConnectionState(
-            member: displayMember,
-            activityVffConnectionState:
-                activity?.vffConnectionState ?? VffConnectionState.none,
-          );
+                member: displayMember,
+                activityVffConnectionState:
+                    activity?.vffConnectionState ?? VffConnectionState.none,
+              );
 
-          final vffRequestSent = displayMember.hasPendingVffOutgoing ||
+          final vffRequestSent =
+              displayMember.hasPendingVffOutgoing ||
               vffConnectionState == VffConnectionState.pendingOutgoing;
 
-          final isCoLeader = activity?.isCoLeader ??
-              displayMember.role == MemberRole.coLeader;
+          final isCoLeader =
+              activity?.isCoLeader ?? displayMember.role == MemberRole.coLeader;
 
-
-
-          final showCoLeaderControls = p != null &&
-
+          final showCoLeaderControls =
+              p != null &&
               MemberDetailActionsVisibility.showCoLeaderControls(
-
                 project: p,
 
                 member: displayMember,
-
               );
 
-          final showSendVff = p != null &&
-
+          final showSendVff =
+              p != null &&
               MemberDetailActionsVisibility.showVffSendOrSent(
-
                 project: p,
 
                 member: displayMember,
 
                 vffConnectionState: vffConnectionState,
-
               );
 
-          final showVffFollowing = p != null &&
-
+          final showVffFollowing =
+              p != null &&
               MemberDetailActionsVisibility.showVffFollowing(
-
                 project: p,
 
                 member: displayMember,
 
                 vffConnectionState: vffConnectionState,
-
               );
 
-          final showRemoveMember = p != null &&
-
+          final showRemoveMember =
+              p != null &&
               MemberDetailActionsVisibility.showRemoveMember(
-
                 project: p,
 
                 member: displayMember,
-
               );
 
-          final showFooter = p != null &&
-
+          final showFooter =
+              p != null &&
               MemberDetailActionsVisibility.showFooter(
-
                 project: p,
 
                 member: displayMember,
 
                 vffConnectionState: vffConnectionState,
-
               );
 
-
-
-          final coLeaderLoading = state.isLoadingAction(
-
-                MemberDetailAction.assignCoLeader,
-
-              ) ||
-
+          final coLeaderLoading =
+              state.isLoadingAction(MemberDetailAction.assignCoLeader) ||
               state.isLoadingAction(MemberDetailAction.removeCoLeader);
 
-
-
           return Scaffold(
-
             backgroundColor: Colors.transparent,
 
             body: PostAuthGradientBackground(
-
               child: Column(
-
                 crossAxisAlignment: CrossAxisAlignment.stretch,
 
                 children: [
-
                   PostAuthHeader(
-
                     title:
-
                         '${displayMember.name}${AppStrings.memberProfileSuffix}',
 
                     leading: AppBackButton(
-
                       onPressed: () {
                         final changed = context
                             .read<MemberDetailCubit>()
                             .state
                             .projectMembersChanged;
                         context.pop(
-                          changed
-                              ? MemberDetailPopResult.membersUpdated
-                              : null,
+                          changed ? MemberDetailPopResult.membersUpdated : null,
                         );
                       },
-
                     ),
-
                   ),
 
                   Expanded(
-
                     child: _buildBody(
-
                       context,
 
                       state: state,
@@ -563,24 +450,16 @@ class _MemberDetailView extends StatelessWidget {
                       showCoLeaderControls: showCoLeaderControls,
 
                       coLeaderLoading: coLeaderLoading,
-
                     ),
-
                   ),
 
-                  if (showFooter && state.loadStatus == MemberDetailLoadStatus.loaded)
-
+                  if (showFooter &&
+                      state.loadStatus == MemberDetailLoadStatus.loaded)
                     MemberDetailFooter(
-
                       showVffFollowing: showVffFollowing,
 
-                      onRemoveVffConnection: () => _onRemoveVffConnection(
-
-                        context,
-
-                        displayMember,
-
-                      ),
+                      onRemoveVffConnection: () =>
+                          _onRemoveVffConnection(context, displayMember),
 
                       showSendVffRequest: showSendVff,
 
@@ -593,41 +472,24 @@ class _MemberDetailView extends StatelessWidget {
                       showRemoveMember: showRemoveMember,
 
                       isRemoveMemberLoading: state.isLoadingAction(
-
                         MemberDetailAction.removeMember,
-
                       ),
 
-                      onSendVffRequest: () => context
-
-                          .read<MemberDetailCubit>()
-
-                          .sendVffRequest(),
+                      onSendVffRequest: () =>
+                          context.read<MemberDetailCubit>().sendVffRequest(),
 
                       onRemoveMember: () => _promptRemoveMember(context),
-
                     ),
-
                 ],
-
               ),
-
             ),
-
           );
-
         },
-
       ),
-
     );
-
   }
 
-
-
   Widget _buildBody(
-
     BuildContext context, {
 
     required MemberDetailState state,
@@ -643,65 +505,43 @@ class _MemberDetailView extends StatelessWidget {
     required bool showCoLeaderControls,
 
     required bool coLeaderLoading,
-
   }) {
-
     switch (state.loadStatus) {
-
       case MemberDetailLoadStatus.initial:
-
       case MemberDetailLoadStatus.loading:
-
         return CustomScrollView(
-
           slivers: [
-
             SliverPadding(
-
               padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
 
               sliver: const SliverToBoxAdapter(child: MemberDetailShimmer()),
-
             ),
-
           ],
-
         );
 
       case MemberDetailLoadStatus.error:
-
         return ProjectDetailLoadError(
-
           message: state.loadErrorMessage ?? AppStrings.errorGeneric,
 
           onRetry: () => context.read<MemberDetailCubit>().load(
+            projectId: projectId,
 
-                projectId: projectId,
+            userId: member.apiUserId,
 
-                userId: member.apiUserId,
-
-                projectName: projectName,
-
-              ),
-
+            projectName: projectName,
+          ),
         );
 
       case MemberDetailLoadStatus.loaded:
-
         final loaded = activity!;
 
         return CustomScrollView(
-
           slivers: [
-
             SliverPadding(
-
               padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
 
               sliver: SliverToBoxAdapter(
-
                 child: _MemberDetailBody(
-
                   member: displayMember,
 
                   activity: loaded,
@@ -719,41 +559,25 @@ class _MemberDetailView extends StatelessWidget {
                   isCoLeaderActionLoading: coLeaderLoading,
 
                   onAssignCoLeader: showCoLeaderControls
-
                       ? () => _promptAssignCoLeader(context)
-
                       : null,
 
                   onRemoveCoLeader: showCoLeaderControls
-
                       ? () => _promptRemoveCoLeader(context)
-
                       : null,
 
                   onTakeAction: () => _openPenaltyAction(context),
-
                 ),
-
               ),
-
             ),
-
           ],
-
         );
-
     }
-
   }
-
 }
 
-
-
 class _MemberDetailBody extends StatelessWidget {
-
   const _MemberDetailBody({
-
     required this.member,
 
     required this.activity,
@@ -775,10 +599,7 @@ class _MemberDetailBody extends StatelessWidget {
     this.onRemoveCoLeader,
 
     this.onTakeAction,
-
   });
-
-
 
   final MemberEntity member;
 
@@ -803,17 +624,12 @@ class _MemberDetailBody extends StatelessWidget {
   final VoidCallback? onTakeAction;
 
   @override
-
   Widget build(BuildContext context) {
-
     return Column(
-
       crossAxisAlignment: CrossAxisAlignment.start,
 
       children: [
-
         MemberIdentitySection(
-
           member: member,
 
           username: MemberActivityDisplay.formatUsername(member),
@@ -829,27 +645,20 @@ class _MemberDetailBody extends StatelessWidget {
           onAssignCoLeader: onAssignCoLeader,
 
           onRemoveCoLeader: onRemoveCoLeader,
-
         ),
 
         SizedBox(height: 16.h),
 
         MemberMetricsSection(
-
           contributed: MemberActivityDisplay.formatCurrencyMetric(
-
             activity.totalContributed,
-
           ),
 
           contributions: '${activity.contributionCount}',
 
           borrowed: MemberActivityDisplay.formatCurrencyMetric(
-
             activity.totalBorrowed,
-
           ),
-
         ),
 
         SizedBox(height: 24.h),
@@ -866,13 +675,7 @@ class _MemberDetailBody extends StatelessWidget {
             onTakeAction: onTakeAction,
           ),
         ],
-
       ],
-
     );
-
   }
-
 }
-
-

@@ -6,9 +6,9 @@ class MockProjects {
 
   /// Profile → Completed Projects UI preview when API returns none.
   static List<Project> get previewCompletedProjects => [
-        ...myProjects.where((p) => p.status == ProjectStatus.completed),
-        ...joinedProjects.where((p) => p.status == ProjectStatus.completed),
-      ];
+    ...myProjects.where((p) => p.status == ProjectStatus.completed),
+    ...joinedProjects.where((p) => p.status == ProjectStatus.completed),
+  ];
 
   static const List<Project> myProjects = [
     Project(
@@ -187,7 +187,8 @@ class MockProjects {
       goalAmount: 5000,
       currentAmount: 2700,
       endsIn: '2 months',
-      description: 'e.g. for financial freedom (after goal pot will be close and there will only be return)',
+      description:
+          'e.g. for financial freedom (after goal pot will be close and there will only be return)',
       requestPending: true,
     ),
     Project(
@@ -199,7 +200,8 @@ class MockProjects {
       goalAmount: 5000,
       currentAmount: 2700,
       endsIn: '2 months',
-      description: 'e.g. for financial freedom (after goal pot will be close and there will only be return)',
+      description:
+          'e.g. for financial freedom (after goal pot will be close and there will only be return)',
     ),
     Project(
       id: 'd4',

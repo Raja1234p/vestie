@@ -43,8 +43,7 @@ class AppNetworkImage extends StatelessWidget {
         height: height,
         fit: fit,
         placeholder: (context, url) => placeholder ?? _defaultPlaceholder(),
-        errorWidget: (context, url, error) =>
-            errorWidget ?? _defaultError(),
+        errorWidget: (context, url, error) => errorWidget ?? _defaultError(),
       );
     } else {
       child = errorWidget ?? _defaultError();
@@ -55,7 +54,8 @@ class AppNetworkImage extends StatelessWidget {
 
   static bool isValidNetworkUrl(String? url) {
     final t = url?.trim() ?? '';
-    return t.isNotEmpty && (t.startsWith('http://') || t.startsWith('https://'));
+    return t.isNotEmpty &&
+        (t.startsWith('http://') || t.startsWith('https://'));
   }
 
   Widget _defaultPlaceholder() {

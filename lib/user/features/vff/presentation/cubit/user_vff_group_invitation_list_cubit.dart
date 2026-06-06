@@ -55,10 +55,10 @@ final class UserVffGroupInvitationListCubit
     required GetVffReceivedInboxUseCase getVffReceivedInboxUseCase,
     required AcceptVffProjectInviteUseCase acceptVffProjectInviteUseCase,
     required DeclineVffProjectInviteUseCase declineVffProjectInviteUseCase,
-  })  : _getVffReceivedInboxUseCase = getVffReceivedInboxUseCase,
-        _acceptVffProjectInviteUseCase = acceptVffProjectInviteUseCase,
-        _declineVffProjectInviteUseCase = declineVffProjectInviteUseCase,
-        super(const UserVffGroupInvitationListState()) {
+  }) : _getVffReceivedInboxUseCase = getVffReceivedInboxUseCase,
+       _acceptVffProjectInviteUseCase = acceptVffProjectInviteUseCase,
+       _declineVffProjectInviteUseCase = declineVffProjectInviteUseCase,
+       super(const UserVffGroupInvitationListState()) {
     load();
   }
 
@@ -107,9 +107,7 @@ final class UserVffGroupInvitationListCubit
 
     reloadResult.fold(
       (failure) => emit(
-        state.copyWith(
-          errorMessage: FailureMapper.userMessage(failure),
-        ),
+        state.copyWith(errorMessage: FailureMapper.userMessage(failure)),
       ),
       (inbox) => emit(
         state.copyWith(

@@ -15,4 +15,3 @@ class ConfirmContributionUseCase {
     return _repository.confirm(input: input);
   }
 }
-

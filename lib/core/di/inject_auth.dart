@@ -18,7 +18,10 @@ import 'service_locator.dart';
 /// Registers auth data sources, repository, and use cases.
 void registerAuthDependencies(ServiceLocator sl) {
   sl.authRemoteDataSource = AuthRemoteDataSourceImpl(sl.dioClient);
-  sl.authRepository = AuthRepositoryImpl(sl.authRemoteDataSource, sl.sharedPrefs);
+  sl.authRepository = AuthRepositoryImpl(
+    sl.authRemoteDataSource,
+    sl.sharedPrefs,
+  );
 
   sl.loginUseCase = LoginUseCase(sl.authRepository);
   sl.registerUseCase = RegisterUseCase(sl.authRepository);
@@ -29,10 +32,12 @@ void registerAuthDependencies(ServiceLocator sl) {
   sl.logoutUseCase = LogoutUseCase(sl.authRepository);
   sl.getMeUseCase = GetMeUseCase(sl.authRepository);
   sl.getRiskDisclaimerUseCase = GetRiskDisclaimerUseCase(sl.authRepository);
-  sl.acceptRiskDisclaimerUseCase =
-      AcceptRiskDisclaimerUseCase(sl.authRepository);
+  sl.acceptRiskDisclaimerUseCase = AcceptRiskDisclaimerUseCase(
+    sl.authRepository,
+  );
   sl.googleLoginUseCase = GoogleLoginUseCase(sl.authRepository);
   sl.updateMeUseCase = UpdateMeUseCase(sl.authRepository);
-  sl.deleteMeProfilePictureUseCase =
-      DeleteMeProfilePictureUseCase(sl.authRepository);
+  sl.deleteMeProfilePictureUseCase = DeleteMeProfilePictureUseCase(
+    sl.authRepository,
+  );
 }

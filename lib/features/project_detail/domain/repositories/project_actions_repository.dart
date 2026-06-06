@@ -4,9 +4,8 @@ import '../entities/member_activity_entity.dart';
 import '../entities/pending_join_request_entity.dart';
 
 abstract class ProjectActionsRepository {
-  Future<Either<Failure, List<PendingJoinRequestEntity>>> listPendingJoinRequests(
-    String projectId,
-  );
+  Future<Either<Failure, List<PendingJoinRequestEntity>>>
+  listPendingJoinRequests(String projectId);
 
   Future<Either<Failure, MemberActivityEntity>> getMemberActivity({
     required String projectId,
@@ -23,7 +22,10 @@ abstract class ProjectActionsRepository {
     String membershipId,
   );
   Future<Either<Failure, void>> removeMember(String projectId, String userId);
-  Future<Either<Failure, void>> promoteToCoLeader(String projectId, String userId);
+  Future<Either<Failure, void>> promoteToCoLeader(
+    String projectId,
+    String userId,
+  );
   Future<Either<Failure, void>> demoteCoLeader(String projectId, String userId);
 
   Future<Either<Failure, void>> openClosureVoting({

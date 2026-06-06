@@ -61,10 +61,7 @@ class ContributionConfig extends Equatable {
   final String projectId;
   final List<dynamic> wallets;
 
-  const ContributionConfig({
-    required this.projectId,
-    required this.wallets,
-  });
+  const ContributionConfig({required this.projectId, required this.wallets});
 
   factory ContributionConfig.fromModel(ContributionConfigModel model) {
     return ContributionConfig(

@@ -21,6 +21,13 @@ class PendingJoinRequestEntity extends Equatable {
   });
 
   @override
-  List<Object?> get props =>
-      [membershipId, userId, status, displayName, username, initials, photoUrl];
+  List<Object?> get props => [
+    membershipId,
+    userId,
+    status,
+    displayName,
+    username,
+    initials,
+    photoUrl,
+  ];
 }

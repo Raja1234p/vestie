@@ -29,10 +29,10 @@ class RegisterForm extends StatefulWidget {
 }
 
 class _RegisterFormState extends State<RegisterForm> {
-  final _nameCtrl        = TextEditingController();
-  final _emailCtrl       = TextEditingController();
-  final _passCtrl        = TextEditingController();
-  final _confirmCtrl     = TextEditingController();
+  final _nameCtrl = TextEditingController();
+  final _emailCtrl = TextEditingController();
+  final _passCtrl = TextEditingController();
+  final _confirmCtrl = TextEditingController();
 
   @override
   void dispose() {
@@ -57,12 +57,14 @@ class _RegisterFormState extends State<RegisterForm> {
     );
     if (!isValid) return;
 
-    context.read<RegisterBloc>().add(RegisterSubmitted(
-          name: _nameCtrl.text.trim(),
-          email: _emailCtrl.text.trim(),
-          password: _passCtrl.text,
-          confirmPassword: _confirmCtrl.text,
-        ));
+    context.read<RegisterBloc>().add(
+      RegisterSubmitted(
+        name: _nameCtrl.text.trim(),
+        email: _emailCtrl.text.trim(),
+        password: _passCtrl.text,
+        confirmPassword: _confirmCtrl.text,
+      ),
+    );
   }
 
   @override
@@ -79,135 +81,147 @@ class _RegisterFormState extends State<RegisterForm> {
               padding: EdgeInsets.symmetric(horizontal: 24.w),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
-              SizedBox(height: 48.h),
-              Text(AppStrings.registerTitle,
-                  style: GoogleFonts.lato(
+                  SizedBox(height: 48.h),
+                  Text(
+                    AppStrings.registerTitle,
+                    style: GoogleFonts.lato(
                       fontSize: 34.sp,
                       fontWeight: FontWeight.w800,
                       color: AppColors.authTitle,
-                      height: 1.2)),
-              Text(AppStrings.registerSubtitle,
-                  style: GoogleFonts.lato(
+                      height: 1.2,
+                    ),
+                  ),
+                  Text(
+                    AppStrings.registerSubtitle,
+                    style: GoogleFonts.lato(
                       fontSize: 18.sp,
                       color: AppColors.authSubtitle,
-                      height: 1.5)),
-              SizedBox(height: 12.h),
-              AppTextField(
-                label: AppStrings.labelFullName,
-                hint: AppStrings.hintFullName,
-                controller: _nameCtrl,
-                keyboardType: TextInputType.name,
-                inputFormatters: [
-                  PersonNameInputFormatter(allowSpaces: true),
-                ],
-                errorText: form.nameError,
-                onChanged: (_) =>
-                    context.read<RegisterFormCubit>().onFieldsChanged(
-                      _nameCtrl.text,
-                      _emailCtrl.text,
-                      _passCtrl.text,
-                      _confirmCtrl.text,
+                      height: 1.5,
                     ),
-              ),
-              SizedBox(height: 12.h),
-              AppTextField(
-                label: AppStrings.labelEmail,
-                hint: AppStrings.hintEmail,
-                controller: _emailCtrl,
-                keyboardType: TextInputType.emailAddress,
-                errorText: form.emailError,
-                onChanged: (_) =>
-                    context.read<RegisterFormCubit>().onFieldsChanged(
-                      _nameCtrl.text,
-                      _emailCtrl.text,
-                      _passCtrl.text,
-                      _confirmCtrl.text,
-                    ),
-              ),
-              SizedBox(height: 12.h),
-              AppTextField(
-                label: AppStrings.labelPassword,
-                hint: AppStrings.hintCreatePassword,
-                controller: _passCtrl,
-                obscureText: !form.passwordVisible,
-                errorText: form.passwordError,
-                onChanged: (_) =>
-                    context.read<RegisterFormCubit>().onFieldsChanged(
-                      _nameCtrl.text,
-                      _emailCtrl.text,
-                      _passCtrl.text,
-                      _confirmCtrl.text,
-                    ),
-                suffixIcon: ExcludeFocus(
-                  child: IconButton(
-                    icon: AuthPasswordVisibilityIcon(
-                      passwordVisible: form.passwordVisible,
-                      logicalSize: 20.w,
-                    ),
-                    onPressed: () =>
-                        context.read<RegisterFormCubit>().togglePassword(),
                   ),
-                ),
-              ),
-              SizedBox(height: 12.h),
-              AppTextField(
-                label: AppStrings.labelConfirmPassword,
-                hint: AppStrings.hintConfirmPassword,
-                controller: _confirmCtrl,
-                obscureText: !form.confirmVisible,
-                textInputAction: TextInputAction.done,
-                errorText: form.confirmError,
-                onChanged: (_) =>
-                    context.read<RegisterFormCubit>().onFieldsChanged(
-                      _nameCtrl.text,
-                      _emailCtrl.text,
-                      _passCtrl.text,
-                      _confirmCtrl.text,
-                    ),
-                suffixIcon: ExcludeFocus(
-                  child: IconButton(
-                    icon: AuthPasswordVisibilityIcon(
-                      passwordVisible: form.confirmVisible,
-                      logicalSize: 20.w,
-                    ),
-                    onPressed: () =>
-                        context.read<RegisterFormCubit>().toggleConfirm(),
+                  SizedBox(height: 12.h),
+                  AppTextField(
+                    label: AppStrings.labelFullName,
+                    hint: AppStrings.hintFullName,
+                    controller: _nameCtrl,
+                    keyboardType: TextInputType.name,
+                    inputFormatters: [
+                      PersonNameInputFormatter(allowSpaces: true),
+                    ],
+                    errorText: form.nameError,
+                    onChanged: (_) =>
+                        context.read<RegisterFormCubit>().onFieldsChanged(
+                          _nameCtrl.text,
+                          _emailCtrl.text,
+                          _passCtrl.text,
+                          _confirmCtrl.text,
+                        ),
                   ),
-                ),
-              ),
-              SizedBox(height: 12.h),
-              RegisterPasswordRequirementBar(),
-              SizedBox(height: 24.h),
-              AppButton(
-                text: AppStrings.btnContinue,
-                isLoading: isEmailLoading,
-                onPressed: isEmailLoading || isGoogleLoading
-                    ? null
-                    : () => _submit(context),
-              ),
-              SizedBox(height: 12.h),
-              const OrDivider(),
-              SizedBox(height: 12.h),
-              SocialAuthButton(
-                provider: SocialProvider.google,
-                onPressed: isEmailLoading || isGoogleLoading
-                    ? null
-                    : () => context
-                        .read<RegisterBloc>()
-                        .add(const GoogleRegisterRequested()),
-              ),
-              SizedBox(height: 12.h),
-              SocialAuthButton(
-                  provider: SocialProvider.apple,
-                  onPressed: () => _showComingSoon(context)),
-              SizedBox(height: 12.h),
+                  SizedBox(height: 12.h),
+                  AppTextField(
+                    label: AppStrings.labelEmail,
+                    hint: AppStrings.hintEmail,
+                    controller: _emailCtrl,
+                    keyboardType: TextInputType.emailAddress,
+                    errorText: form.emailError,
+                    onChanged: (_) =>
+                        context.read<RegisterFormCubit>().onFieldsChanged(
+                          _nameCtrl.text,
+                          _emailCtrl.text,
+                          _passCtrl.text,
+                          _confirmCtrl.text,
+                        ),
+                  ),
+                  SizedBox(height: 12.h),
+                  AppTextField(
+                    label: AppStrings.labelPassword,
+                    hint: AppStrings.hintCreatePassword,
+                    controller: _passCtrl,
+                    obscureText: !form.passwordVisible,
+                    errorText: form.passwordError,
+                    onChanged: (_) =>
+                        context.read<RegisterFormCubit>().onFieldsChanged(
+                          _nameCtrl.text,
+                          _emailCtrl.text,
+                          _passCtrl.text,
+                          _confirmCtrl.text,
+                        ),
+                    suffixIcon: ExcludeFocus(
+                      child: IconButton(
+                        icon: AuthPasswordVisibilityIcon(
+                          passwordVisible: form.passwordVisible,
+                          logicalSize: 20.w,
+                        ),
+                        onPressed: () =>
+                            context.read<RegisterFormCubit>().togglePassword(),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 12.h),
+                  AppTextField(
+                    label: AppStrings.labelConfirmPassword,
+                    hint: AppStrings.hintConfirmPassword,
+                    controller: _confirmCtrl,
+                    obscureText: !form.confirmVisible,
+                    textInputAction: TextInputAction.done,
+                    errorText: form.confirmError,
+                    onChanged: (_) =>
+                        context.read<RegisterFormCubit>().onFieldsChanged(
+                          _nameCtrl.text,
+                          _emailCtrl.text,
+                          _passCtrl.text,
+                          _confirmCtrl.text,
+                        ),
+                    suffixIcon: ExcludeFocus(
+                      child: IconButton(
+                        icon: AuthPasswordVisibilityIcon(
+                          passwordVisible: form.confirmVisible,
+                          logicalSize: 20.w,
+                        ),
+                        onPressed: () =>
+                            context.read<RegisterFormCubit>().toggleConfirm(),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 12.h),
+                  RegisterPasswordRequirementBar(),
+                  SizedBox(height: 24.h),
+                  AppButton(
+                    text: AppStrings.btnContinue,
+                    isLoading: isEmailLoading,
+                    onPressed: isEmailLoading || isGoogleLoading
+                        ? null
+                        : () => _submit(context),
+                  ),
+                  SizedBox(height: 12.h),
+                  const OrDivider(),
+                  SizedBox(height: 12.h),
+                  SocialAuthButton(
+                    provider: SocialProvider.google,
+                    onPressed: isEmailLoading || isGoogleLoading
+                        ? null
+                        : () => context.read<RegisterBloc>().add(
+                            const GoogleRegisterRequested(),
+                          ),
+                  ),
+                  SizedBox(height: 12.h),
+                  SocialAuthButton(
+                    provider: SocialProvider.apple,
+                    onPressed: () => _showComingSoon(context),
+                  ),
+                  SizedBox(height: 12.h),
                 ]),
               ),
             ),
             SliverFillRemaining(
               hasScrollBody: false,
               child: Padding(
-                padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 16.h + bottomInset),
+                padding: EdgeInsets.fromLTRB(
+                  24.w,
+                  8.h,
+                  24.w,
+                  16.h + bottomInset,
+                ),
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: Wrap(

@@ -32,17 +32,17 @@ class CreatedProjectEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        description,
-        type,
-        visibility,
-        state,
-        targetAmount,
-        endsAtUtc,
-        launchedAtUtc,
-        borrowingEnabled,
-        suggestedContributionAmount,
-        createdUtc,
-      ];
+    id,
+    name,
+    description,
+    type,
+    visibility,
+    state,
+    targetAmount,
+    endsAtUtc,
+    launchedAtUtc,
+    borrowingEnabled,
+    suggestedContributionAmount,
+    createdUtc,
+  ];
 }

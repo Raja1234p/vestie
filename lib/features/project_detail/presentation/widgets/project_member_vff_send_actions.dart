@@ -9,5 +9,7 @@ void sendMemberVffFromProjectDetail(
   BuildContext context, {
   required MemberEntity member,
 }) {
-  context.read<ProjectDetailBloc>().add(SendMemberVffRequestEvent(member: member));
+  context.read<ProjectDetailBloc>().add(
+    SendMemberVffRequestEvent(member: member),
+  );
 }

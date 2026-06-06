@@ -19,10 +19,7 @@ class ProjectInvitationState extends Equatable {
   });
 
   bool get canJoin =>
-      preview != null &&
-      !preview!.isExpired &&
-      preview!.isJoinable &&
-      !joining;
+      preview != null && !preview!.isExpired && preview!.isJoinable && !joining;
 
   ProjectInvitationState copyWith({
     bool? loading,
@@ -43,6 +40,11 @@ class ProjectInvitationState extends Equatable {
   }
 
   @override
-  List<Object?> get props =>
-      [loading, preview, errorMessage, joining, joinEffect];
+  List<Object?> get props => [
+    loading,
+    preview,
+    errorMessage,
+    joining,
+    joinEffect,
+  ];
 }

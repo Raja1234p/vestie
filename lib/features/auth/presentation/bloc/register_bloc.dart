@@ -22,10 +22,14 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     RegisterUseCase? registerUseCase,
     GoogleLoginUseCase? googleLoginUseCase,
     GetRiskDisclaimerUseCase? getRiskDisclaimerUseCase,
-  })  : _registerUseCase = registerUseCase ?? ServiceLocator.instance.registerUseCase,
-        _googleLoginUseCase = googleLoginUseCase ?? ServiceLocator.instance.googleLoginUseCase,
-        _getRiskDisclaimerUseCase = getRiskDisclaimerUseCase ?? ServiceLocator.instance.getRiskDisclaimerUseCase,
-        super(const RegisterInitial()) {
+  }) : _registerUseCase =
+           registerUseCase ?? ServiceLocator.instance.registerUseCase,
+       _googleLoginUseCase =
+           googleLoginUseCase ?? ServiceLocator.instance.googleLoginUseCase,
+       _getRiskDisclaimerUseCase =
+           getRiskDisclaimerUseCase ??
+           ServiceLocator.instance.getRiskDisclaimerUseCase,
+       super(const RegisterInitial()) {
     on<RegisterSubmitted>(_onRegisterSubmitted);
     on<GoogleRegisterRequested>(_onGoogleRegisterRequested);
     on<RegisterReset>((_, emit) => emit(const RegisterInitial()));
@@ -35,7 +39,8 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     RegisterSubmitted event,
     Emitter<RegisterState> emit,
   ) async {
-    final hasErrors = ValidationUtils.validateFullName(event.name) != null ||
+    final hasErrors =
+        ValidationUtils.validateFullName(event.name) != null ||
         ValidationUtils.validateEmail(event.email) != null ||
         ValidationUtils.validatePassword(event.password) != null ||
         ValidationUtils.validateConfirmPassword(
@@ -55,15 +60,18 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     );
 
     result.fold(
-      (failure) => emit(RegisterError(message: failure.message, title: failure.title)),
-      (_) => emit(RegisterSuccess(
-            user: User(
-              id: '',
-              name: event.name,
-              email: event.email,
-              userName: '',
-            ),
-          )),
+      (failure) =>
+          emit(RegisterError(message: failure.message, title: failure.title)),
+      (_) => emit(
+        RegisterSuccess(
+          user: User(
+            id: '',
+            name: event.name,
+            email: event.email,
+            userName: '',
+          ),
+        ),
+      ),
     );
   }
 
@@ -81,10 +89,12 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
           emit(const RegisterInitial());
           return;
         }
-        emit(RegisterError(
-          message: FailureMapper.userMessage(failure),
-          title: FailureMapper.dialogTitle(failure),
-        ));
+        emit(
+          RegisterError(
+            message: FailureMapper.userMessage(failure),
+            title: FailureMapper.dialogTitle(failure),
+          ),
+        );
       },
       (user) async {
         // Save tokens

@@ -7,18 +7,14 @@ import 'package:vestie/leader/features/create_project/domain/create_project_form
 import 'package:vestie/leader/features/create_project/presentation/cubit/create_project_cubit.dart';
 
 String _amountPromptFor(NewProjectCategory category) => switch (category) {
-      NewProjectCategory.vacation => AppStrings.projectAmountPromptVacation,
-      NewProjectCategory.investment =>
-        AppStrings.projectAmountPromptInvestment,
-      NewProjectCategory.emergency => AppStrings.projectAmountPromptEmergency,
-    };
+  NewProjectCategory.vacation => AppStrings.projectAmountPromptVacation,
+  NewProjectCategory.investment => AppStrings.projectAmountPromptInvestment,
+  NewProjectCategory.emergency => AppStrings.projectAmountPromptEmergency,
+};
 
 /// Figma “set amount” step — shared by [showCreateProjectAmountSheet] and route.
 class CreateProjectAmountSheetContent extends StatelessWidget {
-  const CreateProjectAmountSheetContent({
-    super.key,
-    required this.onFinished,
-  });
+  const CreateProjectAmountSheetContent({super.key, required this.onFinished});
 
   final ValueChanged<bool> onFinished;
 

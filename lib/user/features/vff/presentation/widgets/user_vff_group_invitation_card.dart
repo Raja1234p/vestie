@@ -31,9 +31,9 @@ class UserVffGroupInvitationCard extends StatelessWidget {
     final subtitle = '${AppStrings.userVffInvitedBy} ${item.invitedByName}';
     final primaryLabel =
         item.kind == UserVffGroupInviteKind.memberRequestJoin ||
-                item.primaryIsRequestToJoin
-            ? AppStrings.userVffRequestToJoin
-            : AppStrings.btnJoin;
+            item.primaryIsRequestToJoin
+        ? AppStrings.userVffRequestToJoin
+        : AppStrings.btnJoin;
     return Padding(
       padding: EdgeInsets.only(bottom: bottomSpacing ?? AppDimens.v12),
       child: Material(

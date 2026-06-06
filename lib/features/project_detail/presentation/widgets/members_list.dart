@@ -13,23 +13,18 @@ class MembersList extends StatelessWidget {
   final List<MemberEntity> members;
   final ValueChanged<MemberEntity>? onMemberTap;
 
-  const MembersList({
-    super.key,
-    required this.members,
-    this.onMemberTap,
-  });
+  const MembersList({super.key, required this.members, this.onMemberTap});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: members
-          .map((m) => Padding(
-            padding:  EdgeInsets.only(bottom: 12.h),
-            child: _MemberRow(
-              member: m,
-              onTap: onMemberTap,
+          .map(
+            (m) => Padding(
+              padding: EdgeInsets.only(bottom: 12.h),
+              child: _MemberRow(member: m, onTap: onMemberTap),
             ),
-          ))
+          )
           .toList(),
     );
   }
@@ -40,10 +35,7 @@ class _MemberRow extends StatelessWidget {
   final MemberEntity member;
   final ValueChanged<MemberEntity>? onTap;
 
-  const _MemberRow({
-    required this.member,
-    this.onTap,
-  });
+  const _MemberRow({required this.member, this.onTap});
 
   bool get _isNegative => member.contributedAmount < 0;
   bool get _showOverdueBadge =>
@@ -61,10 +53,10 @@ class _MemberRow extends StatelessWidget {
       onTap: onTap == null ? null : () => onTap!(member),
       behavior: HitTestBehavior.opaque,
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 16.h,horizontal: 16.w),
+        padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
         decoration: BoxDecoration(
           color: AppColors.grey100,
-          borderRadius: BorderRadius.circular(12.r)
+          borderRadius: BorderRadius.circular(12.r),
         ),
         child: Row(
           children: [

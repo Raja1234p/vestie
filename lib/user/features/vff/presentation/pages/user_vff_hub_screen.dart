@@ -30,9 +30,7 @@ final class UserVffHubScreen extends StatelessWidget {
           declineVffProjectInviteUseCase: sl.declineVffProjectInviteUseCase,
         );
         if (previewDemoCards) {
-          cubit.seedFromDemo(
-            previewHub ?? UserVffHubUiModel.demoFilled(),
-          );
+          cubit.seedFromDemo(previewHub ?? UserVffHubUiModel.demoFilled());
         } else {
           cubit.load();
         }

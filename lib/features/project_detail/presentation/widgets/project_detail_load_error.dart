@@ -36,10 +36,7 @@ class ProjectDetailLoadError extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20.h),
-            AppButton(
-              text: AppStrings.btnRetry,
-              onPressed: onRetry,
-            ),
+            AppButton(text: AppStrings.btnRetry, onPressed: onRetry),
           ],
         ),
       ),

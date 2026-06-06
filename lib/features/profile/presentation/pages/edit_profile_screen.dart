@@ -61,10 +61,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       );
     }
 
-    return BlocProvider.value(
-      value: cubit,
-      child: const _EditProfileForm(),
-    );
+    return BlocProvider.value(value: cubit, child: const _EditProfileForm());
   }
 }
 
@@ -263,8 +260,10 @@ class _ProfileFieldGroup extends StatelessWidget {
                 color: AppColors.authHint,
               ),
               border: InputBorder.none,
-              contentPadding:
-                  EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 14.w,
+                vertical: 14.h,
+              ),
             ),
           ),
         ),
@@ -272,10 +271,7 @@ class _ProfileFieldGroup extends StatelessWidget {
           SizedBox(height: 4.h),
           Text(
             errorText!,
-            style: GoogleFonts.lato(
-              fontSize: 12.sp,
-              color: AppColors.error,
-            ),
+            style: GoogleFonts.lato(fontSize: 12.sp, color: AppColors.error),
           ),
         ],
       ],

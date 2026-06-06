@@ -17,32 +17,39 @@ mixin UserVffInboxSyncMixin {
   ({
     List<UserVffIncomingRequestUi> incoming,
     List<UserVffGroupInviteUi> invites,
-  }) _mapReceivedInbox(VffReceivedInboxEntity inbox) => (
-        incoming: inbox.vffRequests
-            .map(UserVffHubMapper.inboxRequest)
-            .toList(growable: false),
-        invites: inbox.projectInvites
-            .map(UserVffHubMapper.projectInvite)
-            .toList(growable: false),
-      );
+  })
+  _mapReceivedInbox(VffReceivedInboxEntity inbox) => (
+    incoming: inbox.vffRequests
+        .map(UserVffHubMapper.inboxRequest)
+        .toList(growable: false),
+    invites: inbox.projectInvites
+        .map(UserVffHubMapper.projectInvite)
+        .toList(growable: false),
+  );
 
   /// Returns `null` on API failure so callers keep the current lists.
-  Future<({
-    List<UserVffIncomingRequestUi> incoming,
-    List<UserVffGroupInviteUi> invites,
-  })?> syncReceivedInbox() async {
+  Future<
+    ({
+      List<UserVffIncomingRequestUi> incoming,
+      List<UserVffGroupInviteUi> invites,
+    })?
+  >
+  syncReceivedInbox() async {
     final result = await inboxUseCase();
-    return result.fold(
-      (_) => null,
-      _mapReceivedInbox,
-    );
+    return result.fold((_) => null, _mapReceivedInbox);
   }
 
   /// Reload after accept / decline — surfaces API failure to the caller.
-  Future<Either<Failure, ({
-    List<UserVffIncomingRequestUi> incoming,
-    List<UserVffGroupInviteUi> invites,
-  })>> reloadReceivedInbox() async {
+  Future<
+    Either<
+      Failure,
+      ({
+        List<UserVffIncomingRequestUi> incoming,
+        List<UserVffGroupInviteUi> invites,
+      })
+    >
+  >
+  reloadReceivedInbox() async {
     final result = await inboxUseCase();
     return result.map(_mapReceivedInbox);
   }

@@ -17,10 +17,7 @@ import '../models/create_project_status_screen_args.dart';
 class CreateProjectStatusScreen extends StatelessWidget {
   final CreateProjectStatusScreenArgs args;
 
-  const CreateProjectStatusScreen({
-    super.key,
-    required this.args,
-  });
+  const CreateProjectStatusScreen({super.key, required this.args});
 
   void _finish(BuildContext context) => context.go(AppRoutes.dashboard);
 

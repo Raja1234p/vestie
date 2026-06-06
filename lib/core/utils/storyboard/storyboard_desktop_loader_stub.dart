@@ -5,5 +5,4 @@ Widget? implLoadStoryboardDesktopImage(
   String filename, {
   required String basePath,
   BoxFit fit = BoxFit.cover, // Ignored without dart:io
-}) =>
-    null;
+}) => null;

@@ -10,11 +10,7 @@ class AppMetricTile extends StatelessWidget {
   final String label;
   final String value;
 
-  const AppMetricTile({
-    super.key,
-    required this.label,
-    required this.value,
-  });
+  const AppMetricTile({super.key, required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {

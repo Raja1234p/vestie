@@ -27,15 +27,15 @@ class UserProfileEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        email,
-        userName,
-        firstName,
-        lastName,
-        photoUrl,
-        isEmailVerified,
-        status,
-        riskAcceptedAtUtc,
-        roles,
-      ];
+    id,
+    email,
+    userName,
+    firstName,
+    lastName,
+    photoUrl,
+    isEmailVerified,
+    status,
+    riskAcceptedAtUtc,
+    roles,
+  ];
 }

@@ -73,10 +73,7 @@ class _EmptyLedgerCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.projectFundsLedgerCardBg,
         borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(
-          color: AppColors.projectFundsLedgerBorder,
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.projectFundsLedgerBorder, width: 1),
       ),
       child: AppText(
         AppStrings.projectFundsHistoryEmpty,

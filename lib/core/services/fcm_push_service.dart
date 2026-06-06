@@ -64,19 +64,16 @@ class FcmPushService {
       // Create Android notification channel.
       await _localNotifications
           .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
+            AndroidFlutterLocalNotificationsPlugin
+          >()
           ?.createNotificationChannel(_androidChannel);
       _log('Android notification channel ready: ${_androidChannel.id}');
 
       // Init local notifications.
-      const androidInit =
-          AndroidInitializationSettings('@mipmap/ic_launcher');
+      const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
       const iosInit = DarwinInitializationSettings();
       await _localNotifications.initialize(
-        const InitializationSettings(
-          android: androidInit,
-          iOS: iosInit,
-        ),
+        const InitializationSettings(android: androidInit, iOS: iosInit),
       );
       _log('Local notifications initialized');
 
@@ -222,8 +219,9 @@ class FcmPushService {
       }
 
       if (!force) {
-        final stored =
-            await sl.sharedPrefs.getString(StorageKeys.fcmDeviceToken);
+        final stored = await sl.sharedPrefs.getString(
+          StorageKeys.fcmDeviceToken,
+        );
         if (stored == token) {
           _sessionSyncedToken = token;
           _log('token sync skipped: same as persisted token');
@@ -260,8 +258,7 @@ class FcmPushService {
     _sessionSyncedToken = null;
 
     final sl = ServiceLocator.instance;
-    final stored =
-        await sl.sharedPrefs.getString(StorageKeys.fcmDeviceToken);
+    final stored = await sl.sharedPrefs.getString(StorageKeys.fcmDeviceToken);
     if (stored != null && stored.isNotEmpty) {
       _log('unregisterDeviceToken API call start: ${_maskToken(stored)}');
       await sl.unregisterDeviceTokenUseCase(token: stored);

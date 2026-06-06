@@ -65,10 +65,7 @@ class ProfilePhotoDialog extends StatelessWidget {
                 child: IconButton(
                   onPressed: () => Navigator.of(context).pop(),
                   padding: EdgeInsets.zero,
-                  constraints: BoxConstraints(
-                    minWidth: 32.w,
-                    minHeight: 32.w,
-                  ),
+                  constraints: BoxConstraints(minWidth: 32.w, minHeight: 32.w),
                   icon: AppSvgIcon(
                     assetPath: AppAssets.iconClose,
                     size: 32.w,

@@ -18,14 +18,18 @@ class AppSuccessScreen extends StatelessWidget {
   final Widget? subtitleWidget;
   final Widget? customContent;
   final Widget? bottomContent;
+
   /// Replaces the default bottom [AppButton] when non-null (still uses standard footer inset).
   final Widget? footer;
   final String? buttonText;
   final VoidCallback? onButtonPressed;
+
   /// Hero image above the title; defaults to [AppAssets.successProjectCreated].
   final String? illustrationAsset;
+
   /// When set, content aligns to the top with this gap below [SafeArea] before the hero image.
   final double? illustrationTopSpacing;
+
   /// Title color; defaults to [AppColors.textPrimary].
   final Color? titleColor;
 
@@ -43,26 +47,28 @@ class AppSuccessScreen extends StatelessWidget {
     this.illustrationAsset,
     this.illustrationTopSpacing,
   }) : assert(
-          footer != null || (buttonText != null && onButtonPressed != null),
-          'Provide footer or both buttonText and onButtonPressed.',
-        );
+         footer != null || (buttonText != null && onButtonPressed != null),
+         'Provide footer or both buttonText and onButtonPressed.',
+       );
 
   @override
   Widget build(BuildContext context) {
-    final Widget? resolvedSubtitle = subtitleWidget ??
+    final Widget? resolvedSubtitle =
+        subtitleWidget ??
         (subtitle != null
             ? AppText(
                 subtitle!,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.w400,
-                      color: const Color(0xFF5E5783),
-                    ),
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.w400,
+                  color: const Color(0xFF5E5783),
+                ),
               )
             : null);
 
-    final Widget actionChild = footer ??
+    final Widget actionChild =
+        footer ??
         AppButton(
           text: buttonText!,
           color: AppColors.cardActionBtn,
@@ -91,14 +97,13 @@ class AppSuccessScreen extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           _SuccessIllustration(
-                            path: illustrationAsset ??
+                            path:
+                                illustrationAsset ??
                                 AppAssets.successProjectCreated,
                           ),
                           AppText(
                             title,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyLarge
+                            style: Theme.of(context).textTheme.bodyLarge
                                 ?.copyWith(
                                   fontSize: 26.sp,
                                   fontWeight: FontWeight.bold,
@@ -160,10 +165,7 @@ class _HomeEmptyStateBackground extends StatelessWidget {
 }
 
 class _SuccessScrollBody extends StatelessWidget {
-  const _SuccessScrollBody({
-    required this.child,
-    this.topSpacing,
-  });
+  const _SuccessScrollBody({required this.child, this.topSpacing});
 
   final Widget child;
   final double? topSpacing;
@@ -171,18 +173,12 @@ class _SuccessScrollBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scrollView = SingleChildScrollView(
-      padding: EdgeInsets.only(
-        top: topSpacing ?? 16.h,
-        bottom: 16.h,
-      ),
+      padding: EdgeInsets.only(top: topSpacing ?? 16.h, bottom: 16.h),
       child: child,
     );
 
     if (topSpacing != null) {
-      return Align(
-        alignment: Alignment.topCenter,
-        child: scrollView,
-      );
+      return Align(alignment: Alignment.topCenter, child: scrollView);
     }
 
     return Center(child: scrollView);
@@ -200,11 +196,6 @@ class _SuccessIllustration extends StatelessWidget {
       return const FailureIcon();
     }
     final s = 174.w;
-    return Image.asset(
-      path,
-      width: s,
-      height: s,
-      fit: BoxFit.contain,
-    );
+    return Image.asset(path, width: s, height: s, fit: BoxFit.contain);
   }
 }

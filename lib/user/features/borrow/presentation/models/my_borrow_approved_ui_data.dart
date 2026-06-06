@@ -3,8 +3,10 @@ class MyBorrowApprovedUiData {
   final double borrowAmount;
   final String borrowDateLabel;
   final String dueDateLabel;
+
   /// Shown on My Borrow breakdown card.
   final double totalRepayment;
+
   /// Shown on repay confirm (may include fees).
   final double totalRepaymentDue;
   final int penaltyPercent;

@@ -72,10 +72,7 @@ class _MemberSuccessVoteContentState extends State<MemberSuccessVoteContent> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: MemberSuccessVoteScrollBody(
-        data: widget.data,
-        choice: _choice,
-      ),
+      body: MemberSuccessVoteScrollBody(data: widget.data, choice: _choice),
       bottomNavigationBar: _bottomBar(),
     );
   }

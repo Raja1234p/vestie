@@ -39,16 +39,24 @@ class RegisterFormState extends Equatable {
       confirmVisible: confirmVisible ?? this.confirmVisible,
       nameError: clearName ? null : (nameError ?? this.nameError),
       emailError: clearEmail ? null : (emailError ?? this.emailError),
-      passwordError:
-          clearPassword ? null : (passwordError ?? this.passwordError),
+      passwordError: clearPassword
+          ? null
+          : (passwordError ?? this.passwordError),
       confirmError: clearConfirm ? null : (confirmError ?? this.confirmError),
       isValid: isValid ?? this.isValid,
     );
   }
 
   @override
-  List<Object?> get props =>
-      [passwordVisible, confirmVisible, nameError, emailError, passwordError, confirmError, isValid];
+  List<Object?> get props => [
+    passwordVisible,
+    confirmVisible,
+    nameError,
+    emailError,
+    passwordError,
+    confirmError,
+    isValid,
+  ];
 }
 
 /// Manages register form UI state only.
@@ -62,22 +70,33 @@ class RegisterFormCubit extends Cubit<RegisterFormState> {
   void toggleConfirm() =>
       emit(state.copyWith(confirmVisible: !state.confirmVisible));
 
-  void clearNameError()     => emit(state.copyWith(clearName: true));
-  void clearEmailError()    => emit(state.copyWith(clearEmail: true));
+  void clearNameError() => emit(state.copyWith(clearName: true));
+  void clearEmailError() => emit(state.copyWith(clearEmail: true));
   void clearPasswordError() => emit(state.copyWith(clearPassword: true));
-  void clearConfirmError()  => emit(state.copyWith(clearConfirm: true));
+  void clearConfirmError() => emit(state.copyWith(clearConfirm: true));
 
-  void onFieldsChanged(String name, String email, String password, String confirm) {
-    emit(state.copyWith(
-      clearName: state.nameError != null &&
-          ValidationUtils.validateFullName(name) == null,
-      clearEmail: state.emailError != null &&
-          ValidationUtils.validateEmail(email) == null,
-      clearPassword: state.passwordError != null &&
-          ValidationUtils.validatePassword(password) == null,
-      clearConfirm: state.confirmError != null &&
-          ValidationUtils.validateConfirmPassword(confirm, password) == null,
-    ));
+  void onFieldsChanged(
+    String name,
+    String email,
+    String password,
+    String confirm,
+  ) {
+    emit(
+      state.copyWith(
+        clearName:
+            state.nameError != null &&
+            ValidationUtils.validateFullName(name) == null,
+        clearEmail:
+            state.emailError != null &&
+            ValidationUtils.validateEmail(email) == null,
+        clearPassword:
+            state.passwordError != null &&
+            ValidationUtils.validatePassword(password) == null,
+        clearConfirm:
+            state.confirmError != null &&
+            ValidationUtils.validateConfirmPassword(confirm, password) == null,
+      ),
+    );
   }
 
   /// Runs all field rules, shows errors on the form, returns whether submit may proceed.
@@ -85,23 +104,28 @@ class RegisterFormCubit extends Cubit<RegisterFormState> {
     final nameErr = ValidationUtils.validateFullName(name);
     final emailErr = ValidationUtils.validateEmail(email);
     final passErr = ValidationUtils.validatePassword(password);
-    final confirmErr =
-        ValidationUtils.validateConfirmPassword(confirm, password);
-    final allValid = nameErr == null &&
+    final confirmErr = ValidationUtils.validateConfirmPassword(
+      confirm,
+      password,
+    );
+    final allValid =
+        nameErr == null &&
         emailErr == null &&
         passErr == null &&
         confirmErr == null;
 
     // Full emit so null errors clear previous messages (copyWith cannot set null).
-    emit(RegisterFormState(
-      passwordVisible: state.passwordVisible,
-      confirmVisible: state.confirmVisible,
-      nameError: nameErr,
-      emailError: emailErr,
-      passwordError: passErr,
-      confirmError: confirmErr,
-      isValid: allValid,
-    ));
+    emit(
+      RegisterFormState(
+        passwordVisible: state.passwordVisible,
+        confirmVisible: state.confirmVisible,
+        nameError: nameErr,
+        emailError: emailErr,
+        passwordError: passErr,
+        confirmError: confirmErr,
+        isValid: allValid,
+      ),
+    );
     return allValid;
   }
 

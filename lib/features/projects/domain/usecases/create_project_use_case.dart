@@ -10,8 +10,9 @@ class CreateProjectUseCase {
 
   CreateProjectUseCase(this._repository);
 
-  Future<Either<Failure, CreatedProjectEntity>> call({required CreateProjectForm form}) {
+  Future<Either<Failure, CreatedProjectEntity>> call({
+    required CreateProjectForm form,
+  }) {
     return _repository.createProject(form: form);
   }
 }
-

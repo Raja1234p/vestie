@@ -24,10 +24,7 @@ class LeaderManageMembersList extends StatelessWidget {
           .map(
             (member) => Padding(
               padding: EdgeInsets.only(bottom: 12.h),
-              child: _LeaderMemberRow(
-                member: member,
-                onTap: onMemberTap,
-              ),
+              child: _LeaderMemberRow(member: member, onTap: onMemberTap),
             ),
           )
           .toList(),
@@ -39,10 +36,7 @@ class _LeaderMemberRow extends StatelessWidget {
   final MemberEntity member;
   final ValueChanged<MemberEntity>? onTap;
 
-  const _LeaderMemberRow({
-    required this.member,
-    this.onTap,
-  });
+  const _LeaderMemberRow({required this.member, this.onTap});
 
   bool get _showOverdue =>
       member.overdueAmount != null && member.overdueAmount! > 0;
@@ -78,23 +72,24 @@ class _LeaderMemberRow extends StatelessWidget {
                   AppText(
                     member.name,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.grey1000,
-                        ),
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.grey1000,
+                    ),
                   ),
                   SizedBox(height: 2.h),
                   AppText(
                     '${AppStrings.labelContributedWithColon}\$${_fmt(member.contributedAmount.abs())}',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontSize: 14.sp,
-                          color: AppColors.grey1000,
-                        ),
+                      fontSize: 14.sp,
+                      color: AppColors.grey1000,
+                    ),
                   ),
                 ],
               ),
             ),
-            if (_showOverdue) _LeaderOverdueBadge(amount: member.overdueAmount!),
+            if (_showOverdue)
+              _LeaderOverdueBadge(amount: member.overdueAmount!),
           ],
         ),
       ),
@@ -121,10 +116,10 @@ class _LeaderOverdueBadge extends StatelessWidget {
       child: AppText(
         '${AppStrings.overdueLabel.toUpperCase()} - \$${_fmt(amount)}',
         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              fontSize: 10.sp,
-              fontWeight: FontWeight.w700,
-              color: AppColors.red800,
-            ),
+          fontSize: 10.sp,
+          fontWeight: FontWeight.w700,
+          color: AppColors.red800,
+        ),
       ),
     );
   }

@@ -59,22 +59,23 @@ class VerificationState extends Equatable {
       isSuccess: isSuccess ?? this.isSuccess,
       resendSeconds: resendSeconds ?? this.resendSeconds,
       isValid: isValid ?? this.isValid,
-      resendMessage:
-          clearResendMessage ? null : (resendMessage ?? this.resendMessage),
+      resendMessage: clearResendMessage
+          ? null
+          : (resendMessage ?? this.resendMessage),
     );
   }
 
   @override
   List<Object?> get props => [
-        isLoading,
-        isResending,
-        error,
-        title,
-        isSuccess,
-        resendSeconds,
-        isValid,
-        resendMessage,
-      ];
+    isLoading,
+    isResending,
+    error,
+    title,
+    isSuccess,
+    resendSeconds,
+    isValid,
+    resendMessage,
+  ];
 }
 
 // ─── Cubit ──────────────────────────────────────────────────────────────────
@@ -85,13 +86,14 @@ class VerificationCubit extends Cubit<VerificationState> {
     VerifyEmailUseCase? verifyEmailUseCase,
     ResendCodeUseCase? resendCodeUseCase,
     ForgotPasswordUseCase? forgotPasswordUseCase,
-  })  : _verifyEmailUseCase =
-            verifyEmailUseCase ?? ServiceLocator.instance.verifyEmailUseCase,
-        _resendCodeUseCase =
-            resendCodeUseCase ?? ServiceLocator.instance.resendCodeUseCase,
-        _forgotPasswordUseCase =
-            forgotPasswordUseCase ?? ServiceLocator.instance.forgotPasswordUseCase,
-        super(const VerificationState()) {
+  }) : _verifyEmailUseCase =
+           verifyEmailUseCase ?? ServiceLocator.instance.verifyEmailUseCase,
+       _resendCodeUseCase =
+           resendCodeUseCase ?? ServiceLocator.instance.resendCodeUseCase,
+       _forgotPasswordUseCase =
+           forgotPasswordUseCase ??
+           ServiceLocator.instance.forgotPasswordUseCase,
+       super(const VerificationState()) {
     _startResendCountdown();
   }
 
@@ -117,8 +119,9 @@ class VerificationCubit extends Cubit<VerificationState> {
   }
 
   void onCodeChanged(String code) {
-    emit(state.copyWith(
-        isValid: ValidationUtils.validateOtpCode(code) == null));
+    emit(
+      state.copyWith(isValid: ValidationUtils.validateOtpCode(code) == null),
+    );
   }
 
   Future<void> verifyCode(String code) async {
@@ -134,11 +137,13 @@ class VerificationCubit extends Cubit<VerificationState> {
 
     if (!isClosed) {
       result.fold(
-        (failure) => emit(state.copyWith(
-          isLoading: false,
-          error: failure.message,
-          title: failure.title,
-        )),
+        (failure) => emit(
+          state.copyWith(
+            isLoading: false,
+            error: failure.message,
+            title: failure.title,
+          ),
+        ),
         (user) async {
           if (flow == VerifyFlow.registration) {
             await _persistSessionAfterRegistrationVerify(user);
@@ -182,11 +187,9 @@ class VerificationCubit extends Cubit<VerificationState> {
 
   Future<void> resendCode() async {
     if (!state.canResend || state.isResending) return;
-    emit(state.copyWith(
-      resendSeconds: 60,
-      clearError: true,
-      isResending: true,
-    ));
+    emit(
+      state.copyWith(resendSeconds: 60, clearError: true, isResending: true),
+    );
     _startResendCountdown();
 
     final Either<Failure, String> result = flow == VerifyFlow.forgotPassword
@@ -196,15 +199,15 @@ class VerificationCubit extends Cubit<VerificationState> {
     if (isClosed) return;
 
     result.fold(
-      (failure) => emit(state.copyWith(
-        isResending: false,
-        error: failure.message,
-        title: failure.title,
-      )),
-      (message) => emit(state.copyWith(
-        isResending: false,
-        resendMessage: message,
-      )),
+      (failure) => emit(
+        state.copyWith(
+          isResending: false,
+          error: failure.message,
+          title: failure.title,
+        ),
+      ),
+      (message) =>
+          emit(state.copyWith(isResending: false, resendMessage: message)),
     );
   }
 
@@ -214,12 +217,14 @@ class VerificationCubit extends Cubit<VerificationState> {
 
   /// After [AppRoutes.resetPassword] is popped/replaced — clear OTP UI so user can re-enter code.
   void clearCodeAfterResetPasswordRoutePopped() {
-    emit(state.copyWith(
-      isSuccess: false,
-      isValid: false,
-      isResending: false,
-      clearError: true,
-    ));
+    emit(
+      state.copyWith(
+        isSuccess: false,
+        isValid: false,
+        isResending: false,
+        clearError: true,
+      ),
+    );
   }
 
   @override

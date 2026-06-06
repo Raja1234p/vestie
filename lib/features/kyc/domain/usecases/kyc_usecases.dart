@@ -22,10 +22,9 @@ class StartKycUseCase {
     String country = 'US',
     String? refreshUrl,
     String? returnUrl,
-  }) =>
-      repository.startOnboarding(
-        country: country,
-        refreshUrl: refreshUrl,
-        returnUrl: returnUrl,
-      );
+  }) => repository.startOnboarding(
+    country: country,
+    refreshUrl: refreshUrl,
+    returnUrl: returnUrl,
+  );
 }

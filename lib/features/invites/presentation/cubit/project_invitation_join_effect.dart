@@ -33,7 +33,8 @@ final class ProjectInvitationJoinShowRequestSubmitted
   List<Object?> get props => [projectId, projectName, isInvestment];
 }
 
-final class ProjectInvitationJoinOpenDetail extends ProjectInvitationJoinEffect {
+final class ProjectInvitationJoinOpenDetail
+    extends ProjectInvitationJoinEffect {
   final String projectId;
   final String projectName;
   final bool isInvestment;

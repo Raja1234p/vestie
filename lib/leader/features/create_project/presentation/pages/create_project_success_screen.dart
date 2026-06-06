@@ -38,7 +38,8 @@ class CreateProjectSuccessScreen extends StatefulWidget {
       _CreateProjectSuccessScreenState();
 }
 
-class _CreateProjectSuccessScreenState extends State<CreateProjectSuccessScreen> {
+class _CreateProjectSuccessScreenState
+    extends State<CreateProjectSuccessScreen> {
   bool _loadingInvite = true;
   String? _shareText;
 
@@ -102,9 +103,9 @@ class _CreateProjectSuccessScreenState extends State<CreateProjectSuccessScreen>
           onButtonPressed: () {
             final apiName = widget.projectName?.trim() ?? '';
             final formName = form.projectName.trim();
-            final detailName =
-                apiName.isNotEmpty ? apiName : formName;
-            final isInvestment = widget.isInvestment ||
+            final detailName = apiName.isNotEmpty ? apiName : formName;
+            final isInvestment =
+                widget.isInvestment ||
                 form.category == NewProjectCategory.investment;
             context.read<CreateProjectCubit>().reset();
             openProjectDetailAfterCreateSuccess(
@@ -117,8 +118,7 @@ class _CreateProjectSuccessScreenState extends State<CreateProjectSuccessScreen>
           customContent: Column(
             children: [
               Container(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
                 decoration: BoxDecoration(
                   color: AppColors.purple300.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(12.r),
@@ -140,9 +140,7 @@ class _CreateProjectSuccessScreenState extends State<CreateProjectSuccessScreen>
                           Expanded(
                             child: AppText(
                               shareLink,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyLarge
+                              style: Theme.of(context).textTheme.bodyLarge
                                   ?.copyWith(
                                     fontSize: 15.sp,
                                     color: Colors.black,
@@ -155,9 +153,12 @@ class _CreateProjectSuccessScreenState extends State<CreateProjectSuccessScreen>
                             onTap: canShare
                                 ? () {
                                     Clipboard.setData(
-                                        ClipboardData(text: shareLink));
+                                      ClipboardData(text: shareLink),
+                                    );
                                     AppSnackBar.showSuccess(
-                                        context, AppStrings.linkCopied);
+                                      context,
+                                      AppStrings.linkCopied,
+                                    );
                                   }
                                 : null,
                             child: AppSvgIcon(
@@ -186,10 +187,10 @@ class _CreateProjectSuccessScreenState extends State<CreateProjectSuccessScreen>
             child: AppText(
               AppStrings.shareViaWhatsapp,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontSize: 17.sp,
-                    fontWeight: FontWeight.w800,
-                    color: canShare ? Colors.black : AppColors.grey500,
-                  ),
+                fontSize: 17.sp,
+                fontWeight: FontWeight.w800,
+                color: canShare ? Colors.black : AppColors.grey500,
+              ),
             ),
           ),
         );

@@ -39,10 +39,8 @@ Rect _rectOf(WidgetTester tester, Finder finder) {
   return tester.getRect(finder);
 }
 
-Finder get _contentColumn => find.descendant(
-      of: find.byType(Center),
-      matching: find.byType(Column),
-    );
+Finder get _contentColumn =>
+    find.descendant(of: find.byType(Center), matching: find.byType(Column));
 
 void main() {
   group('UserVffHubEmptyBody layout', () {
@@ -66,8 +64,9 @@ void main() {
       expect(find.byType(Center), findsOneWidget);
     });
 
-    testWidgets('centers content vertically and horizontally in host',
-        (tester) async {
+    testWidgets('centers content vertically and horizontally in host', (
+      tester,
+    ) async {
       await _pumpEmptyHost(
         tester,
         child: const UserVffHubEmptyBody(
@@ -82,8 +81,9 @@ void main() {
       expect(contentRect.center.dy, closeTo(hostRect.center.dy, 2));
     });
 
-    testWidgets('centers content when wrapped in full-list empty inset',
-        (tester) async {
+    testWidgets('centers content when wrapped in full-list empty inset', (
+      tester,
+    ) async {
       await _pumpEmptyHost(
         tester,
         child: Padding(
@@ -131,8 +131,9 @@ void main() {
   });
 
   group('VFF full-list empty inset', () {
-    testWidgets('uses horizontal-only padding so empty state can center',
-        (tester) async {
+    testWidgets('uses horizontal-only padding so empty state can center', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         ScreenUtilInit(
           designSize: const Size(390, 844),

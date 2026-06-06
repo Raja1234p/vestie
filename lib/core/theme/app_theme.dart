@@ -20,11 +20,11 @@ class AppTheme {
       scaffoldBackgroundColor: AppColors.background,
       textTheme: GoogleFonts.latoTextTheme(
         TextTheme(
-        displayLarge: AppTextStyles.displayLarge,
-        titleLarge: AppTextStyles.titleLarge,
-        bodyLarge: AppTextStyles.bodyLarge,
-        bodyMedium: AppTextStyles.bodyMedium,
-        labelLarge: AppTextStyles.labelLarge,
+          displayLarge: AppTextStyles.displayLarge,
+          titleLarge: AppTextStyles.titleLarge,
+          bodyLarge: AppTextStyles.bodyLarge,
+          bodyMedium: AppTextStyles.bodyMedium,
+          labelLarge: AppTextStyles.labelLarge,
         ),
       ),
       appBarTheme: const AppBarTheme(

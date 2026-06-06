@@ -5,26 +5,18 @@ import '../../constants/app_assets.dart';
 class PostAuthGradientBackground extends StatelessWidget {
   final Widget child;
 
-  const PostAuthGradientBackground({
-    super.key,
-    required this.child,
-  });
+  const PostAuthGradientBackground({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        const Positioned.fill(
-          child: ColoredBox(color: Colors.white),
-        ),
+        const Positioned.fill(child: ColoredBox(color: Colors.white)),
         Positioned(
           top: 0,
           left: 0,
           right: 0,
-          child: Image.asset(
-            AppAssets.headerGradient,
-            fit: BoxFit.cover,
-          ),
+          child: Image.asset(AppAssets.headerGradient, fit: BoxFit.cover),
         ),
         Positioned.fill(child: child),
       ],

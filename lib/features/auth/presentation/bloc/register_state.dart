@@ -20,13 +20,15 @@ class RegisterLoading extends RegisterState {
 
 /// Google sign-up in progress ([AppLoadingDialog] on register screen).
 class RegisterGoogleLoading extends RegisterState {
-  const RegisterGoogleLoading() : super(status: FormSubmissionStatus.submitting);
+  const RegisterGoogleLoading()
+    : super(status: FormSubmissionStatus.submitting);
 }
 
 class RegisterSuccess extends RegisterState {
   final User user;
 
-  const RegisterSuccess({required this.user}) : super(status: FormSubmissionStatus.success);
+  const RegisterSuccess({required this.user})
+    : super(status: FormSubmissionStatus.success);
 
   @override
   List<Object?> get props => [status, errorMessage, validationErrors, user];
@@ -43,15 +45,26 @@ class RegisterError extends RegisterState {
   }) : super(status: FormSubmissionStatus.failure, errorMessage: message);
 
   @override
-  List<Object?> get props => [status, errorMessage, validationErrors, message, title];
+  List<Object?> get props => [
+    status,
+    errorMessage,
+    validationErrors,
+    message,
+    title,
+  ];
 }
 
 class RegisterGoogleSuccess extends RegisterState {
   final bool isDisclaimerAccepted;
 
   const RegisterGoogleSuccess({required this.isDisclaimerAccepted})
-      : super(status: FormSubmissionStatus.success);
+    : super(status: FormSubmissionStatus.success);
 
   @override
-  List<Object?> get props => [status, errorMessage, validationErrors, isDisclaimerAccepted];
+  List<Object?> get props => [
+    status,
+    errorMessage,
+    validationErrors,
+    isDisclaimerAccepted,
+  ];
 }

@@ -33,7 +33,8 @@ class PaymentMethodApiModel {
 
     return PaymentMethodApiModel(
       id: json.safeString('id'),
-      holderName: json.safeStringNullable('holderName') ??
+      holderName:
+          json.safeStringNullable('holderName') ??
           json.safeStringNullable('cardholderName'),
       last4: json.safeString('last4'),
       maskedNumber: json.safeStringNullable('maskedNumber'),

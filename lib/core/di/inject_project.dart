@@ -32,10 +32,10 @@ import 'service_locator.dart';
 /// Registers projects, project detail, actions, pot, announcements, voting.
 void registerProjectDependencies(ServiceLocator sl) {
   sl.projectsRemoteDataSource = ProjectsRemoteDataSourceImpl(sl.dioClient);
-  sl.projectsRepository =
-      ProjectsRepositoryImpl(sl.projectsRemoteDataSource);
-  sl.projectRemoteDataSource =
-      ProjectRemoteDataSourceImpl(apiClient: sl.apiClient);
+  sl.projectsRepository = ProjectsRepositoryImpl(sl.projectsRemoteDataSource);
+  sl.projectRemoteDataSource = ProjectRemoteDataSourceImpl(
+    apiClient: sl.apiClient,
+  );
   sl.projectRepository = ProjectRepositoryImpl(
     remoteDataSource: sl.projectRemoteDataSource,
     localDataSource: sl.projectLocalDataSource,
@@ -43,62 +43,77 @@ void registerProjectDependencies(ServiceLocator sl) {
   );
   sl.listProjectsUseCase = ListProjectsUseCase(sl.projectsRepository);
   sl.createProjectUseCase = CreateProjectUseCase(sl.projectsRepository);
-  sl.createAndLaunchProjectUseCase =
-      CreateAndLaunchProjectUseCase(sl.projectsRepository);
+  sl.createAndLaunchProjectUseCase = CreateAndLaunchProjectUseCase(
+    sl.projectsRepository,
+  );
   sl.previewInviteUseCase = PreviewInviteUseCase(sl.projectRepository);
   sl.joinProjectUseCase = JoinProjectUseCase(sl.projectRepository);
 
-  sl.projectDetailRemoteDataSource =
-      ProjectDetailRemoteDataSourceImpl(sl.dioClient);
-  sl.projectDetailRepository =
-      ProjectDetailRepositoryImpl(sl.projectDetailRemoteDataSource);
+  sl.projectDetailRemoteDataSource = ProjectDetailRemoteDataSourceImpl(
+    sl.dioClient,
+  );
+  sl.projectDetailRepository = ProjectDetailRepositoryImpl(
+    sl.projectDetailRemoteDataSource,
+  );
   sl.getProjectDetailUseCase = GetProjectDetailUseCase(sl.projectRepository);
-  sl.projectActionsRemoteDataSource =
-      ProjectActionsRemoteDataSourceImpl(apiClient: sl.apiClient);
+  sl.projectActionsRemoteDataSource = ProjectActionsRemoteDataSourceImpl(
+    apiClient: sl.apiClient,
+  );
   sl.projectActionsRepository = ProjectActionsRepositoryImpl(
     remoteDataSource: sl.projectActionsRemoteDataSource,
   );
-  sl.openClosureVotingUseCase =
-      OpenClosureVotingUseCase(sl.projectActionsRepository);
-  sl.openStopContributionsVotingUseCase =
-      OpenStopContributionsVotingUseCase(sl.projectActionsRepository);
+  sl.openClosureVotingUseCase = OpenClosureVotingUseCase(
+    sl.projectActionsRepository,
+  );
+  sl.openStopContributionsVotingUseCase = OpenStopContributionsVotingUseCase(
+    sl.projectActionsRepository,
+  );
   sl.cancelProjectUseCase = CancelProjectUseCase(sl.projectActionsRepository);
   sl.leaveProjectUseCase = LeaveProjectUseCase(sl.projectActionsRepository);
-  sl.listPendingJoinRequestsUseCase =
-      ListPendingJoinRequestsUseCase(sl.projectActionsRepository);
-  sl.approveMembershipUseCase =
-      ApproveMembershipUseCase(sl.projectActionsRepository);
-  sl.rejectMembershipUseCase =
-      RejectMembershipUseCase(sl.projectActionsRepository);
+  sl.listPendingJoinRequestsUseCase = ListPendingJoinRequestsUseCase(
+    sl.projectActionsRepository,
+  );
+  sl.approveMembershipUseCase = ApproveMembershipUseCase(
+    sl.projectActionsRepository,
+  );
+  sl.rejectMembershipUseCase = RejectMembershipUseCase(
+    sl.projectActionsRepository,
+  );
   sl.createInviteUseCase = CreateInviteUseCase(sl.projectActionsRepository);
-  sl.assignCoLeaderUseCase =
-      AssignCoLeaderUseCase(sl.projectActionsRepository);
-  sl.removeCoLeaderUseCase =
-      RemoveCoLeaderUseCase(sl.projectActionsRepository);
-  sl.updateCoLeaderRoleUseCase =
-      UpdateCoLeaderRoleUseCase(sl.projectActionsRepository);
+  sl.assignCoLeaderUseCase = AssignCoLeaderUseCase(sl.projectActionsRepository);
+  sl.removeCoLeaderUseCase = RemoveCoLeaderUseCase(sl.projectActionsRepository);
+  sl.updateCoLeaderRoleUseCase = UpdateCoLeaderRoleUseCase(
+    sl.projectActionsRepository,
+  );
   sl.removeMemberUseCase = RemoveMemberUseCase(sl.projectActionsRepository);
-  sl.getMemberActivityUseCase =
-      GetMemberActivityUseCase(sl.projectActionsRepository);
+  sl.getMemberActivityUseCase = GetMemberActivityUseCase(
+    sl.projectActionsRepository,
+  );
   sl.markDefaultedUseCase = MarkDefaultedUseCase(sl.projectActionsRepository);
-  sl.removeForNonRepaymentUseCase =
-      RemoveForNonRepaymentUseCase(sl.projectActionsRepository);
-  sl.castClosureVoteUseCase =
-      CastClosureVoteUseCase(sl.projectActionsRepository);
-  sl.extendClosureVotingUseCase =
-      ExtendClosureVotingUseCase(sl.projectActionsRepository);
-  sl.finalizeClosureVotingUseCase =
-      FinalizeClosureVotingUseCase(sl.projectActionsRepository);
+  sl.removeForNonRepaymentUseCase = RemoveForNonRepaymentUseCase(
+    sl.projectActionsRepository,
+  );
+  sl.castClosureVoteUseCase = CastClosureVoteUseCase(
+    sl.projectActionsRepository,
+  );
+  sl.extendClosureVotingUseCase = ExtendClosureVotingUseCase(
+    sl.projectActionsRepository,
+  );
+  sl.finalizeClosureVotingUseCase = FinalizeClosureVotingUseCase(
+    sl.projectActionsRepository,
+  );
   sl.resolveGoalUseCase = ResolveGoalUseCase(sl.projectActionsRepository);
-  sl.extendDeadlineUseCase =
-      ExtendDeadlineUseCase(sl.projectActionsRepository);
-  sl.completeProjectUseCase =
-      CompleteProjectUseCase(sl.projectActionsRepository);
+  sl.extendDeadlineUseCase = ExtendDeadlineUseCase(sl.projectActionsRepository);
+  sl.completeProjectUseCase = CompleteProjectUseCase(
+    sl.projectActionsRepository,
+  );
 
-  sl.projectPotRemoteDataSource =
-      ProjectPotRemoteDataSourceImpl(apiClient: sl.apiClient);
-  sl.projectPotRepository =
-      ProjectPotRepositoryImpl(remoteDataSource: sl.projectPotRemoteDataSource);
+  sl.projectPotRemoteDataSource = ProjectPotRemoteDataSourceImpl(
+    apiClient: sl.apiClient,
+  );
+  sl.projectPotRepository = ProjectPotRepositoryImpl(
+    remoteDataSource: sl.projectPotRemoteDataSource,
+  );
   sl.getProjectPotUseCase = GetProjectPotUseCase(sl.projectPotRepository);
 
   sl.projectAnnouncementsRemoteDataSource =
@@ -106,20 +121,26 @@ void registerProjectDependencies(ServiceLocator sl) {
   sl.projectAnnouncementsRepository = ProjectAnnouncementsRepositoryImpl(
     remoteDataSource: sl.projectAnnouncementsRemoteDataSource,
   );
-  sl.createProjectAnnouncementUseCase =
-      CreateProjectAnnouncementUseCase(sl.projectAnnouncementsRepository);
-  sl.deleteProjectAnnouncementUseCase =
-      DeleteProjectAnnouncementUseCase(sl.projectAnnouncementsRepository);
+  sl.createProjectAnnouncementUseCase = CreateProjectAnnouncementUseCase(
+    sl.projectAnnouncementsRepository,
+  );
+  sl.deleteProjectAnnouncementUseCase = DeleteProjectAnnouncementUseCase(
+    sl.projectAnnouncementsRepository,
+  );
 
-  sl.votingRemoteDataSource =
-      VotingRemoteDataSourceImpl(apiClient: sl.apiClient);
-  sl.votingRepository =
-      VotingRepositoryImpl(remoteDataSource: sl.votingRemoteDataSource);
+  sl.votingRemoteDataSource = VotingRemoteDataSourceImpl(
+    apiClient: sl.apiClient,
+  );
+  sl.votingRepository = VotingRepositoryImpl(
+    remoteDataSource: sl.votingRemoteDataSource,
+  );
   sl.submitVoteUseCase = SubmitVoteUseCase(repository: sl.votingRepository);
-  sl.moderateMemberUseCase =
-      ModerateMemberUseCase(repository: sl.projectActionsRepository);
+  sl.moderateMemberUseCase = ModerateMemberUseCase(
+    repository: sl.projectActionsRepository,
+  );
 
-  sl.moderationBloc =
-      ModerationBloc(moderateMemberUseCase: sl.moderateMemberUseCase);
+  sl.moderationBloc = ModerationBloc(
+    moderateMemberUseCase: sl.moderateMemberUseCase,
+  );
   sl.votingBloc = VotingBloc(submitVoteUseCase: sl.submitVoteUseCase);
 }

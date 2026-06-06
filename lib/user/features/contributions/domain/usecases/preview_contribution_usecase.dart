@@ -9,7 +9,9 @@ class PreviewContributionUseCase {
 
   PreviewContributionUseCase(this.repository);
 
-  Future<Either<Failure, ContributionPreviewEntity>> call(PreviewContributionParams params) async {
+  Future<Either<Failure, ContributionPreviewEntity>> call(
+    PreviewContributionParams params,
+  ) async {
     return await repository.previewContribution(
       projectId: params.projectId,
       membershipId: params.membershipId,
@@ -43,12 +45,12 @@ class PreviewContributionParams extends Equatable {
 
   @override
   List<Object?> get props => [
-        projectId,
-        membershipId,
-        walletId,
-        amount,
-        currency,
-        externalReference,
-        confirmNonRefundable,
-      ];
+    projectId,
+    membershipId,
+    walletId,
+    amount,
+    currency,
+    externalReference,
+    confirmNonRefundable,
+  ];
 }

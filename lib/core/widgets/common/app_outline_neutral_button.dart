@@ -9,11 +9,14 @@ class AppOutlineNeutralButton extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
   final double? borderRadius;
+
   /// When null, uses [AppColors.neutral1200].
   final Color? borderColor;
+
   /// When null, uses [AppColors.surface].
   final Color? backgroundColor;
   final Widget? leading;
+
   /// When null, uses [AppColors.neutral1200] for the label.
   final Color? labelColor;
   final bool isLoading;
@@ -47,7 +50,9 @@ class AppOutlineNeutralButton extends StatelessWidget {
         : (borderColor ?? AppColors.neutral1200);
     final textColor = labelColor ?? AppColors.neutral1200;
     return Material(
-      color: borderless ? Colors.transparent : (backgroundColor ?? AppColors.surface),
+      color: borderless
+          ? Colors.transparent
+          : (backgroundColor ?? AppColors.surface),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(radius),
         side: borderless

@@ -1,22 +1,19 @@
 import 'package:intl/intl.dart';
 
 /// Vacation vs Emergency variant for member-facing fund UX (mock / local routing).
-enum CreateProjectFundKind {
-  vacation,
-  emergency,
-}
+enum CreateProjectFundKind { vacation, emergency }
 
 extension CreateProjectFundKindUi on CreateProjectFundKind {
   /// Suggested hero filenames under `Desktop/images`.
   String get suggestedHeroFilename => switch (this) {
-        CreateProjectFundKind.vacation => 'vacation_hero.png',
-        CreateProjectFundKind.emergency => 'emergency_hero.png',
-      };
+    CreateProjectFundKind.vacation => 'vacation_hero.png',
+    CreateProjectFundKind.emergency => 'emergency_hero.png',
+  };
 
   double get mockRaisedVsGoalFraction => switch (this) {
-        CreateProjectFundKind.vacation => 0.35,
-        CreateProjectFundKind.emergency => 0.42,
-      };
+    CreateProjectFundKind.vacation => 0.35,
+    CreateProjectFundKind.emergency => 0.42,
+  };
 }
 
 /// Payload passed via [RouteSettings.extra] across setup → summary → detail → contributions → status.
@@ -42,8 +39,7 @@ class CreateProjectFundDraft {
     return '\$${n.format(goalAmountUsd)} USD';
   }
 
-  String formatDate(DateTime d) =>
-      DateFormat('d MMMM y', 'en_US').format(d);
+  String formatDate(DateTime d) => DateFormat('d MMMM y', 'en_US').format(d);
 
   int get mockPercentTowardGoal =>
       (mockRaisedVsGoalFraction * 100).clamp(1, 99).round();

@@ -45,15 +45,11 @@ class _VerifyScreenState extends State<VerifyScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => VerificationCubit(
-        email: widget.email,
-        flow: widget.flow,
-      ),
+      create: (_) => VerificationCubit(email: widget.email, flow: widget.flow),
       child: MultiBlocListener(
         listeners: [
           BlocListener<VerificationCubit, VerificationState>(
-            listenWhen: (prev, curr) =>
-                !prev.isResending && curr.isResending,
+            listenWhen: (prev, curr) => !prev.isResending && curr.isResending,
             listener: (context, _) {
               final cubit = context.read<VerificationCubit>();
               showDialog<void>(
@@ -119,9 +115,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                   final msg = state.resendMessage!.trim();
                   AppToast.showSuccess(
                     context,
-                    msg.isNotEmpty
-                        ? msg
-                        : AppStrings.otpSentSuccessToast,
+                    msg.isNotEmpty ? msg : AppStrings.otpSentSuccessToast,
                   );
                   context.read<VerificationCubit>().clearResendMessage();
                 });
@@ -190,9 +184,9 @@ class _VerifyScreenState extends State<VerifyScreen> {
                           : AppStrings.btnVerify,
                       isLoading: state.isLoading,
                       onPressed: state.isValid
-                          ? () => context
-                              .read<VerificationCubit>()
-                              .verifyCode(_codeCtrl.text.trim())
+                          ? () => context.read<VerificationCubit>().verifyCode(
+                              _codeCtrl.text.trim(),
+                            )
                           : null,
                     );
                   },

@@ -54,10 +54,7 @@ class ProjectDetailUserCompletedContent extends StatelessWidget {
         ),
         ProjectInfoCard(project: project),
         SizedBox(height: 16.h),
-        CompletedProjectNoticeBar(
-          title: notice.title,
-          body: notice.body,
-        ),
+        CompletedProjectNoticeBar(title: notice.title, body: notice.body),
         SizedBox(height: 16.h),
         ProjectMembersPreviewSection(
           project: project,

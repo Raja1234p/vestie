@@ -9,6 +9,7 @@ class ProjectSummaryEntity extends Equatable {
   final String description;
   final String type;
   final String visibility;
+
   /// Lifecycle state from API `state` (e.g. `active`) or mapped int.
   final String state;
   final double targetAmount;
@@ -19,6 +20,7 @@ class ProjectSummaryEntity extends Equatable {
   final bool borrowingEnabled;
   final double? suggestedContributionAmount;
   final DateTime createdUtc;
+
   /// `GroupLeader` | `CoLeader` | `Member`.
   final String viewerRole;
   final String displayStatus;
@@ -59,24 +61,24 @@ class ProjectSummaryEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        description,
-        type,
-        visibility,
-        state,
-        targetAmount,
-        raisedAmount,
-        maxMembers,
-        endsAtUtc,
-        launchedAtUtc,
-        borrowingEnabled,
-        suggestedContributionAmount,
-        createdUtc,
-        viewerRole,
-        displayStatus,
-        projectInviteCode,
-        pendingRequestCount,
-        roiPercentage,
-      ];
+    id,
+    name,
+    description,
+    type,
+    visibility,
+    state,
+    targetAmount,
+    raisedAmount,
+    maxMembers,
+    endsAtUtc,
+    launchedAtUtc,
+    borrowingEnabled,
+    suggestedContributionAmount,
+    createdUtc,
+    viewerRole,
+    displayStatus,
+    projectInviteCode,
+    pendingRequestCount,
+    roiPercentage,
+  ];
 }

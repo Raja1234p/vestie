@@ -8,10 +8,7 @@ class LeaderSuccessVoteMemberRow {
   final String name;
   final LeaderMemberVoteStatus status;
 
-  const LeaderSuccessVoteMemberRow({
-    required this.name,
-    required this.status,
-  });
+  const LeaderSuccessVoteMemberRow({required this.name, required this.status});
 }
 
 /// Leader monitors an active success vote (Figma Post-Success — voting window).
@@ -72,8 +69,7 @@ class LeaderSuccessVoteProgressUiData {
     ];
     return List.generate(members.length, (i) {
       final member = members[i];
-      final name =
-          member.name.isNotEmpty ? member.name : member.username;
+      final name = member.name.isNotEmpty ? member.name : member.username;
       return LeaderSuccessVoteMemberRow(
         name: name,
         status: pattern[i % pattern.length],

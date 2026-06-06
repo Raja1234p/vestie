@@ -6,17 +6,9 @@ import '../constants/app_strings.dart';
 import '../constants/stripe_constants.dart';
 import 'stripe_sdk_initializer.dart';
 
-enum StripeDepositPaymentResult {
-  completed,
-  cancelled,
-  failed,
-}
+enum StripeDepositPaymentResult { completed, cancelled, failed }
 
-enum StripeSetupPaymentResult {
-  completed,
-  cancelled,
-  failed,
-}
+enum StripeSetupPaymentResult { completed, cancelled, failed }
 
 class StripeSetupPaymentOutcome {
   final StripeSetupPaymentResult result;
@@ -107,8 +99,7 @@ class StripePaymentService {
       if (setupIntent.status.toLowerCase() != 'succeeded') {
         return StripeSetupPaymentOutcome(
           result: StripeSetupPaymentResult.failed,
-          errorMessage:
-              'Card setup did not complete (${setupIntent.status}).',
+          errorMessage: 'Card setup did not complete (${setupIntent.status}).',
         );
       }
 
@@ -133,8 +124,9 @@ class StripePaymentService {
       final msg = e.error.localizedMessage?.trim() ?? e.error.message?.trim();
       return StripeSetupPaymentOutcome(
         result: StripeSetupPaymentResult.failed,
-        errorMessage:
-            msg != null && msg.isNotEmpty ? msg : AppStrings.addCardStripeFailed,
+        errorMessage: msg != null && msg.isNotEmpty
+            ? msg
+            : AppStrings.addCardStripeFailed,
       );
     } catch (e) {
       return StripeSetupPaymentOutcome(

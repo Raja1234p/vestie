@@ -28,381 +28,149 @@ import '../widgets/distribute_funds_amount_sheet.dart';
 import 'package:vestie/features/project_detail/presentation/project_detail_reload_coordinator.dart';
 import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
 import 'package:vestie/core/services/home_project_list_sync.dart';
-import 'package:vestie/features/wallet/domain/wallet_balance_cache.dart';
+import 'package:vestie/wallet/domain/wallet_balance_cache.dart';
 import 'package:vestie/user/features/contributions/data/models/contribution_submit_result_model.dart';
 import 'package:vestie/user/features/vff/presentation/mappers/invite_members_mapper.dart';
 import '../data/project_funds_history_ledger_builder.dart';
 import 'package:vestie/user/features/borrow/presentation/data/my_borrow_request_args_builder.dart';
+
+part 'project_detail_navigation_route_args.dart';
+part 'project_detail_navigation_refresh.dart';
+part 'project_detail_navigation_router.dart';
+part 'project_detail_navigation_leader.dart';
+part 'project_detail_navigation_member.dart';
 
 /// Shared navigation/route-arg helpers for project detail screens.
 /// Keeps screen widgets focused on layout while preserving identical behavior.
 class ProjectDetailNavigation {
   const ProjectDetailNavigation._();
 
-  static ProjectWalletFlowArgs walletArgs(ProjectDetailEntity project) {
-    final dueBy = project.repaymentWindowDays > 0
-        ? 'In ${project.repaymentWindowDays} days'
-        : ProjectWalletFlowArgs.defaultBorrowDueByLabel;
-    final cachedBalance = WalletBalanceCache.value?.availableBalance;
-    return ProjectWalletFlowArgs(
-      projectId: project.id,
-      projectName: project.name,
-      walletBalance: cachedBalance ?? 0,
-      borrowLimit: project.borrowLimitAmount > 0
-          ? project.borrowLimitAmount
-          : ProjectWalletFlowArgs.defaultBorrowLimit,
-      borrowDueByLabel: dueBy,
-      membershipId: project.membershipId.isEmpty ? null : project.membershipId,
-    );
-  }
+  static ProjectWalletFlowArgs walletArgs(ProjectDetailEntity project) =>
+      _walletArgs(project);
 
   static MemberDetailRouteArgs memberDetailArgs(
     ProjectDetailEntity project,
     MemberEntity member, {
     Future<void> Function()? onProjectMembersChanged,
-  }) {
-    return MemberDetailRouteArgs(
-      member: member,
-      projectId: project.id,
-      projectName: project.name,
-      project: project,
-      isLeaderView: project.isModeratorView,
-      onProjectMembersChanged: onProjectMembersChanged,
-    );
-  }
+  }) => _memberDetailArgs(
+    project,
+    member,
+    onProjectMembersChanged: onProjectMembersChanged,
+  );
 
   /// Member / CoLeader / GroupLeader — opens project member profile.
   static Future<MemberDetailPopResult?> openMemberProfile(
     BuildContext context, {
     required ProjectDetailEntity project,
     required MemberEntity member,
-  }) async {
-    if (!project.canReviewMemberProfiles) {
-      AppSnackBar.showError(context, AppStrings.errorForbidden);
-      return null;
-    }
-    Future<void> reloadProjectDetail() {
-      return reloadProjectDetailAndWait(context, projectId: project.id);
-    }
-
-    return context.push<MemberDetailPopResult>(
-      AppRoutes.memberDetail,
-      extra: memberDetailArgs(
-        project,
-        member,
-        onProjectMembersChanged: reloadProjectDetail,
-      ),
-    );
-  }
+  }) => _openMemberProfile(context, project: project, member: member);
 
   /// Reloads `GET /projects/{id}` after member profile changes (remove, co-leader, etc.).
   static void refreshProjectDetailAfterMemberFlow(
     BuildContext context, {
     required String projectId,
     required MemberDetailPopResult? result,
-  }) {
-    if (result == null) return;
-    if (!context.mounted) return;
-    _reloadProjectDetailBloc(context, projectId: projectId);
-  }
+  }) => _refreshProjectDetailAfterMemberFlow(
+    context,
+    projectId: projectId,
+    result: result,
+  );
 
   static Future<void> reloadProjectDetailAndWait(
     BuildContext context, {
     required String projectId,
-  }) async {
-    if (!context.mounted) return;
-    try {
-      await context
-          .read<ProjectDetailBloc>()
-          .reloadDetailAndWait(projectId);
-      return;
-    } on ProviderNotFoundException {
-      // Opened outside project detail.
-    }
-    await ProjectDetailReloadCoordinator.reload(projectId);
-  }
-
-  static void _reloadProjectDetailBloc(
-    BuildContext context, {
-    required String projectId,
-  }) {
-    if (!context.mounted) return;
-    try {
-      context.read<ProjectDetailBloc>().add(
-            LoadProjectDetailEvent(projectId: projectId),
-          );
-    } on ProviderNotFoundException {
-      // Opened outside project detail.
-    }
-  }
+  }) => _reloadProjectDetailAndWait(context, projectId: projectId);
 
   /// Merges contribute 201 `projectPot` / VFF ids, then refreshes pot for contributor count.
   static void refreshAfterContribution(
     BuildContext context, {
     required String projectId,
     required ContributionSubmitResultModel submitResult,
-  }) {
-    HomeProjectListSync.recordContribution(
-      projectId: projectId,
-      projectPot: submitResult.projectPot,
-    );
-    if (!context.mounted) return;
-    try {
-      context.read<ProjectDetailBloc>().add(
-            ApplyContributionSubmitResultEvent(
-              projectId: projectId,
-              projectPot: submitResult.projectPot,
-              vffMemberUserIds: submitResult.vffMemberUserIds,
-            ),
-          );
-    } on ProviderNotFoundException {
-      // Opened outside project detail.
-    }
-  }
+  }) => _refreshAfterContribution(
+    context,
+    projectId: projectId,
+    submitResult: submitResult,
+  );
 
   /// Sends a VFF request from a project member row (no profile screen).
   static void sendVffRequestFromMemberRow(
     BuildContext context, {
     required MemberEntity member,
-  }) {
-    sendMemberVffFromProjectDetail(context, member: member);
-  }
+  }) => _sendVffRequestFromMemberRow(context, member: member);
 
   static BorrowRequestsRouteArgs borrowRequestsArgs(
     ProjectDetailEntity project, {
     required bool isLeaderMode,
     String? screenTitle,
-  }) {
-    return BorrowRequestsRouteArgs(
-      requests: project.borrowRequests,
-      projectId: project.id,
-      project: project,
-      isLeaderMode: isLeaderMode,
-      screenTitle: screenTitle,
-    );
-  }
+  }) => _borrowRequestsArgs(
+    project,
+    isLeaderMode: isLeaderMode,
+    screenTitle: screenTitle,
+  );
 
-  static GroupMembersRouteArgs groupMembersArgs(ProjectDetailEntity project) {
-    return GroupMembersRouteArgs(
-      members: project.members,
-      projectId: project.id,
-      project: project,
-    );
-  }
+  static GroupMembersRouteArgs groupMembersArgs(ProjectDetailEntity project) =>
+      _groupMembersArgs(project);
 
   static Future<void> openGroupMembers(
     BuildContext context, {
     required ProjectDetailEntity project,
-  }) async {
-    await context.push(
-      AppRoutes.groupMembers,
-      extra: groupMembersArgs(project),
-    );
-    if (!context.mounted) return;
-    _reloadProjectDetailBloc(context, projectId: project.id);
-  }
+  }) => _openGroupMembers(context, project: project);
 
   /// Pops success → distribution → distribute funds so the existing detail
   /// screen (and its bloc) is restored — avoids a full reload shimmer.
-  ///
-  /// Uses a fixed pop count (not [uri.path] matching) so we never pop past
-  /// detail or replace the stack with [GoRouter.go] (which would leave nothing
-  /// to pop when the user taps back on detail).
   static void popAfterFundsDistributed(
     BuildContext context, {
     required String projectId,
     String? projectName,
-  }) {
-    final router = GoRouter.of(context);
-    // detail → distribute funds → distribution → success
-    const routesAboveDetail = 3;
-    for (var i = 0; i < routesAboveDetail; i++) {
-      if (!router.canPop()) break;
-      router.pop();
-      if (!context.mounted) return;
-    }
-    if (!context.mounted) return;
-
-    // Deep link / unexpected stack: still on success with nothing left to pop.
-    if (GoRouterState.of(context).matchedLocation ==
-        AppRoutes.leaderInvestmentDistributionSuccess) {
-      router.go(
-        AppRoutes.investmentProjectDetail,
-        extra: ProjectDetailRouteArgs(
-          projectId: projectId,
-          initialProjectName:
-              ProjectDetailRouteArgs.normalizedName(projectName),
-        ),
-      );
-    }
-  }
+  }) => _popAfterFundsDistributed(
+    context,
+    projectId: projectId,
+    projectName: projectName,
+  );
 
   static void openFundsDistributedSuccess(
     BuildContext context, {
     required InvestmentDistributionUiData distributionData,
-  }) {
-    context.push(
-      AppRoutes.leaderInvestmentDistributionSuccess,
-      extra: InvestmentDistributionSuccessRouteArgs(
-        projectId: distributionData.projectId,
-        projectName: distributionData.projectName,
-        amountUsd: distributionData.distributeAmountUsd,
-        memberCount: distributionData.memberCount,
-      ),
-    );
-  }
+  }) =>
+      _openFundsDistributedSuccess(context, distributionData: distributionData);
 
   static Future<void> openDistributeFundsFlow(
     BuildContext context, {
     required InvestmentReturnsUiData returnsData,
-  }) async {
-    final amountUsd = await showDistributeFundsAmountSheet(context);
-    if (!context.mounted || amountUsd == null || amountUsd <= 0) return;
-    context.push(
-      AppRoutes.leaderInvestmentDistribution,
-      extra: InvestmentDistributionRouteArgs(
-        data: InvestmentDistributionUiData.preview(
-          projectId: returnsData.projectId,
-          projectName: returnsData.projectName,
-          distributeAmountUsd: amountUsd,
-        ),
-      ),
-    );
-  }
+  }) => _openDistributeFundsFlow(context, returnsData: returnsData);
 
   static void openInvestmentReturns(
     BuildContext context, {
     required ProjectDetailEntity project,
-  }) {
-    if (project.isModeratorView) {
-      context.push(
-        AppRoutes.leaderDistributeFunds,
-        extra: InvestmentReturnsRouteArgs(
-          data: InvestmentReturnsUiData.previewLeaderForProject(project),
-        ),
-      );
-      return;
-    }
-    context.push(
-      AppRoutes.userInvestmentReturns,
-      extra: InvestmentReturnsRouteArgs(
-        data: InvestmentReturnsUiData.previewForProject(project),
-      ),
-    );
-  }
+  }) => _openInvestmentReturns(context, project: project);
 
   /// Group leader — active success vote monitor (Figma voting window).
-  /// Vacation and emergency projects only.
   static void openLeaderViewSuccessVotes(
     BuildContext context, {
     required ProjectDetailEntity project,
-  }) {
-    if (!project.showsSuccessVoteDevPreviews) return;
-
-    context.push(
-      AppRoutes.leaderViewSuccessVotes,
-      extra: LeaderViewSuccessVotesRouteArgs(
-        projectName: project.name,
-        data: LeaderSuccessVoteProgressUiData.preview(project: project),
-      ),
-    );
-  }
+  }) => _openLeaderViewSuccessVotes(context, project: project);
 
   /// Temporary preview — member success vote screen ([UserSuccessVoteScreen]).
   static void openSuccessVoteScreenPreview(
     BuildContext context, {
     required ProjectDetailEntity project,
-  }) {
-    if (!project.showsMemberSuccessVoteDevPreviews) return;
-
-    final memberCount =
-        project.members.isNotEmpty ? project.members.length : 7;
-    context.push(
-      AppRoutes.userSuccessVote,
-      extra: UserSuccessVoteArgs(
-        projectId: project.id,
-        projectName: project.name,
-        goalAmount: project.goalAmount > 0 ? project.goalAmount : 5000,
-        memberCount: memberCount,
-        totalRaised: project.currentAmount > 0
-            ? project.currentAmount
-            : project.goalAmount * 0.96,
-        deadlineLabel:
-            project.endsIn.trim().isNotEmpty ? project.endsIn : 'May 12, 2025',
-        daysRemaining: 21,
-      ),
-    );
-  }
+  }) => _openSuccessVoteScreenPreview(context, project: project);
 
   /// Temporary preview — member vote outcome (approved / rejected).
   static void openMemberVoteOutcomePreview(
     BuildContext context, {
     required ProjectDetailEntity project,
     required bool approved,
-  }) {
-    if (!project.showsMemberSuccessVoteDevPreviews) return;
-
-    context.push(
-      AppRoutes.userVoteOutcome,
-      extra: MemberVoteOutcomeRouteArgs(
-        data: MemberVoteOutcomeUiData.preview(
-          isApproved: approved,
-          project: project,
-        ),
-        isGroupLeaderView: project.isGroupLeader,
-        project: project.isGroupLeader ? project : null,
-      ),
-    );
-  }
+  }) => _openMemberVoteOutcomePreview(
+    context,
+    project: project,
+    approved: approved,
+  );
 
   static Future<void> openInviteMembers(
     BuildContext context, {
     required ProjectDetailEntity project,
-  }) async {
-    if (!project.canInviteMembers) {
-      AppSnackBar.showError(context, AppStrings.errorForbidden);
-      return;
-    }
-
-    AppLoadingDialog.show(context);
-    final result = await ServiceLocator.instance.createInviteUseCase(
-      projectId: project.id,
-      requiresApproval: project.joinApprovalRequired,
-      expiresInDays: 30,
-      maxUses: 25,
-    );
-
-    if (!context.mounted) return;
-    final nav = Navigator.of(context, rootNavigator: true);
-    if (nav.canPop()) nav.pop();
-
-    final inviteLink = result.fold(
-      (failure) {
-        AppSnackBar.showError(context, failure.message);
-        return null;
-      },
-      (value) {
-        final link = resolveInviteShareLink(value);
-        if (link.isEmpty) {
-          AppSnackBar.showError(context, AppStrings.errorGeneric);
-          return null;
-        }
-        return link;
-      },
-    );
-
-    if (!context.mounted || inviteLink == null) return;
-
-    final excludeUserIds =
-        InviteMembersMapper.excludeUserIdsForProject(project);
-    await AppInviteMembersDialog.show(
-      context,
-      projectId: project.id,
-      projectName: project.name,
-      excludeUserIds: excludeUserIds,
-      inviteLink: inviteLink,
-    );
-  }
+  }) => _openInviteMembers(context, project: project);
 
   static Future<void> handleLeaderAction(
     BuildContext context, {
@@ -410,132 +178,17 @@ class ProjectDetailNavigation {
     required LeaderMenuAction action,
     bool refreshHomeOnPop = false,
     bool refreshDiscoverOnPop = false,
-  }) async {
-    if (action == LeaderMenuAction.inviteMembers) {
-      openInviteMembers(context, project: project);
-      return;
-    }
-
-    if (action == LeaderMenuAction.leaveProject) {
-      context.push(
-        AppRoutes.leaveProjectWarning,
-        extra: LeaveProjectRouteArgs(
-          projectId: project.id,
-          projectName: project.name,
-          refreshHomeOnPop: refreshHomeOnPop,
-          refreshDiscoverOnPop: refreshDiscoverOnPop,
-        ),
-      );
-      return;
-    }
-
-    if (!project.isModeratorView) {
-      AppSnackBar.showError(context, AppStrings.errorForbidden);
-      return;
-    }
-    if (action == LeaderMenuAction.markSuccessful &&
-        !project.canMarkProjectSuccessful) {
-      AppSnackBar.showError(context, AppStrings.errorForbidden);
-      return;
-    }
-    if (action == LeaderMenuAction.stopContributions &&
-        !project.canStopContributions) {
-      AppSnackBar.showError(context, AppStrings.errorForbidden);
-      return;
-    }
-    if (action == LeaderMenuAction.editProject && !project.canEditProject) {
-      AppSnackBar.showError(context, AppStrings.errorForbidden);
-      return;
-    }
-    if (action == LeaderMenuAction.cancelProject && !project.canCancelProject) {
-      AppSnackBar.showError(context, AppStrings.errorForbidden);
-      return;
-    }
-
-    switch (action) {
-      case LeaderMenuAction.joinRequests:
-        context.push(
-          AppRoutes.joinRequests,
-          extra: JoinRequestsRouteArgs(
-            projectId: project.id,
-            onRefreshProjectDetail: () {
-              return reloadProjectDetailAndWait(
-                context,
-                projectId: project.id,
-              );
-            },
-          ),
-        );
-        break;
-      case LeaderMenuAction.addAnnouncement:
-        final created = await context.push<bool>(
-          AppRoutes.createAnnouncement,
-          extra: CreateAnnouncementRouteArgs(projectId: project.id),
-        );
-        if (created == true && context.mounted) {
-          context.read<ProjectDetailBloc>().add(
-                LoadProjectDetailEvent(projectId: project.id),
-              );
-        }
-        break;
-      case LeaderMenuAction.editProject:
-        context.push(
-          AppRoutes.createProjectDetails,
-          extra: CreateProjectEntryMode.editFromProjectDetail,
-        );
-        break;
-      case LeaderMenuAction.projectFundsHistory:
-        context.push(
-          AppRoutes.projectFundsHistory,
-          extra: fundsHistoryArgs(project),
-        );
-        break;
-      case LeaderMenuAction.myBorrows:
-        context.push(
-          AppRoutes.myBorrowRequest,
-          extra: MyBorrowRequestArgsBuilder.fromProject(project),
-        );
-        break;
-      case LeaderMenuAction.inviteMembers:
-        break;
-      case LeaderMenuAction.markSuccessful:
-        context.push(
-          AppRoutes.markProjectSuccessful,
-          extra: MarkSuccessfulRouteArgs(
-            projectId: project.id,
-            memberCount: project.members.length,
-          ),
-        );
-        break;
-      case LeaderMenuAction.stopContributions:
-        context.push(
-          AppRoutes.stopContributions,
-          extra: StopContributionsRouteArgs(projectId: project.id),
-        );
-        break;
-      case LeaderMenuAction.cancelProject:
-        final unpaid = project.members
-            .where((m) => m.overdueAmount != null && m.overdueAmount! > 0)
-            .length;
-        context.push(
-          AppRoutes.cancelProject,
-          extra: CancelProjectRouteArgs(
-            projectId: project.id,
-            projectName: project.name,
-            membersWithUnpaidBorrows: unpaid,
-          ),
-        );
-        break;
-      case LeaderMenuAction.leaveProject:
-        break;
-    }
-  }
+  }) => _handleLeaderAction(
+    context,
+    project: project,
+    action: action,
+    refreshHomeOnPop: refreshHomeOnPop,
+    refreshDiscoverOnPop: refreshDiscoverOnPop,
+  );
 
   static ProjectFundsHistoryRouteArgs fundsHistoryArgs(
     ProjectDetailEntity project,
-  ) {
-    return ProjectFundsHistoryLedgerBuilder.fromProject(project);
-  }
+  ) => _fundsHistoryArgs(project);
 
   static void handleMemberAction(
     BuildContext context, {
@@ -543,35 +196,11 @@ class ProjectDetailNavigation {
     required MemberProjectMenuAction action,
     bool refreshHomeOnPop = false,
     bool refreshDiscoverOnPop = false,
-  }) {
-    switch (action) {
-      case MemberProjectMenuAction.projectFundsHistory:
-        context.push(
-          AppRoutes.projectFundsHistory,
-          extra: fundsHistoryArgs(project),
-        );
-        break;
-      case MemberProjectMenuAction.myBorrows:
-        context.push(
-          AppRoutes.myBorrowRequest,
-          extra: MyBorrowRequestArgsBuilder.fromProject(project),
-        );
-        break;
-      case MemberProjectMenuAction.inviteMembers:
-        openInviteMembers(context, project: project);
-        break;
-      case MemberProjectMenuAction.leaveProject:
-        context.push(
-          AppRoutes.leaveProjectWarning,
-          extra: LeaveProjectRouteArgs(
-            projectId: project.id,
-            projectName: project.name,
-            refreshHomeOnPop: refreshHomeOnPop,
-            refreshDiscoverOnPop: refreshDiscoverOnPop,
-          ),
-        );
-        break;
-    }
-  }
+  }) => _handleMemberAction(
+    context,
+    project: project,
+    action: action,
+    refreshHomeOnPop: refreshHomeOnPop,
+    refreshDiscoverOnPop: refreshDiscoverOnPop,
+  );
 }
-

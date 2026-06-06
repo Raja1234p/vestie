@@ -19,7 +19,8 @@ class MemberSuccessVoteScrollBody extends StatefulWidget {
       _MemberSuccessVoteScrollBodyState();
 }
 
-class _MemberSuccessVoteScrollBodyState extends State<MemberSuccessVoteScrollBody> {
+class _MemberSuccessVoteScrollBodyState
+    extends State<MemberSuccessVoteScrollBody> {
   final GlobalKey _contentKey = GlobalKey();
   double _maxHeight = 0;
   bool _needsScroll = true;
@@ -71,10 +72,7 @@ class _MemberSuccessVoteScrollBodyState extends State<MemberSuccessVoteScrollBod
           );
         }
 
-        return Align(
-          alignment: Alignment.topCenter,
-          child: _voteBody(),
-        );
+        return Align(alignment: Alignment.topCenter, child: _voteBody());
       },
     );
   }

@@ -54,8 +54,9 @@ class ProjectDetailScreen extends StatelessWidget {
         );
       },
       child: BlocProvider(
-        create: (_) => ServiceLocator.instance.createProjectDetailBloc()
-          ..add(LoadProjectDetailEvent(projectId: projectId)),
+        create: (_) =>
+            ServiceLocator.instance.createProjectDetailBloc()
+              ..add(LoadProjectDetailEvent(projectId: projectId)),
         child: ProjectDetailReloadScope(
           projectId: projectId,
           child: ProjectRealtimeScope(
@@ -97,27 +98,30 @@ class _ProjectDetailBody extends StatelessWidget {
               curr is ProjectDetailLoaded &&
               curr.vffSendErrorMessage != null &&
               curr.vffSendErrorMessage !=
-                  (prev is ProjectDetailLoaded ? prev.vffSendErrorMessage : null),
+                  (prev is ProjectDetailLoaded
+                      ? prev.vffSendErrorMessage
+                      : null),
           listener: (context, state) {
             if (state is! ProjectDetailLoaded) return;
             final message = state.vffSendErrorMessage;
             if (message == null || message.isEmpty) return;
             AppSnackBar.showError(context, message);
-            context
-                .read<ProjectDetailBloc>()
-                .add(const ClearMemberVffSendErrorEvent());
+            context.read<ProjectDetailBloc>().add(
+              const ClearMemberVffSendErrorEvent(),
+            );
           },
           builder: (context, state) {
             if (state is ProjectDetailError) {
               return ProjectDetailLoadError(
                 message: state.message,
                 onRetry: () => context.read<ProjectDetailBloc>().add(
-                      LoadProjectDetailEvent(projectId: projectId),
-                    ),
+                  LoadProjectDetailEvent(projectId: projectId),
+                ),
               );
             }
 
-            if (state is ProjectDetailLoading || state is ProjectDetailInitial) {
+            if (state is ProjectDetailLoading ||
+                state is ProjectDetailInitial) {
               return ProjectDetailLoadingBody(
                 title: initialProjectName,
                 onBack: () => popProjectDetailNavigation(
@@ -131,17 +135,17 @@ class _ProjectDetailBody extends StatelessWidget {
             if (state is ProjectDetailLoaded) {
               final project = state.project;
               final pendingCount = state.pendingJoinRequestCount;
-              final isMemberCompletedView = project.isMemberView &&
+              final isMemberCompletedView =
+                  project.isMemberView &&
                   project.status == ProjectStatus.completed;
 
               Future<void> onRefresh() async {
                 context.read<ProjectDetailBloc>().add(
-                      LoadProjectDetailEvent(projectId: projectId),
-                    );
+                  LoadProjectDetailEvent(projectId: projectId),
+                );
                 await context.read<ProjectDetailBloc>().stream.firstWhere(
-                      (s) =>
-                          s is ProjectDetailLoaded || s is ProjectDetailError,
-                    );
+                  (s) => s is ProjectDetailLoaded || s is ProjectDetailError,
+                );
               }
 
               if (isMemberCompletedView) {
@@ -177,9 +181,9 @@ class _ProjectDetailBody extends StatelessWidget {
                               ),
                               onSendVffRequest: (member) =>
                                   sendMemberVffFromProjectDetail(
-                                context,
-                                member: member,
-                              ),
+                                    context,
+                                    member: member,
+                                  ),
                               sendingVffUserId: state.sendingVffUserId,
                             ),
                           ),
@@ -222,9 +226,9 @@ class _ProjectDetailBody extends StatelessWidget {
             return Center(
               child: AppText(
                 AppStrings.errorGeneric,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: AppColors.textBody,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(color: AppColors.textBody),
               ),
             );
           },

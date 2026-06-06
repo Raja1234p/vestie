@@ -17,8 +17,10 @@ class AppDimens {
   static double get p40 => 40.0.w;
   static double get p48 => 48.0.w;
   static double get p64 => 64.0.w;
+
   /// Create project amount sheet — vertical gap between close icon and title (Figma 70).
   static double get createProjectAmountSheetIconTitleVerticalGap => 70.0.h;
+
   /// Create project amount sheet — gap between question and amount (Figma 14).
   static double get createProjectAmountSheetTitleValueGap => 14.0.h;
 
@@ -48,6 +50,7 @@ class AppDimens {
   /// Invite members sheet — gap above/below dashed dividers; hint-to-first-divider.
   static double get inviteMembersDividerGutter => v24;
   static double get inviteMembersHintToDivider => v34;
+
   /// Space below “Share outside Vestie” inside the sheet card (Figma 34).
   static double get inviteMembersSheetBottom => v34;
 
@@ -152,8 +155,10 @@ class AppDimens {
 
   /// Payment method picker row (Visa / Master / Wallet).
   static double get paymentMethodRowHeight => 72.0.h;
+
   /// Gap between payment method rows in a list.
   static double get paymentMethodRowGap => v8;
+
   /// Wallet recent-activity transaction cards.
   static double get walletTransactionRowGap => v12;
 }
@@ -163,8 +168,10 @@ class AppRadius {
 
   static double get r4 => 4.0.r;
   static double get r8 => 8.0.r;
+
   /// VFF hub Accept / Decline / Request Sent action corners.
   static double get vffHubRequestActionButton => 10.0.r;
+
   /// [AppActionDialog] primary/secondary action corners (Figma: 24).
   static double get dialogActionButton => r24;
   static double get r12 => 12.0.r;
@@ -173,7 +180,7 @@ class AppRadius {
   static double get r22 => 22.0.r;
   static double get r24 => 24.0.r;
   static double get r32 => 32.0.r;
-  
+
   static double get button => 12.0.r; // Standard button radius
   static double get card => 16.0.r; // Standard card radius
 }

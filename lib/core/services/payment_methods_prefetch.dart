@@ -23,8 +23,9 @@ abstract final class PaymentMethodsPrefetch {
   /// Always refreshes from API (silent background).
   static Future<void> refresh() async {
     try {
-      await ServiceLocator.instance
-          .listPaymentMethodsUseCase(forceRefresh: true);
+      await ServiceLocator.instance.listPaymentMethodsUseCase(
+        forceRefresh: true,
+      );
     } catch (_) {}
   }
 

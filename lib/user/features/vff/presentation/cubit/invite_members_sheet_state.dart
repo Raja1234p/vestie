@@ -52,5 +52,10 @@ final class InviteMembersSheetState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [status, vffs, loadedConnectionCount, errorMessage];
+  List<Object?> get props => [
+    status,
+    vffs,
+    loadedConnectionCount,
+    errorMessage,
+  ];
 }

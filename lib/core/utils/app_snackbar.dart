@@ -58,11 +58,7 @@ class AppSnackBar {
           duration: const Duration(seconds: 3),
           content: Row(
             children: [
-              AppSvgIcon(
-                assetPath: iconAsset,
-                size: 18.w,
-                color: Colors.white,
-              ),
+              AppSvgIcon(assetPath: iconAsset, size: 18.w, color: Colors.white),
               SizedBox(width: 10.w),
               Expanded(
                 child: Text(

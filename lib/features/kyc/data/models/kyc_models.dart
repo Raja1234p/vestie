@@ -11,15 +11,15 @@ class KycStatusModel extends KycStatusEntity {
   });
 
   factory KycStatusModel.fromJson(Map<String, dynamic> json) {
-    final due = (json['requirementsCurrentlyDue'] as List<dynamic>?)
+    final due =
+        (json['requirementsCurrentlyDue'] as List<dynamic>?)
             ?.map((e) => e.toString())
             .toList(growable: false) ??
         const <String>[];
 
     return KycStatusModel(
       status: kycStatusFromApi(json.safeString('status')),
-      stripeConnectAccountId:
-          json.safeStringNullable('stripeConnectAccountId'),
+      stripeConnectAccountId: json.safeStringNullable('stripeConnectAccountId'),
       chargesEnabled: json.safeBool('chargesEnabled'),
       payoutsEnabled: json.safeBool('payoutsEnabled'),
       requirementsCurrentlyDue: due,
@@ -36,7 +36,9 @@ class KycStartResultModel extends KycStartResultEntity {
 
   factory KycStartResultModel.fromJson(Map<String, dynamic> json) {
     return KycStartResultModel(
-      status: kycStatusFromApi(json.safeString('status', defaultValue: 'Pending')),
+      status: kycStatusFromApi(
+        json.safeString('status', defaultValue: 'Pending'),
+      ),
       onboardingUrl: json.safeStringNullable('onboardingUrl'),
       onboardingExpiresAt: _parseDate(json['onboardingExpiresAt']),
     );

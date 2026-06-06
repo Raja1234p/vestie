@@ -30,40 +30,42 @@ ProjectDetailEntity _moderatorProject({
 
 void main() {
   group('MemberDetailActionsVisibility.showRemoveMember', () {
-    test('true for group leader or co-leader viewing a regular member on every category',
-        () {
-      const member = MemberEntity(
-        id: 'u2',
-        membershipId: 'm2',
-        userId: 'u2',
-        initials: 'AB',
-        name: 'Alex',
-        role: MemberRole.member,
-        contributedAmount: 0,
-      );
+    test(
+      'true for group leader or co-leader viewing a regular member on every category',
+      () {
+        const member = MemberEntity(
+          id: 'u2',
+          membershipId: 'm2',
+          userId: 'u2',
+          initials: 'AB',
+          name: 'Alex',
+          role: MemberRole.member,
+          contributedAmount: 0,
+        );
 
-      for (final category in ProjectCategory.values) {
-        for (final role in [
-          ViewerMembershipRole.groupLeader,
-          ViewerMembershipRole.coLeader,
-        ]) {
-          expect(
-            MemberDetailActionsVisibility.showRemoveMember(
-              project: _moderatorProject(
-                category: category,
-                viewerRole: role,
-                membershipId: role == ViewerMembershipRole.coLeader
-                    ? 'co-m'
-                    : 'leader-m',
+        for (final category in ProjectCategory.values) {
+          for (final role in [
+            ViewerMembershipRole.groupLeader,
+            ViewerMembershipRole.coLeader,
+          ]) {
+            expect(
+              MemberDetailActionsVisibility.showRemoveMember(
+                project: _moderatorProject(
+                  category: category,
+                  viewerRole: role,
+                  membershipId: role == ViewerMembershipRole.coLeader
+                      ? 'co-m'
+                      : 'leader-m',
+                ),
+                member: member,
               ),
-              member: member,
-            ),
-            isTrue,
-            reason: 'remove should show for $category as $role',
-          );
+              isTrue,
+              reason: 'remove should show for $category as $role',
+            );
+          }
         }
-      }
-    });
+      },
+    );
 
     test('false for regular member viewer', () {
       const project = ProjectDetailEntity(
@@ -129,36 +131,40 @@ void main() {
           member: leaderMember.copyWith(role: MemberRole.member),
         ),
         isFalse,
-        reason: 'leader slot in members list blocks remove even if role field is member',
+        reason:
+            'leader slot in members list blocks remove even if role field is member',
       );
     });
 
-    test('true when activity role is leader but member is not leader in project list', () {
-      const listMember = MemberEntity(
-        id: 'u2',
-        membershipId: 'm2',
-        userId: 'u2',
-        initials: 'AB',
-        name: 'Alex',
-        role: MemberRole.member,
-        contributedAmount: 0,
-      );
-      final misTagged = listMember.copyWith(role: MemberRole.leader);
-      final project = _moderatorProject(
-        category: ProjectCategory.emergency,
-        viewerRole: ViewerMembershipRole.coLeader,
-        members: [listMember],
-        membershipId: 'co-m',
-      );
+    test(
+      'true when activity role is leader but member is not leader in project list',
+      () {
+        const listMember = MemberEntity(
+          id: 'u2',
+          membershipId: 'm2',
+          userId: 'u2',
+          initials: 'AB',
+          name: 'Alex',
+          role: MemberRole.member,
+          contributedAmount: 0,
+        );
+        final misTagged = listMember.copyWith(role: MemberRole.leader);
+        final project = _moderatorProject(
+          category: ProjectCategory.emergency,
+          viewerRole: ViewerMembershipRole.coLeader,
+          members: [listMember],
+          membershipId: 'co-m',
+        );
 
-      expect(
-        MemberDetailActionsVisibility.showRemoveMember(
-          project: project,
-          member: misTagged,
-        ),
-        isTrue,
-      );
-    });
+        expect(
+          MemberDetailActionsVisibility.showRemoveMember(
+            project: project,
+            member: misTagged,
+          ),
+          isTrue,
+        );
+      },
+    );
   });
 
   group('MemberDetailActionsVisibility.isVffActionTarget', () {
@@ -217,43 +223,46 @@ void main() {
   });
 
   group('MemberDetailActionsVisibility.showVffSendOrSent', () {
-    test('shows Send VFF when canSendVffRequest is false but state is none', () {
-      const project = ProjectDetailEntity(
-        id: 'p1',
-        name: 'Vacation',
-        category: ProjectCategory.vacations,
-        status: ProjectStatus.ongoing,
-        goalAmount: 1000,
-        currentAmount: 0,
-        endsIn: '30d',
-        announcement: '',
-        members: [],
-        borrowRequests: [],
-        viewerRole: ViewerMembershipRole.groupLeader,
-        membershipId: 'viewer-membership',
-      );
+    test(
+      'shows Send VFF when canSendVffRequest is false but state is none',
+      () {
+        const project = ProjectDetailEntity(
+          id: 'p1',
+          name: 'Vacation',
+          category: ProjectCategory.vacations,
+          status: ProjectStatus.ongoing,
+          goalAmount: 1000,
+          currentAmount: 0,
+          endsIn: '30d',
+          announcement: '',
+          members: [],
+          borrowRequests: [],
+          viewerRole: ViewerMembershipRole.groupLeader,
+          membershipId: 'viewer-membership',
+        );
 
-      const member = MemberEntity(
-        id: 'user-2',
-        membershipId: 'm2',
-        userId: 'user-2',
-        initials: 'AB',
-        name: 'Alex',
-        role: MemberRole.member,
-        contributedAmount: 0,
-        vffConnectionState: VffConnectionState.none,
-        canSendVffRequest: false,
-      );
-
-      expect(
-        MemberDetailActionsVisibility.showVffSendOrSent(
-          project: project,
-          member: member,
+        const member = MemberEntity(
+          id: 'user-2',
+          membershipId: 'm2',
+          userId: 'user-2',
+          initials: 'AB',
+          name: 'Alex',
+          role: MemberRole.member,
+          contributedAmount: 0,
           vffConnectionState: VffConnectionState.none,
-        ),
-        isTrue,
-      );
-    });
+          canSendVffRequest: false,
+        );
+
+        expect(
+          MemberDetailActionsVisibility.showVffSendOrSent(
+            project: project,
+            member: member,
+            vffConnectionState: VffConnectionState.none,
+          ),
+          isTrue,
+        );
+      },
+    );
 
     test('shows Request Sent when activity reports PendingOutgoing', () {
       const project = ProjectDetailEntity(

@@ -37,17 +37,17 @@ class CreateProjectSavingSettingsScreen extends StatelessWidget {
           return const Scaffold(body: SizedBox.shrink());
         }
 
-        final settingsLabelStyle =
-            Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.authLabel,
-                );
-        final helperStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
-              fontSize: 13.sp,
-              height: 1.45,
-              color: AppColors.authHint,
+        final settingsLabelStyle = Theme.of(context).textTheme.bodyLarge
+            ?.copyWith(
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w500,
+              color: AppColors.authLabel,
             );
+        final helperStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
+          fontSize: 13.sp,
+          height: 1.45,
+          color: AppColors.authHint,
+        );
 
         return Scaffold(
           backgroundColor: Colors.transparent,

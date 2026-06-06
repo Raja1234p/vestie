@@ -21,10 +21,7 @@ class UserVffHubRouteArgs {
 }
 
 /// Popped from [UserVffProfileScreen] after a successful VFF mutation.
-enum UserVffProfilePopResult {
-  connectionRemoved,
-  vffRequestSent,
-}
+enum UserVffProfilePopResult { connectionRemoved, vffRequestSent }
 
 /// Opens peer profile (`user_vff_profile_screen.dart`).
 class UserVffProfileRouteArgs {

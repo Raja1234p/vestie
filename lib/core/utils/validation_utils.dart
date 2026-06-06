@@ -15,6 +15,7 @@ class ValidationUtils {
   static final RegExp _passwordLowercase = RegExp(r'[a-z]');
   static final RegExp _passwordUppercase = RegExp(r'[A-Z]');
   static final RegExp _passwordDigit = RegExp(r'[0-9]');
+
   /// At least one non-alphanumeric (special) character.
   static final RegExp _passwordSpecial = RegExp(r'[^a-zA-Z0-9]');
 

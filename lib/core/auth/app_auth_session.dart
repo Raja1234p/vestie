@@ -25,9 +25,7 @@ final class AppAuthSession extends ChangeNotifier {
     final sl = ServiceLocator.instance;
     final isLoggedIn = await sl.sharedPrefs.getBool(StorageKeys.isLoggedIn);
     final token = await sl.secureStorage.getString(StorageKeys.accessToken);
-    final next = isLoggedIn &&
-        token != null &&
-        token.trim().isNotEmpty;
+    final next = isLoggedIn && token != null && token.trim().isNotEmpty;
     if (next == _isAuthenticated) return;
     _isAuthenticated = next;
     notifyListeners();

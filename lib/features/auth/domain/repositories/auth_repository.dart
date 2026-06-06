@@ -26,13 +26,9 @@ abstract class AuthRepository {
     required String code,
   });
 
-  Future<Either<Failure, String>> resendCode({
-    required String email,
-  });
+  Future<Either<Failure, String>> resendCode({required String email});
 
-  Future<Either<Failure, String>> forgotPassword({
-    required String email,
-  });
+  Future<Either<Failure, String>> forgotPassword({required String email});
 
   Future<Either<Failure, String>> resetPassword({
     required String email,
@@ -41,9 +37,7 @@ abstract class AuthRepository {
     required String confirmNewPassword,
   });
 
-  Future<Either<Failure, String>> logout({
-    required String refreshToken,
-  });
+  Future<Either<Failure, String>> logout({required String refreshToken});
 
   Future<Either<Failure, User>> getMe();
 

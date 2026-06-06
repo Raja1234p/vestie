@@ -1,0 +1,35 @@
+---
+description: MANDATORY — read all .cursor/rules before every task; follow MDC rules completely.
+alwaysApply: true
+---
+
+# Vestie — agent workflow (read first)
+
+## Before starting ANY work
+
+1. **Read every rule file** in `.cursor/rules/`:
+   - `project_context.mdc` — **what Vestie is** (product, roles, flows)
+   - `agent_workflow.mdc` (this file)
+   - `production_scope.mdc` — what is allowed vs deferred; validation pipeline
+   - `pre_commit.mdc` — UI, architecture, state, navigation, file size
+
+2. **For any feature, screen, API, or flow task** — also read `DOCS/project_scope.md` (full scope) before editing.
+
+3. **Follow all MDC rules completely** for the entire task — not only the file you are editing.
+
+4. **Re-read rules + project scope** when the task shifts (e.g. UI → perf → docs) or before committing.
+
+## Rule priority (when in doubt)
+
+1. **Production stability** — no unintended UI, API, routing, or flow changes
+2. **`production_scope.mdc`** — deferred waves (E/B/F/G) stay off unless user explicitly approves
+3. **`pre_commit.mdc`** — coding standards, `AppStrings`/`AppColors`/`AppRoutes`, ScreenUtil, Cubit/Bloc
+
+## Quick checklist before ending a task
+
+- [ ] Changes match active scope in `production_scope.mdc`
+- [ ] UI uses `AppStrings`, `AppColors`, `AppAssets`, `AppDimens`, ScreenUtil
+- [ ] Routes use `AppRoutes` only
+- [ ] `flutter analyze` — no errors on changed files
+- [ ] `flutter test` — pass (after meaningful code changes)
+- [ ] Minimal diff — no mass format, global rename, or unrelated refactors

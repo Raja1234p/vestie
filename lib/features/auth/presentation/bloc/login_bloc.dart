@@ -25,10 +25,13 @@ class LoginBloc extends BaseFormBloc<LoginEvent, LoginState> {
     LoginUseCase? loginUseCase,
     GoogleLoginUseCase? googleLoginUseCase,
     GetRiskDisclaimerUseCase? getRiskDisclaimerUseCase,
-  })  : _loginUseCase = loginUseCase ?? ServiceLocator.instance.loginUseCase,
-        _googleLoginUseCase = googleLoginUseCase ?? ServiceLocator.instance.googleLoginUseCase,
-        _getRiskDisclaimerUseCase = getRiskDisclaimerUseCase ?? ServiceLocator.instance.getRiskDisclaimerUseCase,
-        super(const LoginInitial()) {
+  }) : _loginUseCase = loginUseCase ?? ServiceLocator.instance.loginUseCase,
+       _googleLoginUseCase =
+           googleLoginUseCase ?? ServiceLocator.instance.googleLoginUseCase,
+       _getRiskDisclaimerUseCase =
+           getRiskDisclaimerUseCase ??
+           ServiceLocator.instance.getRiskDisclaimerUseCase,
+       super(const LoginInitial()) {
     on<LoginSubmitted>(_onLoginSubmitted);
     on<GoogleLoginRequested>(_onGoogleLoginRequested);
     on<LoginReset>((_, emit) => emit(const LoginInitial()));
@@ -40,7 +43,12 @@ class LoginBloc extends BaseFormBloc<LoginEvent, LoginState> {
   ) async {
     final emailError = Validators.validateEmail(event.email);
     if (emailError != null) {
-      emit(LoginError(message: 'Validation Error', validationErrors: {'email': emailError}));
+      emit(
+        LoginError(
+          message: 'Validation Error',
+          validationErrors: {'email': emailError},
+        ),
+      );
       return;
     }
 
@@ -53,7 +61,8 @@ class LoginBloc extends BaseFormBloc<LoginEvent, LoginState> {
       ),
       emit,
       stateBuilder: (status, errorMessage, errorTitle, errors, user) {
-        if (status == FormSubmissionStatus.submitting) return const LoginLoading();
+        if (status == FormSubmissionStatus.submitting)
+          return const LoginLoading();
         if (status == FormSubmissionStatus.failure) {
           return LoginError(
             message: errorMessage ?? 'Error',
@@ -75,47 +84,46 @@ class LoginBloc extends BaseFormBloc<LoginEvent, LoginState> {
       ipAddress: ApiConstants.defaultIpAddress,
     );
 
-    await result.fold(
-      (failure) async {},
-      (user) async {
-        // Save tokens
-        if (user.accessToken != null) {
-          await ServiceLocator.instance.secureStorage.saveString(
-            StorageKeys.accessToken,
-            user.accessToken!,
-          );
-        }
-        if (user.refreshToken != null && user.refreshToken!.isNotEmpty) {
-          await ServiceLocator.instance.secureStorage.saveString(
-            StorageKeys.refreshToken,
-            user.refreshToken!,
-          );
-        }
-          await ServiceLocator.instance.sharedPrefs.saveBool(
-            StorageKeys.isLoggedIn,
-            true,
-          );
-          await ServiceLocator.instance.sharedPrefs.saveString(
-            StorageKeys.userName,
-            user.name,
-          );
-          await ServiceLocator.instance.sharedPrefs.saveString(
-            StorageKeys.userEmail,
-            user.email,
-          );
-
-          // Check Risk Disclaimer status
-          final disclaimerResult = await _getRiskDisclaimerUseCase();
-          final isDisclaimerAccepted = disclaimerResult.fold(
-            (_) => false,
-            (disclaimer) => disclaimer.accepted,
-          );
-
-          await OnboardingPrefs.markCompleted();
-          emit(LoginSuccess(user: user, isDisclaimerAccepted: isDisclaimerAccepted));
-        },
+    await result.fold((failure) async {}, (user) async {
+      // Save tokens
+      if (user.accessToken != null) {
+        await ServiceLocator.instance.secureStorage.saveString(
+          StorageKeys.accessToken,
+          user.accessToken!,
+        );
+      }
+      if (user.refreshToken != null && user.refreshToken!.isNotEmpty) {
+        await ServiceLocator.instance.secureStorage.saveString(
+          StorageKeys.refreshToken,
+          user.refreshToken!,
+        );
+      }
+      await ServiceLocator.instance.sharedPrefs.saveBool(
+        StorageKeys.isLoggedIn,
+        true,
       );
-    }
+      await ServiceLocator.instance.sharedPrefs.saveString(
+        StorageKeys.userName,
+        user.name,
+      );
+      await ServiceLocator.instance.sharedPrefs.saveString(
+        StorageKeys.userEmail,
+        user.email,
+      );
+
+      // Check Risk Disclaimer status
+      final disclaimerResult = await _getRiskDisclaimerUseCase();
+      final isDisclaimerAccepted = disclaimerResult.fold(
+        (_) => false,
+        (disclaimer) => disclaimer.accepted,
+      );
+
+      await OnboardingPrefs.markCompleted();
+      emit(
+        LoginSuccess(user: user, isDisclaimerAccepted: isDisclaimerAccepted),
+      );
+    });
+  }
 
   Future<void> _onGoogleLoginRequested(
     GoogleLoginRequested event,
@@ -131,10 +139,12 @@ class LoginBloc extends BaseFormBloc<LoginEvent, LoginState> {
           emit(const LoginInitial());
           return;
         }
-        emit(LoginError(
-          message: FailureMapper.userMessage(failure),
-          title: FailureMapper.dialogTitle(failure),
-        ));
+        emit(
+          LoginError(
+            message: FailureMapper.userMessage(failure),
+            title: FailureMapper.dialogTitle(failure),
+          ),
+        );
       },
       (user) async {
         if (user.accessToken != null) {

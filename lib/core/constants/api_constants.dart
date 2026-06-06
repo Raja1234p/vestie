@@ -63,27 +63,28 @@ class ApiConstants {
       apiOrigin.replace(path: '/bank/refresh').toString();
 
   // ── Auth ─────────────────────────────────────────────────────────────────
-  static const String register       = '/auth/register';
-  static const String verifyEmail    = '/auth/verify-email';
-  static const String resendCode     = '/auth/resend-code';
-  static const String login          = '/auth/login';
-  static const String refreshToken   = '/auth/refresh';
+  static const String register = '/auth/register';
+  static const String verifyEmail = '/auth/verify-email';
+  static const String resendCode = '/auth/resend-code';
+  static const String login = '/auth/login';
+  static const String refreshToken = '/auth/refresh';
   static const String forgotPassword = '/auth/forgot-password';
-  static const String resetPassword  = '/auth/reset-password';
-  static const String googleLogin    = '/auth/google';
-  static const String appleLogin     = '/auth/apple';
-  static const String logout         = '/auth/logout';
+  static const String resetPassword = '/auth/reset-password';
+  static const String googleLogin = '/auth/google';
+  static const String appleLogin = '/auth/apple';
+  static const String logout = '/auth/logout';
 
   // ── User ─────────────────────────────────────────────────────────────────
-  static const String me              = '/users/me';
-  static const String meSummary       = '/users/me/summary';
+  static const String me = '/users/me';
+  static const String meSummary = '/users/me/summary';
   static const String meProfilePicture = '/users/me/profile-picture';
-  static const String riskDisclaimer  = '/users/me/risk-disclaimer';
+  static const String riskDisclaimer = '/users/me/risk-disclaimer';
 
   // ── VFF ──────────────────────────────────────────────────────────────────
   static const String userMeVffs = '/users/me/vffs';
   static String userMeVffProfile(String userId) => '/users/me/vffs/$userId';
-  static String userVffPublicProfile(String userId) => '/users/$userId/vff-profile';
+  static String userVffPublicProfile(String userId) =>
+      '/users/$userId/vff-profile';
   static String userVffConnection(String userId) => '/users/$userId/vff';
   static const String userInboxReceived = '/users/me/inbox/received';
   static const String userInboxSent = '/users/me/inbox/sent';
@@ -106,7 +107,8 @@ class ApiConstants {
   static const String projects = '/projects';
 
   /// `POST /projects/{id}/launch` — Draft → Active after create (Week 3/4).
-  static String projectLaunch(String projectId) => '$projects/$projectId/launch';
+  static String projectLaunch(String projectId) =>
+      '$projects/$projectId/launch';
 
   /// `GET /projects/{projectId}/members/{userId}/activity` — member profile metrics + ledger.
   static String projectMemberActivity(String projectId, String userId) =>
@@ -117,8 +119,10 @@ class ApiConstants {
       '$projects/$projectId/members/$userId/defaulted';
 
   /// `POST /projects/{projectId}/members/{userId}/remove-non-repayment`
-  static String projectMemberRemoveNonRepayment(String projectId, String userId) =>
-      '$projects/$projectId/members/$userId/remove-non-repayment';
+  static String projectMemberRemoveNonRepayment(
+    String projectId,
+    String userId,
+  ) => '$projects/$projectId/members/$userId/remove-non-repayment';
 
   /// `POST` assign / `DELETE` remove — `/projects/{projectId}/members/{userId}/co-leader`
   static String projectMemberCoLeader(String projectId, String userId) =>
@@ -192,13 +196,11 @@ class ApiConstants {
   static String projectAnnouncements(String projectId) =>
       '$projects/$projectId/announcements';
 
-  static String projectAnnouncement(
-    String projectId,
-    String announcementId,
-  ) =>
+  static String projectAnnouncement(String projectId, String announcementId) =>
       '$projects/$projectId/announcements/$announcementId';
 
-  static const String googleServerClientId = '531408349211-pfs5okgjus8t8iecl9arrt782mo4ppob.apps.googleusercontent.com';
+  static const String googleServerClientId =
+      '531408349211-pfs5okgjus8t8iecl9arrt782mo4ppob.apps.googleusercontent.com';
 
   // ── Network ──────────────────────────────────────────────────────────────
   /// Max time for connect / send / receive on every API call (1 minute).
@@ -207,5 +209,5 @@ class ApiConstants {
   // ── Static values ────────────────────────────────────────────────────────
   static const String disclaimerVersion = '1.0';
   static const String defaultDeviceName = 'Flutter';
-  static const String defaultIpAddress  = '0.0.0.0';
+  static const String defaultIpAddress = '0.0.0.0';
 }

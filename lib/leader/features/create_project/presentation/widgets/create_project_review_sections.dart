@@ -6,7 +6,9 @@ import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import '../../domain/create_project_form.dart';
 
-List<MapEntry<String, String>> buildProjectDetailsReviewRows(CreateProjectForm form) {
+List<MapEntry<String, String>> buildProjectDetailsReviewRows(
+  CreateProjectForm form,
+) {
   return [
     MapEntry(
       AppStrings.reviewLabelName,
@@ -21,19 +23,18 @@ List<MapEntry<String, String>> buildProjectDetailsReviewRows(CreateProjectForm f
   ];
 }
 
-List<MapEntry<String, String>> buildInvestmentRoiReviewRows(CreateProjectForm form) {
+List<MapEntry<String, String>> buildInvestmentRoiReviewRows(
+  CreateProjectForm form,
+) {
   final raw = form.roi.trim().replaceAll('%', '');
-  final roi = raw.isEmpty
-      ? AppStrings.reviewRoiNotSet
-      : '$raw%';
-  return [
-    MapEntry(AppStrings.labelRoiOptional, roi),
-  ];
+  final roi = raw.isEmpty ? AppStrings.reviewRoiNotSet : '$raw%';
+  return [MapEntry(AppStrings.labelRoiOptional, roi)];
 }
 
 /// White summary card shared by [CreateProjectReviewScreen].
 class CreateProjectReviewSectionCard extends StatelessWidget {
   final String title;
+
   /// Only the Project Details card supplies this — edit restarts the wizard at details.
   final VoidCallback? onEdit;
   final List<MapEntry<String, String>> rows;
@@ -78,8 +79,10 @@ class CreateProjectReviewSectionCard extends StatelessWidget {
                 GestureDetector(
                   onTap: onEdit,
                   child: Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 15.w, vertical: 7.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 15.w,
+                      vertical: 7.h,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.primary,
                       borderRadius: BorderRadius.circular(100.r),
@@ -119,15 +122,17 @@ class CreateProjectReviewValueTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final normalizedValue = value.trim().isEmpty ? '—' : value.trim();
-    final isPrimaryDetailsRow = label == AppStrings.reviewLabelName ||
+    final isPrimaryDetailsRow =
+        label == AppStrings.reviewLabelName ||
         label == AppStrings.reviewLabelGoal ||
         label == AppStrings.reviewLabelDeadline ||
         label == AppStrings.reviewLabelCategory ||
         label == AppStrings.labelRoiOptional;
 
     final isLongValue = normalizedValue.length > 28;
-    final valueFontSize =
-        isPrimaryDetailsRow ? 30.sp : (isLongValue ? 18.sp : 24.sp);
+    final valueFontSize = isPrimaryDetailsRow
+        ? 30.sp
+        : (isLongValue ? 18.sp : 24.sp);
     final valueWeight = isPrimaryDetailsRow
         ? FontWeight.w600
         : (isLongValue ? FontWeight.w500 : FontWeight.w600);

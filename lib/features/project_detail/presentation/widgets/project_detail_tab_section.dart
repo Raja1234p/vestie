@@ -40,7 +40,9 @@ class ProjectDetailTabSection extends StatelessWidget {
         final message = state.vffSendErrorMessage;
         if (message == null || message.isEmpty) return;
         AppSnackBar.showError(context, message);
-        context.read<ProjectDetailBloc>().add(const ClearMemberVffSendErrorEvent());
+        context.read<ProjectDetailBloc>().add(
+          const ClearMemberVffSendErrorEvent(),
+        );
       },
       builder: (context, state) {
         if (state is! ProjectDetailLoaded) return const SizedBox.shrink();
@@ -65,84 +67,82 @@ class ProjectDetailTabSection extends StatelessWidget {
                     : AppStrings.tabMember,
               ],
               activeIndex: isBorrowTab ? 0 : 1,
-              onTabSelected: (i) => bloc.add(ChangeTabEvent(
-                activeTab: i == 0
-                    ? ProjectDetailTab.borrowRequests
-                    : ProjectDetailTab.members,
-              )),
+              onTabSelected: (i) => bloc.add(
+                ChangeTabEvent(
+                  activeTab: i == 0
+                      ? ProjectDetailTab.borrowRequests
+                      : ProjectDetailTab.members,
+                ),
+              ),
             ),
             SizedBox(height: 16.h),
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 280),
               child: isBorrowTab
                   ? project.usesLeaderDetailPanels
-                      ? LeaderBorrowRequestsPanel(
-                          key: const ValueKey('leader-borrow'),
-                          project: project,
-                          requests: project.borrowRequests,
-                          onViewAll: () => context.push(
-                            AppRoutes.borrowRequests,
-                            extra: ProjectDetailNavigation
-                                .borrowRequestsArgs(
-                              project,
-                              isLeaderMode: true,
+                        ? LeaderBorrowRequestsPanel(
+                            key: const ValueKey('leader-borrow'),
+                            project: project,
+                            requests: project.borrowRequests,
+                            onViewAll: () => context.push(
+                              AppRoutes.borrowRequests,
+                              extra: ProjectDetailNavigation.borrowRequestsArgs(
+                                project,
+                                isLeaderMode: true,
+                              ),
                             ),
-                          ),
-                          onMemberTap: project.canReviewMemberProfiles
-                              ? onMemberTap
-                              : null,
-                        )
-                      : UserBorrowRequestsPanel(
-                          key: const ValueKey('user-borrow'),
-                          project: project,
-                          requests: project.borrowRequests,
-                          onViewAll: () => context.push(
-                            AppRoutes.borrowRequests,
-                            extra: ProjectDetailNavigation
-                                .borrowRequestsArgs(
-                              project,
-                              isLeaderMode: false,
+                            onMemberTap: project.canReviewMemberProfiles
+                                ? onMemberTap
+                                : null,
+                          )
+                        : UserBorrowRequestsPanel(
+                            key: const ValueKey('user-borrow'),
+                            project: project,
+                            requests: project.borrowRequests,
+                            onViewAll: () => context.push(
+                              AppRoutes.borrowRequests,
+                              extra: ProjectDetailNavigation.borrowRequestsArgs(
+                                project,
+                                isLeaderMode: false,
+                              ),
                             ),
-                          ),
-                          onMemberTap: project.canReviewMemberProfiles
-                              ? onMemberTap
-                              : null,
-                        )
+                            onMemberTap: project.canReviewMemberProfiles
+                                ? onMemberTap
+                                : null,
+                          )
                   : project.usesLeaderDetailPanels
-                      ? LeaderMembersPanel(
-                          key: const ValueKey('leader-members'),
-                          project: project,
-                          members: project.members,
-                          onViewAll: () =>
-                              ProjectDetailNavigation.openGroupMembers(
-                            context,
-                            project: project,
-                          ),
-                          onMemberTap: project.canReviewMemberProfiles
-                              ? onMemberTap
-                              : null,
-                          onSendVffRequest: project.canReviewMemberProfiles
-                              ? onSendVff
-                              : null,
-                          sendingVffUserId: sendingVffUserId,
-                        )
-                      : UserMembersPanel(
-                          key: const ValueKey('user-members'),
-                          project: project,
-                          members: project.members,
-                          onViewAll: () =>
-                              ProjectDetailNavigation.openGroupMembers(
-                            context,
-                            project: project,
-                          ),
-                          onMemberTap: project.canReviewMemberProfiles
-                              ? onMemberTap
-                              : null,
-                          onSendVffRequest: project.canReviewMemberProfiles
-                              ? onSendVff
-                              : null,
-                          sendingVffUserId: sendingVffUserId,
-                        ),
+                  ? LeaderMembersPanel(
+                      key: const ValueKey('leader-members'),
+                      project: project,
+                      members: project.members,
+                      onViewAll: () => ProjectDetailNavigation.openGroupMembers(
+                        context,
+                        project: project,
+                      ),
+                      onMemberTap: project.canReviewMemberProfiles
+                          ? onMemberTap
+                          : null,
+                      onSendVffRequest: project.canReviewMemberProfiles
+                          ? onSendVff
+                          : null,
+                      sendingVffUserId: sendingVffUserId,
+                    )
+                  : UserMembersPanel(
+                      key: const ValueKey('user-members'),
+                      project: project,
+                      members: project.members,
+                      onViewAll: () => ProjectDetailNavigation.openGroupMembers(
+                        context,
+                        project: project,
+                      ),
+                      onMemberTap: project.canReviewMemberProfiles
+                          ? onMemberTap
+                          : null,
+                      onSendVffRequest: project.canReviewMemberProfiles
+                          ? onSendVff
+                          : null,
+                      sendingVffUserId: sendingVffUserId,
+                    ),
             ),
           ],
         );

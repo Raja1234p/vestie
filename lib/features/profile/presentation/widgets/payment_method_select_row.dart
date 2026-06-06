@@ -32,56 +32,56 @@ class PaymentMethodSelectRow extends StatelessWidget {
       child: SizedBox(
         height: AppDimens.paymentMethodRowHeight,
         child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.grey100,
-          borderRadius: BorderRadius.circular(12.r),
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: enabled ? onTap : null,
+          decoration: BoxDecoration(
+            color: AppColors.grey100,
             borderRadius: BorderRadius.circular(12.r),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  leading,
-                  SizedBox(width: 10.w),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                      AppText(
-                        title,
-                        style: GoogleFonts.lato(
-                          fontSize: 17.sp,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.grey1100,
-                        ),
-                      ),
-                      if (subtitle != null) ...[
-                        SizedBox(height: 2.h),
-                        AppText(
-                          subtitle!,
-                          style: GoogleFonts.lato(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.grey700,
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: enabled ? onTap : null,
+              borderRadius: BorderRadius.circular(12.r),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    leading,
+                    SizedBox(width: 10.w),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AppText(
+                            title,
+                            style: GoogleFonts.lato(
+                              fontSize: 17.sp,
+                              fontWeight: FontWeight.w800,
+                              color: AppColors.grey1100,
+                            ),
                           ),
-                        ),
-                      ],
-                    ],
-                  ),
+                          if (subtitle != null) ...[
+                            SizedBox(height: 2.h),
+                            AppText(
+                              subtitle!,
+                              style: GoogleFonts.lato(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.grey700,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    _PaymentMethodRadio(selected: selected),
+                  ],
                 ),
-                _PaymentMethodRadio(selected: selected),
-                ],
               ),
             ),
           ),
         ),
-      ),
       ),
     );
   }
@@ -128,10 +128,7 @@ class _PaymentMethodRadio extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(
-            color: AppColors.neutral400,
-            width: 2,
-          ),
+          border: Border.all(color: AppColors.neutral400, width: 2),
         ),
       ),
     );

@@ -39,7 +39,10 @@ class AssignCoLeaderUseCase {
   final ProjectActionsRepository repository;
   AssignCoLeaderUseCase(this.repository);
 
-  Future<Either<Failure, void>> call({required String projectId, required String userId}) async {
+  Future<Either<Failure, void>> call({
+    required String projectId,
+    required String userId,
+  }) async {
     return repository.promoteToCoLeader(projectId, userId);
   }
 }
@@ -48,7 +51,10 @@ class RemoveCoLeaderUseCase {
   final ProjectActionsRepository repository;
   RemoveCoLeaderUseCase(this.repository);
 
-  Future<Either<Failure, void>> call({required String projectId, required String userId}) async {
+  Future<Either<Failure, void>> call({
+    required String projectId,
+    required String userId,
+  }) async {
     return repository.demoteCoLeader(projectId, userId);
   }
 }
@@ -73,7 +79,10 @@ class RemoveMemberUseCase {
   final ProjectActionsRepository repository;
   RemoveMemberUseCase(this.repository);
 
-  Future<Either<Failure, void>> call({required String projectId, required String userId}) async {
+  Future<Either<Failure, void>> call({
+    required String projectId,
+    required String userId,
+  }) async {
     return repository.removeMember(projectId, userId);
   }
 }
@@ -82,7 +91,10 @@ class MarkDefaultedUseCase {
   final ProjectActionsRepository repository;
   MarkDefaultedUseCase(this.repository);
 
-  Future<Either<Failure, void>> call({required String projectId, required String userId}) async {
+  Future<Either<Failure, void>> call({
+    required String projectId,
+    required String userId,
+  }) async {
     return repository.markDefaulted(projectId: projectId, userId: userId);
   }
 }
@@ -91,8 +103,14 @@ class RemoveForNonRepaymentUseCase {
   final ProjectActionsRepository repository;
   RemoveForNonRepaymentUseCase(this.repository);
 
-  Future<Either<Failure, void>> call({required String projectId, required String userId}) async {
-    return repository.removeForNonRepayment(projectId: projectId, userId: userId);
+  Future<Either<Failure, void>> call({
+    required String projectId,
+    required String userId,
+  }) async {
+    return repository.removeForNonRepayment(
+      projectId: projectId,
+      userId: userId,
+    );
   }
 }
 
