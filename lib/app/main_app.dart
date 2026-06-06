@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -32,6 +33,9 @@ class _MainAppState extends State<MainApp> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (kDebugMode) {
+        debugPrint('MainApp: first frame — starting deep link listener');
+      }
       ProjectInviteDeepLinkService.instance.start(AppRouter.router);
     });
   }

@@ -130,12 +130,12 @@ abstract final class AppPermissionHelper {
 
   /// Prompts for notification permission once per install.
   ///
+  /// Call after the splash screen has painted (not during bootstrap).
+  ///
   /// - Already granted → no-op.
   /// - Permanently denied → no-op (user must go to Settings manually).
   /// - Not determined / denied (promptable) → shows in-app dialog once, then marks dismissed.
-  static Future<void> maybePromptNotificationsOnDashboard(
-    BuildContext context,
-  ) async {
+  static Future<void> maybePromptNotifications(BuildContext context) async {
     if (kIsWeb || !context.mounted) return;
 
     // Already granted — nothing to do.

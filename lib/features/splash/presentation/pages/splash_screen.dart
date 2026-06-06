@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/app_routes.dart';
 import '../../../../core/storage/pending_project_invite_store.dart';
+import '../../../../core/utils/app_permission_helper.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_dimens.dart';
 import '../../../../core/extensions/widget_extensions.dart';
@@ -20,6 +21,15 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   bool _didPrecache = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      await AppPermissionHelper.maybePromptNotifications(context);
+    });
+  }
 
   @override
   void didChangeDependencies() {

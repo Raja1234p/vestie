@@ -19,7 +19,6 @@ import '../../../../core/services/fcm_push_service.dart';
 import '../../../../core/services/bank_accounts_prefetch.dart';
 import '../../../../core/services/payment_methods_prefetch.dart';
 import '../../../../core/services/wallet_prefetch.dart';
-import '../../../../core/utils/app_permission_helper.dart';
 import '../widgets/app_bottom_nav_bar.dart';
 
 /// Root shell for the main app — holds all bottom-nav tabs via IndexedStack.
@@ -70,8 +69,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       await FcmPushService.syncDeviceToken();
       await ProjectsSignalRService.instance.connectIfLoggedIn();
       await WalletSignalRService.instance.connectIfLoggedIn();
-      if (!mounted) return;
-      await AppPermissionHelper.maybePromptNotificationsOnDashboard(context);
     });
   }
 
