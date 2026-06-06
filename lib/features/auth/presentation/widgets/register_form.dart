@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -193,23 +195,26 @@ class _RegisterFormState extends State<RegisterForm> {
                         ? null
                         : () => _submit(context),
                   ),
-                  SizedBox(height: 12.h),
-                  const OrDivider(),
-                  SizedBox(height: 12.h),
-                  SocialAuthButton(
-                    provider: SocialProvider.google,
-                    isLoading: isGoogleLoading,
-                    onPressed: isEmailLoading || isGoogleLoading
-                        ? null
-                        : () => context.read<RegisterBloc>().add(
-                            const GoogleRegisterRequested(),
-                          ),
-                  ),
-                  SizedBox(height: 12.h),
-                  SocialAuthButton(
-                    provider: SocialProvider.apple,
-                    onPressed: () => _showComingSoon(context),
-                  ),
+                  if (Platform.isAndroid || Platform.isIOS) ...[
+                    SizedBox(height: 12.h),
+                    const OrDivider(),
+                    SizedBox(height: 12.h),
+                    if (Platform.isAndroid)
+                      SocialAuthButton(
+                        provider: SocialProvider.google,
+                        isLoading: isGoogleLoading,
+                        onPressed: isEmailLoading || isGoogleLoading
+                            ? null
+                            : () => context.read<RegisterBloc>().add(
+                                const GoogleRegisterRequested(),
+                              ),
+                      ),
+                    if (Platform.isIOS)
+                      SocialAuthButton(
+                        provider: SocialProvider.apple,
+                        onPressed: () => _showComingSoon(context),
+                      ),
+                  ],
                   SizedBox(height: 12.h),
                 ]),
               ),
