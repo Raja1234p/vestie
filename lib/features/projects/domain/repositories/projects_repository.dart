@@ -20,4 +20,10 @@ abstract class ProjectsRepository {
   Future<Either<Failure, CreatedProjectEntity>> createAndLaunchProject({
     required CreateProjectForm form,
   });
+
+  /// `PUT /projects/{id}` — leader edit from project detail.
+  Future<Either<Failure, void>> updateProject({
+    required String projectId,
+    required CreateProjectForm form,
+  });
 }

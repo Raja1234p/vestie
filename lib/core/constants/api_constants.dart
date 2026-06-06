@@ -106,6 +106,9 @@ class ApiConstants {
   // ── Projects ─────────────────────────────────────────────────────────────
   static const String projects = '/projects';
 
+  /// `GET` / `PUT /projects/{id}` — project detail and leader edit.
+  static String projectById(String projectId) => '$projects/$projectId';
+
   /// `POST /projects/{id}/launch` — Draft → Active after create (Week 3/4).
   static String projectLaunch(String projectId) =>
       '$projects/$projectId/launch';

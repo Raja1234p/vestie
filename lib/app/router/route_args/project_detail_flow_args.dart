@@ -32,6 +32,9 @@ class MyBorrowRequestRouteArgs {
   final List<MyBorrowHistoryEntry> history;
   final MyBorrowApprovedUiData? approvedBorrow;
 
+  /// Vacation/emergency group leaders cannot borrow until a co-leader exists.
+  final bool borrowDisabledForViewer;
+
   const MyBorrowRequestRouteArgs({
     required this.projectId,
     this.projectName = '',
@@ -39,6 +42,7 @@ class MyBorrowRequestRouteArgs {
     this.activeRequest,
     this.history = const [],
     this.approvedBorrow,
+    this.borrowDisabledForViewer = false,
   });
 }
 

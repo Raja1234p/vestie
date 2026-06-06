@@ -44,7 +44,10 @@ class BorrowRequestsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (requests.isEmpty) {
-      return const BorrowRequestsEmptyState(compactTop: true);
+      return const BorrowRequestsEmptyState(
+        compactTop: true,
+        title: AppStrings.projectDetailBorrowRequestsEmpty,
+      );
     }
 
     final preview = requests.take(2).toList();

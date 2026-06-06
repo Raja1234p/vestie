@@ -16,11 +16,13 @@ import '../create_project_entry_mode.dart';
 import '../create_project_flow.dart';
 import '../cubit/create_project_cubit.dart';
 import '../cubit/create_project_submit_cubit.dart';
+import '../cubit/create_project_update_cubit.dart';
 import '../widgets/create_project_header.dart';
 import '../widgets/create_project_review_sections.dart';
 
 /// Summary before submit — sections depend on the chosen [ProjectCreationFlowType].
-/// Final wizard step: `POST /projects` then `POST /projects/{id}/launch` (Week 3/4).
+/// Create: `POST /projects` then `POST /projects/{id}/launch`.
+/// Edit: `PUT /projects/{id}`.
 class CreateProjectReviewScreen extends StatelessWidget {
   const CreateProjectReviewScreen({super.key});
 
@@ -30,47 +32,72 @@ class CreateProjectReviewScreen extends StatelessWidget {
       create: (_) => CreateProjectSubmitCubit(),
       child: BlocBuilder<CreateProjectCubit, CreateProjectForm>(
         builder: (context, form) {
-          return BlocListener<
-            CreateProjectSubmitCubit,
-            CreateProjectSubmitState
-          >(
-            listenWhen: (previous, current) {
-              final idReady =
-                  (current.createdProject?.id ?? '').isNotEmpty &&
-                  current.createdProject?.id != previous.createdProject?.id;
-              final errReady =
-                  (current.error ?? '').isNotEmpty &&
-                  current.error != previous.error &&
-                  !current.loading;
-              return idReady || errReady;
-            },
-            listener: (context, state) async {
-              if (state.createdProject != null &&
-                  state.createdProject!.id.isNotEmpty) {
-                if (!context.mounted) return;
-                final created = state.createdProject!;
-                context.push(
-                  AppRoutes.createProjectSuccess,
-                  extra: CreateProjectSuccessRouteArgs(
-                    projectId: created.id,
-                    projectName: created.name,
-                    isInvestment: projectTypeIsInvestment(created.type),
-                  ),
-                );
-                return;
-              }
-              final err = state.error;
-              if (err != null && err.isNotEmpty && !state.loading) {
-                await AppFailureDialog.show(
-                  context,
-                  title: state.errorTitle,
-                  message: err,
-                );
-                if (context.mounted) {
-                  context.read<CreateProjectSubmitCubit>().clearError();
-                }
-              }
-            },
+          final isEdit = form.isEditingProject;
+
+          return MultiBlocListener(
+            listeners: [
+              BlocListener<CreateProjectSubmitCubit, CreateProjectSubmitState>(
+                listenWhen: (previous, current) {
+                  final idReady =
+                      (current.createdProject?.id ?? '').isNotEmpty &&
+                      current.createdProject?.id != previous.createdProject?.id;
+                  final errReady =
+                      (current.error ?? '').isNotEmpty &&
+                      current.error != previous.error &&
+                      !current.loading;
+                  return idReady || errReady;
+                },
+                listener: (context, state) async {
+                  if (state.createdProject != null &&
+                      state.createdProject!.id.isNotEmpty) {
+                    if (!context.mounted) return;
+                    final created = state.createdProject!;
+                    context.push(
+                      AppRoutes.createProjectSuccess,
+                      extra: CreateProjectSuccessRouteArgs(
+                        projectId: created.id,
+                        projectName: created.name,
+                        isInvestment: projectTypeIsInvestment(created.type),
+                      ),
+                    );
+                    return;
+                  }
+                  final err = state.error;
+                  if (err != null && err.isNotEmpty && !state.loading) {
+                    await AppFailureDialog.show(
+                      context,
+                      title: state.errorTitle,
+                      message: err,
+                    );
+                    if (context.mounted) {
+                      context.read<CreateProjectSubmitCubit>().clearError();
+                    }
+                  }
+                },
+              ),
+              BlocListener<CreateProjectUpdateCubit, CreateProjectUpdateState>(
+                listenWhen: (previous, current) {
+                  final errReady =
+                      (current.error ?? '').isNotEmpty &&
+                      current.error != previous.error &&
+                      !current.loading;
+                  return errReady;
+                },
+                listener: (context, state) async {
+                  final err = state.error;
+                  if (err != null && err.isNotEmpty && !state.loading) {
+                    await AppFailureDialog.show(
+                      context,
+                      title: state.errorTitle,
+                      message: err,
+                    );
+                    if (context.mounted) {
+                      context.read<CreateProjectUpdateCubit>().clearError();
+                    }
+                  }
+                },
+              ),
+            ],
             child: Scaffold(
               backgroundColor: Colors.transparent,
               resizeToAvoidBottomInset: false,
@@ -117,28 +144,51 @@ class CreateProjectReviewScreen extends StatelessWidget {
                       top: false,
                       child: Padding(
                         padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 20.h),
-                        child:
-                            BlocBuilder<
-                              CreateProjectSubmitCubit,
-                              CreateProjectSubmitState
-                            >(
-                              buildWhen: (p, c) => p.loading != c.loading,
-                              builder: (context, submit) {
-                                return AppButton(
-                                  text: AppStrings.btnCreateProject2,
-                                  useGradient: false,
-                                  hasShadow: false,
-                                  color: AppColors.neutral1200,
-                                  borderRadius: 10.r,
-                                  isLoading: submit.loading,
-                                  onPressed: submit.loading
-                                      ? () {}
-                                      : () => context
-                                            .read<CreateProjectSubmitCubit>()
-                                            .submit(form),
-                                );
-                              },
-                            ),
+                        child: BlocBuilder<CreateProjectSubmitCubit,
+                            CreateProjectSubmitState>(
+                          buildWhen: (p, c) => p.loading != c.loading,
+                          builder: (context, submit) {
+                            final update =
+                                context.watch<CreateProjectUpdateCubit>().state;
+                            final loading =
+                                isEdit ? update.loading : submit.loading;
+
+                            return AppButton(
+                              text: isEdit
+                                  ? AppStrings.btnEditProject
+                                  : AppStrings.btnCreateProject2,
+                              useGradient: false,
+                              hasShadow: false,
+                              color: AppColors.neutral1200,
+                              borderRadius: 10.r,
+                              isLoading: loading,
+                              onPressed: loading
+                                  ? null
+                                  : () async {
+                                      if (isEdit) {
+                                        final ok = await context
+                                            .read<CreateProjectUpdateCubit>()
+                                            .submit(form);
+                                        if (!context.mounted || !ok) return;
+                                        context.push(
+                                          AppRoutes.createProjectSuccess,
+                                          extra: CreateProjectSuccessRouteArgs(
+                                            projectId: form.editingProjectId!,
+                                            projectName: form.projectName,
+                                            isInvestment: form.category ==
+                                                NewProjectCategory.investment,
+                                            isEditFlow: true,
+                                          ),
+                                        );
+                                        return;
+                                      }
+                                      context
+                                          .read<CreateProjectSubmitCubit>()
+                                          .submit(form);
+                                    },
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ],

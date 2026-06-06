@@ -25,9 +25,21 @@ Multi-step wizard to create and launch vacation, emergency, or investment projec
 | `/create-project/review` | Review & submit |
 | `/create-project/success` | Post-launch success |
 
-## Trace
+## Trace (create)
 
 `CreateProjectCubit` → `POST /projects` + `POST /projects/{id}/launch`
+
+## Edit project (leader)
+
+Entry: project detail menu → `hydrateFromProjectDetail` → details (category locked) → settings → review → success.
+
+| Concern | Implementation |
+|---------|----------------|
+| API | `PUT /projects/{id}` via `UpdateProjectUseCase` / `CreateProjectUpdateCubit` |
+| Pre-fill | `CreateProjectFormFromDetail` from `ProjectDetailEntity` |
+| Permission | `canEditProject` (group leader only) before navigation |
+| Copy | Review **Edit**, success **Project Edited** (`AppStrings`) |
+| State | Same `CreateProjectCubit` + shared validators as create |
 
 ## See also
 

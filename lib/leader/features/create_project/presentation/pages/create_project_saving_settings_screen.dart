@@ -108,14 +108,8 @@ class CreateProjectSavingSettingsScreen extends StatelessWidget {
                       hasShadow: false,
                       color: AppColors.neutral1200,
                       borderRadius: 10.r,
-                      onPressed: () {
-                        if (entryMode.isEditFlow) {
-                          context.pop();
-                          context.pop();
-                          return;
-                        }
-                        context.push(AppRoutes.createProjectReview);
-                      },
+                      onPressed: () =>
+                          context.push(AppRoutes.createProjectReview),
                     ),
                   ),
                 ),

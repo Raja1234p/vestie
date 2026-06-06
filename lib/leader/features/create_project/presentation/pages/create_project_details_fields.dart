@@ -225,11 +225,13 @@ class CPDeadlinePicker extends StatelessWidget {
 class CPCategoryDropdown extends StatefulWidget {
   final NewProjectCategory value;
   final ValueChanged<NewProjectCategory> onChanged;
+  final bool enabled;
 
   const CPCategoryDropdown({
     super.key,
     required this.value,
     required this.onChanged,
+    this.enabled = true,
   });
 
   @override
@@ -251,7 +253,10 @@ class _CPCategoryDropdownState extends State<CPCategoryDropdown> {
     color: AppColors.inputFieldText,
   );
 
-  void _toggleExpanded() => setState(() => _expanded = !_expanded);
+  void _toggleExpanded() {
+    if (!widget.enabled) return;
+    setState(() => _expanded = !_expanded);
+  }
 
   void _select(NewProjectCategory category) {
     widget.onChanged(category);
@@ -260,6 +265,13 @@ class _CPCategoryDropdownState extends State<CPCategoryDropdown> {
 
   @override
   Widget build(BuildContext context) {
+    final fill = widget.enabled
+        ? AppColors.searchBarBg
+        : AppColors.searchBarBg.withValues(alpha: 0.65);
+    final textStyle = widget.enabled
+        ? _optionTextStyle
+        : _optionTextStyle.copyWith(color: AppColors.authHint);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -271,7 +283,7 @@ class _CPCategoryDropdownState extends State<CPCategoryDropdown> {
               horizontal: AppDimens.p16,
               vertical: 14.h,
             ),
-            decoration: _boxDecoration(AppColors.searchBarBg),
+            decoration: _boxDecoration(fill),
             child: Row(
               children: [
                 Expanded(
@@ -279,22 +291,23 @@ class _CPCategoryDropdownState extends State<CPCategoryDropdown> {
                     widget.value.label,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: _optionTextStyle,
+                    style: textStyle,
                   ),
                 ),
-                Transform.rotate(
-                  angle: _expanded ? math.pi : 0,
-                  child: AppSvgIcon(
-                    assetPath: AppAssets.iconChevronDown,
-                    size: 22.w,
-                    color: AppColors.inputFieldIcon,
+                if (widget.enabled)
+                  Transform.rotate(
+                    angle: _expanded ? math.pi : 0,
+                    child: AppSvgIcon(
+                      assetPath: AppAssets.iconChevronDown,
+                      size: 22.w,
+                      color: AppColors.inputFieldIcon,
+                    ),
                   ),
-                ),
               ],
             ),
           ),
         ),
-        if (_expanded) ...[
+        if (widget.enabled && _expanded) ...[
           SizedBox(height: AppDimens.v8),
           Container(
             decoration: _boxDecoration(AppColors.searchBarBg),
@@ -354,10 +367,13 @@ class _CategoryOptionTile extends StatelessWidget {
 class CPVisibilityToggle extends StatelessWidget {
   final ProjectVisibility value;
   final ValueChanged<ProjectVisibility> onChanged;
+  final bool enabled;
+
   const CPVisibilityToggle({
     super.key,
     required this.value,
     required this.onChanged,
+    this.enabled = true,
   });
 
   @override
@@ -366,7 +382,9 @@ class CPVisibilityToggle extends StatelessWidget {
       height: 50.h,
       padding: EdgeInsets.all(4.r),
       decoration: BoxDecoration(
-        color: AppColors.grey200,
+        color: enabled
+            ? AppColors.grey200
+            : AppColors.grey200.withValues(alpha: 0.65),
         borderRadius: BorderRadius.circular(12.r),
       ),
       child: Row(
@@ -377,14 +395,16 @@ class CPVisibilityToggle extends StatelessWidget {
               : AppStrings.visibilityPrivate;
           return Expanded(
             child: GestureDetector(
-              onTap: () => onChanged(v),
+              onTap: enabled ? () => onChanged(v) : null,
               behavior: HitTestBehavior.opaque,
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 180),
                 curve: Curves.easeInOut,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: isActive ? AppColors.primary : Colors.transparent,
+                  color: isActive
+                      ? (enabled ? AppColors.primary : AppColors.grey800)
+                      : Colors.transparent,
                   borderRadius: BorderRadius.circular(10.r),
                 ),
                 child: Text(
@@ -392,7 +412,11 @@ class CPVisibilityToggle extends StatelessWidget {
                   style: GoogleFonts.lato(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
-                    color: isActive ? Colors.white : AppColors.textPrimary,
+                    color: isActive
+                        ? Colors.white
+                        : (enabled
+                              ? AppColors.textPrimary
+                              : AppColors.authHint),
                   ),
                 ),
               ),

@@ -94,6 +94,31 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
   }
 
   @override
+  Future<Either<Failure, void>> updateProject({
+    required String projectId,
+    required CreateProjectForm form,
+  }) async {
+    if (projectId.isEmpty) {
+      return const Left(ServerFailure(AppStrings.errorGeneric));
+    }
+    try {
+      await remoteDataSource.updateProject(
+        projectId: projectId,
+        request: CreateProjectRequestModel.fromForm(form),
+      );
+      return const Right(null);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message, e.title));
+    } on UnauthorizedException catch (e) {
+      return Left(UnauthorizedFailure(e.message, e.title));
+    } on Failure catch (f) {
+      return Left(f);
+    } catch (_) {
+      return const Left(ServerFailure(AppStrings.errorUpdateProject));
+    }
+  }
+
+  @override
   Future<Either<Failure, CreatedProjectEntity>> createAndLaunchProject({
     required CreateProjectForm form,
   }) async {

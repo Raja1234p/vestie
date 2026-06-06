@@ -22,6 +22,7 @@ import '../../features/projects/data/datasources/projects_remote_data_source_imp
 import '../../features/projects/data/repositories/project_repository_impl.dart';
 import '../../features/projects/data/repositories/projects_repository_impl.dart';
 import '../../features/projects/domain/usecases/create_and_launch_project_use_case.dart';
+import '../../features/projects/domain/usecases/update_project_use_case.dart';
 import '../../features/projects/domain/usecases/create_project_use_case.dart';
 import '../../features/projects/domain/usecases/get_project_detail_usecase.dart';
 import '../../features/projects/domain/usecases/join_project_usecase.dart';
@@ -46,6 +47,7 @@ void registerProjectDependencies(ServiceLocator sl) {
   sl.createAndLaunchProjectUseCase = CreateAndLaunchProjectUseCase(
     sl.projectsRepository,
   );
+  sl.updateProjectUseCase = UpdateProjectUseCase(sl.projectsRepository);
   sl.previewInviteUseCase = PreviewInviteUseCase(sl.projectRepository);
   sl.joinProjectUseCase = JoinProjectUseCase(sl.projectRepository);
 

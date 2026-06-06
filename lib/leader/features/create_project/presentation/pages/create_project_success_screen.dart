@@ -26,11 +26,15 @@ class CreateProjectSuccessScreen extends StatefulWidget {
   /// From API project type — used when opening detail (form may reset before tap).
   final bool isInvestment;
 
+  /// Leader edit flow — success copy differs from create.
+  final bool isEditFlow;
+
   const CreateProjectSuccessScreen({
     super.key,
     required this.projectId,
     this.projectName,
     this.isInvestment = false,
+    this.isEditFlow = false,
   });
 
   @override
@@ -98,7 +102,9 @@ class _CreateProjectSuccessScreenState
         final canShare = shareLink.isNotEmpty && !_loadingInvite;
 
         return AppSuccessScreen(
-          title: AppStrings.projectCreatedTitle,
+          title: widget.isEditFlow
+              ? AppStrings.projectEditedTitle
+              : AppStrings.projectCreatedTitle,
           buttonText: AppStrings.btnGoToMyProject,
           onButtonPressed: () {
             final apiName = widget.projectName?.trim() ?? '';
