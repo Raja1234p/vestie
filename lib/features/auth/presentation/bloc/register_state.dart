@@ -18,7 +18,7 @@ class RegisterLoading extends RegisterState {
   const RegisterLoading() : super(status: FormSubmissionStatus.submitting);
 }
 
-/// Google sign-up in progress ([AppLoadingDialog] on register screen).
+/// Google sign-up in progress (Google button inline loader).
 class RegisterGoogleLoading extends RegisterState {
   const RegisterGoogleLoading()
     : super(status: FormSubmissionStatus.submitting);

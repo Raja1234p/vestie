@@ -4,7 +4,6 @@ import '../../../../app/router/project_invite_navigation.dart';
 import '../../../../core/auth/app_auth_session.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/widgets/common/app_failure_dialog.dart';
-import '../../../../core/widgets/common/app_loading_dialog.dart';
 import '../bloc/login_bloc.dart';
 import '../bloc/login_event.dart';
 import '../bloc/login_state.dart';
@@ -23,54 +22,36 @@ class LoginScreen extends StatelessWidget {
         BlocProvider(create: (_) => LoginBloc()),
         BlocProvider(create: (_) => LoginFormCubit()),
       ],
-      child: MultiBlocListener(
-        listeners: [
-          BlocListener<LoginBloc, LoginState>(
-            listenWhen: (prev, curr) => curr is LoginGoogleLoading,
-            listener: (context, _) {
-              AppLoadingDialog.show(context);
-            },
-          ),
-          BlocListener<LoginBloc, LoginState>(
-            listenWhen: (prev, curr) =>
-                prev is LoginGoogleLoading && curr is! LoginGoogleLoading,
-            listener: (context, _) {
-              final nav = Navigator.of(context, rootNavigator: true);
-              if (nav.canPop()) nav.pop();
-            },
-          ),
-          BlocListener<LoginBloc, LoginState>(
-            listenWhen: (prev, curr) =>
-                curr is LoginSuccess ||
-                curr is LoginGoogleSuccess ||
-                curr is LoginError,
-            listener: (context, state) async {
-              if (state is LoginSuccess) {
-                AppLogger.info('Login success: ${state.user.email}');
-                await AppAuthSession.instance.syncFromStorage();
-                if (!context.mounted) return;
-                await ProjectInviteNavigation.goAfterAuth(
-                  context,
-                  disclaimerAccepted: state.isDisclaimerAccepted,
-                );
-              } else if (state is LoginGoogleSuccess) {
-                await AppAuthSession.instance.syncFromStorage();
-                if (!context.mounted) return;
-                await ProjectInviteNavigation.goAfterAuth(
-                  context,
-                  disclaimerAccepted: state.isDisclaimerAccepted,
-                );
-              } else if (state is LoginError) {
-                AppFailureDialog.show(
-                  context,
-                  title: state.title,
-                  message: state.message,
-                );
-                context.read<LoginBloc>().add(const LoginReset());
-              }
-            },
-          ),
-        ],
+      child: BlocListener<LoginBloc, LoginState>(
+        listenWhen: (prev, curr) =>
+            curr is LoginSuccess ||
+            curr is LoginGoogleSuccess ||
+            curr is LoginError,
+        listener: (context, state) async {
+          if (state is LoginSuccess) {
+            AppLogger.info('Login success: ${state.user.email}');
+            await AppAuthSession.instance.syncFromStorage();
+            if (!context.mounted) return;
+            await ProjectInviteNavigation.goAfterAuth(
+              context,
+              disclaimerAccepted: state.isDisclaimerAccepted,
+            );
+          } else if (state is LoginGoogleSuccess) {
+            await AppAuthSession.instance.syncFromStorage();
+            if (!context.mounted) return;
+            await ProjectInviteNavigation.goAfterAuth(
+              context,
+              disclaimerAccepted: state.isDisclaimerAccepted,
+            );
+          } else if (state is LoginError) {
+            AppFailureDialog.show(
+              context,
+              title: state.title,
+              message: state.message,
+            );
+            context.read<LoginBloc>().add(const LoginReset());
+          }
+        },
         child: const AuthBackground(child: LoginForm()),
       ),
     );

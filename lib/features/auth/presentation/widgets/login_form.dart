@@ -161,6 +161,7 @@ class _LoginFormState extends State<LoginForm> {
                   SizedBox(height: 12.h),
                   SocialAuthButton(
                     provider: SocialProvider.google,
+                    isLoading: isGoogleLoading,
                     onPressed: isEmailLoading || isGoogleLoading
                         ? null
                         : () => context.read<LoginBloc>().add(

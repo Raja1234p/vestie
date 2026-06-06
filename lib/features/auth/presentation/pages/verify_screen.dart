@@ -11,7 +11,6 @@ import '../../../../core/theme/app_colors.dart';
 import '../widgets/auth_go_back_button.dart';
 import '../../../../core/widgets/common/app_failure_dialog.dart';
 import '../../../../core/widgets/common/app_toast.dart';
-import '../../../../core/widgets/common/app_loading_dialog.dart';
 import '../../../../core/widgets/text/app_text.dart';
 import '../bloc/verification_cubit.dart';
 import '../models/auth_route_extras.dart';
@@ -48,35 +47,6 @@ class _VerifyScreenState extends State<VerifyScreen> {
       create: (_) => VerificationCubit(email: widget.email, flow: widget.flow),
       child: MultiBlocListener(
         listeners: [
-          BlocListener<VerificationCubit, VerificationState>(
-            listenWhen: (prev, curr) => !prev.isResending && curr.isResending,
-            listener: (context, _) {
-              final cubit = context.read<VerificationCubit>();
-              showDialog<void>(
-                context: context,
-                useRootNavigator: true,
-                barrierDismissible: false,
-                barrierColor: Colors.black.withValues(alpha: 0.35),
-                builder: (dialogContext) {
-                  return BlocProvider.value(
-                    value: cubit,
-                    child: BlocListener<VerificationCubit, VerificationState>(
-                      listenWhen: (prev, curr) =>
-                          prev.isResending && !curr.isResending,
-                      listener: (_, s) {
-                        if (s.isResending) return;
-                        final nav = Navigator.of(dialogContext);
-                        if (nav.canPop()) nav.pop();
-                      },
-                      child: AppLoadingDialog.body(
-                        message: AppStrings.loadingResendOtp,
-                      ),
-                    ),
-                  );
-                },
-              );
-            },
-          ),
           BlocListener<VerificationCubit, VerificationState>(
             listenWhen: (prev, curr) =>
                 prev.isSuccess != curr.isSuccess ||
@@ -226,7 +196,29 @@ class _VerifyScreenState extends State<VerifyScreen> {
                           runSpacing: 6.h,
                           children: [
                             Text(AppStrings.didntReceive, style: baseStyle),
-                            if (!state.isResending && state.canResend)
+                            if (state.isResending)
+                              Padding(
+                                padding: EdgeInsets.only(left: 6.w),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SizedBox(
+                                      width: 14.w,
+                                      height: 14.w,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: AppColors.authBottomLink,
+                                      ),
+                                    ),
+                                    SizedBox(width: 8.w),
+                                    Text(
+                                      AppStrings.loadingResendOtp,
+                                      style: disabledStyle,
+                                    ),
+                                  ],
+                                ),
+                              )
+                            else if (state.canResend)
                               Padding(
                                 padding: EdgeInsets.only(left: 6.w),
                                 child: GestureDetector(
@@ -237,7 +229,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                                   ),
                                 ),
                               )
-                            else if (!state.isResending)
+                            else
                               Padding(
                                 padding: EdgeInsets.only(left: 6.w),
                                 child: Text(

@@ -198,6 +198,7 @@ class _RegisterFormState extends State<RegisterForm> {
                   SizedBox(height: 12.h),
                   SocialAuthButton(
                     provider: SocialProvider.google,
+                    isLoading: isGoogleLoading,
                     onPressed: isEmailLoading || isGoogleLoading
                         ? null
                         : () => context.read<RegisterBloc>().add(
