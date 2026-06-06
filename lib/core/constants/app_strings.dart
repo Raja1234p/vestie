@@ -1052,6 +1052,8 @@ class AppStrings {
   static const String borrowRequestsEmpty = 'No Borrow Request';
   static const String borrowRequestsEmptySubtitle =
       'Great, you don\'t have any borrow requests.';
+  static const String projectDetailBorrowRequestsEmpty =
+      'No borrow requests yet.';
   static const String borrowRequestsTitle = 'Borrow Requests';
   static const String myBorrowRequestTitle = 'My Borrow Request';
   static const String myBorrowTitle = 'My Borrow';
