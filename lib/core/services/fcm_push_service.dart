@@ -1,4 +1,5 @@
 import 'dart:io' show Platform;
+import 'dart:ui' show Color;
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -70,7 +71,7 @@ class FcmPushService {
       _log('Android notification channel ready: ${_androidChannel.id}');
 
       // Init local notifications.
-      const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
+      const androidInit = AndroidInitializationSettings('@drawable/ic_notification');
       const iosInit = DarwinInitializationSettings();
       await _localNotifications.initialize(
         const InitializationSettings(android: androidInit, iOS: iosInit),
@@ -156,7 +157,11 @@ class FcmPushService {
           channelDescription: _androidChannel.description,
           importance: Importance.high,
           priority: Priority.high,
-          icon: '@mipmap/ic_launcher',
+          icon: '@drawable/ic_notification',
+          largeIcon: const DrawableResourceAndroidBitmap(
+            'ic_notification_large',
+          ),
+          color: const Color(0xFF4C24A0),
         ),
         iOS: const DarwinNotificationDetails(
           presentAlert: true,

@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- FCM notification accent color — matches Vestie brand purple -->
+    <!-- FCM notification accent — matches app icon purple from AppIcons (2) -->
     <color name="notification_color">#4C24A0</color>
+    <color name="ic_launcher_background">#4C24A0</color>
 </resources>
