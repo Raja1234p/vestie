@@ -2,12 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'app/main_app.dart';
-import 'app/vestie_startup_shell.dart';
+import 'bootstrap.dart';
 
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
+Future<void> main() async {
+  await AppBootstrap.run();
   if (kDebugMode) {
-    debugPrint('main: runApp(VestieStartupShell)');
+    debugPrint('main: runApp(MainApp)');
   }
-  runApp(const VestieStartupShell(child: MainApp()));
+  runApp(const MainApp());
 }
