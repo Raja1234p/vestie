@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
 import 'package:vestie/app/router/app_routes.dart';
-import 'package:vestie/core/constants/app_keyboard_types.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/utils/storyboard/storyboard_desktop_loader.dart';
@@ -160,7 +159,9 @@ class _CreateProjectFundMemberSetupScreenState
                     MemberFundTextField(
                       controller: _goalCtrl,
                       hint: AppStrings.hintGoalAmountUsd,
-                      keyboardType: AppKeyboardTypes.decimal,
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                       textInputAction: TextInputAction.next,
                       errorText: _goalError,
                       onChanged: (_) {},

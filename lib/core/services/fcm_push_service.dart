@@ -57,10 +57,6 @@ class FcmPushService {
 
       final messaging = FirebaseMessaging.instance;
 
-      // Do NOT request permission here — [AppPermissionHelper.maybePromptNotifications]
-      // runs after the splash screen's first frame. Requesting during bootstrap
-      // would pop the OS dialog before the user sees any UI.
-
       // Background / terminated handler.
       FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
       _log('Background handler attached');
@@ -73,18 +69,26 @@ class FcmPushService {
           ?.createNotificationChannel(_androidChannel);
       _log('Android notification channel ready: ${_androidChannel.id}');
 
-      // Init local notifications — do not request OS permission here; splash handles it.
       const androidInit = AndroidInitializationSettings('@drawable/ic_notification');
       const iosInit = DarwinInitializationSettings(
-        requestAlertPermission: false,
-        requestBadgePermission: false,
-        requestSoundPermission: false,
+        requestAlertPermission: true,
+        requestBadgePermission: true,
+        requestSoundPermission: true,
         requestProvisionalPermission: false,
       );
       await _localNotifications.initialize(
         const InitializationSettings(android: androidInit, iOS: iosInit),
       );
       _log('Local notifications initialized');
+
+      if (Platform.isAndroid) {
+        await _localNotifications
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >()
+            ?.requestNotificationsPermission();
+        _log('Android notification permission requested');
+      }
 
       // iOS: show foreground notifications as banners.
       await messaging.setForegroundNotificationPresentationOptions(

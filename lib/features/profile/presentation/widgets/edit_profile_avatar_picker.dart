@@ -42,6 +42,9 @@ class EditProfileAvatarPicker extends StatelessWidget {
       source: source,
       imageQuality: 80,
       maxWidth: 800,
+      requestFullMetadata: AppPermissionHelper.galleryPickRequestsFullMetadata(
+        source,
+      ),
     );
     if (picked == null) return;
     onPicked(picked.path);

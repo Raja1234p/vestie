@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../constants/app_keyboard_types.dart';
 import '../../theme/app_colors.dart';
 
 /// Large [displayDollar] text with a transparent [TextField] on top for digit
@@ -47,7 +46,10 @@ class AppStackedCurrencyField extends StatelessWidget {
             onChanged: onDigitsChanged,
             showCursor: false,
             textAlign: TextAlign.center,
-            keyboardType: AppKeyboardTypes.integer,
+            keyboardType: const TextInputType.numberWithOptions(
+              signed: false,
+              decimal: false,
+            ),
             inputFormatters: <TextInputFormatter>[
               FilteringTextInputFormatter.digitsOnly,
               LengthLimitingTextInputFormatter(8),

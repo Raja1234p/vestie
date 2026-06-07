@@ -62,11 +62,12 @@ class AppActionDialog extends StatelessWidget {
     String? glyphAsset,
     Color? iconColor,
     bool actionsInRow = false,
+    bool barrierDismissible = true,
     required VoidCallback onPrimary,
   }) {
     return showDialog(
       context: context,
-      barrierDismissible: true,
+      barrierDismissible: barrierDismissible,
       builder: (_) => Dialog(
         backgroundColor: Colors.transparent,
         insetPadding: EdgeInsets.symmetric(horizontal: 15.w),

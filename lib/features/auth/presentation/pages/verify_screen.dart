@@ -6,7 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../app/router/app_routes.dart';
 import '../../../../core/auth/app_auth_session.dart';
-import '../../../../core/constants/app_keyboard_types.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../widgets/auth_go_back_button.dart';
@@ -134,7 +133,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                       label: AppStrings.labelVerifyCode,
                       hint: AppStrings.hintVerifyCode,
                       controller: _codeCtrl,
-                      keyboardType: AppKeyboardTypes.integer,
+                      keyboardType: TextInputType.number,
                       textInputAction: TextInputAction.done,
                       maxLength: 6,
                       errorText: state.error,

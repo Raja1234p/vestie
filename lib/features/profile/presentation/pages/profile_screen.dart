@@ -140,6 +140,9 @@ class _ProfileBody extends StatelessWidget {
       source: source,
       imageQuality: 80,
       maxWidth: 400,
+      requestFullMetadata: AppPermissionHelper.galleryPickRequestsFullMetadata(
+        source,
+      ),
     );
     if (picked == null || !context.mounted) return;
 
