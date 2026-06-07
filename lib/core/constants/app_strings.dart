@@ -706,7 +706,7 @@ class AppStrings {
   static const String reviewSectionRoi = 'ROI';
   static const String btnEdit = 'Edit';
   static const String btnCreateProject2 = 'Create Project';
-  static const String btnEditProject = 'Edit';
+  static const String btnEditProject = 'Edit Project';
   static const String reviewRoiNotSet = 'Not set';
 
   // Success
@@ -1109,7 +1109,7 @@ class AppStrings {
   static const String btnMakeCoLeader = 'Make Co-Leader';
   static const String btnRemoveCoLeader = 'Remove Co-Leader';
   static const String btnTakeAction = 'Take Action';
-  static const String btnRemoveMember = 'Remove Member';
+  static const String btnRemoveMember = 'Remove from Group';
   static String memberOverdueBorrowNotice(int overdueBorrowCount) {
     if (overdueBorrowCount <= 0) {
       return 'This user has overdue borrow(s).';
