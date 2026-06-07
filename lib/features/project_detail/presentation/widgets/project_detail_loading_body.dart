@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_shimmer.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
-import 'package:vestie/core/widgets/common/post_auth_scroll_viewport.dart';
 
 /// Initial project-detail load — real header when [title] is known; shimmer below.
 ///
@@ -26,20 +25,23 @@ class ProjectDetailLoadingBody extends StatelessWidget {
   }
 
   Widget _buildWithHeader() {
-    return PostAuthScrollViewport(
-      child: CustomScrollView(
-        physics: const NeverScrollableScrollPhysics(),
-        slivers: [
-          SliverToBoxAdapter(
-            child: PostAuthHeader(
-              applyTopSafeArea: false,
-              title: title!.trim(),
-              leading: AppBackButton(onPressed: onBack),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        PostAuthHeader(
+          title: title!.trim(),
+          leading: AppBackButton(onPressed: onBack),
+        ),
+        const Expanded(
+          child: ColoredBox(
+            color: Colors.white,
+            child: CustomScrollView(
+              physics: NeverScrollableScrollPhysics(),
+              slivers: [ProjectDetailContentShimmer()],
             ),
           ),
-          const ProjectDetailContentShimmer(),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

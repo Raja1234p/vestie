@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
+import 'package:vestie/core/constants/app_keyboard_types.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/utils/app_snackbar.dart';
@@ -151,7 +152,7 @@ class _VotingWindowScreenState extends State<VotingWindowScreen> {
                           hint: AppStrings.hintVotingWindowDays,
                           controller: _daysController,
                           focusNode: _daysFocus,
-                          keyboardType: TextInputType.number,
+                          keyboardType: AppKeyboardTypes.integer,
                           textInputAction: TextInputAction.done,
                           maxLength: VotingWindowCubit.maxDigits,
                           errorText: state.errorText,

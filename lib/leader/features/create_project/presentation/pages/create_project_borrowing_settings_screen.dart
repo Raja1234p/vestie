@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
+import 'package:vestie/core/constants/app_keyboard_types.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
@@ -113,7 +114,7 @@ class _CreateProjectBorrowingSettingsScreenState
                               hint: AppStrings.hintRepaymentDays,
                               controller: _daysCtrl,
                               focusNode: _daysFocusNode,
-                              keyboardType: TextInputType.number,
+                              keyboardType: AppKeyboardTypes.integer,
                               textInputAction: TextInputAction.next,
                               maxLength: 3,
                               errorText: form.repaymentWindowError,
@@ -129,7 +130,7 @@ class _CreateProjectBorrowingSettingsScreenState
                               hint: AppStrings.hintBorrowPenalty,
                               controller: _penaltyCtrl,
                               focusNode: _penaltyFocusNode,
-                              keyboardType: TextInputType.number,
+                              keyboardType: AppKeyboardTypes.integer,
                               textInputAction: TextInputAction.done,
                               maxLength: 3,
                               errorText: form.penaltyError,

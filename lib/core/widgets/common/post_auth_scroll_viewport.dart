@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
-/// Constrains [child] scroll content below the status bar while a parent
-/// white shell ([PostAuthGradientBackground]) and header band layout apply.
+/// Applies top [SafeArea] for scroll-only bodies (e.g. Discover empty/error).
 ///
-/// Pair with [PostAuthHeader] `applyTopSafeArea: false` when the header is the
-/// first sliver/child inside [child].
+/// Screens with a [PostAuthHeader] should use `Column(header, Expanded(body))`
+/// so the gradient band extends under the status bar — do not wrap the header.
 final class PostAuthScrollViewport extends StatelessWidget {
   final Widget child;
 
