@@ -91,7 +91,7 @@ class _CreateProjectBorrowingSettingsScreenState
                         ScrollViewKeyboardDismissBehavior.onDrag,
                     padding: EdgeInsets.fromLTRB(
                       20.w,
-                      0.h,
+                      5.h,
                       20.w,
                       16.h + MediaQuery.viewInsetsOf(context).bottom,
                     ),

@@ -127,7 +127,7 @@ class _CreateProjectDetailsScreenState
                   child: SingleChildScrollView(
                     padding: EdgeInsets.fromLTRB(
                       20.w,
-                      20.h,
+                      5.h,
                       20.w,
                       16.h + MediaQuery.viewInsetsOf(context).bottom,
                     ),
