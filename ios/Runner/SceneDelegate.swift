@@ -27,6 +27,14 @@ class SceneDelegate: FlutterSceneDelegate {
     syncAppDelegateWindow()
   }
 
+  override func scene(
+    _ scene: UIScene,
+    openURLContexts URLContexts: Set<UIOpenURLContext>
+  ) {
+    super.scene(scene, openURLContexts: URLContexts)
+    syncAppDelegateWindow()
+  }
+
   private func applySplashBackground() {
     window?.backgroundColor = Self.splashBackgroundColor
     if let flutterViewController = window?.rootViewController as? FlutterViewController {
