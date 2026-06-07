@@ -221,7 +221,7 @@ class _ProfileBody extends StatelessWidget {
                 const _ProfileHeader(),
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.fromLTRB(20.w, 14.h, 20.w, 12.h),
+                    padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 12.h),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -291,7 +291,7 @@ class _ProfileBody extends StatelessWidget {
                                           ),
                                         ],
                                       ),
-                                SizedBox(height: 18.h),
+                                SizedBox(height: 10.h),
                                 AppText(
                                   AppStrings.settingsLabel,
                                   style: GoogleFonts.lato(
