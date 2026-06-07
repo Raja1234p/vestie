@@ -102,7 +102,7 @@ class _CreateProjectInvestmentSettingsScreenState
                         ScrollViewKeyboardDismissBehavior.onDrag,
                     padding: EdgeInsets.fromLTRB(
                       20.w,
-                      5.h,
+                      0,
                       20.w,
                       16.h + MediaQuery.viewInsetsOf(context).bottom,
                     ),

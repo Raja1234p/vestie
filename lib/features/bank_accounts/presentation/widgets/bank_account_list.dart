@@ -23,10 +23,9 @@ class BankAccountList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(height: 10.h),
         Expanded(
           child: ListView.separated(
-            padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 0),
+            padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 0),
             itemCount: accounts.length,
             separatorBuilder: (_, _) =>
                 SizedBox(height: AppDimens.paymentMethodRowGap),

@@ -57,8 +57,17 @@ class AppDimens {
   /// Room for stacked primary footer on dense profile layouts.
   static double get v92 => 92.0.h;
 
-  /// Home tab gradient header: full width × 130 from screen top.
+  /// Home + Discover tab gradient header band.
   static double get homeHeaderHeight => 140.0.h;
+
+  /// Standard post-auth header band (all screens except Home / Discover).
+  static double get postAuthHeaderHeight => 130.0.h;
+
+  /// Gap below gradient header band before body (Home tab only).
+  static const double homeContentTopGap = 4;
+
+  /// Gap below gradient header band before body (all tabs/screens except Home).
+  static const double postAuthContentTopGap = 10;
 
   /// VFF rounded white sheet padding presets.
   static EdgeInsets get sheetInsetComfort =>

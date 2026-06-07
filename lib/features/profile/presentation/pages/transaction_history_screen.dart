@@ -59,7 +59,7 @@ class _TxBody extends StatelessWidget {
                 Expanded(
                   child: state.loading
                       ? ListView.builder(
-                          padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 16.h),
+                          padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
                           physics: const BouncingScrollPhysics(),
                           itemCount: 7,
                           itemBuilder: (_, __) => Padding(
@@ -68,7 +68,7 @@ class _TxBody extends StatelessWidget {
                           ),
                         )
                       : ListView.builder(
-                          padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 16.h),
+                          padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
                           itemCount: state.filtered.length,
                           itemBuilder: (_, i) {
                             final tx = state.filtered[i];

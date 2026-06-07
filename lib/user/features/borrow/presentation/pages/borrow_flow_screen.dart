@@ -146,7 +146,7 @@ class _BorrowAmountViewState extends State<_BorrowAmountView> {
               children: [
                 PostAuthHeader(
                   title: AppStrings.borrowScreenTitle,
-                  padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 8.h),
+                  padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 0),
                   leading: AppBackButton(
                     onPressed: () => context.pop(),
                     color: AppColors.textPrimary,
@@ -299,7 +299,7 @@ class _BorrowConfirmView extends StatelessWidget {
           children: [
             PostAuthHeader(
               title: AppStrings.borrowTermsTitle,
-              padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 8.h),
+              padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0),
               leading: AppBackButton(
                 onPressed: c.backToAmount,
                 color: AppColors.textPrimary,

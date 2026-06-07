@@ -140,7 +140,7 @@ class _TransactionAmountScreenState extends State<TransactionAmountScreen> {
                     AppDimens.p16,
                     AppDimens.v16,
                     AppDimens.p16,
-                    AppDimens.v10,
+                    0,
                   ),
                   leading: AppBackButton(
                     onPressed: () {

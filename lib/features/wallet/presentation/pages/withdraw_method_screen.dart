@@ -132,7 +132,7 @@ class _WithdrawMethodScreenState extends State<WithdrawMethodScreen> {
                     AppDimens.p16,
                     AppDimens.v16,
                     AppDimens.p16,
-                    AppDimens.v10,
+                    0,
                   ),
                   leading: IgnorePointer(
                     ignoring: _isContinuing,

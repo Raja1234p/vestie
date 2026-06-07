@@ -100,10 +100,9 @@ class _PaymentCardListState extends State<PaymentCardList> {
 
     return Column(
       children: [
-        SizedBox(height: 5.h),
         Expanded(
           child: ListView.separated(
-            padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 0),
+            padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 0),
             itemCount: widget.cards.length,
             separatorBuilder: (context, index) =>
                 SizedBox(height: AppDimens.paymentMethodRowGap),
@@ -151,10 +150,9 @@ class _SelectionList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(height: 10.h),
         Expanded(
           child: ListView(
-            padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 0),
+            padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 0),
             children: [
               for (var i = 0; i < cards.length; i++) ...[
                 if (i > 0) SizedBox(height: AppDimens.paymentMethodRowGap),

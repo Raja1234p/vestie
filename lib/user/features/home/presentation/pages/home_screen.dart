@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/services/bank_accounts_prefetch.dart';
 import 'package:vestie/core/services/payment_methods_prefetch.dart';
@@ -12,6 +13,7 @@ import 'package:vestie/core/services/wallet_prefetch.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_shimmer.dart';
+import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../home/domain/entities/project.dart';
@@ -138,7 +140,11 @@ class _HomeBody extends StatelessWidget {
                       physics: const AlwaysScrollableScrollPhysics(),
                       slivers: [
                         // Match [_HomeContent]: 4.h inset + section header block.
-                        SliverToBoxAdapter(child: SizedBox(height: 4.h)),
+                        SliverToBoxAdapter(
+                          child: PostAuthHeaderContentGap(
+                            gap: AppDimens.homeContentTopGap,
+                          ),
+                        ),
                         SliverPadding(
                           padding: EdgeInsets.fromLTRB(16.w, 48.h, 16.w, 0),
                           sliver: SliverList(
@@ -252,7 +258,11 @@ class _HomeContent extends StatelessWidget {
                     child: CustomScrollView(
                       physics: const AlwaysScrollableScrollPhysics(),
                       slivers: [
-                        SliverToBoxAdapter(child: SizedBox(height: 4.h)),
+                        SliverToBoxAdapter(
+                          child: PostAuthHeaderContentGap(
+                            gap: AppDimens.homeContentTopGap,
+                          ),
+                        ),
                         ...ProjectsSection.buildSlivers(
                           title: AppStrings.myProjects,
                           projects: data.myProjects,

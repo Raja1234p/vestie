@@ -35,7 +35,7 @@ class BorrowRepayConfirmScreen extends StatelessWidget {
                 AppDimens.p16,
                 AppDimens.v10,
                 AppDimens.p16,
-                AppDimens.v8,
+                0,
               ),
               leading: AppBackButton(
                 onPressed: context.pop,

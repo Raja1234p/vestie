@@ -221,7 +221,7 @@ class _ProfileBody extends StatelessWidget {
                 const _ProfileHeader(),
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 12.h),
+                    padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 12.h),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

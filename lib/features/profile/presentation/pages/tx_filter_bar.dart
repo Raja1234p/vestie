@@ -25,7 +25,7 @@ class TxFilterBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: AppColors.surface,
-      padding: EdgeInsets.fromLTRB(0, 10.h, 0, 10.h),
+      padding: EdgeInsets.fromLTRB(0, 0, 0, 10.h),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(

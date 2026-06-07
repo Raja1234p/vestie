@@ -14,7 +14,7 @@ class DiscoverSearchBarShimmer extends StatelessWidget {
     final radius = height / 2;
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0),
+      padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 0),
       child: AppShimmer(
         child: Container(
           height: height,

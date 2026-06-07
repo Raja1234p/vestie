@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// Constrains [child] scroll content below the status bar while a parent
-/// background ([PostAuthGradientBackground], [HomeGradientBackground], etc.)
-/// can still paint edge-to-edge.
+/// white shell ([PostAuthGradientBackground]) and header band layout apply.
 ///
 /// Pair with [PostAuthHeader] `applyTopSafeArea: false` when the header is the
 /// first sliver/child inside [child].

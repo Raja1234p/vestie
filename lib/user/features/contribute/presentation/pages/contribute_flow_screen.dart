@@ -113,7 +113,7 @@ class _ContributeAmountViewState extends State<_ContributeAmountView> {
               children: [
                 PostAuthHeader(
                   title: AppStrings.contributeScreenTitle,
-                  padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 8.h),
+                  padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0),
                   leading: AppBackButton(
                     onPressed: () => context.pop(),
                     color: AppColors.textPrimary,
@@ -194,7 +194,7 @@ class _ContributeConfirmView extends StatelessWidget {
           children: [
             PostAuthHeader(
               title: AppStrings.contributeConfirmHeader,
-              padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 8.h),
+              padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0),
               leading: AppBackButton(
                 onPressed: () => bloc.add(BackToAmountEvent()),
                 color: AppColors.textPrimary,

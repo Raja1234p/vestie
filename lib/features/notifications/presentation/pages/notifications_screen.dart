@@ -203,7 +203,7 @@ class _NotificationListView extends StatelessWidget {
     return ListView.separated(
       controller: controller,
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: EdgeInsets.fromLTRB(0, 12.h, 0, 32.h),
+      padding: EdgeInsets.fromLTRB(0, 0, 0, 32.h),
       itemCount: items.length + (loadingMore ? 1 : 0),
       separatorBuilder: (context, index) {
         if (index >= items.length - 1) return const SizedBox.shrink();

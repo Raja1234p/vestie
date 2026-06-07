@@ -173,7 +173,7 @@ class _TransactionConfirmationScreenState
                       AppDimens.p16,
                       AppDimens.v16,
                       AppDimens.p16,
-                      AppDimens.v8,
+                      0,
                     ),
                     leading: AppBackButton(
                       onPressed: busy ? () {} : () => context.pop(),

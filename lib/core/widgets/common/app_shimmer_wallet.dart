@@ -18,7 +18,7 @@ class WalletTabShimmer extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Padding(
-                padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 0),
+                padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 0),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [

@@ -99,7 +99,7 @@ class _ContributePaymentPickerScreenState
                 AppDimens.p16,
                 AppDimens.v16,
                 AppDimens.p16,
-                AppDimens.v10,
+                0,
               ),
               leading: AppBackButton(
                 onPressed: context.pop,
@@ -112,7 +112,7 @@ class _ContributePaymentPickerScreenState
                   : _error != null
                   ? AppErrorView(message: _error, onRetry: _load)
                   : ListView(
-                      padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 0),
+                      padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 0),
                       children: [
                         for (var i = 0; i < _cards.length; i++) ...[
                           if (i > 0)

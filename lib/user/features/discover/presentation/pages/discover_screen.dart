@@ -162,32 +162,37 @@ class _DiscoverBody extends StatelessWidget {
                 );
               }
 
-              return PostAuthScrollViewport(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const DiscoverHeader(),
-                    SizedBox(height: 22.h),
-                    if (state.loading) ...[
-                      const DiscoverSearchBarShimmer(),
-                      SizedBox(height: 16.h),
-                      const DiscoverFilterRowShimmer(),
-                    ] else ...[
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0),
-                        child: DiscoverSearchBar(
-                          onChanged: context.read<DiscoverCubit>().search,
-                        ),
-                      ),
-                      SizedBox(height: 16.h),
-                      DiscoverFilterRow(
-                        selected: state.selectedFilter,
-                        onSelect: context.read<DiscoverCubit>().selectFilter,
-                      ),
-                    ],
-                    SizedBox(height: 16.h),
-                    Expanded(
-                      child: RefreshIndicator(
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const DiscoverHeader(),
+                  Expanded(
+                    child: ColoredBox(
+                      color: Colors.white,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          if (state.loading) ...[
+                            const DiscoverSearchBarShimmer(),
+                            SizedBox(height: 16.h),
+                            const DiscoverFilterRowShimmer(),
+                          ] else ...[
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 0),
+                              child: DiscoverSearchBar(
+                                onChanged: context.read<DiscoverCubit>().search,
+                              ),
+                            ),
+                            SizedBox(height: 16.h),
+                            DiscoverFilterRow(
+                              selected: state.selectedFilter,
+                              onSelect:
+                                  context.read<DiscoverCubit>().selectFilter,
+                            ),
+                          ],
+                          SizedBox(height: 16.h),
+                          Expanded(
+                            child: RefreshIndicator(
                         color: AppColors.primary,
                         onRefresh: () =>
                             context.read<DiscoverCubit>().refresh(),
@@ -277,8 +282,11 @@ class _DiscoverBody extends StatelessWidget {
                         ),
                       ),
                     ),
-                  ],
-                ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               );
             },
           ),

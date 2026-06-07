@@ -49,7 +49,7 @@ class CreateProjectContributionProgressScreen extends StatelessWidget {
             MemberFundFlowHeader(title: AppStrings.contributionProgressTitle),
             Expanded(
               child: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 16.h),
+                padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 16.h),
                 child: Column(
                   children: [
                     SizedBox(height: 8.h),

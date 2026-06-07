@@ -119,7 +119,7 @@ class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
                     children: [
                       PostAuthHeader(
                         title: AppStrings.createAnnouncementTitle,
-                        padding: EdgeInsets.fromLTRB(0, 20.h, 0, 12.h),
+                        padding: EdgeInsets.fromLTRB(0, 20.h, 0, 0),
                         leading: AppBackButton(
                           onPressed: () {
                             _unfocusKeyboard();
@@ -127,7 +127,6 @@ class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
                           },
                         ),
                       ),
-                      SizedBox(height: 5.h),
                       AppTextField(
                         focusNode: _headingFocus,
                         label: AppStrings.announcementHeadingLabel,

@@ -512,7 +512,7 @@ class _MemberDetailView extends StatelessWidget {
         return CustomScrollView(
           slivers: [
             SliverPadding(
-              padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
+              padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 24.h),
 
               sliver: const SliverToBoxAdapter(child: MemberDetailShimmer()),
             ),
@@ -538,7 +538,7 @@ class _MemberDetailView extends StatelessWidget {
         return CustomScrollView(
           slivers: [
             SliverPadding(
-              padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
+              padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 24.h),
 
               sliver: SliverToBoxAdapter(
                 child: _MemberDetailBody(

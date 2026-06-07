@@ -130,7 +130,7 @@ class _VotingWindowScreenState extends State<VotingWindowScreen> {
                   children: [
                     PostAuthHeader(
                       title: AppStrings.votingWindowTitle,
-                      padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 8.h),
+                      padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0),
                       leading: AppBackButton(
                         onPressed: state.loading ? () {} : () => context.pop(),
                         color: AppColors.textPrimary,
@@ -142,7 +142,7 @@ class _VotingWindowScreenState extends State<VotingWindowScreen> {
                             ScrollViewKeyboardDismissBehavior.onDrag,
                         padding: EdgeInsets.fromLTRB(
                           20.w,
-                          12.h,
+                          0,
                           20.w,
                           16.h + bottomInset,
                         ),

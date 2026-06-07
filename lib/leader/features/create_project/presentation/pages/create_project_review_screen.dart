@@ -113,7 +113,7 @@ class CreateProjectReviewScreen extends StatelessWidget {
                       child: SingleChildScrollView(
                         padding: EdgeInsets.fromLTRB(
                           16.w,
-                          10.h,
+                          0,
                           16.w,
                           10.h + MediaQuery.viewInsetsOf(context).bottom,
                         ),

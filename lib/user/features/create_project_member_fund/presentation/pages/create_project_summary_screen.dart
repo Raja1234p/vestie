@@ -33,7 +33,7 @@ class CreateProjectSummaryScreen extends StatelessWidget {
             MemberFundFlowHeader(title: AppStrings.createProjectSummaryTitle),
             Expanded(
               child: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(20.w, 4.h, 20.w, 20.h),
+                padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 20.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

@@ -145,7 +145,6 @@ class _MemberPenaltyActionScreenState extends State<MemberPenaltyActionScreen> {
               title: AppStrings.penaltyActionTitle,
               leading: AppBackButton(onPressed: () => context.pop()),
             ),
-            SizedBox(height: 8.h),
             const Expanded(
               child: SingleChildScrollView(child: PenaltyActionContent()),
             ),

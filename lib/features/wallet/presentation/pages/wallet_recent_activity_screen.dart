@@ -36,7 +36,7 @@ class WalletRecentActivityScreen extends StatelessWidget {
                     AppDimens.p16,
                     AppDimens.v16,
                     AppDimens.p16,
-                    AppDimens.v8,
+                    0,
                   ),
                   leading: AppBackButton(
                     onPressed: context.pop,
@@ -49,7 +49,7 @@ class WalletRecentActivityScreen extends StatelessWidget {
                     color: AppColors.surface,
                     padding: EdgeInsets.fromLTRB(
                       AppDimens.p16,
-                      AppDimens.v8,
+                      0,
                       AppDimens.p16,
                       0,
                     ),

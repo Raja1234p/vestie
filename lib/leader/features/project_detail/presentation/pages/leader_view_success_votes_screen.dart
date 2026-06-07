@@ -29,8 +29,7 @@ class LeaderViewSuccessVotesScreen extends StatelessWidget {
             PostAuthHeader(
               title: args.projectName,
               leading: AppBackButton(onPressed: () => context.pop()),
-              bottomGap: 0,
-              padding: EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 12.h),
+              padding: EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 0),
             ),
             Expanded(
               child: SingleChildScrollView(

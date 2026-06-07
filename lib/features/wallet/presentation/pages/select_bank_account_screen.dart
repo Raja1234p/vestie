@@ -116,7 +116,7 @@ class _SelectBankAccountScreenState extends State<SelectBankAccountScreen> {
                 AppDimens.p16,
                 AppDimens.v16,
                 AppDimens.p16,
-                AppDimens.v10,
+                0,
               ),
               leading: AppBackButton(
                 onPressed: context.pop,
@@ -132,7 +132,7 @@ class _SelectBankAccountScreenState extends State<SelectBankAccountScreen> {
                           subtitle: _error ?? AppStrings.emptyMyAccountsSubtitle,
                         )
                       : ListView.separated(
-                          padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 8.h),
+                          padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 8.h),
                           itemCount: _banks.length,
                           separatorBuilder: (_, _) =>
                               SizedBox(height: AppDimens.paymentMethodRowGap),

@@ -67,7 +67,7 @@ class CreateProjectSavingSettingsScreen extends StatelessWidget {
                   child: SingleChildScrollView(
                     padding: EdgeInsets.fromLTRB(
                       20.w,
-                      10.h,
+                      0,
                       20.w,
                       16.h + MediaQuery.viewInsetsOf(context).bottom,
                     ),
