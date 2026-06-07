@@ -15,9 +15,7 @@ import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
-import 'package:vestie/core/services/bank_accounts_prefetch.dart';
 import 'package:vestie/features/bank_accounts/domain/entities/bank_account_entity.dart';
-import 'package:vestie/features/bank_accounts/presentation/bank_browser_onboarding_runner.dart';
 import 'package:vestie/features/bank_accounts/presentation/models/bank_link_onboarding_result.dart';
 import 'package:vestie/features/bank_accounts/presentation/widgets/bank_account_manage_row.dart';
 import 'package:vestie/features/profile/presentation/widgets/payment_empty_view.dart';
@@ -36,7 +34,6 @@ class _SelectBankAccountScreenState extends State<SelectBankAccountScreen> {
   final _listBankAccounts = ServiceLocator.instance.listBankAccountsUseCase;
   List<BankAccountEntity> _banks = const [];
   bool _loading = true;
-  bool _linking = false;
   String? _error;
 
   @override
@@ -65,30 +62,34 @@ class _SelectBankAccountScreenState extends State<SelectBankAccountScreen> {
     );
   }
 
+  Future<void> _reloadInPlace() async {
+    final result = await _listBankAccounts(forceRefresh: true);
+    if (!mounted) return;
+    result.fold(
+      (f) => setState(() {
+        _error = FailureMapper.userMessage(f);
+        _banks = const [];
+      }),
+      (banks) => setState(() {
+        _error = null;
+        _banks = banks;
+      }),
+    );
+  }
+
   Future<void> _addBankAccount() async {
-    setState(() => _linking = true);
-    try {
-      final result = await BankBrowserOnboardingRunner.run(
-        onBrowserPresented: () {
-          if (mounted) setState(() => _linking = false);
-        },
-      );
-      if (!mounted) return;
-      if (result == BankLinkOnboardingResult.linked) {
-        await BankAccountsPrefetch.refresh();
-        if (!mounted) return;
-        await _load();
-        return;
-      }
-      if (result == BankLinkOnboardingResult.incomplete) {
+    final result = await context.push<BankLinkOnboardingResult>(
+      AppRoutes.bankLinkOnboarding,
+    );
+    if (!mounted || result == null) return;
+    switch (result) {
+      case BankLinkOnboardingResult.linked:
+        await _reloadInPlace();
+      case BankLinkOnboardingResult.completed:
+      case BankLinkOnboardingResult.incomplete:
         AppToast.showInfo(context, AppStrings.bankLinkOnboardingIncompleteHint);
-      } else if (result == BankLinkOnboardingResult.canceled) {
+      case BankLinkOnboardingResult.canceled:
         AppToast.showError(context, AppStrings.bankLinkOnboardingCanceled);
-      }
-    } catch (e) {
-      if (mounted) AppToast.showError(context, e.toString());
-    } finally {
-      if (mounted) setState(() => _linking = false);
     }
   }
 
@@ -150,8 +151,7 @@ class _SelectBankAccountScreenState extends State<SelectBankAccountScreen> {
               FlowScreenFooter(
                 child: PaymentPrimaryButton(
                   label: AppStrings.btnAddBankAccount,
-                  onTap: _loading || _linking ? null : _addBankAccount,
-                  loading: _linking,
+                  onTap: _loading ? null : _addBankAccount,
                 ),
               ),
           ],

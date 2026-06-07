@@ -1,5 +1,4 @@
 import 'package:vestie/core/constants/app_strings.dart';
-import 'package:vestie/core/services/bank_accounts_prefetch.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/core/stripe/stripe_hosted_onboarding_launcher.dart';
@@ -45,11 +44,8 @@ class BankBrowserOnboardingRunner {
         continue;
       }
       if (BankFlowConstants.isCompletionUrl(callback)) {
-        AppLogger.info(
-          'Bank return redirect — syncing accounts',
-          name: _logTag,
-        );
-        return _outcomeAfterReturn();
+        AppLogger.info('Bank return redirect', name: _logTag);
+        return BankLinkOnboardingResult.completed;
       }
       AppLogger.error('Unknown bank redirect: $callback', name: _logTag);
       return BankLinkOnboardingResult.incomplete;
@@ -67,16 +63,4 @@ class BankBrowserOnboardingRunner {
     );
   }
 
-  static Future<BankLinkOnboardingResult> _outcomeAfterReturn() async {
-    await BankAccountsPrefetch.refresh();
-    final result = await ServiceLocator.instance.listBankAccountsUseCase(
-      forceRefresh: true,
-    );
-    return result.fold(
-      (_) => BankLinkOnboardingResult.incomplete,
-      (accounts) => accounts.isNotEmpty
-          ? BankLinkOnboardingResult.linked
-          : BankLinkOnboardingResult.incomplete,
-    );
-  }
 }

@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
-import 'package:vestie/core/services/bank_accounts_prefetch.dart';
 import 'package:vestie/core/widgets/common/app_shimmer.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
@@ -46,15 +45,22 @@ class _MyAccountsBody extends StatelessWidget {
       );
       if (!context.mounted) return;
 
-      if (result == BankLinkOnboardingResult.linked) {
-        await BankAccountsPrefetch.refresh();
-        await cubit.load(forceRefresh: true);
-        return;
-      }
-      if (result == BankLinkOnboardingResult.incomplete) {
-        AppToast.showInfo(context, AppStrings.bankLinkOnboardingIncompleteHint);
-      } else if (result == BankLinkOnboardingResult.canceled) {
-        AppToast.showError(context, AppStrings.bankLinkOnboardingCanceled);
+      switch (result) {
+        case BankLinkOnboardingResult.linked:
+        case BankLinkOnboardingResult.completed:
+          cubit.setLinking(true);
+          final linked = await cubit.syncAfterLink();
+          if (!context.mounted) return;
+          if (!linked) {
+            AppToast.showInfo(
+              context,
+              AppStrings.bankLinkOnboardingIncompleteHint,
+            );
+          }
+        case BankLinkOnboardingResult.incomplete:
+          AppToast.showInfo(context, AppStrings.bankLinkOnboardingIncompleteHint);
+        case BankLinkOnboardingResult.canceled:
+          AppToast.showError(context, AppStrings.bankLinkOnboardingCanceled);
       }
     } catch (e) {
       if (context.mounted) {

@@ -59,4 +59,23 @@ class BankAccountsCubit extends Cubit<BankAccountsState> {
 
   void setLinking(bool linking) =>
       emit(state.copyWith(linking: linking, clearError: true));
+
+  /// Refresh after Stripe return without replacing the list with a full-page shimmer.
+  Future<bool> syncAfterLink() async {
+    final result = await listBankAccountsUseCase(forceRefresh: true);
+    return result.fold(
+      (failure) {
+        emit(
+          state.copyWith(
+            errorMessage: FailureMapper.userMessage(failure),
+          ),
+        );
+        return false;
+      },
+      (accounts) {
+        emit(state.copyWith(accounts: accounts, clearError: true));
+        return accounts.isNotEmpty;
+      },
+    );
+  }
 }
