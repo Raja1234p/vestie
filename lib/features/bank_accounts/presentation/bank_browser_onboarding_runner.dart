@@ -32,8 +32,10 @@ class BankBrowserOnboardingRunner {
       }
 
       onBrowserPresented?.call();
-      final callback =
-          await StripeHostedOnboardingLauncher.openAndWaitForRedirect(trimmed);
+      final callback = await StripeHostedOnboardingLauncher.openAndWaitForRedirect(
+        trimmed,
+        httpsCompletionPath: BankFlowConstants.httpsCompletionPath,
+      );
       if (callback == null) {
         AppLogger.info('Bank browser closed without redirect', name: _logTag);
         return BankLinkOnboardingResult.canceled;

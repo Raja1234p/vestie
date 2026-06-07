@@ -36,6 +36,7 @@ class StripeBrowserOnboardingScreen extends StatefulWidget {
   final Future<void> Function({bool silent}) onManualCheck;
   final VoidCallback onCancel;
   final VoidCallback? onImmediateSuccess;
+  final String httpsCompletionPath;
 
   const StripeBrowserOnboardingScreen({
     super.key,
@@ -49,6 +50,7 @@ class StripeBrowserOnboardingScreen extends StatefulWidget {
     required this.onManualCheck,
     required this.onCancel,
     this.onImmediateSuccess,
+    required this.httpsCompletionPath,
   });
 
   @override
@@ -203,8 +205,10 @@ class _StripeBrowserOnboardingScreenState
       _error = null;
     });
 
-    final callbackUrl =
-        await StripeHostedOnboardingLauncher.openAndWaitForRedirect(url);
+    final callbackUrl = await StripeHostedOnboardingLauncher.openAndWaitForRedirect(
+      url,
+      httpsCompletionPath: widget.httpsCompletionPath,
+    );
 
     if (!mounted) return;
 

@@ -56,11 +56,28 @@ class ApiConstants {
   static String get kycRefreshUrl =>
       apiOrigin.replace(path: '/kyc/refresh').toString();
 
+  /// Covered by AASA `/stripe/onboarding/*` (no `/bank/*` entry required).
+  static const String stripeOnboardingBankReturnPath =
+      '/stripe/onboarding/bank/return';
+
+  static const String stripeOnboardingBankRefreshPath =
+      '/stripe/onboarding/bank/refresh';
+
+  /// Legacy paths — still matched when redirecting old sessions.
+  static const String legacyBankReturnPath = '/bank/return';
+  static const String legacyBankRefreshPath = '/bank/refresh';
+
   static String get bankReturnUrl =>
-      apiOrigin.replace(path: '/bank/return').toString();
+      apiOrigin.replace(path: stripeOnboardingBankReturnPath).toString();
 
   static String get bankRefreshUrl =>
-      apiOrigin.replace(path: '/bank/refresh').toString();
+      apiOrigin.replace(path: stripeOnboardingBankRefreshPath).toString();
+
+  static String get legacyBankReturnUrl =>
+      apiOrigin.replace(path: legacyBankReturnPath).toString();
+
+  static String get legacyBankRefreshUrl =>
+      apiOrigin.replace(path: legacyBankRefreshPath).toString();
 
   // ── Auth ─────────────────────────────────────────────────────────────────
   static const String register = '/auth/register';
