@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:vestie/core/constants/api_constants.dart';
 import 'package:vestie/core/stripe/stripe_connect_redirect_matcher.dart';
 import 'package:vestie/features/bank_accounts/presentation/constants/bank_flow_constants.dart';
 import 'package:vestie/features/kyc/presentation/constants/kyc_flow_constants.dart';
@@ -28,29 +27,20 @@ void main() {
       );
     });
 
-    test('Bank return and refresh', () {
+    test('Bank uses KYC HTTPS return paths for API', () {
+      expect(BankFlowConstants.returnUrl, KycFlowConstants.returnUrl);
+      expect(BankFlowConstants.refreshUrl, KycFlowConstants.refreshUrl);
+      expect(BankFlowConstants.returnUrl, contains('/kyc/complete'));
+    });
+
+    test('Bank completion matches kyc and legacy bank deep links', () {
+      expect(
+        BankFlowConstants.isCompletionUrl('vestie://kyc/complete'),
+        isTrue,
+      );
       expect(BankFlowConstants.isCompletionUrl('vestie://bank/return'), isTrue);
+      expect(BankFlowConstants.isRefreshUrl('vestie://kyc/refresh'), isTrue);
       expect(BankFlowConstants.isRefreshUrl('vestie://bank/refresh'), isTrue);
-    });
-
-    test('Bank HTTPS under AASA stripe/onboarding path', () {
-      expect(BankFlowConstants.isCompletionUrl(BankFlowConstants.returnUrl), isTrue);
-      expect(BankFlowConstants.isRefreshUrl(BankFlowConstants.refreshUrl), isTrue);
-      expect(
-        BankFlowConstants.returnUrl,
-        contains('/stripe/onboarding/bank/return'),
-      );
-    });
-
-    test('Bank legacy HTTPS paths still match', () {
-      expect(
-        BankFlowConstants.isCompletionUrl(ApiConstants.legacyBankReturnUrl),
-        isTrue,
-      );
-      expect(
-        BankFlowConstants.isRefreshUrl(ApiConstants.legacyBankRefreshUrl),
-        isTrue,
-      );
     });
   });
 }

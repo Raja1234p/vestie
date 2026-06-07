@@ -14,9 +14,8 @@ const _logTag = 'StripeOnboarding';
 /// **Android** — unchanged: waits for `vestie://bank/return` / `vestie://kyc/complete`
 /// (same as before; requires backend redirect from HTTPS return pages).
 ///
-/// **iOS 17.4+** — HTTPS callback on the flow completion path (bank:
-/// `/stripe/onboarding/bank/return` per AASA `/stripe/onboarding/*`; kyc:
-/// `/kyc/complete` per AASA `/kyc/*`).
+/// **iOS 17.4+** — HTTPS callback on the same return path sent to the API
+/// (bank and kyc both use `/kyc/complete` on the API host for bank link).
 ///
 /// **Older iOS** — same as Android (`vestie://` redirect from backend).
 class StripeHostedOnboardingLauncher {

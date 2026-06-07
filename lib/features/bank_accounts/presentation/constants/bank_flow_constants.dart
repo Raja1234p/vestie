@@ -1,48 +1,47 @@
 import 'package:vestie/core/constants/api_constants.dart';
 import 'package:vestie/core/stripe/stripe_connect_redirect_matcher.dart';
+import 'package:vestie/features/kyc/presentation/constants/kyc_flow_constants.dart';
 
 /// Redirect URLs for `POST /bank-accounts`.
 ///
-/// HTTPS return/refresh use [ApiConstants.stripeOnboardingBankReturnPath] so
-/// iOS Universal Links work with AASA `/stripe/onboarding/*`.
-/// Android still completes via `vestie://bank/*` from the backend bounce page.
+/// Uses the same HTTPS return/refresh pages as KYC (`/kyc/complete`, `/kyc/refresh`)
+/// — those routes exist on the backend and are covered by AASA `/kyc/*`.
+/// Backend bounce pages redirect to `vestie://kyc/complete` / `vestie://kyc/refresh`.
 class BankFlowConstants {
   BankFlowConstants._();
 
-  static String get returnUrl => ApiConstants.bankReturnUrl;
+  static String get returnUrl => ApiConstants.kycReturnUrl;
 
-  static String get refreshUrl => ApiConstants.bankRefreshUrl;
+  static String get refreshUrl => ApiConstants.kycRefreshUrl;
 
-  static const String appSchemeReturnUrl = 'vestie://bank/return';
-  static const String appSchemeRefreshUrl = 'vestie://bank/refresh';
-
-  /// iOS auth-session HTTPS callback (matches AASA `/stripe/onboarding/*`).
-  static const String httpsCompletionPath =
-      ApiConstants.stripeOnboardingBankReturnPath;
+  /// iOS auth-session HTTPS callback (same as [KycFlowConstants.httpsCompletionPath]).
+  static const String httpsCompletionPath = KycFlowConstants.httpsCompletionPath;
 
   static bool isCompletionUrl(String? url) {
+    if (KycFlowConstants.isCompletionUrl(url)) return true;
+
     final uri = Uri.tryParse(url ?? '');
     if (uri != null &&
         StripeConnectRedirectMatcher.isVestieCompletion(uri, host: 'bank')) {
       return true;
     }
     return StripeConnectRedirectMatcher.matchesAny(url, [
-      returnUrl,
-      ApiConstants.legacyBankReturnUrl,
-      appSchemeReturnUrl,
+      'vestie://bank/return',
+      ApiConstants.bankReturnUrl,
     ]);
   }
 
   static bool isRefreshUrl(String? url) {
+    if (KycFlowConstants.isRefreshUrl(url)) return true;
+
     final uri = Uri.tryParse(url ?? '');
     if (uri != null &&
         StripeConnectRedirectMatcher.isVestieRefresh(uri, host: 'bank')) {
       return true;
     }
     return StripeConnectRedirectMatcher.matchesAny(url, [
-      refreshUrl,
-      ApiConstants.legacyBankRefreshUrl,
-      appSchemeRefreshUrl,
+      'vestie://bank/refresh',
+      ApiConstants.bankRefreshUrl,
     ]);
   }
 }
