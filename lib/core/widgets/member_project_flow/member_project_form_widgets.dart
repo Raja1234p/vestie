@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/utils/ios_numeric_keyboard_input.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 
@@ -36,6 +38,8 @@ class MemberFundTextField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final TextInputType? keyboardType;
   final TextInputAction textInputAction;
+  final List<TextInputFormatter>? inputFormatters;
+  final ValueChanged<String>? onSubmitted;
   final Widget? suffixIcon;
   final String? errorText;
 
@@ -47,6 +51,8 @@ class MemberFundTextField extends StatelessWidget {
     this.onChanged,
     this.keyboardType,
     this.textInputAction = TextInputAction.next,
+    this.inputFormatters,
+    this.onSubmitted,
     this.suffixIcon,
     this.errorText,
   });
@@ -54,6 +60,30 @@ class MemberFundTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasError = errorText != null && errorText!.isNotEmpty;
+    final isMultiline = maxLines > 1;
+    final effectiveKeyboardType = IosNumericKeyboardInput.effectiveKeyboardType(
+      keyboardType: keyboardType,
+      isMultiline: isMultiline,
+      textInputAction: textInputAction,
+    );
+    final effectiveTextInputAction = isMultiline
+        ? (textInputAction == TextInputAction.done
+              ? TextInputAction.done
+              : TextInputAction.newline)
+        : textInputAction;
+    final effectiveInputFormatters =
+        IosNumericKeyboardInput.effectiveFormatters(
+          keyboardType: keyboardType,
+          isMultiline: isMultiline,
+          textInputAction: textInputAction,
+          inputFormatters: inputFormatters,
+        );
+    final disableTextAssist = IosNumericKeyboardInput.shouldDisableTextAssist(
+      keyboardType: keyboardType,
+      isMultiline: isMultiline,
+      textInputAction: textInputAction,
+    );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -68,12 +98,26 @@ class MemberFundTextField extends StatelessWidget {
           child: TextField(
             controller: controller,
             onChanged: onChanged,
+            onSubmitted: onSubmitted ??
+                ((_) {
+                  if (textInputAction == TextInputAction.done) {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                  }
+                }),
             onTapOutside: (_) {
               FocusManager.instance.primaryFocus?.unfocus();
             },
             maxLines: maxLines,
-            keyboardType: keyboardType,
-            textInputAction: textInputAction,
+            keyboardType: effectiveKeyboardType,
+            textInputAction: effectiveTextInputAction,
+            autocorrect: !disableTextAssist,
+            enableSuggestions: !disableTextAssist,
+            textCapitalization: disableTextAssist
+                ? TextCapitalization.none
+                : TextCapitalization.sentences,
+            inputFormatters: effectiveInputFormatters.isEmpty
+                ? null
+                : effectiveInputFormatters,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
               fontSize: 16.sp,
               fontWeight: FontWeight.w500,

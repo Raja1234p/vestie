@@ -127,7 +127,7 @@ class _EditProfileFormState extends State<_EditProfileForm> {
                 ProfileSubHeader(title: AppStrings.editProfileTitle),
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 16.h),
+                    padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 16.h),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

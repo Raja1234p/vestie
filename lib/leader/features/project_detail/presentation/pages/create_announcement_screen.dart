@@ -127,7 +127,7 @@ class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
                           },
                         ),
                       ),
-                      SizedBox(height: 14.h),
+                      SizedBox(height: 5.h),
                       AppTextField(
                         focusNode: _headingFocus,
                         label: AppStrings.announcementHeadingLabel,

@@ -36,6 +36,8 @@ class _CreateProjectBorrowingSettingsScreenState
     extends State<CreateProjectBorrowingSettingsScreen> {
   late final TextEditingController _daysCtrl;
   late final TextEditingController _penaltyCtrl;
+  late final FocusNode _daysFocusNode;
+  late final FocusNode _penaltyFocusNode;
 
   @override
   void initState() {
@@ -43,12 +45,16 @@ class _CreateProjectBorrowingSettingsScreenState
     final f = context.read<CreateProjectCubit>().state;
     _daysCtrl = TextEditingController(text: f.repaymentWindow);
     _penaltyCtrl = TextEditingController(text: f.penalty);
+    _daysFocusNode = FocusNode();
+    _penaltyFocusNode = FocusNode();
   }
 
   @override
   void dispose() {
     _daysCtrl.dispose();
     _penaltyCtrl.dispose();
+    _daysFocusNode.dispose();
+    _penaltyFocusNode.dispose();
     super.dispose();
   }
 
@@ -106,11 +112,14 @@ class _CreateProjectBorrowingSettingsScreenState
                               label: AppStrings.labelRepaymentWindowDays,
                               hint: AppStrings.hintRepaymentDays,
                               controller: _daysCtrl,
+                              focusNode: _daysFocusNode,
                               keyboardType: TextInputType.number,
                               textInputAction: TextInputAction.next,
                               maxLength: 3,
                               errorText: form.repaymentWindowError,
                               onChanged: cubit.setRepaymentDays,
+                              onSubmitted: (_) =>
+                                  _penaltyFocusNode.requestFocus(),
                               labelStyle: settingsLabelStyle,
                               fillColor: AppColors.searchBarBg,
                             ),
@@ -119,11 +128,14 @@ class _CreateProjectBorrowingSettingsScreenState
                               label: AppStrings.labelBorrowPenaltyPercent,
                               hint: AppStrings.hintBorrowPenalty,
                               controller: _penaltyCtrl,
+                              focusNode: _penaltyFocusNode,
                               keyboardType: TextInputType.number,
                               textInputAction: TextInputAction.done,
                               maxLength: 3,
                               errorText: form.penaltyError,
                               onChanged: cubit.setPenalty,
+                              onSubmitted: (_) =>
+                                  FocusManager.instance.primaryFocus?.unfocus(),
                               labelStyle: settingsLabelStyle,
                               fillColor: AppColors.searchBarBg,
                             ),

@@ -33,7 +33,7 @@ class BorrowRepayConfirmScreen extends StatelessWidget {
               title: AppStrings.repayScreenTitle,
               padding: EdgeInsets.fromLTRB(
                 AppDimens.p16,
-                AppDimens.v16,
+                AppDimens.v10,
                 AppDimens.p16,
                 AppDimens.v8,
               ),

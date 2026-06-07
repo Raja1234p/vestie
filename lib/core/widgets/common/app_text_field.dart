@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../utils/ios_numeric_keyboard_input.dart';
 import '../text/app_text.dart';
 import '../../theme/app_colors.dart';
 
@@ -76,9 +77,11 @@ class AppTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isMultiline = maxLines > 1 || minLines > 1;
-    final effectiveKeyboardType = isMultiline
-        ? TextInputType.multiline
-        : keyboardType;
+    final effectiveKeyboardType = IosNumericKeyboardInput.effectiveKeyboardType(
+      keyboardType: keyboardType,
+      isMultiline: isMultiline,
+      textInputAction: textInputAction,
+    );
     // Multiline fields default to Enter for new lines; pass [textInputAction:
     // TextInputAction.done] to show a Done key and dismiss on submit instead.
     final effectiveTextInputAction = isMultiline
@@ -86,6 +89,18 @@ class AppTextField extends StatelessWidget {
               ? TextInputAction.done
               : TextInputAction.newline)
         : textInputAction;
+    final effectiveInputFormatters =
+        IosNumericKeyboardInput.effectiveFormatters(
+          keyboardType: keyboardType,
+          isMultiline: isMultiline,
+          textInputAction: textInputAction,
+          inputFormatters: inputFormatters,
+        );
+    final disableTextAssist = IosNumericKeyboardInput.shouldDisableTextAssist(
+      keyboardType: keyboardType,
+      isMultiline: isMultiline,
+      textInputAction: textInputAction,
+    );
 
     final effectiveLabelStyle =
         labelStyle ??
@@ -122,8 +137,13 @@ class AppTextField extends StatelessWidget {
           obscureText: obscureText,
           keyboardType: effectiveKeyboardType,
           textInputAction: effectiveTextInputAction,
+          autocorrect: !disableTextAssist,
+          enableSuggestions: !disableTextAssist,
+          textCapitalization: disableTextAssist
+              ? TextCapitalization.none
+              : TextCapitalization.sentences,
           maxLength: maxLength,
-          inputFormatters: inputFormatters,
+          inputFormatters: effectiveInputFormatters,
           onChanged: onChanged,
           onSubmitted: onSubmitted,
           onTapOutside: (_) {

@@ -100,7 +100,7 @@ class _PaymentCardListState extends State<PaymentCardList> {
 
     return Column(
       children: [
-        SizedBox(height: 10.h),
+        SizedBox(height: 5.h),
         Expanded(
           child: ListView.separated(
             padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 0),
