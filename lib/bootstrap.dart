@@ -16,8 +16,6 @@ abstract final class AppBootstrap {
 
   static Future<void> run() async {
     _log('start');
-    WidgetsFlutterBinding.ensureInitialized();
-
     await StripeSdkInitializer.initialize();
     _log('stripe ready');
 
