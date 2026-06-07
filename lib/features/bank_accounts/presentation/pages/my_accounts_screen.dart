@@ -38,17 +38,12 @@ class _MyAccountsBody extends StatelessWidget {
     final cubit = context.read<BankAccountsCubit>();
     cubit.setLinking(true);
     try {
-      final result = await BankBrowserOnboardingRunner.run(
-        onBrowserPresented: () {
-          if (context.mounted) cubit.setLinking(false);
-        },
-      );
+      final result = await BankBrowserOnboardingRunner.run();
       if (!context.mounted) return;
 
       switch (result) {
         case BankLinkOnboardingResult.linked:
         case BankLinkOnboardingResult.completed:
-          cubit.setLinking(true);
           final linked = await cubit.syncAfterLink();
           if (!context.mounted) return;
           if (!linked) {

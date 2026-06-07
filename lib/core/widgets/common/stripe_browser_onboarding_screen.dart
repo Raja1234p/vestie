@@ -67,6 +67,7 @@ class _StripeBrowserOnboardingScreenState
   StreamSubscription<Uri>? _linkSub;
 
   bool _bootstrapping = true;
+  bool _openingBrowser = false;
   bool _handlingReturn = false;
   bool _awaitingManualReturn = false;
   String? _error;
@@ -168,7 +169,6 @@ class _StripeBrowserOnboardingScreenState
         });
         return;
       }
-      setState(() => _bootstrapping = false);
       AppLogger.info(
         'POST /kyc/start OK — opening Stripe session',
         name: _logTag,
@@ -201,14 +201,25 @@ class _StripeBrowserOnboardingScreenState
     );
 
     setState(() {
+      _openingBrowser = true;
       _awaitingManualReturn = false;
       _error = null;
     });
 
-    final callbackUrl = await StripeHostedOnboardingLauncher.openAndWaitForRedirect(
-      url,
-      httpsCompletionPath: widget.httpsCompletionPath,
-    );
+    String? callbackUrl;
+    try {
+      callbackUrl = await StripeHostedOnboardingLauncher.openAndWaitForRedirect(
+        url,
+        httpsCompletionPath: widget.httpsCompletionPath,
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _openingBrowser = false;
+          _bootstrapping = false;
+        });
+      }
+    }
 
     if (!mounted) return;
 
@@ -279,7 +290,7 @@ class _StripeBrowserOnboardingScreenState
   }
 
   Widget _buildBody() {
-    if (_bootstrapping) {
+    if (_bootstrapping || _openingBrowser) {
       return const Padding(
         padding: EdgeInsets.all(16),
         child: StripeOnboardingShimmer(),

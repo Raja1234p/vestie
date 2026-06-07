@@ -13,12 +13,8 @@ class BankBrowserOnboardingRunner {
 
   static const _logTag = 'StripeOnboarding';
 
-  /// `POST /bank-accounts` → Custom Tab → `vestie://bank/*` → `GET /bank-accounts`.
-  ///
-  /// [onBrowserPresented] fires immediately before the Custom Tab opens (hide button loader).
-  static Future<BankLinkOnboardingResult> run({
-    void Function()? onBrowserPresented,
-  }) async {
+  /// `POST /bank-accounts` → Custom Tab → `vestie://kyc/*` → sync accounts on screen.
+  static Future<BankLinkOnboardingResult> run() async {
     while (true) {
       final linkResult = await _link();
       if (linkResult.hasLinkedAccount) {
@@ -30,7 +26,6 @@ class BankBrowserOnboardingRunner {
         throw Exception(AppStrings.bankLinkOnboardingUrlMissing);
       }
 
-      onBrowserPresented?.call();
       final callback = await StripeHostedOnboardingLauncher.openAndWaitForRedirect(
         trimmed,
         httpsCompletionPath: BankFlowConstants.httpsCompletionPath,
