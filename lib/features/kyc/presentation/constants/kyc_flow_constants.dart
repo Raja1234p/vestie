@@ -16,6 +16,8 @@ class KycFlowConstants {
   static const String appSchemeReturnUrl = 'vestie://kyc/complete';
   static const String appSchemeRefreshUrl = 'vestie://kyc/refresh';
 
+  static const String httpsCompletionPath = '/kyc/complete';
+
   static bool isCompletionUrl(String? url) {
     final uri = Uri.tryParse(url ?? '');
     if (uri != null &&

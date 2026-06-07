@@ -58,6 +58,7 @@ class BankLinkOnboardingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StripeBrowserOnboardingScreen(
+      httpsCompletionPath: BankFlowConstants.httpsCompletionPath,
       title: AppStrings.bankLinkOnboardingTitle,
       urlMissingMessage: AppStrings.bankLinkOnboardingUrlMissing,
       bodyMessage: AppStrings.stripeBrowserOnboardingBankBody,

@@ -24,8 +24,10 @@ class KycBrowserOnboardingRunner {
         throw Exception(AppStrings.kycOnboardingUrlMissing);
       }
 
-      final callback =
-          await StripeHostedOnboardingLauncher.openAndWaitForRedirect(trimmed);
+      final callback = await StripeHostedOnboardingLauncher.openAndWaitForRedirect(
+        trimmed,
+        httpsCompletionPath: KycFlowConstants.httpsCompletionPath,
+      );
       if (callback == null) {
         AppLogger.info('KYC browser closed without redirect', name: _logTag);
         return KycOnboardingResult.canceled;
