@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/features/bank_accounts/domain/entities/bank_account_entity.dart';
-import 'package:vestie/features/bank_accounts/presentation/widgets/bank_account_detail_sheet.dart';
 import 'package:vestie/features/bank_accounts/presentation/widgets/bank_account_manage_row.dart';
 import 'package:vestie/features/profile/presentation/widgets/payment_primary_button.dart';
 
@@ -33,7 +32,7 @@ class BankAccountList extends StatelessWidget {
                 SizedBox(height: AppDimens.paymentMethodRowGap),
             itemBuilder: (_, i) => BankAccountManageRow(
               account: accounts[i],
-              onTap: () => BankAccountDetailSheet.show(context, accounts[i]),
+              showChevron: false,
             ),
           ),
         ),

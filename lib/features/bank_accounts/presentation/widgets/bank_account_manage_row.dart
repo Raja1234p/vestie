@@ -13,13 +13,13 @@ import 'package:vestie/features/bank_accounts/presentation/widgets/bank_account_
 
 class BankAccountManageRow extends StatelessWidget {
   final BankAccountEntity account;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final bool showChevron;
 
   const BankAccountManageRow({
     super.key,
     required this.account,
-    required this.onTap,
+    this.onTap,
     this.showChevron = true,
   });
 
@@ -41,6 +41,8 @@ class BankAccountManageRow extends StatelessWidget {
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(14.r),
+            splashFactory: onTap == null ? NoSplash.splashFactory : null,
+            highlightColor: onTap == null ? Colors.transparent : null,
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
               child: Row(
@@ -86,7 +88,7 @@ class BankAccountManageRow extends StatelessWidget {
                     const BankAccountPrimaryBadge(),
                     SizedBox(width: 8.w),
                   ],
-                  if (showChevron)
+                  if (showChevron && onTap != null)
                     AppSvgIcon(
                       assetPath: AppAssets.iconChevronRight,
                       size: 18.w,
