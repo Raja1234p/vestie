@@ -203,8 +203,6 @@ class ServiceLocator {
   late final BankAccountsRepository bankAccountsRepository;
   late final ListBankAccountsUseCase listBankAccountsUseCase;
   late final LinkBankAccountUseCase linkBankAccountUseCase;
-  late final RemoveBankAccountUseCase removeBankAccountUseCase;
-  late final SetDefaultBankAccountUseCase setDefaultBankAccountUseCase;
 
   late final WalletWithdrawalRemoteDataSource walletWithdrawalRemoteDataSource;
   late final WalletWithdrawalRepository walletWithdrawalRepository;

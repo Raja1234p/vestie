@@ -53,33 +53,4 @@ class BankAccountsRepositoryImpl implements BankAccountsRepository {
       return Left(FailureMapper.fromException(e));
     }
   }
-
-  @override
-  Future<Either<Failure, void>> remove(String bankAccountId) async {
-    try {
-      await remoteDataSource.remove(bankAccountId);
-      BankAccountsCache.removeById(bankAccountId);
-      return const Right(null);
-    } on Failure catch (f) {
-      return Left(f);
-    } catch (e) {
-      return Left(FailureMapper.fromException(e));
-    }
-  }
-
-  @override
-  Future<Either<Failure, void>> setDefault(
-    String bankAccountId, {
-    required bool isDefault,
-  }) async {
-    try {
-      await remoteDataSource.setDefault(bankAccountId, isDefault: isDefault);
-      BankAccountsCache.updateDefault(bankAccountId, isDefault: isDefault);
-      return const Right(null);
-    } on Failure catch (f) {
-      return Left(f);
-    } catch (e) {
-      return Left(FailureMapper.fromException(e));
-    }
-  }
 }

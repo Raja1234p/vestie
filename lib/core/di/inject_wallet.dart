@@ -95,12 +95,6 @@ void registerWalletDependencies(ServiceLocator sl) {
     sl.bankAccountsRepository,
   );
   sl.linkBankAccountUseCase = LinkBankAccountUseCase(sl.bankAccountsRepository);
-  sl.removeBankAccountUseCase = RemoveBankAccountUseCase(
-    sl.bankAccountsRepository,
-  );
-  sl.setDefaultBankAccountUseCase = SetDefaultBankAccountUseCase(
-    sl.bankAccountsRepository,
-  );
 
   sl.walletWithdrawalRemoteDataSource = WalletWithdrawalRemoteDataSourceImpl(
     apiClient: sl.apiClient,

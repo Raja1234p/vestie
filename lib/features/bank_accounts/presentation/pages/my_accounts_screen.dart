@@ -26,8 +26,6 @@ class MyAccountsScreen extends StatelessWidget {
     return BlocProvider(
       create: (_) => BankAccountsCubit(
         listBankAccountsUseCase: sl.listBankAccountsUseCase,
-        setDefaultBankAccountUseCase: sl.setDefaultBankAccountUseCase,
-        removeBankAccountUseCase: sl.removeBankAccountUseCase,
       ),
       child: const _MyAccountsBody(),
     );
@@ -75,8 +73,6 @@ class _MyAccountsBody extends StatelessWidget {
       listenWhen: (prev, next) =>
           prev.errorMessage != next.errorMessage &&
           next.errorMessage != null &&
-          next.settingDefaultAccountId == null &&
-          next.removingAccountId == null &&
           !next.linking,
       listener: (context, state) {
         AppToast.showError(

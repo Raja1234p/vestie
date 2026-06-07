@@ -12,10 +12,6 @@ abstract class BankAccountsRemoteDataSource {
     String? refreshUrl,
     String? returnUrl,
   });
-
-  Future<void> remove(String bankAccountId);
-
-  Future<void> setDefault(String bankAccountId, {required bool isDefault});
 }
 
 class BankAccountsRemoteDataSourceImpl implements BankAccountsRemoteDataSource {
@@ -54,21 +50,5 @@ class BankAccountsRemoteDataSourceImpl implements BankAccountsRemoteDataSource {
       data: data,
     );
     return BankLinkResultModel.fromJson(response);
-  }
-
-  @override
-  Future<void> remove(String bankAccountId) async {
-    await apiClient.delete(ApiConstants.bankAccount(bankAccountId));
-  }
-
-  @override
-  Future<void> setDefault(
-    String bankAccountId, {
-    required bool isDefault,
-  }) async {
-    await apiClient.patch<Map<String, dynamic>>(
-      ApiConstants.bankAccountDefault(bankAccountId),
-      data: {'isDefault': isDefault},
-    );
   }
 }

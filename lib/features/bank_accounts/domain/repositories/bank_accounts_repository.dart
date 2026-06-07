@@ -14,11 +14,4 @@ abstract class BankAccountsRepository {
     String? refreshUrl,
     String? returnUrl,
   });
-
-  Future<Either<Failure, void>> remove(String bankAccountId);
-
-  Future<Either<Failure, void>> setDefault(
-    String bankAccountId, {
-    required bool isDefault,
-  });
 }
