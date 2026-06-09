@@ -45,6 +45,10 @@ class _BorrowRequestsScreenState extends State<BorrowRequestsScreen> {
   void initState() {
     super.initState();
     _requests = List<BorrowRequestEntity>.from(widget.requests);
+    // Route args are a snapshot; refresh so callerVote / counts match after tab votes.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _reloadRequests();
+    });
   }
 
   Future<void> _reloadRequests() async {
@@ -144,6 +148,10 @@ class _BorrowRequestsScreenState extends State<BorrowRequestsScreen> {
                           final request = _requests[i];
                           final project = widget.project;
                           return BorrowRequestCard(
+                          key: ValueKey(
+                            '${request.id}|${request.callerVote}|'
+                            '${request.upvotes}|${request.downvotes}',
+                          ),
                           projectId: widget.projectId,
                           request: request,
                           actionMode: widget.isLeaderMode

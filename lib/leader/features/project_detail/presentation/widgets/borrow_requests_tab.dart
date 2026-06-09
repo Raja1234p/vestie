@@ -18,6 +18,7 @@ class BorrowRequestsTab extends StatelessWidget {
   final ValueChanged<MemberEntity>? onMemberTap;
   final void Function(BorrowRequestEntity request)? onAccept;
   final void Function(BorrowRequestEntity request)? onReject;
+  final VoidCallback? onVoteSuccess;
 
   const BorrowRequestsTab({
     super.key,
@@ -28,6 +29,7 @@ class BorrowRequestsTab extends StatelessWidget {
     this.onMemberTap,
     this.onAccept,
     this.onReject,
+    this.onVoteSuccess,
   });
 
   VoidCallback? _openMemberDetail(BorrowRequestEntity request) {
@@ -59,6 +61,9 @@ class BorrowRequestsTab extends StatelessWidget {
         ),
         ...preview.map(
           (r) => BorrowRequestCard(
+            key: ValueKey(
+              '${r.id}|${r.callerVote}|${r.upvotes}|${r.downvotes}',
+            ),
             projectId: project.id,
             request: r,
             actionMode: actionMode,
@@ -68,6 +73,7 @@ class BorrowRequestsTab extends StatelessWidget {
             onOpenMemberDetail: _openMemberDetail(r),
             onAccept: onAccept != null ? () => onAccept!(r) : null,
             onReject: onReject != null ? () => onReject!(r) : null,
+            onVoteSuccess: onVoteSuccess,
           ),
         ),
       ],

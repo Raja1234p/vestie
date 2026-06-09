@@ -33,6 +33,9 @@ class UserBorrowRequestsPanel extends StatelessWidget {
       requests: requests,
       onViewAll: onViewAll,
       onMemberTap: onMemberTap,
+      onVoteSuccess: () {
+        context.read<ProjectDetailBloc>().reloadDetailAndWait(project.id);
+      },
     );
   }
 }
