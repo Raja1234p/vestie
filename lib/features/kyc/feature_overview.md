@@ -22,7 +22,9 @@ Stripe Identity onboarding so users can withdraw and satisfy compliance gates.
 
 ## Trace
 
-`KycCubit` → `CreateKycSessionUseCase` → `POST /kyc/session` → hosted Stripe Identity UI
+`KycBrowserOnboardingRunner` → `POST /kyc/start` → `StripeHostedOnboardingLauncher` → `vestie://kyc/complete` → `GET /kyc/status`
+
+Bank link uses the same HTTPS return pages (`/kyc/complete`, `/kyc/refresh`) via `BankFlowConstants`.
 
 ## See also
 

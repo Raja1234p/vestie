@@ -28,7 +28,8 @@ Use this when verifying **data on screen matches API** after actions (refresh, n
 |--------|-----|------|----------------|
 | Wallet tab | `GET /wallet` | `WalletTabShimmer` | Tab open; after deposit/contribute/withdraw |
 | Recent activity (wallet) | `recentTransactions[]` from wallet | Part of wallet shimmer | Same as wallet |
-| Recent activity (full screen) | — | — | **Mock only** (known gap) |
+| Recent activity (wallet tab) | `recentTransactions[]` from wallet | Part of wallet shimmer | Same as wallet |
+| Transaction history (profile) | **Dedicated API (TBD)** | Shimmer then mock | N/A until new endpoint |
 | Contribute amount/confirm | `GET /wallet` (balance), preview client-side | — | — |
 | Contribute submit | `POST /projects/{id}/contributions` | — | Wallet tab; project detail reload |
 | Project detail | `GET /projects/{id}` | Shimmer | After contribute / announcement |

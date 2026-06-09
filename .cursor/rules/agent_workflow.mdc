@@ -15,9 +15,14 @@ alwaysApply: true
 
 2. **For any feature, screen, API, or flow task** — also read `DOCS/project_scope.md` (full scope) before editing.
 
-3. **Follow all MDC rules completely** for the entire task — not only the file you are editing.
+3. **For API / wallet / Stripe / KYC / bank work** — also read:
+   - `DOCS/api_integration_plan.md` — endpoint map & PR order
+   - `DOCS/qa/api_screen_sync_matrix.md` — screen ↔ API sync expectations
+   - `feature_overview.md` in each feature folder you touch (update it when behavior changes)
 
-4. **Re-read rules + project scope** when the task shifts (e.g. UI → perf → docs) or before committing.
+4. **Follow all MDC rules completely** for the entire task — not only the file you are editing.
+
+5. **Re-read rules + project scope** when the task shifts (e.g. UI → perf → docs) or before committing.
 
 ## Rule priority (when in doubt)
 
@@ -30,6 +35,9 @@ alwaysApply: true
 - [ ] Changes match active scope in `production_scope.mdc`
 - [ ] UI uses `AppStrings`, `AppColors`, `AppAssets`, `AppDimens`, ScreenUtil
 - [ ] Routes use `AppRoutes` only
+- [ ] **No widgets → API** — repositories + use cases + Cubit/Bloc only
+- [ ] **No raw URLs** — `ApiConstants` for paths; deep links via flow constants
+- [ ] Updated `feature_overview.md` if feature behavior or routes changed
 - [ ] `flutter analyze` — no errors on changed files
 - [ ] `flutter test` — pass (after meaningful code changes)
 - [ ] Minimal diff — no mass format, global rename, or unrelated refactors
