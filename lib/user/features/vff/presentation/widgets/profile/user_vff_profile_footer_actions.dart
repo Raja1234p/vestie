@@ -34,16 +34,14 @@ final class UserVffProfileFooterActions extends StatelessWidget {
 
         if (isFollowingUi) {
           return VffFollowingMenuButton(
-            isRemoveLoading: state.isRemoveVffLoading,
             onRemove: state.isFooterBusy
                 ? null
                 : () async {
-                    final ok = await showUserVffRemoveConnectionDialog(
+                    final removed = await showUserVffRemoveConnectionDialog(
                       context,
                       usernameWithoutAt: profile.usernameHandle,
+                      onConfirm: cubit.removeVffConnection,
                     );
-                    if (!context.mounted || ok != true) return;
-                    final removed = await cubit.removeVffConnection();
                     if (!context.mounted || !removed) return;
                     context.pop(UserVffProfilePopResult.connectionRemoved);
                   },

@@ -35,9 +35,6 @@ class MemberPenaltyActionScreen extends StatefulWidget {
 }
 
 class _MemberPenaltyActionScreenState extends State<MemberPenaltyActionScreen> {
-  bool _isRemoving = false;
-  bool _isMarkingDefaulted = false;
-
   String get _userId => widget.member.apiUserId;
 
   bool get _showRemoveMember {
@@ -58,76 +55,59 @@ class _MemberPenaltyActionScreenState extends State<MemberPenaltyActionScreen> {
     );
   }
 
-  Future<void> _removeMember() async {
-    if (_isRemoving || _isMarkingDefaulted) return;
-    setState(() => _isRemoving = true);
-
+  Future<bool> _removeMember() async {
     final result = await ServiceLocator.instance.removeForNonRepaymentUseCase(
       projectId: widget.projectId,
       userId: _userId,
     );
 
-    await result.fold(
-      (failure) async {
-        if (!mounted) return;
-        setState(() => _isRemoving = false);
+    return result.fold(
+      (failure) {
         showMemberDetailErrorDialog(context, failure: failure);
+        return false;
       },
       (_) async {
         await ProjectDetailReloadCoordinator.reload(widget.projectId);
-        if (!mounted) return;
-        setState(() => _isRemoving = false);
-        showMemberRemovedSuccess(
-          context,
-          onOk: () {
-            Navigator.of(context).pop();
-            context.pop(MemberPenaltyActionOutcome.memberRemoved);
-          },
-        );
+        return true;
       },
     );
   }
 
-  Future<void> _markDefaulted() async {
-    if (_isRemoving || _isMarkingDefaulted) return;
-    setState(() => _isMarkingDefaulted = true);
-
+  Future<bool> _markDefaulted() async {
     final result = await ServiceLocator.instance.markDefaultedUseCase(
       projectId: widget.projectId,
       userId: _userId,
     );
 
-    await result.fold(
-      (failure) async {
-        if (!mounted) return;
-        setState(() => _isMarkingDefaulted = false);
+    return result.fold(
+      (failure) {
         showMemberDetailErrorDialog(context, failure: failure);
+        return false;
       },
       (_) async {
         await ProjectDetailReloadCoordinator.reload(widget.projectId);
-        if (!mounted) return;
-        setState(() => _isMarkingDefaulted = false);
-        showMemberMarkedDefaultedSuccess(
-          context,
-          onOk: () {
-            Navigator.of(context).pop();
-            context.pop(MemberPenaltyActionOutcome.memberUpdated);
-          },
-        );
+        return true;
       },
     );
   }
 
-  void _promptRemoveMember() {
-    showRemoveMemberConfirm(
+  Future<void> _promptRemoveMember() async {
+    final removed = await showRemoveMemberFlow(
       context,
       memberName: widget.member.name,
-      onConfirmed: _removeMember,
+      onConfirm: _removeMember,
     );
+    if (!mounted || !removed) return;
+    context.pop(MemberPenaltyActionOutcome.memberRemoved);
   }
 
-  void _promptMarkDefaulted() {
-    showMarkDefaultedConfirm(context, onConfirmed: _markDefaulted);
+  Future<void> _promptMarkDefaulted() async {
+    final marked = await showMarkDefaultedFlow(
+      context,
+      onConfirm: _markDefaulted,
+    );
+    if (!mounted || !marked) return;
+    context.pop(MemberPenaltyActionOutcome.memberUpdated);
   }
 
   @override
@@ -157,8 +137,6 @@ class _MemberPenaltyActionScreenState extends State<MemberPenaltyActionScreen> {
                 showMarkAsDefaulted: _showMarkAsDefaulted,
                 onRemoveMember: _promptRemoveMember,
                 onMarkDefaulted: _promptMarkDefaulted,
-                isRemoveMemberLoading: _isRemoving,
-                isMarkDefaultedLoading: _isMarkingDefaulted,
               ),
           ],
         ),

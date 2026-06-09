@@ -13,12 +13,10 @@ import 'package:vestie/user/features/vff/presentation/widgets/vff_following_menu
 class MemberDetailFooter extends StatelessWidget {
   final bool showVffFollowing;
   final VoidCallback onRemoveVffConnection;
-  final bool isRemoveVffLoading;
   final bool showSendVffRequest;
   final bool vffRequestSent;
   final bool isVffRequestLoading;
   final bool showRemoveMember;
-  final bool isRemoveMemberLoading;
   final VoidCallback onSendVffRequest;
   final VoidCallback onRemoveMember;
 
@@ -26,12 +24,10 @@ class MemberDetailFooter extends StatelessWidget {
     super.key,
     this.showVffFollowing = false,
     required this.onRemoveVffConnection,
-    this.isRemoveVffLoading = false,
     required this.showSendVffRequest,
     this.vffRequestSent = false,
     this.isVffRequestLoading = false,
     required this.showRemoveMember,
-    this.isRemoveMemberLoading = false,
     required this.onSendVffRequest,
     required this.onRemoveMember,
   });
@@ -46,8 +42,7 @@ class MemberDetailFooter extends StatelessWidget {
         children: [
           if (showVffFollowing) ...[
             VffFollowingMenuButton(
-              onRemove: isRemoveVffLoading ? null : onRemoveVffConnection,
-              isRemoveLoading: isRemoveVffLoading,
+              onRemove: onRemoveVffConnection,
             ),
             if (showRemoveMember) SizedBox(height: 12.h),
           ],
@@ -85,7 +80,6 @@ class MemberDetailFooter extends StatelessWidget {
             AppOutlineNeutralButton(
               label: AppStrings.btnRemoveMember,
               onPressed: onRemoveMember,
-              isLoading: isRemoveMemberLoading,
               borderRadius: AppRadius.r8,
               backgroundColor: AppColors.red100,
               borderColor: AppColors.red100,

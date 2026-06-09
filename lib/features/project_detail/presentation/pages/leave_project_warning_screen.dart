@@ -28,42 +28,46 @@ class LeaveProjectWarningScreen extends StatefulWidget {
 }
 
 class _LeaveProjectWarningScreenState extends State<LeaveProjectWarningScreen> {
-  bool _isLeaving = false;
+  bool _dialogOpen = false;
 
-  void _onLeaveProjectPressed() {
-    if (_isLeaving) return;
-    showLeaveProjectConfirmDialog(
+  Future<void> _onLeaveProjectPressed() async {
+    if (_dialogOpen) return;
+    setState(() => _dialogOpen = true);
+
+    final left = await showLeaveProjectConfirmDialog(
       context,
       onConfirm: () async {
-        if (!mounted) return;
-        setState(() => _isLeaving = true);
         final result = await ServiceLocator.instance.leaveProjectUseCase(
           projectId: widget.args.projectId,
         );
-        if (!mounted) return;
-        setState(() => _isLeaving = false);
-        if (!mounted) return;
-        await result.fold(
-          (failure) async {
-            AppFailureDialog.show(
-              context,
-              message: failure.message.isNotEmpty
-                  ? failure.message
-                  : AppStrings.errorGeneric,
-            );
+        return result.fold(
+          (failure) {
+            if (mounted) {
+              AppFailureDialog.show(
+                context,
+                message: failure.message.isNotEmpty
+                    ? failure.message
+                    : AppStrings.errorGeneric,
+              );
+            }
+            return false;
           },
-          (_) async {
-            HomeProjectListSync.recordProjectLeft(widget.args.projectId);
-            await showLeaveProjectSuccessDialog(context);
-            if (!mounted) return;
-            popAfterLeaveProjectSuccess(
-              context,
-              refreshHomeOnPop: widget.args.refreshHomeOnPop,
-              refreshDiscoverOnPop: widget.args.refreshDiscoverOnPop,
-            );
-          },
+          (_) => true,
         );
       },
+    );
+
+    if (!mounted) return;
+    setState(() => _dialogOpen = false);
+    if (!left) return;
+
+    HomeProjectListSync.recordProjectLeft(widget.args.projectId);
+    await showLeaveProjectSuccessDialog(context);
+    if (!mounted) return;
+    popAfterLeaveProjectSuccess(
+      context,
+      refreshHomeOnPop: widget.args.refreshHomeOnPop,
+      refreshDiscoverOnPop: widget.args.refreshDiscoverOnPop,
     );
   }
 
@@ -92,16 +96,14 @@ class _LeaveProjectWarningScreenState extends State<LeaveProjectWarningScreen> {
               children: [
                 LeaveProjectDestructiveButton(
                   label: AppStrings.leaveProjectWarningTitle,
-                  isLoading: _isLeaving,
-                  onPressed: _onLeaveProjectPressed,
+                  isLoading: _dialogOpen,
+                  onPressed: _dialogOpen ? null : _onLeaveProjectPressed,
                 ),
                 SizedBox(height: 12.h),
                 AppOutlineNeutralButton(
                   label: AppStrings.btnCancel,
                   borderless: true,
-                  onPressed: () {
-                    if (!_isLeaving) context.pop();
-                  },
+                  onPressed: _dialogOpen ? () {} : () => context.pop(),
                 ),
               ],
             ),

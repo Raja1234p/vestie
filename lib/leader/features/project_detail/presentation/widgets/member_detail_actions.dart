@@ -6,6 +6,8 @@ import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_action_dialog.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 
+import 'member_detail_result_dialogs.dart';
+
 /// Full-width red-outline row action (penalty / legacy leader screens).
 class LeaderActionOutlineButton extends StatelessWidget {
   final String label;
@@ -44,75 +46,97 @@ class LeaderActionOutlineButton extends StatelessWidget {
   }
 }
 
-Future<void> showRemoveMemberConfirm(
+/// Confirm remove member — primary button loader, then success dialog.
+Future<bool> showRemoveMemberFlow(
   BuildContext context, {
   required String memberName,
-  required VoidCallback onConfirmed,
-}) {
-  return AppActionDialog.show(
+  required Future<bool> Function() onConfirm,
+}) async {
+  final ok = await AppActionDialog.showAsync(
     context,
     title: AppStrings.removeMemberTitle(memberName),
     description: AppStrings.removeMemberBody(memberName),
     primaryLabel: AppStrings.btnRemove,
     primaryColor: AppColors.red800,
-    onPrimary: () {
-      Navigator.of(context).pop();
-      onConfirmed();
-    },
+    onPrimary: onConfirm,
   );
+  if (!context.mounted || !ok) return false;
+  await showMemberRemovedSuccess(
+    context,
+    onOk: () => Navigator.of(context).pop(),
+  );
+  return true;
 }
 
-Future<void> showMarkDefaultedConfirm(
+/// Confirm mark defaulted — primary button loader, then success dialog.
+Future<bool> showMarkDefaultedFlow(
   BuildContext context, {
-  required VoidCallback onConfirmed,
-}) {
-  return AppActionDialog.show(
+  required Future<bool> Function() onConfirm,
+}) async {
+  final ok = await AppActionDialog.showAsync(
     context,
     title: AppStrings.markDefaultedConfirmTitle,
     description: AppStrings.markDefaultedConfirmBody,
     primaryLabel: AppStrings.markAsDefaulted,
     primaryColor: AppColors.red800,
-    onPrimary: () {
-      Navigator.of(context).pop();
-      onConfirmed();
-    },
+    onPrimary: onConfirm,
   );
+  if (!context.mounted || !ok) return false;
+  await showMemberMarkedDefaultedSuccess(
+    context,
+    onOk: () => Navigator.of(context).pop(),
+  );
+  return true;
 }
 
-Future<void> showMakeCoLeaderConfirm(
+/// Confirm assign co-leader — primary button loader, then success dialog.
+Future<bool> showMakeCoLeaderFlow(
   BuildContext context, {
   required String memberName,
-  required VoidCallback onConfirmed,
-}) {
-  return AppActionDialog.show(
+  required String projectName,
+  required Future<bool> Function() onConfirm,
+}) async {
+  final ok = await AppActionDialog.showAsync(
     context,
     title: AppStrings.makeCoLeaderConfirmTitle,
     description: AppStrings.makeCoLeaderDescription(memberName),
     primaryLabel: AppStrings.btnMakeCoLeader,
     primaryColor: AppColors.makeCoLeaderDialogButton,
     primaryBorderColor: AppColors.makeCoLeaderDialogButton,
-    onPrimary: () {
-      Navigator.of(context).pop();
-      onConfirmed();
-    },
+    onPrimary: onConfirm,
   );
+  if (!context.mounted || !ok) return false;
+  await showCoLeaderAssignedSuccess(
+    context,
+    memberName: memberName,
+    projectName: projectName,
+    onOk: () => Navigator.of(context).pop(),
+  );
+  return true;
 }
 
-Future<void> showRemoveCoLeaderConfirm(
+/// Confirm remove co-leader — primary button loader, then success dialog.
+Future<bool> showRemoveCoLeaderFlow(
   BuildContext context, {
   required String memberName,
-  required VoidCallback onConfirmed,
-}) {
-  return AppActionDialog.show(
+  required String projectName,
+  required Future<bool> Function() onConfirm,
+}) async {
+  final ok = await AppActionDialog.showAsync(
     context,
     title: AppStrings.removeCoLeaderConfirmTitle,
     description: AppStrings.removeCoLeaderDescription(memberName),
     primaryLabel: AppStrings.btnRemoveCoLeader,
     secondaryLabel: AppStrings.btnCancel,
     primaryColor: AppColors.red800,
-    onPrimary: () {
-      Navigator.of(context).pop();
-      onConfirmed();
-    },
+    onPrimary: onConfirm,
   );
+  if (!context.mounted || !ok) return false;
+  await showCoLeaderRemovedSuccess(
+    context,
+    memberName: memberName,
+    projectName: projectName,
+    onOk: () => Navigator.of(context).pop(),
+  );
+  return true;
 }

@@ -98,6 +98,25 @@ Use this when verifying **data on screen matches API** after actions (refresh, n
 
 ---
 
+## Member profile & moderation (leader / member)
+
+| Screen | API | Load / confirm UX | Refresh after |
+|--------|-----|-------------------|---------------|
+| Member detail — make / remove co-leader | `POST` / `DELETE …/members/{userId}/co-leader` | `AppActionDialog.showAsync` on confirm | `syncWithProjectDetail` → success dialog → OK |
+| Member detail — remove member (footer) | `DELETE …/members/{userId}` | `showRemoveMemberFlow` (`showAsync` + success) | Reload detail if bloc registered → `pop(memberRemoved)` |
+| Penalty action — remove / mark defaulted | `POST …/remove-non-repayment`, `POST …/defaulted` | `showRemoveMemberFlow` / `showMarkDefaultedFlow` | `ProjectDetailReloadCoordinator.reload` **before** success dialog |
+| Member detail — remove VFF | `DELETE /vff/connections/{userId}` | `showUserVffRemoveConnectionDialog` (`showAsync`) | `syncWithProjectDetail`; footer Following menu unchanged |
+| Member detail — send VFF | `POST …/vff-requests` | Footer `AppButton.isLoading` (no dialog) | `syncWithProjectDetail`; chip → Request Sent |
+| Leave project warning | `POST …/leave` | `showLeaveProjectConfirmDialog` (`showAsync`) | Success dialog → `HomeProjectListSync` → pop stack |
+
+**Notes**
+
+- Dialog POST actions return `Future<bool>` from Cubit/use case; confirm dialog stays open with primary spinner until POST (+ detail reload when applicable) completes.
+- Action failures → `AppToast` via `MemberDetailCubit` listener; confirm dialog remains open for retry.
+- Success dialogs are shown **after** `showAsync` returns `true`, matching borrow cancel / leader decide pattern.
+
+---
+
 ## Sync test procedure (per screen)
 
 For each **money** screen row above:

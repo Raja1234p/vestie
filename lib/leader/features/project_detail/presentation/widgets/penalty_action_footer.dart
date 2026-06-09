@@ -13,8 +13,6 @@ class PenaltyActionFooter extends StatelessWidget {
   final bool showMarkAsDefaulted;
   final VoidCallback onRemoveMember;
   final VoidCallback onMarkDefaulted;
-  final bool isRemoveMemberLoading;
-  final bool isMarkDefaultedLoading;
 
   const PenaltyActionFooter({
     super.key,
@@ -22,8 +20,6 @@ class PenaltyActionFooter extends StatelessWidget {
     required this.showMarkAsDefaulted,
     required this.onRemoveMember,
     required this.onMarkDefaulted,
-    this.isRemoveMemberLoading = false,
-    this.isMarkDefaultedLoading = false,
   });
 
   static const _outlineColor = AppColors.red900;
@@ -42,7 +38,6 @@ class PenaltyActionFooter extends StatelessWidget {
             AppOutlineNeutralButton(
               label: AppStrings.btnRemoveMember,
               onPressed: onRemoveMember,
-              isLoading: isRemoveMemberLoading,
               borderRadius: AppRadius.r8,
               borderColor: _outlineColor,
               labelColor: _outlineColor,
@@ -52,7 +47,6 @@ class PenaltyActionFooter extends StatelessWidget {
             AppOutlineNeutralButton(
               label: AppStrings.markAsDefaulted,
               onPressed: onMarkDefaulted,
-              isLoading: isMarkDefaultedLoading,
               borderRadius: AppRadius.r8,
               borderColor: _outlineColor,
               labelColor: _outlineColor,

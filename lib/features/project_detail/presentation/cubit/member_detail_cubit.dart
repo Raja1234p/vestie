@@ -371,21 +371,20 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
     return fetched;
   }
 
-  Future<void> removeVffConnection() async {
-    if (state.isRemoveVffLoading) return;
-
+  /// Remove VFF from member profile — loader on confirm dialog primary button.
+  Future<bool> removeVffConnection() async {
     final userId = _userId;
-    if (userId == null || userId.trim().isEmpty) return;
+    if (userId == null || userId.trim().isEmpty) return false;
 
-    emit(state.copyWith(isRemoveVffLoading: true, clearFailure: true));
+    emit(state.copyWith(clearFailure: true));
 
     final result = await _removeVffConnectionUseCase(userId);
+    if (isClosed) return false;
 
-    if (isClosed) return;
-
-    await result.fold(
-      (failure) async {
-        emit(state.copyWith(isRemoveVffLoading: false, failure: failure));
+    return result.fold(
+      (failure) {
+        emit(state.copyWith(failure: failure));
+        return false;
       },
       (_) async {
         final current = state.activity;
@@ -410,39 +409,33 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
           emit(state.copyWith(projectMembersChanged: true));
         }
         await _syncConnectedApis();
-        if (isClosed) return;
-        emit(state.copyWith(isRemoveVffLoading: false));
+        if (isClosed) return false;
+        return true;
       },
     );
   }
 
-  Future<void> assignCoLeader({
+  Future<bool> assignCoLeader({
     required String projectId,
-
     required String userId,
   }) {
     return _setCoLeaderRole(projectId: projectId, userId: userId, assign: true);
   }
 
-  Future<void> removeCoLeader({
+  Future<bool> removeCoLeader({
     required String projectId,
-
     required String userId,
   }) {
     return _setCoLeaderRole(
       projectId: projectId,
-
       userId: userId,
-
       assign: false,
     );
   }
 
-  Future<void> _setCoLeaderRole({
+  Future<bool> _setCoLeaderRole({
     required String projectId,
-
     required String userId,
-
     required bool assign,
   }) async {
     final resolvedUserId = userId.trim().isNotEmpty
@@ -452,78 +445,48 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
       emit(
         state.copyWith(failure: const ServerFailure(AppStrings.errorGeneric)),
       );
-      return;
+      return false;
     }
 
-    await _run(
-      action: assign
-          ? MemberDetailAction.assignCoLeader
-          : MemberDetailAction.removeCoLeader,
-
+    return _runDialogAction(
+      refreshMember: true,
       task: () => _updateCoLeaderRoleUseCase(
         projectId: projectId,
-
         userId: resolvedUserId,
-
         assign: assign,
       ),
     );
   }
 
-  Future<void> removeMember({
+  Future<bool> removeMember({
     required String projectId,
-
     required String userId,
-  }) => _run(
-    action: MemberDetailAction.removeMember,
-
-    task: () => _removeMemberUseCase(projectId: projectId, userId: userId),
-  );
-
-  Future<void> _run({
-    required MemberDetailAction action,
-
-    required Future<Either<Failure, void>> Function() task,
-  }) async {
-    if (state.isActionLoading) return;
-
-    emit(
-      state.copyWith(
-        isActionLoading: true,
-
-        loadingAction: action,
-
-        clearFailure: true,
-
-        clearCompleted: true,
-      ),
+  }) {
+    return _runDialogAction(
+      refreshMember: false,
+      task: () => _removeMemberUseCase(projectId: projectId, userId: userId),
     );
+  }
+
+  Future<bool> _runDialogAction({
+    required Future<Either<Failure, void>> Function() task,
+    required bool refreshMember,
+  }) async {
+    emit(state.copyWith(clearFailure: true, clearCompleted: true));
 
     final result = await task();
+    if (isClosed) return false;
 
-    await result.fold(
-      (Failure failure) async {
-        emit(
-          state.copyWith(
-            isActionLoading: false,
-            loadingAction: null,
-            failure: failure,
-          ),
-        );
+    return result.fold(
+      (Failure failure) {
+        emit(state.copyWith(failure: failure));
+        return false;
       },
       (_) async {
-        await _syncConnectedApis(
-          refreshMember: action != MemberDetailAction.removeMember,
-        );
-        if (isClosed) return;
-        emit(
-          state.copyWith(
-            isActionLoading: false,
-            loadingAction: null,
-            completedAction: action,
-            projectMembersChanged: true,
-          ),
-        );
+        await _syncConnectedApis(refreshMember: refreshMember);
+        if (isClosed) return false;
+        emit(state.copyWith(projectMembersChanged: true));
+        return true;
       },
     );
   }
