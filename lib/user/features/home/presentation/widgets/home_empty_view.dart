@@ -88,6 +88,7 @@ class HomeEmptyView extends StatelessWidget {
             const Spacer(),
             Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Image.asset(
                   AppAssets.homeDiscoverEmpty,
@@ -121,12 +122,15 @@ class HomeEmptyView extends StatelessWidget {
                 ),
                 if (showCreateProjectButton) ...[
                   SizedBox(height: 34.h),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40.w),
-                    child: AppButton(
-                      text: AppStrings.btnCreateProject,
-                      height: 48.h,
-                      onPressed: onCreateProject!,
+                  SizedBox(
+                    width: double.infinity,
+                    child: Center(
+                      child: AppButton(
+                        text: AppStrings.btnCreateProject,
+                        width: 175.w,
+                        height: 48.h,
+                        onPressed: onCreateProject!,
+                      ),
                     ),
                   ),
                 ],

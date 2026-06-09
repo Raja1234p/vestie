@@ -1,12 +1,12 @@
 part of 'project_detail_navigation.dart';
 
-void _handleMemberAction(
+Future<void> _handleMemberAction(
   BuildContext context, {
   required ProjectDetailEntity project,
   required MemberProjectMenuAction action,
   bool refreshHomeOnPop = false,
   bool refreshDiscoverOnPop = false,
-}) {
+}) async {
   switch (action) {
     case MemberProjectMenuAction.projectFundsHistory:
       context.push(
@@ -15,10 +15,7 @@ void _handleMemberAction(
       );
       break;
     case MemberProjectMenuAction.myBorrows:
-      context.push(
-        AppRoutes.myBorrowRequest,
-        extra: MyBorrowRequestArgsBuilder.fromProject(project),
-      );
+      await _openMyBorrowRequestAndRefresh(context, project: project);
       break;
     case MemberProjectMenuAction.inviteMembers:
       _openInviteMembers(context, project: project);

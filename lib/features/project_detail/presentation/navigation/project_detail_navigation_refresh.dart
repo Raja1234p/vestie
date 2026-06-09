@@ -38,6 +38,40 @@ void _reloadProjectDetailBloc(
   }
 }
 
+Future<void> _openMyBorrowRequestAndRefresh(
+  BuildContext context, {
+  required ProjectDetailEntity project,
+}) async {
+  final changed = await context.push<bool>(
+    AppRoutes.myBorrowRequest,
+    extra: MyBorrowRequestArgsBuilder.fromProject(project),
+  );
+  if (!context.mounted || changed != true) return;
+  await _refreshAfterBorrowSubmit(
+    context,
+    projectId: project.id,
+    reloadDetail: false,
+  );
+}
+
+Future<void> _refreshAfterBorrowSubmit(
+  BuildContext context, {
+  required String projectId,
+  bool reloadDetail = true,
+}) async {
+  if (!context.mounted) return;
+  try {
+    context.read<ProjectDetailBloc>().add(
+      const ChangeTabEvent(activeTab: ProjectDetailTab.borrowRequests),
+    );
+  } on ProviderNotFoundException {
+    // Opened outside project detail.
+  }
+  if (reloadDetail) {
+    await _reloadProjectDetailAndWait(context, projectId: projectId);
+  }
+}
+
 void _refreshAfterContribution(
   BuildContext context, {
   required String projectId,

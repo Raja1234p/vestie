@@ -1,8 +1,18 @@
 import 'package:vestie/user/features/borrow/data/datasources/borrow_remote_data_source_impl.dart';
 import 'package:vestie/user/features/borrow/data/repositories/borrow_repository_impl.dart';
 import 'package:vestie/user/features/borrow/domain/usecases/approve_borrow_request_use_case.dart';
+import 'package:vestie/user/features/borrow/domain/usecases/cancel_borrow_request_use_case.dart';
 import 'package:vestie/user/features/borrow/domain/usecases/create_borrow_request_use_case.dart';
+import 'package:vestie/user/features/borrow/domain/usecases/get_active_repay_summary_use_case.dart';
+import 'package:vestie/user/features/borrow/domain/usecases/get_borrow_repay_payment_options_use_case.dart';
+import 'package:vestie/user/features/borrow/domain/usecases/get_borrow_repay_preview_use_case.dart';
+import 'package:vestie/user/features/borrow/domain/usecases/get_borrow_repay_summary_use_case.dart';
+import 'package:vestie/user/features/borrow/domain/usecases/get_borrow_terms_use_case.dart';
+import 'package:vestie/user/features/borrow/domain/usecases/get_my_borrow_screen_use_case.dart';
+import 'package:vestie/user/features/borrow/domain/usecases/submit_borrow_repayment_use_case.dart';
+import 'package:vestie/user/features/borrow/domain/usecases/list_borrow_requests_use_case.dart';
 import 'package:vestie/user/features/borrow/domain/usecases/reject_borrow_request_use_case.dart';
+import 'package:vestie/user/features/borrow/domain/usecases/vote_borrow_request_use_case.dart';
 import 'package:vestie/user/features/contributions/data/datasources/contribution_remote_data_source.dart';
 import 'package:vestie/user/features/contributions/data/repositories/contribution_repository_impl.dart';
 import 'package:vestie/user/features/contributions/domain/usecases/confirm_contribution_usecase.dart';
@@ -40,6 +50,26 @@ void registerUserFeatureDependencies(ServiceLocator sl) {
   sl.createBorrowRequestUseCase = CreateBorrowRequestUseCase(
     sl.borrowRepository,
   );
+  sl.getBorrowTermsUseCase = GetBorrowTermsUseCase(sl.borrowRepository);
+  sl.getMyBorrowScreenUseCase = GetMyBorrowScreenUseCase(sl.borrowRepository);
+  sl.cancelBorrowRequestUseCase = CancelBorrowRequestUseCase(sl.borrowRepository);
+  sl.getActiveRepaySummaryUseCase = GetActiveRepaySummaryUseCase(
+    sl.borrowRepository,
+  );
+  sl.getBorrowRepaySummaryUseCase = GetBorrowRepaySummaryUseCase(
+    sl.borrowRepository,
+  );
+  sl.getBorrowRepayPaymentOptionsUseCase = GetBorrowRepayPaymentOptionsUseCase(
+    sl.borrowRepository,
+  );
+  sl.getBorrowRepayPreviewUseCase = GetBorrowRepayPreviewUseCase(
+    sl.borrowRepository,
+  );
+  sl.submitBorrowRepaymentUseCase = SubmitBorrowRepaymentUseCase(
+    sl.borrowRepository,
+  );
+  sl.listBorrowRequestsUseCase = ListBorrowRequestsUseCase(sl.borrowRepository);
+  sl.voteBorrowRequestUseCase = VoteBorrowRequestUseCase(sl.borrowRepository);
   sl.approveBorrowRequestUseCase = ApproveBorrowRequestUseCase(
     sl.borrowRepository,
   );

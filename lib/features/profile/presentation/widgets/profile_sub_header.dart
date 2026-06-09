@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/widgets/common/app_back_button.dart';
-import '../../../../core/widgets/common/post_auth_header.dart';
+import '../../../../core/widgets/common/post_auth_flow_sub_header.dart';
 
 /// Reusable gradient header for profile sub-screens (← Title).
 class ProfileSubHeader extends StatelessWidget {
@@ -20,12 +17,9 @@ class ProfileSubHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PostAuthHeader(
+    return PostAuthFlowSubHeader(
       title: title,
-      leading: AppBackButton(
-        onPressed: onBack ?? () => context.pop(),
-        color: AppColors.textPrimary,
-      ),
+      onBack: onBack,
       trailing: trailing,
     );
   }

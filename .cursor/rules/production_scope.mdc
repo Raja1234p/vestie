@@ -17,9 +17,10 @@ alwaysApply: true
 
 1. **Production stability** — zero regressions; no UI/visual, API contract, routing, Stripe, KYC, SignalR, or wallet flow changes unless explicitly requested.
 2. **Performance** — rebuild reduction, memory, startup, scroll/render (no UX/flow changes).
-3. **Documentation** — `README.md`, `FEATURE_MAP.md`, `DEPENDENCY_MAP.md`, `ARCHITECTURE_OVERVIEW.md`, `PROJECT_FLOW_MAP.md`, per-feature `feature_overview.md`.
-4. **Large-file decomposition** — **incremental only**, on files already being modified or pre-identified (`project_detail_navigation.dart`, `app_shimmer.dart`, oversized flow screens). Use `part`/`export` barrels to preserve public APIs.
-5. **Boy Scout Rule** — when touching a file: remove dead code/unused imports, improve local naming, add dartdoc if missing.
+3. **Documentation** — `README.md`, `FEATURE_MAP.md`, `DEPENDENCY_MAP.md`, `ARCHITECTURE_OVERVIEW.md`, `PROJECT_FLOW_MAP.md`, per-feature `feature_overview.md`, `DOCS/qa/api_screen_sync_matrix.md`, `DOCS/group_vacation_emergency_member_flow.md` when API/sync/member flows change.
+4. **Architecture hygiene** — when touching a feature: follow `architecture.mdc` (constants, layers, remove dead mocks); Boy Scout only in files you edit.
+5. **Large-file decomposition** — **incremental only**, on files already being modified or pre-identified (`project_detail_navigation.dart`, `app_shimmer.dart`, oversized flow screens). Use `part`/`export` barrels to preserve public APIs.
+6. **Boy Scout Rule** — when touching a file: remove dead code/unused imports, replace inline magic strings/numbers with central constants, add dartdoc if missing.
 
 ---
 

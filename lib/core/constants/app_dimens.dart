@@ -69,6 +69,20 @@ class AppDimens {
   /// Gap below gradient header band before body (all tabs/screens except Home).
   static const double postAuthContentTopGap = 10;
 
+  /// Scroll body below [PostAuthFlowSubHeader] — matches Edit Profile (`20.w` / `16.h`).
+  static EdgeInsets get postAuthFlowScrollPadding =>
+      EdgeInsets.fromLTRB(p20, 0, p20, v16);
+
+  /// Same as [postAuthFlowScrollPadding] plus keyboard inset for form flows.
+  static EdgeInsets postAuthFlowScrollPaddingWithKeyboard(BuildContext context) {
+    return EdgeInsets.fromLTRB(
+      p20,
+      0,
+      p20,
+      v16 + MediaQuery.viewInsetsOf(context).bottom,
+    );
+  }
+
   /// VFF rounded white sheet padding presets.
   static EdgeInsets get sheetInsetComfort =>
       EdgeInsets.fromLTRB(p18, v20, p18, v4);

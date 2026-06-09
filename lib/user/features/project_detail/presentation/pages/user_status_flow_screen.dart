@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
@@ -7,11 +6,11 @@ import 'package:vestie/app/router/route_args/project_detail_flow_args.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_outline_neutral_button.dart';
 import 'package:vestie/core/widgets/common/centered_hero_status_block.dart';
+import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
+import 'package:vestie/core/widgets/common/post_auth_flow_sub_header.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
-import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import '../models/user_status_flow_copy.dart';
 
 /// Member: join result or mark-vote submission feedback.
@@ -34,17 +33,15 @@ class UserStatusFlowScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            PostAuthHeader(
+            PostAuthFlowSubHeader(
               title: projectName,
-              leading: AppBackButton(
-                onPressed: () {
-                  if (context.canPop()) {
-                    context.pop();
-                  } else {
-                    context.go(AppRoutes.dashboard);
-                  }
-                },
-              ),
+              onBack: () {
+                if (context.canPop()) {
+                  context.pop();
+                } else {
+                  context.go(AppRoutes.dashboard);
+                }
+              },
             ),
             Expanded(
               child: CenteredHeroStatusBlock(
@@ -53,16 +50,12 @@ class UserStatusFlowScreen extends StatelessWidget {
                 body: data.body,
               ),
             ),
-            SafeArea(
-              top: false,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
-                child: AppOutlineNeutralButton(
-                  label: AppStrings.btnBackToHome,
-                  onPressed: () => context.go(AppRoutes.dashboard),
-                  borderRadius: AppRadius.r8,
-                  borderColor: AppColors.backToHomeButtonBorder,
-                ),
+            FlowScreenFooter(
+              child: AppOutlineNeutralButton(
+                label: AppStrings.btnBackToHome,
+                onPressed: () => context.go(AppRoutes.dashboard),
+                borderRadius: AppRadius.r8,
+                borderColor: AppColors.backToHomeButtonBorder,
               ),
             ),
           ],

@@ -8,6 +8,7 @@ import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
+import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/app_text_field.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import '../../domain/create_project_form.dart';
@@ -145,21 +146,17 @@ class _CreateProjectBorrowingSettingsScreenState
                     ),
                   ),
                 ),
-                SafeArea(
-                  top: false,
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 20.h),
-                    child: AppButton(
-                      text: AppStrings.btnNext,
-                      useGradient: false,
-                      hasShadow: false,
-                      color: AppColors.neutral1200,
-                      borderRadius: 10.r,
-                      onPressed: () {
-                        if (!cubit.validateFundsBorrowing()) return;
-                        context.push(AppRoutes.createProjectReview);
-                      },
-                    ),
+                FlowScreenFooter(
+                  child: AppButton(
+                    text: AppStrings.btnNext,
+                    useGradient: false,
+                    hasShadow: false,
+                    color: AppColors.neutral1200,
+                    borderRadius: 10.r,
+                    onPressed: () {
+                      if (!cubit.validateFundsBorrowing()) return;
+                      context.push(AppRoutes.createProjectReview);
+                    },
                   ),
                 ),
               ],

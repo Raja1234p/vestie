@@ -46,10 +46,11 @@ Public join → instant active membership. Private → pending until leader appr
 
 **Read** (in order):
 
-1. `DOCS/project_scope.md` — full product & technical scope
-2. `ARCHITECTURE_OVERVIEW.md` — layout & layers
-3. `PROJECT_FLOW_MAP.md` or `FEATURE_MAP.md` — locate code & traces
-4. `feature_overview.md` in the feature folder you touch
+1. `.cursor/rules/architecture.mdc` — layers, constants, no magic literals, doc sync
+2. `DOCS/project_scope.md` — full product & technical scope
+3. `ARCHITECTURE_OVERVIEW.md` — layout & layers
+4. `PROJECT_FLOW_MAP.md` or `FEATURE_MAP.md` — locate code & traces
+5. `feature_overview.md` in the feature folder you touch
 
 ## Tech stack (fixed)
 

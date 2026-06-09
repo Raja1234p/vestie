@@ -45,7 +45,7 @@ Future<void> showApproveBorrowRequestFlow(
   BorrowRequestEntity request, [
   Future<bool> Function()? onConfirmed,
 ]) async {
-  await AppActionDialog.show(
+  final ok = await AppActionDialog.showAsync(
     context,
     title: AppStrings.approveBorrowRequestTitle,
     description: '',
@@ -57,15 +57,11 @@ Future<void> showApproveBorrowRequestFlow(
     primaryLabel: AppStrings.approveLabel,
     primaryColor: AppColors.green800,
     onPrimary: () async {
-      if (onConfirmed == null) {
-        Navigator.of(context).pop();
-        return;
-      }
-      final ok = await onConfirmed();
-      if (!context.mounted || !ok) return;
-      Navigator.of(context).pop();
+      if (onConfirmed == null) return true;
+      return onConfirmed();
     },
   );
+  if (!ok) return;
   if (!context.mounted) return;
   await AppActionDialog.showSuccessOk(
     context,
@@ -84,7 +80,7 @@ Future<void> showRejectBorrowRequestFlow(
   BorrowRequestEntity request, [
   Future<bool> Function()? onConfirmed,
 ]) async {
-  await AppActionDialog.show(
+  final ok = await AppActionDialog.showAsync(
     context,
     title: AppStrings.rejectBorrowRequestTitle,
     description: '',
@@ -96,15 +92,11 @@ Future<void> showRejectBorrowRequestFlow(
     primaryLabel: AppStrings.rejectShortLabel,
     primaryColor: AppColors.red800,
     onPrimary: () async {
-      if (onConfirmed == null) {
-        Navigator.of(context).pop();
-        return;
-      }
-      final ok = await onConfirmed();
-      if (!context.mounted || !ok) return;
-      Navigator.of(context).pop();
+      if (onConfirmed == null) return true;
+      return onConfirmed();
     },
   );
+  if (!ok) return;
   if (!context.mounted) return;
   await AppActionDialog.show(
     context,

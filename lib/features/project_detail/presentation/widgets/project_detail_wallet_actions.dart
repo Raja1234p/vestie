@@ -85,12 +85,21 @@ class _BorrowButton extends StatelessWidget {
       secondaryFillColor: blocked ? AppColors.grey800 : null,
       secondaryBorderColor: blocked ? AppColors.grey800 : null,
       secondaryLabelColor: blocked ? AppColors.surface : null,
-      onPressed: () {
+      onPressed: () async {
         if (blocked) {
           AppToast.showInfo(context, AppStrings.borrowRequiresCoLeaderMessage);
           return;
         }
-        context.push(AppRoutes.borrowFlow, extra: walletArgs);
+        final submitted = await context.push<bool>(
+          AppRoutes.borrowFlow,
+          extra: walletArgs,
+        );
+        if (!context.mounted || submitted != true) return;
+        await ProjectDetailNavigation.refreshAfterBorrowSubmit(
+          context,
+          projectId: project.id,
+          reloadDetail: false,
+        );
       },
     );
   }

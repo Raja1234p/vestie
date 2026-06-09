@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/app/router/route_args/borrow_repay_flow_args.dart';
@@ -9,6 +8,7 @@ import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/utils/formatters.dart';
 import 'package:vestie/core/widgets/common/app_success_screen.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
+import '../navigation/borrow_repay_navigation.dart';
 
 /// Borrow repay success (Figma).
 class BorrowRepaySuccessScreen extends StatelessWidget {
@@ -20,11 +20,15 @@ class BorrowRepaySuccessScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final amount = AppFormatters.formatCurrency(args.totalRepayment);
 
+    final subtitle = args.successMessage?.trim().isNotEmpty == true
+        ? args.successMessage!
+        : AppStrings.borrowRepaySuccessBody(amount, args.projectName);
+
     return AppSuccessScreen(
       title: AppStrings.repaySentSuccessTitle,
       titleColor: AppColors.grey1000,
       subtitleWidget: AppText(
-        AppStrings.borrowRepaySuccessBody(amount, args.projectName),
+        subtitle,
         textAlign: TextAlign.center,
         style: GoogleFonts.lato(
           fontSize: 18.sp,
@@ -34,7 +38,7 @@ class BorrowRepaySuccessScreen extends StatelessWidget {
         ),
       ),
       buttonText: AppStrings.btnDone,
-      onButtonPressed: () => context.pop(),
+      onButtonPressed: () => BorrowRepayNavigation.finishRepayFlow(context),
     );
   }
 }

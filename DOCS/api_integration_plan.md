@@ -19,7 +19,7 @@ All REST paths are relative to `baseUrl` (e.g. `/wallet`, `/projects/{id}/contri
 | **Auth** | `Authorization: Bearer <accessToken>` on protected routes |
 | **Risk disclaimer** | `POST /users/me/risk-disclaimer` — **required** before **wallet**, **deposit**, **KYC**, **bank accounts**, **withdrawals** (and Week 5 Stripe Connect if used). `403` → route to agreement flow. **Not** required for saved-card payment-methods routes or notifications inbox (see table below). |
 | **Idempotency** | `Idempotency-Key` on `POST /wallet/deposit/intent`, `POST /projects/{id}/contributions`, `POST /wallet/withdrawals` (recommended) |
-| **Errors** | Map `400` / `403` / `404` / `409` / `503` via `FailureMapper` → `AppSnackBar` / inline field errors |
+| **Errors** | Map `400` / `403` / `404` / `409` / `503` via `FailureMapper` → `AppToast` (actions) / `AppErrorView` (load) / inline field errors |
 | **Sync** | Session caches + invalidate on logout, successful deposit, successful contribution |
 | **No widgets → API** | Repositories + use cases only; Cubit/Bloc owns loading/submit state |
 | **Strings / colors** | `AppStrings`, `AppColors` only |

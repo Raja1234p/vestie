@@ -3,20 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
-import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
-import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/core/utils/app_snackbar.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/features/payment_methods/domain/payment_methods_cache.dart';
 import 'package:vestie/features/profile/domain/entities/payment_method_picker_behavior.dart';
 import 'package:vestie/core/utils/wallet_withdraw_validation.dart';
-import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
+import 'package:vestie/core/widgets/common/post_auth_flow_sub_header.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
-import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import '../../domain/wallet_transaction_type.dart';
 import '../../domain/withdraw_delivery_method.dart';
 import '../cubit/wallet_deposit_cubit.dart';
@@ -47,7 +43,7 @@ class _TransactionConfirmationScreenState
         final balanceErr =
             WalletWithdrawValidation.validateForWithdraw(tx.amountParsed);
         if (balanceErr != null) {
-          AppSnackBar.showError(context, balanceErr);
+          AppToast.showError(context, balanceErr);
           return;
         }
         final method =
@@ -77,7 +73,7 @@ class _TransactionConfirmationScreenState
     if (txState.transactionType == WalletTransactionType.deposit) {
       final cardId = txState.selectedCard?.id.trim() ?? '';
       if (txState.payFromWallet || cardId.isEmpty) {
-        AppSnackBar.showError(context, AppStrings.depositSelectCardRequired);
+        AppToast.showError(context, AppStrings.depositSelectCardRequired);
         return;
       }
       await context.read<WalletDepositCubit>().submitDeposit(
@@ -89,12 +85,12 @@ class _TransactionConfirmationScreenState
     final balanceErr =
         WalletWithdrawValidation.validateForWithdraw(txState.amountParsed);
     if (balanceErr != null) {
-      AppSnackBar.showError(context, balanceErr);
+      AppToast.showError(context, balanceErr);
       return;
     }
     final bankId = txState.selectedBankAccountId;
     if (bankId == null || bankId.isEmpty) {
-      AppSnackBar.showError(context, AppStrings.withdrawSelectBankRequired);
+      AppToast.showError(context, AppStrings.withdrawSelectBankRequired);
       return;
     }
     final method =
@@ -133,7 +129,7 @@ class _TransactionConfirmationScreenState
           listenWhen: (p, c) => p.failure != c.failure || p.isSuccess != c.isSuccess,
           listener: (context, withdrawState) async {
             if (withdrawState.failure != null) {
-              AppSnackBar.showError(
+              AppToast.showError(
                 context,
                 FailureMapper.userMessage(withdrawState.failure!),
               );
@@ -158,27 +154,27 @@ class _TransactionConfirmationScreenState
               ? context.watch<WalletWithdrawCubit>().state.isSubmitting
               : false;
           final busy = depositSubmitting || withdrawSubmitting;
+          final withdrawState = !isDeposit
+              ? context.watch<WalletWithdrawCubit>().state
+              : null;
+          final canConfirm = isDeposit
+              ? state.canConfirmDeposit
+              : (withdrawState?.preview != null &&
+                    !(withdrawState?.isPreviewLoading ?? true) &&
+                    state.canConfirmWithdraw);
 
           return Scaffold(
             backgroundColor: Colors.transparent,
+            resizeToAvoidBottomInset: false,
             body: PostAuthGradientBackground(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  PostAuthHeader(
+                  PostAuthFlowSubHeader(
                     title: isDeposit
                         ? AppStrings.confirmDepositTitle
                         : AppStrings.confirmWithdrawTitle,
-                    padding: EdgeInsets.fromLTRB(
-                      AppDimens.p16,
-                      AppDimens.v16,
-                      AppDimens.p16,
-                      0,
-                    ),
-                    leading: AppBackButton(
-                      onPressed: busy ? () {} : () => context.pop(),
-                      color: AppColors.textPrimary,
-                    ),
+                    onBack: busy ? () {} : () => context.pop(),
                   ),
                   Expanded(
                     child: isDeposit
@@ -186,7 +182,7 @@ class _TransactionConfirmationScreenState
                             state: state,
                             depositErrorMessage: depositState?.failure != null
                                 ? _depositErrorHint(depositState!)
-                                : null,
+                                : state.depositValidationMessage,
                             onChangePaymentMethod:
                                 _canChangeDepositCard(state)
                                     ? () =>
@@ -203,7 +199,9 @@ class _TransactionConfirmationScreenState
                     child: AppButton(
                       text: _confirmCta(state),
                       isLoading: busy,
-                      onPressed: busy ? null : () => _onConfirm(context, state),
+                      onPressed: busy || !canConfirm
+                          ? null
+                          : () => _onConfirm(context, state),
                     ),
                   ),
                 ],

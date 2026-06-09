@@ -18,7 +18,7 @@ import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_announcements_section.dart';
 import '../widgets/investment_detail_preview_button.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/investment_completed_detail_content.dart';
-import 'package:vestie/core/utils/app_snackbar.dart';
+import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_member_vff_send_actions.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_members_preview_section.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_trailing_actions.dart';
@@ -113,7 +113,7 @@ class _InvestmentProjectDetailBodyState
     if (!mounted) return false;
     return result.fold(
       (failure) {
-        AppSnackBar.showError(context, FailureMapper.userMessage(failure));
+        AppToast.showError(context, FailureMapper.userMessage(failure));
         return false;
       },
       (_) {
@@ -142,7 +142,7 @@ class _InvestmentProjectDetailBodyState
             if (state is! ProjectDetailLoaded) return;
             final message = state.vffSendErrorMessage;
             if (message == null || message.isEmpty) return;
-            AppSnackBar.showError(context, message);
+            AppToast.showError(context, message);
             context.read<ProjectDetailBloc>().add(
               const ClearMemberVffSendErrorEvent(),
             );

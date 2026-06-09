@@ -26,12 +26,29 @@ class SplashCompleted extends SplashState {
 class SplashCubit extends Cubit<SplashState> {
   SplashCubit() : super(SplashInitial());
 
+  static const Duration minDisplayDuration = Duration(seconds: 3);
+
   Future<void> initializeApp() async {
     emit(SplashLoading());
 
+    final bootstrap = await Future.wait([
+      _loadBootstrap(),
+      Future<void>.delayed(minDisplayDuration),
+    ]).then((results) => results.first as _SplashBootstrap);
+
+    emit(
+      SplashCompleted(
+        isAuthenticated: bootstrap.isAuthenticated,
+        isDisclaimerAccepted: bootstrap.isDisclaimerAccepted,
+        hasSeenOnboarding: bootstrap.hasSeenOnboarding,
+      ),
+    );
+  }
+
+  Future<_SplashBootstrap> _loadBootstrap() async {
     await AppAuthSession.instance.syncFromStorage();
     final isAuthenticated = AppAuthSession.instance.isAuthenticated;
-    bool isDisclaimerAccepted = false;
+    var isDisclaimerAccepted = false;
 
     if (isAuthenticated) {
       final disclaimerResult = await ServiceLocator.instance
@@ -44,12 +61,22 @@ class SplashCubit extends Cubit<SplashState> {
 
     final hasSeenOnboarding = await OnboardingPrefs.hasCompleted();
 
-    emit(
-      SplashCompleted(
-        isAuthenticated: isAuthenticated,
-        isDisclaimerAccepted: isDisclaimerAccepted,
-        hasSeenOnboarding: hasSeenOnboarding,
-      ),
+    return _SplashBootstrap(
+      isAuthenticated: isAuthenticated,
+      isDisclaimerAccepted: isDisclaimerAccepted,
+      hasSeenOnboarding: hasSeenOnboarding,
     );
   }
+}
+
+class _SplashBootstrap {
+  final bool isAuthenticated;
+  final bool isDisclaimerAccepted;
+  final bool hasSeenOnboarding;
+
+  const _SplashBootstrap({
+    required this.isAuthenticated,
+    required this.isDisclaimerAccepted,
+    required this.hasSeenOnboarding,
+  });
 }

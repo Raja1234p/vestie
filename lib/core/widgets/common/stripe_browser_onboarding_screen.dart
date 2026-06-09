@@ -5,17 +5,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../constants/app_dimens.dart';
 import '../../constants/app_strings.dart';
 import '../../stripe/stripe_hosted_onboarding_launcher.dart';
 import '../../utils/logger.dart';
 import '../../theme/app_colors.dart';
 import '../text/app_text.dart';
-import 'app_back_button.dart';
 import 'app_button.dart';
 import 'app_loader.dart';
 import 'app_shimmer.dart';
+import 'flow_screen_footer.dart';
+import 'post_auth_flow_sub_header.dart';
 import 'post_auth_gradient_background.dart';
-import 'post_auth_header.dart';
 
 /// Stripe hosted Connect onboarding in the system browser.
 ///
@@ -268,20 +269,19 @@ class _StripeBrowserOnboardingScreenState
       },
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        resizeToAvoidBottomInset: false,
         body: PostAuthGradientBackground(
           child: Column(
             children: [
-              PostAuthHeader(
-                title: widget.title,
-                leading: IgnorePointer(
-                  ignoring: _handlingReturn,
-                  child: AppBackButton(
-                    onPressed: widget.onCancel,
-                    color: AppColors.textPrimary,
-                  ),
+              IgnorePointer(
+                ignoring: _handlingReturn,
+                child: PostAuthFlowSubHeader(
+                  title: widget.title,
+                  onBack: widget.onCancel,
                 ),
               ),
               Expanded(child: _buildBody()),
+              if (_showsPinnedFooter) FlowScreenFooter(child: _buildFooterActions()),
             ],
           ),
         ),
@@ -289,11 +289,17 @@ class _StripeBrowserOnboardingScreenState
     );
   }
 
+  bool get _showsPinnedFooter =>
+      !_bootstrapping &&
+      !_openingBrowser &&
+      _error == null &&
+      !_handlingReturn;
+
   Widget _buildBody() {
     if (_bootstrapping || _openingBrowser) {
-      return const Padding(
-        padding: EdgeInsets.all(16),
-        child: StripeOnboardingShimmer(),
+      return Padding(
+        padding: AppDimens.postAuthFlowScrollPadding,
+        child: const StripeOnboardingShimmer(),
       );
     }
     if (_error != null) {
@@ -321,8 +327,8 @@ class _StripeBrowserOnboardingScreenState
         ),
       );
     }
-    return Padding(
-      padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 16.h),
+    return SingleChildScrollView(
+      padding: AppDimens.postAuthFlowScrollPadding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -339,21 +345,27 @@ class _StripeBrowserOnboardingScreenState
           if (_handlingReturn) ...[
             SizedBox(height: 32.h),
             const AppLoader(),
-          ] else ...[
-            SizedBox(height: 24.h),
-            AppButton(
-              text: AppStrings.stripeBrowserOnboardingReturnToApp,
-              onPressed: () => _runManualCheck(),
-            ),
-            SizedBox(height: 12.h),
-            AppButton(
-              text: AppStrings.stripeBrowserOnboardingOpenAgain,
-              isSecondary: true,
-              onPressed: () => _runStripeSession(),
-            ),
           ],
         ],
       ),
+    );
+  }
+
+  Widget _buildFooterActions() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        AppButton(
+          text: AppStrings.stripeBrowserOnboardingReturnToApp,
+          onPressed: () => _runManualCheck(),
+        ),
+        SizedBox(height: 12.h),
+        AppButton(
+          text: AppStrings.stripeBrowserOnboardingOpenAgain,
+          isSecondary: true,
+          onPressed: () => _runStripeSession(),
+        ),
+      ],
     );
   }
 }

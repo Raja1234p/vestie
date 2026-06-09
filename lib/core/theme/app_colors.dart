@@ -378,4 +378,7 @@ class AppColors {
 
   /// Dim layer behind modal bottom sheets (Figma).
   static Color get modalBarrier => grey1100.withValues(alpha: 0.45);
+
+  /// Post-gradient row-tap overlays — block taps without dimming the gradient.
+  static const Color postAuthLoadingOverlayScrim = Colors.transparent;
 }

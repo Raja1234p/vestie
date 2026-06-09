@@ -9,7 +9,7 @@ import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/core/utils/app_snackbar.dart';
+import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/widgets/common/app_success_screen.dart';
 import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
@@ -79,7 +79,7 @@ class _CreateProjectSuccessScreenState
 
     result.fold(
       (failure) {
-        AppSnackBar.showError(context, failure.message);
+        AppToast.showError(context, failure.message);
         setState(() {
           _loadingInvite = false;
           _shareText = '';
@@ -161,7 +161,7 @@ class _CreateProjectSuccessScreenState
                                     Clipboard.setData(
                                       ClipboardData(text: shareLink),
                                     );
-                                    AppSnackBar.showSuccess(
+                                    AppToast.showSuccess(
                                       context,
                                       AppStrings.linkCopied,
                                     );
@@ -187,7 +187,7 @@ class _CreateProjectSuccessScreenState
                     final msg = AppStrings.shareWhatsappMessage(shareLink);
                     final ok = await launchWhatsAppShareText(msg);
                     if (!ctx.mounted || ok) return;
-                    AppSnackBar.showError(ctx, AppStrings.errorGeneric);
+                    AppToast.showError(ctx, AppStrings.errorGeneric);
                   }
                 : null,
             child: AppText(

@@ -11,7 +11,16 @@ enum CreateProjectEntryMode {
 }
 
 extension CreateProjectEntryModeX on CreateProjectEntryMode {
-  bool get isEditFlow => this != CreateProjectEntryMode.wizard;
+  /// Leader editing a **live** project from project detail (category/visibility locked).
+  bool get isEditFromProjectDetail =>
+      this == CreateProjectEntryMode.editFromProjectDetail;
+
+  /// Same as [isEditFromProjectDetail] — not used for review-screen draft edits.
+  bool get isEditFlow => isEditFromProjectDetail;
+
+  /// Create wizard: user tapped Edit on review to adjust draft details locally.
+  bool get isEditFromReview =>
+      this == CreateProjectEntryMode.editFromReview;
 }
 
 /// Parses route `extra` from [GoRoute]. Legacy `extra == true` → [editFromProjectDetail].

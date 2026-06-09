@@ -49,12 +49,7 @@ class WalletDepositConfirmSection extends StatelessWidget {
         );
 
         return SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(
-            AppDimens.p16,
-            AppDimens.v10,
-            AppDimens.p16,
-            0,
-          ),
+          padding: AppDimens.postAuthFlowScrollPadding,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

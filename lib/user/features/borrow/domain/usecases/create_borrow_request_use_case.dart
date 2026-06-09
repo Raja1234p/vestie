@@ -12,11 +12,13 @@ class CreateBorrowRequestUseCase {
     required String projectId,
     required double amount,
     required String reason,
+    required String idempotencyKey,
   }) {
     return _repository.createBorrowRequest(
       projectId: projectId,
       amount: amount,
       reason: reason,
+      idempotencyKey: idempotencyKey,
     );
   }
 }

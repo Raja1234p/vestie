@@ -81,22 +81,17 @@ void popProjectDetailNavigation(
   context.go(AppRoutes.dashboard);
 }
 
-/// After leave-project success — uses the same shell reload flags as detail back.
+/// After leave-project success — reload home/discover lists (membership removed).
 void popAfterLeaveProjectSuccess(
   BuildContext context, {
   bool refreshHomeOnPop = false,
   bool refreshDiscoverOnPop = false,
 }) {
-  if (refreshHomeOnPop || refreshDiscoverOnPop) {
-    popProjectDetailNavigation(
-      context,
-      refreshHomeOnPop: refreshHomeOnPop,
-      refreshDiscoverOnPop: refreshDiscoverOnPop,
-    );
-    return;
-  }
-  context.pop();
-  if (context.mounted) context.pop();
+  popProjectDetailNavigation(
+    context,
+    refreshHomeOnPop: true,
+    refreshDiscoverOnPop: refreshDiscoverOnPop,
+  );
 }
 
 ProjectDetailRouteArgs _routeArgs({

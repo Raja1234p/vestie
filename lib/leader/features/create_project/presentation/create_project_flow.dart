@@ -83,14 +83,21 @@ void pushNextAfterDetailsStep(
     return;
   }
 
+  // Wizard and review-screen edit share forward navigation (settings → review).
+  final settingsExtra =
+      entryMode.isEditFromReview ? entryMode : null;
+
   switch (form.flowType) {
     case ProjectCreationFlowType.collaborativeSaving:
-      context.push(AppRoutes.createProjectSavingSettings);
+      context.push(AppRoutes.createProjectSavingSettings, extra: settingsExtra);
     case ProjectCreationFlowType.fundsBorrowing:
-      context.push(AppRoutes.createProjectFundsBorrowing);
+      context.push(AppRoutes.createProjectFundsBorrowing, extra: settingsExtra);
     case ProjectCreationFlowType.streamlined:
       context.push(AppRoutes.createProjectReview);
     case ProjectCreationFlowType.investmentOptionalRoi:
-      context.push(AppRoutes.createProjectInvestmentSettings);
+      context.push(
+        AppRoutes.createProjectInvestmentSettings,
+        extra: settingsExtra,
+      );
   }
 }

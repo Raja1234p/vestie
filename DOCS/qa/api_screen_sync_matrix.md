@@ -5,7 +5,7 @@ Use this when verifying **data on screen matches API** after actions (refresh, n
 **Legend:**  
 - **Load** = shimmer/skeleton then API data  
 - **Refresh** = automatic after success action  
-- **Fallback** = mock/sample + error snackbar if API fails (document on release builds)
+- **Load error** = `AppErrorView` + Try Again (no toast); **action error** = `AppToast.showError`
 
 ---
 
@@ -72,6 +72,32 @@ Use this when verifying **data on screen matches API** after actions (refresh, n
 
 ---
 
+## Week 8 — Borrow (vacation / emergency)
+
+| Screen | API | Load | Refresh after |
+|--------|-----|------|----------------|
+| Borrow flow — amount | — (local validation) | — | — |
+| Borrow flow — confirm | `GET …/borrow-requests/terms?amount=` | `AppButton.isLoading` on Confirm | — |
+| Borrow flow — submit | `POST …/projects/{id}/borrow-requests` | Submit button loading | `reloadBeforeSuccess` → success screen → back to detail (borrow tab only) |
+| Project detail — borrow tab | `GET …/borrow-requests?status=Pending` | With project detail shimmer | After vote/decide; `reloadDetailAndWait` |
+| Borrow request card (member vote) | `POST …/borrow-requests/{id}/vote` | `AppVoteButtons.isLoading` (`isVoting`) | Vote counts update in card state |
+| Borrow request card (leader decide) | `POST …/borrow-requests/{id}/decide` | `AppActionDialog.showAsync` on confirm | `reloadBeforeSuccess` / `reloadDetailAndWait` **before** success dialog |
+| Borrow requests full list | `GET …/borrow-requests?status=Pending` | List inline / empty state | Same as tab after decide |
+| My Borrow Request | `GET …/borrow-requests/mine/screen` | `MyBorrowRequestShimmer`; load fail → `AppErrorView` + retry | Cancel: POST cancel → `reloadBeforeSuccess` → success dialog → `pop(true)` **only if cancel succeeded** |
+| My Borrow (approved/disbursed) | `GET …/mine/screen` then `GET …/{id}/repay` (fallback: `GET …/mine` + repay) | Part of My Borrow load; repay CTA loader through auto-skip | Repay POST → `reloadBeforeSuccess` → success → `finishRepayFlow`; idempotency key stable per confirm Cubit |
+| Repay payment options | `GET …/repay/payment-options`; row tap → preview POST | Shimmer on load; load fail → `AppErrorView`; `AppLoadingOverlay` on `selecting` | Preloaded options when auto-skip fell through |
+| Repay confirm | `GET …/repay/preview` then `POST …/repay` | Confirm button loading | `WalletBalanceCache.clear()`; success screen |
+| Borrow submit confirm | `POST …/borrow-requests` | Footer `AppButton.isLoading` | `Idempotency-Key` header; key created on confirm step; inline error + retry on failure; back clears key |
+| Wallet tab (after repay) | `GET /wallet` | — | Next wallet tab open / hub push |
+
+**Notes**
+
+- Borrow list is **not** embedded in `GET /projects/{id}` — `ProjectDetailBloc` fetches pending requests separately when `borrowingEnabled`.
+- `MyBorrowRequestArgsBuilder` passes navigation metadata only; all borrow state on that screen comes from `MyBorrowRequestCubit`.
+- Pot on detail reloads after leader approve/reject via `reloadDetailAndWait`; explicit post-disburse pot polish may still be needed on member return from repay.
+
+---
+
 ## Sync test procedure (per screen)
 
 For each **money** screen row above:
@@ -87,6 +113,9 @@ For each **money** screen row above:
 |---------------|----------------|------------|----------|--------|
 | Wallet | | | | |
 | Project detail (after contribute) | | | | |
+| Project detail (after borrow approve) | | | | |
+| My Borrow Request (after submit / cancel) | | | | |
+| Wallet (after borrow repay) | | | | |
 | Payment methods | | | | |
 | Notifications unread | | | | |
 

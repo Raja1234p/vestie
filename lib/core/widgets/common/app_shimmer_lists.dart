@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+
+import '../../constants/app_dimens.dart';
 import '../../theme/app_colors.dart';
 import 'app_shimmer_base.dart';
+import 'flow_screen_footer.dart';
 
 /// Join requests list skeleton (Week 3 pending memberships).
 class JoinRequestsListShimmer extends StatelessWidget {
@@ -206,6 +209,36 @@ class NotificationListShimmer extends StatelessWidget {
 }
 
 /// Payment methods card list skeleton.
+/// My Borrow / My Borrow Request — amount + breakdown card (Week 8).
+class MyBorrowRequestShimmer extends StatelessWidget {
+  const MyBorrowRequestShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppShimmer(
+      child: Padding(
+        padding: AppDimens.postAuthFlowScrollPadding,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AppShimmer.box(width: 120, height: 18, borderRadius: 4),
+            const SizedBox(height: 10),
+            AppShimmer.box(width: 160, height: 36, borderRadius: 6),
+            const SizedBox(height: 24),
+            AppShimmer.box(width: 100, height: 16, borderRadius: 4),
+            const SizedBox(height: 10),
+            AppShimmer.box(
+              width: double.infinity,
+              height: 140,
+              borderRadius: 14,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class PaymentCardListShimmer extends StatelessWidget {
   const PaymentCardListShimmer({super.key});
 
@@ -214,7 +247,10 @@ class PaymentCardListShimmer extends StatelessWidget {
     return AppShimmer(
       child: ListView(
         physics: const NeverScrollableScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+        padding: FlowScreenFooterInsets.listPadding(
+          context,
+          top: AppDimens.v8,
+        ),
         children: [
           for (var i = 0; i < 3; i++) ...[
             Container(

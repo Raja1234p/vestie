@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:vestie/app/router/route_args/project_detail_flow_args.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
-import 'package:vestie/core/widgets/common/app_back_button.dart';
+import 'package:vestie/core/constants/app_dimens.dart';
+import 'package:vestie/core/widgets/common/post_auth_flow_sub_header.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
-import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
@@ -137,16 +136,20 @@ class _MemberPenaltyActionScreenState extends State<MemberPenaltyActionScreen> {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
+      resizeToAvoidBottomInset: false,
       body: PostAuthGradientBackground(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            PostAuthHeader(
+            PostAuthFlowSubHeader(
               title: AppStrings.penaltyActionTitle,
-              leading: AppBackButton(onPressed: () => context.pop()),
+              onBack: () => context.pop(),
             ),
-            const Expanded(
-              child: SingleChildScrollView(child: PenaltyActionContent()),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: AppDimens.postAuthFlowScrollPadding,
+                child: const PenaltyActionContent(),
+              ),
             ),
             if (showFooter)
               PenaltyActionFooter(

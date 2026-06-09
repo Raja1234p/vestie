@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,17 +9,17 @@ import 'package:vestie/features/payment_methods/presentation/add_card_stripe_lau
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
-import 'package:vestie/core/di/service_locator.dart';
-import 'package:vestie/core/error/failure_mapper.dart';
+import 'package:vestie/core/services/payment_methods_prefetch.dart';
 import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_error_view.dart';
 import 'package:vestie/core/widgets/common/app_shimmer.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
+import 'package:vestie/core/widgets/common/post_auth_flow_sub_header.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
-import 'package:vestie/core/widgets/common/post_auth_header.dart';
+import 'package:vestie/features/payment_methods/domain/payment_methods_cache.dart';
 import 'package:vestie/features/profile/domain/entities/payment_card.dart';
 import 'package:vestie/features/profile/domain/entities/payment_method_selection.dart';
+import 'package:vestie/features/profile/domain/payment_source_preference.dart';
 import 'package:vestie/features/profile/presentation/widgets/payment_card_brand_icon.dart';
 import 'package:vestie/features/profile/presentation/widgets/payment_method_select_row.dart';
 import 'package:vestie/features/profile/presentation/widgets/payment_primary_button.dart';
@@ -39,33 +41,78 @@ class _ContributePaymentPickerScreenState
   bool _loading = true;
   String? _error;
   String? _selectedCardId;
+  bool _walletSelected = false;
 
   @override
   void initState() {
     super.initState();
-    _load();
+    final cached = PaymentMethodsCache.value;
+    if (cached != null) {
+      _cards = cached;
+      _loading = false;
+      _syncInitialSelection();
+      unawaited(PaymentMethodsPrefetch.refresh().then((_) => _reloadFromCache()));
+    } else {
+      _load();
+    }
+  }
+
+  Future<void> _reloadFromCache() async {
+    final cached = PaymentMethodsCache.value;
+    if (!mounted || cached == null) return;
+    setState(() {
+      _cards = cached;
+      _syncInitialSelection();
+    });
+  }
+
+  void _syncInitialSelection() {
+    final args = widget.args;
+    if (args.initialPayFromWallet && args.walletCoversTotal) {
+      _walletSelected = true;
+      _selectedCardId = null;
+      return;
+    }
+    if (args.initialSelectedCardId != null &&
+        _cards.any((c) => c.id == args.initialSelectedCardId)) {
+      _walletSelected = false;
+      _selectedCardId = args.initialSelectedCardId;
+      return;
+    }
+    final pref = PaymentSourcePreference.resolve(
+      walletBalance: args.walletBalance,
+      requiredTotal: args.requiredTotal,
+      cards: _cards,
+    );
+    _walletSelected = pref.payFromWallet;
+    _selectedCardId = pref.card?.id;
   }
 
   Future<void> _load() async {
     setState(() {
-      _loading = true;
+      if (_cards.isEmpty) {
+        _loading = true;
+      }
       _error = null;
     });
-    final result = await ServiceLocator.instance.listPaymentMethodsUseCase(
-      forceRefresh: true,
-    );
+
+    await PaymentMethodsPrefetch.warmIfNeeded();
     if (!mounted) return;
-    result.fold(
-      (f) => setState(() {
+
+    final cached = PaymentMethodsCache.value;
+    if (cached == null) {
+      setState(() {
         _loading = false;
-        _error = FailureMapper.userMessage(f);
-        _cards = const [];
-      }),
-      (cards) => setState(() {
-        _loading = false;
-        _cards = cards;
-      }),
-    );
+        _error = AppStrings.paymentMethodsLoadFailed;
+      });
+      return;
+    }
+
+    setState(() {
+      _loading = false;
+      _cards = cached;
+      _syncInitialSelection();
+    });
   }
 
   void _selectCard(PaymentCard card) {
@@ -80,7 +127,7 @@ class _ContributePaymentPickerScreenState
   Future<void> _addCard() async {
     final card = await AddCardStripeLauncher.launch(context);
     if (card != null && mounted) {
-      await _load();
+      await _reloadFromCache();
     }
   }
 
@@ -90,21 +137,13 @@ class _ContributePaymentPickerScreenState
 
     return Scaffold(
       backgroundColor: Colors.transparent,
+      resizeToAvoidBottomInset: false,
       body: PostAuthGradientBackground(
         child: Column(
           children: [
-            PostAuthHeader(
+            PostAuthFlowSubHeader(
               title: AppStrings.paymentMethodsTitle,
-              padding: EdgeInsets.fromLTRB(
-                AppDimens.p16,
-                AppDimens.v16,
-                AppDimens.p16,
-                0,
-              ),
-              leading: AppBackButton(
-                onPressed: context.pop,
-                color: AppColors.textPrimary,
-              ),
+              onBack: context.pop,
             ),
             Expanded(
               child: _loading
@@ -112,13 +151,15 @@ class _ContributePaymentPickerScreenState
                   : _error != null
                   ? AppErrorView(message: _error, onRetry: _load)
                   : ListView(
-                      padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 0),
+                      padding: FlowScreenFooterInsets.listPadding(context),
                       children: [
                         for (var i = 0; i < _cards.length; i++) ...[
                           if (i > 0)
                             SizedBox(height: AppDimens.paymentMethodRowGap),
                           PaymentMethodSelectRow(
-                            selected: _selectedCardId == _cards[i].id,
+                            selected:
+                                !_walletSelected &&
+                                _selectedCardId == _cards[i].id,
                             leading: SizedBox(
                               width: 32.w,
                               height: 32.h,
@@ -129,7 +170,10 @@ class _ContributePaymentPickerScreenState
                             title: _cards[i].brandName,
                             subtitle: _cards[i].maskedNumber,
                             onTap: () {
-                              setState(() => _selectedCardId = _cards[i].id);
+                              setState(() {
+                                _walletSelected = false;
+                                _selectedCardId = _cards[i].id;
+                              });
                               _selectCard(_cards[i]);
                             },
                           ),
@@ -142,7 +186,7 @@ class _ContributePaymentPickerScreenState
                         ),
                         SizedBox(height: 16.h),
                         PaymentMethodSelectRow(
-                          selected: false,
+                          selected: _walletSelected && walletEnabled,
                           enabled: walletEnabled,
                           leading: SizedBox(
                             width: 32.w,
@@ -156,7 +200,14 @@ class _ContributePaymentPickerScreenState
                           subtitle: walletEnabled
                               ? widget.args.walletAmountFormatted
                               : AppStrings.contributeWalletInsufficientSubtitle,
-                          onTap: _selectWallet,
+                          onTap: () {
+                            if (!walletEnabled) return;
+                            setState(() {
+                              _walletSelected = true;
+                              _selectedCardId = null;
+                            });
+                            _selectWallet();
+                          },
                         ),
                       ],
                     ),

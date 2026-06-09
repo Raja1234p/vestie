@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
-import 'package:vestie/core/utils/app_snackbar.dart';
+import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/widgets/common/app_toggle_tab_bar.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_member_vff_send_actions.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
@@ -39,7 +39,7 @@ class ProjectDetailTabSection extends StatelessWidget {
         if (state is! ProjectDetailLoaded) return;
         final message = state.vffSendErrorMessage;
         if (message == null || message.isEmpty) return;
-        AppSnackBar.showError(context, message);
+        AppToast.showError(context, message);
         context.read<ProjectDetailBloc>().add(
           const ClearMemberVffSendErrorEvent(),
         );

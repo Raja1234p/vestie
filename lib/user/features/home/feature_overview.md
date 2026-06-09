@@ -10,7 +10,8 @@
 
 - `ProjectListBloc`, `HomeSectionsCubit`
 - `features/projects/`, `openProjectFromCard`
-- `HomeProjectListSync` (contribution cache updates)
+- `HomeProjectListSync` (contribution pot patches; `recordProjectLeft` on leave)
+- Leave project success → `DashboardShellArgs.reloadHomeProjectList` (same as cancel project)
 
 ## Routes
 

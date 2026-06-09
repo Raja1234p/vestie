@@ -15,6 +15,7 @@ class AppVoteButtons extends StatelessWidget {
   final int downvotes;
   final VoidCallback onUpvote;
   final VoidCallback onDownvote;
+  final bool isLoading;
 
   const AppVoteButtons({
     super.key,
@@ -24,31 +25,47 @@ class AppVoteButtons extends StatelessWidget {
     required this.downvotes,
     required this.onUpvote,
     required this.onDownvote,
+    this.isLoading = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    final row = Row(
       children: [
-        // ── Downvote ──────────────────────────────────────────
         Expanded(
           child: _VoteButton(
             label: AppStrings.downvoteLabel,
             iconPath: AppAssets.voteThumbsDown,
             isActive: hasDownvoted,
             isPrimary: false,
-            onTap: onDownvote,
+            onTap: isLoading ? null : onDownvote,
           ),
         ),
         SizedBox(width: 10.w),
-        // ── Upvote ────────────────────────────────────────────
         Expanded(
           child: _VoteButton(
             label: AppStrings.upvoteLabel,
             iconPath: AppAssets.voteThumbsUp,
             isActive: hasUpvoted,
             isPrimary: true,
-            onTap: onUpvote,
+            onTap: isLoading ? null : onUpvote,
+          ),
+        ),
+      ],
+    );
+
+    if (!isLoading) return row;
+
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Opacity(opacity: 0.55, child: row),
+        SizedBox(
+          width: 22.w,
+          height: 22.h,
+          child: const CircularProgressIndicator(
+            strokeWidth: 2,
+            color: AppColors.primary,
           ),
         ),
       ],
@@ -62,7 +79,7 @@ class _VoteButton extends StatelessWidget {
   final String iconPath;
   final bool isActive;
   final bool isPrimary;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   const _VoteButton({
     required this.label,

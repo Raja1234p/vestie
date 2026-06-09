@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart';
 import 'package:vestie/user/features/vff/presentation/cubit/user_vff_profile_cubit.dart';
@@ -103,13 +104,7 @@ final class UserVffProfileConnectedBody extends StatelessWidget {
             ],
           ),
         ),
-        SafeArea(
-          top: false,
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(AppDimens.p18, 0, AppDimens.p18, 8.h),
-            child: const UserVffProfileFooterActions(),
-          ),
-        ),
+        const FlowScreenFooter(child: UserVffProfileFooterActions()),
       ],
     );
   }

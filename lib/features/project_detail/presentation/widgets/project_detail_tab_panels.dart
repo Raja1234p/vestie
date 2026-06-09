@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:vestie/core/di/service_locator.dart';
+import 'package:vestie/core/widgets/common/app_toast.dart';
+import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
 import '../../domain/entities/borrow_request_entity.dart';
 import '../../domain/entities/member_entity.dart';
 import '../../domain/entities/project_detail_entity.dart';
@@ -47,6 +51,34 @@ class LeaderBorrowRequestsPanel extends StatelessWidget {
     this.onMemberTap,
   });
 
+  Future<bool> _approve(BuildContext context, BorrowRequestEntity request) async {
+    final result = await ServiceLocator.instance.approveBorrowRequestUseCase(
+      projectId: project.id,
+      borrowRequestId: request.id,
+    );
+    return result.fold((failure) {
+      AppToast.showError(context, failure.message);
+      return false;
+    }, (_) async {
+      await context.read<ProjectDetailBloc>().reloadDetailAndWait(project.id);
+      return true;
+    });
+  }
+
+  Future<bool> _reject(BuildContext context, BorrowRequestEntity request) async {
+    final result = await ServiceLocator.instance.rejectBorrowRequestUseCase(
+      projectId: project.id,
+      borrowRequestId: request.id,
+    );
+    return result.fold((failure) {
+      AppToast.showError(context, failure.message);
+      return false;
+    }, (_) async {
+      await context.read<ProjectDetailBloc>().reloadDetailAndWait(project.id);
+      return true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return BorrowRequestsTab(
@@ -55,8 +87,16 @@ class LeaderBorrowRequestsPanel extends StatelessWidget {
       onViewAll: onViewAll,
       actionMode: BorrowRequestActionMode.decision,
       onMemberTap: onMemberTap,
-      onAccept: (r) => showApproveBorrowRequestFlow(context, r),
-      onReject: (r) => showRejectBorrowRequestFlow(context, r),
+      onAccept: (r) => showApproveBorrowRequestFlow(
+        context,
+        r,
+        () => _approve(context, r),
+      ),
+      onReject: (r) => showRejectBorrowRequestFlow(
+        context,
+        r,
+        () => _reject(context, r),
+      ),
     );
   }
 }

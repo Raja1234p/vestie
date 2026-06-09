@@ -8,7 +8,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../constants/app_strings.dart';
 import '../theme/app_colors.dart';
 import '../widgets/common/app_action_dialog.dart';
-import 'app_snackbar.dart';
+import '../widgets/common/app_toast.dart';
 
 /// Camera / gallery permission — on user action only (profile photo).
 ///
@@ -62,7 +62,7 @@ abstract final class AppPermissionHelper {
             : AppStrings.permissionPhotosSettingsBody,
       );
     } else {
-      AppSnackBar.showError(
+      AppToast.showError(
         context,
         source == ImageSource.camera
             ? AppStrings.permissionCameraDenied

@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
-import 'package:vestie/core/utils/app_snackbar.dart';
+import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_shimmer.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
@@ -123,7 +123,7 @@ class _JoinRequestsScreenState extends State<JoinRequestsScreen> {
               _actingMembershipId = null;
               _actingIsApprove = null;
             });
-            AppSnackBar.showError(context, mState.failure!.message);
+            AppToast.showError(context, mState.failure!.message);
             context.read<ModerationBloc>().add(
               const ResetModerationStateEvent(),
             );
@@ -246,7 +246,7 @@ class _JoinRequestsScreenState extends State<JoinRequestsScreen> {
     required bool approve,
   }) {
     if (membershipId.isEmpty) {
-      AppSnackBar.showError(context, AppStrings.errorGeneric);
+      AppToast.showError(context, AppStrings.errorGeneric);
       return;
     }
     setState(() {

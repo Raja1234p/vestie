@@ -7,7 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/core/utils/app_snackbar.dart';
+import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/utils/whatsapp_launch.dart';
 import 'package:vestie/core/widgets/common/app_network_avatar.dart';
 import 'package:vestie/core/widgets/common/app_svg_icon.dart';
@@ -130,7 +130,7 @@ Future<void> showUserProjectMembersModal(
                               '${snapshot.projectName} — ${snapshot.inviteShareLink}';
                           final ok = await launchWhatsAppShareText(text);
                           if (!sheetContext.mounted || ok) return;
-                          AppSnackBar.showError(
+                          AppToast.showError(
                             sheetContext,
                             AppStrings.errorGeneric,
                           );
@@ -144,7 +144,7 @@ Future<void> showUserProjectMembersModal(
                             ClipboardData(text: snapshot.inviteShareLink),
                           );
                           if (context.mounted) {
-                            AppSnackBar.showSuccess(
+                            AppToast.showSuccess(
                               context,
                               AppStrings.linkCopied,
                             );
@@ -171,7 +171,7 @@ Future<void> showUserProjectMembersModal(
                         label: 'IG',
                         onTap: () {
                           if (context.mounted) {
-                            AppSnackBar.showInfo(
+                            AppToast.showInfo(
                               context,
                               AppStrings.socialComingSoon,
                             );

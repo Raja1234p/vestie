@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
-import 'package:vestie/core/utils/app_snackbar.dart';
+import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
@@ -115,7 +115,7 @@ final class UserVffHubShell extends StatelessWidget {
                                         hubState.requestsErrorMessage;
                                     if (message == null || message.isEmpty)
                                       return;
-                                    AppSnackBar.showError(context, message);
+                                    AppToast.showError(context, message);
                                   },
                                   builder: (context, hubState) {
                                     if (hubState.tabIndex == 0) {

@@ -1,78 +1,27 @@
-/// Centralised feedback — errors always use top [AppToast]; success may use toast or bottom snackbar.
-///
-/// Prefer [AppToast.showError] / [AppToast.showSuccess] directly for new code.
+/// Deprecated — use [AppToast] directly (`lib/core/widgets/common/app_toast.dart`).
+@Deprecated('Use AppToast.showError / showSuccess / showInfo instead.')
 library;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-import '../constants/app_assets.dart';
-import '../theme/app_colors.dart';
-import '../widgets/common/app_svg_icon.dart';
 import '../widgets/common/app_toast.dart';
 
+@Deprecated('Use AppToast instead.')
 class AppSnackBar {
   AppSnackBar._();
 
-  /// Top error toast (#E03F3F).
+  @Deprecated('Use AppToast.showError')
   static void showError(BuildContext context, String message) {
     AppToast.showError(context, message);
   }
 
-  /// Bottom snackbar with icon — not used for OTP success (see [AppToast.showSuccess]).
+  @Deprecated('Use AppToast.showSuccess')
   static void showSuccess(BuildContext context, String message) {
-    _showBottom(
-      context,
-      message: message,
-      backgroundColor: AppColors.validSuccess,
-      iconAsset: AppAssets.iconCheckCircle,
-    );
+    AppToast.showSuccess(context, message);
   }
 
+  @Deprecated('Use AppToast.showInfo')
   static void showInfo(BuildContext context, String message) {
-    _showBottom(
-      context,
-      message: message,
-      backgroundColor: AppColors.primary,
-      iconAsset: AppAssets.iconInfo,
-    );
-  }
-
-  static void _showBottom(
-    BuildContext context, {
-    required String message,
-    required Color backgroundColor,
-    required String iconAsset,
-  }) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: backgroundColor,
-          margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.r),
-          ),
-          duration: const Duration(seconds: 3),
-          content: Row(
-            children: [
-              AppSvgIcon(assetPath: iconAsset, size: 18.w, color: Colors.white),
-              SizedBox(width: 10.w),
-              Expanded(
-                child: Text(
-                  message,
-                  style: GoogleFonts.lato(
-                    fontSize: 13.sp,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
+    AppToast.showInfo(context, message);
   }
 }

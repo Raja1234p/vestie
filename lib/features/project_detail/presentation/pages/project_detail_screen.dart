@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/app_strings.dart';
-import '../../../../core/utils/app_snackbar.dart';
+import '../../../../core/widgets/common/app_toast.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_back_button.dart';
 import '../../../../core/widgets/text/app_text.dart';
@@ -104,7 +104,7 @@ class _ProjectDetailBody extends StatelessWidget {
             if (state is! ProjectDetailLoaded) return;
             final message = state.vffSendErrorMessage;
             if (message == null || message.isEmpty) return;
-            AppSnackBar.showError(context, message);
+            AppToast.showError(context, message);
             context.read<ProjectDetailBloc>().add(
               const ClearMemberVffSendErrorEvent(),
             );

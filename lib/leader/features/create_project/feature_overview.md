@@ -31,7 +31,9 @@ Multi-step wizard to create and launch vacation, emergency, or investment projec
 
 ## Edit project (leader)
 
-Entry: project detail menu → `hydrateFromProjectDetail` → details (category locked) → settings → review → success.
+Entry: project detail menu → `hydrateFromProjectDetail` → details (`CreateProjectEntryMode.editFromProjectDetail`, category locked) → settings → review → success.
+
+**Review “Edit” (create wizard):** `editFromReview` — same create titles/step badges; category and visibility stay editable; Next continues through settings steps like the normal wizard (not project-detail edit UX).
 
 | Concern | Implementation |
 |---------|----------------|

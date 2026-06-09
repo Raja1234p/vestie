@@ -6,7 +6,7 @@ class VotingWindowState extends Equatable {
   /// Inline validation (e.g. empty / out of range days).
   final String? errorText;
 
-  /// API failure — surfaced via [AppSnackBar] in the screen listener.
+  /// API failure — surfaced via [AppToast] in the screen listener.
   final String? apiErrorMessage;
   final bool loading;
 

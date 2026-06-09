@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/services/payment_methods_prefetch.dart';
 import 'package:vestie/core/error/failures.dart';
 import 'package:vestie/core/utils/contribution_fee_policy.dart';
-import 'package:vestie/features/payment_methods/domain/usecases/payment_methods_usecases.dart';
+import 'package:vestie/features/payment_methods/domain/payment_methods_cache.dart';
+import 'package:vestie/features/profile/domain/payment_source_preference.dart';
 import 'package:vestie/features/profile/domain/entities/payment_card.dart';
 import 'package:vestie/features/wallet/domain/usecases/get_wallet_use_case.dart';
 import 'package:vestie/features/wallet/domain/wallet_balance_cache.dart';
@@ -22,16 +25,14 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
   final PreviewContributionUseCase previewUseCase;
   final ConfirmContributionUseCase confirmUseCase;
   final GetWalletUseCase getWalletUseCase;
-  final ListPaymentMethodsUseCase listPaymentMethodsUseCase;
-
-  List<PaymentCard> _savedCards = const [];
+  List<PaymentCard> get _savedCards =>
+      PaymentMethodsCache.value ?? const [];
 
   ContributeBloc({
     required this.configUseCase,
     required this.previewUseCase,
     required this.confirmUseCase,
     required this.getWalletUseCase,
-    required this.listPaymentMethodsUseCase,
   }) : super(const ContributeState()) {
     on<InitArgsEvent>(_onInitArgs);
 
@@ -87,11 +88,11 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
       walletId = w.walletId;
     });
 
-    final cardsResult = await listPaymentMethodsUseCase();
-    cardsResult.fold(
-      (_) => _savedCards = const [],
-      (cards) => _savedCards = cards,
-    );
+    if (PaymentMethodsCache.value != null) {
+      unawaited(PaymentMethodsPrefetch.refresh());
+    } else {
+      await PaymentMethodsPrefetch.warmIfNeeded();
+    }
 
     final configResult = await configUseCase(projectId: event.args.projectId);
     configResult.fold(
@@ -130,7 +131,10 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
     final args = state.args;
     if (args == null || state.amountValue <= 0) return;
 
-    final validation = ContributionFeePolicy.validateAmount(state.amountValue);
+    final validation = ContributionFeePolicy.validateAmount(
+      state.amountValue,
+      maxContributionToGoal: state.maxContributionToGoal,
+    );
     if (validation != null) {
       emit(state.copyWith(previewFailure: ValidationFailure(validation)));
       return;
@@ -162,7 +166,8 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
         emit(state.copyWith(isPreviewLoading: false, previewFailure: failure));
       },
       (preview) async {
-        final next = _paymentMethodForTotal(state.copyWith(preview: preview));
+        final withPreview = state.copyWith(preview: preview);
+        final next = _paymentMethodForTotal(withPreview);
         emit(
           state.copyWith(
             isPreviewLoading: false,
@@ -170,6 +175,18 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
             step: ContributeStep.confirm,
             selectedCard: next.$1,
             payFromWallet: next.$2,
+            requiresPaymentMethodPicker:
+                PaymentSourcePreference.requiresUserPicker(
+                  walletBalance: withPreview.walletBalance,
+                  requiredTotal: withPreview.totalDeductionValue,
+                  cards: _savedCards,
+                ),
+            canChangePaymentMethod:
+                PaymentSourcePreference.canChangePaymentMethod(
+                  walletBalance: withPreview.walletBalance,
+                  requiredTotal: withPreview.totalDeductionValue,
+                  cards: _savedCards,
+                ),
           ),
         );
       },
@@ -185,27 +202,21 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
         selectedCard: event.card,
         payFromWallet: event.payFromWallet,
         clearSelectedCard: event.payFromWallet,
+        requiresPaymentMethodPicker: false,
       ),
     );
   }
 
   (PaymentCard?, bool) _paymentMethodForTotal(ContributeState s) {
-    if (s.walletCoversTotal) {
-      return (null, true);
-    }
     if (!s.payFromWallet && s.selectedCard != null) {
       return (s.selectedCard, false);
     }
-    final card = _defaultCard();
-    return (card, false);
-  }
-
-  PaymentCard? _defaultCard() {
-    if (_savedCards.isEmpty) return null;
-    for (final c in _savedCards) {
-      if (c.isPrimary) return c;
-    }
-    return _savedCards.first;
+    final pref = PaymentSourcePreference.resolve(
+      walletBalance: s.walletBalance,
+      requiredTotal: s.totalDeductionValue,
+      cards: _savedCards,
+    );
+    return (pref.card, pref.payFromWallet);
   }
 
   Future<void> _onAmountChanged(
@@ -226,19 +237,12 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
 
     if (!state.canConfirmSubmit) return;
 
-    if (!state.payFromWallet) {
-      final shortfall = (state.totalDeductionValue - state.walletBalance).clamp(
-        0.0,
-        double.infinity,
-      );
-      final shortfallFormatted = '\$${shortfall.toStringAsFixed(2)}';
-      emit(
-        state.copyWith(
-          submitFailure: ValidationFailure(
-            AppStrings.contributeDepositForWalletMessage(shortfallFormatted),
-          ),
-        ),
-      );
+    final capValidation = ContributionFeePolicy.validateAmount(
+      state.amountValue,
+      maxContributionToGoal: state.maxContributionToGoal,
+    );
+    if (capValidation != null) {
+      emit(state.copyWith(submitFailure: ValidationFailure(capValidation)));
       return;
     }
 

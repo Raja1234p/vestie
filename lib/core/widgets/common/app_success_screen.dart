@@ -11,7 +11,7 @@ import 'flow_screen_footer.dart';
 /// A globally reusable full-page success screen.
 ///
 /// Background: white + top [AppAssets.successScreenBackground] (Home / Discover style).
-/// Bottom action uses 16.w horizontal / 24.h bottom inset (borrow terms footer).
+/// Bottom action uses [FlowScreenFooter] (20.w horizontal + system safe-area inset).
 class AppSuccessScreen extends StatelessWidget {
   final String title;
   final String? subtitle;

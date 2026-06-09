@@ -47,6 +47,53 @@ class AppActionDialog extends StatelessWidget {
     this.actionsInRow = false,
   });
 
+  /// Confirm dialog whose primary action is async (POST / cancel / approve).
+  ///
+  /// Shows a spinner on the primary button, blocks duplicate taps, and sets
+  /// [barrierDismissible] to false while loading. Returns `true` when the primary
+  /// action completes successfully and the dialog is popped.
+  static Future<bool> showAsync(
+    BuildContext context, {
+    required String title,
+    required String description,
+    Widget? descriptionWidget,
+    required String primaryLabel,
+    String secondaryLabel = AppStrings.btnNo,
+    bool showSecondary = true,
+    required Color primaryColor,
+    Color primaryTextColor = AppColors.surface,
+    Color? primaryBorderColor,
+    String? iconAsset,
+    String? glyphAsset,
+    Color? iconColor,
+    bool actionsInRow = false,
+    bool barrierDismissible = true,
+    required Future<bool> Function() onPrimary,
+  }) async {
+    final result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: barrierDismissible,
+      builder: (dialogContext) => _AsyncAppActionDialog(
+        title: title,
+        description: description,
+        descriptionWidget: descriptionWidget,
+        primaryLabel: primaryLabel,
+        secondaryLabel: secondaryLabel,
+        showSecondary: showSecondary,
+        primaryColor: primaryColor,
+        primaryTextColor: primaryTextColor,
+        primaryBorderColor: primaryBorderColor,
+        iconAsset: iconAsset,
+        glyphAsset: glyphAsset,
+        iconColor: iconColor,
+        actionsInRow: actionsInRow,
+        barrierDismissible: barrierDismissible,
+        onPrimary: onPrimary,
+      ),
+    );
+    return result ?? false;
+  }
+
   static Future<void> show(
     BuildContext context, {
     required String title,
@@ -255,10 +302,11 @@ class _DialogIcon extends StatelessWidget {
 
 class _DialogButton extends StatelessWidget {
   final String label;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final Color textColor;
   final Color bgColor;
   final Color borderColor;
+  final bool isLoading;
 
   const _DialogButton({
     required this.label,
@@ -266,12 +314,13 @@ class _DialogButton extends StatelessWidget {
     required this.textColor,
     required this.bgColor,
     required this.borderColor,
+    this.isLoading = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap,
+      onTap: isLoading ? null : onTap,
       borderRadius: BorderRadius.circular(AppRadius.dialogActionButton),
       child: Container(
         width: double.infinity,
@@ -282,16 +331,182 @@ class _DialogButton extends StatelessWidget {
           border: Border.all(color: borderColor),
         ),
         child: Center(
-          child: AppText(
-            label,
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              fontSize: 18.sp,
-              fontWeight: FontWeight.w600,
-              color: textColor,
-            ),
+          child: isLoading
+              ? SizedBox(
+                  width: 22.w,
+                  height: 22.h,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: textColor,
+                  ),
+                )
+              : AppText(
+                  label,
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w600,
+                    color: textColor,
+                  ),
+                ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AsyncAppActionDialog extends StatefulWidget {
+  final String title;
+  final String description;
+  final Widget? descriptionWidget;
+  final String primaryLabel;
+  final String secondaryLabel;
+  final bool showSecondary;
+  final Color primaryColor;
+  final Color primaryTextColor;
+  final Color? primaryBorderColor;
+  final String? iconAsset;
+  final String? glyphAsset;
+  final Color? iconColor;
+  final bool actionsInRow;
+  final bool barrierDismissible;
+  final Future<bool> Function() onPrimary;
+
+  const _AsyncAppActionDialog({
+    required this.title,
+    required this.description,
+    this.descriptionWidget,
+    required this.primaryLabel,
+    required this.secondaryLabel,
+    required this.showSecondary,
+    required this.primaryColor,
+    required this.primaryTextColor,
+    this.primaryBorderColor,
+    this.iconAsset,
+    this.glyphAsset,
+    this.iconColor,
+    required this.actionsInRow,
+    required this.barrierDismissible,
+    required this.onPrimary,
+  });
+
+  @override
+  State<_AsyncAppActionDialog> createState() => _AsyncAppActionDialogState();
+}
+
+class _AsyncAppActionDialogState extends State<_AsyncAppActionDialog> {
+  bool _isLoading = false;
+
+  Future<void> _handlePrimary() async {
+    if (_isLoading) return;
+    setState(() => _isLoading = true);
+    final ok = await widget.onPrimary();
+    if (!mounted) return;
+    if (ok) {
+      Navigator.of(context).pop(true);
+      return;
+    }
+    setState(() => _isLoading = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final canDismiss = widget.barrierDismissible && !_isLoading;
+    return PopScope(
+      canPop: canDismiss,
+      child: Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: EdgeInsets.symmetric(horizontal: 15.w),
+        child: Container(
+          padding: EdgeInsets.fromLTRB(
+            18.w,
+            35.h,
+            18.w,
+            AppDimens.dialogActionBottomInset,
+          ),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(28.r),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (widget.iconAsset != null || widget.glyphAsset != null) ...[
+                _DialogIcon(
+                  iconAsset: widget.iconAsset,
+                  glyphAsset: widget.glyphAsset,
+                  iconColor: widget.iconColor,
+                ),
+                SizedBox(height: 6.h),
+              ],
+              AppText(
+                widget.title,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  fontSize: 26.sp,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.grey1100,
+                ),
+              ),
+              SizedBox(height: 6.h),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 3.w),
+                child:
+                    widget.descriptionWidget ??
+                    AppText(
+                      widget.description,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.grey900,
+                        height: 1.5,
+                      ),
+                    ),
+              ),
+              SizedBox(height: 35.h),
+              _buildActions(),
+            ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildActions() {
+    final primary = _DialogButton(
+      label: widget.primaryLabel,
+      onTap: _handlePrimary,
+      textColor: widget.primaryTextColor,
+      bgColor: widget.primaryColor,
+      borderColor: widget.primaryBorderColor ?? widget.primaryColor,
+      isLoading: _isLoading,
+    );
+    if (!widget.showSecondary) {
+      return primary;
+    }
+    final secondary = _DialogButton(
+      label: widget.secondaryLabel,
+      onTap: _isLoading ? null : () => Navigator.of(context).pop(false),
+      textColor: AppColors.neutral1200,
+      bgColor: Colors.transparent,
+      borderColor: AppColors.neutral1200,
+    );
+    if (widget.actionsInRow) {
+      return Row(
+        children: [
+          Expanded(child: secondary),
+          SizedBox(width: 12.w),
+          Expanded(child: primary),
+        ],
+      );
+    }
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        primary,
+        SizedBox(height: 10.h),
+        secondary,
+      ],
     );
   }
 }

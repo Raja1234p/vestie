@@ -1,43 +1,65 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:vestie/core/error/failure_mapper.dart';
+import 'package:vestie/user/features/borrow/domain/usecases/vote_borrow_request_use_case.dart';
 import 'borrow_vote_state.dart';
 
-/// UI-only Cubit managing upvote/downvote toggles for one borrow request card.
-/// Each card gets its own instance scoped via BlocProvider.
+/// Manages member Agree/Disagree votes for one borrow request card.
 class BorrowVoteCubit extends Cubit<BorrowVoteState> {
-  BorrowVoteCubit({required int upvotes, required int downvotes})
-    : super(BorrowVoteState(upvotes: upvotes, downvotes: downvotes));
+  final VoteBorrowRequestUseCase _voteUseCase;
+  final String projectId;
+  final String requestId;
 
-  void toggleUpvote() {
-    if (state.hasUpvoted) {
-      // Undo upvote
-      emit(state.copyWith(hasUpvoted: false, upvotes: state.upvotes - 1));
-    } else {
-      // Apply upvote; remove downvote if active
-      emit(
-        state.copyWith(
-          hasUpvoted: true,
-          hasDownvoted: false,
-          upvotes: state.upvotes + 1,
-          downvotes: state.hasDownvoted ? state.downvotes - 1 : state.downvotes,
-        ),
-      );
-    }
-  }
+  BorrowVoteCubit({
+    required VoteBorrowRequestUseCase voteUseCase,
+    required this.projectId,
+    required this.requestId,
+    required int upvotes,
+    required int downvotes,
+    String? callerVote,
+  }) : _voteUseCase = voteUseCase,
+       super(
+         BorrowVoteState(
+           upvotes: upvotes,
+           downvotes: downvotes,
+           hasUpvoted: callerVote == 'Agree',
+           hasDownvoted: callerVote == 'Disagree',
+         ),
+       );
 
-  void toggleDownvote() {
-    if (state.hasDownvoted) {
-      // Undo downvote
-      emit(state.copyWith(hasDownvoted: false, downvotes: state.downvotes - 1));
-    } else {
-      // Apply downvote; remove upvote if active
-      emit(
-        state.copyWith(
-          hasDownvoted: true,
-          hasUpvoted: false,
-          downvotes: state.downvotes + 1,
-          upvotes: state.hasUpvoted ? state.upvotes - 1 : state.upvotes,
-        ),
-      );
-    }
+  Future<String?> voteAgree() => _submitVote('Agree');
+
+  Future<String?> voteDisagree() => _submitVote('Disagree');
+
+  Future<String?> _submitVote(String vote) async {
+    if (state.isVoting) return null;
+    if (vote == 'Agree' && state.hasUpvoted) return null;
+    if (vote == 'Disagree' && state.hasDownvoted) return null;
+
+    emit(state.copyWith(isVoting: true));
+
+    final result = await _voteUseCase(
+      projectId: projectId,
+      borrowRequestId: requestId,
+      vote: vote,
+    );
+
+    return result.fold(
+      (failure) {
+        emit(state.copyWith(isVoting: false));
+        return FailureMapper.userMessage(failure);
+      },
+      (data) {
+        emit(
+          BorrowVoteState(
+            upvotes: data.upvoteCount,
+            downvotes: data.downvoteCount,
+            hasUpvoted: data.callerVote == 'Agree',
+            hasDownvoted: data.callerVote == 'Disagree',
+          ),
+        );
+        return null;
+      },
+    );
   }
 }

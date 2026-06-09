@@ -11,14 +11,18 @@ Principal Flutter engineer mindset: **scalable, testable, team-ready**. Prefer m
 
 ---
 
-## 1. No hardcoding (product-facing)
+## 1. No hardcoding (product-facing + wire)
 
-- **Strings** → `AppStrings` (or localized keys when i18n lands).
+See **`architecture.mdc`** for full layer rules and anti-patterns.
+
+- **Strings (UI)** → `AppStrings` (or localized keys when i18n lands). No inline user-facing sentences in widgets.
+- **Strings (API)** → parse in **data models**; expose typed fields on **entities** (`isPending`, `hasAgreed`). Presentation must not compare raw `'Pending'` / `'Agree'` literals.
 - **Colors** → `AppColors` (add a named token if a design color is missing; avoid random `Color(0xFF…)` in widgets except rare one-offs—then add `AppColors` in the same change when possible).
 - **Assets** → `AppAssets`.
-- **Routes** → `AppRoutes` + `go_router` (`context.push`, `context.go`, etc.) — **no** `Navigator.push` with raw path strings.
-- **API paths** → `ApiConstants` (or feature data-layer constants).
-- **Spacing / radius** → `AppDimens` / `AppRadius` where the project already centralizes them; otherwise **`flutter_screenutil`** (`.w`, `.h`, `.r`) for responsive layout—**not** raw magic numbers scattered in UI.
+- **Routes** → `AppRoutes` + `go_router` (`context.push`, `context.go`, etc.) — **no** `Navigator.push` with raw path strings like `'/project/borrow'`.
+- **API paths** → `ApiConstants` only — never duplicate path segments in data sources or widgets.
+- **Spacing / radius** → `AppDimens` / `AppRadius` where the project already centralizes them; otherwise **`flutter_screenutil`** (`.w`, `.h`, `.r`, `.sp`) — **not** raw literals (`17`, `15.sp` without `.sp` from ScreenUtil, `EdgeInsets.all(20)` without `.w`/`.h`).
+- **No fake API** — replace `Future.delayed` stubs with real use cases when integrating endpoints.
 
 ---
 
@@ -50,7 +54,7 @@ Principal Flutter engineer mindset: **scalable, testable, team-ready**. Prefer m
 
 Prefer **`lib/core/widgets/common/`**:
 
-- `AppText`, `AppTextField`, `AppButton`, loaders, snackbars, etc.
+- `AppText`, `AppTextField`, `AppButton`, loaders, `AppToast`, etc.
 - **Do not** use raw `Text` / `TextField` / `ElevatedButton` / `ScaffoldMessenger` for product UI—use the app wrappers.
 
 **`AppTextField` extensions (use when needed):**
@@ -61,16 +65,25 @@ Prefer **`lib/core/widgets/common/`**:
 
 ---
 
-## 6. Snackbar / feedback
+## 6. Toast / feedback (API + actions)
 
-- Central helpers: `lib/core/utils/app_snackbar.dart` (and related patterns).
-- **No** ad-hoc `ScaffoldMessenger.of(context).showSnackBar` for standard success/error copy — use the shared API; messages from **`AppStrings`**.
+- **Use `AppToast`** (`lib/core/widgets/common/app_toast.dart`) for transient user feedback — errors, success, info.
+- **Do not** use `AppSnackBar` or ad-hoc `ScaffoldMessenger.showSnackBar` in new code.
+- Messages from **`AppStrings`** or **`FailureMapper.userMessage`** — never inline API error sentences in widgets.
+- **Load failures** → full-screen **`AppErrorView`** + Try Again (`onRetry` → Cubit `load()`). **No toast** when `loadFailed` is true.
+- **Action failures** (submit, cancel, vote, decide, repay, validation on confirm tap) → **`AppToast.showError`** via `BlocListener` with `listenWhen` excluding `loadFailed`.
+- **Confirm-step POST failure** → inline error on screen + retry hint; toast only for earlier steps (amount / picker).
+- **Confirm CTA** → disabled until terms switch + valid payment (wallet covers total or card/bank selected); payment errors inline on pill row, not toast-on-tap.
+- Map failures in Cubits with **`FailureMapper.userMessage`** — not `failure.message` directly unless already mapped.
 
 ---
 
 ## 7. Architecture & folders
 
-- **Clean-ish feature layout**: `data` / `domain` / `presentation` under each feature where applicable.
+Follow **`architecture.mdc`** for data flow, DI, route args, and doc sync.
+
+- **Clean feature layout**: `data` / `domain` / `presentation` under each feature (reference: `lib/user/features/borrow/`).
+- **Dependency direction**: presentation → domain ← data; widgets never import `DioClient` or `ApiConstants`.
 - **Top-level `lib/`** (actual repo shape):
   - **`app/`** — `MainApp`, `GoRouter`, route tables, `AppRoutes`.
   - **`core/`** — constants, theme, DI, shared utils, **`core/widgets/common/`**.
@@ -79,6 +92,7 @@ Prefer **`lib/core/widgets/common/`**:
   - **`user/features/`** — member-only (home, discover, contribute, VFF, …).
 - **No bulk folder migration** — deferred; one feature per PR when approved (`production_scope.mdc`).
 - **New / touched features** — add or update `feature_overview.md` in the feature root.
+- **API/sync changes** — update `DOCS/qa/api_screen_sync_matrix.md`; member vacation/emergency flows also `DOCS/group_vacation_emergency_member_flow.md`.
 
 ---
 
@@ -87,6 +101,11 @@ Prefer **`lib/core/widgets/common/`**:
 - **Figma**: match spacing, typography, and components when implementing design tasks.
 - **`flutter_screenutil`** — design base **390 × 844** (see `MainApp` / `ScreenUtilInit`).
 - **SVG** — `flutter_svg`; tint with `ColorFilter.mode(..., BlendMode.srcIn)` where needed.
+- **Post-auth flow screens** (gradient header + scroll + optional pinned CTA): follow **`architecture.mdc` §6** — `PostAuthFlowSubHeader`, `AppDimens.postAuthFlowScrollPadding`, **`FlowScreenFooter`** for every pinned bottom CTA (never raw `SafeArea` + fixed bottom `h` padding). List-only screens: `FlowScreenFooterInsets.listPadding(context)`. **Exception:** `AppSuccessScreen` — no post-gradient header; still uses `FlowScreenFooter` for its action button.
+- **Loading / freeze on POST** — follow **`architecture.mdc` §6 “Loading & screen freeze”**: shimmer for initial load; `AppButton.isLoading` for pinned footer submit; `AppActionDialog.showAsync` for dialog POST; `AppLoadingOverlay` or control-level loader (`AppVoteButtons.isLoading`) for row/card taps. On post-gradient screens use `AppColors.postAuthLoadingOverlayScrim` and wrap header + body — never a dark scrim on only the list half. Never ship API actions with only `enabled: false` and no loader.
+- **Initial load errors** — `AppErrorView` + `AppStrings.btnRetry`; do not show empty-state UI when the API failed. **`AppToast.showError`** for action errors only (`listenWhen` excludes `loadFailed`).
+- **Idempotency** — borrow create/repay: one key per confirm session; reuse on retry; clear borrow key on back to amount (`architecture.mdc` §6).
+- **Success after POST** — reload project detail **before** success dialog/screen (`architecture.mdc` §5); do not pop repay flow to payment-options on Done.
 
 ---
 
@@ -100,6 +119,8 @@ Prefer **`lib/core/widgets/common/`**:
 ## 10. Navigation
 
 - **Only** `go_router` + **`AppRoutes`** constants.
+- **Borrow / project-detail sync** — follow **`architecture.mdc` §5 “Post-action sync”**: POST → `BorrowProjectDetailSync.reloadBeforeSuccess` (or `reloadDetailAndWait` on detail) → then success UI; on return use `refreshAfterBorrowSubmit(reloadDetail: false)` when detail was already reloaded; repay Done uses `BorrowRepayNavigation.finishRepayFlow`.
+- Update **`DOCS/qa/api_screen_sync_matrix.md`** when changing load/refresh order for any money screen.
 
 ---
 

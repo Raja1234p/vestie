@@ -10,7 +10,7 @@ import 'package:vestie/features/project_detail/presentation/navigation/open_proj
 import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
-import 'package:vestie/core/utils/app_snackbar.dart';
+import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_announcements_section.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_success_vote_dev_previews.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_tab_section.dart';
@@ -59,7 +59,7 @@ class _ProjectDetailModeratorScrollContentState
     setState(() => _deletingAnnouncement = false);
     return result.fold(
       (failure) {
-        AppSnackBar.showError(context, FailureMapper.userMessage(failure));
+        AppToast.showError(context, FailureMapper.userMessage(failure));
         return false;
       },
       (_) {

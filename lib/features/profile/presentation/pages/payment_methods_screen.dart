@@ -121,6 +121,7 @@ class _PaymentBody extends StatelessWidget {
 
         return Scaffold(
           backgroundColor: Colors.transparent,
+          resizeToAvoidBottomInset: false,
           body: PostAuthGradientBackground(
             child: Column(
               children: [

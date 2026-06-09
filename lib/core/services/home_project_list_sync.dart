@@ -23,6 +23,13 @@ class HomeProjectListSync {
     onProjectPotUpdated?.call(projectId, projectPot);
   }
 
+  /// Membership ended (leave project) — drop cached pot; force home reload on pop.
+  static void recordProjectLeft(String projectId) {
+    if (projectId.isEmpty) return;
+    _pendingPotByProjectId.remove(projectId);
+    _refreshHomeOnNextDetailPop = true;
+  }
+
   /// When true, popping project detail should reload the home list (shell `go`).
   static bool consumeRefreshHomeOnPop() {
     if (!_refreshHomeOnNextDetailPop) return false;

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import 'package:vestie/core/constants/app_dimens.dart';
+import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 
 import '../models/member_success_vote_ui_data.dart';
 import 'member_success_vote_actions.dart';
@@ -8,7 +10,7 @@ import 'member_success_vote_scroll_body.dart';
 /// Embeddable member success-vote UI. Parent must wrap in [Expanded].
 ///
 /// Body scrolls only when content overflows; otherwise it stays pinned to the top.
-/// Actions use [Scaffold.bottomNavigationBar].
+/// Actions use [FlowScreenFooter] (same inset as Edit Profile / contribute flows).
 class MemberSuccessVoteContent extends StatefulWidget {
   final MemberSuccessVoteUiData data;
   final bool isLoading;
@@ -49,14 +51,26 @@ class _MemberSuccessVoteContentState extends State<MemberSuccessVoteContent> {
     });
   }
 
-  Widget _bottomBar() {
-    return Material(
-      color: Colors.transparent,
-      elevation: 0,
-      child: SafeArea(
-        top: false,
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(0, 20.h, 0, 15.h),
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(
+              AppDimens.p20,
+              0,
+              AppDimens.p20,
+              AppDimens.v16,
+            ),
+            child: MemberSuccessVoteScrollBody(
+              data: widget.data,
+              choice: _choice,
+            ),
+          ),
+        ),
+        FlowScreenFooter(
           child: MemberSuccessVoteActions(
             choice: _choice,
             isLoading: _loading,
@@ -64,16 +78,7 @@ class _MemberSuccessVoteContentState extends State<MemberSuccessVoteContent> {
             onVoteNo: () => _castVote(false),
           ),
         ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: MemberSuccessVoteScrollBody(data: widget.data, choice: _choice),
-      bottomNavigationBar: _bottomBar(),
+      ],
     );
   }
 }

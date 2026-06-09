@@ -3,9 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:vestie/core/constants/app_assets.dart';
+import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
+import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import 'package:vestie/core/widgets/common/app_text_field.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
@@ -125,11 +127,8 @@ class _CreateProjectDetailsScreenState
                 ),
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: EdgeInsets.fromLTRB(
-                      20.w,
-                      0,
-                      20.w,
-                      16.h + MediaQuery.viewInsetsOf(context).bottom,
+                    padding: AppDimens.postAuthFlowScrollPaddingWithKeyboard(
+                      context,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,21 +193,17 @@ class _CreateProjectDetailsScreenState
                     ),
                   ),
                 ),
-                SafeArea(
-                  top: false,
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 20.h),
-                    child: AppButton(
-                      text: AppStrings.btnNext,
-                      useGradient: false,
-                      hasShadow: false,
-                      color: AppColors.neutral1200,
-                      borderRadius: 10.r,
-                      onPressed: () => pushNextAfterDetailsStep(
-                        context,
-                        cubit,
-                        entryMode: widget.entryMode,
-                      ),
+                FlowScreenFooter(
+                  child: AppButton(
+                    text: AppStrings.btnNext,
+                    useGradient: false,
+                    hasShadow: false,
+                    color: AppColors.neutral1200,
+                    borderRadius: 10.r,
+                    onPressed: () => pushNextAfterDetailsStep(
+                      context,
+                      cubit,
+                      entryMode: widget.entryMode,
                     ),
                   ),
                 ),

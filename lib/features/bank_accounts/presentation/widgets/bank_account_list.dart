@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/features/bank_accounts/domain/entities/bank_account_entity.dart';
 import 'package:vestie/features/bank_accounts/presentation/widgets/bank_account_manage_row.dart';
 import 'package:vestie/features/profile/presentation/widgets/payment_primary_button.dart';
@@ -35,8 +36,7 @@ class BankAccountList extends StatelessWidget {
             ),
           ),
         ),
-        Padding(
-          padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 32.h),
+        FlowScreenFooter(
           child: PaymentPrimaryButton(
             label: AppStrings.btnAddBankAccount,
             onTap: addLoading ? null : onAdd,

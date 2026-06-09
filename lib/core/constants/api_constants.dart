@@ -136,6 +136,42 @@ class ApiConstants {
   static String projectMemberCoLeader(String projectId, String userId) =>
       '$projects/$projectId/members/$userId/co-leader';
 
+  // ── Borrow requests (Week 8) ─────────────────────────────────────────────
+  static String projectBorrowRequests(String projectId) =>
+      '$projects/$projectId/borrow-requests';
+
+  static String projectBorrowRequestTerms(String projectId) =>
+      '${projectBorrowRequests(projectId)}/terms';
+
+  static String projectBorrowRequest(String projectId, String requestId) =>
+      '${projectBorrowRequests(projectId)}/$requestId';
+
+  static String projectBorrowRequestCancel(String projectId, String requestId) =>
+      '${projectBorrowRequest(projectId, requestId)}/cancel';
+
+  static String projectBorrowRequestVote(String projectId, String requestId) =>
+      '${projectBorrowRequest(projectId, requestId)}/vote';
+
+  static String projectBorrowRequestDecide(String projectId, String requestId) =>
+      '${projectBorrowRequest(projectId, requestId)}/decide';
+
+  static String projectBorrowRequestsMine(String projectId) =>
+      '${projectBorrowRequests(projectId)}/mine';
+
+  static String projectBorrowRequestsMineScreen(String projectId) =>
+      '${projectBorrowRequests(projectId)}/mine/screen';
+
+  static String projectBorrowRepay(String projectId, String requestId) =>
+      '${projectBorrowRequest(projectId, requestId)}/repay';
+
+  static String projectBorrowRepayPaymentOptions(
+    String projectId,
+    String requestId,
+  ) => '${projectBorrowRepay(projectId, requestId)}/payment-options';
+
+  static String projectBorrowRepayPreview(String projectId, String requestId) =>
+      '${projectBorrowRepay(projectId, requestId)}/preview';
+
   // ── Contributions (legacy paths — prefer [projectContributions]) ─────────
   static const String contributions = '/contributions';
 

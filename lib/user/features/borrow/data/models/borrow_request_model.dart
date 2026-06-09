@@ -21,7 +21,10 @@ class BorrowRequestModel {
 
   factory BorrowRequestModel.fromJson(Map<String, dynamic> json) {
     return BorrowRequestModel(
-      id: (json['id'] as String?) ?? '',
+      id:
+          (json['borrowRequestId'] as String?) ??
+          (json['id'] as String?) ??
+          '',
       projectId: (json['projectId'] as String?) ?? '',
       requesterMembershipId: (json['requesterMembershipId'] as String?) ?? '',
       requestedAmount: (json['requestedAmount'] as num?)?.toDouble() ?? 0.0,

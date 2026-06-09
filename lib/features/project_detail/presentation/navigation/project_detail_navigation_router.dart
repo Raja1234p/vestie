@@ -6,7 +6,7 @@ Future<MemberDetailPopResult?> _openMemberProfile(
   required MemberEntity member,
 }) async {
   if (!project.canReviewMemberProfiles) {
-    AppSnackBar.showError(context, AppStrings.errorForbidden);
+    AppToast.showError(context, AppStrings.errorForbidden);
     return null;
   }
   Future<void> reloadProjectDetail() {
@@ -177,7 +177,7 @@ Future<void> _openInviteMembers(
   required ProjectDetailEntity project,
 }) async {
   if (!project.canInviteMembers) {
-    AppSnackBar.showError(context, AppStrings.errorForbidden);
+    AppToast.showError(context, AppStrings.errorForbidden);
     return;
   }
 
@@ -195,13 +195,13 @@ Future<void> _openInviteMembers(
 
   final inviteLink = result.fold(
     (failure) {
-      AppSnackBar.showError(context, failure.message);
+      AppToast.showError(context, failure.message);
       return null;
     },
     (value) {
       final link = resolveInviteShareLink(value);
       if (link.isEmpty) {
-        AppSnackBar.showError(context, AppStrings.errorGeneric);
+        AppToast.showError(context, AppStrings.errorGeneric);
         return null;
       }
       return link;

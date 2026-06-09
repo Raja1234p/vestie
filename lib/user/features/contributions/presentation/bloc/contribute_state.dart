@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/error/failures.dart';
 import 'package:vestie/core/utils/contribution_fee_policy.dart';
 import '../../domain/entities/contribution_preview_entity.dart';
@@ -19,6 +20,8 @@ class ContributeState extends Equatable {
   final String selectedWalletId;
   final PaymentCard? selectedCard;
   final bool payFromWallet;
+  final bool requiresPaymentMethodPicker;
+  final bool canChangePaymentMethod;
   final ContributionPreviewEntity? preview;
   final Failure? previewFailure;
   final Failure? submitFailure;
@@ -36,6 +39,8 @@ class ContributeState extends Equatable {
     this.selectedWalletId = '',
     this.selectedCard,
     this.payFromWallet = true,
+    this.requiresPaymentMethodPicker = false,
+    this.canChangePaymentMethod = false,
     this.preview,
     this.previewFailure,
     this.submitFailure,
@@ -54,6 +59,8 @@ class ContributeState extends Equatable {
     String? selectedWalletId,
     PaymentCard? selectedCard,
     bool? payFromWallet,
+    bool? requiresPaymentMethodPicker,
+    bool? canChangePaymentMethod,
     bool clearSelectedCard = false,
     ContributionPreviewEntity? preview,
     Failure? previewFailure,
@@ -78,6 +85,10 @@ class ContributeState extends Equatable {
           ? null
           : (selectedCard ?? this.selectedCard),
       payFromWallet: payFromWallet ?? this.payFromWallet,
+      requiresPaymentMethodPicker:
+          requiresPaymentMethodPicker ?? this.requiresPaymentMethodPicker,
+      canChangePaymentMethod:
+          canChangePaymentMethod ?? this.canChangePaymentMethod,
       preview: clearPreview ? null : (preview ?? this.preview),
       previewFailure: clearPreviewFailure
           ? null
@@ -113,6 +124,27 @@ class ContributeState extends Equatable {
 
   double get walletBalance => args?.walletBalance ?? 0;
 
+  bool get hasContributionGoal => args?.hasContributionGoal ?? false;
+
+  double get remainingToGoal => args?.remainingToGoal ?? double.infinity;
+
+  String get remainingToGoalFormatted =>
+      args?.remainingToGoalFormatted ?? r'$0.00';
+
+  bool get isProjectGoalReached =>
+      hasContributionGoal && remainingToGoal <= 0;
+
+  bool get amountExceedsProjectRemaining =>
+      hasContributionGoal && amountValue > remainingToGoal;
+
+  bool get canProceedFromAmount =>
+      amountValue > 0 &&
+      !isProjectGoalReached &&
+      !amountExceedsProjectRemaining;
+
+  double? get maxContributionToGoal =>
+      hasContributionGoal ? remainingToGoal : null;
+
   double get totalDeductionValue =>
       preview?.totalDeduction ?? (amountValue + vestieFee);
 
@@ -122,8 +154,12 @@ class ContributeState extends Equatable {
 
   bool get walletCoversContribution => walletCovers(amountValue);
 
-  /// User can pick a card when wallet cannot cover the confirm total.
-  bool get canPickPaymentMethod => !walletCoversTotal;
+  /// Confirm step: picker only when wallet cannot cover and no auto card.
+  bool get canPickPaymentMethodOnConfirm => requiresPaymentMethodPicker;
+
+  /// Amount step: hint when wallet may not cover the contribution.
+  bool get canPickPaymentMethodOnAmount =>
+      !walletCoversContribution && amountValue > 0;
 
   /// Confirm enabled when terms accepted and wallet covers total, or a card is selected.
   bool get canConfirmSubmit {
@@ -134,6 +170,32 @@ class ContributeState extends Equatable {
     if (payFromWallet) return walletCoversTotal;
     return selectedCard != null;
   }
+
+  /// Confirm CTA enabled only when terms + payment source are valid.
+  bool get canTapConfirm => canConfirmSubmit && !isSubmitLoading;
+
+  /// Inline hint under the payment pill on the confirm step.
+  String? get paymentValidationMessage {
+    if (preview == null) return null;
+    if (payFromWallet && !walletCoversTotal) {
+      if (requiresPaymentMethodPicker || !canChangePaymentMethod) {
+        return AppStrings.contributeWalletInsufficientSubtitle;
+      }
+      final shortfall = (totalDeductionValue - walletBalance).clamp(
+        0.0,
+        double.infinity,
+      );
+      return AppStrings.contributeDepositForWalletMessage(
+        '\$${shortfall.toStringAsFixed(2)}',
+      );
+    }
+    if (!payFromWallet && selectedCard == null) {
+      return AppStrings.contributeSelectCardRequired;
+    }
+    return null;
+  }
+
+  bool get hasPaymentValidationError => paymentValidationMessage != null;
 
   @override
   List<Object?> get props => [
@@ -147,6 +209,8 @@ class ContributeState extends Equatable {
     selectedWalletId,
     selectedCard,
     payFromWallet,
+    requiresPaymentMethodPicker,
+    canChangePaymentMethod,
     preview,
     previewFailure,
     submitFailure,

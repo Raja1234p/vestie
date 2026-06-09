@@ -5,7 +5,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/widgets/common/app_avatar_circle.dart';
 import 'package:vestie/core/widgets/common/app_vote_buttons.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
@@ -18,34 +20,50 @@ enum BorrowRequestActionMode { vote, decision }
 /// A single borrow request card with avatar, amount, vote counts, and buttons.
 /// Each card manages its own BorrowVoteCubit internally.
 class BorrowRequestCard extends StatelessWidget {
+  final String projectId;
   final BorrowRequestEntity request;
   final BorrowRequestActionMode actionMode;
   final VoidCallback? onOpenMemberDetail;
   final VoidCallback? onAccept;
   final VoidCallback? onReject;
 
+  /// Called after a successful Agree/Disagree so parent lists can refresh counts.
+  final VoidCallback? onVoteSuccess;
+
+  /// When true, hides Agree/Disagree (e.g. viewer is the requester).
+  final bool hideVoteActions;
+
   const BorrowRequestCard({
     super.key,
+    required this.projectId,
     required this.request,
     this.actionMode = BorrowRequestActionMode.vote,
     this.onOpenMemberDetail,
     this.onAccept,
     this.onReject,
+    this.onVoteSuccess,
+    this.hideVoteActions = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => BorrowVoteCubit(
+        voteUseCase: ServiceLocator.instance.voteBorrowRequestUseCase,
+        projectId: projectId,
+        requestId: request.id,
         upvotes: request.upvotes,
         downvotes: request.downvotes,
+        callerVote: request.callerVote,
       ),
       child: _BorrowRequestCardBody(
         request: request,
         actionMode: actionMode,
+        hideVoteActions: hideVoteActions,
         onOpenMemberDetail: onOpenMemberDetail,
         onAccept: onAccept,
         onReject: onReject,
+        onVoteSuccess: onVoteSuccess,
       ),
     );
   }
@@ -55,30 +73,46 @@ class BorrowRequestCard extends StatelessWidget {
 class _BorrowRequestCardBody extends StatelessWidget {
   final BorrowRequestEntity request;
   final BorrowRequestActionMode actionMode;
+  final bool hideVoteActions;
   final VoidCallback? onOpenMemberDetail;
   final VoidCallback? onAccept;
   final VoidCallback? onReject;
+  final VoidCallback? onVoteSuccess;
 
   const _BorrowRequestCardBody({
     required this.request,
     required this.actionMode,
+    this.hideVoteActions = false,
     this.onOpenMemberDetail,
     this.onAccept,
     this.onReject,
+    this.onVoteSuccess,
   });
 
   String _fmt(double v) =>
       '\$${v.toStringAsFixed(0).replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (_) => ',')}';
 
+  bool get _showsVoteActions =>
+      actionMode == BorrowRequestActionMode.vote && !hideVoteActions;
+
+  bool get _showsDecisionActions => request.callerCanDecide;
+
+  bool get _showsActionFooter => _showsVoteActions || _showsDecisionActions;
+
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(bottom: 14.h),
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.fromLTRB(
+        16.w,
+        16.h,
+        16.w,
+        _showsActionFooter ? 16.h : 8.h,
+      ),
       decoration: BoxDecoration(
-        color: AppColors.grey200,
+        color: AppColors.grey100,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: AppColors.grey200),
+        border: Border.all(color: AppColors.grey100),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,16 +136,17 @@ class _BorrowRequestCardBody extends StatelessWidget {
                           AppText(
                             request.memberName,
                             style: GoogleFonts.lato(
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w700,
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.w600,
                               color: AppColors.grey1100,
                             ),
                           ),
                           AppText(
                             request.loanType,
                             style: GoogleFonts.lato(
-                              fontSize: 13.sp,
-                              color: AppColors.textBody,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.grey1100,
                             ),
                           ),
                         ],
@@ -127,10 +162,12 @@ class _BorrowRequestCardBody extends StatelessWidget {
           // ── Requested amount label ──────────────────────────
           AppText(
             AppStrings.requestedAmount,
-            style: GoogleFonts.lato(fontSize: 14.sp, color: AppColors.textBody),
+            style: GoogleFonts.lato(
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w500,
+              color: AppColors.grey800,
+            ),
           ),
-          SizedBox(height: 4.h),
-
           // ── Amount + vote counts ────────────────────────────
           BlocBuilder<BorrowVoteCubit, BorrowVoteState>(
             builder: (context, state) {
@@ -163,10 +200,10 @@ class _BorrowRequestCardBody extends StatelessWidget {
               );
             },
           ),
-          SizedBox(height: 12.h),
+          if (_showsActionFooter) SizedBox(height: 12.h),
 
           // ── Vote buttons ────────────────────────────────────
-          if (actionMode == BorrowRequestActionMode.vote)
+          if (_showsVoteActions)
             BlocBuilder<BorrowVoteCubit, BorrowVoteState>(
               builder: (context, state) {
                 if (state.hasDownvoted) {
@@ -188,12 +225,29 @@ class _BorrowRequestCardBody extends StatelessWidget {
                   hasDownvoted: state.hasDownvoted,
                   upvotes: state.upvotes,
                   downvotes: state.downvotes,
-                  onUpvote: cubit.toggleUpvote,
-                  onDownvote: cubit.toggleDownvote,
+                  isLoading: state.isVoting,
+                  onUpvote: () async {
+                    final error = await cubit.voteAgree();
+                    if (!context.mounted) return;
+                    if (error != null) {
+                      AppToast.showError(context, error);
+                      return;
+                    }
+                    onVoteSuccess?.call();
+                  },
+                  onDownvote: () async {
+                    final error = await cubit.voteDisagree();
+                    if (!context.mounted) return;
+                    if (error != null) {
+                      AppToast.showError(context, error);
+                      return;
+                    }
+                    onVoteSuccess?.call();
+                  },
                 );
               },
             )
-          else
+          else if (_showsDecisionActions)
             _DecisionButtons(onReject: onReject, onAccept: onAccept),
         ],
       ),

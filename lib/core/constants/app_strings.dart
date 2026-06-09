@@ -990,10 +990,21 @@ class AppStrings {
   static const String labelTotalDeduction = 'Total Deduction';
   static const String contributeNonRefundable =
       'I understand this contribution is non-refundable';
+  static const String contributeNonRefundableRequired =
+      'Please confirm that this contribution is non-refundable.';
   static const String contributeWalletInsufficientSubtitle =
       'Insufficient balance for this total. Tap above to choose a card.';
   static const String contributeSelectCardRequired =
       'Select a payment card to continue.';
+  static const String labelSelectPaymentCard = 'Select card';
+  static const String contributeProjectGoalReached =
+      'This project has reached its funding goal.';
+  /// Proactive hint on the amount step (project goal cap).
+  static String contributeOnlyAmountHint(String maxFormatted) =>
+      'You can contribute only $maxFormatted to reach the project goal.';
+  /// Shown when the entered amount is above [contributeOnlyAmountHint].
+  static String contributeOnlyAmountExceeded(String maxFormatted) =>
+      'Please lower your amount. You can contribute only $maxFormatted.';
   static String contributeDepositForWalletMessage(String amountFormatted) =>
       'Contributions are paid from your Vestie wallet. Deposit at least '
       '$amountFormatted to continue, then return and pay with Wallet.';
@@ -1013,10 +1024,24 @@ class AppStrings {
   static const String penaltyValuePercent = '10% of borrowed amount';
   static const String penaltyValueOneTime = 'One time';
   static const String btnSubmitBorrowRequest = 'Submit Borrow Request';
+  static const String borrowSubmitRetryHint =
+      'Tap Submit to try again, or go back to change the amount.';
   static const String borrowRequestSubmitted = 'Request Submitted';
   static const String btnBackToProject = 'Back to Project';
   static const String borrowAmountExceedsLimit =
       'Amount exceeds your borrow limit for this project.';
+  static const String borrowCannotBorrowNow =
+      'You cannot borrow at this time.';
+  static const String borrowDefaultReason = 'Borrow request';
+  static const String borrowLimitSetByLeaderSuffix = '(set by leader)';
+  static const String borrowSuccessSubtitlePrefix = 'Your ';
+  static const String borrowSuccessSubtitleSuffix =
+      ' borrow request has been sent to the group for voting and leader review.';
+  static String borrowAgreementFallback(
+    String amountFormatted,
+    String dueByLabel,
+  ) =>
+      'I agree to repay $amountFormatted in full by $dueByLabel';
   // ── Recent Activity ───────────────────────────────────────────────────────
   static const String borrowedLabel = 'Borrowed';
   static const String recentActivityHeader = 'Recent Activity';
@@ -1071,6 +1096,7 @@ class AppStrings {
   static const String labelRepayAmount = 'Repay Amount';
   static const String btnConfirmRepay = 'Confirm Repay';
   static const String btnRepayBorrowAmount = 'Repay Borrow Amount';
+  static const String borrowCannotRepayYet = 'This borrow cannot be repaid yet.';
   static String borrowRepaySuccessBody(String amount, String projectName) =>
       'You\'ve successfully repaid $amount to $projectName.';
   static String borrowRepayPenaltyValue(int percent, String amountFormatted) =>
@@ -1093,6 +1119,7 @@ class AppStrings {
   static const String borrowRequestCancelledBody =
       'You\'ve cancelled your on going borrow request';
   static const String borrowHistoryApproved = 'Approved';
+  static const String borrowHistoryCancelled = 'Cancelled';
   static const String borrowHistoryRejected = 'Rejected';
   static const String upvoteLabel = 'Upvote';
   static const String downvoteLabel = 'Downvote';

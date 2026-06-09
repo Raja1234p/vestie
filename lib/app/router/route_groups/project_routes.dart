@@ -27,8 +27,12 @@ import 'package:vestie/leader/features/project_detail/presentation/pages/member_
 import 'package:vestie/user/features/borrow/presentation/cubit/borrow_cubit.dart';
 import 'package:vestie/user/features/borrow/presentation/pages/borrow_flow_screen.dart';
 import 'package:vestie/app/router/route_args/borrow_repay_flow_args.dart';
+import 'package:vestie/user/features/borrow/presentation/cubit/borrow_repay_confirm_cubit.dart';
+import 'package:vestie/user/features/borrow/presentation/cubit/borrow_repay_payment_options_cubit.dart';
 import 'package:vestie/user/features/borrow/presentation/pages/borrow_repay_confirm_screen.dart';
+import 'package:vestie/user/features/borrow/presentation/pages/borrow_repay_payment_options_screen.dart';
 import 'package:vestie/user/features/borrow/presentation/pages/borrow_repay_success_screen.dart';
+import 'package:vestie/user/features/borrow/presentation/cubit/my_borrow_request_cubit.dart';
 import 'package:vestie/user/features/borrow/presentation/pages/my_borrow_request_screen.dart';
 import 'package:vestie/app/router/route_args/contribute_payment_picker_args.dart';
 import 'package:vestie/user/features/contribute/presentation/pages/contribute_flow_screen.dart';
@@ -109,7 +113,13 @@ List<RouteBase> buildProjectRoutes({
         final extra = state.extra;
         if (extra is! ProjectWalletFlowArgs) return invalidRouteScreen();
         return BlocProvider(
-          create: (_) => BorrowCubit(extra),
+          create: (_) => BorrowCubit(
+            extra,
+            getBorrowTermsUseCase:
+                ServiceLocator.instance.getBorrowTermsUseCase,
+            createBorrowRequestUseCase:
+                ServiceLocator.instance.createBorrowRequestUseCase,
+          ),
           child: const BorrowFlowScreen(),
         );
       },
@@ -207,7 +217,41 @@ List<RouteBase> buildProjectRoutes({
       builder: (context, state) {
         final extra = state.extra;
         if (extra is! MyBorrowRequestRouteArgs) return invalidRouteScreen();
-        return MyBorrowRequestScreen(args: extra);
+        return BlocProvider(
+          create: (_) => MyBorrowRequestCubit(
+            projectId: extra.projectId,
+            getMyBorrowScreenUseCase:
+                ServiceLocator.instance.getMyBorrowScreenUseCase,
+            getActiveRepaySummaryUseCase:
+                ServiceLocator.instance.getActiveRepaySummaryUseCase,
+            getBorrowRepaySummaryUseCase:
+                ServiceLocator.instance.getBorrowRepaySummaryUseCase,
+            cancelBorrowRequestUseCase:
+                ServiceLocator.instance.cancelBorrowRequestUseCase,
+          ),
+          child: MyBorrowRequestScreen(args: extra),
+        );
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.borrowRepayPaymentOptions,
+      builder: (context, state) {
+        final extra = state.extra;
+        if (extra is! BorrowRepayPaymentOptionsRouteArgs) {
+          return invalidRouteScreen();
+        }
+        return BlocProvider(
+          create: (_) => BorrowRepayPaymentOptionsCubit(
+            projectId: extra.projectId,
+            borrowRequestId: extra.borrowRequestId,
+            getPaymentOptionsUseCase:
+                ServiceLocator.instance.getBorrowRepayPaymentOptionsUseCase,
+            getPreviewUseCase:
+                ServiceLocator.instance.getBorrowRepayPreviewUseCase,
+            preloadedOptions: extra.preloadedOptions,
+          ),
+          child: BorrowRepayPaymentOptionsScreen(args: extra),
+        );
       },
     ),
     GoRoute(
@@ -215,7 +259,17 @@ List<RouteBase> buildProjectRoutes({
       builder: (context, state) {
         final extra = state.extra;
         if (extra is! BorrowRepayConfirmRouteArgs) return invalidRouteScreen();
-        return BorrowRepayConfirmScreen(args: extra);
+        return BlocProvider(
+          create: (_) => BorrowRepayConfirmCubit(
+            projectId: extra.projectId,
+            borrowRequestId: extra.borrowRequestId,
+            paymentSourceType: extra.paymentSourceType,
+            paymentMethodId: extra.paymentMethodId,
+            submitUseCase:
+                ServiceLocator.instance.submitBorrowRepaymentUseCase,
+          ),
+          child: BorrowRepayConfirmScreen(args: extra),
+        );
       },
     ),
     GoRoute(

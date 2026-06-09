@@ -14,7 +14,7 @@ import '../../constants/app_assets.dart';
 import '../../constants/app_dimens.dart';
 import '../../constants/app_strings.dart';
 import '../../theme/app_colors.dart';
-import '../../utils/app_snackbar.dart';
+import 'app_toast.dart';
 import '../../utils/invite_share_utils.dart';
 import '../text/app_text.dart';
 import 'app_network_avatar.dart';
@@ -63,7 +63,7 @@ class _AppInviteMembersBottomSheetState
       sharePositionOrigin: origin,
     );
     if (!context.mounted || ok) return;
-    AppSnackBar.showError(context, AppStrings.errorGeneric);
+    AppToast.showError(context, AppStrings.errorGeneric);
   }
 
   void _openShareFromButton(BuildContext buttonContext) {
@@ -101,7 +101,7 @@ class _AppInviteMembersBottomSheetState
       listener: (context, state) {
         final message = state.errorMessage;
         if (message == null || message.isEmpty) return;
-        AppSnackBar.showError(context, message);
+        AppToast.showError(context, message);
       },
       builder: (context, sheetState) {
         final vffs = sheetState.vffs;

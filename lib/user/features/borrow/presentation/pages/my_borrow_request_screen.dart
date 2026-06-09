@@ -1,102 +1,147 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/app/router/route_args/project_detail_flow_args.dart';
+import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
+import 'package:vestie/core/widgets/common/app_error_view.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
+import 'package:vestie/core/widgets/common/app_shimmer_lists.dart';
+import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
+import 'package:vestie/core/widgets/common/post_auth_flow_sub_header.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
-import 'package:vestie/core/widgets/common/post_auth_header.dart';
-import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/borrow_requests_empty_state.dart';
-import 'package:vestie/features/project_detail/presentation/widgets/project_detail_preview_link.dart';
-import 'package:vestie/user/features/borrow/presentation/models/my_borrow_approved_ui_data.dart';
-
-import '../data/my_borrow_request_args_builder.dart';
+import '../cubit/my_borrow_request_cubit.dart';
 import '../navigation/borrow_repay_navigation.dart';
 import '../widgets/cancel_borrow_request_dialog.dart';
 import '../widgets/my_borrow_approved_body.dart';
+import '../widgets/my_borrow_history_body.dart';
 import '../widgets/my_borrow_request_active_body.dart';
 
-enum _MyBorrowPreviewKind { none, pending, approved }
-
 /// Member My Borrow Request — empty, pending, and approved (My Borrow) states.
-class MyBorrowRequestScreen extends StatefulWidget {
+class MyBorrowRequestScreen extends StatelessWidget {
   final MyBorrowRequestRouteArgs args;
 
   const MyBorrowRequestScreen({super.key, required this.args});
 
   @override
-  State<MyBorrowRequestScreen> createState() => _MyBorrowRequestScreenState();
-}
-
-class _MyBorrowRequestScreenState extends State<MyBorrowRequestScreen> {
-  _MyBorrowPreviewKind _previewKind = _MyBorrowPreviewKind.none;
-
-  bool get _hasRealApproved => widget.args.approvedBorrow != null;
-
-  bool get _hasRealActiveRequest => widget.args.activeRequest != null;
-
-  bool get _showsApproved =>
-      _hasRealApproved || _previewKind == _MyBorrowPreviewKind.approved;
-
-  bool get _showsPending =>
-      !_showsApproved &&
-      (_hasRealActiveRequest || _previewKind == _MyBorrowPreviewKind.pending);
-
-  bool get _canShowDevPreviews => !_hasRealApproved && !_hasRealActiveRequest;
-
-  String get _headerTitle => _showsApproved
-      ? AppStrings.myBorrowTitle
-      : AppStrings.myBorrowRequestTitle;
-
-  BorrowRequestEntity get _displayRequest =>
-      widget.args.activeRequest ??
-      MyBorrowRequestArgsBuilder.pendingPreviewRequest();
-
-  List<MyBorrowHistoryEntry> get _displayHistory => _hasRealActiveRequest
-      ? widget.args.history
-      : MyBorrowRequestArgsBuilder.pendingPreviewHistory();
-
-  MyBorrowApprovedUiData get _displayApproved =>
-      widget.args.approvedBorrow ??
-      MyBorrowRequestArgsBuilder.approvedPreview();
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      resizeToAvoidBottomInset: false,
-      body: PostAuthGradientBackground(
-        child: Column(
-          children: [
-            PostAuthHeader(
-              title: _headerTitle,
-              leading: AppBackButton(onPressed: () => context.pop()),
+    return BlocConsumer<MyBorrowRequestCubit, MyBorrowRequestState>(
+      listenWhen: (prev, curr) =>
+          prev.errorMessage != curr.errorMessage &&
+          curr.errorMessage != null &&
+          !curr.loadFailed,
+      listener: (context, state) {
+        AppToast.showError(context, state.errorMessage!);
+      },
+      builder: (context, state) {
+        final showsApproved = state.hasRepayableBorrow;
+        final showsPending = !showsApproved && state.hasPending;
+        final headerTitle = showsApproved
+            ? AppStrings.myBorrowTitle
+            : AppStrings.myBorrowRequestTitle;
+
+        return Scaffold(
+          backgroundColor: Colors.transparent,
+          resizeToAvoidBottomInset: false,
+          body: PostAuthGradientBackground(
+            child: Column(
+              children: [
+                PostAuthFlowSubHeader(title: headerTitle),
+                Expanded(
+                  child: state.loading
+                      ? const MyBorrowRequestShimmer()
+                      : state.loadFailed
+                      ? AppErrorView(
+                          message: state.errorMessage,
+                          onRetry: () =>
+                              context.read<MyBorrowRequestCubit>().load(),
+                        )
+                      : _buildScrollBody(
+                          context,
+                          state,
+                          showsApproved,
+                          showsPending,
+                        ),
+                ),
+                if (!state.loadFailed)
+                  FlowScreenFooter(
+                    child: _buildPrimaryButton(
+                      context,
+                      state,
+                      showsApproved,
+                      showsPending,
+                    ),
+                  ),
+              ],
             ),
-            Expanded(child: _buildBody()),
-            SafeArea(
-              top: false,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 15.h),
-                child: _buildPrimaryButton(context),
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildPrimaryButton(BuildContext context) {
-    if (_showsApproved) {
+  Widget _buildScrollBody(
+    BuildContext context,
+    MyBorrowRequestState state,
+    bool showsApproved,
+    bool showsPending,
+  ) {
+    if (showsApproved) {
+      final approved = state.repayableBorrowUi;
+      if (approved == null) {
+        return AppErrorView(
+          message: state.errorMessage ?? AppStrings.errorGeneric,
+          onRetry: () => context.read<MyBorrowRequestCubit>().load(),
+        );
+      }
+      return SingleChildScrollView(
+        padding: AppDimens.postAuthFlowScrollPadding,
+        child: MyBorrowApprovedBody(data: approved),
+      );
+    }
+
+    if (showsPending && state.activeRequest != null) {
+      return SingleChildScrollView(
+        padding: AppDimens.postAuthFlowScrollPadding,
+        child: MyBorrowRequestActiveBody(
+          activeRequest: state.activeRequest!,
+          history: state.history,
+        ),
+      );
+    }
+
+    if (state.history.isNotEmpty) {
+      return SingleChildScrollView(
+        padding: AppDimens.postAuthFlowScrollPadding,
+        child: MyBorrowHistoryBody(history: state.history),
+      );
+    }
+
+    return const BorrowRequestsEmptyState(
+      centered: true,
+      subtitle: AppStrings.borrowRequestsEmptySubtitle,
+    );
+  }
+
+  Widget _buildPrimaryButton(
+    BuildContext context,
+    MyBorrowRequestState state,
+    bool showsApproved,
+    bool showsPending,
+  ) {
+    if (showsApproved) {
       return AppButton(
         text: AppStrings.btnRepayBorrowAmount,
-        onPressed: _onRepayPressed,
+        isLoading: state.startingRepay,
+        onPressed: state.startingRepay
+            ? null
+            : () => _onRepayPressed(context, state),
         useGradient: false,
         hasShadow: false,
         color: AppColors.purple700,
@@ -104,95 +149,68 @@ class _MyBorrowRequestScreenState extends State<MyBorrowRequestScreen> {
       );
     }
 
-    final makeRequestBlocked =
-        widget.args.borrowDisabledForViewer && !_showsPending;
+    final makeRequestBlocked = args.borrowDisabledForViewer && !showsPending;
 
     return AppButton(
-      text: _showsPending
+      text: showsPending
           ? AppStrings.btnCancelBorrowRequest
           : AppStrings.btnMakeBorrowRequest,
-      onPressed: () => _onPrimaryAction(context),
+      isLoading: state.cancelling,
+      onPressed: state.cancelling
+          ? null
+          : () => _onPrimaryAction(context, showsPending),
       useGradient: false,
       hasShadow: false,
-      color: _showsPending
+      color: showsPending
           ? AppColors.red900
           : (makeRequestBlocked ? AppColors.grey800 : AppColors.grey1200),
       borderRadius: 12.r,
     );
   }
 
-  Widget _buildBody() {
-    if (_showsApproved) {
-      return SingleChildScrollView(
-        child: MyBorrowApprovedBody(data: _displayApproved),
+  Future<void> _onRepayPressed(
+    BuildContext context,
+    MyBorrowRequestState state,
+  ) async {
+    final cubit = context.read<MyBorrowRequestCubit>();
+    try {
+      final routeArgs = await cubit.prepareRepayFlow(
+        projectName: args.projectName.isNotEmpty
+            ? args.projectName
+            : (state.repaySummary?.projectName ?? ''),
       );
-    }
+      if (!context.mounted || routeArgs == null) return;
 
-    if (_showsPending) {
-      return SingleChildScrollView(
-        child: MyBorrowRequestActiveBody(
-          activeRequest: _displayRequest,
-          history: _displayHistory,
-        ),
-      );
+      await BorrowRepayNavigation.startRepayFlow(context, routeArgs);
+    } finally {
+      if (context.mounted) {
+        cubit.clearStartingRepay();
+      }
     }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        if (_canShowDevPreviews) ...[
-          ProjectDetailPreviewLink(
-            label: AppStrings.btnPreviewPendingBorrowRequest,
-            onPressed: () =>
-                setState(() => _previewKind = _MyBorrowPreviewKind.pending),
-          ),
-          ProjectDetailPreviewLink(
-            label: AppStrings.btnPreviewApprovedBorrowRequest,
-            onPressed: () =>
-                setState(() => _previewKind = _MyBorrowPreviewKind.approved),
-          ),
-        ],
-        const Expanded(
-          child: BorrowRequestsEmptyState(
-            centered: true,
-            subtitle: AppStrings.borrowRequestsEmptySubtitle,
-          ),
-        ),
-      ],
-    );
   }
 
-  void _onRepayPressed() {
-    BorrowRepayNavigation.startRepayFlow(
-      context,
-      projectId: widget.args.projectId,
-      projectName: widget.args.projectName.isNotEmpty
-          ? widget.args.projectName
-          : 'Europe Trip 2025',
-      approved: _displayApproved,
-    );
-  }
-
-  void _onPrimaryAction(BuildContext context) {
-    if (_showsPending) {
-      showCancelBorrowRequestDialog(
+  Future<void> _onPrimaryAction(BuildContext context, bool showsPending) async {
+    if (showsPending) {
+      final cancelled = await showCancelBorrowRequestDialog(
         context,
-        onConfirm: () {
-          if (!context.mounted) return;
-          if (_previewKind == _MyBorrowPreviewKind.pending &&
-              !_hasRealActiveRequest) {
-            setState(() => _previewKind = _MyBorrowPreviewKind.none);
-            return;
-          }
-          context.pop();
-        },
+        onConfirm: () =>
+            context.read<MyBorrowRequestCubit>().cancelActiveRequest(),
       );
+      if (!context.mounted || !cancelled) return;
+      context.pop(true);
       return;
     }
-    if (widget.args.borrowDisabledForViewer) {
+
+    if (args.borrowDisabledForViewer) {
       AppToast.showInfo(context, AppStrings.borrowRequiresCoLeaderMessage);
       return;
     }
-    context.push(AppRoutes.borrowFlow, extra: widget.args.walletFlowArgs);
+
+    final submitted = await context.push<bool>(
+      AppRoutes.borrowFlow,
+      extra: args.walletFlowArgs,
+    );
+    if (!context.mounted || submitted != true) return;
+    await context.read<MyBorrowRequestCubit>().load();
   }
 }

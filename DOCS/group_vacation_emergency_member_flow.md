@@ -205,8 +205,8 @@ Restore implementations in `lib/user/features/contributions/presentation/bloc/co
 | Step | UI | Current behavior |
 |------|-----|------------------|
 | `amount` | `AppStackedCurrencyField`, borrow limit chip, optional note | Local digits; over-limit blocks Confirm |
-| `confirm` | Borrow terms cards + checkbox (`Text.rich` with amount + due date) | UI-only submit ~400ms |
-| `success` | `AppSuccessScreen` (empty-state top background) + rich subtitle | **Back to Project** |
+| `confirm` | Borrow terms cards + checkbox (`Text.rich` with amount + due date) | `GET …/borrow-requests/terms?amount=` on Confirm tap; `AppButton.isLoading` while fetching |
+| `success` | `AppSuccessScreen` (empty-state top background) + rich subtitle | `POST …/borrow-requests` with `agreedToTerms: true`; API success message; **Back to Project** |
 
 ### 6.2 Terms UI reference
 
@@ -214,14 +214,31 @@ Restore implementations in `lib/user/features/contributions/presentation/bloc/co
 - Cards: `#F8F7FA`, border `#D9D9D9`, `AppPurpleDashedLine` between rows
 - Rows: label `14.sp` `neutral700`, value `16.sp` w600 `neutral1200`
 - Submit: `AppStrings.btnSubmitBorrowRequest`
+- Terms values (`dueByDisplay`, penalty copy) come from API when loaded; fall back to `ProjectWalletFlowArgs` labels until terms load
 
-### 6.3 API integration checklist (borrow)
+### 6.3 API integration (borrow) — wired (Week 8)
 
-| Event | Use case | Notes |
-|-------|----------|-------|
-| Submit | `CreateBorrowRequestUseCase` | Replace `BorrowCubit._submitBorrowRequest` delay |
-| Detail list | Map `borrowRequests` on `ProjectDetailEntity` | Today often empty in response model |
-| My Borrows menu | `MyBorrowRequestArgsBuilder.fromProject` | Preview/mock args until list API wired |
+| Event | Use case / API | Notes |
+|-------|----------------|-------|
+| Terms on confirm | `GetBorrowTermsUseCase` → `GET …/terms` | Fetched when user taps Confirm on amount step |
+| Submit | `CreateBorrowRequestUseCase` → `POST …/borrow-requests` | `agreedToTerms: true` in body |
+| Detail borrow tab | `ListBorrowRequestsUseCase` → `GET …/borrow-requests?status=Pending` | Merged into `ProjectDetailEntity` via `withBorrowRequests` on detail load (not from `GET /projects/{id}` body) |
+| Member vote on card | `VoteBorrowRequestUseCase` → `POST …/vote` | `BorrowVoteCubit` per card; Agree/Disagree |
+| Leader decide | `ApproveBorrowRequestUseCase` / `RejectBorrowRequestUseCase` → `POST …/decide` | `decision: Approve` or `Reject`; then `reloadDetailAndWait` (pot + borrow list) |
+| My Borrows menu | `MyBorrowRequestArgsBuilder.fromProject` → `AppRoutes.myBorrowRequest` | Args carry `projectId`, name, wallet flow, co-leader gate only |
+| My Borrow Request screen | `GetMyBorrowScreenUseCase` → `GET …/mine/screen` | `MyBorrowRequestCubit` + `MyBorrowRequestShimmer` |
+| Cancel pending | `CancelBorrowRequestUseCase` → `POST …/cancel` | Requester only |
+| Disbursed / repay UI | `GetActiveRepaySummaryUseCase` → `GET …/mine` + `GET …/repay` | Shows **My Borrow** repayment body when status is Disbursed/Overdue |
+| Repay flow | payment-options → preview → `POST …/repay` | `WalletBalanceCache.clear()` on successful repay |
+
+### 6.4 Repay routes (member)
+
+| Route | Screen | APIs |
+|-------|--------|------|
+| `AppRoutes.myBorrowRequest` | `MyBorrowRequestScreen` | `mine/screen`, active `repay` summary |
+| `AppRoutes.borrowRepayPaymentOptions` | `BorrowRepayPaymentOptionsScreen` | `GET …/repay/payment-options`, preview query |
+| `AppRoutes.borrowRepayConfirm` | `BorrowRepayConfirmScreen` | `POST …/repay` (idempotency key in body) |
+| `AppRoutes.borrowRepaySuccess` | `BorrowRepaySuccessScreen` | — |
 
 ---
 
@@ -375,12 +392,12 @@ lib/app/router/route_args/project_wallet_flow_args.dart
 |------|--------|
 | Member fund storyboard (A) | Fully local draft |
 | Contribute preview/confirm/submit | UI delay; use cases stubbed in bloc |
-| Borrow submit | UI delay |
+| Borrow submit + terms + repay | **API wired** (Week 8) — see §6.3 |
 | Invite members | Sample link string |
 | Success vote on detail | Preview toggle + local vote choice |
 | Vote outcome (approved / rejected) | `userVoteOutcome` route; dev preview from member detail |
 | `AppSuccessScreen` background | White + `empty_state_background.png` at top (Home/Discover style) |
 | Wallet balance on chip | From `ProjectWalletFlowArgs` defaults unless API adds wallet to detail |
-| `borrowRequests` on detail | Often empty in model — My Borrows uses builder preview |
+| `borrowRequests` on detail | Loaded via separate `GET …/borrow-requests` on detail open (not embedded in project JSON) |
 
 When integrating, search codebase for `TODO(api)` and `UI-only` in these feature folders.

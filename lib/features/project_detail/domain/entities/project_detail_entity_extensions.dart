@@ -2,6 +2,20 @@ import 'member_entity.dart';
 import 'member_entity_extensions.dart';
 import 'project_detail_entity.dart';
 
+extension ProjectDetailEntityViewer on ProjectDetailEntity {
+  /// API user id for the signed-in viewer on this project.
+  String? get viewerUserId {
+    final viewerMembershipId = membershipId.trim();
+    if (viewerMembershipId.isEmpty) return null;
+    for (final member in members) {
+      if (member.membershipId.trim() != viewerMembershipId) continue;
+      final uid = member.apiUserId.trim();
+      return uid.isEmpty ? null : uid;
+    }
+    return null;
+  }
+}
+
 extension ProjectDetailEntityMemberUpdates on ProjectDetailEntity {
   ProjectDetailEntity withUpdatedMember(
     MemberEntity target,

@@ -8,6 +8,7 @@ import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_shimmer.dart';
+import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart'
@@ -38,11 +39,20 @@ class _CompletedProjectsBody extends StatelessWidget {
       builder: (context, state) {
         return Scaffold(
           backgroundColor: Colors.transparent,
+          resizeToAvoidBottomInset: false,
           body: PostAuthGradientBackground(
             child: Column(
               children: [
                 ProfileSubHeader(title: AppStrings.completedProjectsTitle),
                 Expanded(child: _buildBody(context, state)),
+                if (state.errorMessage != null && !state.loading)
+                  FlowScreenFooter(
+                    child: AppButton(
+                      text: AppStrings.btnRetry,
+                      onPressed: () =>
+                          context.read<CompletedProjectsCubit>().load(),
+                    ),
+                  ),
               ],
             ),
           ),
@@ -54,22 +64,19 @@ class _CompletedProjectsBody extends StatelessWidget {
   Widget _buildBody(BuildContext context, CompletedProjectsState state) {
     if (state.loading) {
       return ListView.builder(
-        padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
+        padding: FlowScreenFooterInsets.listPadding(context),
         itemCount: 3,
         itemBuilder: (_, __) => const ProjectCardShimmer(),
       );
     }
     if (state.errorMessage != null) {
-      return _ErrorView(
-        message: state.errorMessage!,
-        onRetry: () => context.read<CompletedProjectsCubit>().load(),
-      );
+      return _ErrorView(message: state.errorMessage!);
     }
     if (state.projects.isEmpty) {
-      return _EmptyView();
+      return const _EmptyView();
     }
     return ListView.builder(
-      padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
+      padding: FlowScreenFooterInsets.listPadding(context),
       itemCount: state.projects.length,
       itemBuilder: (_, i) {
         final project = state.projects[i];
@@ -84,6 +91,8 @@ class _CompletedProjectsBody extends StatelessWidget {
 }
 
 class _EmptyView extends StatelessWidget {
+  const _EmptyView();
+
   @override
   Widget build(BuildContext context) {
     return const UserVffHubEmptyBody(
@@ -95,36 +104,24 @@ class _EmptyView extends StatelessWidget {
 }
 
 class _ErrorView extends StatelessWidget {
-  const _ErrorView({required this.message, required this.onRetry});
+  const _ErrorView({required this.message});
 
   final String message;
-  final VoidCallback onRetry;
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 28.w),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AppText(
-              message,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.lato(
-                fontSize: 15.sp,
-                fontWeight: FontWeight.w500,
-                color: AppColors.textBody,
-                height: 1.45,
-              ),
-            ),
-            SizedBox(height: 20.h),
-            AppButton(
-              text: AppStrings.btnRetry,
-              width: 280.w,
-              onPressed: onRetry,
-            ),
-          ],
+        child: AppText(
+          message,
+          textAlign: TextAlign.center,
+          style: GoogleFonts.lato(
+            fontSize: 15.sp,
+            fontWeight: FontWeight.w500,
+            color: AppColors.textBody,
+            height: 1.45,
+          ),
         ),
       ),
     );

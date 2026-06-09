@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
@@ -8,13 +7,11 @@ import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
-import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_shimmer.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
+import 'package:vestie/core/widgets/common/post_auth_flow_sub_header.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
-import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/features/bank_accounts/domain/entities/bank_account_entity.dart';
 import 'package:vestie/features/bank_accounts/presentation/models/bank_link_onboarding_result.dart';
 import 'package:vestie/features/bank_accounts/presentation/widgets/bank_account_manage_row.dart';
@@ -108,21 +105,13 @@ class _SelectBankAccountScreenState extends State<SelectBankAccountScreen> {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
+      resizeToAvoidBottomInset: false,
       body: PostAuthGradientBackground(
         child: Column(
           children: [
-            PostAuthHeader(
+            PostAuthFlowSubHeader(
               title: AppStrings.selectBankAccountTitle,
-              padding: EdgeInsets.fromLTRB(
-                AppDimens.p16,
-                AppDimens.v16,
-                AppDimens.p16,
-                0,
-              ),
-              leading: AppBackButton(
-                onPressed: context.pop,
-                color: AppColors.textPrimary,
-              ),
+              onBack: context.pop,
             ),
             Expanded(
               child: _loading
@@ -133,7 +122,7 @@ class _SelectBankAccountScreenState extends State<SelectBankAccountScreen> {
                           subtitle: _error ?? AppStrings.emptyMyAccountsSubtitle,
                         )
                       : ListView.separated(
-                          padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 8.h),
+                          padding: FlowScreenFooterInsets.listPadding(context),
                           itemCount: _banks.length,
                           separatorBuilder: (_, _) =>
                               SizedBox(height: AppDimens.paymentMethodRowGap),

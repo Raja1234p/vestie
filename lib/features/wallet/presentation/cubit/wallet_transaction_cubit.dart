@@ -1,7 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vestie/core/constants/app_strings.dart';
 
 import '../../../profile/domain/entities/payment_card.dart';
 import '../../domain/wallet_transaction_type.dart';
+import 'package:vestie/core/utils/wallet_withdraw_validation.dart';
 import '../../domain/withdraw_delivery_method.dart';
 
 class WalletTransactionState {
@@ -58,6 +60,31 @@ class WalletTransactionState {
 
   String get formattedAmount {
     return '\$${amountParsed.toStringAsFixed(2)}';
+  }
+
+  bool get canConfirmDeposit {
+    if (payFromWallet) return false;
+    final cardId = selectedCard?.id.trim() ?? '';
+    return cardId.isNotEmpty;
+  }
+
+  String? get depositValidationMessage {
+    if (canConfirmDeposit) return null;
+    return AppStrings.depositSelectCardRequired;
+  }
+
+  bool get canConfirmWithdraw {
+    final bankId = selectedBankAccountId?.trim() ?? '';
+    if (bankId.isEmpty) return false;
+    return WalletWithdrawValidation.validateForWithdraw(amountParsed) == null;
+  }
+
+  String? get withdrawValidationMessage {
+    if (canConfirmWithdraw) return null;
+    final balanceErr =
+        WalletWithdrawValidation.validateForWithdraw(amountParsed);
+    if (balanceErr != null) return balanceErr;
+    return AppStrings.withdrawSelectBankRequired;
   }
 }
 

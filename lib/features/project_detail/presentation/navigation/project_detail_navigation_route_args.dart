@@ -14,6 +14,8 @@ ProjectWalletFlowArgs _walletArgs(ProjectDetailEntity project) {
         : ProjectWalletFlowArgs.defaultBorrowLimit,
     borrowDueByLabel: dueBy,
     membershipId: project.membershipId.isEmpty ? null : project.membershipId,
+    goalAmount: project.goalAmount,
+    currentAmount: project.currentAmount,
   );
 }
 

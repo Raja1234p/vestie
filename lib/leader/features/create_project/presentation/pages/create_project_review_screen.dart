@@ -10,6 +10,7 @@ import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_failure_dialog.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
+import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import '../../domain/create_project_form.dart';
 import '../create_project_entry_mode.dart';
@@ -140,55 +141,51 @@ class CreateProjectReviewScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SafeArea(
-                      top: false,
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 20.h),
-                        child: BlocBuilder<CreateProjectSubmitCubit,
-                            CreateProjectSubmitState>(
-                          buildWhen: (p, c) => p.loading != c.loading,
-                          builder: (context, submit) {
-                            final update =
-                                context.watch<CreateProjectUpdateCubit>().state;
-                            final loading =
-                                isEdit ? update.loading : submit.loading;
+                    FlowScreenFooter(
+                      child: BlocBuilder<CreateProjectSubmitCubit,
+                          CreateProjectSubmitState>(
+                        buildWhen: (p, c) => p.loading != c.loading,
+                        builder: (context, submit) {
+                          final update =
+                              context.watch<CreateProjectUpdateCubit>().state;
+                          final loading =
+                              isEdit ? update.loading : submit.loading;
 
-                            return AppButton(
-                              text: isEdit
-                                  ? AppStrings.btnEditProject
-                                  : AppStrings.btnCreateProject2,
-                              useGradient: false,
-                              hasShadow: false,
-                              color: AppColors.neutral1200,
-                              borderRadius: 10.r,
-                              isLoading: loading,
-                              onPressed: loading
-                                  ? null
-                                  : () async {
-                                      if (isEdit) {
-                                        final ok = await context
-                                            .read<CreateProjectUpdateCubit>()
-                                            .submit(form);
-                                        if (!context.mounted || !ok) return;
-                                        context.push(
-                                          AppRoutes.createProjectSuccess,
-                                          extra: CreateProjectSuccessRouteArgs(
-                                            projectId: form.editingProjectId!,
-                                            projectName: form.projectName,
-                                            isInvestment: form.category ==
-                                                NewProjectCategory.investment,
-                                            isEditFlow: true,
-                                          ),
-                                        );
-                                        return;
-                                      }
-                                      context
-                                          .read<CreateProjectSubmitCubit>()
+                          return AppButton(
+                            text: isEdit
+                                ? AppStrings.btnEditProject
+                                : AppStrings.btnCreateProject2,
+                            useGradient: false,
+                            hasShadow: false,
+                            color: AppColors.neutral1200,
+                            borderRadius: 10.r,
+                            isLoading: loading,
+                            onPressed: loading
+                                ? null
+                                : () async {
+                                    if (isEdit) {
+                                      final ok = await context
+                                          .read<CreateProjectUpdateCubit>()
                                           .submit(form);
-                                    },
-                            );
-                          },
-                        ),
+                                      if (!context.mounted || !ok) return;
+                                      context.push(
+                                        AppRoutes.createProjectSuccess,
+                                        extra: CreateProjectSuccessRouteArgs(
+                                          projectId: form.editingProjectId!,
+                                          projectName: form.projectName,
+                                          isInvestment: form.category ==
+                                              NewProjectCategory.investment,
+                                          isEditFlow: true,
+                                        ),
+                                      );
+                                      return;
+                                    }
+                                    context
+                                        .read<CreateProjectSubmitCubit>()
+                                        .submit(form);
+                                  },
+                          );
+                        },
                       ),
                     ),
                   ],

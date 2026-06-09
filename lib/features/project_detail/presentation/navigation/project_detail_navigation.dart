@@ -10,7 +10,7 @@ import '../../../../app/router/route_args/project_detail_flow_args.dart';
 import '../../../../app/router/route_args/project_wallet_flow_args.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/di/service_locator.dart';
-import '../../../../core/utils/app_snackbar.dart';
+import '../../../../core/widgets/common/app_toast.dart';
 import '../../../../core/utils/invite_share_link_resolver.dart';
 import '../../../../core/widgets/common/app_loading_dialog.dart';
 import '../../../../core/widgets/common/app_invite_members_dialog.dart';
@@ -91,6 +91,17 @@ class ProjectDetailNavigation {
     context,
     projectId: projectId,
     submitResult: submitResult,
+  );
+
+  /// Reloads project detail (pot + pending borrow list) after borrow submit.
+  static Future<void> refreshAfterBorrowSubmit(
+    BuildContext context, {
+    required String projectId,
+    bool reloadDetail = true,
+  }) => _refreshAfterBorrowSubmit(
+    context,
+    projectId: projectId,
+    reloadDetail: reloadDetail,
   );
 
   /// Sends a VFF request from a project member row (no profile screen).
@@ -191,7 +202,7 @@ class ProjectDetailNavigation {
     ProjectDetailEntity project,
   ) => _fundsHistoryArgs(project);
 
-  static void handleMemberAction(
+  static Future<void> handleMemberAction(
     BuildContext context, {
     required ProjectDetailEntity project,
     required MemberProjectMenuAction action,

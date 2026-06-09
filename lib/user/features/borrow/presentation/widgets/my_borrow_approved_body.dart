@@ -18,16 +18,9 @@ class MyBorrowApprovedBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        AppDimens.p16,
-        AppDimens.v10,
-        AppDimens.p16,
-        AppDimens.p16,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
           AppText(
             AppStrings.myBorrowAmountLabel,
             style: GoogleFonts.lato(
@@ -106,7 +99,6 @@ class MyBorrowApprovedBody extends StatelessWidget {
             ),
           ),
         ],
-      ),
     );
   }
 }

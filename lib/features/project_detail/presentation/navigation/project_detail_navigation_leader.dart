@@ -26,25 +26,25 @@ Future<void> _handleLeaderAction(
   }
 
   if (!project.isModeratorView) {
-    AppSnackBar.showError(context, AppStrings.errorForbidden);
+    AppToast.showError(context, AppStrings.errorForbidden);
     return;
   }
   if (action == LeaderMenuAction.markSuccessful &&
       !project.canMarkProjectSuccessful) {
-    AppSnackBar.showError(context, AppStrings.errorForbidden);
+    AppToast.showError(context, AppStrings.errorForbidden);
     return;
   }
   if (action == LeaderMenuAction.stopContributions &&
       !project.canStopContributions) {
-    AppSnackBar.showError(context, AppStrings.errorForbidden);
+    AppToast.showError(context, AppStrings.errorForbidden);
     return;
   }
   if (action == LeaderMenuAction.editProject && !project.canEditProject) {
-    AppSnackBar.showError(context, AppStrings.errorForbidden);
+    AppToast.showError(context, AppStrings.errorForbidden);
     return;
   }
   if (action == LeaderMenuAction.cancelProject && !project.canCancelProject) {
-    AppSnackBar.showError(context, AppStrings.errorForbidden);
+    AppToast.showError(context, AppStrings.errorForbidden);
     return;
   }
 
@@ -85,10 +85,7 @@ Future<void> _handleLeaderAction(
       );
       break;
     case LeaderMenuAction.myBorrows:
-      context.push(
-        AppRoutes.myBorrowRequest,
-        extra: MyBorrowRequestArgsBuilder.fromProject(project),
-      );
+      await _openMyBorrowRequestAndRefresh(context, project: project);
       break;
     case LeaderMenuAction.inviteMembers:
       break;

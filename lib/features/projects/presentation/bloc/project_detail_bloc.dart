@@ -17,6 +17,7 @@ import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_pot_extensions.dart';
 import 'package:vestie/features/project_pot/domain/entities/project_pot_entity.dart';
 import 'package:vestie/features/project_pot/domain/usecases/get_project_pot_use_case.dart';
+import 'package:vestie/user/features/borrow/domain/usecases/list_borrow_requests_use_case.dart';
 import 'package:vestie/user/features/vff/domain/usecases/vff_usecases.dart';
 
 enum ProjectDetailTab { borrowRequests, members }
@@ -102,7 +103,7 @@ class ProjectDetailLoaded extends ProjectDetailState {
   /// `member.apiUserId` while POST VFF request is in flight.
   final String? sendingVffUserId;
 
-  /// Shown once via UI listener (snackbar).
+  /// Shown once via UI listener (toast).
   final String? vffSendErrorMessage;
 
   ProjectDetailLoaded({
@@ -163,6 +164,7 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
   final ProjectDetailRepository repository;
   final GetProjectPotUseCase? _getProjectPotUseCase;
   final ListPendingJoinRequestsUseCase? _listPendingJoinRequests;
+  final ListBorrowRequestsUseCase? _listBorrowRequests;
   final SendVffRequestUseCase? _sendVffRequestUseCase;
   final List<Completer<void>> _detailLoadWaiters = [];
 
@@ -170,9 +172,11 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
     required this.repository,
     GetProjectPotUseCase? getProjectPotUseCase,
     ListPendingJoinRequestsUseCase? listPendingJoinRequests,
+    ListBorrowRequestsUseCase? listBorrowRequests,
     SendVffRequestUseCase? sendVffRequestUseCase,
   }) : _getProjectPotUseCase = getProjectPotUseCase,
        _listPendingJoinRequests = listPendingJoinRequests,
+       _listBorrowRequests = listBorrowRequests,
        _sendVffRequestUseCase = sendVffRequestUseCase,
        super(ProjectDetailInitial()) {
     on<LoadProjectDetailEvent>(_onLoadProjectDetail);
@@ -231,7 +235,18 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
           if (potUseCase != null) {
             final potResult = await potUseCase(event.projectId);
             potResult.fold((_) {}, (pot) {
-              loadedProject = project.withProjectPot(pot);
+              loadedProject = loadedProject.withProjectPot(pot);
+            });
+          }
+
+          final listBorrow = _listBorrowRequests;
+          if (listBorrow != null && loadedProject.borrowingEnabled) {
+            final borrowResult = await listBorrow(
+              projectId: event.projectId,
+              status: 'Pending',
+            );
+            borrowResult.fold((_) {}, (requests) {
+              loadedProject = loadedProject.withBorrowRequests(requests);
             });
           }
 

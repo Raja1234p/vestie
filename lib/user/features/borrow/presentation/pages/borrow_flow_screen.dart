@@ -5,8 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/core/utils/app_snackbar.dart';
-import 'package:vestie/core/widgets/common/app_back_button.dart';
+import 'package:vestie/core/widgets/common/app_toast.dart';
+import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_stacked_currency_field.dart';
 import 'package:vestie/core/widgets/common/app_tick_switch.dart';
@@ -14,7 +14,7 @@ import 'package:vestie/core/widgets/common/app_success_screen.dart';
 import 'package:vestie/core/widgets/common/app_text.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
-import 'package:vestie/core/widgets/common/post_auth_header.dart';
+import 'package:vestie/core/widgets/common/post_auth_flow_sub_header.dart';
 import '../cubit/borrow_cubit.dart';
 
 class BorrowFlowScreen extends StatelessWidget {
@@ -23,12 +23,12 @@ class BorrowFlowScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<BorrowCubit, BorrowState>(
-      listenWhen: (prev, curr) => prev.errorMessage != curr.errorMessage,
+      listenWhen: (prev, curr) =>
+          prev.errorMessage != curr.errorMessage &&
+          curr.errorMessage != null &&
+          curr.step != BorrowStep.confirm,
       listener: (context, state) {
-        final msg = state.errorMessage;
-        if (msg != null && msg.isNotEmpty) {
-          AppSnackBar.showError(context, msg);
-        }
+        AppToast.showError(context, state.errorMessage!);
       },
       child: BlocBuilder<BorrowCubit, BorrowState>(
         builder: (context, s) {
@@ -144,13 +144,9 @@ class _BorrowAmountViewState extends State<_BorrowAmountView> {
           body: PostAuthGradientBackground(
             child: Column(
               children: [
-                PostAuthHeader(
+                PostAuthFlowSubHeader(
                   title: AppStrings.borrowScreenTitle,
-                  padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 0),
-                  leading: AppBackButton(
-                    onPressed: () => context.pop(),
-                    color: AppColors.textPrimary,
-                  ),
+                  onBack: () => context.pop(),
                 ),
                 Expanded(
                   child: LayoutBuilder(
@@ -193,7 +189,7 @@ class _BorrowAmountViewState extends State<_BorrowAmountView> {
                                 child: AppText(
                                   '${AppStrings.labelBorrowLimitChip}: '
                                   '\$${state.borrowLimitFormatted} '
-                                  '(set by leader)',
+                                  '${AppStrings.borrowLimitSetByLeaderSuffix}',
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.lato(
                                     fontSize: 12.sp,
@@ -270,7 +266,8 @@ class _BorrowAmountViewState extends State<_BorrowAmountView> {
                 FlowScreenFooter(
                   child: AppButton(
                     text: AppStrings.btnConfirm,
-                    onPressed: (state.amountValue <= 0 || over)
+                    isLoading: state.loading,
+                    onPressed: (state.amountValue <= 0 || over || state.loading)
                         ? null
                         : c.toConfirm,
                   ),
@@ -293,21 +290,18 @@ class _BorrowConfirmView extends StatelessWidget {
     final c = context.read<BorrowCubit>();
     return Scaffold(
       backgroundColor: Colors.transparent,
+      resizeToAvoidBottomInset: false,
       body: PostAuthGradientBackground(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            PostAuthHeader(
+            PostAuthFlowSubHeader(
               title: AppStrings.borrowTermsTitle,
-              padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0),
-              leading: AppBackButton(
-                onPressed: c.backToAmount,
-                color: AppColors.textPrimary,
-              ),
+              onBack: c.backToAmount,
             ),
             Expanded(
               child: ListView(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                padding: AppDimens.postAuthFlowScrollPadding,
                 children: [
                   _label(AppStrings.sectionBorrowAmount),
                   SizedBox(height: 12.h),
@@ -318,7 +312,7 @@ class _BorrowConfirmView extends StatelessWidget {
                         _row(AppStrings.labelAmount, state.displayDollar),
                         _row(
                           AppStrings.labelFullAmountDueBy,
-                          state.args.borrowDueByLabel,
+                          state.dueByLabel,
                         ),
                       ],
                     ),
@@ -332,11 +326,11 @@ class _BorrowConfirmView extends StatelessWidget {
                       children: [
                         _row(
                           AppStrings.labelPenaltyIfMissed,
-                          AppStrings.penaltyValuePercent,
+                          state.penaltyIfMissedLabel,
                         ),
                         _row(
                           AppStrings.labelPenaltyApplies,
-                          AppStrings.penaltyValueOneTime,
+                          state.penaltyAppliesLabel,
                         ),
                       ],
                     ),
@@ -351,32 +345,41 @@ class _BorrowConfirmView extends StatelessWidget {
                       ),
                       SizedBox(width: 6.w),
                       Expanded(
-                        child: Text.rich(
-                          TextSpan(
-                            style: GoogleFonts.lato(
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w400,
-                              color: AppColors.neutral700,
-                              height: 1.4,
-                            ),
-                            children: [
-                              const TextSpan(text: 'I agree to repay '),
-                              TextSpan(
-                                text: state.displayDollar,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              TextSpan(
-                                text:
-                                    ' in full by ${state.args.borrowDueByLabel}.',
-                              ),
-                            ],
+                        child: AppText(
+                          state.agreementText,
+                          style: GoogleFonts.lato(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.neutral700,
+                            height: 1.4,
                           ),
                         ),
                       ),
                     ],
                   ),
+                  if (state.errorMessage != null &&
+                      state.errorMessage!.isNotEmpty) ...[
+                    SizedBox(height: 16.h),
+                    AppText(
+                      state.errorMessage!,
+                      style: GoogleFonts.lato(
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.red900,
+                        height: 1.35,
+                      ),
+                    ),
+                    SizedBox(height: 4.h),
+                    AppText(
+                      AppStrings.borrowSubmitRetryHint,
+                      style: GoogleFonts.lato(
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.neutral700,
+                        height: 1.35,
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -468,22 +471,19 @@ class _BorrowSuccessView extends StatelessWidget {
               height: 1.35,
             ),
             children: [
-              const TextSpan(text: 'Your '),
+              const TextSpan(text: AppStrings.borrowSuccessSubtitlePrefix),
               TextSpan(
                 text: state.displayDollar,
                 style: const TextStyle(fontWeight: FontWeight.w700),
               ),
-              const TextSpan(
-                text:
-                    ' borrow request has been sent to the group for voting and leader review.',
-              ),
+              const TextSpan(text: AppStrings.borrowSuccessSubtitleSuffix),
             ],
           ),
           textAlign: TextAlign.center,
         ),
       ),
       buttonText: AppStrings.btnBackToProject,
-      onButtonPressed: () => context.pop(),
+      onButtonPressed: () => context.pop(true),
     );
   }
 }

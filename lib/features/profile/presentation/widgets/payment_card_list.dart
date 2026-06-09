@@ -112,8 +112,7 @@ class _PaymentCardListState extends State<PaymentCardList> {
             ),
           ),
         ),
-        Padding(
-          padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 32.h),
+        FlowScreenFooter(
           child: PaymentPrimaryButton(
             label: AppStrings.btnAddCard,
             onTap: widget.addCardLoading ? null : widget.onAdd,

@@ -6,6 +6,7 @@ import 'package:vestie/app/router/route_args/project_detail_flow_args.dart';
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
+import 'package:vestie/core/services/home_project_list_sync.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_failure_dialog.dart';
 import 'package:vestie/core/widgets/common/app_outline_neutral_button.dart';
@@ -52,8 +53,9 @@ class _LeaveProjectWarningScreenState extends State<LeaveProjectWarningScreen> {
             );
           },
           (_) async {
+            HomeProjectListSync.recordProjectLeft(widget.args.projectId);
             await showLeaveProjectSuccessDialog(context);
-            if (!context.mounted) return;
+            if (!mounted) return;
             popAfterLeaveProjectSuccess(
               context,
               refreshHomeOnPop: widget.args.refreshHomeOnPop,

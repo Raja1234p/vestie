@@ -4,8 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
+import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/member_project_flow/member_project_form_widgets.dart';
 import 'package:vestie/core/widgets/member_project_flow/member_project_header.dart';
@@ -26,6 +28,7 @@ class CreateProjectSummaryScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
+      resizeToAvoidBottomInset: false,
       body: PostAuthGradientBackground(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -33,7 +36,7 @@ class CreateProjectSummaryScreen extends StatelessWidget {
             MemberFundFlowHeader(title: AppStrings.createProjectSummaryTitle),
             Expanded(
               child: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 20.h),
+                padding: AppDimens.postAuthFlowScrollPadding,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -99,16 +102,12 @@ class CreateProjectSummaryScreen extends StatelessWidget {
                 ),
               ),
             ),
-            SafeArea(
-              top: false,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 14.h),
-                child: MemberFundPrimaryButton(
-                  label: AppStrings.btnCreateProject2,
-                  onPressed: () => context.push(
-                    AppRoutes.createProjectFundDetail,
-                    extra: draft,
-                  ),
+            FlowScreenFooter(
+              child: MemberFundPrimaryButton(
+                label: AppStrings.btnCreateProject2,
+                onPressed: () => context.push(
+                  AppRoutes.createProjectFundDetail,
+                  extra: draft,
                 ),
               ),
             ),

@@ -8,7 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/utils/app_snackbar.dart';
+import '../../../../core/widgets/common/app_toast.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import 'auth_password_visibility_icon.dart';
 import '../../../../core/widgets/common/app_text_field.dart';
@@ -40,7 +40,7 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   void _showComingSoon(BuildContext context) =>
-      AppSnackBar.showInfo(context, AppStrings.socialComingSoon);
+      AppToast.showInfo(context, AppStrings.socialComingSoon);
 
   void _submit(BuildContext context) {
     FocusScope.of(context).unfocus();

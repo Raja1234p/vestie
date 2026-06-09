@@ -31,7 +31,7 @@ class WithdrawMethodBody extends StatelessWidget {
       children: [
         Expanded(
           child: ListView(
-            padding: EdgeInsets.fromLTRB(AppDimens.p16, AppDimens.v8, AppDimens.p16, 0),
+            padding: FlowScreenFooterInsets.listPadding(context, top: AppDimens.v8),
             children: [
               WithdrawMethodOptionCard(
                 selected: selected == WithdrawDeliveryMethod.standard,

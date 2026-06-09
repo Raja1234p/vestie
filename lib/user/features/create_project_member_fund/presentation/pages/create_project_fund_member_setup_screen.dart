@@ -5,9 +5,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
 import 'package:vestie/app/router/app_routes.dart';
+import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/utils/storyboard/storyboard_desktop_loader.dart';
+import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/member_project_flow/member_project_form_widgets.dart';
 import 'package:vestie/core/widgets/member_project_flow/member_project_header.dart';
@@ -128,6 +130,7 @@ class _CreateProjectFundMemberSetupScreenState
 
     return Scaffold(
       backgroundColor: Colors.transparent,
+      resizeToAvoidBottomInset: false,
       body: PostAuthGradientBackground(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -135,7 +138,9 @@ class _CreateProjectFundMemberSetupScreenState
             MemberFundFlowHeader(title: _fundHeaderTitle),
             Expanded(
               child: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 24.h),
+                padding: AppDimens.postAuthFlowScrollPaddingWithKeyboard(
+                  context,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -208,14 +213,10 @@ class _CreateProjectFundMemberSetupScreenState
                 ),
               ),
             ),
-            SafeArea(
-              top: false,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 14.h),
-                child: MemberFundPrimaryButton(
-                  label: AppStrings.btnContinue,
-                  onPressed: _submit,
-                ),
+            FlowScreenFooter(
+              child: MemberFundPrimaryButton(
+                label: AppStrings.btnContinue,
+                onPressed: _submit,
               ),
             ),
           ],

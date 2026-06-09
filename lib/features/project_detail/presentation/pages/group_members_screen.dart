@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
-import 'package:vestie/core/utils/app_snackbar.dart';
+import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
@@ -72,7 +72,7 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
     await result.fold(
       (failure) async {
         setState(() => _sendingVffUserId = null);
-        AppSnackBar.showError(context, FailureMapper.userMessage(failure));
+        AppToast.showError(context, FailureMapper.userMessage(failure));
       },
       (sent) async {
         setState(() {

@@ -10,6 +10,7 @@ alwaysApply: true
 1. **Read every rule file** in `.cursor/rules/`:
    - `project_context.mdc` — **what Vestie is** (product, roles, flows)
    - `agent_workflow.mdc` (this file)
+   - `architecture.mdc` — layers, data flow, no magic strings/numbers, doc sync
    - `production_scope.mdc` — what is allowed vs deferred; validation pipeline
    - `pre_commit.mdc` — UI, architecture, state, navigation, file size
 
@@ -17,8 +18,10 @@ alwaysApply: true
 
 3. **For API / wallet / Stripe / KYC / bank work** — also read:
    - `DOCS/api_integration_plan.md` — endpoint map & PR order
-   - `DOCS/qa/api_screen_sync_matrix.md` — screen ↔ API sync expectations
+   - `DOCS/qa/api_screen_sync_matrix.md` — screen ↔ API sync expectations (**update rows when wiring or changing load/refresh**)
+   - `DOCS/group_vacation_emergency_member_flow.md` — when touching member borrow/contribute/detail flows
    - `feature_overview.md` in each feature folder you touch (update it when behavior changes)
+   - `architecture.mdc` — follow layer boundaries and constants rules for all new code
 
 4. **Follow all MDC rules completely** for the entire task — not only the file you are editing.
 
@@ -28,16 +31,24 @@ alwaysApply: true
 
 1. **Production stability** — no unintended UI, API, routing, or flow changes
 2. **`production_scope.mdc`** — deferred waves (E/B/F/G) stay off unless user explicitly approves
-3. **`pre_commit.mdc`** — coding standards, `AppStrings`/`AppColors`/`AppRoutes`, ScreenUtil, Cubit/Bloc
+3. **`architecture.mdc`** — layer boundaries, data flow, no magic literals
+4. **`pre_commit.mdc`** — coding standards, `AppStrings`/`AppColors`/`AppRoutes`, ScreenUtil, Cubit/Bloc
 
 ## Quick checklist before ending a task
 
 - [ ] Changes match active scope in `production_scope.mdc`
+- [ ] **Architecture** (`architecture.mdc`): presentation → use case → repository → data source; no widget I/O
+- [ ] **No magic strings** — `AppStrings`, `AppRoutes`, `ApiConstants`; API statuses parsed in models/entities
+- [ ] **No magic numbers** — ScreenUtil / `AppDimens` / `AppColors`; no fake delays for API
 - [ ] UI uses `AppStrings`, `AppColors`, `AppAssets`, `AppDimens`, ScreenUtil
-- [ ] Routes use `AppRoutes` only
+- [ ] Routes use `AppRoutes` only; route args = navigation metadata, not mock screen data
 - [ ] **No widgets → API** — repositories + use cases + Cubit/Bloc only
 - [ ] **No raw URLs** — `ApiConstants` for paths; deep links via flow constants
 - [ ] Updated `feature_overview.md` if feature behavior or routes changed
+- [ ] Updated `DOCS/qa/api_screen_sync_matrix.md` (and member flow doc if applicable) when API/sync behavior changed
+- [ ] **Borrow/money POST flows** — project detail reload **before** success UI (`architecture.mdc` §5); no duplicate reload on pop when already synced
+- [ ] **API error/loader/toast** — shimmer + `AppErrorView` for load fail; `AppToast` for action errors; loaders per `architecture.mdc` §6; no `AppSnackBar`
+- [ ] Removed dead preview/mock code when replacing with real APIs
 - [ ] `flutter analyze` — no errors on changed files
 - [ ] `flutter test` — pass (after meaningful code changes)
 - [ ] Minimal diff — no mass format, global rename, or unrelated refactors

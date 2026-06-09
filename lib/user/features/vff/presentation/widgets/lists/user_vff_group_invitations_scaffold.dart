@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/core/utils/app_snackbar.dart';
+import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
@@ -54,7 +54,7 @@ final class UserVffGroupInvitationsScaffold extends StatelessWidget {
                       listener: (context, state) {
                         final message = state.errorMessage;
                         if (message == null || message.isEmpty) return;
-                        AppSnackBar.showError(context, message);
+                        AppToast.showError(context, message);
                       },
                       builder: (context, state) {
                         if (state.status ==

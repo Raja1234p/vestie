@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_purple_dashed_line.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
@@ -44,6 +44,7 @@ class KeyGuidelinesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
+      resizeToAvoidBottomInset: false,
       body: PostAuthGradientBackground(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -51,7 +52,10 @@ class KeyGuidelinesScreen extends StatelessWidget {
             ProfileSubHeader(title: AppStrings.menuKeyGuidelines),
             Expanded(
               child: ListView.separated(
-                padding: EdgeInsets.fromLTRB(20.w, 4.h, 20.w, 24.h),
+                padding: FlowScreenFooterInsets.listPadding(
+                  context,
+                  top: AppDimens.v4,
+                ),
                 itemCount: _items.length,
                 separatorBuilder: (context, index) => const AppPurpleDashedLine(
                   color: AppColors.purple300,

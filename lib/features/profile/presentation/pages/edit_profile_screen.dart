@@ -50,6 +50,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (cubit == null) {
       return Scaffold(
         backgroundColor: Colors.transparent,
+        resizeToAvoidBottomInset: false,
         body: PostAuthGradientBackground(
           child: Column(
             children: [
@@ -121,13 +122,16 @@ class _EditProfileFormState extends State<_EditProfileForm> {
         final cubit = context.read<EditProfileCubit>();
         return Scaffold(
           backgroundColor: Colors.transparent,
+          resizeToAvoidBottomInset: false,
           body: PostAuthGradientBackground(
             child: Column(
               children: [
                 ProfileSubHeader(title: AppStrings.editProfileTitle),
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 16.h),
+                    padding: AppDimens.postAuthFlowScrollPaddingWithKeyboard(
+                      context,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

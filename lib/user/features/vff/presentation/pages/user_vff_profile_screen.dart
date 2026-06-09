@@ -6,7 +6,7 @@ import 'package:vestie/app/router/route_args/user_vff_flow_args.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
-import 'package:vestie/core/utils/app_snackbar.dart';
+import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import '../cubit/user_vff_profile_cubit.dart';
 import '../cubit/user_vff_profile_state.dart';
@@ -51,7 +51,7 @@ final class UserVffProfileScreen extends StatelessWidget {
         listener: (context, state) {
           final message = state.errorMessage;
           if (message == null || message.isEmpty) return;
-          AppSnackBar.showError(context, message);
+          AppToast.showError(context, message);
         },
         builder: (context, state) {
           final cubit = context.read<UserVffProfileCubit>();

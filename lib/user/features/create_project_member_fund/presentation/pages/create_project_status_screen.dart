@@ -7,6 +7,7 @@ import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
+import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/app_success_screen.dart';
 import 'package:vestie/core/widgets/common/failure_icon.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
@@ -34,49 +35,62 @@ class CreateProjectStatusScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
+      resizeToAvoidBottomInset: false,
       body: PostAuthGradientBackground(
-        child: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24.w),
-            child: Column(
-              children: [
-                SizedBox(height: 24.h),
-                const FailureIcon(),
-                SizedBox(height: 28.h),
-                Text(
-                  AppStrings.transactionStatusFailureTitle,
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.lato(
-                    fontSize: 24.sp,
-                    fontWeight: FontWeight.w900,
-                    color: AppColors.textPrimary,
+        child: Column(
+          children: [
+            Expanded(
+              child: SafeArea(
+                bottom: false,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 24.h),
+                      const FailureIcon(),
+                      SizedBox(height: 28.h),
+                      Text(
+                        AppStrings.transactionStatusFailureTitle,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.lato(
+                          fontSize: 24.sp,
+                          fontWeight: FontWeight.w900,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      SizedBox(height: 10.h),
+                      Text(
+                        AppStrings.transactionStatusFailureSubtitle,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.lato(
+                          fontSize: 13.sp,
+                          height: 1.45,
+                          color: AppColors.textBody,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(height: 10.h),
-                Text(
-                  AppStrings.transactionStatusFailureSubtitle,
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.lato(
-                    fontSize: 13.sp,
-                    height: 1.45,
-                    color: AppColors.textBody,
-                  ),
-                ),
-                const Spacer(),
-                AppButton(
-                  text: AppStrings.btnRetry,
-                  onPressed: () => context.pop(),
-                ),
-                SizedBox(height: 12.h),
-                AppButton(
-                  text: AppStrings.btnCancel,
-                  isSecondary: true,
-                  onPressed: () => _finish(context),
-                ),
-                SizedBox(height: 20.h),
-              ],
+              ),
             ),
-          ),
+            FlowScreenFooter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  AppButton(
+                    text: AppStrings.btnRetry,
+                    onPressed: () => context.pop(),
+                  ),
+                  SizedBox(height: 12.h),
+                  AppButton(
+                    text: AppStrings.btnCancel,
+                    isSecondary: true,
+                    onPressed: () => _finish(context),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

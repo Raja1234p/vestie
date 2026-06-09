@@ -12,13 +12,12 @@ import 'package:vestie/core/constants/app_dimens.dart' show AppDimens;
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/utils/formatters.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
-import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_stacked_currency_field.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
+import 'package:vestie/core/widgets/common/post_auth_flow_sub_header.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
-import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
-import 'package:vestie/core/utils/app_snackbar.dart';
+import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/services/bank_accounts_prefetch.dart';
 import 'package:vestie/core/services/payment_methods_prefetch.dart';
@@ -105,7 +104,7 @@ class _TransactionAmountScreenState extends State<TransactionAmountScreen> {
     final err =
         WalletWithdrawValidation.validateForWithdraw(cubit.state.amountParsed);
     if (err != null) {
-      AppSnackBar.showError(context, err);
+      AppToast.showError(context, err);
       return;
     }
     cubit.prepareWithdrawMethodSelection();
@@ -134,21 +133,12 @@ class _TransactionAmountScreenState extends State<TransactionAmountScreen> {
           body: PostAuthGradientBackground(
             child: Column(
               children: [
-                PostAuthHeader(
+                PostAuthFlowSubHeader(
                   title: title,
-                  padding: EdgeInsets.fromLTRB(
-                    AppDimens.p16,
-                    AppDimens.v16,
-                    AppDimens.p16,
-                    0,
-                  ),
-                  leading: AppBackButton(
-                    onPressed: () {
-                      cubit.reset();
-                      context.pop();
-                    },
-                    color: AppColors.textPrimary,
-                  ),
+                  onBack: () {
+                    cubit.reset();
+                    context.pop();
+                  },
                 ),
                 Expanded(
                   child: _AmountEntryBody(

@@ -10,17 +10,43 @@ import 'package:vestie/user/features/project_detail/presentation/models/member_v
 
 import 'project_wallet_flow_args.dart';
 
+/// History row badge styling on My Borrow Request.
+enum MyBorrowHistoryBadgeKind { approved, cancelled, rejected }
+
 /// One row in My Borrow Request — borrow history (Figma).
 class MyBorrowHistoryEntry {
+  final String id;
   final double amount;
   final String dateLabel;
   final bool isApproved;
 
+  /// API `status` — used to resolve repay when [currentRequest] is null.
+  final String status;
+
+  /// API `statusDisplay` — user-facing badge label (e.g. Cancelled, Approved).
+  final String statusDisplay;
+
   const MyBorrowHistoryEntry({
+    this.id = '',
     required this.amount,
     required this.dateLabel,
     required this.isApproved,
+    this.status = '',
+    this.statusDisplay = '',
   });
+
+  bool get isCancelled => status == 'Cancelled';
+
+  bool get isRepayable =>
+      status == 'Disbursed' || status == 'Overdue' || status == 'Approved';
+
+  MyBorrowHistoryBadgeKind get badgeKind {
+    if (isCancelled) return MyBorrowHistoryBadgeKind.cancelled;
+    if (isApproved || status == 'Repaid') {
+      return MyBorrowHistoryBadgeKind.approved;
+    }
+    return MyBorrowHistoryBadgeKind.rejected;
+  }
 }
 
 /// Member / leader “My Borrow Request” screen (not the group borrow-requests list).

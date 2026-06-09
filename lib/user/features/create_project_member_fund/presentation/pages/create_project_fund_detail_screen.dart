@@ -5,10 +5,12 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_assets.dart';
+import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/utils/storyboard/storyboard_desktop_loader.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
+import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/member_project_flow/member_project_header.dart';
@@ -44,6 +46,7 @@ class CreateProjectFundDetailScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
+      resizeToAvoidBottomInset: false,
       body: PostAuthGradientBackground(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -51,7 +54,7 @@ class CreateProjectFundDetailScreen extends StatelessWidget {
             MemberFundFlowHeader(title: headerTitle),
             Expanded(
               child: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 20.h),
+                padding: AppDimens.postAuthFlowScrollPadding,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -257,16 +260,12 @@ class CreateProjectFundDetailScreen extends StatelessWidget {
                 ),
               ),
             ),
-            SafeArea(
-              top: false,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 14.h),
-                child: AppButton(
-                  text: AppStrings.btnContribute,
-                  onPressed: () => context.push(
-                    AppRoutes.createProjectFundContributionProgress,
-                    extra: draft,
-                  ),
+            FlowScreenFooter(
+              child: AppButton(
+                text: AppStrings.btnContribute,
+                onPressed: () => context.push(
+                  AppRoutes.createProjectFundContributionProgress,
+                  extra: draft,
                 ),
               ),
             ),

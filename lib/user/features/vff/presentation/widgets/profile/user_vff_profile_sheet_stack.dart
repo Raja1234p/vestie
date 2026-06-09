@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:vestie/core/constants/app_dimens.dart';
+import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import '../../models/user_vff_profile_ui_model.dart';
 import '../user_vff_tx_row.dart';
 import 'user_vff_profile_connected_body.dart';
@@ -51,13 +51,7 @@ final class UserVffProfileSheetStack extends StatelessWidget {
             ],
           ),
         ),
-        SafeArea(
-          top: false,
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(AppDimens.p18, 0, AppDimens.p18, 8.h),
-            child: const UserVffProfileFooterActions(),
-          ),
-        ),
+        const FlowScreenFooter(child: UserVffProfileFooterActions()),
       ],
     );
   }

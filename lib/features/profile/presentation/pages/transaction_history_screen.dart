@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/widgets/common/flow_screen_footer.dart';
 import '../../../../core/widgets/common/app_shimmer.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../cubit/transaction_history_cubit.dart';
@@ -51,6 +52,7 @@ class _TxBody extends StatelessWidget {
       builder: (context, state) {
         return Scaffold(
           backgroundColor: Colors.transparent,
+          resizeToAvoidBottomInset: false,
           body: PostAuthGradientBackground(
             child: Column(
               children: [
@@ -59,7 +61,7 @@ class _TxBody extends StatelessWidget {
                 Expanded(
                   child: state.loading
                       ? ListView.builder(
-                          padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
+                          padding: FlowScreenFooterInsets.listPadding(context),
                           physics: const BouncingScrollPhysics(),
                           itemCount: 7,
                           itemBuilder: (_, __) => Padding(
@@ -68,7 +70,7 @@ class _TxBody extends StatelessWidget {
                           ),
                         )
                       : ListView.builder(
-                          padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
+                          padding: FlowScreenFooterInsets.listPadding(context),
                           itemCount: state.filtered.length,
                           itemBuilder: (_, i) {
                             final tx = state.filtered[i];

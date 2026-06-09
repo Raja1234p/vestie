@@ -12,6 +12,12 @@ class ProjectWalletFlowArgs {
   final String borrowDueByLabel;
   final String? membershipId;
 
+  /// Project funding goal from `GET /projects/{id}` (`targetAmount`).
+  final double goalAmount;
+
+  /// Raised so far (`currentAmount` / pot balance on detail).
+  final double currentAmount;
+
   /// Legacy mock default — do not use in production UI; prefer [WalletBalanceCache].
   static const double defaultWallet = 0;
   static const double defaultBorrowLimit = 250.0;
@@ -24,10 +30,21 @@ class ProjectWalletFlowArgs {
     this.borrowLimit = defaultBorrowLimit,
     this.borrowDueByLabel = defaultBorrowDueByLabel,
     this.membershipId,
+    this.goalAmount = 0,
+    this.currentAmount = 0,
   });
 
   String get walletAmountFormatted =>
       AppFormatters.formatMoneyAmount(walletBalance);
+
+  bool get hasContributionGoal => goalAmount > 0;
+
+  double get remainingToGoal => hasContributionGoal
+      ? (goalAmount - currentAmount).clamp(0.0, double.infinity)
+      : double.infinity;
+
+  String get remainingToGoalFormatted =>
+      AppFormatters.formatMoneyAmount(remainingToGoal);
 
   ProjectWalletFlowArgs copyWithWalletBalance(double balance) {
     return ProjectWalletFlowArgs(
@@ -37,6 +54,8 @@ class ProjectWalletFlowArgs {
       borrowLimit: borrowLimit,
       borrowDueByLabel: borrowDueByLabel,
       membershipId: membershipId,
+      goalAmount: goalAmount,
+      currentAmount: currentAmount,
     );
   }
 }

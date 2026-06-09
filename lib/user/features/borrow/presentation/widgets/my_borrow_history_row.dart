@@ -18,7 +18,6 @@ class MyBorrowHistoryRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final approved = entry.isApproved;
     return Container(
       margin: EdgeInsets.only(bottom: 10.h),
       padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
@@ -55,7 +54,7 @@ class MyBorrowHistoryRow extends StatelessWidget {
               ],
             ),
           ),
-          _StatusBadge(approved: approved),
+          _StatusBadge(entry: entry),
         ],
       ),
     );
@@ -85,19 +84,37 @@ class _BorrowHistoryIcon extends StatelessWidget {
 }
 
 class _StatusBadge extends StatelessWidget {
-  final bool approved;
+  final MyBorrowHistoryEntry entry;
 
-  const _StatusBadge({required this.approved});
+  const _StatusBadge({required this.entry});
 
   @override
   Widget build(BuildContext context) {
-    final bg = approved
-        ? AppColors.badgeCompletedBg
-        : AppColors.borrowVoteDownBg;
-    final fg = approved ? AppColors.badgeCompletedText : AppColors.red900;
-    final label = approved
-        ? AppStrings.borrowHistoryApproved
-        : AppStrings.borrowHistoryRejected;
+    final label = entry.statusDisplay.trim().isNotEmpty
+        ? entry.statusDisplay.trim()
+        : switch (entry.badgeKind) {
+            MyBorrowHistoryBadgeKind.approved =>
+              AppStrings.borrowHistoryApproved,
+            MyBorrowHistoryBadgeKind.cancelled =>
+              AppStrings.borrowHistoryCancelled,
+            MyBorrowHistoryBadgeKind.rejected =>
+              AppStrings.borrowHistoryRejected,
+          };
+
+    final (bg, fg) = switch (entry.badgeKind) {
+      MyBorrowHistoryBadgeKind.approved => (
+        AppColors.badgeCompletedBg,
+        AppColors.badgeCompletedText,
+      ),
+      MyBorrowHistoryBadgeKind.cancelled => (
+        AppColors.neutral300,
+        AppColors.neutral700,
+      ),
+      MyBorrowHistoryBadgeKind.rejected => (
+        AppColors.borrowVoteDownBg,
+        AppColors.red900,
+      ),
+    };
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),

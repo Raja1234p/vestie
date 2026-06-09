@@ -55,20 +55,25 @@ class BorrowRequestsTab extends StatelessWidget {
       children: [
         ...preview.map(
           (r) => BorrowRequestCard(
+            projectId: project.id,
             request: r,
             actionMode: actionMode,
+            hideVoteActions:
+                actionMode == BorrowRequestActionMode.vote &&
+                r.isRequestedByViewer(project),
             onOpenMemberDetail: _openMemberDetail(r),
             onAccept: onAccept != null ? () => onAccept!(r) : null,
             onReject: onReject != null ? () => onReject!(r) : null,
           ),
         ),
-        if (requests.length > 2) ...[
+        if (requests.isNotEmpty) ...[
           SizedBox(height: 10.h),
           ProjectDetailViewAllLink(
             label: AppStrings.viewAllRequests,
             onTap: onViewAll,
           ),
         ],
+        SizedBox(height: 20.h),
       ],
     );
   }

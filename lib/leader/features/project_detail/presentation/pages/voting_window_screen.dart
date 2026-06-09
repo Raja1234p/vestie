@@ -9,15 +9,14 @@ import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/core/utils/app_snackbar.dart';
+import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/widgets/common/app_action_dialog.dart';
-import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import 'package:vestie/core/widgets/common/app_text_field.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
-import 'package:vestie/core/widgets/common/post_auth_header.dart';
+import 'package:vestie/core/widgets/common/post_auth_flow_sub_header.dart';
 import 'package:vestie/features/project_detail/domain/entities/leader_voting_flow_kind.dart';
 import '../cubit/voting_window_cubit.dart';
 
@@ -74,7 +73,7 @@ class _VotingWindowScreenState extends State<VotingWindowScreen> {
     if (!context.mounted) return;
     context.pop();
     if (context.mounted) {
-      AppSnackBar.showSuccess(context, AppStrings.successVoteStartedMessage);
+      AppToast.showSuccess(context, AppStrings.successVoteStartedMessage);
     }
   }
 
@@ -108,13 +107,12 @@ class _VotingWindowScreenState extends State<VotingWindowScreen> {
         listener: (context, state) {
           final msg = state.apiErrorMessage;
           if (msg != null && msg.isNotEmpty) {
-            AppSnackBar.showError(context, msg);
+            AppToast.showError(context, msg);
           }
         },
         child: BlocBuilder<VotingWindowCubit, VotingWindowState>(
           builder: (context, state) {
             final cubit = context.read<VotingWindowCubit>();
-            final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
             final labelStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
               fontSize: 16.sp,
               fontWeight: FontWeight.w500,
@@ -128,23 +126,16 @@ class _VotingWindowScreenState extends State<VotingWindowScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    PostAuthHeader(
+                    PostAuthFlowSubHeader(
                       title: AppStrings.votingWindowTitle,
-                      padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0),
-                      leading: AppBackButton(
-                        onPressed: state.loading ? () {} : () => context.pop(),
-                        color: AppColors.textPrimary,
-                      ),
+                      onBack: state.loading ? () {} : () => context.pop(),
                     ),
                     Expanded(
                       child: SingleChildScrollView(
                         keyboardDismissBehavior:
                             ScrollViewKeyboardDismissBehavior.onDrag,
-                        padding: EdgeInsets.fromLTRB(
-                          20.w,
-                          0,
-                          20.w,
-                          16.h + bottomInset,
+                        padding: AppDimens.postAuthFlowScrollPaddingWithKeyboard(
+                          context,
                         ),
                         child: AppTextField(
                           label: AppStrings.labelEnterVotingWindowDays,

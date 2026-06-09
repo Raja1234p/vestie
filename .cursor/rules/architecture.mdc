@@ -1,0 +1,268 @@
+---
+description: Vestie clean architecture — layers, data flow, constants, anti-patterns (always follow).
+alwaysApply: true
+---
+
+# Vestie — architecture & patterns
+
+> **Before every task:** read with `agent_workflow.mdc` and `pre_commit.mdc`.  
+> **Reference implementation:** `lib/user/features/borrow/` (Week 8) + `lib/user/features/contribute/`.
+
+Principal goal: **scalable, testable, team-ready** — widgets stay thin; business logic and I/O stay in domain/data.
+
+---
+
+## 1. Layer boundaries (strict)
+
+```text
+presentation/   → Cubit/Bloc, screens, widgets, UI mappers, route navigation helpers
+domain/         → entities, repository interfaces, use cases (no Flutter, no Dio)
+data/           → models, mappers, repository impl, remote/local data sources
+```
+
+| Layer | May import | Must NOT |
+|-------|------------|----------|
+| **presentation** | domain entities, use cases (via Cubit ctor/DI), `core/` UI utils | `Dio`, `DioClient`, raw JSON `Map`, `ApiConstants` in widgets |
+| **domain** | `core/error`, `dartz` | Flutter, Dio, data models |
+| **data** | domain, `ApiConstants`, `DioClient` | `BuildContext`, widgets |
+
+**Shared cross-feature entities** (e.g. `BorrowRequestEntity` in `lib/features/project_detail/domain/entities/`) are allowed when multiple features render the same API shape.
+
+---
+
+## 2. Standard data flow (required for API features)
+
+```text
+Screen → Cubit/Bloc → UseCase → Repository → RemoteDataSource → DioClient
+                ↑                      ↓
+           emit state            Model.fromJson → Entity
+```
+
+1. **RemoteDataSource** — HTTP only; throws `ServerException` / `UnauthorizedException`.
+2. **Repository impl** — catches exceptions → `Either<Failure, T>`; maps models → entities.
+3. **Use case** — one public action per class; thin wrapper over repository.
+4. **Cubit/Bloc** — calls use cases; maps failures via `FailureMapper`; holds loading/error UI state.
+5. **Screen** — `BlocBuilder` / `BlocConsumer`; no business rules.
+
+**Register** new use cases in `lib/core/di/inject_*.dart` + `service_locator.dart`.  
+**Route-scoped Cubits** — create in `project_routes.dart` (or feature route group), not global singletons for form wizards.
+
+---
+
+## 3. No magic strings (product + wire)
+
+Centralize literals — **never** scatter user-facing or API contract strings in widgets.
+
+| Kind | Where |
+|------|--------|
+| User-visible copy | `AppStrings` |
+| REST paths | `ApiConstants` |
+| Routes | `AppRoutes` |
+| Assets | `AppAssets` |
+| API query/body keys | model `toJson` / `fromJson` in **data** layer |
+| API enum values (`Pending`, `Agree`, `Approve`) | parse in **models**; expose typed fields/getters on **entities** — widgets compare `entity.isPending`, not `status == 'Pending'` |
+| Deep links / redirect paths | `ApiConstants` or `core/constants/` |
+| Validation messages | `AppStrings` or validator return values — not inline in `Text` |
+
+**Bad:** `context.push('/project/borrow')`, `'Failed to load borrow'`, `if (status == 'Disbursed')` in a widget.  
+**Good:** `AppRoutes.borrowFlow`, `FailureMapper.userMessage(failure)`, `summary.isRepayable` on entity.
+
+When adding a new API field or status, extend the **model + entity** in the same change — do not leak raw JSON keys into presentation.
+
+---
+
+## 4. No magic numbers (layout + domain)
+
+| Kind | Where |
+|------|--------|
+| Spacing, gutters, icon sizes (UI) | `AppDimens` if shared; else **`flutter_screenutil`** (`.w`, `.h`, `.r`, `.sp`) — base **390×844** |
+| Border radius (repeated) | `AppRadius` or `.r` |
+| Colors | `AppColors` — add a named token if Figma introduces a new color |
+| Business limits (borrow cap, poll interval) | domain entity, API response, or named `static const` in **one** feature constants file — not inline in Cubit logic |
+| Timeouts / retries | `core/network/` or feature data source — named constants |
+
+**Bad:** `padding: EdgeInsets.all(17)`, `fontSize: 15`, `Color(0xFF1A1A1A)`, `await Future.delayed(Duration(milliseconds: 400))` for fake API.  
+**Good:** `EdgeInsets.symmetric(horizontal: 16.w)`, `fontSize: 16.sp`, `AppColors.grey1100`, real use case call.
+
+Literal `0` / `1` for list indices or `flex: 1` are fine. Prefer named getters for non-obvious numeric domain rules (e.g. `args.borrowLimit`).
+
+---
+
+## 5. Navigation & route args
+
+- **Only** `go_router` + `AppRoutes`; typed `extra` classes in `lib/app/router/route_args/`.
+- **Route args** = navigation context (ids, labels, flags, `ProjectWalletFlowArgs`) — **not** a substitute for API data.
+- If the screen has its own load API, pass **ids** in args and fetch in a **route-scoped Cubit** (see `MyBorrowRequestCubit` + `MyBorrowRequestArgsBuilder`).
+- Remove **preview/mock builders** when API is wired — do not leave dead Figma fallback paths.
+
+After money actions, refresh per `DOCS/qa/api_screen_sync_matrix.md` (e.g. `reloadDetailAndWait`, `WalletBalanceCache.clear()`).
+
+### Post-action sync — project detail **before** success UI (required)
+
+For borrow mutations that affect project detail (pot, pending borrow list, member state), **always** reload project detail **after the POST succeeds and before** any success dialog or `AppSuccessScreen`.
+
+```text
+POST (cancel | submit | decide | repay) → reload project detail → success dialog / screen → navigate back
+```
+
+| Step | Helper | When |
+|------|--------|------|
+| Reload from Cubit (no `BuildContext`) | `BorrowProjectDetailSync.reloadBeforeSuccess(projectId)` | `BorrowCubit` submit, `MyBorrowRequestCubit` cancel, `BorrowRepayConfirmCubit` repay, leader full-list approve/reject |
+| Reload from detail screen | `ProjectDetailBloc.reloadDetailAndWait(projectId)` or `ProjectDetailNavigation.reloadProjectDetailAndWait` | Leader decide on project detail borrow tab (inside `onConfirmed` before success dialog) |
+| Return to detail after flow | `ProjectDetailNavigation.refreshAfterBorrowSubmit(reloadDetail: false)` | My Borrow menu / wallet Borrow CTA — detail already synced; **only** switch to borrow tab |
+| Repay stack exit | `BorrowRepayNavigation.finishRepayFlow(context)` | Repay success Done — pop success + payment options + my borrow; never land on payment picker |
+
+**Rules:**
+
+1. **Never** show success dialog / `AppSuccessScreen` before project detail reload completes (button loader may still run through both steps in one `onPrimary` / Cubit method).
+2. **Do not** double-fetch on pop when step 1 already ran — use `refreshAfterBorrowSubmit(reloadDetail: false)` (not another full reload).
+3. Parse borrow **status** in models/entities — e.g. `RequestSent` is pending (`BorrowRequestEntity.isPending`); history rows use API `statusDisplay` + `MyBorrowHistoryBadgeKind`, not a binary approved/rejected label.
+4. Register `ProjectDetailReloadCoordinator` via `ProjectDetailReloadScope` on detail so sub-routes can reload while detail stays mounted under the stack.
+
+**Reference:** `lib/user/features/borrow/presentation/navigation/borrow_project_detail_sync.dart`, `borrow_repay_navigation.dart`, `feature_overview.md` (borrow).
+
+---
+
+## 6. UI patterns
+
+- Wrappers: `AppText`, `AppButton`, `AppTextField`, `AppToast` — not raw Material + `ScaffoldMessenger`.
+- **Validation** in `ValidationUtils` or Cubit — not in widget `onChanged`.
+- **Leader vs member UI** — `lib/leader/features/` vs `lib/user/features/`; shared shells in `lib/features/`.
+
+### Post-auth flow screen shell (gradient + scroll + pinned CTA)
+
+Use this layout for **form / action flows** under `PostAuthGradientBackground` (Edit Profile, My Borrow, repay confirm, etc.). **Do not** apply to **`AppSuccessScreen`** — success screens use their own full-screen pattern with **no** post-gradient header.
+
+**Reference:** `lib/features/profile/presentation/pages/edit_profile_screen.dart`
+
+```text
+Scaffold(backgroundColor: transparent, resizeToAvoidBottomInset: false)
+  PostAuthGradientBackground
+    Column
+      PostAuthFlowSubHeader  (or ProfileSubHeader — same widget)
+      Expanded
+        SingleChildScrollView / ListView
+          padding: AppDimens.postAuthFlowScrollPadding   // 20.w L/R, 16.h bottom
+          child: content only — no extra outer padding in body widgets
+      FlowScreenFooter (when screen has a primary CTA)
+        AppButton — pinned, never inside scroll
+```
+
+| Piece | Rule |
+|-------|------|
+| Header | `PostAuthFlowSubHeader` — default `PostAuthHeader` padding; back `AppColors.textPrimary` |
+| Scroll body | `AppDimens.postAuthFlowScrollPadding` on the **screen** scroll view |
+| List-only (no footer button) | `FlowScreenFooterInsets.listPadding(context)` — same `20.w` horizontal |
+| Footer CTA | **`FlowScreenFooter`** + `AppButton` — uses `FlowScreenFooterInsets` (`20.w` horizontal, `max(24.h, systemBottom + 8.h)`). **Never** `SafeArea(top: false)` + fixed `16.h`/`20.h` bottom padding |
+| Keyboard forms | **Pinned footer:** `resizeToAvoidBottomInset: false` + scroll `AppDimens.postAuthFlowScrollPaddingWithKeyboard(context)` (Edit Profile, create project, voting window, announcements). **Amount entry:** keep `resizeToAvoidBottomInset: true` + `FlowScreenFooter` (borrow/contribute/deposit amount) — do not change keyboard behavior when syncing visuals |
+| Body widgets | Column/content only — **no** duplicate `SingleChildScrollView` or screen-level padding inside `widgets/` |
+
+**Anti-pattern:** pinned CTA inside `SingleChildScrollView`, or `bottomNavigationBar` / `SafeArea` with ad-hoc `EdgeInsets.only(bottom: 14.h)` — causes buttons under the system nav bar on some devices.
+
+**Performance:** reuse `FlowScreenFooter` / `FlowScreenFooterInsets` only — no per-screen `MediaQuery` math, no extra `LayoutBuilder` shells for footer spacing.
+
+### Loading & screen freeze (production)
+
+Every async user action that hits the API must show feedback and **block duplicate submits**. Pick **one** pattern per interaction — do not leave POST taps with only `enabled: false` and no visible loader.
+
+| Situation | Widget | Cubit flag (example) | Reference |
+|-----------|--------|----------------------|-----------|
+| **Initial screen / list load** | Named shimmer from `app_shimmer_lists.dart` | `loading` | `MyBorrowRequestShimmer`, `PaymentCardListShimmer` |
+| **Initial load failed** | `AppErrorView` + **Try Again** (`onRetry` → Cubit `load()`) — **not** empty state + toast | `loadFailed` getter on state | `my_borrow_request_screen`, `borrow_repay_payment_options_screen` |
+| **Cross-route async** (e.g. repay auto-skip) | Keep footer `AppButton.isLoading` until navigation helper returns | `startingRepay` through full `startRepayFlow` | `my_borrow_request_screen` + `BorrowRepayNavigation` |
+| **Pinned footer POST** (submit, confirm, cancel CTA on screen) | `AppButton(isLoading: true)` + `onPressed: null` while busy | `loading`, `submitting`, `cancelling` | `borrow_flow_screen`, `borrow_repay_confirm_screen` |
+| **Dialog confirm POST** (approve, reject, cancel confirm) | `AppActionDialog.showAsync` — spinner on primary, secondary disabled, `PopScope` blocks back while loading | return `Future<bool>` from dialog `onPrimary` | `borrow_request_decision_dialogs`, `cancel_borrow_request_dialog` |
+| **Row / card tap POST** (vote, payment-method preview) | `AppLoadingOverlay` on the screen body **or** inline loader on the control (`AppVoteButtons.isLoading`) | `selecting`, `isVoting` | `borrow_repay_payment_options_screen`, `borrow_request_card` |
+| **Background refresh** (keep content visible) | `AppLoadingOverlay` on existing body | `silentRefreshing` | `notifications_screen` |
+
+**Rules:**
+
+1. Cubit owns the busy flag — emit `true` before the use case, `false` on success/failure; guard re-entry (`if (state.submitting) return`).
+2. **`AppButton.isLoading`** — only for the **single** pinned footer CTA; keeps label area as spinner; button stays visually active (see `AppButton` implementation).
+3. **`AppLoadingOverlay`** — `AbsorbPointer` + centred loader; use when there is no single footer button to own the loader (payment row tap, silent refresh). On **post-gradient** screens: `scrimColor: AppColors.postAuthLoadingOverlayScrim` (transparent — no dim box) and wrap the full `Column` (header + `Expanded` body) so the overlay does not split header vs list. On opaque list surfaces (e.g. notifications silent refresh), default dark `modalBarrier` scrim is fine.
+4. **`AppActionDialog.showAsync`** — for any dialog whose primary action calls an API; return `true`/`false` only after POST **and** any required project-detail reload (see §5 post-action sync); show success dialog **after** `showAsync` returns `true` — never show success before those complete.
+5. **Do not** use bare `CircularProgressIndicator` for full-screen first load — use a named shimmer. Small inline spinners inside `AppButton`, `_DialogButton`, or `AppVoteButtons` are fine.
+6. **Do not** use `setState` for submit loading — Cubit/Bloc only.
+7. **POST submit failure on confirm step** — show inline error + retry hint on the screen; **`AppToast.showError`** only for earlier steps. **Back** clears idempotency key when user edits amount/terms.
+8. **Toast vs full error** — use `listenWhen` to skip toast when `loadFailed` is true (full-screen `AppErrorView` already shown). Background list reload failures stay silent (keep stale data).
+9. **Transient feedback** — **`AppToast.showError` / `showSuccess` / `showInfo`** only. **Do not** use `AppSnackBar` or `ScaffoldMessenger.showSnackBar` in new code.
+10. **Confirm CTA gating** — pinned **Confirm / Submit** stays **`onPressed: null`** until required checkboxes (terms / non-refundable) **and** payment source are valid (wallet covers total **or** card selected; deposit: card required). Show inline validation under **`AppPaymentMethodPill`** (`hasError` + message) — do not rely on enabled button + toast for missing switch/card.
+
+### Error handling (every API feature)
+
+```text
+RemoteDataSource throws → Repository → Either<Failure, T> → UseCase → Cubit
+                                                              ↓
+                                    FailureMapper.userMessage(failure) on state
+                                                              ↓
+              loadFailed? → AppErrorView + retry    else action error? → AppToast.showError
+```
+
+| Failure type | UI |
+|--------------|-----|
+| Initial `GET` / screen load | `AppErrorView` + Try Again — **no toast** |
+| Row tap / submit / cancel / vote / decide | `AppToast.showError` (or inline on confirm step) |
+| Validation before API (confirm tap) | `AppToast.showError` with `AppStrings` message |
+| Forbidden / navigation guard | `AppToast.showError` with `AppStrings.errorForbidden` |
+| Success after POST | Success dialog / `AppSuccessScreen` — optional `AppToast.showSuccess` when no dedicated success UI |
+
+**Cubit rules:** emit `loading`/`submitting`/… before await; map all failures with **`FailureMapper.userMessage`**; expose `loadFailed` when the screen has no partial data to show.
+
+### Idempotency keys (money POST)
+
+| Flow | When to create key | Reuse on retry | Clear when |
+|------|-------------------|----------------|------------|
+| Borrow create | Entering confirm step (`toConfirm` success) | Same key on Submit retries until success | `backToAmount` |
+| Borrow repay | `BorrowRepayConfirmCubit` construction | Same key on Confirm retries until success | New Cubit per confirm route |
+| Contribute / deposit / withdraw | Per existing feature patterns | Header or body per API contract | — |
+
+Send borrow create via `Idempotency-Key` header; repay via body `idempotencyKey` (Week 8 API). Generate with `newIdempotencyKey('borrow'|'repay')` — **never** regenerate on retry within the same confirm session.
+
+Prefer **Cubit** for use-case calls from UI. `ServiceLocator.instance` directly inside widgets is legacy — match nearby code when editing, but new flows should inject use cases through Cubit constructors.
+
+---
+
+## 7. Documentation sync (part of “done”)
+
+When behavior or API wiring changes, update in the **same PR / task**:
+
+| Change | Update |
+|--------|--------|
+| Any feature API | `feature_overview.md` in that feature folder |
+| Screen load/refresh contract | `DOCS/qa/api_screen_sync_matrix.md` |
+| Member vacation/emergency flow | `DOCS/group_vacation_emergency_member_flow.md` |
+| New routes or major flows | `FEATURE_MAP.md` / `PROJECT_FLOW_MAP.md` if trace changes |
+
+Stale docs are bugs — agents must not leave “UI-only” / “mock” notes after wiring real APIs.
+
+---
+
+## 8. Anti-patterns (reject in review)
+
+- Widget → `DioClient` / `http.get` / raw URL string
+- Fake `Future.delayed` instead of repository call
+- Mock/preview data paths still reachable in production navigation
+- Duplicated API path strings outside `ApiConstants`
+- Business branching on raw API strings in presentation layer
+- Success dialog / `AppSuccessScreen` shown before `BorrowProjectDetailSync.reloadBeforeSuccess` (or equivalent detail reload)
+- Second full project-detail `GET` on pop when reload already ran before success (`reloadDetail: false` on return)
+- New `setState` for submit/load/error flows
+- `Navigator.push` with string routes
+- Dead code after API integration (preview builders, TODO stubs)
+- Magic numbers/colors/strings in new code when a central constant exists or should exist
+
+---
+
+## 9. Adding a new API feature (checklist)
+
+1. `ApiConstants` path helpers  
+2. data: model, data source, repository impl  
+3. domain: entity, repository interface, use case(s)  
+4. presentation: Cubit + screen; register route + `BlocProvider`  
+5. DI: `inject_*.dart` + `service_locator.dart`  
+6. **Loading UX** — pick one pattern from §6 table (shimmer / `AppButton.isLoading` / `AppActionDialog.showAsync` / `AppLoadingOverlay` / control loader); never POST with only `enabled: false`  
+7. **Error UX** — `loadFailed` + `AppErrorView` for initial load; `AppToast` for action errors; `FailureMapper` in Cubit; `listenWhen` excludes `loadFailed`  
+8. **Post-action sync** — money flows reload project detail before success UI (§5); idempotency keys for money POST (§6)  
+9. `feature_overview.md` + `api_screen_sync_matrix.md` row(s)  
+10. Model test(s) + Cubit test(s) for non-trivial state (idempotency, cancel contract, vote counts)  
+11. `flutter analyze` + `flutter test` on touched code  
