@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_view_all_link.dart';
@@ -52,7 +51,12 @@ class BorrowRequestsTab extends StatelessWidget {
 
     final preview = requests.take(2).toList();
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        ProjectDetailViewAllLink(
+          label: AppStrings.viewAllRequests,
+          onTap: onViewAll,
+        ),
         ...preview.map(
           (r) => BorrowRequestCard(
             projectId: project.id,
@@ -66,14 +70,6 @@ class BorrowRequestsTab extends StatelessWidget {
             onReject: onReject != null ? () => onReject!(r) : null,
           ),
         ),
-        if (requests.isNotEmpty) ...[
-          SizedBox(height: 10.h),
-          ProjectDetailViewAllLink(
-            label: AppStrings.viewAllRequests,
-            onTap: onViewAll,
-          ),
-        ],
-        SizedBox(height: 20.h),
       ],
     );
   }
