@@ -5,6 +5,7 @@ import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
+import 'package:vestie/core/widgets/common/app_shimmer_lists.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
@@ -40,12 +41,12 @@ class BorrowRequestsScreen extends StatefulWidget {
 
 class _BorrowRequestsScreenState extends State<BorrowRequestsScreen> {
   late List<BorrowRequestEntity> _requests;
+  bool _loading = true;
 
   @override
   void initState() {
     super.initState();
     _requests = List<BorrowRequestEntity>.from(widget.requests);
-    // Route args are a snapshot; refresh so callerVote / counts match after tab votes.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _reloadRequests();
     });
@@ -59,9 +60,13 @@ class _BorrowRequestsScreenState extends State<BorrowRequestsScreen> {
     if (!mounted) return;
     result.fold(
       (_) {
-        // Load failure — keep current list; no toast (AppErrorView pattern).
+        // Load failure — keep route snapshot; no toast (AppErrorView pattern).
+        setState(() => _loading = false);
       },
-      (items) => setState(() => _requests = items),
+      (items) => setState(() {
+        _requests = items;
+        _loading = false;
+      }),
     );
   }
 
@@ -137,7 +142,11 @@ class _BorrowRequestsScreenState extends State<BorrowRequestsScreen> {
             ),
             SliverPadding(
               padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 32.h),
-              sliver: _requests.isEmpty
+              sliver: _loading
+                  ? const SliverToBoxAdapter(
+                      child: BorrowRequestListShimmer(),
+                    )
+                  : _requests.isEmpty
                   ? const SliverFillRemaining(
                       hasScrollBody: false,
                       child: BorrowRequestsEmptyState(centered: true),

@@ -208,6 +208,96 @@ class NotificationListShimmer extends StatelessWidget {
   }
 }
 
+/// Full borrow-requests list skeleton (`GET …/borrow-requests?status=Pending`).
+class BorrowRequestListShimmer extends StatelessWidget {
+  const BorrowRequestListShimmer({super.key, this.itemCount = 3});
+
+  final int itemCount;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppShimmer(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (var i = 0; i < itemCount; i++) ...[
+            if (i > 0) const SizedBox(height: 14),
+            const _BorrowRequestCardShimmer(),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _BorrowRequestCardShimmer extends StatelessWidget {
+  const _BorrowRequestCardShimmer();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.grey100,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              AppShimmer.box(width: 55, height: 55, borderRadius: 28),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppShimmer.box(width: 140, height: 18, borderRadius: 4),
+                    const SizedBox(height: 6),
+                    AppShimmer.box(width: 100, height: 14, borderRadius: 4),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          AppShimmer.box(width: 120, height: 14, borderRadius: 4),
+          const SizedBox(height: 6),
+          Row(
+            children: [
+              AppShimmer.box(width: 100, height: 28, borderRadius: 4),
+              const Spacer(),
+              AppShimmer.box(width: 36, height: 18, borderRadius: 4),
+              const SizedBox(width: 12),
+              AppShimmer.box(width: 36, height: 18, borderRadius: 4),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: AppShimmer.box(
+                  width: double.infinity,
+                  height: 44,
+                  borderRadius: 22,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: AppShimmer.box(
+                  width: double.infinity,
+                  height: 44,
+                  borderRadius: 22,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 /// Payment methods card list skeleton.
 /// My Borrow / My Borrow Request — amount + breakdown card (Week 8).
 class MyBorrowRequestShimmer extends StatelessWidget {

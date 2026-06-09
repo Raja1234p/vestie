@@ -14,6 +14,7 @@ import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
 import 'package:vestie/features/project_detail/presentation/cubit/borrow_vote_cubit.dart';
 import 'package:vestie/features/project_detail/presentation/cubit/borrow_vote_state.dart';
+import 'borrow_request_decision_dialogs.dart';
 
 enum BorrowRequestActionMode { vote, decision }
 
@@ -225,23 +226,38 @@ class _BorrowRequestCardBody extends StatelessWidget {
                   hasDownvoted: state.hasDownvoted,
                   upvotes: state.upvotes,
                   downvotes: state.downvotes,
-                  isLoading: state.isVoting,
                   onUpvote: () async {
-                    final error = await cubit.voteAgree();
-                    if (!context.mounted) return;
-                    if (error != null) {
-                      AppToast.showError(context, error);
-                      return;
-                    }
+                    final voted = await showUpvoteBorrowRequestFlow(
+                      context,
+                      request,
+                      onConfirmed: () async {
+                        final error = await cubit.voteAgree();
+                        if (!context.mounted) return false;
+                        if (error != null) {
+                          AppToast.showError(context, error);
+                          return false;
+                        }
+                        return true;
+                      },
+                    );
+                    if (!voted || !context.mounted) return;
                     onVoteSuccess?.call();
                   },
                   onDownvote: () async {
-                    final error = await cubit.voteDisagree();
-                    if (!context.mounted) return;
-                    if (error != null) {
-                      AppToast.showError(context, error);
-                      return;
-                    }
+                    final voted = await showDownvoteBorrowRequestFlow(
+                      context,
+                      request,
+                      onConfirmed: () async {
+                        final error = await cubit.voteDisagree();
+                        if (!context.mounted) return false;
+                        if (error != null) {
+                          AppToast.showError(context, error);
+                          return false;
+                        }
+                        return true;
+                      },
+                    );
+                    if (!voted || !context.mounted) return;
                     onVoteSuccess?.call();
                   },
                 );

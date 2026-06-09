@@ -1192,6 +1192,8 @@ class AppStrings {
   static const String rejectBorrowRequestTitle = 'Reject Borrow Request';
   static const String borrowApprovedTitle = 'Approve Borrow Request?';
   static const String borrowRejectedTitle = 'Borrow Request Rejected';
+  static const String upvoteBorrowRequestTitle = 'Upvote Borrow Request?';
+  static const String downvoteBorrowRequestTitle = 'Downvote Borrow Request?';
   static const String approveLabel = 'Approve';
   static const String rejectShortLabel = 'Reject';
 
@@ -1434,4 +1436,9 @@ class AppStrings {
       'You’re approving borrow request from ';
 
   static String borrowRejectPrefix() => 'You’re rejecting borrow request from ';
+
+  static String borrowUpvotePrefix() => 'You’re upvoting borrow request from ';
+
+  static String borrowDownvotePrefix() =>
+      'You’re downvoting borrow request from ';
 }

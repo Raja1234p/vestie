@@ -40,6 +40,37 @@ Widget _borrowDescription(
   );
 }
 
+Widget _borrowVoteDescription(
+  BuildContext context, {
+  required bool isUpvote,
+  required BorrowRequestEntity request,
+}) {
+  final base = Theme.of(context).textTheme.bodyLarge?.copyWith(
+    fontSize: 16.sp,
+    color: AppColors.grey900,
+    height: 1.5,
+  );
+  final highlighted = base?.copyWith(
+    fontWeight: FontWeight.w700,
+    decoration: TextDecoration.underline,
+  );
+  final prefix = isUpvote
+      ? AppStrings.borrowUpvotePrefix()
+      : AppStrings.borrowDownvotePrefix();
+  final highlightedText =
+      '${request.memberName} of \$${_fmtAmount(request.requestedAmount)}';
+  return RichText(
+    textAlign: TextAlign.center,
+    text: TextSpan(
+      style: base,
+      children: [
+        TextSpan(text: prefix),
+        TextSpan(text: highlightedText, style: highlighted),
+      ],
+    ),
+  );
+}
+
 Future<void> showApproveBorrowRequestFlow(
   BuildContext context,
   BorrowRequestEntity request, [
@@ -114,5 +145,47 @@ Future<void> showRejectBorrowRequestFlow(
     primaryBorderColor: AppColors.neutral1200,
     iconAsset: AppAssets.statusFailure,
     onPrimary: () => Navigator.of(context).pop(),
+  );
+}
+
+/// Member vote — same confirm dialog pattern as approve/reject; card shows voted banner after.
+Future<bool> showUpvoteBorrowRequestFlow(
+  BuildContext context,
+  BorrowRequestEntity request, {
+  required Future<bool> Function() onConfirmed,
+}) async {
+  return AppActionDialog.showAsync(
+    context,
+    title: AppStrings.upvoteBorrowRequestTitle,
+    description: '',
+    descriptionWidget: _borrowVoteDescription(
+      context,
+      isUpvote: true,
+      request: request,
+    ),
+    primaryLabel: AppStrings.upvoteLabel,
+    primaryColor: AppColors.green800,
+    onPrimary: onConfirmed,
+  );
+}
+
+/// Member vote — same confirm dialog pattern as approve/reject; card shows voted banner after.
+Future<bool> showDownvoteBorrowRequestFlow(
+  BuildContext context,
+  BorrowRequestEntity request, {
+  required Future<bool> Function() onConfirmed,
+}) async {
+  return AppActionDialog.showAsync(
+    context,
+    title: AppStrings.downvoteBorrowRequestTitle,
+    description: '',
+    descriptionWidget: _borrowVoteDescription(
+      context,
+      isUpvote: false,
+      request: request,
+    ),
+    primaryLabel: AppStrings.downvoteLabel,
+    primaryColor: AppColors.red800,
+    onPrimary: onConfirmed,
   );
 }

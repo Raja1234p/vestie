@@ -15,6 +15,7 @@ Week 8 Azure API (`ApiConstants.projectBorrowRequests*`).
 | Action | Pattern |
 |--------|---------|
 | My Borrow initial load | `MyBorrowRequestShimmer` |
+| Borrow requests full list initial load | `BorrowRequestListShimmer` |
 | Repay payment-options load | `PaymentCardListShimmer` |
 | Borrow amount → terms / confirm submit | `AppButton.isLoading` (`BorrowCubit.loading`) |
 | Repay confirm submit | `AppButton.isLoading` (`BorrowRepayConfirmCubit.submitting`) |
