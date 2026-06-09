@@ -42,7 +42,7 @@ class ProjectActionButton extends StatelessWidget {
       return GoogleFonts.lato(
         fontSize: 13.sp,
         fontWeight: FontWeight.w500,
-        color: AppColors.textPrimary,
+        color: const Color(0xFF000000),
       );
     }
     if (discoverCtaStyle &&
@@ -71,11 +71,11 @@ class ProjectActionButton extends StatelessWidget {
       color: isCompletedViewStyle
           ? Colors.transparent
           : AppColors.cardActionBtn,
-      borderRadius: radius,
+      borderRadius: isCompletedViewStyle ? null : radius,
       shape: isCompletedViewStyle
           ? RoundedRectangleBorder(
               borderRadius: radius,
-              side: const BorderSide(color: Colors.black, width: 1),
+              side: const BorderSide(color: Color(0xFF000000), width: 1),
             )
           : null,
       child: InkWell(
@@ -89,9 +89,11 @@ class ProjectActionButton extends StatelessWidget {
                 ? SizedBox(
                     width: 22.w,
                     height: 22.h,
-                    child: const CircularProgressIndicator(
+                    child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: AppColors.surface,
+                      color: isCompletedViewStyle
+                          ? const Color(0xFF000000)
+                          : AppColors.surface,
                     ),
                   )
                 : Text(_label, style: _textStyle),

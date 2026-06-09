@@ -64,7 +64,7 @@ class _CompletedProjectsBody extends StatelessWidget {
   Widget _buildBody(BuildContext context, CompletedProjectsState state) {
     if (state.loading) {
       return ListView.builder(
-        padding: FlowScreenFooterInsets.listPadding(context),
+        padding: FlowScreenFooterInsets.listPadding(context, horizontal: 16.w),
         itemCount: 3,
         itemBuilder: (_, __) => const ProjectCardShimmer(),
       );
@@ -76,7 +76,7 @@ class _CompletedProjectsBody extends StatelessWidget {
       return const _EmptyView();
     }
     return ListView.builder(
-      padding: FlowScreenFooterInsets.listPadding(context),
+      padding: FlowScreenFooterInsets.listPadding(context, horizontal: 16.w),
       itemCount: state.projects.length,
       itemBuilder: (_, i) {
         final project = state.projects[i];
