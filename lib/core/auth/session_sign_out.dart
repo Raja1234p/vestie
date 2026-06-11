@@ -1,3 +1,4 @@
+import '../../features/profile/data/profile_prefs.dart';
 import '../constants/storage_keys.dart';
 import '../di/service_locator.dart';
 import 'app_auth_session.dart';
@@ -10,6 +11,7 @@ final class SessionSignOut {
     final sl = ServiceLocator.instance;
     await sl.secureStorage.remove(StorageKeys.accessToken);
     await sl.secureStorage.remove(StorageKeys.refreshToken);
+    await ProfilePrefs.clear();
     await sl.sharedPrefs.saveBool(StorageKeys.isLoggedIn, false);
     AppAuthSession.instance.markLoggedOut();
   }

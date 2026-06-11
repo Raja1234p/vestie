@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vestie/core/constants/app_strings.dart';
-import 'package:vestie/core/constants/storage_keys.dart';
 import 'package:vestie/core/di/service_locator.dart';
+import 'package:vestie/features/profile/data/profile_prefs.dart';
 import 'package:vestie/core/error/failures.dart';
 import 'package:vestie/features/auth/domain/entities/user.dart';
 import 'package:vestie/features/auth/domain/usecases/get_me_use_case.dart';
@@ -90,22 +90,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     if (!DashboardPrefetch.userMeLoadedOnDashboard) {
       final meResult = await _getMeUseCase();
-      meResult.fold((_) {}, (User user) {
-        final userName = user.userName.isNotEmpty
-            ? user.userName
-            : (user.email.contains('@') ? user.email.split('@').first : '');
-        ServiceLocator.instance.sharedPrefs.saveString(
-          StorageKeys.userName,
-          user.name,
-        );
-        ServiceLocator.instance.sharedPrefs.saveString(
-          StorageKeys.userEmail,
-          user.email,
-        );
-        ServiceLocator.instance.sharedPrefs.saveString(
-          StorageKeys.userUsername,
-          userName,
-        );
+      await meResult.fold<Future<void>>((_) async {}, (User user) async {
+        await ProfilePrefs.persist(ProfilePrefs.fromUser(user));
         DashboardPrefetch.markUserMeLoaded();
       });
     }

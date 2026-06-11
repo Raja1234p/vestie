@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/constants/app_strings.dart';
@@ -194,9 +196,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<MessageResponseModel> logout({required String refreshToken}) async {
     try {
+      // API contract: body is a JSON string (not `{ "refreshToken": "..." }`).
       final response = await _client.post(
         ApiConstants.logout,
-        data: {'refreshToken': refreshToken},
+        data: jsonEncode(refreshToken),
       );
       return MessageResponseModel.fromJson(response.data);
     } on DioException catch (e) {

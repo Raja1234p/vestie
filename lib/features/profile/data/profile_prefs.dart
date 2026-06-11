@@ -35,6 +35,15 @@ abstract final class ProfilePrefs {
     }
   }
 
+  /// Clears cached profile fields (call on logout / forced sign-out).
+  static Future<void> clear() async {
+    final prefs = ServiceLocator.instance.sharedPrefs;
+    await prefs.remove(StorageKeys.userName);
+    await prefs.remove(StorageKeys.userEmail);
+    await prefs.remove(StorageKeys.userUsername);
+    await prefs.remove(StorageKeys.userPhotoUrl);
+  }
+
   static UserProfile fromUser(User user) {
     final userName = user.userName.isNotEmpty
         ? user.userName

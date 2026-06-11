@@ -91,25 +91,12 @@ class ProfileCubit extends Cubit<ProfileState> {
   final DeleteMeProfilePictureUseCase _deleteMeProfilePictureUseCase;
   final GetMeUseCase _getMeUseCase;
 
-  bool _tabBootstrapped = false;
-
   Future<void> ensureTabVisible() async {
-    if (_tabBootstrapped) return;
-    _tabBootstrapped = true;
-    if (DashboardPrefetch.userMeLoadedOnDashboard) {
-      await _hydrateFromPrefs();
-      return;
-    }
     await loadProfile();
   }
 
-  Future<void> _hydrateFromPrefs() async {
-    final profile = await ProfilePrefs.load();
-    emit(state.copyWith(isLoading: false, profile: profile));
-  }
-
   Future<void> refreshProfile() async {
-    await _hydrateFromPrefs();
+    await loadProfile();
   }
 
   Future<void> loadProfile() async {
@@ -243,6 +230,7 @@ class ProfileCubit extends Cubit<ProfileState> {
     BankAccountsCache.clear();
     await ServiceLocator.instance.authRepository
         .clearRiskDisclaimerLocalCache();
+    await ProfilePrefs.clear();
     await ServiceLocator.instance.secureStorage.remove(StorageKeys.accessToken);
     await ServiceLocator.instance.secureStorage.remove(
       StorageKeys.refreshToken,
