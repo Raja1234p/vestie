@@ -35,13 +35,18 @@ class AppDimens {
   static double get v10 => 10.0.h;
   static double get v12 => 12.0.h;
   static double get v14 => 14.0.h;
+  static double get v15 => 15.0.h;
   static double get v16 => 16.0.h;
   static double get v18 => 18.0.h;
   static double get v20 => 20.0.h;
   static double get v22 => 22.0.h;
   static double get v24 => 24.0.h;
   static double get v28 => 28.0.h;
+  static double get v32 => 32.0.h;
   static double get v34 => 34.0.h;
+
+  /// Bottom gap for project detail scroll bodies (above system nav / home indicator).
+  static double get projectDetailScrollBottomGap => v4;
   static double get v48 => 48.0.h;
 
   /// Shared [DottedBorder] dash lengths (project card description, agreement, etc.).

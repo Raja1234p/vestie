@@ -15,6 +15,7 @@ import 'package:vestie/features/project_detail/presentation/widgets/project_anno
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_success_vote_dev_previews.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_tab_section.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_trailing_actions.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_detail_scroll_insets.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_wallet_actions.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_info_card.dart';
 
@@ -113,9 +114,12 @@ class _ProjectDetailModeratorScrollContentState
               : null,
         ),
         Expanded(
-          child: ColoredBox(
-            color: Colors.white,
-            child: RefreshIndicator(
+          child: SafeArea(
+            top: false,
+            bottom: ProjectDetailScrollInsets.applyBottomSafeAreaToViewport,
+            child: ColoredBox(
+              color: Colors.white,
+              child: RefreshIndicator(
               color: AppColors.primary,
               onRefresh: widget.onRefresh,
               child: CustomScrollView(
@@ -153,13 +157,18 @@ class _ProjectDetailModeratorScrollContentState
                             project: project,
                             onMemberTap: widget.onMemberTap,
                           ),
-                          SizedBox(height: 32.h),
+                          SizedBox(
+                            height: ProjectDetailScrollInsets.scrollBottomGap(
+                              context,
+                            ),
+                          ),
                         ],
                       ),
                     ),
                   ),
                 ],
               ),
+            ),
             ),
           ),
         ),

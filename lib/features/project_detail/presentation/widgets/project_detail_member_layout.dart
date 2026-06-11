@@ -12,6 +12,7 @@ import 'package:vestie/user/features/project_detail/presentation/models/member_s
 import 'package:vestie/user/features/project_detail/presentation/widgets/member_success_vote_content.dart';
 
 import 'project_detail_member_scroll_content.dart';
+import 'project_detail_scroll_insets.dart';
 import 'project_detail_success_vote_dev_previews.dart';
 import 'project_detail_trailing_actions.dart';
 
@@ -104,9 +105,12 @@ class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
       children: [
         _header(context),
         Expanded(
-          child: ColoredBox(
-            color: Colors.white,
-            child: RefreshIndicator(
+          child: SafeArea(
+            top: false,
+            bottom: ProjectDetailScrollInsets.applyBottomSafeAreaToViewport,
+            child: ColoredBox(
+              color: Colors.white,
+              child: RefreshIndicator(
               color: AppColors.primary,
               onRefresh: widget.onRefresh,
               child: CustomScrollView(
@@ -134,6 +138,7 @@ class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
                   ),
                 ],
               ),
+            ),
             ),
           ),
         ),

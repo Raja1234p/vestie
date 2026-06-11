@@ -91,25 +91,65 @@ class ProfileCubit extends Cubit<ProfileState> {
   final DeleteMeProfilePictureUseCase _deleteMeProfilePictureUseCase;
   final GetMeUseCase _getMeUseCase;
 
+  static const _profileSyncTtl = Duration(minutes: 3);
+
+  Future<void>? _loadInFlight;
+  DateTime? _lastSuccessfulSync;
+  bool _hasLoadedOnce = false;
+
+  /// First open loads from cache then API; re-opens skip network if synced recently.
   Future<void> ensureTabVisible() async {
-    await loadProfile();
+    await loadProfile(
+      silent: _hasLoadedOnce,
+      skipNetworkIfFresh: _hasLoadedOnce,
+    );
   }
 
+  /// After edit profile — always sync, without loading shimmer when cache exists.
   Future<void> refreshProfile() async {
-    await loadProfile();
+    await loadProfile(silent: true, skipNetworkIfFresh: false);
   }
 
-  Future<void> loadProfile() async {
-    final cached = await ProfilePrefs.load();
-    if (cached.fullName.isNotEmpty || cached.email.isNotEmpty) {
-      emit(state.copyWith(profile: cached));
+  Future<void> loadProfile({
+    bool silent = false,
+    bool skipNetworkIfFresh = false,
+  }) async {
+    if (_loadInFlight != null) {
+      await _loadInFlight;
+      return;
     }
 
-    emit(state.copyWith(isLoading: true));
+    _loadInFlight = _loadProfileImpl(
+      silent: silent,
+      skipNetworkIfFresh: skipNetworkIfFresh,
+    );
+    try {
+      await _loadInFlight;
+    } finally {
+      _loadInFlight = null;
+    }
+  }
+
+  Future<void> _loadProfileImpl({
+    required bool silent,
+    required bool skipNetworkIfFresh,
+  }) async {
+    final cached = await ProfilePrefs.load();
+    final hasCache = cached.fullName.isNotEmpty || cached.email.isNotEmpty;
+    if (hasCache) {
+      emit(state.copyWith(profile: cached, error: null));
+    }
+
+    if (skipNetworkIfFresh && _isProfileSyncFresh) return;
+
+    if (!silent && !hasCache) {
+      emit(state.copyWith(isLoading: true, error: null));
+    }
+
     final result = await _getMeUseCase();
 
-    result.fold(
-      (failure) {
+    await result.fold(
+      (failure) async {
         emit(
           state.copyWith(
             isLoading: false,
@@ -120,9 +160,17 @@ class ProfileCubit extends Cubit<ProfileState> {
       (user) async {
         final profile = ProfilePrefs.fromUser(user);
         await ProfilePrefs.persist(profile);
-        emit(state.copyWith(isLoading: false, profile: profile));
+        _lastSuccessfulSync = DateTime.now();
+        _hasLoadedOnce = true;
+        emit(state.copyWith(isLoading: false, profile: profile, error: null));
       },
     );
+  }
+
+  bool get _isProfileSyncFresh {
+    final last = _lastSuccessfulSync;
+    if (last == null) return false;
+    return DateTime.now().difference(last) < _profileSyncTtl;
   }
 
   /// Uploads a new profile photo. Returns `null` on success, else user-facing error.
@@ -187,6 +235,8 @@ class ProfileCubit extends Cubit<ProfileState> {
   Future<void> _applySyncedUser(User user) async {
     final profile = ProfilePrefs.fromUser(user);
     await ProfilePrefs.persist(profile);
+    _lastSuccessfulSync = DateTime.now();
+    _hasLoadedOnce = true;
     emit(state.copyWith(profile: profile));
   }
 

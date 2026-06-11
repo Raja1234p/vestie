@@ -7,6 +7,7 @@ import 'package:vestie/features/project_detail/presentation/widgets/project_anno
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_wallet_actions.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_info_card.dart';
 
+import 'project_detail_scroll_insets.dart';
 import 'project_detail_tab_section.dart';
 
 /// Default member project detail body (announcement, wallet, tabs).
@@ -32,7 +33,7 @@ class ProjectDetailMemberScrollContent extends StatelessWidget {
         ProjectDetailWalletActions(project: project),
         SizedBox(height: 20.h),
         ProjectDetailTabSection(project: project, onMemberTap: onMemberTap),
-        SizedBox(height: 32.h),
+        SizedBox(height: ProjectDetailScrollInsets.scrollBottomGap(context)),
       ],
     );
   }

@@ -106,11 +106,9 @@ class _AppInviteMembersBottomSheetState
       builder: (context, sheetState) {
         final vffs = sheetState.vffs;
         final media = MediaQuery.of(context);
+        final viewPadding = media.viewPadding;
         final maxBodyHeight =
-            (media.size.height -
-                media.viewPadding.top -
-                media.viewPadding.bottom) *
-            0.88;
+            (media.size.height - viewPadding.top - viewPadding.bottom) * 0.88;
         final selectionCount = _selectedIds.length;
         final hasSelection = selectionCount > 0;
         final dividerGutter = AppDimens.inviteMembersDividerGutter;
@@ -225,7 +223,11 @@ class _AppInviteMembersBottomSheetState
                   },
                 ),
               ),
-              SizedBox(height: AppDimens.inviteMembersSheetBottom),
+              SizedBox(
+                height:
+                    AppDimens.inviteMembersSheetBottom +
+                    MediaQuery.viewInsetsOf(context).bottom,
+              ),
             ],
           ),
         );

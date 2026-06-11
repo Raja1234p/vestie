@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_view_all_link.dart';
 import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
@@ -76,6 +77,7 @@ class BorrowRequestsTab extends StatelessWidget {
             onVoteSuccess: onVoteSuccess,
           ),
         ),
+        SizedBox(height: AppDimens.v15),
       ],
     );
   }

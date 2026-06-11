@@ -24,16 +24,22 @@ class AppInviteMembersDialog {
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      useSafeArea: true,
+      useSafeArea: false,
       backgroundColor: Colors.transparent,
       builder: (sheetContext) {
+        final viewPadding = MediaQuery.viewPaddingOf(sheetContext);
         return BlocProvider(
           create: (_) => InviteMembersSheetCubit(
             listMyVffsUseCase: sl.listMyVffsUseCase,
             inviteVffsToProjectUseCase: sl.inviteVffsToProjectUseCase,
           )..load(excludeUserIds: excludeUserIds),
           child: Padding(
-            padding: EdgeInsets.fromLTRB(12.w, 0, 12.w, 0),
+            padding: EdgeInsets.fromLTRB(
+              12.w,
+              0,
+              12.w,
+              viewPadding.bottom,
+            ),
             child: DecoratedBox(
               decoration: BoxDecoration(
                 color: AppColors.surface,
