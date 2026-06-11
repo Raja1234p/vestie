@@ -37,15 +37,6 @@ class ProjectWalletFlowArgs {
   String get walletAmountFormatted =>
       AppFormatters.formatMoneyAmount(walletBalance);
 
-  bool get hasContributionGoal => goalAmount > 0;
-
-  double get remainingToGoal => hasContributionGoal
-      ? (goalAmount - currentAmount).clamp(0.0, double.infinity)
-      : double.infinity;
-
-  String get remainingToGoalFormatted =>
-      AppFormatters.formatMoneyAmount(remainingToGoal);
-
   ProjectWalletFlowArgs copyWithWalletBalance(double balance) {
     return ProjectWalletFlowArgs(
       projectId: projectId,

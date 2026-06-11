@@ -104,8 +104,6 @@ class _ContributeAmountViewState extends State<_ContributeAmountView> {
       builder: (context, state) {
         final bloc = context.read<ContributeBloc>();
         _syncAmountFieldFromState(state.amountDigits);
-        final over = state.amountExceedsProjectRemaining;
-        final goalReached = state.isProjectGoalReached;
         return Scaffold(
           resizeToAvoidBottomInset: true,
           backgroundColor: Colors.transparent,
@@ -145,48 +143,6 @@ class _ContributeAmountViewState extends State<_ContributeAmountView> {
                                       bloc.add(DigitsChangedEvent(digits: raw)),
                                 ),
                               ),
-                              if (state.hasContributionGoal) ...[
-                                SizedBox(height: 12.h),
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 12.w,
-                                    vertical: 8.h,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.searchBarBg,
-                                    borderRadius: BorderRadius.circular(999.r),
-                                  ),
-                                  child: AppText(
-                                    goalReached
-                                        ? AppStrings.contributeProjectGoalReached
-                                        : AppStrings.contributeOnlyAmountHint(
-                                            state.remainingToGoalFormatted,
-                                          ),
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.lato(
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w400,
-                                      color: goalReached
-                                          ? AppColors.error
-                                          : AppColors.neutral1200,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                              if (over) ...[
-                                SizedBox(height: 8.h),
-                                AppText(
-                                  AppStrings.contributeOnlyAmountExceeded(
-                                    state.remainingToGoalFormatted,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.lato(
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.error,
-                                  ),
-                                ),
-                              ],
                               SizedBox(height: 12.h),
                               _ContributePaymentPill(
                                 state: state,

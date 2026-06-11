@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import '../../auth/session_sign_out.dart';
 import '../../constants/api_constants.dart';
 import '../../constants/storage_keys.dart';
+import '../../device/device_info_service.dart';
 import '../../network/api_response_body.dart';
 import '../../storage/secure_storage_impl.dart';
 import '../../utils/logger.dart';
@@ -22,10 +23,15 @@ const _kAuthRetryExtraKey = 'auth_retry';
 class AuthInterceptor extends QueuedInterceptor {
   final Dio _dio;
   final SecureStorageImpl _secureStorage;
+  final DeviceInfoService _deviceInfoService;
 
-  AuthInterceptor({required Dio dio, required SecureStorageImpl secureStorage})
-    : _dio = dio,
-      _secureStorage = secureStorage;
+  AuthInterceptor({
+    required Dio dio,
+    required SecureStorageImpl secureStorage,
+    required DeviceInfoService deviceInfoService,
+  }) : _dio = dio,
+       _secureStorage = secureStorage,
+       _deviceInfoService = deviceInfoService;
 
   @override
   Future<void> onRequest(
@@ -183,11 +189,13 @@ class AuthInterceptor extends QueuedInterceptor {
           };
     }
 
+    final device = await _deviceInfoService.getIdentity();
     final refreshResponse = await refreshDio.post(
       ApiConstants.refreshToken,
       data: {
         'refreshToken': refreshToken,
-        'deviceName': ApiConstants.defaultDeviceName,
+        'deviceId': device.id,
+        'deviceName': device.name,
         'ipAddress': ApiConstants.defaultIpAddress,
       },
     );

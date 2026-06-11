@@ -11,6 +11,8 @@ abstract class NotificationsRemoteDataSource {
   Future<void> registerDeviceToken({
     required String token,
     required String platform,
+    required String deviceId,
+    required String deviceName,
   });
 
   Future<void> unregisterDeviceToken({required String token});
@@ -43,10 +45,17 @@ class NotificationsRemoteDataSourceImpl
   Future<void> registerDeviceToken({
     required String token,
     required String platform,
+    required String deviceId,
+    required String deviceName,
   }) async {
     await apiClient.post(
       ApiConstants.notificationsDeviceToken,
-      data: {'token': token, 'platform': platform},
+      data: {
+        'token': token,
+        'platform': platform,
+        'deviceId': deviceId,
+        'deviceName': deviceName,
+      },
     );
   }
 

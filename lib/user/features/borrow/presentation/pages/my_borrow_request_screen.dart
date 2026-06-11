@@ -11,7 +11,8 @@ import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_error_view.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
-import 'package:vestie/core/widgets/common/app_shimmer_lists.dart';
+import '../models/my_borrow_content_kind.dart';
+import '../widgets/my_borrow_screen_shimmer.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/post_auth_flow_sub_header.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
@@ -40,8 +41,9 @@ class MyBorrowRequestScreen extends StatelessWidget {
         AppToast.showError(context, state.errorMessage!);
       },
       builder: (context, state) {
-        final showsApproved = state.hasRepayableBorrow;
-        final showsPending = !showsApproved && state.hasPending;
+        final contentKind = resolveMyBorrowContentKind(state);
+        final showsApproved = contentKind == MyBorrowContentKind.approved;
+        final showsPending = contentKind == MyBorrowContentKind.pending;
         final headerTitle = showsApproved
             ? AppStrings.myBorrowTitle
             : AppStrings.myBorrowRequestTitle;
@@ -55,7 +57,7 @@ class MyBorrowRequestScreen extends StatelessWidget {
                 PostAuthFlowSubHeader(title: headerTitle),
                 Expanded(
                   child: state.loading
-                      ? const MyBorrowRequestShimmer()
+                      ? MyBorrowScreenShimmer(kind: contentKind)
                       : state.loadFailed
                       ? AppErrorView(
                           message: state.errorMessage,
@@ -69,7 +71,7 @@ class MyBorrowRequestScreen extends StatelessWidget {
                           showsPending,
                         ),
                 ),
-                if (!state.loadFailed)
+                if (!state.loadFailed && !state.loading)
                   FlowScreenFooter(
                     child: _buildPrimaryButton(
                       context,

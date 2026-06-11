@@ -1,11 +1,23 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/foundation.dart';
+import 'package:vestie/core/device/device_identity.dart';
+import 'package:vestie/core/device/device_info_service.dart';
 import 'package:vestie/core/network/dio_client.dart';
 import 'package:vestie/features/auth/data/datasources/auth_remote_data_source_impl.dart';
 import 'package:vestie/core/storage/secure_storage_impl.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockSecureStorage extends Mock implements SecureStorageImpl {}
+
+class _TestDeviceInfoService implements DeviceInfoService {
+  @override
+  Future<DeviceIdentity> getIdentity() async {
+    return const DeviceIdentity(
+      id: 'integration-test-device-id',
+      name: 'IntegrationTestRunner',
+    );
+  }
+}
 
 void main() {
   // This is an integration test that hits the real local API.
@@ -18,7 +30,10 @@ void main() {
     when(() => mockStorage.getString(any())).thenAnswer((_) async => null);
     when(() => mockStorage.saveString(any(), any())).thenAnswer((_) async {});
 
-    final client = DioClient(secureStorage: mockStorage);
+    final client = DioClient(
+      secureStorage: mockStorage,
+      deviceInfoService: _TestDeviceInfoService(),
+    );
     final dataSource = AuthRemoteDataSourceImpl(client);
 
     final testEmail =
@@ -44,6 +59,7 @@ void main() {
         final tokens = await dataSource.login(
           email: testEmail,
           password: testPass,
+          deviceId: 'integration-test-device-id',
           deviceName: 'IntegrationTestRunner',
           ipAddress: '127.0.0.1',
         );

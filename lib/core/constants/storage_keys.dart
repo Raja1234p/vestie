@@ -25,6 +25,9 @@ class StorageKeys {
   /// Last FCM token successfully registered with the API.
   static const String fcmDeviceToken = 'fcm_device_token';
 
+  /// Fallback install id when the OS does not expose a stable device id.
+  static const String deviceInstallId = 'device_install_id';
+
   /// User dismissed the dashboard notification permission prompt.
   static const String notificationPermissionPromptDismissed =
       'notification_permission_prompt_dismissed';

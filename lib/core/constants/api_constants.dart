@@ -246,6 +246,5 @@ class ApiConstants {
 
   // ── Static values ────────────────────────────────────────────────────────
   static const String disclaimerVersion = '1.0';
-  static const String defaultDeviceName = 'Flutter';
   static const String defaultIpAddress = '0.0.0.0';
 }

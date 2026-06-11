@@ -131,10 +131,7 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
     final args = state.args;
     if (args == null || state.amountValue <= 0) return;
 
-    final validation = ContributionFeePolicy.validateAmount(
-      state.amountValue,
-      maxContributionToGoal: state.maxContributionToGoal,
-    );
+    final validation = ContributionFeePolicy.validateAmount(state.amountValue);
     if (validation != null) {
       emit(state.copyWith(previewFailure: ValidationFailure(validation)));
       return;
@@ -237,10 +234,7 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
 
     if (!state.canConfirmSubmit) return;
 
-    final capValidation = ContributionFeePolicy.validateAmount(
-      state.amountValue,
-      maxContributionToGoal: state.maxContributionToGoal,
-    );
+    final capValidation = ContributionFeePolicy.validateAmount(state.amountValue);
     if (capValidation != null) {
       emit(state.copyWith(submitFailure: ValidationFailure(capValidation)));
       return;

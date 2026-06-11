@@ -9,6 +9,7 @@ import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/widgets/common/app_avatar_circle.dart';
+import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import 'package:vestie/core/widgets/common/app_vote_buttons.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
@@ -127,12 +128,14 @@ class _BorrowRequestCardBody extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 2.h),
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     AppAvatarCircle(initials: request.initials, size: 55.h),
                     SizedBox(width: 12.w),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           AppText(
                             request.memberName,
@@ -153,6 +156,12 @@ class _BorrowRequestCardBody extends StatelessWidget {
                         ],
                       ),
                     ),
+                    if (onOpenMemberDetail != null)
+                      AppSvgIcon(
+                        assetPath: AppAssets.iconChevronRight,
+                        size: 24.w,
+                        color: AppColors.primary,
+                      ),
                   ],
                 ),
               ),
@@ -315,7 +324,8 @@ class _DecisionButtons extends StatelessWidget {
             child: OutlinedButton(
               onPressed: onReject ?? () {},
               style: OutlinedButton.styleFrom(
-                side: BorderSide(color: AppColors.red600, width: 1),
+                backgroundColor: AppColors.red100,
+                side: const BorderSide(color: AppColors.red900, width: 1),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(100.r),
                 ),

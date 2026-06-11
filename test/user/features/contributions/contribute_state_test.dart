@@ -30,38 +30,32 @@ void main() {
     brand: CardBrand.visa,
   );
 
-  group('ContributeState project goal cap', () {
-    test('canProceedFromAmount false when amount exceeds remaining goal', () {
+  group('ContributeState amount step', () {
+    test('canProceedFromAmount false when amount is zero', () {
+      const state = ContributeState(args: args, amountDigits: '');
+
+      expect(state.canProceedFromAmount, isFalse);
+    });
+
+    test('canProceedFromAmount true for any positive amount regardless of goal', () {
       const state = ContributeState(
         args: args,
         amountDigits: '100000',
       );
 
-      expect(state.remainingToGoal, 200);
-      expect(state.amountExceedsProjectRemaining, isTrue);
-      expect(state.canProceedFromAmount, isFalse);
-    });
-
-    test('canProceedFromAmount true within remaining goal', () {
-      const state = ContributeState(
-        args: args,
-        amountDigits: '15000',
-      );
-
       expect(state.canProceedFromAmount, isTrue);
     });
 
-    test('isProjectGoalReached when pot meets goal', () {
+    test('canProceedFromAmount true when pot already meets goal', () {
       const fullArgs = ProjectWalletFlowArgs(
         projectId: 'p1',
         projectName: 'Trip',
         goalAmount: 5000,
         currentAmount: 5000,
       );
-      const state = ContributeState(args: fullArgs, amountDigits: '1000');
+      const state = ContributeState(args: fullArgs, amountDigits: '100000');
 
-      expect(state.isProjectGoalReached, isTrue);
-      expect(state.canProceedFromAmount, isFalse);
+      expect(state.canProceedFromAmount, isTrue);
     });
   });
 

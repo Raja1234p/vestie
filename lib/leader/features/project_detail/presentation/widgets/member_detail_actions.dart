@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/navigation/success_dialog_navigation.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_action_dialog.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
@@ -63,7 +64,7 @@ Future<bool> showRemoveMemberFlow(
   if (!context.mounted || !ok) return false;
   await showMemberRemovedSuccess(
     context,
-    onOk: () => Navigator.of(context).pop(),
+    onOk: popDialogAction(context),
   );
   return true;
 }
@@ -84,7 +85,7 @@ Future<bool> showMarkDefaultedFlow(
   if (!context.mounted || !ok) return false;
   await showMemberMarkedDefaultedSuccess(
     context,
-    onOk: () => Navigator.of(context).pop(),
+    onOk: popDialogAction(context),
   );
   return true;
 }
@@ -110,7 +111,7 @@ Future<bool> showMakeCoLeaderFlow(
     context,
     memberName: memberName,
     projectName: projectName,
-    onOk: () => Navigator.of(context).pop(),
+    onOk: popDialogAction(context),
   );
   return true;
 }
@@ -136,7 +137,7 @@ Future<bool> showRemoveCoLeaderFlow(
     context,
     memberName: memberName,
     projectName: projectName,
-    onOk: () => Navigator.of(context).pop(),
+    onOk: popDialogAction(context),
   );
   return true;
 }

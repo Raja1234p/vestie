@@ -11,13 +11,11 @@ class LoginUseCase {
   Future<Either<Failure, User>> call({
     required String email,
     required String password,
-    required String deviceName,
     required String ipAddress,
   }) {
     return _repository.login(
       email: email,
       password: password,
-      deviceName: deviceName,
       ipAddress: ipAddress,
     );
   }

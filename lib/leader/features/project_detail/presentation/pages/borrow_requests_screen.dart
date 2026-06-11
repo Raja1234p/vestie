@@ -127,75 +127,71 @@ class _BorrowRequestsScreenState extends State<BorrowRequestsScreen> {
     });
   }
 
+  Widget _buildRequestCard(BuildContext context, BorrowRequestEntity request) {
+    final project = widget.project;
+    return BorrowRequestCard(
+      key: ValueKey(
+        '${request.id}|${request.callerVote}|'
+        '${request.upvotes}|${request.downvotes}',
+      ),
+      projectId: widget.projectId,
+      request: request,
+      actionMode: widget.isLeaderMode
+          ? BorrowRequestActionMode.decision
+          : BorrowRequestActionMode.vote,
+      hideVoteActions:
+          !widget.isLeaderMode &&
+          project != null &&
+          request.isRequestedByViewer(project),
+      onOpenMemberDetail: _openMemberDetail(context, request),
+      onAccept: widget.isLeaderMode
+          ? () => showApproveBorrowRequestFlow(
+              context,
+              request,
+              () => _approve(context, request),
+            )
+          : null,
+      onReject: widget.isLeaderMode
+          ? () => showRejectBorrowRequestFlow(
+              context,
+              request,
+              () => _reject(context, request),
+            )
+          : null,
+      onVoteSuccess: widget.isLeaderMode ? null : _reloadRequests,
+    );
+  }
+
+  Widget _buildBody(BuildContext context) {
+    if (_loading) {
+      return ListView(
+        padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 32.h),
+        children: const [BorrowRequestListShimmer()],
+      );
+    }
+    if (_requests.isEmpty) {
+      return const BorrowRequestsEmptyState(centered: true);
+    }
+    return ListView.builder(
+      padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 32.h),
+      itemCount: _requests.length,
+      itemBuilder: (_, i) => _buildRequestCard(context, _requests[i]),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
+      resizeToAvoidBottomInset: false,
       body: PostAuthGradientBackground(
-        child: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: PostAuthHeader(
-                title: widget.screenTitle ?? AppStrings.borrowRequestsTitle,
-                leading: AppBackButton(onPressed: () => context.pop()),
-              ),
+        child: Column(
+          children: [
+            PostAuthHeader(
+              title: widget.screenTitle ?? AppStrings.borrowRequestsTitle,
+              leading: AppBackButton(onPressed: () => context.pop()),
             ),
-            SliverPadding(
-              padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 32.h),
-              sliver: _loading
-                  ? const SliverToBoxAdapter(
-                      child: BorrowRequestListShimmer(),
-                    )
-                  : _requests.isEmpty
-                  ? const SliverFillRemaining(
-                      hasScrollBody: false,
-                      child: BorrowRequestsEmptyState(centered: true),
-                    )
-                  : SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (_, i) {
-                          final request = _requests[i];
-                          final project = widget.project;
-                          return BorrowRequestCard(
-                          key: ValueKey(
-                            '${request.id}|${request.callerVote}|'
-                            '${request.upvotes}|${request.downvotes}',
-                          ),
-                          projectId: widget.projectId,
-                          request: request,
-                          actionMode: widget.isLeaderMode
-                              ? BorrowRequestActionMode.decision
-                              : BorrowRequestActionMode.vote,
-                          hideVoteActions: !widget.isLeaderMode &&
-                              project != null &&
-                              request.isRequestedByViewer(project),
-                          onOpenMemberDetail: _openMemberDetail(
-                            context,
-                            request,
-                          ),
-                          onAccept: widget.isLeaderMode
-                              ? () => showApproveBorrowRequestFlow(
-                                  context,
-                                  request,
-                                  () => _approve(context, request),
-                                )
-                              : null,
-                          onReject: widget.isLeaderMode
-                              ? () => showRejectBorrowRequestFlow(
-                                  context,
-                                  request,
-                                  () => _reject(context, request),
-                                )
-                              : null,
-                          onVoteSuccess: widget.isLeaderMode
-                              ? null
-                              : _reloadRequests,
-                        );
-                        },
-                        childCount: _requests.length,
-                      ),
-                    ),
-            ),
+            Expanded(child: _buildBody(context)),
           ],
         ),
       ),

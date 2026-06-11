@@ -93,10 +93,8 @@ class _VoteButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final bgColor = isPrimary
         ? (isActive ? AppColors.purple700 : AppColors.grey1100)
-        : Colors.transparent;
-    final borderColor = isPrimary
-        ? Colors.transparent
-        : (isActive ? AppColors.red600 : AppColors.red600);
+        : AppColors.red100;
+    final borderColor = isPrimary ? Colors.transparent : AppColors.red900;
     final iconColor = isPrimary
         ? AppColors.neutral100
         : (isActive ? AppColors.red900 : AppColors.red900);

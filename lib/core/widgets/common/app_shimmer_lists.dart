@@ -298,37 +298,6 @@ class _BorrowRequestCardShimmer extends StatelessWidget {
   }
 }
 
-/// Payment methods card list skeleton.
-/// My Borrow / My Borrow Request — amount + breakdown card (Week 8).
-class MyBorrowRequestShimmer extends StatelessWidget {
-  const MyBorrowRequestShimmer({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return AppShimmer(
-      child: Padding(
-        padding: AppDimens.postAuthFlowScrollPadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AppShimmer.box(width: 120, height: 18, borderRadius: 4),
-            const SizedBox(height: 10),
-            AppShimmer.box(width: 160, height: 36, borderRadius: 6),
-            const SizedBox(height: 24),
-            AppShimmer.box(width: 100, height: 16, borderRadius: 4),
-            const SizedBox(height: 10),
-            AppShimmer.box(
-              width: double.infinity,
-              height: 140,
-              borderRadius: 14,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class PaymentCardListShimmer extends StatelessWidget {
   const PaymentCardListShimmer({super.key});
 

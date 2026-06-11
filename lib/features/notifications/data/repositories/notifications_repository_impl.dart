@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 
+import 'package:vestie/core/device/device_info_service.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/core/error/failures.dart';
 import 'package:vestie/features/notifications/domain/entities/app_notification_entity.dart';
@@ -9,8 +10,12 @@ import '../datasources/notifications_remote_data_source.dart';
 
 class NotificationsRepositoryImpl implements NotificationsRepository {
   final NotificationsRemoteDataSource remoteDataSource;
+  final DeviceInfoService deviceInfoService;
 
-  NotificationsRepositoryImpl({required this.remoteDataSource});
+  NotificationsRepositoryImpl({
+    required this.remoteDataSource,
+    required this.deviceInfoService,
+  });
 
   @override
   Future<Either<Failure, NotificationsPageEntity>> list({
@@ -50,9 +55,12 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
   }) async {
     if (token.trim().isEmpty) return const Right(null);
     try {
+      final device = await deviceInfoService.getIdentity();
       await remoteDataSource.registerDeviceToken(
         token: token,
         platform: platform,
+        deviceId: device.id,
+        deviceName: device.name,
       );
       return const Right(null);
     } on Failure catch (f) {

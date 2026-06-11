@@ -96,7 +96,7 @@ class MyBorrowRequestCubit extends Cubit<MyBorrowRequestState> {
   }
 
   Future<void> load() async {
-    emit(state.copyWith(loading: true, clearError: true, clearRepaySummary: true));
+    emit(state.copyWith(loading: true, clearError: true));
 
     final screenResult = await _getMyBorrowScreenUseCase(projectId: projectId);
     if (isClosed) return;

@@ -58,6 +58,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<AuthTokenModel> login({
     required String email,
     required String password,
+    required String deviceId,
     required String deviceName,
     required String ipAddress,
   }) async {
@@ -67,6 +68,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         data: {
           'email': email,
           'password': password,
+          'deviceId': deviceId,
           'deviceName': deviceName,
           'ipAddress': ipAddress,
         },
@@ -334,13 +336,18 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<AuthTokenModel> loginWithGoogle({required String idToken}) async {
+  Future<AuthTokenModel> loginWithGoogle({
+    required String idToken,
+    required String deviceId,
+    required String deviceName,
+  }) async {
     try {
       final response = await _client.post(
         ApiConstants.googleLogin,
         data: {
           'idToken': idToken,
-          'deviceName': ApiConstants.defaultDeviceName,
+          'deviceId': deviceId,
+          'deviceName': deviceName,
           'ipAddress': ApiConstants.defaultIpAddress,
         },
       );

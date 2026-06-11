@@ -4,6 +4,7 @@ import 'interceptors/auth_interceptor.dart';
 import 'interceptors/logging_interceptor.dart';
 import 'interceptors/retry_interceptor.dart';
 import '../constants/api_constants.dart';
+import '../device/device_info_service.dart';
 import '../storage/secure_storage_impl.dart';
 
 /// Enterprise-grade Network Client.
@@ -13,7 +14,10 @@ class DioClient {
 
   Dio get dio => _dio;
 
-  DioClient({required SecureStorageImpl secureStorage}) {
+  DioClient({
+    required SecureStorageImpl secureStorage,
+    required DeviceInfoService deviceInfoService,
+  }) {
     _dio = Dio(
       BaseOptions(
         baseUrl: ApiConstants.baseUrl,
@@ -37,7 +41,11 @@ class DioClient {
     // }
 
     _dio.interceptors.addAll([
-      AuthInterceptor(dio: _dio, secureStorage: secureStorage),
+      AuthInterceptor(
+        dio: _dio,
+        secureStorage: secureStorage,
+        deviceInfoService: deviceInfoService,
+      ),
       RetryInterceptor(dio: _dio),
       LoggingInterceptor(),
     ]);

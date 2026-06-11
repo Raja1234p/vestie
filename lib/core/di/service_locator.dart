@@ -1,5 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 
+import '../device/device_info_service.dart';
 import '../../features/auth/data/datasources/auth_remote_data_source.dart';
 import '../../features/auth/domain/repositories/auth_repository.dart';
 import '../../features/auth/domain/usecases/accept_risk_disclaimer_use_case.dart';
@@ -119,6 +120,7 @@ class ServiceLocator {
   static final ServiceLocator instance = ServiceLocator._();
 
   late final DioClient dioClient;
+  late final DeviceInfoService deviceInfoService;
   late final SecureStorageImpl secureStorage;
   late final SharedPrefsImpl sharedPrefs;
   late final Connectivity connectivity;

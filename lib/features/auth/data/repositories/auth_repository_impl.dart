@@ -5,6 +5,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/constants/storage_keys.dart';
+import '../../../../core/device/device_info_service.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/storage/local_storage.dart';
@@ -19,25 +20,31 @@ import '../datasources/auth_remote_data_source.dart';
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource _remoteDataSource;
   final LocalStorage _prefs;
+  final DeviceInfoService _deviceInfoService;
 
   /// Last GET result this process when [accepted] is not yet persisted as `true`
   /// on disk — avoids duplicate GETs (e.g. splash + agreement) in one launch.
   RiskDisclaimer? _sessionDisclaimer;
 
-  AuthRepositoryImpl(this._remoteDataSource, this._prefs);
+  AuthRepositoryImpl(
+    this._remoteDataSource,
+    this._prefs,
+    this._deviceInfoService,
+  );
 
   @override
   Future<Either<Failure, User>> login({
     required String email,
     required String password,
-    required String deviceName,
     required String ipAddress,
   }) async {
     try {
+      final device = await _deviceInfoService.getIdentity();
       final userModel = await _remoteDataSource.login(
         email: email,
         password: password,
-        deviceName: deviceName,
+        deviceId: device.id,
+        deviceName: device.name,
         ipAddress: ipAddress,
       );
       return Right(userModel);
@@ -464,8 +471,11 @@ class AuthRepositoryImpl implements AuthRepository {
         return const Left(ServerFailure(AppStrings.errorGoogleSignInNoToken));
       }
 
+      final device = await _deviceInfoService.getIdentity();
       final userModel = await _remoteDataSource.loginWithGoogle(
         idToken: idToken,
+        deviceId: device.id,
+        deviceName: device.name,
       );
 
       return Right(userModel);

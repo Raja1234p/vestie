@@ -21,6 +21,7 @@ void registerAuthDependencies(ServiceLocator sl) {
   sl.authRepository = AuthRepositoryImpl(
     sl.authRemoteDataSource,
     sl.sharedPrefs,
+    sl.deviceInfoService,
   );
 
   sl.loginUseCase = LoginUseCase(sl.authRepository);

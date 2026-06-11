@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/navigation/success_dialog_navigation.dart';
 import 'package:vestie/core/widgets/common/app_action_dialog.dart';
 import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
 
@@ -19,10 +20,7 @@ Widget _borrowDescription(
     color: AppColors.grey900,
     height: 1.5,
   );
-  final highlighted = base?.copyWith(
-    fontWeight: FontWeight.w700,
-    decoration: TextDecoration.underline,
-  );
+  final highlighted = base?.copyWith(fontWeight: FontWeight.w700);
   final prefix = isApprove
       ? AppStrings.borrowApprovePrefix()
       : AppStrings.borrowRejectPrefix();
@@ -71,7 +69,8 @@ Widget _borrowVoteDescription(
   );
 }
 
-Future<void> showApproveBorrowRequestFlow(
+/// Returns true after the user dismisses the success dialog.
+Future<bool> showApproveBorrowRequestFlow(
   BuildContext context,
   BorrowRequestEntity request, [
   Future<bool> Function()? onConfirmed,
@@ -92,8 +91,8 @@ Future<void> showApproveBorrowRequestFlow(
       return onConfirmed();
     },
   );
-  if (!ok) return;
-  if (!context.mounted) return;
+  if (!ok) return false;
+  if (!context.mounted) return false;
   await AppActionDialog.showSuccessOk(
     context,
     title: AppStrings.borrowApprovedTitle,
@@ -102,11 +101,13 @@ Future<void> showApproveBorrowRequestFlow(
       isApprove: true,
       request: request,
     ),
-    onPrimary: () => Navigator.of(context).pop(),
+    onPrimary: popDialogAction(context),
   );
+  return true;
 }
 
-Future<void> showRejectBorrowRequestFlow(
+/// Returns true after the user dismisses the success dialog.
+Future<bool> showRejectBorrowRequestFlow(
   BuildContext context,
   BorrowRequestEntity request, [
   Future<bool> Function()? onConfirmed,
@@ -127,8 +128,8 @@ Future<void> showRejectBorrowRequestFlow(
       return onConfirmed();
     },
   );
-  if (!ok) return;
-  if (!context.mounted) return;
+  if (!ok) return false;
+  if (!context.mounted) return false;
   await AppActionDialog.show(
     context,
     title: AppStrings.borrowRejectedTitle,
@@ -144,8 +145,9 @@ Future<void> showRejectBorrowRequestFlow(
     primaryTextColor: AppColors.surface,
     primaryBorderColor: AppColors.neutral1200,
     iconAsset: AppAssets.statusFailure,
-    onPrimary: () => Navigator.of(context).pop(),
+    onPrimary: popDialogAction(context),
   );
+  return true;
 }
 
 /// Member vote — same confirm dialog pattern as approve/reject; card shows voted banner after.

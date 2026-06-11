@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
+import 'package:vestie/core/navigation/success_dialog_navigation.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_shimmer.dart';
@@ -55,11 +56,6 @@ class _JoinRequestsScreenState extends State<JoinRequestsScreen> {
     }
   }
 
-  void _onDialogOk(BuildContext context) {
-    Navigator.of(context).pop();
-    context.read<JoinRequestsCubit>().load(widget.projectId);
-  }
-
   Future<void> _handleModerationSuccess(BuildContext context) async {
     await _syncAfterModeration(context);
     if (!mounted) return;
@@ -68,29 +64,35 @@ class _JoinRequestsScreenState extends State<JoinRequestsScreen> {
       _actingIsApprove = null;
     });
     if (!context.mounted) return;
-    _onModerationComplete(context);
+    await _onModerationComplete(context);
   }
 
-  void _onModerationComplete(BuildContext context) {
+  Future<void> _onModerationComplete(BuildContext context) async {
     final name = _dialogMemberName ?? 'Member';
-
-    if (_wasApproved == true) {
-      showJoinRequestApprovedDialog(
-        context,
-        memberName: name,
-        onOk: () => _onDialogOk(context),
-      );
-    } else if (_wasApproved == false) {
-      showJoinRequestDeclinedDialog(
-        context,
-        memberName: name,
-        onOk: () => _onDialogOk(context),
-      );
-    }
+    final wasApproved = _wasApproved;
 
     _dialogMemberName = null;
     _wasApproved = null;
     context.read<ModerationBloc>().add(const ResetModerationStateEvent());
+
+    if (wasApproved == true) {
+      await showJoinRequestApprovedDialog(
+        context,
+        memberName: name,
+        onOk: popDialogAction(context),
+      );
+    } else if (wasApproved == false) {
+      await showJoinRequestDeclinedDialog(
+        context,
+        memberName: name,
+        onOk: popDialogAction(context),
+      );
+    } else {
+      return;
+    }
+
+    if (!context.mounted) return;
+    context.read<JoinRequestsCubit>().load(widget.projectId);
   }
 
   @override

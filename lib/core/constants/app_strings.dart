@@ -1121,8 +1121,8 @@ class AppStrings {
   static const String borrowHistoryApproved = 'Approved';
   static const String borrowHistoryCancelled = 'Cancelled';
   static const String borrowHistoryRejected = 'Rejected';
-  static const String upvoteLabel = 'Upvote';
-  static const String downvoteLabel = 'Downvote';
+  static const String upvoteLabel = 'Agree';
+  static const String downvoteLabel = 'Disagree';
   static const String upvotedStatusLabel = 'You’ve Upvoted this Requested';
   static const String downvotedStatusLabel = 'You’ve Downvote this Requested';
   static const String acceptLabel = 'Accept';

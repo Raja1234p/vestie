@@ -10,7 +10,6 @@ abstract class AuthRepository {
   Future<Either<Failure, User>> login({
     required String email,
     required String password,
-    required String deviceName,
     required String ipAddress,
   });
 

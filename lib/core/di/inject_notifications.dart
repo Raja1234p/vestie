@@ -10,6 +10,7 @@ void registerNotificationsDependencies(ServiceLocator sl) {
   );
   sl.notificationsRepository = NotificationsRepositoryImpl(
     remoteDataSource: sl.notificationsRemoteDataSource,
+    deviceInfoService: sl.deviceInfoService,
   );
   sl.listNotificationsUseCase = ListNotificationsUseCase(
     sl.notificationsRepository,

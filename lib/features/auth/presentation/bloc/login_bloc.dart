@@ -56,7 +56,6 @@ class LoginBloc extends BaseFormBloc<LoginEvent, LoginState> {
       () => _loginUseCase(
         email: event.email,
         password: event.password,
-        deviceName: ApiConstants.defaultDeviceName,
         ipAddress: ApiConstants.defaultIpAddress,
       ),
       emit,
@@ -80,7 +79,6 @@ class LoginBloc extends BaseFormBloc<LoginEvent, LoginState> {
     final result = await _loginUseCase(
       email: event.email,
       password: event.password,
-      deviceName: ApiConstants.defaultDeviceName,
       ipAddress: ApiConstants.defaultIpAddress,
     );
 

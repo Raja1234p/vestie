@@ -124,26 +124,7 @@ class ContributeState extends Equatable {
 
   double get walletBalance => args?.walletBalance ?? 0;
 
-  bool get hasContributionGoal => args?.hasContributionGoal ?? false;
-
-  double get remainingToGoal => args?.remainingToGoal ?? double.infinity;
-
-  String get remainingToGoalFormatted =>
-      args?.remainingToGoalFormatted ?? r'$0.00';
-
-  bool get isProjectGoalReached =>
-      hasContributionGoal && remainingToGoal <= 0;
-
-  bool get amountExceedsProjectRemaining =>
-      hasContributionGoal && amountValue > remainingToGoal;
-
-  bool get canProceedFromAmount =>
-      amountValue > 0 &&
-      !isProjectGoalReached &&
-      !amountExceedsProjectRemaining;
-
-  double? get maxContributionToGoal =>
-      hasContributionGoal ? remainingToGoal : null;
+  bool get canProceedFromAmount => amountValue > 0;
 
   double get totalDeductionValue =>
       preview?.totalDeduction ?? (amountValue + vestieFee);

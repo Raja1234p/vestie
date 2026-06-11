@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/navigation/success_dialog_navigation.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_action_dialog.dart';
 
@@ -27,6 +28,6 @@ Future<void> showLeaveProjectSuccessDialog(BuildContext context) {
     title: AppStrings.leaveProjectSuccessTitle,
     description: AppStrings.leaveProjectSuccessBody,
     primaryLabel: AppStrings.btnBackToHome,
-    onPrimary: () => Navigator.of(context).pop(),
+    onPrimary: popDialogAction(context),
   );
 }
