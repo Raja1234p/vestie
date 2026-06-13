@@ -77,12 +77,15 @@ class ProjectDetailResponseModel {
   }
 
   ProjectDetailEntity toEntity() {
+    final mappedMembers = _members.map(_mapMember).toList(growable: false);
     final viewerRole = ViewerMembershipRole.forProjectDetail(
       projectViewerRole: _project.viewerRole,
       membershipRole: _viewerMembership.role,
+      viewerMembershipId: _viewerMembership.membershipId,
+      viewerUserId: _viewerMembership.userId,
+      members: mappedMembers,
     );
 
-    final mappedMembers = _members.map(_mapMember).toList(growable: false);
     final mergedMembers = _applyViewerMembershipBadge(
       mappedMembers,
       viewerMembershipId: _viewerMembership.membershipId,

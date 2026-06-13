@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity_extensions.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
+import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
 
 MemberEntity _member({
@@ -184,6 +186,56 @@ void main() {
 
       expect(member.showsVffBadgeOnMemberRow, isFalse);
       expect(member.isViewerVffLinked, isFalse);
+    });
+  });
+
+  group('MemberEntityProjectRoster', () {
+    ProjectDetailEntity _project(List<MemberEntity> members) {
+      return ProjectDetailEntity(
+        id: 'p1',
+        name: 'Trip',
+        category: ProjectCategory.vacations,
+        status: ProjectStatus.ongoing,
+        goalAmount: 1000,
+        currentAmount: 0,
+        endsIn: '30d',
+        announcement: '',
+        members: members,
+        borrowRequests: [],
+      );
+    }
+
+    test('isProjectGroupLeaderOn prefers roster role over activity role', () {
+      const leader = MemberEntity(
+        id: 'gl',
+        membershipId: 'leader-m',
+        userId: 'gl',
+        initials: 'GL',
+        name: 'Leader',
+        role: MemberRole.leader,
+        contributedAmount: 0,
+      );
+      final misTagged = leader.copyWith(role: MemberRole.member);
+      final project = _project([leader]);
+
+      expect(leader.isProjectGroupLeaderOn(project), isTrue);
+      expect(misTagged.isProjectGroupLeaderOn(project), isTrue);
+    });
+
+    test('withProjectRoster overlays roster role onto display member', () {
+      const roster = MemberEntity(
+        id: 'u2',
+        membershipId: 'm2',
+        userId: 'u2',
+        initials: 'CL',
+        name: 'Co',
+        role: MemberRole.coLeader,
+        contributedAmount: 0,
+      );
+      final activity = roster.copyWith(role: MemberRole.member);
+      final project = _project([roster]);
+
+      expect(activity.withProjectRoster(project).role, MemberRole.coLeader);
     });
   });
 }

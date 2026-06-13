@@ -1,6 +1,7 @@
 import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
 
 import 'member_entity.dart';
+import 'project_detail_entity.dart';
 
 extension MemberEntityApiIds on MemberEntity {
   /// `POST/DELETE …/members/{userId}/co-leader` — prefer API `userId`.
@@ -74,5 +75,36 @@ extension MemberEntityApiIds on MemberEntity {
     }
     if (hasPendingVffOutgoing) return VffConnectionState.pendingOutgoing;
     return VffConnectionState.none;
+  }
+}
+
+/// Project roster overlays — stable roles for moderator / VFF visibility.
+extension MemberEntityProjectRoster on MemberEntity {
+  MemberEntity? projectRosterRow(ProjectDetailEntity project) {
+    for (final roster in project.members) {
+      if (matchesIdentity(roster)) return roster;
+    }
+    return null;
+  }
+
+  /// Authoritative membership role from `project.members[]` when matched.
+  MemberRole projectRosterRole(ProjectDetailEntity project) {
+    return projectRosterRow(project)?.role ?? role;
+  }
+
+  /// True when this profile is the project's group leader row.
+  bool isProjectGroupLeaderOn(ProjectDetailEntity project) {
+    final roster = projectRosterRow(project);
+    if (roster != null) return roster.role == MemberRole.leader;
+    if (project.members.isEmpty) return role == MemberRole.leader;
+    return project.members.any((m) => m.role == MemberRole.leader) &&
+        role == MemberRole.leader;
+  }
+
+  /// Keeps display fields; overlays roster role when the member is on the roster.
+  MemberEntity withProjectRoster(ProjectDetailEntity project) {
+    final roster = projectRosterRow(project);
+    if (roster == null || roster.role == role) return this;
+    return copyWith(role: roster.role);
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/viewer_membership_role.dart';
 
 void main() {
@@ -39,13 +40,48 @@ void main() {
       );
     });
 
-    test('defaults to member when both roles are empty', () {
+    test('prefers co-leader row in members when viewerMembership says member', () {
+      const viewerMembershipId = 'co-m';
       expect(
         ViewerMembershipRole.forProjectDetail(
-          projectViewerRole: '',
-          membershipRole: '',
+          projectViewerRole: 'Member',
+          membershipRole: 'member',
+          viewerMembershipId: viewerMembershipId,
+          members: [
+            MemberEntity(
+              id: 'co-u',
+              membershipId: viewerMembershipId,
+              userId: 'co-u',
+              initials: 'CL',
+              name: 'Co',
+              role: MemberRole.coLeader,
+              contributedAmount: 0,
+            ),
+          ],
         ),
-        ViewerMembershipRole.member,
+        ViewerMembershipRole.coLeader,
+      );
+    });
+
+    test('resolves co-leader from viewer userId when membership id mismatches', () {
+      expect(
+        ViewerMembershipRole.forProjectDetail(
+          projectViewerRole: 'Member',
+          membershipRole: 'member',
+          viewerUserId: 'co-u',
+          members: [
+            MemberEntity(
+              id: 'co-u',
+              membershipId: 'different-m',
+              userId: 'co-u',
+              initials: 'CL',
+              name: 'Co',
+              role: MemberRole.coLeader,
+              contributedAmount: 0,
+            ),
+          ],
+        ),
+        ViewerMembershipRole.coLeader,
       );
     });
   });

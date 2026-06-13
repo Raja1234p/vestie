@@ -5,10 +5,23 @@ import '../../domain/entities/member_entity_extensions.dart';
 import '../../domain/entities/project_detail_entity.dart';
 import 'project_member_add_friend_visibility.dart';
 
-/// VFF send / following / footer rules — same for every project category.
-/// Only restriction: never on the signed-in user’s own member row/card.
+/// Member profile footer / penalty / co-leader action visibility.
+///
+/// Rules:
+/// - VFF: any member except self.
+/// - Remove / mark defaulted / overdue take action: group leader or co-leader,
+///   not self, not the project group leader.
+/// - Co-leader promote/demote: group leader only, vacation/emergency, not self,
+///   not the project group leader.
 abstract final class MemberDetailActionsVisibility {
-  /// Any project member except the current viewer (group leader, co-leader, or member).
+  static MemberEntity _memberForRules({
+    required ProjectDetailEntity project,
+    required MemberEntity member,
+  }) {
+    return member.withProjectRoster(project);
+  }
+
+  /// Any project member except the signed-in viewer.
   static bool isVffActionTarget({
     required ProjectDetailEntity project,
     required MemberEntity member,
@@ -19,7 +32,7 @@ abstract final class MemberDetailActionsVisibility {
     );
   }
 
-  /// Member list “Send VFF Request” — same audience and connection rules everywhere.
+  /// Member list “Send VFF Request”.
   static bool canShowSendVffOnMemberRow({
     required ProjectDetailEntity project,
     required MemberEntity member,
@@ -40,55 +53,47 @@ abstract final class MemberDetailActionsVisibility {
     return isVffActionTarget(project: project, member: member);
   }
 
-  /// Group leader only — promote / demote co-leader (not on self or group leader row).
+  /// Group leader only — promote / demote co-leader.
   static bool showCoLeaderControls({
     required ProjectDetailEntity project,
     required MemberEntity member,
   }) {
-    if (!project.supportsCoLeader) return false;
-    if (!project.isGroupLeader) return false;
+    if (!project.supportsCoLeader || !project.isGroupLeader) return false;
+    final target = _memberForRules(project: project, member: member);
     if (ProjectMemberAddFriendVisibility.isViewerSelf(
       project: project,
-      member: member,
+      member: target,
     )) {
       return false;
     }
-    return member.role == MemberRole.member ||
-        member.role == MemberRole.coLeader;
+    if (target.isProjectGroupLeaderOn(project)) return false;
+    return target.role == MemberRole.member ||
+        target.role == MemberRole.coLeader;
   }
 
-  /// Group leader or co-leader — remove member on any project type (not self, not project leader).
+  /// Group leader or co-leader — remove member (not self, not project leader).
   static bool showRemoveMember({
     required ProjectDetailEntity project,
     required MemberEntity member,
   }) {
-    if (!project.canRemoveMembers) return false;
-    if (ProjectMemberAddFriendVisibility.isViewerSelf(
-      project: project,
-      member: member,
-    )) {
-      return false;
-    }
-    return !_isProjectGroupLeader(project: project, member: member);
+    return _canModerateMemberTarget(project: project, member: member);
   }
 
-  /// Leader row from `project.members` (stable); falls back to [MemberEntity.role] when list empty.
-  static bool _isProjectGroupLeader({
+  static bool _canModerateMemberTarget({
     required ProjectDetailEntity project,
     required MemberEntity member,
   }) {
-    for (final m in project.members) {
-      if (m.role == MemberRole.leader && member.matchesIdentity(m)) {
-        return true;
-      }
+    if (!project.canRemoveMembers) return false;
+    final target = _memberForRules(project: project, member: member);
+    if (ProjectMemberAddFriendVisibility.isViewerSelf(
+      project: project,
+      member: target,
+    )) {
+      return false;
     }
-    if (project.members.isEmpty && member.role == MemberRole.leader) {
-      return true;
-    }
-    return false;
+    return !target.isProjectGroupLeaderOn(project);
   }
 
-  /// Resolved VFF state for footer actions (activity API + project member list).
   static VffConnectionState effectiveVffConnectionState({
     required MemberEntity member,
     VffConnectionState activityVffConnectionState = VffConnectionState.none,
@@ -122,7 +127,6 @@ abstract final class MemberDetailActionsVisibility {
         VffConnectionState.connected;
   }
 
-  /// VFF connection accepted — Following menu (not Send / Sent).
   static bool showVffFollowing({
     required ProjectDetailEntity project,
     required MemberEntity member,
@@ -133,7 +137,6 @@ abstract final class MemberDetailActionsVisibility {
         (vffConnectionState == VffConnectionState.connected && member.vffAdded);
   }
 
-  /// Member detail footer: Send VFF or “Request Sent” (uses activity VFF state).
   static bool showVffSendOrSent({
     required ProjectDetailEntity project,
     required MemberEntity member,
@@ -170,7 +173,6 @@ abstract final class MemberDetailActionsVisibility {
         showRemoveMember(project: project, member: member);
   }
 
-  /// Group leader or co-leader — mark defaulted (same rules as remove member).
   static bool showMarkAsDefaulted({
     required ProjectDetailEntity project,
     required MemberEntity member,
@@ -178,16 +180,13 @@ abstract final class MemberDetailActionsVisibility {
     return showRemoveMember(project: project, member: member);
   }
 
-  /// Penalty Action footer — remove + mark defaulted.
   static bool showPenaltyFooter({
     required ProjectDetailEntity project,
     required MemberEntity member,
   }) {
-    return showRemoveMember(project: project, member: member) ||
-        showMarkAsDefaulted(project: project, member: member);
+    return showRemoveMember(project: project, member: member);
   }
 
-  /// Overdue banner "Take Action" (moderator, not self, not project leader).
   static bool showOverdueTakeAction({
     required ProjectDetailEntity project,
     required MemberEntity member,

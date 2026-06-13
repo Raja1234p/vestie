@@ -1,3 +1,6 @@
+import 'member_entity.dart';
+import 'member_entity_extensions.dart';
+
 /// API viewer role on project detail — exactly three values.
 ///
 /// `project.viewerRole`: `GroupLeader` | `CoLeader` | `Member` (or `1` | `2` | `3`).
@@ -35,15 +38,18 @@ enum ViewerMembershipRole {
     }
   }
 
-  /// Resolves the signed-in viewer's role from `project.viewerRole` and
-  /// `viewerMembership.role`, preferring the **highest** privilege.
+  /// Resolves the signed-in viewer's role from `project.viewerRole`,
+  /// `viewerMembership.role`, and the viewer's row in `members[]` (highest wins).
   ///
-  /// Some API payloads send `project.viewerRole: Member` for co-leaders while
-  /// `viewerMembership.role` is `CoLeader` — taking project first hid remove-member
-  /// and other moderator actions.
+  /// Some API payloads send `project.viewerRole: Member` and
+  /// `viewerMembership.role: member` while `members[]` lists the viewer as
+  /// `coLeader` — that hid remove-member for co-leaders on member profile.
   static ViewerMembershipRole forProjectDetail({
     required String projectViewerRole,
     required String membershipRole,
+    String viewerMembershipId = '',
+    String viewerUserId = '',
+    List<MemberEntity> members = const [],
   }) {
     final fromProject = _hasExplicitRole(projectViewerRole)
         ? parse(projectViewerRole)
@@ -51,7 +57,38 @@ enum ViewerMembershipRole {
     final fromMembership = _hasExplicitRole(membershipRole)
         ? parse(membershipRole)
         : ViewerMembershipRole.member;
-    return _higherPrivilege(fromProject, fromMembership);
+    final fromMembersList = _roleFromViewerMemberRow(
+      viewerMembershipId: viewerMembershipId,
+      viewerUserId: viewerUserId,
+      members: members,
+    );
+    return _higherPrivilege(
+      _higherPrivilege(fromProject, fromMembership),
+      fromMembersList ?? ViewerMembershipRole.member,
+    );
+  }
+
+  static ViewerMembershipRole? _roleFromViewerMemberRow({
+    required String viewerMembershipId,
+    required String viewerUserId,
+    required List<MemberEntity> members,
+  }) {
+    final membershipId = viewerMembershipId.trim();
+    final userId = viewerUserId.trim();
+    for (final member in members) {
+      final matchesMembership =
+          membershipId.isNotEmpty &&
+          member.membershipId.trim() == membershipId;
+      final matchesUser =
+          userId.isNotEmpty && member.apiUserId.trim() == userId;
+      if (!matchesMembership && !matchesUser) continue;
+      return switch (member.role) {
+        MemberRole.leader => ViewerMembershipRole.groupLeader,
+        MemberRole.coLeader => ViewerMembershipRole.coLeader,
+        MemberRole.member => ViewerMembershipRole.member,
+      };
+    }
+    return null;
   }
 
   static ViewerMembershipRole _higherPrivilege(

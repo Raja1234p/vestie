@@ -54,6 +54,12 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
       .where((m) => !m.status.toLowerCase().contains('pending'))
       .toList(growable: false);
 
+  /// Prefer bloc-synced detail so viewerRole / moderator flags stay accurate.
+  ProjectDetailEntity? get _projectContext =>
+      ProjectDetailReloadCoordinator.cachedProject(widget.projectId) ??
+      _project ??
+      widget.project;
+
   Future<void> _sendVff({
     required ProjectDetailEntity project,
     required MemberEntity member,
@@ -156,7 +162,7 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
   @override
   Widget build(BuildContext context) {
     final active = _activeMembers;
-    final p = _project ?? widget.project;
+    final p = _projectContext;
 
     return Scaffold(
       backgroundColor: Colors.transparent,

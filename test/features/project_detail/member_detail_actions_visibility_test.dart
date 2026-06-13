@@ -136,6 +136,105 @@ void main() {
       );
     });
 
+    test('false for co-leader viewing project leader', () {
+      const leaderMember = MemberEntity(
+        id: 'gl',
+        membershipId: 'leader-m',
+        userId: 'gl',
+        initials: 'GL',
+        name: 'Leader',
+        role: MemberRole.leader,
+        contributedAmount: 0,
+      );
+      const coLeaderViewer = MemberEntity(
+        id: 'co',
+        membershipId: 'co-m',
+        userId: 'co',
+        initials: 'CL',
+        name: 'Co',
+        role: MemberRole.coLeader,
+        contributedAmount: 0,
+      );
+      final project = _moderatorProject(
+        category: ProjectCategory.vacations,
+        viewerRole: ViewerMembershipRole.coLeader,
+        members: [leaderMember, coLeaderViewer],
+        membershipId: 'co-m',
+      );
+
+      expect(
+        MemberDetailActionsVisibility.showRemoveMember(
+          project: project,
+          member: leaderMember,
+        ),
+        isFalse,
+      );
+    });
+
+    test(
+      'false for co-leader when leader role on profile but roster identity mismatches',
+      () {
+        const leaderMember = MemberEntity(
+          id: 'gl',
+          membershipId: 'leader-m',
+          userId: 'gl',
+          initials: 'GL',
+          name: 'Leader',
+          role: MemberRole.leader,
+          contributedAmount: 0,
+        );
+        final activityLeader = const MemberEntity(
+          id: 'gl-alt',
+          membershipId: 'leader-m-alt',
+          userId: 'gl-alt',
+          initials: 'GL',
+          name: 'Leader',
+          role: MemberRole.leader,
+          contributedAmount: 0,
+        );
+        final project = _moderatorProject(
+          category: ProjectCategory.emergency,
+          viewerRole: ViewerMembershipRole.coLeader,
+          members: [leaderMember],
+          membershipId: 'co-m',
+        );
+
+        expect(
+          MemberDetailActionsVisibility.showRemoveMember(
+            project: project,
+            member: activityLeader,
+          ),
+          isFalse,
+        );
+      },
+    );
+
+    test('false for co-leader viewing own profile', () {
+      const coLeader = MemberEntity(
+        id: 'co',
+        membershipId: 'co-m',
+        userId: 'co',
+        initials: 'CL',
+        name: 'Co',
+        role: MemberRole.coLeader,
+        contributedAmount: 0,
+      );
+      final project = _moderatorProject(
+        category: ProjectCategory.vacations,
+        viewerRole: ViewerMembershipRole.coLeader,
+        members: [coLeader],
+        membershipId: 'co-m',
+      );
+
+      expect(
+        MemberDetailActionsVisibility.showRemoveMember(
+          project: project,
+          member: coLeader,
+        ),
+        isFalse,
+      );
+    });
+
     test(
       'true when activity role is leader but member is not leader in project list',
       () {
@@ -165,6 +264,82 @@ void main() {
         );
       },
     );
+  });
+
+  group('MemberDetailActionsVisibility.showCoLeaderControls', () {
+    test('true for group leader viewing member or co-leader on supported project', () {
+      const target = MemberEntity(
+        id: 'u2',
+        membershipId: 'm2',
+        userId: 'u2',
+        initials: 'AB',
+        name: 'Alex',
+        role: MemberRole.member,
+        contributedAmount: 0,
+      );
+      final project = _moderatorProject(
+        category: ProjectCategory.vacations,
+        viewerRole: ViewerMembershipRole.groupLeader,
+        members: [target],
+        membershipId: 'leader-m',
+      );
+
+      expect(
+        MemberDetailActionsVisibility.showCoLeaderControls(
+          project: project,
+          member: target,
+        ),
+        isTrue,
+      );
+    });
+
+    test('false for co-leader viewer and for project leader target', () {
+      const leader = MemberEntity(
+        id: 'gl',
+        membershipId: 'leader-m',
+        userId: 'gl',
+        initials: 'GL',
+        name: 'Leader',
+        role: MemberRole.leader,
+        contributedAmount: 0,
+      );
+      const member = MemberEntity(
+        id: 'u2',
+        membershipId: 'm2',
+        userId: 'u2',
+        initials: 'AB',
+        name: 'Alex',
+        role: MemberRole.member,
+        contributedAmount: 0,
+      );
+      final coLeaderProject = _moderatorProject(
+        category: ProjectCategory.emergency,
+        viewerRole: ViewerMembershipRole.coLeader,
+        members: [leader, member],
+        membershipId: 'co-m',
+      );
+      final leaderProject = _moderatorProject(
+        category: ProjectCategory.emergency,
+        viewerRole: ViewerMembershipRole.groupLeader,
+        members: [leader, member],
+        membershipId: 'leader-m',
+      );
+
+      expect(
+        MemberDetailActionsVisibility.showCoLeaderControls(
+          project: coLeaderProject,
+          member: member,
+        ),
+        isFalse,
+      );
+      expect(
+        MemberDetailActionsVisibility.showCoLeaderControls(
+          project: leaderProject,
+          member: leader,
+        ),
+        isFalse,
+      );
+    });
   });
 
   group('MemberDetailActionsVisibility.isVffActionTarget', () {

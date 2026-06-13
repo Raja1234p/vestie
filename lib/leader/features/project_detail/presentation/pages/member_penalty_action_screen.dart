@@ -35,23 +35,33 @@ class MemberPenaltyActionScreen extends StatefulWidget {
 }
 
 class _MemberPenaltyActionScreenState extends State<MemberPenaltyActionScreen> {
-  String get _userId => widget.member.apiUserId;
+  ProjectDetailEntity? get _projectContext =>
+      ProjectDetailReloadCoordinator.cachedProject(widget.projectId) ??
+      widget.project;
+
+  MemberEntity get _targetMember {
+    final p = _projectContext;
+    if (p == null) return widget.member;
+    return widget.member.withProjectRoster(p);
+  }
+
+  String get _userId => _targetMember.apiUserId;
 
   bool get _showRemoveMember {
-    final p = widget.project;
+    final p = _projectContext;
     if (p == null) return false;
     return MemberDetailActionsVisibility.showRemoveMember(
       project: p,
-      member: widget.member,
+      member: _targetMember,
     );
   }
 
   bool get _showMarkAsDefaulted {
-    final p = widget.project;
+    final p = _projectContext;
     if (p == null) return false;
     return MemberDetailActionsVisibility.showMarkAsDefaulted(
       project: p,
-      member: widget.member,
+      member: _targetMember,
     );
   }
 
@@ -94,7 +104,7 @@ class _MemberPenaltyActionScreenState extends State<MemberPenaltyActionScreen> {
   Future<void> _promptRemoveMember() async {
     final removed = await showRemoveMemberFlow(
       context,
-      memberName: widget.member.name,
+      memberName: _targetMember.name,
       onConfirm: _removeMember,
     );
     if (!mounted || !removed) return;

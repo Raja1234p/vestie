@@ -38,6 +38,8 @@ import 'package:vestie/user/features/vff/presentation/widgets/user_vff_remove_co
 
 import '../cubit/member_detail_cubit.dart';
 
+import '../project_detail_reload_coordinator.dart';
+
 import '../widgets/member_detail_actions_visibility.dart';
 
 import '../widgets/member_detail_footer.dart';
@@ -145,16 +147,24 @@ class _MemberDetailView extends StatelessWidget {
 
   final Future<void> Function()? onProjectMembersChanged;
 
-  String _userIdForApi(MemberDetailState state) {
-    final resolved = _displayMember(state).apiUserId.trim();
+  /// Prefer synced detail so roster roles / moderator flags stay accurate.
+  ProjectDetailEntity? get _projectContext =>
+      ProjectDetailReloadCoordinator.cachedProject(projectId) ?? project;
+
+  String _userIdForApi(MemberDetailState state, ProjectDetailEntity? project) {
+    final resolved = _displayMember(state, project: project).apiUserId.trim();
     if (resolved.isNotEmpty) return resolved;
     return member.apiUserId.trim();
   }
 
-  MemberEntity _displayMember(MemberDetailState state) {
+  MemberEntity _displayMember(
+    MemberDetailState state, {
+    ProjectDetailEntity? project,
+  }) {
     final loaded = state.activity?.member;
-    if (loaded == null) return member;
-    return member.mergedWithActivity(loaded);
+    final merged = loaded == null ? member : member.mergedWithActivity(loaded);
+    if (project == null) return merged;
+    return merged.withProjectRoster(project);
   }
 
   void _onStateChanged(BuildContext context, MemberDetailState state) {
@@ -180,13 +190,13 @@ class _MemberDetailView extends StatelessWidget {
   }
 
   Future<void> _promptAssignCoLeader(BuildContext context) async {
-    final p = project;
+    final p = _projectContext;
     if (p == null || !p.supportsCoLeader) return;
 
     final cubit = context.read<MemberDetailCubit>();
     final state = cubit.state;
-    final memberName = _displayMember(state).name;
-    final userId = _userIdForApi(state);
+    final memberName = _displayMember(state, project: p).name;
+    final userId = _userIdForApi(state, p);
 
     await showMakeCoLeaderFlow(
       context,
@@ -200,13 +210,13 @@ class _MemberDetailView extends StatelessWidget {
   }
 
   Future<void> _promptRemoveCoLeader(BuildContext context) async {
-    final p = project;
+    final p = _projectContext;
     if (p == null || !p.supportsCoLeader) return;
 
     final cubit = context.read<MemberDetailCubit>();
     final state = cubit.state;
-    final memberName = _displayMember(state).name;
-    final userId = _userIdForApi(state);
+    final memberName = _displayMember(state, project: p).name;
+    final userId = _userIdForApi(state, p);
 
     await showRemoveCoLeaderFlow(
       context,
@@ -220,13 +230,16 @@ class _MemberDetailView extends StatelessWidget {
   }
 
   Future<void> _openPenaltyAction(BuildContext context) async {
-    final p = project;
+    final p = _projectContext;
     if (p == null) return;
 
     final outcome = await context.push<MemberPenaltyActionOutcome>(
       AppRoutes.memberPenaltyAction,
       extra: MemberPenaltyActionRouteArgs(
-        member: _displayMember(context.read<MemberDetailCubit>().state),
+        member: _displayMember(
+          context.read<MemberDetailCubit>().state,
+          project: p,
+        ),
         projectId: projectId,
         project: p,
       ),
@@ -273,9 +286,10 @@ class _MemberDetailView extends StatelessWidget {
   }
 
   Future<void> _promptRemoveMember(BuildContext context) async {
+    final p = _projectContext;
     final cubit = context.read<MemberDetailCubit>();
-    final memberName = _displayMember(cubit.state).name;
-    final userId = _userIdForApi(cubit.state);
+    final memberName = _displayMember(cubit.state, project: p).name;
+    final userId = _userIdForApi(cubit.state, p);
     final removed = await showRemoveMemberFlow(
       context,
       memberName: memberName,
@@ -290,7 +304,7 @@ class _MemberDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final p = project;
+    final p = _projectContext;
 
     return BlocListener<MemberDetailCubit, MemberDetailState>(
       listenWhen: (prev, curr) =>
@@ -302,7 +316,7 @@ class _MemberDetailView extends StatelessWidget {
 
       child: BlocBuilder<MemberDetailCubit, MemberDetailState>(
         builder: (context, state) {
-          final displayMember = _displayMember(state);
+          final displayMember = _displayMember(state, project: p);
 
           final activity = state.activity;
 
@@ -318,7 +332,8 @@ class _MemberDetailView extends StatelessWidget {
               vffConnectionState == VffConnectionState.pendingOutgoing;
 
           final isCoLeader =
-              activity?.isCoLeader ?? displayMember.role == MemberRole.coLeader;
+              displayMember.role == MemberRole.coLeader ||
+              (activity?.isCoLeader ?? false);
 
           final showCoLeaderControls =
               p != null &&
