@@ -48,10 +48,7 @@ Widget _borrowVoteDescription(
     color: AppColors.grey900,
     height: 1.5,
   );
-  final highlighted = base?.copyWith(
-    fontWeight: FontWeight.w700,
-    decoration: TextDecoration.underline,
-  );
+  final highlighted = base?.copyWith(fontWeight: FontWeight.w700);
   final prefix = isUpvote
       ? AppStrings.borrowUpvotePrefix()
       : AppStrings.borrowDownvotePrefix();
