@@ -14,7 +14,7 @@ import 'home_event.dart';
 import 'home_state.dart';
 
 /// Handles Home data fetch.
-/// Dashboard boot: `GET /projects?scope=mine` + `GET /users/me` only (see [DashboardPrefetch]).
+/// Dashboard boot: `GET /projects` + `GET /users/me/summary` (+ `GET /users/me` once per session).
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final ListProjectsUseCase _listProjectsUseCase;
   final GetMeUseCase _getMeUseCase;

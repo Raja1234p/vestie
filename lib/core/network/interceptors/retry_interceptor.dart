@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 
+import 'dio_interceptor_extras.dart';
+
 class RetryInterceptor extends Interceptor {
   final Dio dio;
   final int maxRetries;
@@ -12,9 +14,9 @@ class RetryInterceptor extends Interceptor {
     ErrorInterceptorHandler handler,
   ) async {
     if (_shouldRetry(err)) {
-      int retries = err.requestOptions.extra['retries'] as int? ?? 0;
+      int retries = err.requestOptions.extra[kRetriesExtraKey] as int? ?? 0;
       if (retries < maxRetries) {
-        err.requestOptions.extra['retries'] = retries + 1;
+        err.requestOptions.extra[kRetriesExtraKey] = retries + 1;
         try {
           final response = await dio.fetch(err.requestOptions);
           return handler.resolve(response);

@@ -11,8 +11,7 @@ import '../../device/device_info_service.dart';
 import '../../network/api_response_body.dart';
 import '../../storage/secure_storage_impl.dart';
 import '../../utils/logger.dart';
-
-const _kAuthRetryExtraKey = 'auth_retry';
+import 'dio_interceptor_extras.dart';
 
 /// Injects Bearer token on every [DioClient] request.
 ///
@@ -57,7 +56,7 @@ class AuthInterceptor extends QueuedInterceptor {
     final path = _normalizePath(err.requestOptions.path);
 
     // Retried once after a successful refresh — surface 401 to the caller only.
-    if (err.requestOptions.extra[_kAuthRetryExtraKey] == true) {
+    if (err.requestOptions.extra[kAuthRetryExtraKey] == true) {
       return handler.next(err);
     }
 
@@ -103,7 +102,7 @@ class AuthInterceptor extends QueuedInterceptor {
       );
 
       final retryOptions = err.requestOptions;
-      retryOptions.extra[_kAuthRetryExtraKey] = true;
+      retryOptions.extra[kAuthRetryExtraKey] = true;
       retryOptions.headers['Authorization'] = 'Bearer $newAccess';
 
       try {
@@ -139,6 +138,16 @@ class AuthInterceptor extends QueuedInterceptor {
         p == ApiConstants.appleLogin ||
         p == ApiConstants.verifyEmail ||
         p == ApiConstants.logout;
+  }
+
+  /// True when this 401 will trigger refresh + silent retry (not logged as error).
+  static bool willRefreshAndRetry401(DioException err) {
+    if (err.response?.statusCode != 401) return false;
+    if (err.requestOptions.extra[kAuthRetryExtraKey] == true) return false;
+    final path = _normalizePath(err.requestOptions.path);
+    if (_skipsRefreshOn401(path)) return false;
+    if (path == ApiConstants.refreshToken) return false;
+    return true;
   }
 
   @visibleForTesting

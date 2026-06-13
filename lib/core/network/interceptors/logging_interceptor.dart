@@ -3,60 +3,115 @@ import 'dart:developer' as developer;
 
 import 'package:dio/dio.dart';
 
-/// Pretty console logging for Dio (debug-friendly layout, JSON indented).
+import 'auth_interceptor.dart';
+import 'dio_interceptor_extras.dart';
+
+/// Pretty console logging for Dio (one bordered block per round-trip).
 class LoggingInterceptor extends Interceptor {
   static const int _maxBodyChars = 16000;
+  static const int _maxGetRetries = 3;
   static const String _bar =
       '────────────────────────────────────────────────────────────';
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    _logBlock(
-      title: 'HTTP REQUEST',
-      lines: [
-        '${options.method} ${options.uri}',
-        '',
-        'Headers:',
-        _prettyJsonLike(_safeHeaders(options.headers)),
-        '',
-        'Body:',
-        _truncate(_prettyBody(options.data)),
-      ],
-    );
-    super.onRequest(options, handler);
+    // Auth retry reuses the same [RequestOptions]; request was already captured.
+    if (options.extra[kAuthRetryExtraKey] == true) {
+      return handler.next(options);
+    }
+
+    options.extra[kDioLogPendingKey] = _requestLines(options);
+    handler.next(options);
   }
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    _logBlock(
-      title: 'HTTP RESPONSE ${response.statusCode}',
-      lines: [
-        '${response.requestOptions.method} ${response.requestOptions.uri}',
+    _logRoundTrip(
+      title: 'HTTP ${response.statusCode}',
+      requestOptions: response.requestOptions,
+      tail: [
         '',
-        'Body:',
+        'Response:',
         _truncate(_prettyBody(response.data)),
       ],
     );
-    super.onResponse(response, handler);
+    handler.next(response);
   }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
+    if (_shouldSkipErrorLog(err)) {
+      return handler.next(err);
+    }
+
     final status = err.response?.statusCode;
     final lines = <String>[
-      '${err.requestOptions.method} ${err.requestOptions.uri}',
-      '',
-      'Type: ${err.type}',
       if (err.message != null) 'Message: ${err.message}',
       if (status != null) 'Status: $status',
+      'Type: ${err.type}',
       if (err.response?.data != null) ...[
         '',
-        'Body:',
+        'Response:',
         _truncate(_prettyBody(err.response!.data)),
       ],
     ];
-    _logBlock(title: 'HTTP ERROR', lines: lines);
-    super.onError(err, handler);
+    _logRoundTrip(
+      title: 'HTTP ERROR',
+      requestOptions: err.requestOptions,
+      tail: lines,
+    );
+    handler.next(err);
+  }
+
+  static bool _shouldSkipErrorLog(DioException err) {
+    if (AuthInterceptor.willRefreshAndRetry401(err)) return true;
+
+    if (err.requestOptions.method != 'GET') return false;
+
+    final retries = err.requestOptions.extra[kRetriesExtraKey] as int? ?? 0;
+    if (retries >= _maxGetRetries) return false;
+
+    if (err.type == DioExceptionType.connectionTimeout ||
+        err.type == DioExceptionType.receiveTimeout) {
+      return true;
+    }
+
+    final status = err.response?.statusCode;
+    return status != null && status >= 500;
+  }
+
+  static void _logRoundTrip({
+    required String title,
+    required RequestOptions requestOptions,
+    required List<String> tail,
+  }) {
+    final pending = requestOptions.extra[kDioLogPendingKey];
+    final requestLines = pending is List
+        ? pending.cast<String>()
+        : <String>[
+            '${requestOptions.method} ${requestOptions.uri}',
+            '',
+            'Request headers:',
+            _prettyJsonLike(_safeHeaders(requestOptions.headers)),
+            '',
+            'Request body:',
+            _truncate(_prettyBody(requestOptions.data)),
+          ];
+
+    _logBlock(title: title, lines: [...requestLines, ...tail]);
+    requestOptions.extra.remove(kDioLogPendingKey);
+  }
+
+  static List<String> _requestLines(RequestOptions options) {
+    return [
+      '${options.method} ${options.uri}',
+      '',
+      'Request headers:',
+      _prettyJsonLike(_safeHeaders(options.headers)),
+      '',
+      'Request body:',
+      _truncate(_prettyBody(options.data)),
+    ];
   }
 
   static void _logBlock({required String title, required List<String> lines}) {
