@@ -31,7 +31,7 @@ class BorrowRequestCard extends StatelessWidget {
   final VoidCallback? onReject;
 
   /// Called after a successful Agree/Disagree so parent lists can refresh counts.
-  final VoidCallback? onVoteSuccess;
+  final Future<void> Function()? onVoteSuccess;
 
   /// When true, hides Agree/Disagree (e.g. viewer is the requester).
   final bool hideVoteActions;
@@ -80,7 +80,7 @@ class _BorrowRequestCardBody extends StatelessWidget {
   final VoidCallback? onOpenMemberDetail;
   final VoidCallback? onAccept;
   final VoidCallback? onReject;
-  final VoidCallback? onVoteSuccess;
+  final Future<void> Function()? onVoteSuccess;
 
   const _BorrowRequestCardBody({
     required this.request,
@@ -251,7 +251,7 @@ class _BorrowRequestCardBody extends StatelessWidget {
                       },
                     );
                     if (!voted || !context.mounted) return;
-                    onVoteSuccess?.call();
+                    if (onVoteSuccess != null) await onVoteSuccess!();
                   },
                   onDownvote: () async {
                     final voted = await showDownvoteBorrowRequestFlow(
@@ -268,7 +268,7 @@ class _BorrowRequestCardBody extends StatelessWidget {
                       },
                     );
                     if (!voted || !context.mounted) return;
-                    onVoteSuccess?.call();
+                    if (onVoteSuccess != null) await onVoteSuccess!();
                   },
                 );
               },

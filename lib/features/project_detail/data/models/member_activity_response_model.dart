@@ -273,6 +273,9 @@ class MemberActivityResponseModel {
 
     final photoUrl =
         membershipPhotoUrlFromJson(json) ?? membershipPhotoUrlFromJson(profile);
+    final badge = json.safeString('badge').trim().isNotEmpty
+        ? json.safeString('badge')
+        : profile.safeString('badge');
 
     return MemberEntity(
       id: userId.isNotEmpty ? userId : membershipId,
@@ -292,6 +295,7 @@ class MemberActivityResponseModel {
       vffConnectionState: vffConnectionState,
       canSendVffRequest: canSendVffRequest,
       pendingVffRequestId: pendingVffRequestId,
+      badge: badge,
     );
   }
 

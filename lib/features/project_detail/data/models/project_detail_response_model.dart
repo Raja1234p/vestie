@@ -83,6 +83,11 @@ class ProjectDetailResponseModel {
     );
 
     final mappedMembers = _members.map(_mapMember).toList(growable: false);
+    final mergedMembers = _applyViewerMembershipBadge(
+      mappedMembers,
+      viewerMembershipId: _viewerMembership.membershipId,
+      viewerBadge: _viewerMembership.badge,
+    );
     final mappedInvites = _invites.map(_mapInvite).toList(growable: false);
     final mappedAnnouncements = _announcements
         .map(
@@ -105,7 +110,7 @@ class ProjectDetailResponseModel {
       endsIn: _project.endsAtUtc,
       announcement: _project.description,
       announcements: mappedAnnouncements,
-      members: mappedMembers,
+      members: mergedMembers,
       borrowRequests: const <BorrowRequestEntity>[],
       viewerRole: viewerRole,
       membershipId: _viewerMembership.membershipId,
@@ -170,7 +175,26 @@ class ProjectDetailResponseModel {
       vffConnectionState: json.vffConnectionState,
       canSendVffRequest: json.canSendVffRequest,
       pendingVffRequestId: json.pendingVffRequestId,
+      badge: json.badge,
     );
+  }
+
+  static List<MemberEntity> _applyViewerMembershipBadge(
+    List<MemberEntity> members, {
+    required String viewerMembershipId,
+    required String viewerBadge,
+  }) {
+    final badge = viewerBadge.trim();
+    final membershipId = viewerMembershipId.trim();
+    if (badge.isEmpty || membershipId.isEmpty) return members;
+
+    return members
+        .map((member) {
+          if (member.membershipId.trim() != membershipId) return member;
+          if (member.badge.trim().isNotEmpty) return member;
+          return member.copyWith(badge: badge);
+        })
+        .toList(growable: false);
   }
 
   static String _initials(String name) {

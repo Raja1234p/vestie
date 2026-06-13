@@ -11,6 +11,7 @@ import '../../domain/entities/project_detail_entity.dart';
 import 'project_member_add_friend_button.dart';
 import 'project_member_add_friend_visibility.dart';
 import 'project_member_co_leader_badge.dart';
+import 'project_member_contribution_badge.dart';
 import 'project_member_leader_badge.dart';
 import 'project_member_vff_badge.dart';
 
@@ -43,6 +44,8 @@ class ProjectMemberRow extends StatelessWidget {
         project: project,
         member: member,
       );
+
+  bool get _showContributionBadge => member.showsContributionBadge;
 
   bool get _showRoleBadge =>
       member.role == MemberRole.leader || member.role == MemberRole.coLeader;
@@ -93,7 +96,9 @@ class ProjectMemberRow extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AppText(member.name, style: AppTextStyles.projectMemberName),
-                  if (_showRoleBadge || _showVffBadge) ...[
+                  if (_showRoleBadge ||
+                      _showVffBadge ||
+                      _showContributionBadge) ...[
                     SizedBox(height: AppDimens.projectMemberNameBadgeGap),
                     Wrap(
                       spacing: AppDimens.p8,
@@ -104,6 +109,8 @@ class ProjectMemberRow extends StatelessWidget {
                         else if (member.role == MemberRole.coLeader &&
                             (project == null || project!.supportsCoLeader))
                           const ProjectMemberCoLeaderBadge(),
+                        if (_showContributionBadge)
+                          ProjectMemberContributionBadge(label: member.badge),
                         if (_showVffBadge) const ProjectMemberVffBadge(),
                       ],
                     ),

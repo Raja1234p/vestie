@@ -59,6 +59,7 @@ extension MemberEntityApiIds on MemberEntity {
       vffConnectionState: _mergedVffConnectionState(fromApi),
       canSendVffRequest: fromApi.canSendVffRequest,
       pendingVffRequestId: fromApi.pendingVffRequestId ?? pendingVffRequestId,
+      badge: fromApi.badge.trim().isNotEmpty ? fromApi.badge : badge,
     );
   }
 

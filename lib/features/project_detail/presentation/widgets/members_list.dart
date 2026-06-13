@@ -6,6 +6,7 @@ import '../../../../core/widgets/common/app_network_avatar.dart';
 import '../../../../core/widgets/text/app_text.dart';
 import '../../domain/entities/member_entity.dart';
 import 'project_member_co_leader_badge.dart';
+import 'project_member_contribution_badge.dart';
 import 'project_member_leader_badge.dart';
 
 /// Scrollable member list displayed under the Members tab.
@@ -43,6 +44,8 @@ class _MemberRow extends StatelessWidget {
 
   bool get _showsRoleBadge =>
       member.role == MemberRole.leader || member.role == MemberRole.coLeader;
+
+  bool get _showsContributionBadge => member.showsContributionBadge;
 
   String _fmt(double v) =>
       '\$${v.toStringAsFixed(0).replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (_) => ',')}';
@@ -89,6 +92,10 @@ class _MemberRow extends StatelessWidget {
                       const ProjectMemberLeaderBadge()
                     else
                       const ProjectMemberCoLeaderBadge(),
+                  ],
+                  if (_showsContributionBadge) ...[
+                    SizedBox(width: 8.w),
+                    ProjectMemberContributionBadge(label: member.badge),
                   ],
                   if (_showOverdueBadge) ...[
                     SizedBox(width: 8.w),

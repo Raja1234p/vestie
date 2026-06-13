@@ -20,6 +20,9 @@ class MemberEntity {
   final bool canSendVffRequest;
   final String? pendingVffRequestId;
 
+  /// API `badge` — e.g. `Top Contributor` from `viewerMembership` / `members[]`.
+  final String badge;
+
   const MemberEntity({
     required this.id,
     this.membershipId = '',
@@ -36,6 +39,7 @@ class MemberEntity {
     this.vffConnectionState = VffConnectionState.none,
     this.canSendVffRequest = false,
     this.pendingVffRequestId,
+    this.badge = '',
   });
 
   bool get isVffConnected => vffConnectionState == VffConnectionState.connected;
@@ -50,6 +54,26 @@ class MemberEntity {
 
   /// Connected / VFF on this membership — row UI hides for viewer self via [ProjectMemberAddFriendVisibility].
   bool get showsVffBadgeOnMemberRow => isVffConnected || vffAdded;
+
+  /// Membership contribution pill (e.g. Top Contributor) — not when API badge repeats role.
+  bool get showsContributionBadge {
+    final label = badge.trim();
+    if (label.isEmpty) return false;
+    return !_badgeDuplicatesRoleBadge(label);
+  }
+
+  static String _normalizeBadgeLabel(String label) =>
+      label.toLowerCase().replaceAll(RegExp(r'[\s_-]'), '');
+
+  bool _badgeDuplicatesRoleBadge(String label) {
+    final normalized = _normalizeBadgeLabel(label);
+    return switch (role) {
+      MemberRole.leader => const {'leader', 'groupleader', 'projectleader'}
+          .contains(normalized),
+      MemberRole.coLeader => const {'coleader'}.contains(normalized),
+      MemberRole.member => false,
+    };
+  }
 
   MemberEntity copyWith({
     String? id,
@@ -67,6 +91,7 @@ class MemberEntity {
     VffConnectionState? vffConnectionState,
     bool? canSendVffRequest,
     String? pendingVffRequestId,
+    String? badge,
     bool clearPendingVffRequestId = false,
   }) {
     return MemberEntity(
@@ -87,6 +112,7 @@ class MemberEntity {
       pendingVffRequestId: clearPendingVffRequestId
           ? null
           : (pendingVffRequestId ?? this.pendingVffRequestId),
+      badge: badge ?? this.badge,
     );
   }
 }

@@ -167,6 +167,9 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
   final ListBorrowRequestsUseCase? _listBorrowRequests;
   final SendVffRequestUseCase? _sendVffRequestUseCase;
   final List<Completer<void>> _detailLoadWaiters = [];
+  bool _detailLoadInFlight = false;
+  String? _detailLoadProjectId;
+  bool _detailReloadQueued = false;
 
   ProjectDetailBloc({
     required this.repository,
@@ -206,6 +209,14 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
     LoadProjectDetailEvent event,
     Emitter<ProjectDetailState> emit,
   ) async {
+    if (_detailLoadInFlight && _detailLoadProjectId == event.projectId) {
+      _detailReloadQueued = true;
+      return;
+    }
+
+    _detailLoadInFlight = true;
+    _detailLoadProjectId = event.projectId;
+
     final preservedTab = switch (state) {
       ProjectDetailLoaded(:final activeTab) => activeTab,
       _ => ProjectDetailTab.borrowRequests,
@@ -225,8 +236,11 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
         },
         (project) async {
           var pendingCount = project.pendingJoinRequestCount;
+          // After moderation / member sync, refresh chip count from pending list.
           final listPending = _listPendingJoinRequests;
-          if (project.showsJoinRequestsHeaderChip && listPending != null) {
+          if (isSilentRefresh &&
+              project.showsJoinRequestsHeaderChip &&
+              listPending != null) {
             final pendingResult = await listPending(event.projectId);
             pendingResult.fold((_) {}, (list) => pendingCount = list.length);
           }
@@ -260,7 +274,17 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
         },
       );
     } finally {
-      _completeDetailLoadWaiters();
+      final shouldReload = _detailReloadQueued;
+      _detailReloadQueued = false;
+      _detailLoadInFlight = false;
+      _detailLoadProjectId = null;
+
+      if (shouldReload) {
+        // Sync waiters must see post-mutation data from the queued reload.
+        add(LoadProjectDetailEvent(projectId: event.projectId));
+      } else {
+        _completeDetailLoadWaiters();
+      }
     }
   }
 

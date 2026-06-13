@@ -19,7 +19,7 @@ class BorrowRequestsTab extends StatelessWidget {
   final ValueChanged<MemberEntity>? onMemberTap;
   final void Function(BorrowRequestEntity request)? onAccept;
   final void Function(BorrowRequestEntity request)? onReject;
-  final VoidCallback? onVoteSuccess;
+  final Future<void> Function()? onVoteSuccess;
 
   const BorrowRequestsTab({
     super.key,

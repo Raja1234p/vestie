@@ -98,4 +98,40 @@ void main() {
       expect(member.hasPendingVffOutgoing, isFalse);
     });
   });
+
+  group('MemberEntity.showsContributionBadge', () {
+    MemberEntity leader({String badge = ''}) => MemberEntity(
+      id: 'u1',
+      initials: 'TL',
+      name: 'Taylor',
+      role: MemberRole.leader,
+      contributedAmount: 0,
+      badge: badge,
+    );
+
+    test('shows Top Contributor for leaders', () {
+      expect(
+        leader(badge: 'Top Contributor').showsContributionBadge,
+        isTrue,
+      );
+    });
+
+    test('hides role-duplicate Leader badge', () {
+      expect(leader(badge: 'Leader').showsContributionBadge, isFalse);
+      expect(leader(badge: 'Group Leader').showsContributionBadge, isFalse);
+    });
+
+    test('hides role-duplicate Co Leader badge', () {
+      final coLeader = MemberEntity(
+        id: 'u2',
+        initials: 'CL',
+        name: 'Casey',
+        role: MemberRole.coLeader,
+        contributedAmount: 0,
+        badge: 'Co Leader',
+      );
+
+      expect(coLeader.showsContributionBadge, isFalse);
+    });
+  });
 }

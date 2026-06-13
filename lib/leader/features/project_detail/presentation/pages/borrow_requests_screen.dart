@@ -127,6 +127,12 @@ class _BorrowRequestsScreenState extends State<BorrowRequestsScreen> {
     });
   }
 
+  Future<void> _onVoteSuccess() async {
+    await BorrowProjectDetailSync.reloadBeforeSuccess(widget.projectId);
+    if (!mounted) return;
+    await _reloadRequests();
+  }
+
   Widget _buildRequestCard(BuildContext context, BorrowRequestEntity request) {
     final project = widget.project;
     return BorrowRequestCard(
@@ -158,7 +164,7 @@ class _BorrowRequestsScreenState extends State<BorrowRequestsScreen> {
               () => _reject(context, request),
             )
           : null,
-      onVoteSuccess: widget.isLeaderMode ? null : _reloadRequests,
+      onVoteSuccess: widget.isLeaderMode ? null : _onVoteSuccess,
     );
   }
 
