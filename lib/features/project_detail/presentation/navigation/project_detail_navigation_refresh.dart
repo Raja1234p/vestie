@@ -7,6 +7,10 @@ void _refreshProjectDetailAfterMemberFlow(
 }) {
   if (result == null) return;
   if (!context.mounted) return;
+  // Member detail already synced project detail via [ProjectDetailReloadCoordinator].
+  if (ProjectDetailReloadCoordinator.cachedProject(projectId) != null) {
+    return;
+  }
   _reloadProjectDetailBloc(context, projectId: projectId);
 }
 

@@ -40,12 +40,14 @@ class GroupMembersScreen extends StatefulWidget {
 
 class _GroupMembersScreenState extends State<GroupMembersScreen> {
   late List<MemberEntity> _members;
+  ProjectDetailEntity? _project;
   String? _sendingVffUserId;
 
   @override
   void initState() {
     super.initState();
     _members = widget.members;
+    _project = widget.project;
   }
 
   List<MemberEntity> get _activeMembers => _members
@@ -103,6 +105,31 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
     );
   }
 
+  /// Applies members/co-leader badges from the project detail reload member
+  /// detail already performed — no extra API in the normal stack path.
+  Future<void> _applySyncedMembers() async {
+    final cached = ProjectDetailReloadCoordinator.cachedProject(widget.projectId);
+    if (cached != null) {
+      setState(() {
+        _members = cached.members;
+        _project = cached;
+      });
+      return;
+    }
+
+    final result =
+        await ServiceLocator.instance.projectDetailRepository.getProjectDetail(
+      projectId: widget.projectId,
+    );
+    if (!mounted) return;
+    result.fold((_) {}, (project) {
+      setState(() {
+        _members = project.members;
+        _project = project;
+      });
+    });
+  }
+
   Future<void> _openMemberProfile(
     BuildContext context, {
     required ProjectDetailEntity project,
@@ -118,13 +145,18 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
     if (result == MemberDetailPopResult.memberRemoved) {
       if (!context.mounted) return;
       context.pop();
+      return;
+    }
+
+    if (result == MemberDetailPopResult.membersUpdated) {
+      await _applySyncedMembers();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final active = _activeMembers;
-    final p = widget.project;
+    final p = _project ?? widget.project;
 
     return Scaffold(
       backgroundColor: Colors.transparent,

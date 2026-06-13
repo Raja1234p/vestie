@@ -20,7 +20,7 @@ Shared project detail entity, bloc, navigation helpers, member list, funds histo
 | `/project/detail` | Vacation / emergency detail |
 | `/project/investment-detail` | Investment detail |
 | `/project/member-detail` | Member profile from detail |
-| `/project/group-members` | Full member list |
+| `/project/group-members` | Full member list — refreshes co-leader badges after member-detail changes |
 | `/project/funds-history` | Ledger view |
 | `/project/contribute`, `/project/borrow` | Money sub-flows |
 
