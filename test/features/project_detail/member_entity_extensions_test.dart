@@ -105,42 +105,114 @@ void main() {
   });
 
   group('MemberEntity.showsContributionBadge', () {
-    MemberEntity leader({String badge = ''}) => MemberEntity(
-      id: 'u1',
-      initials: 'TL',
-      name: 'Taylor',
-      role: MemberRole.leader,
-      contributedAmount: 0,
-      badge: badge,
-    );
+    test('shows Top Contributor on member, leader, and co-leader rows', () {
+      const badge = 'Top Contributor';
+      const roles = [
+        MemberRole.member,
+        MemberRole.leader,
+        MemberRole.coLeader,
+      ];
 
-    test('shows Top Contributor for leaders', () {
-      expect(
-        leader(badge: 'Top Contributor').showsContributionBadge,
-        isTrue,
-      );
+      for (final role in roles) {
+        final member = MemberEntity(
+          id: 'u-$role',
+          initials: 'TC',
+          name: 'Taylor',
+          role: role,
+          contributedAmount: 0,
+          badge: badge,
+        );
+        expect(
+          member.showsContributionBadge,
+          isTrue,
+          reason: 'Top Contributor should show for $role',
+        );
+      }
     });
 
-    test('hides role-duplicate Leader badge', () {
-      expect(leader(badge: 'Leader').showsContributionBadge, isFalse);
-      expect(leader(badge: 'Group Leader').showsContributionBadge, isFalse);
-    });
-
-    test('hides role-duplicate Co Leader badge', () {
-      final coLeader = MemberEntity(
+    test('hides Leader, Contributor, and other badge labels', () {
+      const base = MemberEntity(
         id: 'u2',
-        initials: 'CL',
-        name: 'Casey',
-        role: MemberRole.coLeader,
+        initials: 'MB',
+        name: 'Member',
+        role: MemberRole.member,
         contributedAmount: 0,
-        badge: 'Co Leader',
+        badge: '',
       );
 
-      expect(coLeader.showsContributionBadge, isFalse);
+      for (final label in [
+        'Leader',
+        'Group Leader',
+        'Co Leader',
+        'Contributor',
+        'groupLead',
+      ]) {
+        expect(
+          base.copyWith(badge: label).showsContributionBadge,
+          isFalse,
+          reason: '$label should not show',
+        );
+      }
+    });
+
+    test('contributionBadgeFromApi keeps only Top Contributor', () {
+      expect(
+        MemberEntity.contributionBadgeFromApi('Top Contributor'),
+        MemberEntity.topContributorBadgeLabel,
+      );
+      expect(MemberEntity.contributionBadgeFromApi('top_contributor'),
+          MemberEntity.topContributorBadgeLabel);
+      expect(MemberEntity.contributionBadgeFromApi('Contributor'), '');
+      expect(MemberEntity.contributionBadgeFromApi('Leader'), '');
     });
   });
 
   group('MemberEntity.showsVffBadgeOnMemberRow', () {
+    test('shows when vffConnectionState Connected and VFFAdded true', () {
+      final member = MemberEntity(
+        id: 'u-vff',
+        userId: 'u-vff',
+        initials: 'VF',
+        name: 'VFF User',
+        role: MemberRole.member,
+        contributedAmount: 0,
+        vffConnectionState: VffConnectionState.connected,
+        vffAdded: true,
+      );
+
+      expect(member.showsVffBadgeOnMemberRow, isTrue);
+    });
+
+    test('hides when Connected but VFFAdded false', () {
+      final member = MemberEntity(
+        id: 'u-vff',
+        userId: 'u-vff',
+        initials: 'VF',
+        name: 'VFF User',
+        role: MemberRole.member,
+        contributedAmount: 0,
+        vffConnectionState: VffConnectionState.connected,
+        vffAdded: false,
+      );
+
+      expect(member.showsVffBadgeOnMemberRow, isFalse);
+    });
+
+    test('hides when VFFAdded true but vffConnectionState not Connected', () {
+      final member = MemberEntity(
+        id: 'u-vff',
+        userId: 'u-vff',
+        initials: 'VF',
+        name: 'VFF User',
+        role: MemberRole.member,
+        contributedAmount: 0,
+        vffConnectionState: VffConnectionState.none,
+        vffAdded: true,
+      );
+
+      expect(member.showsVffBadgeOnMemberRow, isFalse);
+    });
+
     test('is false when pending outgoing even if vffAdded is true', () {
       final member = MemberEntity(
         id: 'u-co',

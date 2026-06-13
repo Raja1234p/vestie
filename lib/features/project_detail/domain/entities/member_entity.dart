@@ -20,7 +20,7 @@ class MemberEntity {
   final bool canSendVffRequest;
   final String? pendingVffRequestId;
 
-  /// API `badge` — e.g. `Top Contributor` from `viewerMembership` / `members[]`.
+  /// API `badge` — only `Top Contributor` is shown as the contribution pill.
   final String badge;
 
   const MemberEntity({
@@ -61,28 +61,25 @@ class MemberEntity {
     return pendingId != null && pendingId.isNotEmpty;
   }
 
-  /// VFF pill — viewer must be linked (`vffConnectionState` + `VFFAdded` from detail API).
+  /// VFF pill — `vffConnectionState: Connected` and `VFFAdded: true` on `members[]`.
   bool get showsVffBadgeOnMemberRow => isViewerVffLinked;
 
-  /// Membership contribution pill (e.g. Top Contributor) — not when API badge repeats role.
-  bool get showsContributionBadge {
-    final label = badge.trim();
-    if (label.isEmpty) return false;
-    return !_badgeDuplicatesRoleBadge(label);
+  /// Top Contributor pill — `badge: Top Contributor` on any role (member, leader, co-leader).
+  bool get showsContributionBadge => isTopContributorBadge(badge);
+
+  static const topContributorBadgeLabel = 'Top Contributor';
+
+  static bool isTopContributorBadge(String label) {
+    return _normalizeBadgeLabel(label) == 'topcontributor';
+  }
+
+  /// Keeps only Top Contributor from API; all other badge values are ignored.
+  static String contributionBadgeFromApi(String raw) {
+    return isTopContributorBadge(raw) ? topContributorBadgeLabel : '';
   }
 
   static String _normalizeBadgeLabel(String label) =>
       label.toLowerCase().replaceAll(RegExp(r'[\s_-]'), '');
-
-  bool _badgeDuplicatesRoleBadge(String label) {
-    final normalized = _normalizeBadgeLabel(label);
-    return switch (role) {
-      MemberRole.leader => const {'leader', 'groupleader', 'projectleader'}
-          .contains(normalized),
-      MemberRole.coLeader => const {'coleader'}.contains(normalized),
-      MemberRole.member => false,
-    };
-  }
 
   MemberEntity copyWith({
     String? id,

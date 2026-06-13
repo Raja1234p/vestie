@@ -5,6 +5,7 @@ import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
 
 import '../../domain/entities/borrow_request_entity.dart';
 import '../../domain/entities/member_entity.dart';
+import '../../domain/entities/member_entity_extensions.dart';
 import '../../domain/entities/project_announcement_entity.dart';
 import '../../domain/entities/project_detail_entity.dart';
 import '../../domain/entities/project_invite_entity.dart';
@@ -86,10 +87,15 @@ class ProjectDetailResponseModel {
       members: mappedMembers,
     );
 
-    final mergedMembers = _applyViewerMembershipBadge(
-      mappedMembers,
+    final mergedMembers = _applyViewerMembershipRole(
+      _applyViewerMembershipBadge(
+        mappedMembers,
+        viewerMembershipId: _viewerMembership.membershipId,
+        viewerBadge: _viewerMembership.badge,
+      ),
       viewerMembershipId: _viewerMembership.membershipId,
-      viewerBadge: _viewerMembership.badge,
+      viewerUserId: _viewerMembership.userId,
+      viewerRole: viewerRole,
     );
     final mappedInvites = _invites.map(_mapInvite).toList(growable: false);
     final mappedAnnouncements = _announcements
@@ -178,16 +184,72 @@ class ProjectDetailResponseModel {
       vffConnectionState: json.vffConnectionState,
       canSendVffRequest: json.canSendVffRequest,
       pendingVffRequestId: json.pendingVffRequestId,
-      badge: json.badge,
+      badge: MemberEntity.contributionBadgeFromApi(json.badge),
     );
   }
+
+  /// Elevates the viewer's roster row from `project.viewerRole` / membership — not `badge`.
+  static List<MemberEntity> _applyViewerMembershipRole(
+    List<MemberEntity> members, {
+    required String viewerMembershipId,
+    required String viewerUserId,
+    required ViewerMembershipRole viewerRole,
+  }) {
+    final elevatedRole = switch (viewerRole) {
+      ViewerMembershipRole.groupLeader => MemberRole.leader,
+      ViewerMembershipRole.coLeader => MemberRole.coLeader,
+      ViewerMembershipRole.member => null,
+    };
+    if (elevatedRole == null) return members;
+
+    return members
+        .map((member) {
+          if (!_isViewerMemberRow(
+            member,
+            viewerMembershipId: viewerMembershipId,
+            viewerUserId: viewerUserId,
+          )) {
+            return member;
+          }
+          if (_roleRank(member.role) >= _roleRank(elevatedRole)) {
+            return member.copyWith(
+              badge: MemberEntity.contributionBadgeFromApi(member.badge),
+            );
+          }
+          return member.copyWith(
+            role: elevatedRole,
+            badge: MemberEntity.contributionBadgeFromApi(member.badge),
+          );
+        })
+        .toList(growable: false);
+  }
+
+  static bool _isViewerMemberRow(
+    MemberEntity member, {
+    required String viewerMembershipId,
+    required String viewerUserId,
+  }) {
+    final membershipId = viewerMembershipId.trim();
+    if (membershipId.isNotEmpty &&
+        member.membershipId.trim() == membershipId) {
+      return true;
+    }
+    final userId = viewerUserId.trim();
+    return userId.isNotEmpty && member.apiUserId.trim() == userId;
+  }
+
+  static int _roleRank(MemberRole role) => switch (role) {
+    MemberRole.leader => 3,
+    MemberRole.coLeader => 2,
+    MemberRole.member => 1,
+  };
 
   static List<MemberEntity> _applyViewerMembershipBadge(
     List<MemberEntity> members, {
     required String viewerMembershipId,
     required String viewerBadge,
   }) {
-    final badge = viewerBadge.trim();
+    final badge = MemberEntity.contributionBadgeFromApi(viewerBadge);
     final membershipId = viewerMembershipId.trim();
     if (badge.isEmpty || membershipId.isEmpty) return members;
 
