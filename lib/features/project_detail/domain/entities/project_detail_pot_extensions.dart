@@ -1,7 +1,6 @@
 import 'package:vestie/features/project_pot/domain/entities/project_pot_entity.dart';
 
 import 'borrow_request_entity.dart';
-import 'member_entity_extensions.dart';
 import 'project_detail_entity.dart';
 
 extension ProjectDetailEntityPot on ProjectDetailEntity {
@@ -41,18 +40,9 @@ extension ProjectDetailEntityPot on ProjectDetailEntity {
     );
   }
 
-  /// Applies `GET /projects/{id}/pot` (or SignalR payload) to raised amount + VFF badges.
+  /// Applies `GET /projects/{id}/pot` (or SignalR payload) to raised amount only.
+  /// VFF state comes from `GET /projects/{id}` members — not pot.
   ProjectDetailEntity withProjectPot(ProjectPotEntity pot) {
-    final vffIds = pot.vffMemberUserIds.map((e) => e.trim()).toSet();
-
-    final updatedMembers = members
-        .map((member) {
-          final isPotVff = vffIds.contains(member.apiUserId);
-          if (!isPotVff) return member;
-          return member.copyWith(vffAdded: true);
-        })
-        .toList(growable: false);
-
     final raised = pot.potAmount > 0 ? pot.potAmount : currentAmount;
 
     return ProjectDetailEntity(
@@ -66,7 +56,7 @@ extension ProjectDetailEntityPot on ProjectDetailEntity {
       endsIn: endsIn,
       announcement: announcement,
       announcements: announcements,
-      members: updatedMembers,
+      members: members,
       borrowRequests: borrowRequests,
       viewerRole: viewerRole,
       membershipId: membershipId,

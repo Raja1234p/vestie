@@ -55,7 +55,7 @@ extension MemberEntityApiIds on MemberEntity {
       contributedAmount: fromApi.contributedAmount,
       overdueAmount: fromApi.overdueAmount ?? overdueAmount,
       photoUrl: useApiPhoto ? fromApi.photoUrl : photoUrl,
-      vffAdded: fromApi.isVffConnected || fromApi.vffAdded,
+      vffAdded: fromApi.isVffConnected && fromApi.vffAdded,
       vffConnectionState: _mergedVffConnectionState(fromApi),
       canSendVffRequest: fromApi.canSendVffRequest,
       pendingVffRequestId: fromApi.pendingVffRequestId ?? pendingVffRequestId,

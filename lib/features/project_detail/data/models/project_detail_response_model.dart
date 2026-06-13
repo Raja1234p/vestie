@@ -389,24 +389,29 @@ class _MembershipPayload {
     this.pendingVffRequestId,
   });
 
-  factory _MembershipPayload.fromJson(Map<String, dynamic> json) =>
-      _MembershipPayload(
-        membershipId: _jsonString(json['membershipId']),
-        userId: _jsonString(json['userId']),
-        userName: _jsonString(json['userName']),
-        firstName: _jsonString(json['firstName']),
-        lastName: _jsonString(json['lastName']),
-        role: membershipRoleApiValueToString(json['role']),
-        status: membershipStatusApiValueToString(json['status']),
-        borrowLimitAmount: _jsonDoubleNullable(json['borrowLimitAmount']),
-        isDefaulted: json['isDefaulted'] == true,
-        badge: _jsonString(json['badge']),
-        photoUrl: membershipPhotoUrlFromJson(json),
-        vffAdded: membershipVffAddedFromJson(json),
-        vffConnectionState: membershipVffConnectionStateFromJson(json),
-        canSendVffRequest: json.safeBool('canSendVffRequest'),
-        pendingVffRequestId: membershipPendingVffRequestId(json),
-      );
+  factory _MembershipPayload.fromJson(Map<String, dynamic> json) {
+    final vffConnectionState = membershipVffConnectionStateFromJson(json);
+    return _MembershipPayload(
+      membershipId: _jsonString(json['membershipId']),
+      userId: _jsonString(json['userId']),
+      userName: _jsonString(json['userName']),
+      firstName: _jsonString(json['firstName']),
+      lastName: _jsonString(json['lastName']),
+      role: membershipRoleApiValueToString(json['role']),
+      status: membershipStatusApiValueToString(json['status']),
+      borrowLimitAmount: _jsonDoubleNullable(json['borrowLimitAmount']),
+      isDefaulted: json['isDefaulted'] == true,
+      badge: _jsonString(json['badge']),
+      photoUrl: membershipPhotoUrlFromJson(json),
+      vffConnectionState: vffConnectionState,
+      vffAdded: membershipViewerVffLinkedFromJson(
+        json,
+        connectionState: vffConnectionState,
+      ),
+      canSendVffRequest: json.safeBool('canSendVffRequest'),
+      pendingVffRequestId: membershipPendingVffRequestId(json),
+    );
+  }
 }
 
 class _InvitePayload {

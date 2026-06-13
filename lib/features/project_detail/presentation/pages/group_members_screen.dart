@@ -60,7 +60,7 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
   }) async {
     final userId = member.apiUserId;
     if (userId.isEmpty || _sendingVffUserId != null) return;
-    if (member.hasPendingVffOutgoing || member.isVffConnected) return;
+    if (member.hasPendingVffOutgoing || member.isViewerVffLinked) return;
 
     setState(() => _sendingVffUserId = userId);
 
@@ -160,51 +160,55 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
+      resizeToAvoidBottomInset: false,
       body: PostAuthGradientBackground(
-        child: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: PostAuthHeader(
-                title: AppStrings.groupMembersTitle,
-                leading: AppBackButton(onPressed: () => context.pop()),
-              ),
+        child: Column(
+          children: [
+            PostAuthHeader(
+              title: AppStrings.groupMembersTitle,
+              leading: AppBackButton(onPressed: () => context.pop()),
             ),
-            SliverPadding(
-              padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 32.h),
-              sliver: active.isEmpty
-                  ? const SliverFillRemaining(
-                      hasScrollBody: false,
-                      child: ProjectMembersEmptyState(centered: true),
-                    )
-                  : SliverList(
-                      delegate: SliverChildBuilderDelegate((_, i) {
-                        final member = active[i];
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: 12.h),
-                          child: ProjectMemberRow(
-                            member: member,
-                            project: p,
-                            onTap: p != null && p.canReviewMemberProfiles
-                                ? (_) => _openMemberProfile(
-                                    context,
-                                    project: p,
-                                    member: member,
-                                  )
-                                : null,
-                            onAddFriend: p != null && p.canReviewMemberProfiles
-                                ? () => _sendVff(project: p, member: member)
-                                : null,
-                            isSendVffLoading:
-                                _sendingVffUserId == member.apiUserId,
-                            vffRequestSent: member.hasPendingVffOutgoing,
-                          ),
-                        );
-                      }, childCount: active.length),
-                    ),
-            ),
+            Expanded(child: _buildBody(context, active: active, project: p)),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildBody(
+    BuildContext context, {
+    required List<MemberEntity> active,
+    required ProjectDetailEntity? project,
+  }) {
+    if (active.isEmpty) {
+      return const ProjectMembersEmptyState(centered: true);
+    }
+
+    return ListView.builder(
+      padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 32.h),
+      itemCount: active.length,
+      itemBuilder: (_, i) {
+        final member = active[i];
+        return Padding(
+          padding: EdgeInsets.only(bottom: 12.h),
+          child: ProjectMemberRow(
+            member: member,
+            project: project,
+            onTap: project != null && project.canReviewMemberProfiles
+                ? (_) => _openMemberProfile(
+                    context,
+                    project: project,
+                    member: member,
+                  )
+                : null,
+            onAddFriend: project != null && project.canReviewMemberProfiles
+                ? () => _sendVff(project: project, member: member)
+                : null,
+            isSendVffLoading: _sendingVffUserId == member.apiUserId,
+            vffRequestSent: member.hasPendingVffOutgoing,
+          ),
+        );
+      },
     );
   }
 }

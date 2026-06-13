@@ -36,7 +36,7 @@ class LoadProjectDetailEvent extends ProjectDetailEvent {
   List<Object?> get props => [projectId];
 }
 
-/// Reloads `GET /projects/{id}/pot` and merges pot + VFF into loaded detail.
+/// Reloads `GET /projects/{id}/pot` and merges raised amount into loaded detail.
 class RefreshProjectPotEvent extends ProjectDetailEvent {
   final String projectId;
   const RefreshProjectPotEvent({required this.projectId});
@@ -339,7 +339,7 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
     final userId = member.apiUserId;
     if (userId.isEmpty) return;
 
-    if (member.hasPendingVffOutgoing || member.isVffConnected) return;
+    if (member.hasPendingVffOutgoing || member.isViewerVffLinked) return;
     if (curr.sendingVffUserId != null) return;
 
     emit(curr.copyWith(sendingVffUserId: userId, clearVffSendError: true));

@@ -25,6 +25,16 @@ bool membershipVffAddedFromJson(Map<String, dynamic> json) {
   return false;
 }
 
+/// Viewer-relative VFF on a project member — requires Connected + VFFAdded.
+bool membershipViewerVffLinkedFromJson(
+  Map<String, dynamic> json, {
+  VffConnectionState? connectionState,
+}) {
+  final state = connectionState ?? membershipVffConnectionStateFromJson(json);
+  if (state != VffConnectionState.connected) return false;
+  return membershipVffAddedFromJson(json);
+}
+
 String? membershipPendingVffRequestId(Map<String, dynamic> json) {
   final raw = json.safeStringNullable('pendingVffRequestId');
   if (raw == null || raw.trim().isEmpty) return null;

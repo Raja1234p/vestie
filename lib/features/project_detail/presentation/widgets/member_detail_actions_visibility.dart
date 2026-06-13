@@ -25,7 +25,7 @@ abstract final class MemberDetailActionsVisibility {
     required MemberEntity member,
   }) {
     if (!isVffActionTarget(project: project, member: member)) return false;
-    if (member.isVffConnected) return false;
+    if (member.isViewerVffLinked) return false;
     if (member.hasPendingVffOutgoing) return false;
     if (member.vffConnectionState == VffConnectionState.pendingIncoming) {
       return false;
@@ -93,8 +93,8 @@ abstract final class MemberDetailActionsVisibility {
     required MemberEntity member,
     VffConnectionState activityVffConnectionState = VffConnectionState.none,
   }) {
-    if (activityVffConnectionState == VffConnectionState.connected ||
-        member.isVffConnected) {
+    if (activityVffConnectionState == VffConnectionState.connected &&
+        member.vffAdded) {
       return VffConnectionState.connected;
     }
     if (activityVffConnectionState == VffConnectionState.pendingOutgoing ||
@@ -103,6 +103,10 @@ abstract final class MemberDetailActionsVisibility {
     }
     if (activityVffConnectionState != VffConnectionState.none) {
       return activityVffConnectionState;
+    }
+    if (member.isViewerVffLinked) return VffConnectionState.connected;
+    if (member.vffConnectionState == VffConnectionState.connected) {
+      return VffConnectionState.none;
     }
     return member.vffConnectionState;
   }
@@ -125,10 +129,8 @@ abstract final class MemberDetailActionsVisibility {
     VffConnectionState vffConnectionState = VffConnectionState.none,
   }) {
     if (!isVffActionTarget(project: project, member: member)) return false;
-    return _isVffConnected(
-      member: member,
-      vffConnectionState: vffConnectionState,
-    );
+    return member.isViewerVffLinked ||
+        (vffConnectionState == VffConnectionState.connected && member.vffAdded);
   }
 
   /// Member detail footer: Send VFF or “Request Sent” (uses activity VFF state).

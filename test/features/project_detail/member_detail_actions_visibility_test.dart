@@ -329,6 +329,7 @@ void main() {
         role: MemberRole.member,
         contributedAmount: 0,
         vffConnectionState: VffConnectionState.connected,
+        vffAdded: true,
       );
 
       expect(
@@ -374,6 +375,7 @@ void main() {
         role: MemberRole.member,
         contributedAmount: 0,
         vffConnectionState: VffConnectionState.connected,
+        vffAdded: true,
       );
 
       expect(
@@ -384,6 +386,44 @@ void main() {
         ),
         isTrue,
       );
+    });
+
+    test('hides Following when Connected but VFFAdded false', () {
+      const project = ProjectDetailEntity(
+        id: 'p1',
+        name: 'Trip',
+        category: ProjectCategory.vacations,
+        status: ProjectStatus.ongoing,
+        goalAmount: 1000,
+        currentAmount: 0,
+        endsIn: '30d',
+        announcement: '',
+        members: [],
+        borrowRequests: [],
+        viewerRole: ViewerMembershipRole.member,
+        membershipId: 'viewer-membership',
+      );
+
+      const member = MemberEntity(
+        id: 'user-b',
+        membershipId: 'm-b',
+        userId: 'user-b',
+        initials: 'UB',
+        name: 'User B',
+        role: MemberRole.member,
+        contributedAmount: 0,
+        vffConnectionState: VffConnectionState.connected,
+        vffAdded: false,
+      );
+
+      expect(
+        MemberDetailActionsVisibility.showVffFollowing(
+          project: project,
+          member: member,
+        ),
+        isFalse,
+      );
+      expect(member.showsVffBadgeOnMemberRow, isFalse);
     });
   });
 }

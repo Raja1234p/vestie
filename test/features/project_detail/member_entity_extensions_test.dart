@@ -61,7 +61,10 @@ void main() {
 
     test('uses API connected state when available', () {
       final seed = _member(vffConnectionState: VffConnectionState.none);
-      final fromApi = _member(vffConnectionState: VffConnectionState.connected);
+      final fromApi = _member(
+        vffConnectionState: VffConnectionState.connected,
+        vffAdded: true,
+      );
 
       final merged = seed.mergedWithActivity(fromApi);
 
@@ -132,6 +135,55 @@ void main() {
       );
 
       expect(coLeader.showsContributionBadge, isFalse);
+    });
+  });
+
+  group('MemberEntity.showsVffBadgeOnMemberRow', () {
+    test('is false when pending outgoing even if vffAdded is true', () {
+      final member = MemberEntity(
+        id: 'u-co',
+        userId: 'u-co',
+        initials: 'TT',
+        name: 'test test',
+        role: MemberRole.coLeader,
+        contributedAmount: 0,
+        vffAdded: true,
+        vffConnectionState: VffConnectionState.pendingOutgoing,
+        pendingVffRequestId: 'req-1',
+      );
+
+      expect(member.showsVffBadgeOnMemberRow, isFalse);
+    });
+
+    test('is true when connected and VFFAdded', () {
+      final member = MemberEntity(
+        id: 'u-lead',
+        userId: 'u-lead',
+        initials: 'RL',
+        name: 'Leader',
+        role: MemberRole.leader,
+        contributedAmount: 0,
+        vffConnectionState: VffConnectionState.connected,
+        vffAdded: true,
+      );
+
+      expect(member.showsVffBadgeOnMemberRow, isTrue);
+    });
+
+    test('is false when Connected but VFFAdded false (third-party VFF)', () {
+      final member = MemberEntity(
+        id: 'user-b',
+        userId: 'user-b',
+        initials: 'UB',
+        name: 'User B',
+        role: MemberRole.member,
+        contributedAmount: 0,
+        vffConnectionState: VffConnectionState.connected,
+        vffAdded: false,
+      );
+
+      expect(member.showsVffBadgeOnMemberRow, isFalse);
+      expect(member.isViewerVffLinked, isFalse);
     });
   });
 }

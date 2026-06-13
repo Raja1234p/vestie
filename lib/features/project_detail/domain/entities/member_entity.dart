@@ -44,6 +44,15 @@ class MemberEntity {
 
   bool get isVffConnected => vffConnectionState == VffConnectionState.connected;
 
+  /// Viewer is VFF-linked to this member — `Connected` + `VFFAdded` from project detail.
+  bool get isViewerVffLinked {
+    if (hasPendingVffOutgoing ||
+        vffConnectionState == VffConnectionState.pendingIncoming) {
+      return false;
+    }
+    return isVffConnected && vffAdded;
+  }
+
   bool get hasPendingVffOutgoing {
     if (isVffConnected) return false;
     if (vffConnectionState == VffConnectionState.pendingOutgoing) return true;
@@ -52,8 +61,8 @@ class MemberEntity {
     return pendingId != null && pendingId.isNotEmpty;
   }
 
-  /// Connected / VFF on this membership — row UI hides for viewer self via [ProjectMemberAddFriendVisibility].
-  bool get showsVffBadgeOnMemberRow => isVffConnected || vffAdded;
+  /// VFF pill — viewer must be linked (`vffConnectionState` + `VFFAdded` from detail API).
+  bool get showsVffBadgeOnMemberRow => isViewerVffLinked;
 
   /// Membership contribution pill (e.g. Top Contributor) — not when API badge repeats role.
   bool get showsContributionBadge {

@@ -289,9 +289,9 @@ class MemberActivityResponseModel {
       contributedAmount: contributed,
       overdueAmount: overdueAmount,
       photoUrl: photoUrl,
-      vffAdded:
-          membershipVffAddedFromJson(json) ||
-          membershipVffAddedFromJson(profile),
+      vffAdded: vffConnectionState == VffConnectionState.connected &&
+          (membershipVffAddedFromJson(json) ||
+              membershipVffAddedFromJson(profile)),
       vffConnectionState: vffConnectionState,
       canSendVffRequest: canSendVffRequest,
       pendingVffRequestId: pendingVffRequestId,

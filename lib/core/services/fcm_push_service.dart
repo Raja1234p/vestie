@@ -125,6 +125,7 @@ class FcmPushService {
       if (!_tokenRefreshAttached) {
         _tokenRefreshAttached = true;
         messaging.onTokenRefresh.listen((newToken) {
+          _logFcmToken('onTokenRefresh', newToken);
           _log(
             'onTokenRefresh received: token=${_maskToken(newToken)}; '
             'syncDeviceToken() will run',
@@ -133,6 +134,8 @@ class FcmPushService {
         });
         _log('onTokenRefresh listener attached');
       }
+
+      await _logCurrentFcmToken('initialize');
     } catch (e) {
       _log('initialize() failed: $e');
     }
@@ -228,6 +231,7 @@ class FcmPushService {
         _log('token sync skipped: getToken returned null/empty');
         return;
       }
+      _logFcmToken('syncDeviceToken', token);
       _log('FCM token fetched: ${_maskToken(token)}');
 
       if (!force && _sessionSyncedToken == token) {
@@ -290,6 +294,25 @@ class FcmPushService {
     } catch (e) {
       _log('deleteToken skipped: $e');
     }
+  }
+
+  static Future<void> _logCurrentFcmToken(String context) async {
+    if (!kDebugMode || !_firebaseReady || kIsWeb) return;
+    try {
+      final token = await FirebaseMessaging.instance.getToken();
+      if (token == null || token.isEmpty) {
+        _log('$context: FCM token unavailable');
+        return;
+      }
+      _logFcmToken(context, token);
+    } catch (e) {
+      _log('$context: FCM token read failed: $e');
+    }
+  }
+
+  static void _logFcmToken(String context, String token) {
+    if (!kDebugMode) return;
+    debugPrint('$_logTag: [$context] FCM push token: $token');
   }
 
   static void _log(String message) {
