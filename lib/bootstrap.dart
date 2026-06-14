@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,12 +10,15 @@ import 'core/di/service_locator.dart';
 import 'core/services/fcm_push_service.dart';
 import 'core/services/project_invite_deep_link_service.dart';
 import 'core/stripe/stripe_sdk_initializer.dart';
+import 'firebase_options.dart';
 
 /// Shared cold-start initialization for [main.dart] and [main_dev.dart].
 abstract final class AppBootstrap {
   AppBootstrap._();
 
   static Future<void> run() async {
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
     _log('start');
     await StripeSdkInitializer.initialize();
     _log('stripe ready');
