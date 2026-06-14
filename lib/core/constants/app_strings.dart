@@ -782,7 +782,7 @@ class AppStrings {
   static const String errRepaymentMonthsInvalid =
       'Enter months between 1 and 120';
   static const String errRepaymentDaysRequired = 'Repayment window is required';
-  static const String errRepaymentDaysInvalid = 'Enter days between 1 and 3650';
+  static const String errRepaymentDaysInvalid = 'Enter days between 1 and 365';
   static const String errVotingWindowRequired = 'Voting window is required';
   static const String errVotingWindowInvalid =
       'Enter a number between 1 and 365';

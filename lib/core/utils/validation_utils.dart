@@ -157,12 +157,12 @@ class ValidationUtils {
     return null;
   }
 
-  /// Vacation/Emergency borrow step — whole days (maps to API `repaymentWindowDays`).
+  /// Vacation/Emergency borrow step — whole days (1–365, maps to API `repaymentWindowDays`).
   static String? validateRepaymentDays(String? value) {
     final raw = value?.trim() ?? '';
     if (raw.isEmpty) return AppStrings.errRepaymentDaysRequired;
     final n = int.tryParse(raw);
-    if (n == null || n < 1 || n > 3650) {
+    if (n == null || n < 1 || n > 365) {
       return AppStrings.errRepaymentDaysInvalid;
     }
     return null;
