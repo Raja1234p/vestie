@@ -115,8 +115,8 @@ class ProjectDetailEntity {
   /// Mark successful / initiate success vote — GroupLeader only.
   bool get canMarkProjectSuccessful => isGroupLeader;
 
-  /// Stop contributions vote — GroupLeader only.
-  bool get canStopContributions => isGroupLeader;
+  /// Stop contributions vote — group leader on investment projects only (not VAC / emergency).
+  bool get canStopContributions => isGroupLeader && category.isInvestment;
 
   /// Edit project / cancel project — GroupLeader only (CoLeader popup Figma).
   bool get canEditProject => isGroupLeader;

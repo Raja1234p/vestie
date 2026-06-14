@@ -939,7 +939,7 @@ class AppStrings {
   static const String withdrawEtaPrefix = 'Your ';
   static const String withdrawEtaSuffix = ' will arrive in 1-3';
   static const String withdrawEtaLineTwo = 'business days.';
-  static const String repaySentSuccessTitle = 'Repay Sent Successfully';
+  static const String repaySentSuccessTitle = 'Borrowed amount paid successfully';
   static const String repaySentPrefix = 'You’ve sent repay amount of ';
   static const String repaySentSuffix = ' to';
   static const String contributionSuccessTitle = 'Contribution Successful';

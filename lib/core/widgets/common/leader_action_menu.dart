@@ -29,6 +29,7 @@ enum LeaderMenuAudience { primaryLeader, coLeader }
 class LeaderActionMenu extends StatelessWidget {
   final LeaderMenuAudience audience;
   final bool includeMyBorrows;
+  final bool showStopContributions;
   final void Function(LeaderMenuAction) onSelected;
 
   const LeaderActionMenu({
@@ -36,6 +37,7 @@ class LeaderActionMenu extends StatelessWidget {
     required this.onSelected,
     this.audience = LeaderMenuAudience.primaryLeader,
     this.includeMyBorrows = false,
+    this.showStopContributions = true,
   });
 
   static const _primaryLabelColor = AppColors.grey900;
@@ -184,13 +186,15 @@ class LeaderActionMenu extends StatelessWidget {
       iconColor: AppColors.green900,
       labelColor: AppColors.green900,
     );
-    push(
-      LeaderMenuAction.stopContributions,
-      AppAssets.leaderStopContributions,
-      AppStrings.menuStopContributions,
-      iconColor: AppColors.actionStopContributions,
-      labelColor: AppColors.actionStopContributions,
-    );
+    if (showStopContributions) {
+      push(
+        LeaderMenuAction.stopContributions,
+        AppAssets.leaderStopContributions,
+        AppStrings.menuStopContributions,
+        iconColor: AppColors.actionStopContributions,
+        labelColor: AppColors.actionStopContributions,
+      );
+    }
     push(
       LeaderMenuAction.cancelProject,
       AppAssets.leaderCancelProject,
