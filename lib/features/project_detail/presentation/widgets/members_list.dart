@@ -8,6 +8,7 @@ import '../../domain/entities/member_entity.dart';
 import 'project_member_co_leader_badge.dart';
 import 'project_member_contribution_badge.dart';
 import 'project_member_leader_badge.dart';
+import 'project_member_overdue_badge.dart';
 
 /// Scrollable member list displayed under the Members tab.
 class MembersList extends StatelessWidget {
@@ -39,8 +40,7 @@ class _MemberRow extends StatelessWidget {
   const _MemberRow({required this.member, this.onTap});
 
   bool get _isNegative => member.contributedAmount < 0;
-  bool get _showOverdueBadge =>
-      member.overdueAmount != null && member.overdueAmount! > 0;
+  bool get _showOverdueBadge => member.showsOverdueBadge;
 
   bool get _showsRoleBadge =>
       member.role == MemberRole.leader || member.role == MemberRole.coLeader;
@@ -96,10 +96,11 @@ class _MemberRow extends StatelessWidget {
                   if (_showsContributionBadge) ...[
                     SizedBox(width: 8.w),
                     ProjectMemberContributionBadge(label: member.badge),
-                  ],
-                  if (_showOverdueBadge) ...[
+                  ] else if (_showOverdueBadge) ...[
                     SizedBox(width: 8.w),
-                    _OverdueBadge(amount: member.overdueAmount!),
+                    ProjectMemberOverdueBadge(
+                      amount: member.overdueBadgeDisplayAmount,
+                    ),
                   ],
                 ],
               ),
@@ -117,33 +118,6 @@ class _MemberRow extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _OverdueBadge extends StatelessWidget {
-  final double amount;
-  const _OverdueBadge({required this.amount});
-
-  String _fmt(double v) =>
-      '\$${v.toStringAsFixed(0).replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (_) => ',')}';
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-      decoration: BoxDecoration(
-        color: AppColors.red900,
-        borderRadius: BorderRadius.circular(18.r),
-      ),
-      child: AppText(
-        'Overdue - ${_fmt(amount)}',
-        style: GoogleFonts.lato(
-          fontSize: 11.sp,
-          fontWeight: FontWeight.w600,
-          color: Colors.white,
         ),
       ),
     );

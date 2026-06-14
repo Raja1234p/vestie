@@ -155,15 +155,93 @@ void main() {
       }
     });
 
-    test('contributionBadgeFromApi keeps only Top Contributor', () {
+    test('memberBadgeFromApi keeps only Top Contributor and Overdue', () {
       expect(
-        MemberEntity.contributionBadgeFromApi('Top Contributor'),
+        MemberEntity.memberBadgeFromApi('Top Contributor'),
         MemberEntity.topContributorBadgeLabel,
       );
-      expect(MemberEntity.contributionBadgeFromApi('top_contributor'),
+      expect(MemberEntity.memberBadgeFromApi('top_contributor'),
           MemberEntity.topContributorBadgeLabel);
-      expect(MemberEntity.contributionBadgeFromApi('Contributor'), '');
-      expect(MemberEntity.contributionBadgeFromApi('Leader'), '');
+      expect(
+        MemberEntity.memberBadgeFromApi('Overdue'),
+        MemberEntity.overdueBadgeLabel,
+      );
+      expect(MemberEntity.memberBadgeFromApi('overdue'),
+          MemberEntity.overdueBadgeLabel);
+      expect(MemberEntity.memberBadgeFromApi('Contributor'), '');
+      expect(MemberEntity.memberBadgeFromApi('Leader'), '');
+    });
+  });
+
+  group('MemberEntity.showsOverdueBadge', () {
+    test('shows when badge is Overdue and overdueAmount is greater than zero', () {
+      final member = MemberEntity(
+        id: 'u-overdue',
+        initials: 'OD',
+        name: 'Overdue User',
+        role: MemberRole.member,
+        contributedAmount: 0,
+        badge: MemberEntity.overdueBadgeLabel,
+        overdueAmount: 200,
+      );
+
+      expect(member.showsOverdueBadge, isTrue);
+    });
+
+    test('hides when badge is not Overdue even if overdueAmount is set', () {
+      final member = MemberEntity(
+        id: 'u-tc',
+        initials: 'TC',
+        name: 'Top Contributor',
+        role: MemberRole.member,
+        contributedAmount: 0,
+        badge: MemberEntity.topContributorBadgeLabel,
+        overdueAmount: 200,
+      );
+
+      expect(member.showsOverdueBadge, isFalse);
+      expect(member.showsContributionBadge, isTrue);
+    });
+
+    test('hides when overdueAmount is null or zero', () {
+      const base = MemberEntity(
+        id: 'u-clear',
+        initials: 'CL',
+        name: 'Clear User',
+        role: MemberRole.member,
+        contributedAmount: 0,
+        badge: MemberEntity.overdueBadgeLabel,
+      );
+
+      expect(base.showsOverdueBadge, isFalse);
+      expect(
+        base.copyWith(overdueAmount: 0).showsOverdueBadge,
+        isFalse,
+      );
+    });
+
+    test('never shows Top Contributor and Overdue together', () {
+      for (final badge in [
+        MemberEntity.topContributorBadgeLabel,
+        MemberEntity.overdueBadgeLabel,
+        '',
+      ]) {
+        final member = MemberEntity(
+          id: 'u-$badge',
+          initials: 'MX',
+          name: 'Mixed',
+          role: MemberRole.member,
+          contributedAmount: 0,
+          badge: badge,
+          overdueAmount: 150,
+        );
+
+        expect(
+          member.showsContributionBadge && member.showsOverdueBadge,
+          isFalse,
+          reason: 'badge=$badge',
+        );
+      }
     });
   });
 
@@ -308,6 +386,68 @@ void main() {
       final project = _project([roster]);
 
       expect(activity.withProjectRoster(project).role, MemberRole.coLeader);
+    });
+
+    test('withProjectRoster overlays badge and overdueAmount from roster', () {
+      const roster = MemberEntity(
+        id: 'u3',
+        membershipId: 'm3',
+        userId: 'u3',
+        initials: 'OD',
+        name: 'Overdue',
+        role: MemberRole.member,
+        contributedAmount: 0,
+        badge: MemberEntity.overdueBadgeLabel,
+        overdueAmount: 200,
+      );
+      final activityMember = roster.copyWith(badge: '', overdueAmount: null);
+      final project = _project([roster]);
+
+      final merged = activityMember.withProjectRoster(project);
+
+      expect(merged.badge, MemberEntity.overdueBadgeLabel);
+      expect(merged.overdueAmount, 200);
+      expect(merged.showsOverdueBadge, isTrue);
+    });
+  });
+
+  group('MemberEntity.mergedWithActivity badge', () {
+    test('keeps roster badge when activity API omits badge', () {
+      final seed = MemberEntity(
+        id: 'u1',
+        membershipId: 'm1',
+        userId: 'u1',
+        initials: 'TC',
+        name: 'Taylor',
+        role: MemberRole.member,
+        contributedAmount: 0,
+        badge: MemberEntity.topContributorBadgeLabel,
+      );
+      final fromApi = seed.copyWith(badge: '');
+
+      expect(seed.mergedWithActivity(fromApi).badge,
+          MemberEntity.topContributorBadgeLabel);
+    });
+
+    test('normalizes overdue badge from activity API', () {
+      final seed = MemberEntity(
+        id: 'u1',
+        membershipId: 'm1',
+        userId: 'u1',
+        initials: 'OD',
+        name: 'Overdue',
+        role: MemberRole.member,
+        contributedAmount: 0,
+      );
+      final fromApi = seed.copyWith(
+        badge: 'overdue',
+        overdueAmount: 150,
+      );
+
+      final merged = seed.mergedWithActivity(fromApi);
+
+      expect(merged.badge, MemberEntity.overdueBadgeLabel);
+      expect(merged.showsOverdueBadge, isTrue);
     });
   });
 }

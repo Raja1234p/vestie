@@ -106,7 +106,7 @@ Future<void> _handleLeaderAction(
       break;
     case LeaderMenuAction.cancelProject:
       final unpaid = project.members
-          .where((m) => m.overdueAmount != null && m.overdueAmount! > 0)
+          .where((m) => m.showsOverdueBadge)
           .length;
       context.push(
         AppRoutes.cancelProject,

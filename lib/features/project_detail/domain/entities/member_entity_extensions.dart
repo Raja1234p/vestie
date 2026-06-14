@@ -60,8 +60,14 @@ extension MemberEntityApiIds on MemberEntity {
       vffConnectionState: _mergedVffConnectionState(fromApi),
       canSendVffRequest: fromApi.canSendVffRequest,
       pendingVffRequestId: fromApi.pendingVffRequestId ?? pendingVffRequestId,
-      badge: fromApi.badge.trim().isNotEmpty ? fromApi.badge : badge,
+      badge: _mergeMemberBadge(fromApi.badge),
     );
+  }
+
+  String _mergeMemberBadge(String fromApiBadge) {
+    final normalized = MemberEntity.memberBadgeFromApi(fromApiBadge);
+    if (normalized.isNotEmpty) return normalized;
+    return badge;
   }
 
   /// Trust activity API for disconnect; keep route seed only for optimistic pending.
@@ -101,10 +107,21 @@ extension MemberEntityProjectRoster on MemberEntity {
         role == MemberRole.leader;
   }
 
-  /// Keeps display fields; overlays roster role when the member is on the roster.
+  /// Keeps display fields; overlays roster role, badge, and overdue from project detail.
   MemberEntity withProjectRoster(ProjectDetailEntity project) {
     final roster = projectRosterRow(project);
-    if (roster == null || roster.role == role) return this;
-    return copyWith(role: roster.role);
+    if (roster == null) return this;
+
+    final roleChanged = roster.role != role;
+    final badgeFromRoster = roster.badge.isNotEmpty;
+    final overdueFromRoster = roster.overdueAmount != null;
+
+    if (!roleChanged && !badgeFromRoster && !overdueFromRoster) return this;
+
+    return copyWith(
+      role: roster.role,
+      badge: badgeFromRoster ? roster.badge : badge,
+      overdueAmount: roster.overdueAmount ?? overdueAmount,
+    );
   }
 }

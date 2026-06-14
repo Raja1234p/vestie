@@ -178,13 +178,13 @@ class ProjectDetailResponseModel {
       status: json.status,
       role: mappedRole,
       contributedAmount: 0,
-      overdueAmount: null,
+      overdueAmount: json.overdueAmount,
       photoUrl: json.photoUrl,
       vffAdded: json.vffAdded,
       vffConnectionState: json.vffConnectionState,
       canSendVffRequest: json.canSendVffRequest,
       pendingVffRequestId: json.pendingVffRequestId,
-      badge: MemberEntity.contributionBadgeFromApi(json.badge),
+      badge: MemberEntity.memberBadgeFromApi(json.badge),
     );
   }
 
@@ -213,12 +213,12 @@ class ProjectDetailResponseModel {
           }
           if (_roleRank(member.role) >= _roleRank(elevatedRole)) {
             return member.copyWith(
-              badge: MemberEntity.contributionBadgeFromApi(member.badge),
+              badge: MemberEntity.memberBadgeFromApi(member.badge),
             );
           }
           return member.copyWith(
             role: elevatedRole,
-            badge: MemberEntity.contributionBadgeFromApi(member.badge),
+            badge: MemberEntity.memberBadgeFromApi(member.badge),
           );
         })
         .toList(growable: false);
@@ -249,7 +249,7 @@ class ProjectDetailResponseModel {
     required String viewerMembershipId,
     required String viewerBadge,
   }) {
-    final badge = MemberEntity.contributionBadgeFromApi(viewerBadge);
+    final badge = MemberEntity.memberBadgeFromApi(viewerBadge);
     final membershipId = viewerMembershipId.trim();
     if (badge.isEmpty || membershipId.isEmpty) return members;
 
@@ -300,6 +300,17 @@ double? _jsonDoubleNullable(dynamic value) {
   if (value == null) return null;
   if (value is num) return value.toDouble();
   return double.tryParse(value.toString());
+}
+
+double? _jsonDoubleNullableFromKeys(
+  Map<String, dynamic> json,
+  List<String> keys,
+) {
+  for (final key in keys) {
+    final parsed = _jsonDoubleNullable(json[key]);
+    if (parsed != null) return parsed;
+  }
+  return null;
 }
 
 class _ProjectPayload {
@@ -428,6 +439,7 @@ class _MembershipPayload {
   final String role;
   final String status;
   final double? borrowLimitAmount;
+  final double? overdueAmount;
   final bool isDefaulted;
   final String badge;
   final String? photoUrl;
@@ -445,6 +457,7 @@ class _MembershipPayload {
     required this.role,
     required this.status,
     this.borrowLimitAmount,
+    this.overdueAmount,
     required this.isDefaulted,
     required this.badge,
     this.photoUrl,
@@ -465,6 +478,11 @@ class _MembershipPayload {
       role: membershipRoleApiValueToString(json['role']),
       status: membershipStatusApiValueToString(json['status']),
       borrowLimitAmount: _jsonDoubleNullable(json['borrowLimitAmount']),
+      overdueAmount: _jsonDoubleNullableFromKeys(json, const [
+        'overdueAmount',
+        'totalOverdue',
+        'overdueBorrowAmount',
+      ]),
       isDefaulted: json['isDefaulted'] == true,
       badge: _jsonString(json['badge']),
       photoUrl: membershipPhotoUrlFromJson(json),

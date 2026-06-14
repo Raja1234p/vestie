@@ -6,6 +6,7 @@ import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_network_avatar.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_member_overdue_badge.dart';
 
 class LeaderManageMembersList extends StatelessWidget {
   final List<MemberEntity> members;
@@ -38,8 +39,7 @@ class _LeaderMemberRow extends StatelessWidget {
 
   const _LeaderMemberRow({required this.member, this.onTap});
 
-  bool get _showOverdue =>
-      member.overdueAmount != null && member.overdueAmount! > 0;
+  bool get _showOverdue => member.showsOverdueBadge;
 
   String _fmt(double value) => value.toStringAsFixed(2);
 
@@ -89,36 +89,10 @@ class _LeaderMemberRow extends StatelessWidget {
               ),
             ),
             if (_showOverdue)
-              _LeaderOverdueBadge(amount: member.overdueAmount!),
+              ProjectMemberOverdueBadge(
+                amount: member.overdueBadgeDisplayAmount,
+              ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _LeaderOverdueBadge extends StatelessWidget {
-  final double amount;
-
-  const _LeaderOverdueBadge({required this.amount});
-
-  String _fmt(double value) => value.toStringAsFixed(2);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
-      decoration: BoxDecoration(
-        color: AppColors.red100,
-        borderRadius: BorderRadius.circular(999.r),
-        border: Border.all(color: AppColors.red300),
-      ),
-      child: AppText(
-        '${AppStrings.overdueLabel.toUpperCase()} - \$${_fmt(amount)}',
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-          fontSize: 10.sp,
-          fontWeight: FontWeight.w700,
-          color: AppColors.red800,
         ),
       ),
     );

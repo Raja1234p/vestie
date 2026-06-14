@@ -334,6 +334,12 @@ class AppColors {
   static const Color actionInformationBorderDark = blue900; // #204CA0
   static const Color actionInformationInnerShadow = Color(0xFFC3CEE2);
 
+  /// Overdue badge — Action/Error/Pressed (Figma).
+  static const Color actionErrorPressed = red800; // #C22F2F
+  static const Color actionErrorBorderLight = grey100; // #F8F7FA
+  static const Color actionErrorBorderDark = red900; // #A02222
+  static const Color actionErrorInnerShadow = Color(0xFFCABEE5);
+
   /// Co-leader badge — Action/Success/Pressed (Figma).
   static const Color actionSuccessPressed = green800; // #159A68
   static const Color actionSuccessBorderLight = green100; // #F0FBF7

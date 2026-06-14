@@ -436,6 +436,11 @@ class AppStrings {
   static const String userVffBadgeVff = 'VFF Badge';
   static const String btnAddFriend = 'Send VFF Request';
   static const String projectMemberLeaderBadge = 'Leader';
+
+  /// Member row overdue pill — `Overdue - $200` (no icon).
+  static String projectMemberOverdueBadgeLabel(double amount) =>
+      '$overdueLabel - \$${AppFormatters.formatWholeAmount(amount)}';
+
   static const String projectMemberCoLeaderBadge = 'Co Leader';
   static const String userVffProfileTitleSuffix = ' Profile';
   static const String userVffContributed = 'Contributed';

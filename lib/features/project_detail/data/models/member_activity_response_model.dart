@@ -295,7 +295,7 @@ class MemberActivityResponseModel {
       vffConnectionState: vffConnectionState,
       canSendVffRequest: canSendVffRequest,
       pendingVffRequestId: pendingVffRequestId,
-      badge: badge,
+      badge: MemberEntity.memberBadgeFromApi(badge),
     );
   }
 

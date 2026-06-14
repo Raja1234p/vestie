@@ -15,6 +15,7 @@ import '../../domain/entities/project_detail_entity.dart';
 import 'member_detail_actions_visibility.dart';
 import 'member_metric_card.dart';
 import 'project_member_contribution_badge.dart';
+import 'project_member_overdue_badge.dart';
 
 class MemberIdentitySection extends StatelessWidget {
   final MemberEntity member;
@@ -84,6 +85,11 @@ class MemberIdentitySection extends StatelessWidget {
               if (member.showsContributionBadge) ...[
                 SizedBox(height: 6.h),
                 ProjectMemberContributionBadge(label: member.badge),
+              ] else if (member.showsOverdueBadge) ...[
+                SizedBox(height: 6.h),
+                ProjectMemberOverdueBadge(
+                  amount: member.overdueBadgeDisplayAmount,
+                ),
               ],
             ],
           ),

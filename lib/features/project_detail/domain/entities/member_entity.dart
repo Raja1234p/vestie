@@ -20,7 +20,7 @@ class MemberEntity {
   final bool canSendVffRequest;
   final String? pendingVffRequestId;
 
-  /// API `badge` — only `Top Contributor` is shown as the contribution pill.
+  /// API `badge` — `Top Contributor` or `Overdue` (mutually exclusive contribution pills).
   final String badge;
 
   const MemberEntity({
@@ -65,17 +65,33 @@ class MemberEntity {
   bool get showsVffBadgeOnMemberRow => isViewerVffLinked;
 
   /// Top Contributor pill — `badge: Top Contributor` on any role (member, leader, co-leader).
-  bool get showsContributionBadge => isTopContributorBadge(badge);
+  bool get showsContributionBadge => badge == topContributorBadgeLabel;
+
+  /// Overdue pill — `badge: Overdue` plus a positive `overdueAmount` (no icon).
+  bool get showsOverdueBadge =>
+      badge == overdueBadgeLabel &&
+      overdueAmount != null &&
+      overdueAmount! > 0;
+
+  /// Amount for [ProjectMemberOverdueBadge] — only valid when [showsOverdueBadge].
+  double get overdueBadgeDisplayAmount => overdueAmount ?? 0;
 
   static const topContributorBadgeLabel = 'Top Contributor';
+  static const overdueBadgeLabel = 'Overdue';
 
   static bool isTopContributorBadge(String label) {
     return _normalizeBadgeLabel(label) == 'topcontributor';
   }
 
-  /// Keeps only Top Contributor from API; all other badge values are ignored.
-  static String contributionBadgeFromApi(String raw) {
-    return isTopContributorBadge(raw) ? topContributorBadgeLabel : '';
+  static bool isOverdueBadge(String label) {
+    return _normalizeBadgeLabel(label) == 'overdue';
+  }
+
+  /// Keeps only Top Contributor or Overdue from API; all other badge values are ignored.
+  static String memberBadgeFromApi(String raw) {
+    if (isTopContributorBadge(raw)) return topContributorBadgeLabel;
+    if (isOverdueBadge(raw)) return overdueBadgeLabel;
+    return '';
   }
 
   static String _normalizeBadgeLabel(String label) =>

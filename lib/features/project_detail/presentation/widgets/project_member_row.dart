@@ -13,6 +13,7 @@ import 'project_member_add_friend_visibility.dart';
 import 'project_member_co_leader_badge.dart';
 import 'project_member_contribution_badge.dart';
 import 'project_member_leader_badge.dart';
+import 'project_member_overdue_badge.dart';
 import 'project_member_vff_badge.dart';
 
 /// Single member row — avatar, name, role badges, Add Friend (Figma).
@@ -46,6 +47,8 @@ class ProjectMemberRow extends StatelessWidget {
       );
 
   bool get _showContributionBadge => member.showsContributionBadge;
+
+  bool get _showOverdueBadge => member.showsOverdueBadge;
 
   bool get _showRoleBadge =>
       member.role == MemberRole.leader || member.role == MemberRole.coLeader;
@@ -98,7 +101,8 @@ class ProjectMemberRow extends StatelessWidget {
                   AppText(member.name, style: AppTextStyles.projectMemberName),
                   if (_showRoleBadge ||
                       _showVffBadge ||
-                      _showContributionBadge) ...[
+                      _showContributionBadge ||
+                      _showOverdueBadge) ...[
                     SizedBox(height: AppDimens.projectMemberNameBadgeGap),
                     Wrap(
                       spacing: AppDimens.p8,
@@ -110,7 +114,11 @@ class ProjectMemberRow extends StatelessWidget {
                             (project == null || project!.supportsCoLeader))
                           const ProjectMemberCoLeaderBadge(),
                         if (_showContributionBadge)
-                          ProjectMemberContributionBadge(label: member.badge),
+                          ProjectMemberContributionBadge(label: member.badge)
+                        else if (_showOverdueBadge)
+                          ProjectMemberOverdueBadge(
+                            amount: member.overdueBadgeDisplayAmount,
+                          ),
                         if (_showVffBadge) const ProjectMemberVffBadge(),
                       ],
                     ),
