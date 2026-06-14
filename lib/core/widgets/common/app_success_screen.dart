@@ -12,6 +12,9 @@ import 'flow_screen_footer.dart';
 ///
 /// Background: white + top [AppAssets.successScreenBackground] (Home / Discover style).
 /// Bottom action uses [FlowScreenFooter] (20.w horizontal + system safe-area inset).
+///
+/// System back (Android) and predictive / swipe-back are disabled — user must tap
+/// the footer CTA to leave.
 class AppSuccessScreen extends StatelessWidget {
   final String title;
   final String? subtitle;
@@ -78,63 +81,66 @@ class AppSuccessScreen extends StatelessWidget {
           onPressed: onButtonPressed!,
         );
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          const _HomeEmptyStateBackground(),
-          Column(
-            children: [
-              Expanded(
-                child: SafeArea(
-                  bottom: false,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: _SuccessScrollBody(
-                      topSpacing: illustrationTopSpacing,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _SuccessIllustration(
-                            path:
-                                illustrationAsset ??
-                                AppAssets.successProjectCreated,
-                          ),
-                          AppText(
-                            title,
-                            style: Theme.of(context).textTheme.bodyLarge
-                                ?.copyWith(
-                                  fontSize: 26.sp,
-                                  fontWeight: FontWeight.bold,
-                                  color: titleColor ?? AppColors.textPrimary,
-                                ),
-                            textAlign: TextAlign.center,
-                          ),
-                          if (resolvedSubtitle != null) ...[
-                            SizedBox(height: 8.h),
-                            resolvedSubtitle,
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: Stack(
+          fit: StackFit.expand,
+          children: [
+            const _HomeEmptyStateBackground(),
+            Column(
+              children: [
+                Expanded(
+                  child: SafeArea(
+                    bottom: false,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24.w),
+                      child: _SuccessScrollBody(
+                        topSpacing: illustrationTopSpacing,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _SuccessIllustration(
+                              path:
+                                  illustrationAsset ??
+                                  AppAssets.successProjectCreated,
+                            ),
+                            AppText(
+                              title,
+                              style: Theme.of(context).textTheme.bodyLarge
+                                  ?.copyWith(
+                                    fontSize: 26.sp,
+                                    fontWeight: FontWeight.bold,
+                                    color: titleColor ?? AppColors.textPrimary,
+                                  ),
+                              textAlign: TextAlign.center,
+                            ),
+                            if (resolvedSubtitle != null) ...[
+                              SizedBox(height: 8.h),
+                              resolvedSubtitle,
+                            ],
+                            if (customContent case final c?) ...[
+                              SizedBox(height: 20.h),
+                              c,
+                            ],
                           ],
-                          if (customContent case final c?) ...[
-                            SizedBox(height: 20.h),
-                            c,
-                          ],
-                        ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              if (bottomContent case final b?) ...[
-                Padding(
-                  padding: EdgeInsets.fromLTRB(24.w, 0, 24.w, 12.h),
-                  child: b,
-                ),
+                if (bottomContent case final b?) ...[
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(24.w, 0, 24.w, 12.h),
+                    child: b,
+                  ),
+                ],
+                FlowScreenFooter(child: actionChild),
               ],
-              FlowScreenFooter(child: actionChild),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

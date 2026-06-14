@@ -43,4 +43,29 @@ class ProjectDetailReloadCoordinator {
       _lastProjectById[id] = state.project;
     }
   }
+
+  /// Optimistic pot merge + full `GET /projects/{id}` after contribute POST.
+  static Future<void> reloadAfterContribution({
+    required String projectId,
+    required double projectPot,
+    required List<String> vffMemberUserIds,
+  }) async {
+    final id = projectId.trim();
+    if (id.isEmpty) return;
+    final bloc = _blocsByProjectId[id];
+    if (bloc == null) return;
+
+    bloc.add(
+      ApplyContributionSubmitResultEvent(
+        projectId: id,
+        projectPot: projectPot,
+        vffMemberUserIds: vffMemberUserIds,
+      ),
+    );
+    await bloc.reloadDetailAndWait(id);
+    final state = bloc.state;
+    if (state is ProjectDetailLoaded) {
+      _lastProjectById[id] = state.project;
+    }
+  }
 }

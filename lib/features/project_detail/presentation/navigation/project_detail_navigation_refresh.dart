@@ -76,23 +76,28 @@ Future<void> _refreshAfterBorrowSubmit(
   }
 }
 
-void _refreshAfterContribution(
+/// Merges contribute 201 `projectPot` / VFF ids, then reloads project detail.
+Future<void> _refreshAfterContribution(
   BuildContext context, {
   required String projectId,
   required ContributionSubmitResultModel submitResult,
-}) {
+}) async {
   HomeProjectListSync.recordContribution(
     projectId: projectId,
     projectPot: submitResult.projectPot,
   );
   if (!context.mounted) return;
+
+  await ProjectDetailReloadCoordinator.reloadAfterContribution(
+    projectId: projectId,
+    projectPot: submitResult.projectPot,
+    vffMemberUserIds: submitResult.vffMemberUserIds,
+  );
+
+  if (!context.mounted) return;
   try {
     context.read<ProjectDetailBloc>().add(
-      ApplyContributionSubmitResultEvent(
-        projectId: projectId,
-        projectPot: submitResult.projectPot,
-        vffMemberUserIds: submitResult.vffMemberUserIds,
-      ),
+      RefreshProjectPotEvent(projectId: projectId),
     );
   } on ProviderNotFoundException {
     // Opened outside project detail.

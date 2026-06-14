@@ -4,10 +4,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:vestie/core/services/payment_methods_prefetch.dart';
 import 'package:vestie/core/error/failures.dart';
+import 'package:vestie/core/services/home_project_list_sync.dart';
 import 'package:vestie/core/utils/contribution_fee_policy.dart';
 import 'package:vestie/features/payment_methods/domain/payment_methods_cache.dart';
 import 'package:vestie/features/profile/domain/payment_source_preference.dart';
 import 'package:vestie/features/profile/domain/entities/payment_card.dart';
+import 'package:vestie/features/project_detail/presentation/project_detail_reload_coordinator.dart';
 import 'package:vestie/features/wallet/domain/usecases/get_wallet_use_case.dart';
 import 'package:vestie/features/wallet/domain/wallet_balance_cache.dart';
 import '../../domain/usecases/confirm_contribution_usecase.dart';
@@ -128,6 +130,8 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
     GoToConfirmEvent event,
     Emitter<ContributeState> emit,
   ) async {
+    if (state.isPreviewLoading) return;
+
     final args = state.args;
     if (args == null || state.amountValue <= 0) return;
 
@@ -232,6 +236,7 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
     final args = state.args;
     if (args == null || state.preview == null) return;
 
+    if (state.isSubmitLoading) return;
     if (!state.canConfirmSubmit) return;
 
     final capValidation = ContributionFeePolicy.validateAmount(state.amountValue);
@@ -255,13 +260,27 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
 
     if (isClosed) return;
 
-    result.fold(
-      (failure) =>
-          emit(state.copyWith(isSubmitLoading: false, submitFailure: failure)),
-      (submitResult) {
+    await result.fold(
+      (failure) async {
+        emit(state.copyWith(isSubmitLoading: false, submitFailure: failure));
+      },
+      (submitResult) async {
         WalletBalanceCache.patchAvailableBalance(
           submitResult.walletAvailableBalance,
         );
+        HomeProjectListSync.recordContribution(
+          projectId: args.projectId,
+          projectPot: submitResult.projectPot,
+        );
+
+        await ProjectDetailReloadCoordinator.reloadAfterContribution(
+          projectId: args.projectId,
+          projectPot: submitResult.projectPot,
+          vffMemberUserIds: submitResult.vffMemberUserIds,
+        );
+
+        if (isClosed) return;
+
         emit(
           state.copyWith(
             isSubmitLoading: false,

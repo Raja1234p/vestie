@@ -82,8 +82,8 @@ class ProjectDetailNavigation {
     required String projectId,
   }) => _reloadProjectDetailAndWait(context, projectId: projectId);
 
-  /// Merges contribute 201 `projectPot` / VFF ids, then refreshes pot for contributor count.
-  static void refreshAfterContribution(
+  /// Merges contribute 201 `projectPot` / VFF ids, then reloads project detail.
+  static Future<void> refreshAfterContribution(
     BuildContext context, {
     required String projectId,
     required ContributionSubmitResultModel submitResult,

@@ -71,7 +71,9 @@ class MyBorrowRequestScreen extends StatelessWidget {
                           showsPending,
                         ),
                 ),
-                if (!state.loadFailed && !state.loading)
+                if (state.loading)
+                  FlowScreenFooter(child: const MyBorrowFooterShimmer())
+                else if (!state.loadFailed)
                   FlowScreenFooter(
                     child: _buildPrimaryButton(
                       context,

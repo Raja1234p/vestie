@@ -53,7 +53,7 @@ class ProjectDetailWalletActions extends StatelessWidget {
               extra: walletArgs,
             );
             if (!context.mounted || result == null) return;
-            ProjectDetailNavigation.refreshAfterContribution(
+            await ProjectDetailNavigation.refreshAfterContribution(
               context,
               projectId: project.id,
               submitResult: result,
