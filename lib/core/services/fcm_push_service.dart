@@ -13,7 +13,6 @@ import '../di/service_locator.dart';
 /// Top-level handler — required to be a plain static function by FCM.
 @pragma('vm:entry-point')
 Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   if (kDebugMode) {
     debugPrint(
       'FcmPushService: background message received '
@@ -49,9 +48,6 @@ class FcmPushService {
     if (kIsWeb) return;
     _log('initialize() start');
     try {
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
       _firebaseReady = true;
       _log('Firebase initialized');
 
@@ -76,6 +72,17 @@ class FcmPushService {
         requestSoundPermission: true,
         requestProvisionalPermission: false,
       );
+      final settings = await messaging.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+      _log('Notification permission: ${settings.authorizationStatus}');
+      final apns = await messaging.getAPNSToken();
+      final fcmToken = await messaging.getToken();
+
+      _log('FCM TOKEN: $fcmToken');
+      _log('APNS TOKEN: $apns');
       await _localNotifications.initialize(
         const InitializationSettings(android: androidInit, iOS: iosInit),
       );
