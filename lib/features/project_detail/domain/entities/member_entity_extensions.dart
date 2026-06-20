@@ -56,7 +56,7 @@ extension MemberEntityApiIds on MemberEntity {
       contributedAmount: fromApi.contributedAmount,
       overdueAmount: fromApi.overdueAmount ?? overdueAmount,
       photoUrl: useApiPhoto ? fromApi.photoUrl : photoUrl,
-      vffAdded: fromApi.isVffConnected && fromApi.vffAdded,
+      vffAdded: _mergedVffAdded(fromApi),
       vffConnectionState: _mergedVffConnectionState(fromApi),
       canSendVffRequest: fromApi.canSendVffRequest,
       pendingVffRequestId: fromApi.pendingVffRequestId ?? pendingVffRequestId,
@@ -70,13 +70,21 @@ extension MemberEntityApiIds on MemberEntity {
     return badge;
   }
 
-  /// Trust activity API for disconnect; keep route seed only for optimistic pending.
+  bool _mergedVffAdded(MemberEntity fromApi) {
+    return fromApi.isVffConnected && fromApi.vffAdded;
+  }
+
+  /// Trust activity API for disconnect; keep route seed for optimistic pending.
   VffConnectionState _mergedVffConnectionState(MemberEntity fromApi) {
-    if (fromApi.isVffConnected) return VffConnectionState.connected;
+    if (fromApi.isViewerVffLinked) return VffConnectionState.connected;
     if (fromApi.hasPendingVffOutgoing) {
       return VffConnectionState.pendingOutgoing;
     }
     if (fromApi.vffConnectionState != VffConnectionState.none) {
+      if (fromApi.vffConnectionState == VffConnectionState.connected &&
+          !fromApi.vffAdded) {
+        return VffConnectionState.none;
+      }
       return fromApi.vffConnectionState;
     }
     if (hasPendingVffOutgoing) return VffConnectionState.pendingOutgoing;

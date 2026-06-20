@@ -118,6 +118,11 @@ abstract final class MemberDetailActionsVisibility {
       return VffConnectionState.pendingOutgoing;
     }
     if (activityVffConnectionState != VffConnectionState.none) {
+      if (activityVffConnectionState == VffConnectionState.connected &&
+          !member.vffAdded &&
+          !member.isViewerVffLinked) {
+        return VffConnectionState.none;
+      }
       return activityVffConnectionState;
     }
     if (member.isViewerVffLinked) return VffConnectionState.connected;
@@ -131,11 +136,7 @@ abstract final class MemberDetailActionsVisibility {
     required MemberEntity member,
     VffConnectionState vffConnectionState = VffConnectionState.none,
   }) {
-    return effectiveVffConnectionState(
-          member: member,
-          activityVffConnectionState: vffConnectionState,
-        ) ==
-        VffConnectionState.connected;
+    return member.isViewerVffLinked;
   }
 
   static bool showVffFollowing({

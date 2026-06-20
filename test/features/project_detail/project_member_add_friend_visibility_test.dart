@@ -143,4 +143,56 @@ void main() {
       }
     });
   });
+
+  group('ProjectMemberAddFriendVisibility.isViewerSelf', () {
+    test('co-leader is not self when roster membership id differs from project', () {
+      const coLeader = MemberEntity(
+        id: 'co-u',
+        membershipId: 'roster-m',
+        userId: 'co-u',
+        initials: 'CL',
+        name: 'Co',
+        role: MemberRole.coLeader,
+        contributedAmount: 0,
+      );
+      const target = MemberEntity(
+        id: 'peer-u',
+        membershipId: 'peer-m',
+        userId: 'peer-u',
+        initials: 'PE',
+        name: 'Peer',
+        role: MemberRole.member,
+        contributedAmount: 0,
+      );
+      final project = ProjectDetailEntity(
+        id: 'p1',
+        name: 'Trip',
+        category: ProjectCategory.vacations,
+        status: ProjectStatus.ongoing,
+        goalAmount: 1000,
+        currentAmount: 0,
+        endsIn: '30d',
+        announcement: '',
+        members: [coLeader],
+        borrowRequests: [],
+        viewerRole: ViewerMembershipRole.coLeader,
+        membershipId: 'viewer-m',
+      );
+
+      expect(
+        ProjectMemberAddFriendVisibility.isViewerSelf(
+          project: project,
+          member: target,
+        ),
+        isFalse,
+      );
+      expect(
+        ProjectMemberAddFriendVisibility.shouldShow(
+          project: project,
+          member: target,
+        ),
+        isTrue,
+      );
+    });
+  });
 }

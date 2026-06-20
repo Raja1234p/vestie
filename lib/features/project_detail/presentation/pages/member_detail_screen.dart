@@ -426,7 +426,7 @@ class _MemberDetailView extends StatelessWidget {
                   ),
 
                   if (showFooter &&
-                      state.loadStatus == MemberDetailLoadStatus.loaded)
+                      state.loadStatus != MemberDetailLoadStatus.error)
                     MemberDetailFooter(
                       showVffFollowing: showVffFollowing,
 

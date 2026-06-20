@@ -649,7 +649,7 @@ void main() {
       );
     });
 
-    test('hides Following when Connected but VFFAdded false', () {
+    test('activity Connected without VFFAdded still allows Send on profile', () {
       const project = ProjectDetailEntity(
         id: 'p1',
         name: 'Trip',
@@ -661,8 +661,8 @@ void main() {
         announcement: '',
         members: [],
         borrowRequests: [],
-        viewerRole: ViewerMembershipRole.member,
-        membershipId: 'viewer-membership',
+        viewerRole: ViewerMembershipRole.coLeader,
+        membershipId: 'co-m',
       );
 
       const member = MemberEntity(
@@ -681,10 +681,18 @@ void main() {
         MemberDetailActionsVisibility.showVffFollowing(
           project: project,
           member: member,
+          vffConnectionState: VffConnectionState.connected,
         ),
         isFalse,
       );
-      expect(member.showsVffBadgeOnMemberRow, isFalse);
+      expect(
+        MemberDetailActionsVisibility.showVffSendOrSent(
+          project: project,
+          member: member,
+          vffConnectionState: VffConnectionState.connected,
+        ),
+        isTrue,
+      );
     });
   });
 }

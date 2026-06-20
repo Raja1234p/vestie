@@ -84,6 +84,20 @@ void main() {
       expect(merged.vffConnectionState, VffConnectionState.pendingOutgoing);
       expect(merged.pendingVffRequestId, 'req-42');
     });
+
+    test('treats activity Connected without VFFAdded as sendable', () {
+      final seed = _member(vffConnectionState: VffConnectionState.none);
+      final fromApi = _member(
+        vffConnectionState: VffConnectionState.connected,
+        vffAdded: false,
+      );
+
+      final merged = seed.mergedWithActivity(fromApi);
+
+      expect(merged.vffConnectionState, VffConnectionState.none);
+      expect(merged.vffAdded, isFalse);
+      expect(merged.isViewerVffLinked, isFalse);
+    });
   });
 
   group('MemberEntity.hasPendingVffOutgoing', () {
