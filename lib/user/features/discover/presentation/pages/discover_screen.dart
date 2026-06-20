@@ -64,6 +64,8 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
     super.didUpdateWidget(oldWidget);
     if (widget.activate && !oldWidget.activate) {
       _cubit.onTabActivated();
+    } else if (!widget.activate && oldWidget.activate) {
+      _cubit.onTabDeactivated();
     }
   }
 
@@ -180,6 +182,7 @@ class _DiscoverBody extends StatelessWidget {
                             Padding(
                               padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 0),
                               child: DiscoverSearchBar(
+                                query: state.searchQuery,
                                 onChanged: context.read<DiscoverCubit>().search,
                               ),
                             ),

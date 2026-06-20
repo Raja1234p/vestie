@@ -212,6 +212,17 @@ class DiscoverCubit extends Cubit<DiscoverState> {
     );
   }
 
+  /// Clears discover search and restores the list for the active filter.
+  void clearSearch() {
+    if (state.searchQuery.isEmpty) return;
+    search('');
+  }
+
+  /// Discover tab hidden — drop stale search so returning shows the full list.
+  void onTabDeactivated() {
+    clearSearch();
+  }
+
   Future<void> joinProject(Project project) async {
     if (state.joiningProjectId != null) return;
     emit(state.copyWith(joiningProjectId: project.id, clearJoinEffect: true));

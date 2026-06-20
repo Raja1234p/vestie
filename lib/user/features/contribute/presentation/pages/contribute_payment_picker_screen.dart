@@ -51,7 +51,6 @@ class _ContributePaymentPickerScreenState
       _cards = cached;
       _loading = false;
       _syncInitialSelection();
-      unawaited(PaymentMethodsPrefetch.refresh().then((_) => _reloadFromCache()));
     } else {
       _load();
     }

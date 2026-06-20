@@ -28,7 +28,7 @@ class ContributionRemoteDataSourceImpl implements ContributionRemoteDataSource {
     return ContributionConfigModel(
       projectId: projectId,
       projectCurrency: 'USD',
-      platformFeeRatePercent: 15,
+      platformFeeRatePercent: 7,
       minimumContributionAmount: 5,
       isNonRefundable: true,
       suggestedContributionAmount: 50,

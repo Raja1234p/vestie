@@ -53,7 +53,7 @@ abstract final class MemberDetailActionsVisibility {
     return isVffActionTarget(project: project, member: member);
   }
 
-  /// Group leader only — promote / demote co-leader.
+  /// Group leader only — promote when no co-leader exists; demote on co-leader row.
   static bool showCoLeaderControls({
     required ProjectDetailEntity project,
     required MemberEntity member,
@@ -67,8 +67,19 @@ abstract final class MemberDetailActionsVisibility {
       return false;
     }
     if (target.isProjectGroupLeaderOn(project)) return false;
-    return target.role == MemberRole.member ||
-        target.role == MemberRole.coLeader;
+
+    if (target.role == MemberRole.coLeader) return true;
+
+    if (target.role == MemberRole.member) {
+      return !_projectHasCoLeader(project);
+    }
+
+    return false;
+  }
+
+  static bool _projectHasCoLeader(ProjectDetailEntity project) {
+    if (project.hasCoLeader) return true;
+    return project.members.any((m) => m.role == MemberRole.coLeader);
   }
 
   /// Group leader or co-leader — remove member (not self, not project leader).

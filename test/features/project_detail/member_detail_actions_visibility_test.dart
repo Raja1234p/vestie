@@ -267,32 +267,6 @@ void main() {
   });
 
   group('MemberDetailActionsVisibility.showCoLeaderControls', () {
-    test('true for group leader viewing member or co-leader on supported project', () {
-      const target = MemberEntity(
-        id: 'u2',
-        membershipId: 'm2',
-        userId: 'u2',
-        initials: 'AB',
-        name: 'Alex',
-        role: MemberRole.member,
-        contributedAmount: 0,
-      );
-      final project = _moderatorProject(
-        category: ProjectCategory.vacations,
-        viewerRole: ViewerMembershipRole.groupLeader,
-        members: [target],
-        membershipId: 'leader-m',
-      );
-
-      expect(
-        MemberDetailActionsVisibility.showCoLeaderControls(
-          project: project,
-          member: target,
-        ),
-        isTrue,
-      );
-    });
-
     test('false for co-leader viewer and for project leader target', () {
       const leader = MemberEntity(
         id: 'gl',
@@ -336,6 +310,118 @@ void main() {
         MemberDetailActionsVisibility.showCoLeaderControls(
           project: leaderProject,
           member: leader,
+        ),
+        isFalse,
+      );
+    });
+
+    test('true for group leader viewing member when no co-leader assigned', () {
+      const target = MemberEntity(
+        id: 'u2',
+        membershipId: 'm2',
+        userId: 'u2',
+        initials: 'AB',
+        name: 'Alex',
+        role: MemberRole.member,
+        contributedAmount: 0,
+      );
+      final project = _moderatorProject(
+        category: ProjectCategory.vacations,
+        viewerRole: ViewerMembershipRole.groupLeader,
+        members: [target],
+        membershipId: 'leader-m',
+      );
+
+      expect(
+        MemberDetailActionsVisibility.showCoLeaderControls(
+          project: project,
+          member: target,
+        ),
+        isTrue,
+      );
+    });
+
+    test('false for other members when project already has a co-leader', () {
+      const coLeader = MemberEntity(
+        id: 'co',
+        membershipId: 'co-m',
+        userId: 'co',
+        initials: 'CL',
+        name: 'Co Leader',
+        role: MemberRole.coLeader,
+        contributedAmount: 0,
+      );
+      const member = MemberEntity(
+        id: 'u2',
+        membershipId: 'm2',
+        userId: 'u2',
+        initials: 'AB',
+        name: 'Alex',
+        role: MemberRole.member,
+        contributedAmount: 0,
+      );
+      final project = ProjectDetailEntity(
+        id: 'p1',
+        name: 'Trip',
+        category: ProjectCategory.emergency,
+        status: ProjectStatus.ongoing,
+        goalAmount: 1000,
+        currentAmount: 0,
+        endsIn: '30d',
+        announcement: '',
+        members: [coLeader, member],
+        borrowRequests: [],
+        viewerRole: ViewerMembershipRole.groupLeader,
+        membershipId: 'leader-m',
+        hasCoLeader: true,
+      );
+
+      expect(
+        MemberDetailActionsVisibility.showCoLeaderControls(
+          project: project,
+          member: member,
+        ),
+        isFalse,
+      );
+      expect(
+        MemberDetailActionsVisibility.showCoLeaderControls(
+          project: project,
+          member: coLeader,
+        ),
+        isTrue,
+      );
+    });
+
+    test('detects co-leader from roster when hasCoLeader flag is stale', () {
+      const coLeader = MemberEntity(
+        id: 'co',
+        membershipId: 'co-m',
+        userId: 'co',
+        initials: 'CL',
+        name: 'Co Leader',
+        role: MemberRole.coLeader,
+        contributedAmount: 0,
+      );
+      const member = MemberEntity(
+        id: 'u2',
+        membershipId: 'm2',
+        userId: 'u2',
+        initials: 'AB',
+        name: 'Alex',
+        role: MemberRole.member,
+        contributedAmount: 0,
+      );
+      final project = _moderatorProject(
+        category: ProjectCategory.vacations,
+        viewerRole: ViewerMembershipRole.groupLeader,
+        members: [coLeader, member],
+        membershipId: 'leader-m',
+      );
+
+      expect(
+        MemberDetailActionsVisibility.showCoLeaderControls(
+          project: project,
+          member: member,
         ),
         isFalse,
       );

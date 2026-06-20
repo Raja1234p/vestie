@@ -90,11 +90,7 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
       walletId = w.walletId;
     });
 
-    if (PaymentMethodsCache.value != null) {
-      unawaited(PaymentMethodsPrefetch.refresh());
-    } else {
-      await PaymentMethodsPrefetch.warmIfNeeded();
-    }
+    unawaited(PaymentMethodsPrefetch.warmIfNeeded());
 
     final configResult = await configUseCase(projectId: event.args.projectId);
     configResult.fold(

@@ -54,11 +54,8 @@ class _BorrowAmountView extends StatefulWidget {
 }
 
 class _BorrowAmountViewState extends State<_BorrowAmountView> {
-  final FocusNode _noteFocus = FocusNode();
   final FocusNode _amountFieldFocus = FocusNode();
-  final ScrollController _scrollController = ScrollController();
   late final TextEditingController _amountDigitsController;
-  late final TextEditingController _noteController;
 
   @override
   void initState() {
@@ -67,48 +64,16 @@ class _BorrowAmountViewState extends State<_BorrowAmountView> {
     _amountDigitsController = TextEditingController(
       text: cubitState.amountDigits,
     );
-    _noteController = TextEditingController(text: cubitState.note);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       _amountFieldFocus.requestFocus();
-    });
-    _noteFocus.addListener(_onNoteFocusChanged);
-    _amountFieldFocus.addListener(_onAmountFocusChanged);
-  }
-
-  void _onAmountFocusChanged() {
-    if (!_amountFieldFocus.hasFocus) return;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || !_scrollController.hasClients) return;
-      _scrollController.animateTo(
-        0,
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeOut,
-      );
-    });
-  }
-
-  void _onNoteFocusChanged() {
-    if (!_noteFocus.hasFocus) return;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || !_scrollController.hasClients) return;
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeOut,
-      );
     });
   }
 
   @override
   void dispose() {
-    _noteFocus.removeListener(_onNoteFocusChanged);
-    _amountFieldFocus.removeListener(_onAmountFocusChanged);
-    _noteFocus.dispose();
     _amountFieldFocus.dispose();
     _amountDigitsController.dispose();
-    _noteController.dispose();
-    _scrollController.dispose();
     super.dispose();
   }
 
@@ -121,23 +86,12 @@ class _BorrowAmountViewState extends State<_BorrowAmountView> {
     }
   }
 
-  void _syncNoteFromState(String note) {
-    if (!_noteFocus.hasFocus && _noteController.text != note) {
-      _noteController.value = TextEditingValue(
-        text: note,
-        selection: TextSelection.collapsed(offset: note.length),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<BorrowCubit, BorrowState>(
       builder: (context, state) {
         final c = context.read<BorrowCubit>();
         _syncAmountFieldFromState(state.amountDigits);
-        _syncNoteFromState(state.note);
-        final over = state.amountValue > state.args.borrowLimit;
         return Scaffold(
           resizeToAvoidBottomInset: true,
           backgroundColor: Colors.transparent,
@@ -145,14 +99,13 @@ class _BorrowAmountViewState extends State<_BorrowAmountView> {
             child: Column(
               children: [
                 PostAuthFlowSubHeader(
-                  title: AppStrings.borrowScreenTitle,
+                  title: AppStrings.enterBorrowAmountTitle,
                   onBack: () => context.pop(),
                 ),
                 Expanded(
                   child: LayoutBuilder(
                     builder: (context, constraints) {
                       return SingleChildScrollView(
-                        controller: _scrollController,
                         keyboardDismissBehavior:
                             ScrollViewKeyboardDismissBehavior.onDrag,
                         padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 8.h),
@@ -176,86 +129,6 @@ class _BorrowAmountViewState extends State<_BorrowAmountView> {
                                   onDigitsChanged: c.setAmountDigits,
                                 ),
                               ),
-                              SizedBox(height: 12.h),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12.w,
-                                  vertical: 8.h,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColors.searchBarBg,
-                                  borderRadius: BorderRadius.circular(999.r),
-                                ),
-                                child: AppText(
-                                  '${AppStrings.labelBorrowLimitChip}: '
-                                  '\$${state.borrowLimitFormatted} '
-                                  '${AppStrings.borrowLimitSetByLeaderSuffix}',
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.lato(
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w400,
-                                    color: AppColors.neutral1200,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 42.h),
-                              TextField(
-                                controller: _noteController,
-                                focusNode: _noteFocus,
-                                onChanged: c.setNote,
-                                maxLines: 3,
-                                keyboardType: TextInputType.multiline,
-                                textCapitalization:
-                                    TextCapitalization.sentences,
-                                style: GoogleFonts.lato(
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColors.inputFieldText,
-                                ),
-                                decoration: InputDecoration(
-                                  hintText: AppStrings.labelNote,
-                                  hintStyle: GoogleFonts.lato(
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w500,
-                                    color: AppColors.authHint,
-                                  ),
-                                  filled: true,
-                                  fillColor: AppColors.searchBarBg,
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 14.w,
-                                    vertical: 12.h,
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12.r),
-                                    borderSide: const BorderSide(
-                                      color: AppColors.searchBarBg,
-                                    ),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12.r),
-                                    borderSide: const BorderSide(
-                                      color: AppColors.searchBarBg,
-                                    ),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12.r),
-                                    borderSide: const BorderSide(
-                                      color: AppColors.searchBarBg,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              if (over) ...[
-                                SizedBox(height: 8.h),
-                                AppText(
-                                  AppStrings.borrowAmountExceedsLimit,
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.lato(
-                                    fontSize: 12.sp,
-                                    color: AppColors.error,
-                                  ),
-                                ),
-                              ],
                             ],
                           ),
                         ),
@@ -267,7 +140,7 @@ class _BorrowAmountViewState extends State<_BorrowAmountView> {
                   child: AppButton(
                     text: AppStrings.btnConfirm,
                     isLoading: state.loading,
-                    onPressed: (state.amountValue <= 0 || over || state.loading)
+                    onPressed: (state.amountValue <= 0 || state.loading)
                         ? null
                         : c.toConfirm,
                   ),

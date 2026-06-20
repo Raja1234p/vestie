@@ -126,7 +126,6 @@ class BorrowCubit extends Cubit<BorrowState> {
 
   Future<void> toConfirm() async {
     if (state.amountValue <= 0) return;
-    if (state.amountValue > state.args.borrowLimit) return;
 
     emit(state.copyWith(loading: true, clearError: true));
 

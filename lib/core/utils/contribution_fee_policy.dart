@@ -3,7 +3,7 @@ class ContributionFeePolicy {
   ContributionFeePolicy._();
 
   static const double minimumAmountUsd = 5;
-  static const double platformFeeRate = 0.15;
+  static const double platformFeeRate = 0.07;
 
   static double platformFee(double amount) => amount * platformFeeRate;
 

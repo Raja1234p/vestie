@@ -991,7 +991,7 @@ class AppStrings {
   static const String labelPaymentFrom = 'Payment from';
   static const String labelBreakdown = 'Breakdown';
   static const String labelContributionAmount = 'Contribution amount';
-  static const String labelVestieFee3 = 'Vestie fee (3%)';
+  static const String labelVestieFee3 = 'Vestie fee (7%)';
   static const String labelTotalDeduction = 'Total Deduction';
   static const String contributeNonRefundable =
       'I understand this contribution is non-refundable';
@@ -1017,6 +1017,7 @@ class AppStrings {
   static String projectContributorCountLabel(int count) =>
       count == 1 ? '1 contributor' : '$count contributors';
   static const String borrowScreenTitle = 'Borrow';
+  static const String enterBorrowAmountTitle = 'Enter Borrow Amount';
   static const String borrowTermsTitle = 'Borrow Terms';
   static const String labelBorrowLimitChip = 'Borrow Limit';
   static const String labelNote = 'Note';
