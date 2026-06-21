@@ -12,7 +12,8 @@ import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_announcements_section.dart';
-import 'package:vestie/features/project_detail/presentation/widgets/project_detail_success_vote_dev_previews.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_detail_cast_vote_dev_previews.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_detail_vote_outcome_dev_previews.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_tab_section.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_trailing_actions.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_scroll_insets.dart';
@@ -137,8 +138,10 @@ class _ProjectDetailModeratorScrollContentState
                             gapAfter: 12.h,
                           ),
                           ProjectInfoCard(project: project),
+                          if (project.isCoLeader)
+                            ProjectDetailCastVoteDevPreviews(project: project),
                           if (project.showsSuccessVoteDevPreviews) ...[
-                            ProjectDetailSuccessVoteDevPreviews(
+                            ProjectDetailVoteOutcomeDevPreviews(
                               project: project,
                               onPreviewViewSuccessVotesScenario: () =>
                                   setState(

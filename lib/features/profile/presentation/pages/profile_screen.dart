@@ -247,7 +247,7 @@ class _ProfileBody extends StatelessWidget {
                                                   initials: _profileInitials(
                                                     profile.fullName,
                                                   ),
-                                                  size: 100.r,
+                                                  size: 54.w,
                                                   backgroundColor:
                                                       AppColors.cardBorder,
                                                 ),
@@ -257,8 +257,8 @@ class _ProfileBody extends StatelessWidget {
                                                   child: SvgPicture.asset(
                                                     AppAssets
                                                         .profileAvatarEditBadge,
-                                                    width: 22.w,
-                                                    height: 22.w,
+                                                    width:  20.w,
+                                                    height:  20.w,
                                                     fit: BoxFit.contain,
                                                   ),
                                                 ),
@@ -298,7 +298,7 @@ class _ProfileBody extends StatelessWidget {
                                 AppText(
                                   AppStrings.settingsLabel,
                                   style: GoogleFonts.lato(
-                                    fontSize: 24.sp,
+                                    fontSize: 18.sp,
                                     fontWeight: FontWeight.w600,
                                     color: const Color(0xFF141414),
                                   ),

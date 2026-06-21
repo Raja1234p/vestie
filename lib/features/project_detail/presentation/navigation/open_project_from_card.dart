@@ -12,7 +12,7 @@ import 'package:vestie/features/projects/domain/entities/invite_preview_entity.d
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
-import 'package:vestie/user/features/project_detail/presentation/models/member_vote_outcome_ui_data.dart';
+import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_role.dart';
 import '../../domain/entities/project_detail_route_args.dart';
 
 void _openMemberVoteOutcome(
@@ -22,11 +22,13 @@ void _openMemberVoteOutcome(
 }) {
   context.push(
     AppRoutes.userVoteOutcome,
-    extra: MemberVoteOutcomeRouteArgs(
-      data: MemberVoteOutcomeUiData.fromProject(
+    extra: SuccessVoteOutcomeRouteArgs(
+      data: SuccessVoteOutcomeUiData.fromProject(
         project,
         isApproved: isApproved,
       ),
+      viewerRole: SuccessVoteOutcomeRole.member,
+      projectCategory: project.category,
     ),
   );
 }
@@ -245,9 +247,10 @@ void openProjectFromCard(BuildContext context, Project p) {
       case UserFlowOnOpen.showSuccessVote:
         context.push(
           AppRoutes.userSuccessVote,
-          extra: UserSuccessVoteArgs(
+          extra: SuccessVoteCastRouteArgs(
             projectId: p.id,
             projectName: name,
+            projectCategory: p.category,
             goalAmount: p.goalAmount ?? 5000,
             memberCount: 5,
             totalRaised: p.currentAmount ?? 4800,

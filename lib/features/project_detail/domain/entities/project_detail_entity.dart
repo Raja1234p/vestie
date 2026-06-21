@@ -158,8 +158,12 @@ class ProjectDetailEntity {
   /// Member success-vote dev previews — all project categories.
   bool get showsMemberSuccessVoteDevPreviews => true;
 
-  /// Leader / co-leader success-vote dev previews — vacation and emergency only.
+  /// Leader / co-leader success-vote dev previews — vacation and emergency.
   bool get showsSuccessVoteDevPreviews => isVacationOrEmergency;
+
+  /// Investment group leader — vote outcome dev previews (approve / reject).
+  bool get showsInvestmentVoteOutcomeDevPreviews =>
+      isModeratorView && category.isInvestment;
 
   /// Leader / co-leader: replace wallet CTAs while a success vote is open.
   bool get showsViewSuccessVotesAction =>

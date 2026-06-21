@@ -6,7 +6,13 @@ import 'package:vestie/features/project_detail/presentation/models/investment_di
 import 'package:vestie/features/project_detail/presentation/models/investment_returns_ui_data.dart';
 import 'package:vestie/leader/features/project_detail/presentation/models/leader_success_vote_progress_ui_data.dart';
 import 'package:vestie/user/features/borrow/presentation/models/my_borrow_approved_ui_data.dart';
-import 'package:vestie/user/features/project_detail/presentation/models/member_vote_outcome_ui_data.dart';
+import 'package:vestie/features/success_vote/presentation/models/success_vote_cast_route_args.dart';
+import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_route_args.dart';
+import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_ui_data.dart';
+
+export 'package:vestie/features/success_vote/presentation/models/success_vote_cast_route_args.dart';
+export 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_route_args.dart';
+export 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_ui_data.dart';
 
 import 'project_wallet_flow_args.dart';
 
@@ -326,43 +332,5 @@ class LeaderViewSuccessVotesRouteArgs {
   const LeaderViewSuccessVotesRouteArgs({
     required this.projectName,
     required this.data,
-  });
-}
-
-/// Success-vote outcome (majority approved / not approved).
-class MemberVoteOutcomeRouteArgs {
-  final MemberVoteOutcomeUiData data;
-
-  /// Group leader vacation / emergency — Figma CTAs and layout (no amount card).
-  final bool isGroupLeaderView;
-
-  /// When set, leader “Start Distributing” opens the distribute-funds preview flow.
-  final ProjectDetailEntity? project;
-
-  const MemberVoteOutcomeRouteArgs({
-    required this.data,
-    this.isGroupLeaderView = false,
-    this.project,
-  });
-}
-
-/// Member success-vote screen (leader has started a vote).
-class UserSuccessVoteArgs {
-  final String? projectId;
-  final String projectName;
-  final double goalAmount;
-  final int memberCount;
-  final double totalRaised;
-  final String deadlineLabel;
-  final int daysRemaining;
-
-  const UserSuccessVoteArgs({
-    this.projectId,
-    required this.projectName,
-    required this.goalAmount,
-    required this.memberCount,
-    required this.totalRaised,
-    required this.deadlineLabel,
-    required this.daysRemaining,
   });
 }

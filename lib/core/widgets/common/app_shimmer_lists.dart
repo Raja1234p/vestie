@@ -150,8 +150,8 @@ class ProfileHeaderShimmer extends StatelessWidget {
     return AppShimmer(
       child: Row(
         children: [
-          AppShimmer.box(width: 80, height: 80, borderRadius: 40),
-          const SizedBox(width: 16),
+          AppShimmer.box(width: 54, height: 54, borderRadius: 27),
+          const SizedBox(width: 12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

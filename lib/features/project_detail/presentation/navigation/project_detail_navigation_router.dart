@@ -127,18 +127,21 @@ void _openLeaderViewSuccessVotes(
   );
 }
 
-void _openSuccessVoteScreenPreview(
+void _openCastVotePreview(
   BuildContext context, {
   required ProjectDetailEntity project,
 }) {
   if (!project.showsMemberSuccessVoteDevPreviews) return;
+  if (!project.isMemberView && !project.isCoLeader) return;
 
   final memberCount = project.members.isNotEmpty ? project.members.length : 7;
   context.push(
     AppRoutes.userSuccessVote,
-    extra: UserSuccessVoteArgs(
+    extra: SuccessVoteCastRouteArgs(
       projectId: project.id,
       projectName: project.name,
+      projectCategory: project.category,
+      isCoLeader: project.isCoLeader,
       goalAmount: project.goalAmount > 0 ? project.goalAmount : 5000,
       memberCount: memberCount,
       totalRaised: project.currentAmount > 0
@@ -157,17 +160,45 @@ void _openMemberVoteOutcomePreview(
   required ProjectDetailEntity project,
   required bool approved,
 }) {
-  if (!project.showsMemberSuccessVoteDevPreviews) return;
+  final canPreview = project.showsMemberSuccessVoteDevPreviews ||
+      (project.isModeratorView &&
+          (project.showsSuccessVoteDevPreviews ||
+              project.showsInvestmentVoteOutcomeDevPreviews));
+  if (!canPreview) return;
 
+  final role = SuccessVoteOutcomeRole.fromViewerRole(project.viewerRole);
   context.push(
     AppRoutes.userVoteOutcome,
-    extra: MemberVoteOutcomeRouteArgs(
-      data: MemberVoteOutcomeUiData.preview(
+    extra: SuccessVoteOutcomeRouteArgs(
+      data: SuccessVoteOutcomeUiData.preview(
         isApproved: approved,
         project: project,
       ),
-      isGroupLeaderView: project.isGroupLeader,
-      project: project.isGroupLeader ? project : null,
+      viewerRole: role,
+      project: role.isModerator ? project : null,
+    ),
+  );
+}
+
+void _openStopContributionsVoteRejectedPreview(
+  BuildContext context, {
+  required ProjectDetailEntity project,
+}) {
+  final isInvestmentMember =
+      project.isMemberView && project.category.isInvestment;
+  if (!project.canStopContributions && !isInvestmentMember) return;
+
+  final role = SuccessVoteOutcomeRole.fromViewerRole(project.viewerRole);
+  context.push(
+    AppRoutes.userVoteOutcome,
+    extra: SuccessVoteOutcomeRouteArgs(
+      data: SuccessVoteOutcomeUiData.preview(
+        isApproved: false,
+        project: project,
+      ),
+      viewerRole: role,
+      variant: SuccessVoteOutcomeVariant.stopContributionsRejected,
+      project: project,
     ),
   );
 }

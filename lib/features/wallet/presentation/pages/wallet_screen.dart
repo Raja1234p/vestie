@@ -79,10 +79,7 @@ class _WalletScreenState extends State<WalletScreen> {
       context.read<WalletCubit>().load(forceRefresh: true);
     });
 
-    final cubit = context.read<WalletCubit>();
-    if (cubit.state.wallet != null) return;
-
-    unawaited(cubit.load());
+    unawaited(context.read<WalletCubit>().load(forceRefresh: true));
   }
 
   Future<void> _openFlow(

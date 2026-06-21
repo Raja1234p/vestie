@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/utils/formatters.dart';
 import 'package:vestie/core/widgets/common/notification_favourite_header_actions.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
@@ -47,7 +48,7 @@ class HomeHeader extends StatelessWidget {
                         ),
                         SizedBox(height: 4.h),
                         AppText(
-                          '\$${_formatAmount(totalContributed)}',
+                          AppFormatters.formatCurrency(totalContributed),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.lato(
@@ -68,15 +69,5 @@ class HomeHeader extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  static String _formatAmount(double v) {
-    final parts = v.toStringAsFixed(0).split('');
-    final buf = StringBuffer();
-    for (var i = 0; i < parts.length; i++) {
-      if (i > 0 && (parts.length - i) % 3 == 0) buf.write(',');
-      buf.write(parts[i]);
-    }
-    return buf.toString();
   }
 }

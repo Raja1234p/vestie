@@ -40,7 +40,7 @@ class ProfileLogoutButton extends StatelessWidget {
                 : AppText(
                     AppStrings.btnLogout,
                     style: GoogleFonts.lato(
-                      fontSize: 17.sp,
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.w500,
                       color: AppColors.surface,
                     ),

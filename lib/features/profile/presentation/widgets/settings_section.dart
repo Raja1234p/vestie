@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/common/app_text.dart';
 
 /// Row icon: tinted SVG or raster (design export).
@@ -110,10 +110,9 @@ class SettingsSection extends StatelessWidget {
                       Expanded(
                         child: AppText(
                           item.label,
-                          style: GoogleFonts.lato(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w600,
+                          style: AppTextStyles.bodyLarge.copyWith(
                             color: _labelColor,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),

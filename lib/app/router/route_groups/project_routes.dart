@@ -49,8 +49,8 @@ import 'package:vestie/user/features/investment/presentation/pages/user_project_
 import 'package:vestie/user/features/investment/presentation/pages/user_project_funds_history_screen.dart';
 import 'package:vestie/user/features/project_detail/presentation/pages/project_cancelled_screen.dart';
 import 'package:vestie/user/features/project_detail/presentation/pages/user_status_flow_screen.dart';
-import 'package:vestie/user/features/project_detail/presentation/pages/member_vote_outcome_screen.dart';
-import 'package:vestie/user/features/project_detail/presentation/pages/user_success_vote_screen.dart';
+import 'package:vestie/features/success_vote/presentation/pages/success_vote_cast_screen.dart';
+import 'package:vestie/features/success_vote/presentation/pages/success_vote_outcome_screen.dart';
 import '../app_routes.dart';
 import '../route_args/project_detail_flow_args.dart';
 import '../route_args/project_wallet_flow_args.dart';
@@ -377,16 +377,16 @@ List<RouteBase> buildProjectRoutes({
       path: AppRoutes.userSuccessVote,
       builder: (context, state) {
         final extra = state.extra;
-        if (extra is! UserSuccessVoteArgs) return invalidRouteScreen();
-        return UserSuccessVoteScreen(args: extra);
+        if (extra is! SuccessVoteCastRouteArgs) return invalidRouteScreen();
+        return SuccessVoteCastScreen(args: extra);
       },
     ),
     GoRoute(
       path: AppRoutes.userVoteOutcome,
       builder: (context, state) {
         final extra = state.extra;
-        if (extra is! MemberVoteOutcomeRouteArgs) return invalidRouteScreen();
-        return MemberVoteOutcomeScreen(args: extra);
+        if (extra is! SuccessVoteOutcomeRouteArgs) return invalidRouteScreen();
+        return SuccessVoteOutcomeScreen(args: extra);
       },
     ),
     GoRoute(

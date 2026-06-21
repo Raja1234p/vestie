@@ -8,12 +8,13 @@ import 'package:vestie/features/project_detail/domain/entities/member_entity.dar
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation.dart';
-import 'package:vestie/user/features/project_detail/presentation/models/member_success_vote_ui_data.dart';
-import 'package:vestie/user/features/project_detail/presentation/widgets/member_success_vote_content.dart';
+import 'package:vestie/features/success_vote/presentation/models/success_vote_cast_ui_data.dart';
+import 'package:vestie/features/success_vote/presentation/widgets/success_vote_cast_content.dart';
 
+import 'project_detail_cast_vote_dev_previews.dart';
 import 'project_detail_member_scroll_content.dart';
 import 'project_detail_scroll_insets.dart';
-import 'project_detail_success_vote_dev_previews.dart';
+import 'project_detail_vote_outcome_dev_previews.dart';
 import 'project_detail_trailing_actions.dart';
 
 /// Member project detail — normal scroll or full-height success vote preview.
@@ -41,10 +42,11 @@ class ProjectDetailMemberLayout extends StatefulWidget {
 }
 
 class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
-  bool _previewSuccessVote = false;
+  bool _previewCastVote = false;
 
-  bool get _canPreviewSuccessVote =>
-      widget.project.showsMemberSuccessVoteDevPreviews;
+  bool get _canPreviewCastVote =>
+      widget.project.showsMemberSuccessVoteDevPreviews &&
+      (widget.project.isMemberView || widget.project.isCoLeader);
 
   Widget _header(BuildContext context) {
     return PostAuthHeader(
@@ -83,7 +85,7 @@ class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
 
   @override
   Widget build(BuildContext context) {
-    if (_previewSuccessVote && _canPreviewSuccessVote) {
+    if (_previewCastVote && _canPreviewCastVote) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -91,8 +93,8 @@ class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
           Expanded(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: MemberSuccessVoteContent(
-                data: MemberSuccessVoteUiData.fromProject(widget.project),
+              child: SuccessVoteCastContent(
+                data: SuccessVoteCastUiData.fromProject(widget.project),
               ),
             ),
           ),
@@ -122,11 +124,15 @@ class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          if (_canPreviewSuccessVote)
-                            ProjectDetailSuccessVoteDevPreviews(
+                          if (_canPreviewCastVote)
+                            ProjectDetailCastVoteDevPreviews(
                               project: widget.project,
-                              onPreviewSuccessVoteInPlace: () =>
-                                  setState(() => _previewSuccessVote = true),
+                              onPreviewCastVoteInPlace: () =>
+                                  setState(() => _previewCastVote = true),
+                            ),
+                          if (widget.project.showsMemberSuccessVoteDevPreviews)
+                            ProjectDetailVoteOutcomeDevPreviews(
+                              project: widget.project,
                             ),
                           ProjectDetailMemberScrollContent(
                             project: widget.project,

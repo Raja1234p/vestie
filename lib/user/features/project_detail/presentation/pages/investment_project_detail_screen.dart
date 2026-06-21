@@ -24,13 +24,14 @@ import 'package:vestie/features/project_detail/presentation/widgets/project_memb
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_trailing_actions.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_load_error.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_loading_body.dart';
-import 'package:vestie/features/project_detail/presentation/widgets/project_detail_success_vote_dev_previews.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_detail_cast_vote_dev_previews.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_detail_vote_outcome_dev_previews.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_wallet_actions.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_reload_scope.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_realtime_scope.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_info_card.dart';
-import 'package:vestie/user/features/project_detail/presentation/models/member_success_vote_ui_data.dart';
-import 'package:vestie/user/features/project_detail/presentation/widgets/member_success_vote_content.dart';
+import 'package:vestie/features/success_vote/presentation/models/success_vote_cast_ui_data.dart';
+import 'package:vestie/features/success_vote/presentation/widgets/success_vote_cast_content.dart';
 
 class InvestmentProjectDetailScreen extends StatelessWidget {
   final String projectId;
@@ -102,7 +103,7 @@ class InvestmentProjectDetailBody extends StatefulWidget {
 class _InvestmentProjectDetailBodyState
     extends State<InvestmentProjectDetailBody> {
   bool _previewCompletedInvestment = false;
-  bool _previewSuccessVote = false;
+  bool _previewCastVote = false;
 
   Future<bool> _deleteAnnouncement(String announcementId) async {
     final result = await ServiceLocator.instance
@@ -175,10 +176,10 @@ class _InvestmentProjectDetailBodyState
               final isCompleted = project.status == ProjectStatus.completed;
               final showCompletedLayout =
                   isCompleted || _previewCompletedInvestment;
-              final showMemberSuccessVotePreview =
+              final showMemberCastVotePreview =
                   project.isMemberView &&
                   !showCompletedLayout &&
-                  _previewSuccessVote;
+                  _previewCastVote;
 
               Future<void> openMemberDetail(MemberEntity member) async {
                 final result = await ProjectDetailNavigation.openMemberProfile(
@@ -231,7 +232,7 @@ class _InvestmentProjectDetailBodyState
                 );
               }
 
-              if (showMemberSuccessVotePreview) {
+              if (showMemberCastVotePreview) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -239,8 +240,8 @@ class _InvestmentProjectDetailBodyState
                     Expanded(
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16.w),
-                        child: MemberSuccessVoteContent(
-                          data: MemberSuccessVoteUiData.fromProject(project),
+                        child: SuccessVoteCastContent(
+                          data: SuccessVoteCastUiData.fromProject(project),
                         ),
                       ),
                     ),
@@ -289,13 +290,22 @@ class _InvestmentProjectDetailBodyState
                                     : null,
                               )
                             else ...[
-                              if (project.isMemberView)
-                                ProjectDetailSuccessVoteDevPreviews(
+                              if (project.isModeratorView)
+                                ProjectDetailVoteOutcomeDevPreviews(
                                   project: project,
-                                  onPreviewSuccessVoteInPlace: () => setState(
-                                    () => _previewSuccessVote = true,
+                                  includeViewSuccessVotesPreview: false,
+                                ),
+                              if (project.isMemberView) ...[
+                                ProjectDetailCastVoteDevPreviews(
+                                  project: project,
+                                  onPreviewCastVoteInPlace: () => setState(
+                                    () => _previewCastVote = true,
                                   ),
                                 ),
+                                ProjectDetailVoteOutcomeDevPreviews(
+                                  project: project,
+                                ),
+                              ],
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [

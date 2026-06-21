@@ -1334,7 +1334,88 @@ class AppStrings {
   static const String userSuccessVoteDisagreedBody =
       'You\'ve marked the project as incomplete. If the majority agrees, all '
       'money will be refunded to wallet.';
-  static const String btnPreviewSuccessVote = 'Preview success vote UI';
+
+  /// Dev preview — member/co-leader cast vote (give vote), not outcome.
+  static const String btnPreviewCastVote = 'Preview cast vote UI';
+
+  // ── Cast vote copy (member & co-leader — same UI; role/category text) ─
+  // Vacation — member
+  static const String successVoteCastVacationPendingBannerTitle =
+      'The leader has called a success vote!';
+  static const String successVoteCastVacationPendingBannerBody =
+      'Vote before the deadline to decide if the savings goal was met. If approved, funds are released to the project leader.';
+  static const String successVoteCastVacationAgreedTitle =
+      'You\'ve agreed on this';
+  static const String successVoteCastVacationAgreedBody =
+      'You\'ve marked the project as complete. If the majority agrees, all '
+      'funds will be released to the project leader.';
+  static const String successVoteCastVacationDisagreedTitle =
+      'You\'ve disagreed on this';
+  static const String successVoteCastVacationDisagreedBody =
+      'You\'ve voted to keep the project running. If the majority disagrees, '
+      'contributions will continue as planned.';
+  static const String successVoteCastVacationVoteQuestion =
+      'Do you agree this project was successful?';
+  static const String successVoteCastVacationVoteYes = 'Yes, It Was';
+  static const String successVoteCastVacationVoteNo = 'No, Not Yet';
+  static const String successVoteCastVacationCoLeaderPendingBannerBody =
+      'Vote before the deadline to decide if the savings goal was met. '
+      'As co-leader, your vote carries the same weight as any member.';
+
+  // Emergency — member cast vote (Figma)
+  static const String successVoteCastEmergencyPendingBannerTitle =
+      'The leader has called a success vote!';
+  static const String successVoteCastEmergencyPendingBannerBody =
+      'Vote before the deadline to decide if the emergency need has been resolved. If approved, unused funds are released.';
+  static const String successVoteCastEmergencyAgreedTitle =
+      'You\'ve agreed on this';
+  static const String successVoteCastEmergencyAgreedBody =
+      'You\'ve marked the emergency project as resolved. If the majority agrees, '
+      'unused funds will be released.';
+  static const String successVoteCastEmergencyDisagreedTitle =
+      'You\'ve disagreed on this';
+  static const String successVoteCastEmergencyDisagreedBody =
+      'You\'ve voted to keep the emergency fund open. If the majority disagrees, '
+      'the project will continue.';
+  static const String successVoteCastEmergencyVoteQuestion =
+      'Do you agree this emergency fund can close?';
+  static const String successVoteCastEmergencyVoteYes = 'Yes, It Was';
+  static const String successVoteCastEmergencyVoteNo = 'No, Not Yet';
+  static const String successVoteCastEmergencyCoLeaderPendingBannerBody =
+      'Vote before the deadline to decide if the emergency need has been resolved. '
+      'As co-leader, your vote carries the same weight as any member.';
+
+  // Investment — stop contributions cast vote (Figma)
+  static const String successVoteCastInvestmentPendingBannerTitle =
+      'The leader has called a stop contributions vote!';
+  static const String successVoteCastInvestmentPendingBannerBody =
+      'Vote before the deadline to decide if contributions should stop and the investment phase should begin.';
+  static const String successVoteCastInvestmentAgreedTitle =
+      'You\'ve voted to stop contributing';
+  static const String successVoteCastInvestmentAgreedBody =
+      'You\'ve voted to begin the investment phase. If the majority agrees, '
+      'contributions will stop and the leader will start investing.';
+  static const String successVoteCastInvestmentDisagreedTitle =
+      'You\'ve voted to keep contributing';
+  static const String successVoteCastInvestmentDisagreedBody =
+      'You\'ve voted to continue the contribution phase. If the majority disagrees, '
+      'contributions will continue on schedule.';
+  static const String successVoteCastInvestmentVoteQuestion =
+      'Do you agree contributions should stop now?';
+  static const String successVoteCastInvestmentVoteYes = 'Yes, Start Investing';
+  static const String successVoteCastInvestmentVoteNo = 'No, Keep Contributing';
+
+  // Shared cast-vote labels (all categories)
+  static const String successVoteCastDeadlineLabel = 'Voting deadline';
+  static const String successVoteCastStatGoal = 'Goal Amount';
+  static const String successVoteCastStatMembers = 'Members';
+  static const String successVoteCastTotalRaised = 'Total Raised';
+  static const String successVoteCastMemberVotesLabel = 'Member Votes';
+  static const String successVoteCastThumbsUp = 'Thumbs Up';
+  static const String successVoteCastThumbsDown = 'Thumbs Down';
+  static const String successVoteCastNotYetVotedLabel = 'Not yet voted';
+  static const String successVoteCastNotVoted = 'Not voted';
+
   static const String btnViewSuccessVotes = 'View Success Votes';
   static const String btnPreviewViewSuccessVotes =
       'Preview View Success Votes UI';
@@ -1354,6 +1435,8 @@ class AppStrings {
       'Preview vote approved UI';
   static const String btnPreviewVoteOutcomeRejected =
       'Preview vote rejected UI';
+  static const String btnPreviewStopContributionsVoteRejected =
+      'Preview stop contributions vote rejected UI';
 
   // ── Member: success vote final outcome (majority result) ─────────────
   static const String projectVoteApprovedTitle = 'Project Approved!';
@@ -1369,6 +1452,92 @@ class AppStrings {
   static const String projectVoteSummaryLabel = 'Vote Summary';
   static const String projectVoteAgreedLabel = 'Agreed';
   static const String projectVoteDisagreedLabel = 'Disagreed';
+
+  // ── Success vote outcome copy (role-specific — same UI layout) ─────────
+  // Group leader — vacation
+  static const String successVoteOutcomeLeaderApprovedTitle = 'Project Approved!';
+  static const String successVoteOutcomeLeaderApprovedSubtitle =
+      'Majority of members agreed.';
+  static const String successVoteOutcomeLeaderRejectedTitle =
+      'Project Not Approved';
+  static const String successVoteOutcomeLeaderRejectedSubtitle =
+      'Majority of members disagreed.';
+  static const String successVoteOutcomeLeaderAmountApprovedCaption =
+      'Funds released to your wallet';
+  static const String successVoteOutcomeLeaderAmountRejectedCaption =
+      'Contributions being refunded';
+
+  // Group leader — emergency rejected (Figma)
+  static const String successVoteOutcomeEmergencyLeaderRejectedTitle =
+      'Project Not Resolved';
+  static const String successVoteOutcomeEmergencyLeaderRejectedSubtitle =
+      'Majority of members disagreed.';
+  static const String successVoteOutcomeEmergencyLeaderAmountRejectedCaption =
+      'Emergency project continues. Review your group\'s goal and try again.';
+
+  // Investment group leader — success vote approved (Figma)
+  static const String successVoteOutcomeInvestmentLeaderApprovedTitle =
+      'Project Successful!';
+  static const String successVoteOutcomeInvestmentLeaderApprovedSubtitle =
+      'Majority of members agreed.';
+  static const String successVoteOutcomeInvestmentLeaderAmountApprovedCaption =
+      'Your distributions have been dispersed to all the members in the group.';
+
+  // Investment group leader — stop contributions vote rejected (Figma)
+  static const String
+      successVoteOutcomeInvestmentStopContributionsRejectedTitle =
+      'Vote Not Passed';
+  static const String
+      successVoteOutcomeInvestmentStopContributionsRejectedSubtitle =
+      'Majority chose to keep contributing.';
+  static const String
+      successVoteOutcomeInvestmentStopContributionsRejectedAmountCaption =
+      'Contributions continue on schedule. No investing phase yet.';
+
+  // Investment member — stop contributions vote rejected (Figma)
+  static const String
+      successVoteOutcomeInvestmentMemberStopContributionsRejectedSubtitle =
+      'Majority voted to keep contributing.';
+  static const String
+      successVoteOutcomeInvestmentMemberStopContributionsRejectedAmountCaption =
+      'No changes to your contribution schedule. Keep contributing as planned';
+
+  // Co-leader & member — investment approved (Figma; same copy)
+  static const String successVoteOutcomeInvestmentCoLeaderMemberApprovedTitle =
+      'Returns Distributed!';
+  static const String
+      successVoteOutcomeInvestmentCoLeaderMemberApprovedSubtitle =
+      'Majority of members agreed.';
+  static const String
+      successVoteOutcomeInvestmentCoLeaderMemberAmountApprovedCaption =
+      'Your investment returns have been distributed and added to your wallet.';
+
+  // Co-leader & member — vacation (Figma; same copy)
+  static const String successVoteOutcomeCoLeaderApprovedTitle =
+      'Project Approved!';
+  static const String successVoteOutcomeCoLeaderApprovedSubtitle =
+      'Majority of members agreed.';
+  static const String successVoteOutcomeCoLeaderRejectedTitle =
+      'Project Not Approved';
+  static const String successVoteOutcomeCoLeaderRejectedSubtitle =
+      'Majority of members disagreed.';
+  static const String successVoteOutcomeCoLeaderAmountApprovedCaption =
+      'Funds released to the project leader';
+  static const String successVoteOutcomeVacationCoLeaderMemberAmountRejectedCaption =
+      'Your contributions are being refunded to your wallet';
+  static const String successVoteOutcomeCoLeaderAmountRejectedCaption =
+      'Contributions being refunded';
+  static const String successVoteOutcomeCoLeaderBtnApproved = 'Back to Home';
+  static const String successVoteOutcomeCoLeaderBtnRejected = 'Back to Home';
+
+  // Co-leader & member — emergency approved (Figma; same copy)
+  static const String successVoteOutcomeEmergencyCoLeaderMemberApprovedTitle =
+      'Project Resolved!';
+  static const String successVoteOutcomeEmergencyCoLeaderMemberApprovedSubtitle =
+      'Majority of members agreed.';
+  static const String
+      successVoteOutcomeEmergencyCoLeaderMemberAmountApprovedCaption =
+      'Emergency project closed. Unused funds released to leader.';
 
   /// Group leader — vacation / emergency vote approved (Figma).
   static const String btnStartDistributing = 'Start Distributing';
