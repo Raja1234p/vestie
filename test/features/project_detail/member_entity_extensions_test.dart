@@ -85,7 +85,24 @@ void main() {
       expect(merged.pendingVffRequestId, 'req-42');
     });
 
-    test('treats activity Connected without VFFAdded as sendable', () {
+    test('keeps route VFFAdded when activity is Connected but omits VFFAdded', () {
+      final seed = _member(
+        vffConnectionState: VffConnectionState.connected,
+        vffAdded: true,
+      );
+      final fromApi = _member(
+        vffConnectionState: VffConnectionState.connected,
+        vffAdded: false,
+      );
+
+      final merged = seed.mergedWithActivity(fromApi);
+
+      expect(merged.vffConnectionState, VffConnectionState.connected);
+      expect(merged.vffAdded, isTrue);
+      expect(merged.isViewerVffLinked, isTrue);
+    });
+
+    test('treats activity Connected without VFFAdded as not viewer-linked', () {
       final seed = _member(vffConnectionState: VffConnectionState.none);
       final fromApi = _member(
         vffConnectionState: VffConnectionState.connected,
@@ -94,7 +111,7 @@ void main() {
 
       final merged = seed.mergedWithActivity(fromApi);
 
-      expect(merged.vffConnectionState, VffConnectionState.none);
+      expect(merged.vffConnectionState, VffConnectionState.connected);
       expect(merged.vffAdded, isFalse);
       expect(merged.isViewerVffLinked, isFalse);
     });
@@ -182,6 +199,12 @@ void main() {
       );
       expect(MemberEntity.memberBadgeFromApi('overdue'),
           MemberEntity.overdueBadgeLabel);
+      expect(
+        MemberEntity.memberBadgeFromApi('OverDueBorrow'),
+        MemberEntity.overdueBadgeLabel,
+      );
+      expect(MemberEntity.memberBadgeFromApi('over_due_borrow'),
+          MemberEntity.overdueBadgeLabel);
       expect(MemberEntity.memberBadgeFromApi('Contributor'), '');
       expect(MemberEntity.memberBadgeFromApi('Leader'), '');
     });
@@ -202,29 +225,40 @@ void main() {
       expect(member.showsOverdueBadge, isTrue);
     });
 
-    test('hides when badge is not Overdue even if overdueAmount is set', () {
+    test('shows when overdueAmount is set without overdue badge', () {
       final member = MemberEntity(
-        id: 'u-tc',
-        initials: 'TC',
-        name: 'Top Contributor',
+        id: 'u-amt',
+        initials: 'AM',
+        name: 'Amount Only',
         role: MemberRole.member,
         contributedAmount: 0,
-        badge: MemberEntity.topContributorBadgeLabel,
         overdueAmount: 200,
       );
 
-      expect(member.showsOverdueBadge, isFalse);
-      expect(member.showsContributionBadge, isTrue);
+      expect(member.showsOverdueBadge, isTrue);
+      expect(member.showsContributionBadge, isFalse);
     });
 
-    test('hides when overdueAmount is null or zero', () {
+    test('shows when badge is Overdue without overdueAmount', () {
+      const member = MemberEntity(
+        id: 'u-badge',
+        initials: 'BD',
+        name: 'Badge Only',
+        role: MemberRole.member,
+        contributedAmount: 0,
+        badge: MemberEntity.overdueBadgeLabel,
+      );
+
+      expect(member.showsOverdueBadge, isTrue);
+    });
+
+    test('hides when neither overdue badge nor overdueAmount', () {
       const base = MemberEntity(
         id: 'u-clear',
         initials: 'CL',
         name: 'Clear User',
         role: MemberRole.member,
         contributedAmount: 0,
-        badge: MemberEntity.overdueBadgeLabel,
       );
 
       expect(base.showsOverdueBadge, isFalse);
@@ -234,28 +268,28 @@ void main() {
       );
     });
 
-    test('never shows Top Contributor and Overdue together', () {
-      for (final badge in [
-        MemberEntity.topContributorBadgeLabel,
-        MemberEntity.overdueBadgeLabel,
-        '',
-      ]) {
-        final member = MemberEntity(
-          id: 'u-$badge',
-          initials: 'MX',
-          name: 'Mixed',
-          role: MemberRole.member,
-          contributedAmount: 0,
-          badge: badge,
-          overdueAmount: 150,
-        );
+    test('contribution and overdue badge labels are mutually exclusive', () {
+      const topContributor = MemberEntity(
+        id: 'u-tc',
+        initials: 'TC',
+        name: 'Top Contributor',
+        role: MemberRole.member,
+        contributedAmount: 0,
+        badge: MemberEntity.topContributorBadgeLabel,
+      );
+      const overdue = MemberEntity(
+        id: 'u-od',
+        initials: 'OD',
+        name: 'Overdue User',
+        role: MemberRole.member,
+        contributedAmount: 0,
+        badge: MemberEntity.overdueBadgeLabel,
+      );
 
-        expect(
-          member.showsContributionBadge && member.showsOverdueBadge,
-          isFalse,
-          reason: 'badge=$badge',
-        );
-      }
+      expect(topContributor.showsContributionBadge, isTrue);
+      expect(topContributor.showsOverdueBadge, isFalse);
+      expect(overdue.showsContributionBadge, isFalse);
+      expect(overdue.showsOverdueBadge, isTrue);
     });
   });
 
@@ -422,6 +456,30 @@ void main() {
       expect(merged.badge, MemberEntity.overdueBadgeLabel);
       expect(merged.overdueAmount, 200);
       expect(merged.showsOverdueBadge, isTrue);
+    });
+
+    test('withProjectRoster overlays VFF link from project members list', () {
+      const roster = MemberEntity(
+        id: 'u4',
+        membershipId: 'm4',
+        userId: 'u4',
+        initials: 'VF',
+        name: 'VFF Friend',
+        role: MemberRole.member,
+        contributedAmount: 0,
+        vffConnectionState: VffConnectionState.connected,
+        vffAdded: true,
+      );
+      final activityMember = roster.copyWith(
+        vffConnectionState: VffConnectionState.none,
+        vffAdded: false,
+      );
+      final project = _project([roster]);
+
+      final merged = activityMember.withProjectRoster(project);
+
+      expect(merged.isViewerVffLinked, isTrue);
+      expect(merged.vffConnectionState, VffConnectionState.connected);
     });
   });
 

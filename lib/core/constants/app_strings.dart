@@ -437,9 +437,11 @@ class AppStrings {
   static const String btnAddFriend = 'Send VFF Request';
   static const String projectMemberLeaderBadge = 'Leader';
 
-  /// Member row overdue pill — `Overdue - $200` (no icon).
-  static String projectMemberOverdueBadgeLabel(double amount) =>
-      '$overdueLabel - \$${AppFormatters.formatWholeAmount(amount)}';
+  /// Member row overdue pill — `Overdue` or `Overdue - $200` when amount is known.
+  static String projectMemberOverdueBadgeLabel(double amount) {
+    if (amount <= 0) return overdueLabel;
+    return '$overdueLabel - \$${AppFormatters.formatWholeAmount(amount)}';
+  }
 
   static const String projectMemberCoLeaderBadge = 'Co Leader';
   static const String userVffProfileTitleSuffix = ' Profile';
@@ -1142,7 +1144,7 @@ class AppStrings {
   static const String btnMakeCoLeader = 'Make Co-Leader';
   static const String btnRemoveCoLeader = 'Remove Co-Leader';
   static const String btnTakeAction = 'Take Action';
-  static const String btnRemoveMember = 'Remove from Group';
+  static const String btnRemoveMember = 'Remove Member';
   static String memberOverdueBorrowNotice(int overdueBorrowCount) {
     if (overdueBorrowCount <= 0) {
       return 'This user has overdue borrow(s).';

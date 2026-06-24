@@ -115,7 +115,7 @@ class ProjectDetailResponseModel {
       category: _mapCategory(_project.type),
       status: _mapStatus(_project.lifecycleState),
       goalAmount: _project.targetAmount,
-      currentAmount: _project.raisedAmount,
+      currentAmount: _project.displayPotAmount,
       endsIn: _project.endsAtUtc,
       announcement: _project.description,
       announcements: mappedAnnouncements,
@@ -322,6 +322,9 @@ class _ProjectPayload {
   final String lifecycleState;
   final double targetAmount;
   final double raisedAmount;
+
+  /// When present on `project`, shown instead of [raisedAmount] on project detail.
+  final double? potAmount;
   final String endsAtUtc;
   final String? launchedAtUtc;
   final String viewerRole;
@@ -343,6 +346,7 @@ class _ProjectPayload {
     required this.lifecycleState,
     required this.targetAmount,
     required this.raisedAmount,
+    this.potAmount,
     required this.endsAtUtc,
     this.launchedAtUtc,
     required this.viewerRole,
@@ -368,6 +372,9 @@ class _ProjectPayload {
       lifecycleState: lifecycle,
       targetAmount: (json['targetAmount'] as num?)?.toDouble() ?? 0.0,
       raisedAmount: (json['raisedAmount'] as num?)?.toDouble() ?? 0.0,
+      potAmount: json.containsKey('potAmount')
+          ? (json['potAmount'] as num?)?.toDouble() ?? 0.0
+          : null,
       endsAtUtc: _nullableString(json['endsAtUtc']) ?? '',
       launchedAtUtc: _nullableString(json['launchedAtUtc']),
       viewerRole: projectListItemViewerRole(json),
@@ -383,6 +390,9 @@ class _ProjectPayload {
       hasCoLeader: json['hasCoLeader'] == true,
     );
   }
+
+  /// `potAmount` when API sends it (including `0`); otherwise [raisedAmount].
+  double get displayPotAmount => potAmount ?? raisedAmount;
 }
 
 String? _nullableString(dynamic value) {

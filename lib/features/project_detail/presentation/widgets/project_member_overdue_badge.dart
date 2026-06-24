@@ -17,8 +17,6 @@ class ProjectMemberOverdueBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (amount <= 0) return const SizedBox.shrink();
-
     final outerRadius = BorderRadius.circular(100.r);
     final innerRadius = BorderRadius.circular(100.r - _borderWidth);
     final label = AppStrings.projectMemberOverdueBadgeLabel(amount);

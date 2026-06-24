@@ -365,7 +365,7 @@ class _MemberDetailView extends StatelessWidget {
 
           final showRemoveMember =
               p != null &&
-              MemberDetailActionsVisibility.showRemoveMember(
+              MemberDetailActionsVisibility.showRemoveMemberOnMemberProfile(
                 project: p,
 
                 member: displayMember,

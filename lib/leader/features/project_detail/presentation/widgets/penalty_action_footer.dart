@@ -7,7 +7,7 @@ import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_outline_neutral_button.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 
-/// Pinned footer — Remove Member, then Mark as Defaulted (Figma Penalty Action).
+/// Pinned footer — Mark as Defaulted, then Remove Member (Figma Penalty Action).
 class PenaltyActionFooter extends StatelessWidget {
   final bool showRemoveMember;
   final bool showMarkAsDefaulted;
@@ -34,15 +34,6 @@ class PenaltyActionFooter extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (showRemoveMember)
-            AppOutlineNeutralButton(
-              label: AppStrings.btnRemoveMember,
-              onPressed: onRemoveMember,
-              borderRadius: AppRadius.r8,
-              borderColor: _outlineColor,
-              labelColor: _outlineColor,
-            ),
-          if (showRemoveMember && showMarkAsDefaulted) SizedBox(height: 12.h),
           if (showMarkAsDefaulted)
             AppOutlineNeutralButton(
               label: AppStrings.markAsDefaulted,
@@ -50,6 +41,16 @@ class PenaltyActionFooter extends StatelessWidget {
               borderRadius: AppRadius.r8,
               borderColor: _outlineColor,
               labelColor: _outlineColor,
+            ),
+          if (showRemoveMember && showMarkAsDefaulted) SizedBox(height: 12.h),
+          if (showRemoveMember)
+            AppOutlineNeutralButton(
+              label: AppStrings.btnRemoveMember,
+              onPressed: onRemoveMember,
+              borderRadius: AppRadius.r8,
+              backgroundColor: AppColors.red100,
+              borderColor: AppColors.red100,
+              labelColor: AppColors.red900,
             ),
         ],
       ),

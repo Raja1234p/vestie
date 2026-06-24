@@ -20,7 +20,7 @@ class MemberEntity {
   final bool canSendVffRequest;
   final String? pendingVffRequestId;
 
-  /// API `badge` — `Top Contributor` or `Overdue` (mutually exclusive contribution pills).
+  /// API `badge` — `Top Contributor`, `Overdue`, or `OverDueBorrow` (mutually exclusive contribution pills).
   final String badge;
 
   const MemberEntity({
@@ -67,11 +67,10 @@ class MemberEntity {
   /// Top Contributor pill — `badge: Top Contributor` on any role (member, leader, co-leader).
   bool get showsContributionBadge => badge == topContributorBadgeLabel;
 
-  /// Overdue pill — `badge: Overdue` plus a positive `overdueAmount` (no icon).
+  /// Overdue pill — overdue badge (`Overdue` / `OverDueBorrow`) or positive `overdueAmount`.
   bool get showsOverdueBadge =>
-      badge == overdueBadgeLabel &&
-      overdueAmount != null &&
-      overdueAmount! > 0;
+      badge == overdueBadgeLabel ||
+      (overdueAmount != null && overdueAmount! > 0);
 
   /// Amount for [ProjectMemberOverdueBadge] — only valid when [showsOverdueBadge].
   double get overdueBadgeDisplayAmount => overdueAmount ?? 0;
@@ -84,7 +83,8 @@ class MemberEntity {
   }
 
   static bool isOverdueBadge(String label) {
-    return _normalizeBadgeLabel(label) == 'overdue';
+    final normalized = _normalizeBadgeLabel(label);
+    return normalized == 'overdue' || normalized == 'overdueborrow';
   }
 
   /// Keeps only Top Contributor or Overdue from API; all other badge values are ignored.

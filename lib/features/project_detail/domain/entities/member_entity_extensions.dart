@@ -71,20 +71,21 @@ extension MemberEntityApiIds on MemberEntity {
   }
 
   bool _mergedVffAdded(MemberEntity fromApi) {
-    return fromApi.isVffConnected && fromApi.vffAdded;
+    if (fromApi.isViewerVffLinked) return true;
+    if (!fromApi.isVffConnected) return false;
+    if (fromApi.vffAdded) return true;
+    // Activity can lag `VFFAdded` after accept — keep roster/route seed.
+    return vffAdded;
   }
 
   /// Trust activity API for disconnect; keep route seed for optimistic pending.
   VffConnectionState _mergedVffConnectionState(MemberEntity fromApi) {
+    if (_mergedVffAdded(fromApi)) return VffConnectionState.connected;
     if (fromApi.isViewerVffLinked) return VffConnectionState.connected;
     if (fromApi.hasPendingVffOutgoing) {
       return VffConnectionState.pendingOutgoing;
     }
     if (fromApi.vffConnectionState != VffConnectionState.none) {
-      if (fromApi.vffConnectionState == VffConnectionState.connected &&
-          !fromApi.vffAdded) {
-        return VffConnectionState.none;
-      }
       return fromApi.vffConnectionState;
     }
     if (hasPendingVffOutgoing) return VffConnectionState.pendingOutgoing;
@@ -123,13 +124,20 @@ extension MemberEntityProjectRoster on MemberEntity {
     final roleChanged = roster.role != role;
     final badgeFromRoster = roster.badge.isNotEmpty;
     final overdueFromRoster = roster.overdueAmount != null;
+    final vffFromRoster = roster.isViewerVffLinked;
 
-    if (!roleChanged && !badgeFromRoster && !overdueFromRoster) return this;
+    if (!roleChanged && !badgeFromRoster && !overdueFromRoster && !vffFromRoster) {
+      return this;
+    }
 
     return copyWith(
       role: roster.role,
       badge: badgeFromRoster ? roster.badge : badge,
       overdueAmount: roster.overdueAmount ?? overdueAmount,
+      vffAdded: vffFromRoster ? true : vffAdded,
+      vffConnectionState: vffFromRoster
+          ? VffConnectionState.connected
+          : vffConnectionState,
     );
   }
 }

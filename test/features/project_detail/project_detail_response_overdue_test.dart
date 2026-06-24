@@ -64,7 +64,34 @@ void main() {
       expect(member.showsContributionBadge, isFalse);
     });
 
-    test('Top Contributor badge does not show overdue pill', () {
+    test('parses overdueAmount when badge is OverDueBorrow', () {
+      final model = ProjectDetailResponseModel.fromJson(
+        _minimalProjectJson(
+          members: [
+            {
+              'membershipId': 'm1',
+              'userId': 'u1',
+              'userName': 'alice',
+              'firstName': 'Alice',
+              'lastName': 'Lien',
+              'role': 'member',
+              'status': 'active',
+              'badge': 'OverDueBorrow',
+              'overdueAmount': 200,
+            },
+          ],
+        ),
+      );
+
+      final member = model.toEntity().members.single;
+
+      expect(member.badge, MemberEntity.overdueBadgeLabel);
+      expect(member.overdueAmount, 200);
+      expect(member.showsOverdueBadge, isTrue);
+      expect(member.showsContributionBadge, isFalse);
+    });
+
+    test('Top Contributor badge without overdue amount', () {
       final member = ProjectDetailResponseModel.fromJson(
         _minimalProjectJson(
           members: [
@@ -77,7 +104,6 @@ void main() {
               'role': 'member',
               'status': 'active',
               'badge': 'Top Contributor',
-              'overdueAmount': 200,
             },
           ],
         ),
@@ -85,6 +111,29 @@ void main() {
 
       expect(member.showsContributionBadge, isTrue);
       expect(member.showsOverdueBadge, isFalse);
+    });
+
+    test('OverDueBorrow badge without amount still shows overdue pill', () {
+      final member = ProjectDetailResponseModel.fromJson(
+        _minimalProjectJson(
+          members: [
+            {
+              'membershipId': 'm1',
+              'userId': 'u1',
+              'userName': 'rajakumr',
+              'firstName': 'test',
+              'lastName': '',
+              'role': 'member',
+              'status': 'active',
+              'badge': 'OverDueBorrow',
+            },
+          ],
+        ),
+      ).toEntity().members.single;
+
+      expect(member.badge, MemberEntity.overdueBadgeLabel);
+      expect(member.overdueAmount, isNull);
+      expect(member.showsOverdueBadge, isTrue);
     });
 
     test('falls back to totalOverdue and overdueBorrowAmount keys', () {

@@ -31,10 +31,6 @@ final class UserVffHubRequestsTab extends StatelessWidget {
       );
     }
 
-    final cap = UserVffHubState.previewCap;
-    final incPrev = inc.length > cap ? inc.sublist(0, cap) : inc;
-    final grpPrev = grp.length > cap ? grp.sublist(0, cap) : grp;
-
     final acting = hubState.actingRow;
 
     Widget incomingCard(UserVffIncomingRequestUi r) =>
@@ -82,7 +78,7 @@ final class UserVffHubRequestsTab extends StatelessWidget {
               await hubCubit.refreshMyVffsSilently();
             },
           ),
-          ...incPrev.map(incomingCard),
+          ...inc.map(incomingCard),
         ],
         if (inc.isNotEmpty && grp.isNotEmpty) SizedBox(height: AppDimens.v14),
         if (grp.isNotEmpty) ...[
@@ -97,7 +93,7 @@ final class UserVffHubRequestsTab extends StatelessWidget {
                   .refreshReceivedInboxSilently();
             },
           ),
-          ...grpPrev.map(groupCard),
+          ...grp.map(groupCard),
         ],
       ],
     );

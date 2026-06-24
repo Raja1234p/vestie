@@ -30,8 +30,35 @@ ProjectDetailEntity _moderatorProject({
 
 void main() {
   group('MemberDetailActionsVisibility.showRemoveMember', () {
+    test('never shown on member profile (leader or co-leader)', () {
+      const member = MemberEntity(
+        id: 'u2',
+        membershipId: 'm2',
+        userId: 'u2',
+        initials: 'AB',
+        name: 'Alex',
+        role: MemberRole.member,
+        contributedAmount: 0,
+      );
+
+      for (final role in ViewerMembershipRole.values) {
+        expect(
+          MemberDetailActionsVisibility.showRemoveMemberOnMemberProfile(
+            project: _moderatorProject(
+              category: ProjectCategory.vacations,
+              viewerRole: role,
+              membershipId: 'viewer-m',
+            ),
+            member: member,
+          ),
+          isFalse,
+          reason: 'remove on profile hidden for $role',
+        );
+      }
+    });
+
     test(
-      'true for group leader or co-leader viewing a regular member on every category',
+      'true for group leader viewing a regular member on every category (penalty flow)',
       () {
         const member = MemberEntity(
           id: 'u2',
@@ -44,28 +71,48 @@ void main() {
         );
 
         for (final category in ProjectCategory.values) {
-          for (final role in [
-            ViewerMembershipRole.groupLeader,
-            ViewerMembershipRole.coLeader,
-          ]) {
-            expect(
-              MemberDetailActionsVisibility.showRemoveMember(
-                project: _moderatorProject(
-                  category: category,
-                  viewerRole: role,
-                  membershipId: role == ViewerMembershipRole.coLeader
-                      ? 'co-m'
-                      : 'leader-m',
-                ),
-                member: member,
+          expect(
+            MemberDetailActionsVisibility.showRemoveMember(
+              project: _moderatorProject(
+                category: category,
+                viewerRole: ViewerMembershipRole.groupLeader,
+                membershipId: 'leader-m',
               ),
-              isTrue,
-              reason: 'remove should show for $category as $role',
-            );
-          }
+              member: member,
+            ),
+            isTrue,
+            reason: 'remove should show for $category as group leader',
+          );
         }
       },
     );
+
+    test('false for co-leader viewing a regular member', () {
+      const member = MemberEntity(
+        id: 'u2',
+        membershipId: 'm2',
+        userId: 'u2',
+        initials: 'AB',
+        name: 'Alex',
+        role: MemberRole.member,
+        contributedAmount: 0,
+      );
+
+      for (final category in ProjectCategory.values) {
+        expect(
+          MemberDetailActionsVisibility.showRemoveMember(
+            project: _moderatorProject(
+              category: category,
+              viewerRole: ViewerMembershipRole.coLeader,
+              membershipId: 'co-m',
+            ),
+            member: member,
+          ),
+          isFalse,
+          reason: 'co-leader cannot remove members on $category',
+        );
+      }
+    });
 
     test('false for regular member viewer', () {
       const project = ProjectDetailEntity(
@@ -236,7 +283,7 @@ void main() {
     });
 
     test(
-      'true when activity role is leader but member is not leader in project list',
+      'false for co-leader when activity role is leader but member is not leader in project list',
       () {
         const listMember = MemberEntity(
           id: 'u2',
@@ -260,10 +307,49 @@ void main() {
             project: project,
             member: misTagged,
           ),
-          isTrue,
+          isFalse,
         );
       },
     );
+
+    test('co-leader cannot mark defaulted on a regular member', () {
+      const member = MemberEntity(
+        id: 'u2',
+        membershipId: 'm2',
+        userId: 'u2',
+        initials: 'AB',
+        name: 'Alex',
+        role: MemberRole.member,
+        contributedAmount: 0,
+      );
+      final project = _moderatorProject(
+        category: ProjectCategory.vacations,
+        viewerRole: ViewerMembershipRole.coLeader,
+        membershipId: 'co-m',
+      );
+
+      expect(
+        MemberDetailActionsVisibility.showMarkAsDefaulted(
+          project: project,
+          member: member,
+        ),
+        isFalse,
+      );
+      expect(
+        MemberDetailActionsVisibility.showOverdueTakeAction(
+          project: project,
+          member: member,
+        ),
+        isFalse,
+      );
+      expect(
+        MemberDetailActionsVisibility.showRemoveMember(
+          project: project,
+          member: member,
+        ),
+        isFalse,
+      );
+    });
   });
 
   group('MemberDetailActionsVisibility.showCoLeaderControls', () {
@@ -649,7 +735,53 @@ void main() {
       );
     });
 
-    test('activity Connected without VFFAdded still allows Send on profile', () {
+    test('shows Following when route seed is linked but activity omits VFFAdded', () {
+      const project = ProjectDetailEntity(
+        id: 'p1',
+        name: 'Trip',
+        category: ProjectCategory.vacations,
+        status: ProjectStatus.ongoing,
+        goalAmount: 1000,
+        currentAmount: 0,
+        endsIn: '30d',
+        announcement: '',
+        members: [],
+        borrowRequests: [],
+        viewerRole: ViewerMembershipRole.member,
+        membershipId: 'viewer-m',
+      );
+
+      const member = MemberEntity(
+        id: 'user-b',
+        membershipId: 'm-b',
+        userId: 'user-b',
+        initials: 'UB',
+        name: 'User B',
+        role: MemberRole.member,
+        contributedAmount: 0,
+        vffConnectionState: VffConnectionState.connected,
+        vffAdded: true,
+      );
+
+      expect(
+        MemberDetailActionsVisibility.showVffFollowing(
+          project: project,
+          member: member,
+          vffConnectionState: VffConnectionState.connected,
+        ),
+        isTrue,
+      );
+      expect(
+        MemberDetailActionsVisibility.showVffSendOrSent(
+          project: project,
+          member: member,
+          vffConnectionState: VffConnectionState.connected,
+        ),
+        isFalse,
+      );
+    });
+
+    test('activity Connected without VFFAdded still allows Send when not linked', () {
       const project = ProjectDetailEntity(
         id: 'p1',
         name: 'Trip',

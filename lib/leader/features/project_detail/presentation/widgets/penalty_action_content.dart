@@ -15,42 +15,39 @@ class PenaltyActionContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AppText(
-            AppStrings.penaltyBorrowedLabel,
-            style: AppTextStyles.bodyMedium.copyWith(
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w600,
-              color: AppColors.neutral1200,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AppText(
+          AppStrings.penaltyBorrowedLabel,
+          style: AppTextStyles.bodyMedium.copyWith(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w600,
+            color: AppColors.neutral1200,
           ),
-          SizedBox(height: 6.h),
-          AppText(
-            AppStrings.penaltyBorrowedAmount,
-            style: AppTextStyles.titleLarge.copyWith(
-              fontSize: 32.sp,
-              fontWeight: FontWeight.w700,
-              color: AppColors.neutral1200,
-              height: 1.15,
-            ),
+        ),
+        SizedBox(height: 6.h),
+        AppText(
+          AppStrings.penaltyBorrowedAmount,
+          style: AppTextStyles.titleLarge.copyWith(
+            fontSize: 32.sp,
+            fontWeight: FontWeight.w700,
+            color: AppColors.neutral1200,
+            height: 1.15,
           ),
-          SizedBox(height: 24.h),
-          AppText(
-            AppStrings.labelBreakdown,
-            style: AppTextStyles.bodyLarge.copyWith(
-              fontSize: 18.sp,
-              fontWeight: FontWeight.w700,
-              color: AppColors.grey1100,
-            ),
+        ),
+        SizedBox(height: 24.h),
+        AppText(
+          AppStrings.labelBreakdown,
+          style: AppTextStyles.bodyLarge.copyWith(
+            fontSize: 18.sp,
+            fontWeight: FontWeight.w700,
+            color: AppColors.grey1100,
           ),
-          SizedBox(height: 12.h),
-          const _PenaltyBreakdownCard(),
-        ],
-      ),
+        ),
+        SizedBox(height: 12.h),
+        const _PenaltyBreakdownCard(),
+      ],
     );
   }
 }

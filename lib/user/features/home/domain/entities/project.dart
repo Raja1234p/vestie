@@ -95,13 +95,15 @@ class Project {
     return normalized.contains('waiting') && normalized.contains('approval');
   }
 
-  /// API `displayStatus` e.g. "On Going" — member may open project detail.
+  /// API `displayStatus` e.g. "On Going" or "Funded" — joined member may open detail from Home.
   bool get isDisplayOnGoing {
     final normalized = _normalizedDisplayStatus;
     if (normalized.isEmpty) {
       return status == ProjectStatus.ongoing && !isWaitingForApproval;
     }
-    return normalized == 'on going' || normalized == 'ongoing';
+    return normalized == 'on going' ||
+        normalized == 'ongoing' ||
+        normalized == 'funded';
   }
 
   String get _normalizedDisplayStatus =>

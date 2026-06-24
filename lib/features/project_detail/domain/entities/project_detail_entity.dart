@@ -174,8 +174,8 @@ class ProjectDetailEntity {
   /// Promote / demote co-leader — vacation and emergency only (see [ProjectCategoryX.supportsCoLeader]).
   bool get supportsCoLeader => category.supportsCoLeader;
 
-  /// Remove member — group leader and co-leader on every project category.
-  bool get canRemoveMembers => isModeratorView;
+  /// Remove member — group leader only (co-leaders cannot remove members).
+  bool get canRemoveMembers => isGroupLeader;
 
   /// Which ⋯ menu to show — same rules on investment, vacation, and emergency.
   ProjectDetailOverflowMenuKind get overflowMenuKind {

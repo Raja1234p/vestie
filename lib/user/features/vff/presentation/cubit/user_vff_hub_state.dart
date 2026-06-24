@@ -9,8 +9,6 @@ enum UserVffHubLoadStatus { initial, loading, loaded, error }
 enum UserVffHubRequestsLoadStatus { initial, loading, loaded, error }
 
 final class UserVffHubState extends Equatable {
-  static const previewCap = 2;
-
   final UserVffHubLoadStatus loadStatus;
 
   final UserVffHubRequestsLoadStatus requestsLoadStatus;

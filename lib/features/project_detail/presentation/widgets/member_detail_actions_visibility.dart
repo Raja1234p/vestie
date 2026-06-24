@@ -9,7 +9,8 @@ import 'project_member_add_friend_visibility.dart';
 ///
 /// Rules:
 /// - VFF: any member except self.
-/// - Remove / mark defaulted / overdue take action: group leader or co-leader,
+/// - Remove member on profile: never (leader uses penalty / manage flows).
+/// - Remove / mark defaulted / overdue take action elsewhere: **group leader only**,
 ///   not self, not the project group leader.
 /// - Co-leader promote/demote: group leader only, vacation/emergency, not self,
 ///   not the project group leader.
@@ -82,7 +83,7 @@ abstract final class MemberDetailActionsVisibility {
     return project.members.any((m) => m.role == MemberRole.coLeader);
   }
 
-  /// Group leader or co-leader — remove member (not self, not project leader).
+  /// Group leader only — remove member in penalty / overdue flows (not on profile).
   static bool showRemoveMember({
     required ProjectDetailEntity project,
     required MemberEntity member,
@@ -90,11 +91,19 @@ abstract final class MemberDetailActionsVisibility {
     return _canModerateMemberTarget(project: project, member: member);
   }
 
+  /// Member profile footer — remove is not offered here (penalty / manage flows only).
+  static bool showRemoveMemberOnMemberProfile({
+    required ProjectDetailEntity project,
+    required MemberEntity member,
+  }) {
+    return false;
+  }
+
   static bool _canModerateMemberTarget({
     required ProjectDetailEntity project,
     required MemberEntity member,
   }) {
-    if (!project.canRemoveMembers) return false;
+    if (!project.isGroupLeader) return false;
     final target = _memberForRules(project: project, member: member);
     if (ProjectMemberAddFriendVisibility.isViewerSelf(
       project: project,
@@ -181,28 +190,27 @@ abstract final class MemberDetailActionsVisibility {
           project: project,
           member: member,
           vffConnectionState: vffConnectionState,
-        ) ||
-        showRemoveMember(project: project, member: member);
+        );
   }
 
   static bool showMarkAsDefaulted({
     required ProjectDetailEntity project,
     required MemberEntity member,
   }) {
-    return showRemoveMember(project: project, member: member);
+    return _canModerateMemberTarget(project: project, member: member);
   }
 
   static bool showPenaltyFooter({
     required ProjectDetailEntity project,
     required MemberEntity member,
   }) {
-    return showRemoveMember(project: project, member: member);
+    return _canModerateMemberTarget(project: project, member: member);
   }
 
   static bool showOverdueTakeAction({
     required ProjectDetailEntity project,
     required MemberEntity member,
   }) {
-    return showRemoveMember(project: project, member: member);
+    return _canModerateMemberTarget(project: project, member: member);
   }
 }
