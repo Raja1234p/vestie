@@ -1,36 +1,31 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../auth/auth_token_refresh_coordinator.dart';
 import '../../auth/session_sign_out.dart';
 import '../../constants/api_constants.dart';
 import '../../constants/storage_keys.dart';
-import '../../device/device_info_service.dart';
-import '../../network/api_response_body.dart';
 import '../../storage/secure_storage_impl.dart';
 import '../../utils/logger.dart';
 import 'dio_interceptor_extras.dart';
 
 /// Injects Bearer token on every [DioClient] request.
 ///
-/// On 401 from a protected endpoint: calls `POST /auth/refresh` once, saves new
-/// tokens, retries the original request. Screens must not call the refresh API
-/// manually — this interceptor handles it app-wide. Sign-out + login redirect
-/// only when the refresh call itself fails (see [SessionSignOut]).
+/// On 401 from a protected endpoint: coordinates a single `POST /auth/refresh`,
+/// saves new tokens, retries the original request. Concurrent 401s await the same
+/// refresh future. Sign-out only when refresh itself fails.
 class AuthInterceptor extends QueuedInterceptor {
   final Dio _dio;
   final SecureStorageImpl _secureStorage;
-  final DeviceInfoService _deviceInfoService;
+  final AuthTokenRefreshCoordinator _tokenRefresh;
 
   AuthInterceptor({
     required Dio dio,
     required SecureStorageImpl secureStorage,
-    required DeviceInfoService deviceInfoService,
+    required AuthTokenRefreshCoordinator tokenRefresh,
   }) : _dio = dio,
        _secureStorage = secureStorage,
-       _deviceInfoService = deviceInfoService;
+       _tokenRefresh = tokenRefresh;
 
   @override
   Future<void> onRequest(
@@ -55,17 +50,14 @@ class AuthInterceptor extends QueuedInterceptor {
 
     final path = _normalizePath(err.requestOptions.path);
 
-    // Retried once after a successful refresh — surface 401 to the caller only.
     if (err.requestOptions.extra[kAuthRetryExtraKey] == true) {
       return handler.next(err);
     }
 
-    // Public auth calls (login, verify, etc.) — never refresh or sign out.
     if (_skipsRefreshOn401(path)) {
       return handler.next(err);
     }
 
-    // Refresh endpoint failed on the shared client — session is dead.
     if (path == ApiConstants.refreshToken) {
       await SessionSignOut.locally();
       return handler.next(err);
@@ -83,22 +75,10 @@ class AuthInterceptor extends QueuedInterceptor {
     }
 
     try {
-      AppLogger.info('Auth refresh: POST ${ApiConstants.refreshToken}');
-      final tokens = await _refreshTokens(refreshToken);
-      final newAccess = tokens.$1;
-      final newRefresh = tokens.$2;
-
-      if (newAccess == null || newAccess.isEmpty) {
-        throw StateError('Refresh response missing accessToken');
-      }
-
-      await _secureStorage.saveString(StorageKeys.accessToken, newAccess);
-      if (newRefresh != null && newRefresh.isNotEmpty) {
-        await _secureStorage.saveString(StorageKeys.refreshToken, newRefresh);
-      }
+      final newAccess = await _tokenRefresh.refresh(refreshToken);
 
       AppLogger.info(
-        'Auth refresh succeeded; retrying ${err.requestOptions.method} $path',
+        'Auth refresh retrying ${err.requestOptions.method} $path',
       );
 
       final retryOptions = err.requestOptions;
@@ -140,7 +120,6 @@ class AuthInterceptor extends QueuedInterceptor {
         p == ApiConstants.logout;
   }
 
-  /// True when this 401 will trigger refresh + silent retry (not logged as error).
   static bool willRefreshAndRetry401(DioException err) {
     if (err.response?.statusCode != 401) return false;
     if (err.requestOptions.extra[kAuthRetryExtraKey] == true) return false;
@@ -159,56 +138,5 @@ class AuthInterceptor extends QueuedInterceptor {
     final p = _normalizePath(path);
     if (_skipsRefreshOn401(p)) return false;
     return p == ApiConstants.refreshToken;
-  }
-
-  /// Returns (accessToken, refreshToken) from flat or `tokens`-wrapped JSON.
-  static (String?, String?) _parseTokenPair(dynamic data) {
-    if (data is! Map) return (null, null);
-    final map = unwrapApiResponseBody(Map<String, dynamic>.from(data));
-    final tokenData = map['tokens'] is Map
-        ? Map<String, dynamic>.from(map['tokens'] as Map)
-        : map;
-    return (
-      tokenData['accessToken'] as String?,
-      tokenData['refreshToken'] as String?,
-    );
-  }
-
-  Future<(String?, String?)> _refreshTokens(String refreshToken) async {
-    final refreshDio = Dio(
-      BaseOptions(
-        baseUrl: ApiConstants.baseUrl,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        connectTimeout: ApiConstants.requestTimeout,
-        sendTimeout: ApiConstants.requestTimeout,
-        receiveTimeout: ApiConstants.requestTimeout,
-      ),
-    );
-
-    if (kDebugMode && refreshDio.httpClientAdapter is IOHttpClientAdapter) {
-      (refreshDio.httpClientAdapter as IOHttpClientAdapter).createHttpClient =
-          () {
-            final client = HttpClient();
-            client.badCertificateCallback =
-                (X509Certificate cert, String host, int port) => true;
-            return client;
-          };
-    }
-
-    final device = await _deviceInfoService.getIdentity();
-    final refreshResponse = await refreshDio.post(
-      ApiConstants.refreshToken,
-      data: {
-        'refreshToken': refreshToken,
-        'deviceId': device.id,
-        'deviceName': device.name,
-        'ipAddress': ApiConstants.defaultIpAddress,
-      },
-    );
-
-    return _parseTokenPair(refreshResponse.data);
   }
 }

@@ -1,16 +1,18 @@
 import 'package:dio/dio.dart';
 
-import 'interceptors/auth_interceptor.dart';
-import 'interceptors/logging_interceptor.dart';
-import 'interceptors/retry_interceptor.dart';
+import '../auth/auth_token_refresh_coordinator.dart';
 import '../constants/api_constants.dart';
 import '../device/device_info_service.dart';
 import '../storage/secure_storage_impl.dart';
+import 'interceptors/auth_interceptor.dart';
+import 'interceptors/logging_interceptor.dart';
+import 'interceptors/retry_interceptor.dart';
 
 /// Enterprise-grade Network Client.
 /// Upgraded to inject SecureStorageImpl into AuthInterceptor and bypass SSL for dev.
 class DioClient {
   late final Dio _dio;
+  late final AuthTokenRefreshCoordinator _tokenRefresh;
 
   Dio get dio => _dio;
 
@@ -18,6 +20,11 @@ class DioClient {
     required SecureStorageImpl secureStorage,
     required DeviceInfoService deviceInfoService,
   }) {
+    _tokenRefresh = AuthTokenRefreshCoordinator(
+      secureStorage: secureStorage,
+      deviceInfoService: deviceInfoService,
+    );
+
     _dio = Dio(
       BaseOptions(
         baseUrl: ApiConstants.baseUrl,
@@ -31,20 +38,11 @@ class DioClient {
       ),
     );
 
-    // // Bypass SSL certificate verification for development on real devices
-    // if (kDebugMode) {
-    //   (_dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
-    //     final client = HttpClient();
-    //     client.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
-    //     return client;
-    //   };
-    // }
-
     _dio.interceptors.addAll([
       AuthInterceptor(
         dio: _dio,
         secureStorage: secureStorage,
-        deviceInfoService: deviceInfoService,
+        tokenRefresh: _tokenRefresh,
       ),
       RetryInterceptor(dio: _dio),
       LoggingInterceptor(),
