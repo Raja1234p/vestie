@@ -244,6 +244,9 @@ class ApiConstants {
   /// Max time for connect / send / receive on every API call (1 minute).
   static const Duration requestTimeout = Duration(minutes: 1);
 
+  /// SignalR negotiate/WebSocket — library default is 2s which fails on cold start.
+  static const Duration signalRRequestTimeout = Duration(seconds: 30);
+
   // ── Static values ────────────────────────────────────────────────────────
   static const String disclaimerVersion = '1.0';
   static const String defaultIpAddress = '0.0.0.0';

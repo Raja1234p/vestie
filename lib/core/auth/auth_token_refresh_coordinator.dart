@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -9,6 +10,7 @@ import '../constants/storage_keys.dart';
 import '../device/device_info_service.dart';
 import '../network/api_response_body.dart';
 import '../storage/local_storage.dart';
+import '../realtime/realtime_session_bridge.dart';
 import '../utils/logger.dart';
 
 typedef AuthRefreshPoster = Future<(String?, String?)> Function(
@@ -66,6 +68,7 @@ class AuthTokenRefreshCoordinator {
     }
 
     AppLogger.info('Auth refresh succeeded');
+    unawaited(RealtimeSessionBridge.reconnectHubsAfterTokenRefresh());
     return newAccess;
   }
 

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -67,9 +69,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
       BankAccountsPrefetch.warmIfNeeded();
       WalletPrefetch.warmIfNeeded();
       await FcmPushService.syncDeviceToken();
-      await ProjectsSignalRService.instance.connectIfLoggedIn();
-      await WalletSignalRService.instance.connectIfLoggedIn();
+      unawaited(_connectRealtimeHubsWhenReady());
     });
+  }
+
+  /// SignalR negotiate can lag on cold start — run after REST prefetch begins.
+  Future<void> _connectRealtimeHubsWhenReady() async {
+    await Future<void>.delayed(const Duration(milliseconds: 800));
+    await Future.wait([
+      ProjectsSignalRService.instance.connectIfLoggedIn(),
+      WalletSignalRService.instance.connectIfLoggedIn(),
+    ]);
   }
 
   @override

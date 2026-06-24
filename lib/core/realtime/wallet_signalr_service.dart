@@ -5,6 +5,7 @@ import 'package:signalr_netcore/signalr_client.dart';
 import 'package:vestie/core/constants/api_constants.dart';
 import 'package:vestie/core/constants/storage_keys.dart';
 import 'package:vestie/core/di/service_locator.dart';
+import 'package:vestie/core/realtime/signalr_hub_options.dart';
 
 /// SignalR `/hubs/wallet` — live balance updates (deposit, withdraw, contribute).
 class WalletSignalRService {
@@ -32,10 +33,7 @@ class WalletSignalRService {
   Future<void> connectIfLoggedIn() async {
     if (kIsWeb) return;
 
-    final token = await ServiceLocator.instance.secureStorage.getString(
-      StorageKeys.accessToken,
-    );
-    if (token == null || token.isEmpty) return;
+    if (!await _hasAccessToken()) return;
 
     if (_connection?.state == HubConnectionState.Connected) return;
     if (_connecting) return;
@@ -47,9 +45,8 @@ class WalletSignalRService {
       final connection = HubConnectionBuilder()
           .withUrl(
             ApiConstants.walletHubUrl,
-            options: HttpConnectionOptions(
-              accessTokenFactory: () async => token,
-              transport: HttpTransportType.WebSockets,
+            options: SignalRHubOptions.loggedIn(
+              accessTokenFactory: _readAccessToken,
             ),
           )
           .withAutomaticReconnect()
@@ -59,8 +56,12 @@ class WalletSignalRService {
         connection.on(name, (_) => _notifyBalanceChanged());
       }
 
-      await connection.start();
+      await startSignalRHub(connection);
       _connection = connection;
+
+      if (kDebugMode) {
+        debugPrint('WalletSignalRService: connected');
+      }
     } catch (e) {
       if (kDebugMode) {
         debugPrint('WalletSignalRService: connect failed ($e)');
@@ -68,6 +69,30 @@ class WalletSignalRService {
     } finally {
       _connecting = false;
     }
+  }
+
+  /// Drops any stale hub connection and reconnects with the latest access token.
+  Future<void> reconnectAfterTokenRefresh() async {
+    if (kIsWeb) return;
+    if (!await _hasAccessToken()) return;
+
+    try {
+      await _connection?.stop();
+    } catch (_) {}
+    _connection = null;
+    await connectIfLoggedIn();
+  }
+
+  static Future<String> _readAccessToken() async {
+    final token = await ServiceLocator.instance.secureStorage.getString(
+      StorageKeys.accessToken,
+    );
+    return token ?? '';
+  }
+
+  static Future<bool> _hasAccessToken() async {
+    final token = await _readAccessToken();
+    return token.isNotEmpty;
   }
 
   Future<void> disconnect() async {

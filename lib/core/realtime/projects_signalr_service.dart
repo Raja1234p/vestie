@@ -6,6 +6,7 @@ import 'package:vestie/core/constants/api_constants.dart';
 import 'package:vestie/core/constants/storage_keys.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/realtime/project_realtime_event.dart';
+import 'package:vestie/core/realtime/signalr_hub_options.dart';
 
 /// Week 4 — SignalR `/hubs/projects` (`JoinProjectChannel` / `LeaveProjectChannel`).
 class ProjectsSignalRService {
@@ -23,10 +24,7 @@ class ProjectsSignalRService {
   Future<void> connectIfLoggedIn() async {
     if (kIsWeb) return;
 
-    final token = await ServiceLocator.instance.secureStorage.getString(
-      StorageKeys.accessToken,
-    );
-    if (token == null || token.isEmpty) return;
+    if (!await _hasAccessToken()) return;
 
     if (_connection?.state == HubConnectionState.Connected) return;
     if (_connecting) return;
@@ -38,9 +36,8 @@ class ProjectsSignalRService {
       final connection = HubConnectionBuilder()
           .withUrl(
             ApiConstants.projectsHubUrl,
-            options: HttpConnectionOptions(
-              accessTokenFactory: () async => token,
-              transport: HttpTransportType.WebSockets,
+            options: SignalRHubOptions.loggedIn(
+              accessTokenFactory: _readAccessToken,
             ),
           )
           .withAutomaticReconnect()
@@ -53,8 +50,12 @@ class ProjectsSignalRService {
         _emitNamed('pot_updated', args);
       });
 
-      await connection.start();
+      await startSignalRHub(connection);
       _connection = connection;
+
+      if (kDebugMode) {
+        debugPrint('ProjectsSignalRService: connected');
+      }
 
       for (final projectId in _joinedProjectIds.toList()) {
         await _invokeJoin(projectId);
@@ -66,6 +67,30 @@ class ProjectsSignalRService {
     } finally {
       _connecting = false;
     }
+  }
+
+  /// Drops any stale hub connection and reconnects with the latest access token.
+  Future<void> reconnectAfterTokenRefresh() async {
+    if (kIsWeb) return;
+    if (!await _hasAccessToken()) return;
+
+    try {
+      await _connection?.stop();
+    } catch (_) {}
+    _connection = null;
+    await connectIfLoggedIn();
+  }
+
+  static Future<String> _readAccessToken() async {
+    final token = await ServiceLocator.instance.secureStorage.getString(
+      StorageKeys.accessToken,
+    );
+    return token ?? '';
+  }
+
+  static Future<bool> _hasAccessToken() async {
+    final token = await _readAccessToken();
+    return token.isNotEmpty;
   }
 
   Future<void> joinProject(String projectId) async {
