@@ -32,7 +32,7 @@ SuccessVoteCastUiData successVoteCastUiDataFromProjectDetail(
   return SuccessVoteCastUiData(
     projectId: project.id,
     projectCategory: project.category,
-    isCoLeader: project.isCoLeader,
+    isCoLeader: project.isDetailCoLeader,
     goalAmount: vote != null && vote.goalAmount > 0
         ? vote.goalAmount
         : project.goalAmount,

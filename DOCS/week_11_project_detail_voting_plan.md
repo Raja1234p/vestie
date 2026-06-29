@@ -21,6 +21,22 @@
 - **`pending`:** schedule, counts; leader/co-leader → View Votes + Close Voting; member → inline cast UI or Vote Submitted.
 - **`done`:** result bars + Finalize Decision (leader only).
 
+## Audit status (2026-06-02)
+
+**See [week_11_voting_flow_audit_handoff.md](./week_11_voting_flow_audit_handoff.md)** for full QA matrix.
+
+| Item | Status |
+|------|--------|
+| Week 11 API parse + entity getters | Done |
+| Member inline cast (`pending`) | Done |
+| `canStopContributions` menu gating (investment) | Done |
+| Status banner on screen | **Not mounted** |
+| Voting card on screen | **Disabled** (`showsProjectDetailVotingCard => false`) |
+| Leader View Votes / Finalize (Week 11) | **Gap** |
+| Co-leader Start Voting | **Gap** |
+| Member Vote Submitted label | **Gap** (card only) |
+| Remove dev preview links | **Blocked** until audit gaps closed |
+
 ## Performance & safety
 
 - Week 11 UI is **gated** on `hasWeek11ProjectDetailEnvelope` — legacy `GET /projects/{id}` responses are unchanged (no banner, no card, no wallet swap).

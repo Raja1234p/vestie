@@ -29,9 +29,9 @@ Shared project detail entity, bloc, navigation helpers, member list, funds histo
 `ProjectDetailScreen` → `ProjectDetailBloc` → `GetProjectDetailUseCase` → `GET /projects/{id}`
 
 Closure voting (Week 10): `ClosureVotingRepository` → `POST/GET …/closure-voting/*`  
-On project detail load: Week 11+ `GET /projects/{id}` supplies `projectStatus`, `votingStatus`, `userRole`, `voting`. Legacy probe `GET …/closure-voting/active` runs only when detail has no in-progress voting.
+On project detail load: Week 11+ `GET /projects/{id}` supplies `projectStatus`, `votingStatus`, `userRole`, `voting`, `canStopContributions`. Legacy probe `GET …/closure-voting/active` runs only when detail has no in-progress voting.
 
-Production: **status banner** + **voting card** on detail; members **cast inline** (`ProjectDetailInlineCastVote`). **View Votes** still uses monitor screen + `GET active`.
+**Production (target):** status banner + voting card on detail; members **cast inline** (`ProjectDetailInlineCastVote`). **Current gaps:** see `DOCS/week_11_voting_flow_audit_handoff.md` — card and banner not shown; previews still in layouts.
 
 ## See also
 

@@ -60,7 +60,9 @@ extension ProjectDetailEntityClosureVote on ProjectDetailEntity {
   }
 
   ClosureVoteValue? _callerVoteFromSummary(ProjectVotingSummaryEntity summary) {
-    if (!isDetailMember || !summary.hasVoted) return null;
+    if (!(isDetailMember || isDetailCoLeader) || !summary.hasVoted) {
+      return null;
+    }
     return null;
   }
 

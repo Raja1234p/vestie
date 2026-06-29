@@ -243,15 +243,15 @@ class ProjectDetailEntity {
       voting != null &&
       !voting!.isFinalized;
 
-  /// Member inline cast on project detail (Week 11+).
+  /// Member and co-leader inline cast on project detail (Week 11+).
   bool get showsInlineMemberCastVote =>
-      isDetailMember &&
+      (isDetailMember || isDetailCoLeader) &&
       votingStatus == ProjectVotingStatus.pending &&
       voting != null &&
       !voting!.hasVoted;
 
   bool get showsMemberVoteSubmittedLabel =>
-      isDetailMember &&
+      (isDetailMember || isDetailCoLeader) &&
       votingIsInProgress &&
       voting != null &&
       voting!.hasVoted;

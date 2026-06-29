@@ -13,6 +13,7 @@ import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_announcements_section.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_cast_vote_dev_previews.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_detail_inline_cast_vote.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_vote_outcome_dev_previews.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_voting_sections.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_tab_section.dart';
@@ -79,6 +80,55 @@ class _ProjectDetailModeratorScrollContentState
   @override
   Widget build(BuildContext context) {
     final project = widget.project;
+
+    if (project.showsInlineMemberCastVote) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          PostAuthHeader(
+            title: project.name,
+            leading: AppBackButton(
+              onPressed: () => popProjectDetailNavigation(
+                context,
+                refreshHomeOnPop: widget.refreshHomeOnPop,
+                refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
+              ),
+            ),
+            trailing: project.showsProjectDetailOverflowMenu
+                ? ProjectDetailTrailingActions(
+                    project: project,
+                    pendingJoinRequestCount: widget.pendingJoinRequestCount,
+                    onLeaderMenuSelected: (action) =>
+                        ProjectDetailNavigation.handleLeaderAction(
+                          context,
+                          project: project,
+                          action: action,
+                          refreshHomeOnPop: widget.refreshHomeOnPop,
+                          refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
+                        ),
+                    onMemberMenuSelected: (action) =>
+                        ProjectDetailNavigation.handleMemberAction(
+                          context,
+                          project: project,
+                          action: action,
+                          refreshHomeOnPop: widget.refreshHomeOnPop,
+                          refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
+                        ),
+                  )
+                : null,
+          ),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: ProjectDetailInlineCastVote(
+                project: project,
+                onRefresh: widget.onRefresh,
+              ),
+            ),
+          ),
+        ],
+      );
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

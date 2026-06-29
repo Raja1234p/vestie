@@ -7,11 +7,11 @@ import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/presentation/paginated_scroll_listener.dart';
 import 'package:vestie/core/presentation/widgets/list_load_more_footer.dart';
 import 'package:vestie/core/widgets/common/app_error_view.dart';
-import 'package:vestie/core/widgets/common/app_loader.dart';
 import 'package:vestie/features/project_detail/presentation/cubit/investment_returns_cubit.dart';
 import 'package:vestie/features/project_detail/presentation/cubit/investment_returns_state.dart';
 import 'package:vestie/features/project_detail/presentation/models/investment_returns_ui_data.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/investment_returns/investment_returns_screen_shell.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/investment_returns/investment_returns_screen_shimmer.dart';
 
 class InvestmentReturnsScreenHost extends StatelessWidget {
   final InvestmentReturnsRouteArgs args;
@@ -113,8 +113,9 @@ class _InvestmentReturnsProductionBodyState
     return BlocBuilder<InvestmentReturnsCubit, InvestmentReturnsState>(
       builder: (context, state) {
         if (state.isLoading) {
-          return const Scaffold(
-            body: Center(child: AppLoader()),
+          return InvestmentReturnsScreenShimmer(
+            title: widget.title,
+            showFooter: widget.footerBuilder != null,
           );
         }
 

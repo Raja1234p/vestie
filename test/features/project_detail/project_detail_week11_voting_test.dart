@@ -93,6 +93,50 @@ void main() {
       expect(entity.showsMemberVoteSubmittedLabel, isTrue);
     });
 
+    test('co-leader with pending vote shows inline cast', () {
+      final entity = ProjectDetailResponseModel.fromJson(
+        minimalJson(
+          projectStatus: 'ongoing',
+          votingStatus: 'pending',
+          userRole: 'co_leader',
+          voting: {
+            'startedAtUtc': '2026-05-01T10:00:00Z',
+            'deadlineAtUtc': '2026-05-12T23:59:59Z',
+            'agreedCount': 2,
+            'disagreedCount': 1,
+            'pendingCount': 3,
+            'hasVoted': false,
+            'isFinalized': false,
+          },
+        ),
+      ).toEntity();
+
+      expect(entity.isDetailCoLeader, isTrue);
+      expect(entity.showsInlineMemberCastVote, isTrue);
+    });
+
+    test('co-leader with hasVoted true shows vote submitted label', () {
+      final entity = ProjectDetailResponseModel.fromJson(
+        minimalJson(
+          projectStatus: 'ongoing',
+          votingStatus: 'pending',
+          userRole: 'co_leader',
+          voting: {
+            'startedAtUtc': '2026-05-01T10:00:00Z',
+            'deadlineAtUtc': '2026-05-12T23:59:59Z',
+            'agreedCount': 3,
+            'disagreedCount': 0,
+            'pendingCount': 0,
+            'hasVoted': true,
+            'isFinalized': false,
+          },
+        ),
+      ).toEntity();
+
+      expect(entity.showsInlineMemberCastVote, isFalse);
+      expect(entity.showsMemberVoteSubmittedLabel, isTrue);
+    });
+
     test('co-leader can start voting when not_started', () {
       final entity = ProjectDetailResponseModel.fromJson(
         minimalJson(
