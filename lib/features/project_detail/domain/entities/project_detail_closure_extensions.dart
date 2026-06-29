@@ -102,6 +102,7 @@ extension ProjectDetailEntityClosureVote on ProjectDetailEntity {
       detailUserRole: detailUserRole,
       voting: voting,
       hasWeek11ProjectDetailEnvelope: hasWeek11ProjectDetailEnvelope,
+      apiCanStopContributions: apiCanStopContributions,
       borrowingEnabled: borrowingEnabled,
       pendingJoinRequestCount: pendingJoinRequestCount,
       projectInviteCode: projectInviteCode,

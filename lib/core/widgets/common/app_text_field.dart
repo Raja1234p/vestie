@@ -100,10 +100,12 @@ class AppTextField extends StatelessWidget {
       children: [
         if (labelTrailing != null)
           Row(
-            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              AppText(label, style: effectiveLabelStyle),
+              Flexible(
+                fit: FlexFit.loose,
+                child: AppText(label, style: effectiveLabelStyle),
+              ),
               if (labelTrailingGap != null && labelTrailingGap! > 0)
                 SizedBox(width: labelTrailingGap!),
               labelTrailing!,

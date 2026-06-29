@@ -82,5 +82,25 @@ void main() {
       expect(await storage.getString(StorageKeys.accessToken), 'access-new');
       expect(await storage.getString(StorageKeys.refreshToken), 'refresh-new');
     });
+
+    test('skips POST when caller still holds a stale refresh token', () async {
+      var postCount = 0;
+      final storage = _MemoryStorage();
+      await storage.saveString(StorageKeys.accessToken, 'access-new');
+      await storage.saveString(StorageKeys.refreshToken, 'refresh-new');
+
+      final coordinator = AuthTokenRefreshCoordinator(
+        secureStorage: storage,
+        deviceInfoService: _FakeDeviceInfoService(),
+        refreshPoster: (_) async {
+          postCount++;
+          return ('unused', 'unused');
+        },
+      );
+
+      final access = await coordinator.refresh('refresh-old');
+      expect(access, 'access-new');
+      expect(postCount, 0);
+    });
   });
 }

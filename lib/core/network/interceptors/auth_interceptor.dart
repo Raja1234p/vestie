@@ -12,10 +12,13 @@ import 'dio_interceptor_extras.dart';
 /// Injects Bearer token on every [DioClient] request.
 ///
 /// On 401 from a protected endpoint: coordinates a single `POST /auth/refresh`,
-/// saves new tokens, retries the original request. Concurrent 401s await the same
-/// refresh future. Sign-out only when refresh itself fails.
-class AuthInterceptor extends QueuedInterceptor {
-  final Dio _dio;
+/// saves new tokens, retries the original request. Refresh is **reactive** (server
+/// returned 401) — the client does not check JWT expiry before calling the API.
+/// Concurrent 401s await the same refresh future; 401s handled after a peer refresh
+/// reuse the stored access token instead of posting again. Sign-out only when refresh
+/// itself fails.
+class AuthInterceptor extends Interceptor {
+  final Dio _retryDio;
   final SecureStorageImpl _secureStorage;
   final AuthTokenRefreshCoordinator _tokenRefresh;
 
@@ -23,9 +26,23 @@ class AuthInterceptor extends QueuedInterceptor {
     required Dio dio,
     required SecureStorageImpl secureStorage,
     required AuthTokenRefreshCoordinator tokenRefresh,
-  }) : _dio = dio,
+    Dio? retryDio,
+  }) : _retryDio = retryDio ?? _createRetryDio(dio),
        _secureStorage = secureStorage,
        _tokenRefresh = tokenRefresh;
+
+  /// Retries bypass [AuthInterceptor] so a hung retry cannot block the 401 queue.
+  static Dio _createRetryDio(Dio source) {
+    return Dio(
+      BaseOptions(
+        baseUrl: source.options.baseUrl,
+        connectTimeout: source.options.connectTimeout,
+        sendTimeout: source.options.sendTimeout,
+        receiveTimeout: source.options.receiveTimeout,
+        headers: Map<String, dynamic>.from(source.options.headers),
+      ),
+    );
+  }
 
   @override
   Future<void> onRequest(
@@ -75,27 +92,89 @@ class AuthInterceptor extends QueuedInterceptor {
     }
 
     try {
+      final failedBearer = _bearerFrom(err.requestOptions);
+      final storedAccess = await _secureStorage.getString(
+        StorageKeys.accessToken,
+      );
+      if (shouldRetryWithUpdatedAccessToken(
+        failedBearer: failedBearer,
+        storedAccess: storedAccess,
+      )) {
+        AppLogger.info(
+          'Auth refresh skipped: retrying ${err.requestOptions.method} $path '
+          'with updated access token',
+        );
+        return _retryWithAccessToken(
+          err: err,
+          accessToken: storedAccess!,
+          handler: handler,
+        );
+      }
+
+      AppLogger.info(
+        'Auth refresh: server returned 401 on ${err.requestOptions.method} $path',
+      );
+
       final newAccess = await _tokenRefresh.refresh(refreshToken);
 
       AppLogger.info(
-        'Auth refresh retrying ${err.requestOptions.method} $path',
+        'Auth refresh retrying ${err.requestOptions.method} $path '
+        '(after 401 — not a proactive expiry refresh)',
       );
 
-      final retryOptions = err.requestOptions;
-      retryOptions.extra[kAuthRetryExtraKey] = true;
-      retryOptions.headers['Authorization'] = 'Bearer $newAccess';
-
-      try {
-        final retryResponse = await _dio.fetch(retryOptions);
-        return handler.resolve(retryResponse);
-      } on DioException catch (retryErr) {
-        return handler.next(retryErr);
-      }
+      return _retryWithAccessToken(
+        err: err,
+        accessToken: newAccess,
+        handler: handler,
+      );
     } catch (e, stack) {
       AppLogger.error('Auth refresh failed', error: e, stackTrace: stack);
       await SessionSignOut.locally();
       return handler.next(err);
     }
+  }
+
+  Future<void> _retryWithAccessToken({
+    required DioException err,
+    required String accessToken,
+    required ErrorInterceptorHandler handler,
+  }) async {
+    final retryOptions = err.requestOptions;
+    retryOptions.extra[kAuthRetryExtraKey] = true;
+    retryOptions.headers['Authorization'] = 'Bearer $accessToken';
+
+    try {
+      final retryResponse = await _retryDio.fetch(retryOptions);
+      return handler.resolve(retryResponse);
+    } on DioException catch (retryErr) {
+      return handler.next(retryErr);
+    }
+  }
+
+  static String? _bearerFrom(RequestOptions options) {
+    final raw =
+        options.headers['Authorization'] ?? options.headers['authorization'];
+    final auth = switch (raw) {
+      final String s => s,
+      final List<dynamic> list when list.isNotEmpty => list.first.toString(),
+      _ => null,
+    };
+    if (auth == null) return null;
+    const prefix = 'Bearer ';
+    if (!auth.startsWith(prefix)) return null;
+    final token = auth.substring(prefix.length).trim();
+    return token.isEmpty ? null : token;
+  }
+
+  /// True when another 401 handler already refreshed and persisted a new token.
+  @visibleForTesting
+  static bool shouldRetryWithUpdatedAccessToken({
+    required String? failedBearer,
+    required String? storedAccess,
+  }) {
+    if (storedAccess == null || storedAccess.isEmpty) return false;
+    if (failedBearer == null || failedBearer.isEmpty) return false;
+    return storedAccess != failedBearer;
   }
 
   static String _normalizePath(String path) {

@@ -29,6 +29,7 @@ class ProjectDetailResponseModel {
   final String? _projectStatusRaw;
   final String? _votingStatusRaw;
   final String? _userRoleRaw;
+  final bool? _canStopContributions;
   final _VotingPayload? _voting;
 
   const ProjectDetailResponseModel._({
@@ -44,6 +45,7 @@ class ProjectDetailResponseModel {
     String? projectStatusRaw,
     String? votingStatusRaw,
     String? userRoleRaw,
+    bool? canStopContributions,
     _VotingPayload? voting,
   }) : _project = project,
        _rules = rules,
@@ -57,6 +59,7 @@ class ProjectDetailResponseModel {
        _projectStatusRaw = projectStatusRaw,
        _votingStatusRaw = votingStatusRaw,
        _userRoleRaw = userRoleRaw,
+       _canStopContributions = canStopContributions,
        _voting = voting;
 
   factory ProjectDetailResponseModel.fromJson(Map<String, dynamic> json) {
@@ -93,6 +96,9 @@ class ProjectDetailResponseModel {
       projectStatusRaw: _nullableString(json['projectStatus']),
       votingStatusRaw: _nullableString(json['votingStatus']),
       userRoleRaw: _nullableString(json['userRole']),
+      canStopContributions: json['canStopContributions'] is bool
+          ? json['canStopContributions'] as bool
+          : null,
       voting: votingJson == null ? null : _VotingPayload.fromJson(votingJson),
     );
   }
@@ -198,6 +204,7 @@ class ProjectDetailResponseModel {
       detailUserRole: detailUserRole,
       voting: votingSummary,
       hasWeek11ProjectDetailEnvelope: hasWeek11Envelope,
+      apiCanStopContributions: _canStopContributions,
       borrowingEnabled: _project.borrowingEnabled && _rules.borrowingAllowed,
       pendingJoinRequestCount: _project.pendingRequestCount,
       projectInviteCode: _project.projectInviteCode,

@@ -672,6 +672,22 @@ class AppStrings {
   static const String labelRoiOptional = 'ROI (optional)';
   static const String roiOptionalHelper =
       'Set this to incentivize contributors. Paid out on project close.';
+  static const String roiSettingsTooltip =
+      "This is the return you're targeting for members — not a guaranteed "
+      'figure. The actual ROI may be higher or lower depending on how the '
+      "investment performs. When you're ready to close the project, you'll "
+      'distribute the real amounts to each member, and they\'ll confirm '
+      'receipt through a group vote.';
+  static const String roiSettingsTooltipSemantics = 'ROI information';
+  static const String projectDescriptionTooltip =
+      'This is your space to tell members exactly what this project is about '
+      'and how it will run. Use it to share your goal, set contribution '
+      'expectations, outline borrowing rules if you plan to enable them, and '
+      'mention any group protocols members should agree to before joining.\n\n'
+      'A clear description builds trust and gets everyone on the same page '
+      'from day one.';
+  static const String projectDescriptionTooltipSemantics =
+      'Description information';
 
   // Saving path — Project Settings
   static const String createSavingSettingsTitle = 'Project Settings';
@@ -1256,6 +1272,12 @@ class AppStrings {
   static const String hintVotingWindowDays = '1-30';
   static const String votingWindowDaysInfo =
       'Members can vote to approve marking the project successful during this window.';
+  static const String votingWindowTooltipBody =
+      'This sets the number of days your members have to cast their vote. '
+      'Members must vote within this window. Once it closes, if the majority '
+      'agrees, the decision is approved. If the majority disagrees, it is '
+      'declined.';
+  static const String votingWindowTooltipSemantics = 'Voting window information';
   static const String stopContributionsVotingWindowInfo =
       'Members can vote to stop project contributions during this window.';
   static const String successVoteStartedMessage =

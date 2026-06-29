@@ -1,9 +1,13 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:vestie/features/project_detail/data/models/project_detail_response_model.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/viewer_membership_role.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 
-ProjectDetailEntity _leaderProject(ProjectCategory category) {
+ProjectDetailEntity _leaderProject(
+  ProjectCategory category, {
+  bool? apiCanStopContributions,
+}) {
   return ProjectDetailEntity(
     id: 'p1',
     name: 'Test',
@@ -16,12 +20,33 @@ ProjectDetailEntity _leaderProject(ProjectCategory category) {
     members: const [],
     borrowRequests: const [],
     viewerRole: ViewerMembershipRole.groupLeader,
+    apiCanStopContributions: apiCanStopContributions,
   );
 }
 
 void main() {
   group('ProjectDetailEntity.canStopContributions', () {
-    test('true for group leader on investment projects', () {
+    test('true for group leader on investment when API allows', () {
+      expect(
+        _leaderProject(
+          ProjectCategory.investment,
+          apiCanStopContributions: true,
+        ).canStopContributions,
+        isTrue,
+      );
+    });
+
+    test('false when API canStopContributions is false', () {
+      expect(
+        _leaderProject(
+          ProjectCategory.investment,
+          apiCanStopContributions: false,
+        ).canStopContributions,
+        isFalse,
+      );
+    });
+
+    test('legacy true for group leader on investment when API omits field', () {
       expect(_leaderProject(ProjectCategory.investment).canStopContributions,
           isTrue);
     });
@@ -46,9 +71,78 @@ void main() {
         members: const [],
         borrowRequests: const [],
         viewerRole: ViewerMembershipRole.coLeader,
+        apiCanStopContributions: true,
       );
 
       expect(project.canStopContributions, isFalse);
+    });
+  });
+
+  group('ProjectDetailEntity.canMarkProjectSuccessful', () {
+    test('hidden while API canStopContributions is true', () {
+      expect(
+        _leaderProject(
+          ProjectCategory.investment,
+          apiCanStopContributions: true,
+        ).canMarkProjectSuccessful,
+        isFalse,
+      );
+    });
+
+    test('shown when API canStopContributions is false', () {
+      expect(
+        _leaderProject(
+          ProjectCategory.investment,
+          apiCanStopContributions: false,
+        ).canMarkProjectSuccessful,
+        isTrue,
+      );
+    });
+
+    test('legacy shown for leader when API omits field', () {
+      expect(
+        _leaderProject(ProjectCategory.vacations).canMarkProjectSuccessful,
+        isTrue,
+      );
+    });
+  });
+
+  group('ProjectDetailResponseModel canStopContributions', () {
+    test('parses root canStopContributions from GET project detail', () {
+      final entity = ProjectDetailResponseModel.fromJson({
+        'project': {
+          'id': 'p1',
+          'name': 'Fund',
+          'description': '',
+          'type': 'investment',
+          'visibility': 'private',
+          'state': 'active',
+          'targetAmount': 10000,
+          'raisedAmount': 5000,
+          'endsAtUtc': '2026-12-31T00:00:00Z',
+          'viewerRole': 'GroupLeader',
+        },
+        'rules': {},
+        'viewerMembership': {
+          'membershipId': 'm1',
+          'userId': 'u1',
+          'userName': 'leader',
+          'firstName': 'L',
+          'lastName': 'E',
+          'role': 'leader',
+          'status': 'active',
+        },
+        'members': [],
+        'invites': [],
+        'announcements': [],
+        'projectStatus': 'ongoing',
+        'userRole': 'leader',
+        'canStopContributions': false,
+      }).toEntity();
+
+      expect(entity.apiCanStopContributions, isFalse);
+      expect(entity.canStopContributions, isFalse);
+      expect(entity.canMarkProjectSuccessful, isTrue);
     });
   });
 }

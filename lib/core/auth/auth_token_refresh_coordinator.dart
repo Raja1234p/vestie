@@ -37,18 +37,39 @@ class AuthTokenRefreshCoordinator {
   ///
   /// Concurrent callers await the same in-flight refresh instead of posting again.
   Future<String> refresh(String refreshToken) async {
-    final existing = _inFlight;
-    if (existing != null) return existing;
+    if (_inFlight != null) return _inFlight!;
 
-    final future = _performRefresh(refreshToken);
-    _inFlight = future;
+    _inFlight = _doRefresh(refreshToken);
     try {
-      return await future;
+      return await _inFlight!;
     } finally {
-      if (identical(_inFlight, future)) {
-        _inFlight = null;
-      }
+      _inFlight = null;
     }
+  }
+
+  Future<String> _doRefresh(String refreshToken) async {
+    final storedRefresh = await _secureStorage.getString(
+      StorageKeys.refreshToken,
+    );
+    final storedAccess = await _secureStorage.getString(
+      StorageKeys.accessToken,
+    );
+    if (storedRefresh != null &&
+        storedRefresh.isNotEmpty &&
+        storedRefresh != refreshToken &&
+        storedAccess != null &&
+        storedAccess.isNotEmpty) {
+      AppLogger.info(
+        'Auth refresh skipped: refresh token already rotated by peer',
+      );
+      return storedAccess;
+    }
+
+    final tokenToUse = (storedRefresh != null && storedRefresh.isNotEmpty)
+        ? storedRefresh
+        : refreshToken;
+
+    return _performRefresh(tokenToUse);
   }
 
   Future<String> _performRefresh(String refreshToken) async {

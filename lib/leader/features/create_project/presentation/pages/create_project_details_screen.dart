@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/widgets/common/app_info_tooltip_icon.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
-import 'package:vestie/core/widgets/common/app_svg_icon.dart';
 import 'package:vestie/core/widgets/common/app_text_field.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import '../../domain/create_project_form.dart';
@@ -158,10 +157,11 @@ class _CreateProjectDetailsScreenState
                           labelStyle: detailsLabelStyle,
                           fillColor: AppColors.searchBarBg,
                           labelTrailingGap: 6.w,
-                          labelTrailing: AppSvgIcon(
-                            assetPath: AppAssets.iconInfoCircle,
+                          labelTrailing: const AppInfoTooltipIcon(
+                            message: AppStrings.projectDescriptionTooltip,
+                            semanticsLabel:
+                                AppStrings.projectDescriptionTooltipSemantics,
                             size: 16,
-                            color: AppColors.inputFieldIcon,
                           ),
                         ),
                         SizedBox(height: 16.h),

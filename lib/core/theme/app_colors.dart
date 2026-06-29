@@ -178,6 +178,15 @@ class AppColors {
   /// Leading / trailing icons on standard text fields — Figma #4C24A0.
   static const Color inputFieldIcon = purple900;
 
+  /// Info tooltip surface — Figma #FFFFFF.
+  static const Color infoTooltipSurface = neutral100;
+
+  /// Info tooltip border — Figma Border/Grey #D9D9D9.
+  static const Color infoTooltipBorder = neutral400;
+
+  /// Info tooltip drop shadow — Figma #CFCFCF @ 25%.
+  static const Color infoTooltipShadow = Color(0x40CFCFCF);
+
   static const Color authInputBorder = inputFieldBorder;
   static const Color authButtonStart = purple700; // #7A3FE0
   static const Color authButtonEnd = purple900; // #4C24A0

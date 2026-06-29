@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
-import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/utils/percent_digits_input_formatter.dart';
+import 'package:vestie/core/widgets/common/app_info_tooltip_icon.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/app_text_field.dart';
@@ -133,17 +132,10 @@ class _CreateProjectInvestmentSettingsScreenState
                             ),
                             suffixIcon: Padding(
                               padding: EdgeInsets.only(right: 8.w),
-                              child: SizedBox(
-                                width: 20.w,
-                                height: 20.h,
-                                child: SvgPicture.asset(
-                                  AppAssets.iconInfoCircle,
-                                  fit: BoxFit.contain,
-                                  colorFilter: ColorFilter.mode(
-                                    AppColors.inputFieldIcon,
-                                    BlendMode.srcIn,
-                                  ),
-                                ),
+                              child: const AppInfoTooltipIcon(
+                                message: AppStrings.roiSettingsTooltip,
+                                semanticsLabel:
+                                    AppStrings.roiSettingsTooltipSemantics,
                               ),
                             ),
                           ),

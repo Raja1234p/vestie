@@ -104,6 +104,40 @@ void main() {
 
       expect(entity.canStartVotingOnDetail, isTrue);
       expect(entity.showsCastVoteAction, isFalse);
+      expect(entity.showsProjectDetailVotingCard, isFalse);
+    });
+
+    test('ongoing project hides voting card until voting starts', () {
+      final entity = ProjectDetailResponseModel.fromJson(
+        minimalJson(
+          projectStatus: 'ongoing',
+          votingStatus: 'not_started',
+          userRole: 'leader',
+        ),
+      ).toEntity();
+
+      expect(entity.showsProjectDetailVotingCard, isFalse);
+    });
+
+    test('ongoing project never shows detail voting card', () {
+      final entity = ProjectDetailResponseModel.fromJson(
+        minimalJson(
+          projectStatus: 'ongoing',
+          votingStatus: 'pending',
+          userRole: 'leader',
+          voting: {
+            'startedAtUtc': '2026-05-01T10:00:00Z',
+            'deadlineAtUtc': '2026-05-12T23:59:59Z',
+            'agreedCount': 1,
+            'disagreedCount': 0,
+            'pendingCount': 2,
+            'hasVoted': false,
+            'isFinalized': false,
+          },
+        ),
+      ).toEntity();
+
+      expect(entity.showsProjectDetailVotingCard, isFalse);
     });
 
     test('completed project hides voting card', () {

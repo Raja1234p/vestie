@@ -61,6 +61,9 @@ class ProjectDetailEntity {
   /// Set when `GET /projects/{id}` includes Week 11 envelope fields.
   final bool hasWeek11ProjectDetailEnvelope;
 
+  /// Root `canStopContributions` from `GET /projects/{id}` — when set, gates leader menus.
+  final bool? apiCanStopContributions;
+
   final bool borrowingEnabled;
 
   /// From API `project.pendingRequestCount` (join requests awaiting approval).
@@ -113,6 +116,7 @@ class ProjectDetailEntity {
     this.detailUserRole = ProjectDetailUserRole.member,
     this.voting,
     this.hasWeek11ProjectDetailEnvelope = false,
+    this.apiCanStopContributions,
     this.borrowingEnabled = false,
     this.pendingJoinRequestCount = 0,
     this.projectInviteCode = '',
@@ -166,11 +170,21 @@ class ProjectDetailEntity {
   /// GroupLeader and CoLeader share the same detail UI (until product splits them).
   bool get isModeratorView => isGroupLeader || isCoLeader;
 
-  /// Mark successful / initiate success vote — leader menu (legacy); card uses [canStartVotingOnDetail].
-  bool get canMarkProjectSuccessful => isGroupLeader;
+  /// Mark successful — hidden while [apiCanStopContributions] is true (investment phase 1).
+  bool get canMarkProjectSuccessful {
+    if (!isGroupLeader) return false;
+    final api = apiCanStopContributions;
+    if (api != null) return !api;
+    return true;
+  }
 
-  /// Stop contributions vote — group leader on investment projects only (not VAC / emergency).
-  bool get canStopContributions => isGroupLeader && category.isInvestment;
+  /// Stop contributions — shown only when API allows (investment group leader).
+  bool get canStopContributions {
+    if (!isGroupLeader || !category.isInvestment) return false;
+    final api = apiCanStopContributions;
+    if (api != null) return api;
+    return true;
+  }
 
   bool get isDetailLeader =>
       resolvedDetailUserRole == ProjectDetailUserRole.leader;
@@ -202,10 +216,8 @@ class ProjectDetailEntity {
   /// True when `GET /projects/{id}` includes Week 11 voting fields.
   bool get hasWeek11VotingPayload => hasWeek11ProjectDetailEnvelope;
 
-  /// Voting card only when project is ongoing and Week 11 voting data is present.
-  bool get showsProjectDetailVotingCard =>
-      projectBannerStatus == ProjectDetailBannerStatus.ongoing &&
-      hasWeek11VotingPayload;
+  /// Detail voting card is disabled — active votes use dedicated screens/widgets.
+  bool get showsProjectDetailVotingCard => false;
 
   bool get votingIsInProgress =>
       votingStatus == ProjectVotingStatus.pending ||
