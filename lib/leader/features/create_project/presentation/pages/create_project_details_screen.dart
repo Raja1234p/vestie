@@ -104,6 +104,7 @@ class _CreateProjectDetailsScreenState
     return BlocBuilder<CreateProjectCubit, CreateProjectForm>(
       builder: (context, form) {
         final cubit = context.read<CreateProjectCubit>();
+        final isEditingExistingProject = form.isEditingProject;
         final detailsLabelStyle = Theme.of(context).textTheme.bodyLarge
             ?.copyWith(
               fontSize: 18.sp,
@@ -117,12 +118,13 @@ class _CreateProjectDetailsScreenState
             child: Column(
               children: [
                 CreateProjectHeader(
-                  title: widget.entryMode.isEditFlow
+                  title: widget.entryMode.isEditFlow || isEditingExistingProject
                       ? AppStrings.menuEditProject
                       : AppStrings.createDetailsTitle,
                   stepBadge: createProjectDetailsStepBadge(
                     form,
-                    editMode: widget.entryMode.isEditFlow,
+                    editMode:
+                        widget.entryMode.isEditFlow || isEditingExistingProject,
                   ),
                 ),
                 Expanded(
@@ -167,7 +169,7 @@ class _CreateProjectDetailsScreenState
                         CPCategoryDropdown(
                           value: form.category,
                           onChanged: cubit.setCategory,
-                          enabled: !widget.entryMode.isEditFlow,
+                          enabled: !isEditingExistingProject,
                         ),
                         SizedBox(height: 16.h),
                         CPFieldLabel(AppStrings.labelDeadline),
@@ -187,7 +189,7 @@ class _CreateProjectDetailsScreenState
                         CPVisibilityToggle(
                           value: form.visibility,
                           onChanged: cubit.setVisibility,
-                          enabled: !widget.entryMode.isEditFlow,
+                          enabled: !isEditingExistingProject,
                         ),
                       ],
                     ),
@@ -203,7 +205,9 @@ class _CreateProjectDetailsScreenState
                     onPressed: () => pushNextAfterDetailsStep(
                       context,
                       cubit,
-                      entryMode: widget.entryMode,
+                      entryMode: isEditingExistingProject
+                          ? CreateProjectEntryMode.editFromProjectDetail
+                          : widget.entryMode,
                     ),
                   ),
                 ),

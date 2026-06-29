@@ -7,6 +7,7 @@ import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/widgets/common/post_auth_flow_sub_header.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
+import 'package:vestie/features/project_detail/domain/entities/member_activity_penalty_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
@@ -21,12 +22,14 @@ class MemberPenaltyActionScreen extends StatefulWidget {
   final MemberEntity member;
   final String projectId;
   final ProjectDetailEntity? project;
+  final MemberActivityPenaltyEntity? penalty;
 
   const MemberPenaltyActionScreen({
     super.key,
     required this.member,
     required this.projectId,
     this.project,
+    this.penalty,
   });
 
   @override
@@ -48,6 +51,8 @@ class _MemberPenaltyActionScreenState extends State<MemberPenaltyActionScreen> {
   String get _userId => _targetMember.apiUserId;
 
   bool get _showRemoveMember {
+    final penalty = widget.penalty;
+    if (penalty != null) return penalty.canRemoveMember;
     final p = _projectContext;
     if (p == null) return false;
     return MemberDetailActionsVisibility.showRemoveMember(
@@ -57,6 +62,8 @@ class _MemberPenaltyActionScreenState extends State<MemberPenaltyActionScreen> {
   }
 
   bool get _showMarkAsDefaulted {
+    final penalty = widget.penalty;
+    if (penalty != null) return penalty.canMarkAsDefaulted;
     final p = _projectContext;
     if (p == null) return false;
     return MemberDetailActionsVisibility.showMarkAsDefaulted(
@@ -136,10 +143,17 @@ class _MemberPenaltyActionScreenState extends State<MemberPenaltyActionScreen> {
               onBack: () => context.pop(),
             ),
             Expanded(
-              child: SingleChildScrollView(
-                padding: AppDimens.postAuthFlowScrollPadding,
-                child: const PenaltyActionContent(),
-              ),
+              child: widget.penalty == null
+                  ? Center(
+                      child: Padding(
+                        padding: AppDimens.postAuthFlowScrollPadding,
+                        child: Text(AppStrings.emptyData),
+                      ),
+                    )
+                  : SingleChildScrollView(
+                      padding: AppDimens.postAuthFlowScrollPadding,
+                      child: PenaltyActionContent(penalty: widget.penalty!),
+                    ),
             ),
             if (showFooter)
               PenaltyActionFooter(

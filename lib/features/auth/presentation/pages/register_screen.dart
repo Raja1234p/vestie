@@ -6,7 +6,9 @@ import '../../../../app/router/app_routes.dart';
 import '../../../../app/router/project_invite_navigation.dart';
 import '../../../../core/auth/app_auth_session.dart';
 import '../models/auth_route_extras.dart';
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/widgets/common/app_failure_dialog.dart';
+import '../../../../core/widgets/common/app_toast.dart';
 import '../bloc/register_bloc.dart';
 import '../bloc/register_event.dart';
 import '../bloc/register_state.dart';
@@ -32,6 +34,10 @@ class RegisterScreen extends StatelessWidget {
             curr is RegisterError,
         listener: (context, state) async {
           if (state is RegisterSuccess) {
+            AppToast.showSuccess(
+              context,
+              AppStrings.registerSuccessToast,
+            );
             await context.push(
               AppRoutes.verify,
               extra: VerifyScreenExtra(email: state.user.email),

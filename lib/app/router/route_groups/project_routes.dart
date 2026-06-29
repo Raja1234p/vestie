@@ -150,6 +150,7 @@ List<RouteBase> buildProjectRoutes({
           member: extra.member as MemberEntity,
           projectId: extra.projectId,
           project: extra.project,
+          penalty: extra.penalty,
         );
       },
     ),

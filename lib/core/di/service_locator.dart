@@ -16,6 +16,7 @@ import '../../features/auth/domain/usecases/resend_code_use_case.dart';
 import '../../features/auth/domain/usecases/reset_password_use_case.dart';
 import '../../features/auth/domain/usecases/update_me_use_case.dart';
 import '../../features/auth/domain/usecases/verify_email_use_case.dart';
+import '../../features/auth/domain/usecases/verify_reset_code_use_case.dart';
 import '../../features/bank_accounts/data/datasources/bank_accounts_remote_data_source.dart';
 import '../../features/bank_accounts/domain/repositories/bank_accounts_repository.dart';
 import '../../features/bank_accounts/domain/usecases/bank_accounts_usecases.dart';
@@ -144,6 +145,7 @@ class ServiceLocator {
   late final LoginUseCase loginUseCase;
   late final RegisterUseCase registerUseCase;
   late final VerifyEmailUseCase verifyEmailUseCase;
+  late final VerifyResetCodeUseCase verifyResetCodeUseCase;
   late final ResendCodeUseCase resendCodeUseCase;
   late final ForgotPasswordUseCase forgotPasswordUseCase;
   late final ResetPasswordUseCase resetPasswordUseCase;

@@ -2,6 +2,7 @@ import '../models/auth_token_model.dart';
 import '../models/user_model.dart';
 import '../models/register_response_model.dart';
 import '../models/message_response_model.dart';
+import '../models/verify_reset_code_response_model.dart';
 import '../../domain/entities/update_me_photo.dart';
 import '../models/risk_disclaimer_model.dart';
 
@@ -29,6 +30,11 @@ abstract class AuthRemoteDataSource {
   Future<MessageResponseModel> resendCode({required String email});
 
   Future<MessageResponseModel> forgotPassword({required String email});
+
+  Future<VerifyResetCodeResponseModel> verifyResetCode({
+    required String email,
+    required String code,
+  });
 
   Future<MessageResponseModel> resetPassword({
     required String email,

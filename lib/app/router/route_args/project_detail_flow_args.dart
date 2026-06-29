@@ -2,6 +2,7 @@ import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/features/project_detail/domain/entities/cancel_project_entities.dart';
 import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/leader_voting_flow_kind.dart';
+import 'package:vestie/features/project_detail/domain/entities/member_activity_penalty_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/project_detail/presentation/models/investment_distribution_ui_data.dart';
@@ -243,10 +244,14 @@ class MemberPenaltyActionRouteArgs<T> {
   /// Viewer project context — same action visibility as [MemberDetailScreen].
   final ProjectDetailEntity? project;
 
+  /// Penalty payload from member activity API (`penalty` object).
+  final MemberActivityPenaltyEntity? penalty;
+
   const MemberPenaltyActionRouteArgs({
     required this.member,
     required this.projectId,
     this.project,
+    this.penalty,
   });
 }
 

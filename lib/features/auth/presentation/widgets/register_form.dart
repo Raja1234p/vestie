@@ -239,7 +239,7 @@ class _RegisterFormState extends State<RegisterForm> {
                         style: GoogleFonts.lato(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.grey900,
+                          color: AppColors.authBottomText,
                           height: 1.35,
                         ),
                       ),
@@ -251,7 +251,7 @@ class _RegisterFormState extends State<RegisterForm> {
                           style: GoogleFonts.lato(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.grey900,
+                            color: AppColors.authBottomLink,
                             height: 1.35,
                           ),
                         ),

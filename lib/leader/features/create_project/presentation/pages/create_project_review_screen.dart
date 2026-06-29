@@ -34,6 +34,9 @@ class CreateProjectReviewScreen extends StatelessWidget {
       child: BlocBuilder<CreateProjectCubit, CreateProjectForm>(
         builder: (context, form) {
           final isEdit = form.isEditingProject;
+          final detailsEntryMode = isEdit
+              ? CreateProjectEntryMode.editFromProjectDetail
+              : CreateProjectEntryMode.editFromReview;
 
           return MultiBlocListener(
             listeners: [
@@ -124,7 +127,7 @@ class CreateProjectReviewScreen extends StatelessWidget {
                               title: AppStrings.reviewSectionDetails,
                               onEdit: () => context.push(
                                 AppRoutes.createProjectDetails,
-                                extra: CreateProjectEntryMode.editFromReview,
+                                extra: detailsEntryMode,
                               ),
                               rows: buildProjectDetailsReviewRows(form),
                             ),

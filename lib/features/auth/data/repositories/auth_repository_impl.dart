@@ -13,6 +13,7 @@ import '../../../../core/utils/logger.dart';
 import '../../domain/entities/update_me_photo.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/entities/register_result.dart';
+import '../../domain/entities/verify_reset_code_result.dart';
 import '../../domain/entities/risk_disclaimer.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/auth_remote_data_source.dart';
@@ -183,6 +184,41 @@ class AuthRepositoryImpl implements AuthRepository {
         ServerFailure(
           'An unexpected error occurred while processing forgot password request',
         ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, VerifyResetCodeResult>> verifyResetCode({
+    required String email,
+    required String code,
+  }) async {
+    try {
+      final model = await _remoteDataSource.verifyResetCode(
+        email: email,
+        code: code,
+      );
+      return Right(
+        VerifyResetCodeResult(
+          userId: model.userId,
+          message: model.message,
+        ),
+      );
+    } on ServerException catch (e, stack) {
+      AppLogger.error(
+        'Verify Reset Code Server Exception',
+        error: e,
+        stackTrace: stack,
+      );
+      return Left(ServerFailure(e.message, e.title));
+    } catch (e, stack) {
+      AppLogger.error(
+        'Verify Reset Code Unexpected Exception',
+        error: e,
+        stackTrace: stack,
+      );
+      return const Left(
+        ServerFailure('An unexpected error occurred during reset code verification'),
       );
     }
   }

@@ -41,6 +41,9 @@ class AppAssets {
   static const String notificationsEmpty =
       '$_imagePath/notifications_empty.png';
 
+  /// Wallet recent activity empty — 3D glass coin with $.
+  static const String walletEmpty = '$_imagePath/wallet_empty.png';
+
   // Project detail empty states
   /// Borrow / join requests lists — 3D person + $.
   static const String borrowRequestsEmpty =

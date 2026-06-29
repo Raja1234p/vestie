@@ -8,7 +8,6 @@ import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_payment_method_pill.dart';
-import 'package:vestie/features/profile/domain/entities/payment_method_selection.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_stacked_currency_field.dart';
@@ -21,7 +20,6 @@ import 'package:vestie/core/widgets/common/post_auth_flow_sub_header.dart';
 import '../../../contributions/presentation/bloc/contribute_bloc.dart';
 import '../../../contributions/presentation/bloc/contribute_event.dart';
 import '../../../contributions/presentation/bloc/contribute_state.dart';
-import '../navigation/contribute_payment_navigation.dart';
 
 class ContributeFlowScreen extends StatelessWidget {
   const ContributeFlowScreen({super.key});
@@ -144,10 +142,20 @@ class _ContributeAmountViewState extends State<_ContributeAmountView> {
                                 ),
                               ),
                               SizedBox(height: 12.h),
-                              _ContributePaymentPill(
-                                state: state,
-                                forConfirm: false,
-                              ),
+                              _ContributePaymentPill(state: state),
+                              if (state.amountStepValidationMessage != null) ...[
+                                SizedBox(height: 12.h),
+                                AppText(
+                                  state.amountStepValidationMessage!,
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.lato(
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w400,
+                                    color: AppColors.error,
+                                    height: 1.4,
+                                  ),
+                                ),
+                              ],
                             ],
                           ),
                         ),
@@ -201,12 +209,21 @@ class _ContributeConfirmView extends StatelessWidget {
                   _card(
                     _paymentRow(
                       '${AppStrings.labelPaymentFrom}:',
-                      _ContributePaymentPill(
-                        state: state,
-                        forConfirm: true,
-                      ),
+                      _ContributePaymentPill(state: state),
                     ),
                   ),
+                  if (state.paymentValidationMessage != null) ...[
+                    SizedBox(height: 8.h),
+                    AppText(
+                      state.paymentValidationMessage!,
+                      style: GoogleFonts.lato(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.error,
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
                   SizedBox(height: 20.h),
                   _label(AppStrings.labelBreakdown),
                   SizedBox(height: 12.h),
@@ -368,76 +385,20 @@ class _BreakdownDivider extends StatelessWidget {
   }
 }
 
-Future<void> _openContributePaymentPicker(
-  BuildContext context,
-  ContributeBloc bloc,
-  ContributeState state,
-) async {
-  final result = await ContributePaymentNavigation.openPicker(
-    context,
-    state: state,
-  );
-  if (!context.mounted || result == null) return;
-  switch (result) {
-    case CardPaymentMethodSelection(:final card):
-      bloc.add(
-        ContributePaymentMethodSelectedEvent(
-          card: card,
-          payFromWallet: false,
-        ),
-      );
-    case WalletPaymentMethodSelection():
-      bloc.add(
-        const ContributePaymentMethodSelectedEvent(payFromWallet: true),
-      );
-  }
-}
-
 class _ContributePaymentPill extends StatelessWidget {
-  const _ContributePaymentPill({required this.state, required this.forConfirm});
+  const _ContributePaymentPill({required this.state});
 
   final ContributeState state;
-  final bool forConfirm;
 
   @override
   Widget build(BuildContext context) {
-    final bloc = context.read<ContributeBloc>();
     final walletFormatted = state.args?.walletAmountFormatted ?? '0';
-    final canPick = forConfirm
-        ? state.canChangePaymentMethod
-        : state.canPickPaymentMethodOnAmount;
-
-    final hasError = forConfirm && state.hasPaymentValidationError;
-
-    if (!state.payFromWallet && state.selectedCard != null) {
-      return AppPaymentMethodPill.card(
-        card: state.selectedCard!,
-        showChevron: canPick,
-        hasError: hasError,
-        onTap: canPick
-            ? () => _openContributePaymentPicker(context, bloc, state)
-            : null,
-      );
-    }
-
-    if (forConfirm && !state.payFromWallet && state.selectedCard == null) {
-      return AppPaymentMethodPill.placeholder(
-        placeholderLabel: AppStrings.labelSelectPaymentCard,
-        showChevron: canPick,
-        hasError: hasError,
-        onTap: canPick
-            ? () => _openContributePaymentPicker(context, bloc, state)
-            : null,
-      );
-    }
+    final hasError = state.amountStepValidationMessage != null ||
+        state.hasPaymentValidationError;
 
     return AppPaymentMethodPill.wallet(
       formattedBalance: walletFormatted,
-      showChevron: canPick,
       hasError: hasError,
-      onTap: canPick
-          ? () => _openContributePaymentPicker(context, bloc, state)
-          : null,
     );
   }
 }

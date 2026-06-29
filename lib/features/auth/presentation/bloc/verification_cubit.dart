@@ -13,6 +13,7 @@ import '../../domain/entities/user.dart';
 import '../../domain/usecases/forgot_password_use_case.dart';
 import '../../domain/usecases/resend_code_use_case.dart';
 import '../../domain/usecases/verify_email_use_case.dart';
+import '../../domain/usecases/verify_reset_code_use_case.dart';
 import '../models/auth_route_extras.dart';
 
 // ─── State ──────────────────────────────────────────────────────────────────
@@ -84,10 +85,14 @@ class VerificationCubit extends Cubit<VerificationState> {
     required this.email,
     this.flow = VerifyFlow.registration,
     VerifyEmailUseCase? verifyEmailUseCase,
+    VerifyResetCodeUseCase? verifyResetCodeUseCase,
     ResendCodeUseCase? resendCodeUseCase,
     ForgotPasswordUseCase? forgotPasswordUseCase,
   }) : _verifyEmailUseCase =
            verifyEmailUseCase ?? ServiceLocator.instance.verifyEmailUseCase,
+       _verifyResetCodeUseCase =
+           verifyResetCodeUseCase ??
+           ServiceLocator.instance.verifyResetCodeUseCase,
        _resendCodeUseCase =
            resendCodeUseCase ?? ServiceLocator.instance.resendCodeUseCase,
        _forgotPasswordUseCase =
@@ -101,6 +106,7 @@ class VerificationCubit extends Cubit<VerificationState> {
   final VerifyFlow flow;
 
   final VerifyEmailUseCase _verifyEmailUseCase;
+  final VerifyResetCodeUseCase _verifyResetCodeUseCase;
   final ResendCodeUseCase _resendCodeUseCase;
   final ForgotPasswordUseCase _forgotPasswordUseCase;
   Timer? _timer;
@@ -132,6 +138,23 @@ class VerificationCubit extends Cubit<VerificationState> {
     }
 
     emit(state.copyWith(isLoading: true, clearError: true, isValid: true));
+
+    if (flow == VerifyFlow.forgotPassword) {
+      final result = await _verifyResetCodeUseCase(email: email, code: code);
+      if (!isClosed) {
+        result.fold(
+          (failure) => emit(
+            state.copyWith(
+              isLoading: false,
+              error: failure.message,
+              title: failure.title,
+            ),
+          ),
+          (_) => emit(state.copyWith(isLoading: false, isSuccess: true)),
+        );
+      }
+      return;
+    }
 
     final result = await _verifyEmailUseCase(email: email, code: code);
 

@@ -1,4 +1,5 @@
 import 'member_entity.dart';
+import 'member_activity_penalty_entity.dart';
 import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
 
 enum MemberActivityTransactionKind { contribution, borrow, other }
@@ -31,6 +32,7 @@ class MemberActivityEntity {
   final bool canSendVffRequest;
   final String? pendingVffRequestId;
   final List<MemberActivityTransactionEntity> transactions;
+  final MemberActivityPenaltyEntity? penalty;
 
   const MemberActivityEntity({
     required this.member,
@@ -45,6 +47,7 @@ class MemberActivityEntity {
     this.canSendVffRequest = false,
     this.pendingVffRequestId,
     required this.transactions,
+    this.penalty,
   });
 
   bool get hasOverdue =>
@@ -72,6 +75,7 @@ class MemberActivityEntity {
           ? null
           : (pendingVffRequestId ?? this.pendingVffRequestId),
       transactions: transactions,
+      penalty: this.penalty,
     );
   }
 }

@@ -126,6 +126,7 @@ class AppStrings {
   static const String loading = 'Loading...';
   static const String loadingResendOtp = 'Sending code...';
   static const String otpSentSuccessToast = 'OTP Send Successfully';
+  static const String registerSuccessToast = 'Account created successfully';
   static const String emptyData = 'No data available';
 
   // ── Social Auth ────────────────────────────────────────────────────────────
@@ -1006,7 +1007,7 @@ class AppStrings {
   static const String contributeNonRefundableRequired =
       'Please confirm that this contribution is non-refundable.';
   static const String contributeWalletInsufficientSubtitle =
-      'Insufficient balance for this total. Tap above to choose a card.';
+      'Insufficient wallet balance for this total.';
   static const String contributeSelectCardRequired =
       'Select a payment card to continue.';
   static const String labelSelectPaymentCard = 'Select card';
@@ -1195,11 +1196,6 @@ class AppStrings {
   static const String penaltyOverdueLabel = 'Overdue';
   static const String penaltyPenaltyLabel = 'Penalty';
   static const String penaltyTotalOwedLabel = 'Total owed';
-  static const String penaltyBorrowedAmount = '\$250.00';
-  static const String penaltyDueAmount = '\$250';
-  static const String penaltyOverdueDateValue = 'Apr 1, 2025';
-  static const String penaltyChargeValue = '\$20.00';
-  static const String penaltyTotalOwedValue = '\$270.00';
   static const String memberTxDateMar11 = 'Mar 11';
   static const String memberTxDateMar12 = 'Mar 12';
   static const String approveBorrowRequestTitle = 'Approve Borrow Request?';

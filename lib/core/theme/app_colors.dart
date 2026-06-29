@@ -160,7 +160,8 @@ class AppColors {
 
   /// Login / register footer line (“Don’t have an account? Sign up”) — Figma #443F63.
   static const Color authBottomText = grey900;
-  static const Color authBottomLink = grey900;
+  /// Sign up / Log in link in auth footer — Figma #6230C2.
+  static const Color authBottomLink = purple800;
   static const Color authOr = grey600; // #9990BB
 
   static const Color authPurple = Color(0xE64C24A0); // purple900 with opacity

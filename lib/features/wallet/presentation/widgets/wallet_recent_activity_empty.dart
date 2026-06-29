@@ -7,7 +7,7 @@ import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 
-/// Recent Activity empty — same 3D coin as join/borrow requests (Figma).
+/// Recent Activity empty — 3D glass coin (Figma).
 class WalletRecentActivityEmpty extends StatelessWidget {
   const WalletRecentActivityEmpty({super.key});
 
@@ -20,7 +20,7 @@ class WalletRecentActivityEmpty extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              AppAssets.borrowRequestsEmpty,
+              AppAssets.walletEmpty,
               width: 120.w,
               height: 120.h,
               fit: BoxFit.contain,

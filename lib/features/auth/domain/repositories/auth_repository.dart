@@ -3,6 +3,7 @@ import '../../../../core/error/failures.dart';
 import '../entities/update_me_photo.dart';
 import '../entities/user.dart';
 import '../entities/register_result.dart';
+import '../entities/verify_reset_code_result.dart';
 import '../entities/risk_disclaimer.dart';
 
 /// Contract for auth data operations.
@@ -28,6 +29,11 @@ abstract class AuthRepository {
   Future<Either<Failure, String>> resendCode({required String email});
 
   Future<Either<Failure, String>> forgotPassword({required String email});
+
+  Future<Either<Failure, VerifyResetCodeResult>> verifyResetCode({
+    required String email,
+    required String code,
+  });
 
   Future<Either<Failure, String>> resetPassword({
     required String email,

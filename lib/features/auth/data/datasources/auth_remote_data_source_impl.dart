@@ -8,6 +8,7 @@ import '../models/auth_token_model.dart';
 import '../models/user_model.dart';
 import '../models/register_response_model.dart';
 import '../models/message_response_model.dart';
+import '../models/verify_reset_code_response_model.dart';
 import '../../domain/entities/update_me_photo.dart';
 import '../models/risk_disclaimer_model.dart';
 import 'auth_remote_data_source.dart';
@@ -163,6 +164,28 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         error: e.response?.data,
       );
       _handleError(e, 'Forgot password request failed');
+    }
+  }
+
+  @override
+  Future<VerifyResetCodeResponseModel> verifyResetCode({
+    required String email,
+    required String code,
+  }) async {
+    try {
+      final response = await _client.post(
+        ApiConstants.verifyResetCode,
+        data: {'email': email, 'code': code},
+      );
+      return VerifyResetCodeResponseModel.fromJson(
+        response.data as Map<String, dynamic>,
+      );
+    } on DioException catch (e) {
+      AppLogger.error(
+        'API VerifyResetCode Error: ${e.response?.statusCode}',
+        error: e.response?.data,
+      );
+      _handleError(e, 'Reset code verification failed');
     }
   }
 

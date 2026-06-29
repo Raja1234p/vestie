@@ -13,6 +13,7 @@ import '../../features/auth/domain/usecases/resend_code_use_case.dart';
 import '../../features/auth/domain/usecases/reset_password_use_case.dart';
 import '../../features/auth/domain/usecases/update_me_use_case.dart';
 import '../../features/auth/domain/usecases/verify_email_use_case.dart';
+import '../../features/auth/domain/usecases/verify_reset_code_use_case.dart';
 import 'service_locator.dart';
 
 /// Registers auth data sources, repository, and use cases.
@@ -27,6 +28,7 @@ void registerAuthDependencies(ServiceLocator sl) {
   sl.loginUseCase = LoginUseCase(sl.authRepository);
   sl.registerUseCase = RegisterUseCase(sl.authRepository);
   sl.verifyEmailUseCase = VerifyEmailUseCase(sl.authRepository);
+  sl.verifyResetCodeUseCase = VerifyResetCodeUseCase(sl.authRepository);
   sl.resendCodeUseCase = ResendCodeUseCase(sl.authRepository);
   sl.forgotPasswordUseCase = ForgotPasswordUseCase(sl.authRepository);
   sl.resetPasswordUseCase = ResetPasswordUseCase(sl.authRepository);

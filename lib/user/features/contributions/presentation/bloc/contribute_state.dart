@@ -124,7 +124,8 @@ class ContributeState extends Equatable {
 
   double get walletBalance => args?.walletBalance ?? 0;
 
-  bool get canProceedFromAmount => amountValue > 0;
+  bool get canProceedFromAmount =>
+      amountValue > 0 && walletCovers(totalDeductionValue);
 
   double get totalDeductionValue =>
       preview?.totalDeduction ?? (amountValue + vestieFee);
@@ -135,33 +136,40 @@ class ContributeState extends Equatable {
 
   bool get walletCoversContribution => walletCovers(amountValue);
 
-  /// Confirm step: picker only when wallet cannot cover and no auto card.
-  bool get canPickPaymentMethodOnConfirm => requiresPaymentMethodPicker;
+  /// Contributions are wallet-only — no card picker.
+  bool get canPickPaymentMethodOnConfirm => false;
 
-  /// Amount step: hint when wallet may not cover the contribution.
-  bool get canPickPaymentMethodOnAmount =>
-      !walletCoversContribution && amountValue > 0;
+  bool get canPickPaymentMethodOnAmount => false;
 
-  /// Confirm enabled when terms accepted and wallet covers total, or a card is selected.
+  /// Confirm enabled when terms accepted and wallet covers total deduction.
   bool get canConfirmSubmit {
     if (preview == null || isPreviewLoading || previewFailure != null) {
       return false;
     }
     if (!nonRefundableAccepted) return false;
-    if (payFromWallet) return walletCoversTotal;
-    return selectedCard != null;
+    return payFromWallet && walletCoversTotal;
   }
 
-  /// Confirm CTA enabled only when terms + payment source are valid.
+  /// Confirm CTA enabled only when terms + wallet balance are valid.
   bool get canTapConfirm => canConfirmSubmit && !isSubmitLoading;
+
+  /// Inline hint on the amount step when wallet cannot cover contribution + fee.
+  String? get amountStepValidationMessage {
+    if (amountValue <= 0) return null;
+    if (walletCovers(totalDeductionValue)) return null;
+    final shortfall = (totalDeductionValue - walletBalance).clamp(
+      0.0,
+      double.infinity,
+    );
+    return AppStrings.contributeDepositForWalletMessage(
+      '\$${shortfall.toStringAsFixed(2)}',
+    );
+  }
 
   /// Inline hint under the payment pill on the confirm step.
   String? get paymentValidationMessage {
     if (preview == null) return null;
     if (payFromWallet && !walletCoversTotal) {
-      if (requiresPaymentMethodPicker || !canChangePaymentMethod) {
-        return AppStrings.contributeWalletInsufficientSubtitle;
-      }
       final shortfall = (totalDeductionValue - walletBalance).clamp(
         0.0,
         double.infinity,
@@ -169,9 +177,6 @@ class ContributeState extends Equatable {
       return AppStrings.contributeDepositForWalletMessage(
         '\$${shortfall.toStringAsFixed(2)}',
       );
-    }
-    if (!payFromWallet && selectedCard == null) {
-      return AppStrings.contributeSelectCardRequired;
     }
     return null;
   }

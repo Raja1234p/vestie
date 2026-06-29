@@ -4,6 +4,7 @@ import 'package:vestie/features/projects/data/models/project_list_json_parsing.d
 import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
 
 import '../../domain/entities/member_activity_entity.dart';
+import '../../domain/entities/member_activity_penalty_entity.dart';
 import '../../domain/entities/member_entity.dart';
 import '../../domain/entities/viewer_membership_role.dart';
 
@@ -20,6 +21,7 @@ class MemberActivityResponseModel {
   final bool canSendVffRequest;
   final String? pendingVffRequestId;
   final List<MemberActivityTransactionEntity> transactions;
+  final MemberActivityPenaltyEntity? penalty;
 
   const MemberActivityResponseModel({
     required this.member,
@@ -34,6 +36,7 @@ class MemberActivityResponseModel {
     this.canSendVffRequest = false,
     this.pendingVffRequestId,
     required this.transactions,
+    this.penalty,
   });
 
   factory MemberActivityResponseModel.fromJson(
@@ -87,6 +90,7 @@ class MemberActivityResponseModel {
     final transactions = _transactionMaps(json)
         .map((row) => _mapTransaction(row, projectName: projectName))
         .toList(growable: false);
+    final penalty = _mapPenalty(json);
 
     return MemberActivityResponseModel(
       member: member,
@@ -101,6 +105,7 @@ class MemberActivityResponseModel {
       canSendVffRequest: canSendVffRequest,
       pendingVffRequestId: pendingVffRequestId,
       transactions: transactions,
+      penalty: penalty,
     );
   }
 
@@ -117,7 +122,38 @@ class MemberActivityResponseModel {
     canSendVffRequest: canSendVffRequest,
     pendingVffRequestId: pendingVffRequestId,
     transactions: transactions,
+    penalty: penalty,
   );
+
+  static MemberActivityPenaltyEntity? _mapPenalty(Map<String, dynamic> json) {
+    final penalty = json['penalty'];
+    if (penalty is! Map) return null;
+    final map = penalty.cast<String, dynamic>();
+    final breakdownRaw = map['breakdown'];
+    if (breakdownRaw is! Map) return null;
+    final breakdown = breakdownRaw.cast<String, dynamic>();
+
+    final overdueRaw = breakdown.safeString('overdueDate');
+    final overdueDateUtc = overdueRaw.isEmpty
+        ? null
+        : DateTime.tryParse(overdueRaw)?.toUtc();
+
+    return MemberActivityPenaltyEntity(
+      borrowedAmount: map.safeDouble('borrowedAmount'),
+      breakdown: MemberActivityPenaltyBreakdownEntity(
+        dueAmount: breakdown.safeDouble('dueAmount'),
+        overdueDateUtc: overdueDateUtc,
+        penaltyAmount: breakdown.safeDouble('penaltyAmount'),
+        totalOwed: breakdown.safeDouble('totalOwed'),
+      ),
+      currency: map.safeString('currency').isEmpty
+          ? 'USD'
+          : map.safeString('currency'),
+      borrowRequestId: map.safeStringNullable('borrowRequestId'),
+      canMarkAsDefaulted: map.safeBool('canMarkAsDefaulted'),
+      canRemoveMember: map.safeBool('canRemoveMember'),
+    );
+  }
 
   static Map<String, dynamic> _summaryMap(Map<String, dynamic> json) {
     return _nested(json, const [
@@ -315,12 +351,17 @@ class MemberActivityResponseModel {
     final amount = json.safeDouble('amount');
     var occurredRaw = json.safeString('occurredAtUtc');
     if (occurredRaw.isEmpty) occurredRaw = json.safeString('createdUtc');
+    if (occurredRaw.isEmpty) occurredRaw = json.safeString('date');
     final displayDate = _formatOccurred(occurredRaw);
+
+    final txProjectName = json.safeString('projectName');
+    final effectiveProjectName =
+        txProjectName.isNotEmpty ? txProjectName : projectName;
 
     final description = json.safeString('description');
     final title = description.isNotEmpty
         ? description
-        : _defaultTitle(kind, projectName);
+        : _defaultTitle(kind, effectiveProjectName);
 
     return MemberActivityTransactionEntity(
       kind: kind,

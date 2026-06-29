@@ -6,13 +6,12 @@ import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/utils/validation_utils.dart';
-import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_info_notice.dart';
 import 'package:vestie/core/widgets/common/app_text_field.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
-import 'package:vestie/core/widgets/common/post_auth_header.dart';
+import 'package:vestie/core/widgets/common/post_auth_flow_sub_header.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
@@ -101,7 +100,15 @@ class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
       resizeToAvoidBottomInset: false,
       body: PostAuthGradientBackground(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            PostAuthFlowSubHeader(
+              title: AppStrings.createAnnouncementTitle,
+              onBack: () {
+                _unfocusKeyboard();
+                context.pop();
+              },
+            ),
             Expanded(
               child: GestureDetector(
                 onTap: _unfocusKeyboard,
@@ -115,16 +122,6 @@ class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      PostAuthHeader(
-                        title: AppStrings.createAnnouncementTitle,
-                        padding: EdgeInsets.fromLTRB(0, 20.h, 0, 0),
-                        leading: AppBackButton(
-                          onPressed: () {
-                            _unfocusKeyboard();
-                            context.pop();
-                          },
-                        ),
-                      ),
                       AppTextField(
                         focusNode: _headingFocus,
                         label: AppStrings.announcementHeadingLabel,

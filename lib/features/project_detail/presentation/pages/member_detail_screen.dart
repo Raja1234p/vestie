@@ -233,15 +233,19 @@ class _MemberDetailView extends StatelessWidget {
     final p = _projectContext;
     if (p == null) return;
 
+    final cubit = context.read<MemberDetailCubit>();
+    final activity = cubit.state.activity;
+
     final outcome = await context.push<MemberPenaltyActionOutcome>(
       AppRoutes.memberPenaltyAction,
       extra: MemberPenaltyActionRouteArgs(
         member: _displayMember(
-          context.read<MemberDetailCubit>().state,
+          cubit.state,
           project: p,
         ),
         projectId: projectId,
         project: p,
+        penalty: activity?.penalty,
       ),
     );
 

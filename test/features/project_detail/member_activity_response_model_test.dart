@@ -46,6 +46,69 @@ void main() {
       expect(entity.canSendVffRequest, isFalse);
       expect(entity.pendingVffRequestId, isNull);
       expect(model.member.vffConnectionState, VffConnectionState.none);
+      expect(model.penalty, isNull);
+    });
+
+    test('parses penalty block and transaction date field', () {
+      const json = {
+        'memberId': '0c7bdebb-a618-4706-a1e7-43b996f651a8',
+        'memberName': 'KOL K.',
+        'memberUsername': '',
+        'isCoLeader': false,
+        'summary': {
+          'totalContributed': 500,
+          'contributionCount': 1,
+          'totalBorrowed': 250,
+          'overdueBorrowCount': 1,
+          'totalReturned': 0,
+        },
+        'transactions': [
+          {
+            'id': '26009949-a233-43e3-a034-2bb89a87f9ee',
+            'type': 'Borrow',
+            'amount': 250,
+            'direction': 'Debit',
+            'projectName': 'Penalty Action Test',
+            'date': '2026-06-24T13:04:11+00:00',
+          },
+        ],
+        'penalty': {
+          'borrowedAmount': 250,
+          'breakdown': {
+            'dueAmount': 250,
+            'overdueDate': '2026-06-22T13:11:01+00:00',
+            'penaltyAmount': 20,
+            'totalOwed': 270,
+          },
+          'currency': 'USD',
+          'borrowRequestId': '26009949-a233-43e3-a034-2bb89a87f9ee',
+          'canMarkAsDefaulted': true,
+          'canRemoveMember': true,
+        },
+        'vffConnectionState': 'Connected',
+        'canSendVffRequest': false,
+        'pendingVffRequestId': null,
+      };
+
+      final model = MemberActivityResponseModel.fromJson(
+        json,
+        projectName: 'Fallback',
+      );
+      final entity = model.toEntity();
+
+      expect(model.penalty, isNotNull);
+      expect(model.penalty!.borrowedAmount, 250);
+      expect(model.penalty!.breakdown.dueAmount, 250);
+      expect(model.penalty!.breakdown.penaltyAmount, 20);
+      expect(model.penalty!.breakdown.totalOwed, 270);
+      expect(model.penalty!.canMarkAsDefaulted, isTrue);
+      expect(model.penalty!.canRemoveMember, isTrue);
+      expect(model.penalty!.borrowRequestId,
+          '26009949-a233-43e3-a034-2bb89a87f9ee');
+      expect(entity.penalty?.breakdown.overdueDateUtc, isNotNull);
+      expect(model.transactions, hasLength(1));
+      expect(model.transactions.first.displayDate, isNotEmpty);
+      expect(model.transactions.first.title, contains('Penalty Action Test'));
     });
   });
 }

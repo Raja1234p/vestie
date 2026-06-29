@@ -1,17 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/theme/app_text_styles.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
+import 'package:vestie/features/project_detail/domain/entities/member_activity_penalty_entity.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/member_detail_sections.dart';
 
 /// Borrowed amount + breakdown card (Figma Penalty Action).
 class PenaltyActionContent extends StatelessWidget {
-  const PenaltyActionContent({super.key});
+  final MemberActivityPenaltyEntity penalty;
+
+  const PenaltyActionContent({super.key, required this.penalty});
 
   /// Figma — Due / Overdue / Penalty row copy (#737373).
   static const Color _breakdownRowColor = AppColors.neutral700;
+
+  String get _borrowedAmountLabel =>
+      MemberActivityDisplay.formatCurrencyMetric(penalty.borrowedAmount);
+
+  String get _dueAmountLabel =>
+      MemberActivityDisplay.formatCurrencyMetric(penalty.breakdown.dueAmount);
+
+  String get _overdueDateLabel =>
+      _formatOverdueDate(penalty.breakdown.overdueDateUtc);
+
+  String get _penaltyAmountLabel => MemberActivityDisplay.formatCurrencyMetric(
+    penalty.breakdown.penaltyAmount,
+  );
+
+  String get _totalOwedLabel =>
+      MemberActivityDisplay.formatCurrencyMetric(penalty.breakdown.totalOwed);
+
+  static String _formatOverdueDate(DateTime? utc) {
+    if (utc == null) return AppStrings.emptyData;
+    return DateFormat('MMM d, yyyy').format(utc.toLocal());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +54,7 @@ class PenaltyActionContent extends StatelessWidget {
         ),
         SizedBox(height: 6.h),
         AppText(
-          AppStrings.penaltyBorrowedAmount,
+          _borrowedAmountLabel,
           style: AppTextStyles.titleLarge.copyWith(
             fontSize: 32.sp,
             fontWeight: FontWeight.w700,
@@ -46,14 +72,29 @@ class PenaltyActionContent extends StatelessWidget {
           ),
         ),
         SizedBox(height: 12.h),
-        const _PenaltyBreakdownCard(),
+        _PenaltyBreakdownCard(
+          dueAmount: _dueAmountLabel,
+          overdueDate: _overdueDateLabel,
+          penaltyAmount: _penaltyAmountLabel,
+          totalOwed: _totalOwedLabel,
+        ),
       ],
     );
   }
 }
 
 class _PenaltyBreakdownCard extends StatelessWidget {
-  const _PenaltyBreakdownCard();
+  final String dueAmount;
+  final String overdueDate;
+  final String penaltyAmount;
+  final String totalOwed;
+
+  const _PenaltyBreakdownCard({
+    required this.dueAmount,
+    required this.overdueDate,
+    required this.penaltyAmount,
+    required this.totalOwed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -67,26 +108,26 @@ class _PenaltyBreakdownCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          const _BreakdownRow(
+          _BreakdownRow(
             label: AppStrings.penaltyDueLabel,
-            value: AppStrings.penaltyDueAmount,
+            value: dueAmount,
           ),
           SizedBox(height: 14.h),
-          const _BreakdownRow(
+          _BreakdownRow(
             label: AppStrings.penaltyOverdueLabel,
-            value: AppStrings.penaltyOverdueDateValue,
+            value: overdueDate,
           ),
           SizedBox(height: 14.h),
-          const _BreakdownRow(
+          _BreakdownRow(
             label: AppStrings.penaltyPenaltyLabel,
-            value: AppStrings.penaltyChargeValue,
+            value: penaltyAmount,
           ),
           SizedBox(height: 16.h),
           Divider(height: 1.h, color: AppColors.grey400),
           SizedBox(height: 16.h),
-          const _BreakdownRow(
+          _BreakdownRow(
             label: AppStrings.penaltyTotalOwedLabel,
-            value: AppStrings.penaltyTotalOwedValue,
+            value: totalOwed,
             isTotal: true,
           ),
         ],

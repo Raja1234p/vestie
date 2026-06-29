@@ -2,13 +2,11 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/services/payment_methods_prefetch.dart';
 import 'package:vestie/core/error/failures.dart';
 import 'package:vestie/core/services/home_project_list_sync.dart';
 import 'package:vestie/core/utils/contribution_fee_policy.dart';
-import 'package:vestie/features/payment_methods/domain/payment_methods_cache.dart';
-import 'package:vestie/features/profile/domain/payment_source_preference.dart';
-import 'package:vestie/features/profile/domain/entities/payment_card.dart';
 import 'package:vestie/features/project_detail/presentation/project_detail_reload_coordinator.dart';
 import 'package:vestie/features/wallet/domain/usecases/get_wallet_use_case.dart';
 import 'package:vestie/features/wallet/domain/wallet_balance_cache.dart';
@@ -27,8 +25,6 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
   final PreviewContributionUseCase previewUseCase;
   final ConfirmContributionUseCase confirmUseCase;
   final GetWalletUseCase getWalletUseCase;
-  List<PaymentCard> get _savedCards =>
-      PaymentMethodsCache.value ?? const [];
 
   ContributeBloc({
     required this.configUseCase,
@@ -164,26 +160,31 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
       },
       (preview) async {
         final withPreview = state.copyWith(preview: preview);
-        final next = _paymentMethodForTotal(withPreview);
+        if (!withPreview.walletCoversTotal) {
+          final shortfall =
+              (withPreview.totalDeductionValue - withPreview.walletBalance)
+                  .clamp(0.0, double.infinity);
+          emit(
+            state.copyWith(
+              isPreviewLoading: false,
+              previewFailure: ValidationFailure(
+                AppStrings.contributeDepositForWalletMessage(
+                  '\$${shortfall.toStringAsFixed(2)}',
+                ),
+              ),
+            ),
+          );
+          return;
+        }
         emit(
           state.copyWith(
             isPreviewLoading: false,
             preview: preview,
             step: ContributeStep.confirm,
-            selectedCard: next.$1,
-            payFromWallet: next.$2,
-            requiresPaymentMethodPicker:
-                PaymentSourcePreference.requiresUserPicker(
-                  walletBalance: withPreview.walletBalance,
-                  requiredTotal: withPreview.totalDeductionValue,
-                  cards: _savedCards,
-                ),
-            canChangePaymentMethod:
-                PaymentSourcePreference.canChangePaymentMethod(
-                  walletBalance: withPreview.walletBalance,
-                  requiredTotal: withPreview.totalDeductionValue,
-                  cards: _savedCards,
-                ),
+            clearSelectedCard: true,
+            payFromWallet: true,
+            requiresPaymentMethodPicker: false,
+            canChangePaymentMethod: false,
           ),
         );
       },
@@ -196,24 +197,12 @@ class ContributeBloc extends Bloc<ContributeEvent, ContributeState> {
   ) {
     emit(
       state.copyWith(
-        selectedCard: event.card,
-        payFromWallet: event.payFromWallet,
-        clearSelectedCard: event.payFromWallet,
+        clearSelectedCard: true,
+        payFromWallet: true,
         requiresPaymentMethodPicker: false,
+        canChangePaymentMethod: false,
       ),
     );
-  }
-
-  (PaymentCard?, bool) _paymentMethodForTotal(ContributeState s) {
-    if (!s.payFromWallet && s.selectedCard != null) {
-      return (s.selectedCard, false);
-    }
-    final pref = PaymentSourcePreference.resolve(
-      walletBalance: s.walletBalance,
-      requiredTotal: s.totalDeductionValue,
-      cards: _savedCards,
-    );
-    return (pref.card, pref.payFromWallet);
   }
 
   Future<void> _onAmountChanged(

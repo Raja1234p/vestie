@@ -202,7 +202,7 @@ class _LoginFormState extends State<LoginForm> {
                         style: GoogleFonts.lato(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.grey900,
+                          color: AppColors.authBottomText,
                           height: 1.35,
                         ),
                       ),
@@ -214,7 +214,7 @@ class _LoginFormState extends State<LoginForm> {
                           style: GoogleFonts.lato(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.grey900,
+                            color: AppColors.authBottomLink,
                             height: 1.35,
                           ),
                         ),

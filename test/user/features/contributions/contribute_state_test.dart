@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vestie/app/router/route_args/project_wallet_flow_args.dart';
 import 'package:vestie/core/constants/app_strings.dart';
-import 'package:vestie/features/profile/domain/entities/payment_card.dart';
 import 'package:vestie/user/features/contributions/domain/entities/contribution_preview_entity.dart';
 import 'package:vestie/user/features/contributions/presentation/bloc/contribute_state.dart';
 
@@ -21,15 +20,6 @@ void main() {
     currentAmount: 4800,
   );
 
-  const card = PaymentCard(
-    id: 'card-1',
-    holderName: 'Test User',
-    last4: '4242',
-    maskedNumber: '•••• 4242',
-    expiry: '12/30',
-    brand: CardBrand.visa,
-  );
-
   group('ContributeState amount step', () {
     test('canProceedFromAmount false when amount is zero', () {
       const state = ContributeState(args: args, amountDigits: '');
@@ -37,35 +27,43 @@ void main() {
       expect(state.canProceedFromAmount, isFalse);
     });
 
-    test('canProceedFromAmount true for any positive amount regardless of goal', () {
+    test('canProceedFromAmount false when wallet cannot cover total', () {
       const state = ContributeState(
         args: args,
         amountDigits: '100000',
       );
 
-      expect(state.canProceedFromAmount, isTrue);
+      expect(state.canProceedFromAmount, isFalse);
+      expect(state.amountStepValidationMessage, isNotNull);
     });
 
-    test('canProceedFromAmount true when pot already meets goal', () {
-      const fullArgs = ProjectWalletFlowArgs(
+    test('canProceedFromAmount true when wallet covers contribution and fee', () {
+      const richArgs = ProjectWalletFlowArgs(
         projectId: 'p1',
         projectName: 'Trip',
-        goalAmount: 5000,
-        currentAmount: 5000,
+        walletBalance: 2000,
       );
-      const state = ContributeState(args: fullArgs, amountDigits: '100000');
+      const state = ContributeState(
+        args: richArgs,
+        amountDigits: '100000',
+      );
 
       expect(state.canProceedFromAmount, isTrue);
+      expect(state.amountStepValidationMessage, isNull);
     });
   });
 
   group('ContributeState confirm gating', () {
     test('canTapConfirm false until non-refundable switch accepted', () {
+      const richArgs = ProjectWalletFlowArgs(
+        projectId: 'p1',
+        projectName: 'Trip',
+        walletBalance: 2000,
+      );
       const state = ContributeState(
-        args: args,
+        args: richArgs,
         preview: preview,
-        payFromWallet: false,
-        selectedCard: card,
+        payFromWallet: true,
         nonRefundableAccepted: false,
       );
 
@@ -79,45 +77,16 @@ void main() {
         preview: preview,
         payFromWallet: true,
         nonRefundableAccepted: true,
-        requiresPaymentMethodPicker: true,
       );
 
       expect(state.walletCoversTotal, isFalse);
       expect(state.canConfirmSubmit, isFalse);
       expect(state.canTapConfirm, isFalse);
-      expect(state.paymentValidationMessage,
-          AppStrings.contributeWalletInsufficientSubtitle);
+      expect(state.paymentValidationMessage, isNotNull);
       expect(state.hasPaymentValidationError, isTrue);
     });
 
-    test('canTapConfirm false until card selected when wallet insufficient', () {
-      const state = ContributeState(
-        args: args,
-        preview: preview,
-        payFromWallet: false,
-        nonRefundableAccepted: true,
-        requiresPaymentMethodPicker: true,
-      );
-
-      expect(state.canTapConfirm, isFalse);
-      expect(state.paymentValidationMessage,
-          AppStrings.contributeSelectCardRequired);
-    });
-
-    test('canTapConfirm true when switch on and card covers shortfall', () {
-      const state = ContributeState(
-        args: args,
-        preview: preview,
-        payFromWallet: false,
-        selectedCard: card,
-        nonRefundableAccepted: true,
-      );
-
-      expect(state.canTapConfirm, isTrue);
-      expect(state.hasPaymentValidationError, isFalse);
-    });
-
-    test('canTapConfirm true when wallet covers total', () {
+    test('canTapConfirm true when switch on and wallet covers total', () {
       const richArgs = ProjectWalletFlowArgs(
         projectId: 'p1',
         projectName: 'Trip',
@@ -131,6 +100,18 @@ void main() {
       );
 
       expect(state.canTapConfirm, isTrue);
+      expect(state.hasPaymentValidationError, isFalse);
+    });
+
+    test('card picker is disabled for wallet-only contributions', () {
+      const state = ContributeState(
+        args: args,
+        preview: preview,
+        amountDigits: '100000',
+      );
+
+      expect(state.canPickPaymentMethodOnAmount, isFalse);
+      expect(state.canPickPaymentMethodOnConfirm, isFalse);
     });
   });
 }
