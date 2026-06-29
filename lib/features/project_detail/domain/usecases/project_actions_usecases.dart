@@ -1,6 +1,9 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/error/failures.dart';
+import '../entities/cancel_project_entities.dart';
+import '../entities/closure_vote_entities.dart';
 import '../repositories/project_actions_repository.dart';
+import 'submit_vote_usecase.dart';
 
 class ResolveGoalUseCase {
   final ProjectActionsRepository repository;
@@ -115,16 +118,15 @@ class RemoveForNonRepaymentUseCase {
 }
 
 class CastClosureVoteUseCase {
-  final ProjectActionsRepository repository;
-  CastClosureVoteUseCase(this.repository);
+  final SubmitVoteUseCase _submitVoteUseCase;
+  CastClosureVoteUseCase(this._submitVoteUseCase);
 
-  Future<Either<Failure, void>> call({
+  Future<Either<Failure, CastClosureVoteResultEntity>> call({
     required String projectId,
     required bool voteForSuccess,
-  }) async {
-    return repository.castClosureVote(
-      projectId: projectId,
-      voteForSuccess: voteForSuccess,
+  }) {
+    return _submitVoteUseCase(
+      SubmitVoteParams(projectId: projectId, isPositive: voteForSuccess),
     );
   }
 }
@@ -144,20 +146,13 @@ class ExtendClosureVotingUseCase {
   }
 }
 
-class FinalizeClosureVotingUseCase {
-  final ProjectActionsRepository repository;
-  FinalizeClosureVotingUseCase(this.repository);
-
-  Future<Either<Failure, void>> call({required String projectId}) async {
-    return repository.finalizeClosureVoting(projectId: projectId);
-  }
-}
-
 class CancelProjectUseCase {
   final ProjectActionsRepository repository;
   CancelProjectUseCase(this.repository);
 
-  Future<Either<Failure, void>> call({required String projectId}) async {
+  Future<Either<Failure, CancelProjectResultEntity>> call({
+    required String projectId,
+  }) {
     return repository.cancelProject(projectId: projectId);
   }
 }
@@ -214,32 +209,3 @@ class CreateInviteUseCase {
   }
 }
 
-class OpenClosureVotingUseCase {
-  final ProjectActionsRepository repository;
-  OpenClosureVotingUseCase(this.repository);
-
-  Future<Either<Failure, void>> call({
-    required String projectId,
-    required int votingWindowDays,
-  }) async {
-    return repository.openClosureVoting(
-      projectId: projectId,
-      votingWindowDays: votingWindowDays,
-    );
-  }
-}
-
-class OpenStopContributionsVotingUseCase {
-  final ProjectActionsRepository repository;
-  OpenStopContributionsVotingUseCase(this.repository);
-
-  Future<Either<Failure, void>> call({
-    required String projectId,
-    required int votingWindowDays,
-  }) async {
-    return repository.openStopContributionsVoting(
-      projectId: projectId,
-      votingWindowDays: votingWindowDays,
-    );
-  }
-}

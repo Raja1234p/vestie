@@ -18,9 +18,11 @@ import '../../../../core/widgets/common/leader_action_menu.dart';
 import '../../../../core/widgets/common/member_project_action_menu.dart';
 import '../../domain/entities/member_entity.dart';
 import '../widgets/project_member_vff_send_actions.dart';
+import '../../domain/entities/closure_vote_entities.dart';
 import '../../domain/entities/project_detail_entity.dart';
 import '../../domain/entities/create_announcement_route_args.dart';
 import '../../domain/entities/project_detail_route_args.dart';
+import '../mappers/closure_vote_ui_mappers.dart';
 import '../models/investment_distribution_ui_data.dart';
 import '../models/investment_returns_ui_data.dart';
 import 'package:vestie/leader/features/project_detail/presentation/models/leader_success_vote_progress_ui_data.dart';
@@ -164,6 +166,12 @@ class ProjectDetailNavigation {
     required ProjectDetailEntity project,
   }) => _openLeaderViewSuccessVotes(context, project: project);
 
+  /// Member / co-leader — cast vote on an active closure vote (production).
+  static void openCastVote(
+    BuildContext context, {
+    required ProjectDetailEntity project,
+  }) => _openCastVote(context, project: project);
+
   /// Temporary preview — member/co-leader cast vote (give vote).
   static void openCastVotePreview(
     BuildContext context, {
@@ -192,6 +200,19 @@ class ProjectDetailNavigation {
     BuildContext context, {
     required ProjectDetailEntity project,
   }) => _openStopContributionsVoteRejectedPreview(context, project: project);
+
+  /// Production — vote outcome after closure vote finalize.
+  static void openClosureVoteOutcome(
+    BuildContext context, {
+    required ProjectDetailEntity project,
+    required FinalizeClosureVoteResultEntity finalizeResult,
+    bool popCurrentRoute = false,
+  }) => _openClosureVoteOutcome(
+    context,
+    project: project,
+    finalizeResult: finalizeResult,
+    popCurrentRoute: popCurrentRoute,
+  );
 
   static Future<void> openInviteMembers(
     BuildContext context, {

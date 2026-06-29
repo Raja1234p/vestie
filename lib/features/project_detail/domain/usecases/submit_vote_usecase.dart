@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/error/failures.dart';
-import '../repositories/voting_repository.dart';
+import '../entities/closure_vote_entities.dart';
+import '../repositories/closure_voting_repository.dart';
 
 class SubmitVoteParams {
   final String projectId;
@@ -10,11 +11,16 @@ class SubmitVoteParams {
 }
 
 class SubmitVoteUseCase {
-  final VotingRepository repository;
+  final ClosureVotingRepository repository;
 
   SubmitVoteUseCase({required this.repository});
 
-  Future<Either<Failure, void>> call(SubmitVoteParams params) async {
-    return repository.submitVote(params.projectId, params.isPositive);
+  Future<Either<Failure, CastClosureVoteResultEntity>> call(
+    SubmitVoteParams params,
+  ) {
+    return repository.castClosureVote(
+      projectId: params.projectId,
+      voteForSuccess: params.isPositive,
+    );
   }
 }

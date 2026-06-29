@@ -1,19 +1,26 @@
 import '../../features/project_announcements/data/datasources/project_announcements_remote_data_source.dart';
 import '../../features/project_announcements/data/repositories/project_announcements_repository_impl.dart';
 import '../../features/project_announcements/domain/usecases/project_announcements_usecases.dart';
+import '../../features/project_detail/data/datasources/closure_voting_remote_data_source.dart';
 import '../../features/project_detail/data/datasources/project_actions_remote_data_source.dart';
 import '../../features/project_detail/data/datasources/project_detail_remote_data_source_impl.dart';
 import '../../features/project_detail/data/datasources/voting_remote_data_source.dart';
+import '../../features/project_detail/data/repositories/closure_voting_repository_impl.dart';
 import '../../features/project_detail/data/repositories/project_actions_repository_impl.dart';
 import '../../features/project_detail/data/repositories/project_detail_repository_impl.dart';
 import '../../features/project_detail/data/repositories/voting_repository_impl.dart';
 import '../../features/project_detail/domain/usecases/get_member_activity_usecase.dart';
 import '../../features/project_detail/domain/usecases/list_pending_join_requests_usecase.dart';
 import '../../features/project_detail/domain/usecases/moderate_member_usecase.dart';
+import '../../features/project_detail/domain/usecases/closure_voting_usecases.dart';
 import '../../features/project_detail/domain/usecases/project_actions_usecases.dart';
+import '../../features/project_detail/domain/usecases/get_active_closure_vote_usecase.dart';
 import '../../features/project_detail/domain/usecases/submit_vote_usecase.dart';
 import '../../features/project_detail/presentation/bloc/moderation_bloc.dart';
 import '../../features/project_detail/presentation/bloc/voting_bloc.dart';
+import '../../features/project_detail/data/datasources/investment_returns_remote_data_source.dart';
+import '../../features/project_detail/data/repositories/investment_returns_repository_impl.dart';
+import '../../features/project_detail/domain/usecases/investment_returns_usecases.dart';
 import '../../features/project_pot/data/datasources/project_pot_remote_data_source.dart';
 import '../../features/project_pot/data/repositories/project_pot_repository_impl.dart';
 import '../../features/project_pot/domain/usecases/get_project_pot_use_case.dart';
@@ -58,6 +65,12 @@ void registerProjectDependencies(ServiceLocator sl) {
     sl.projectDetailRemoteDataSource,
   );
   sl.getProjectDetailUseCase = GetProjectDetailUseCase(sl.projectRepository);
+  sl.closureVotingRemoteDataSource = ClosureVotingRemoteDataSourceImpl(
+    apiClient: sl.apiClient,
+  );
+  sl.closureVotingRepository = ClosureVotingRepositoryImpl(
+    remoteDataSource: sl.closureVotingRemoteDataSource,
+  );
   sl.projectActionsRemoteDataSource = ProjectActionsRemoteDataSourceImpl(
     apiClient: sl.apiClient,
   );
@@ -65,10 +78,10 @@ void registerProjectDependencies(ServiceLocator sl) {
     remoteDataSource: sl.projectActionsRemoteDataSource,
   );
   sl.openClosureVotingUseCase = OpenClosureVotingUseCase(
-    sl.projectActionsRepository,
+    sl.closureVotingRepository,
   );
   sl.openStopContributionsVotingUseCase = OpenStopContributionsVotingUseCase(
-    sl.projectActionsRepository,
+    sl.closureVotingRepository,
   );
   sl.cancelProjectUseCase = CancelProjectUseCase(sl.projectActionsRepository);
   sl.leaveProjectUseCase = LeaveProjectUseCase(sl.projectActionsRepository);
@@ -95,20 +108,44 @@ void registerProjectDependencies(ServiceLocator sl) {
   sl.removeForNonRepaymentUseCase = RemoveForNonRepaymentUseCase(
     sl.projectActionsRepository,
   );
+  sl.submitVoteUseCase = SubmitVoteUseCase(
+    repository: sl.closureVotingRepository,
+  );
+  sl.getActiveClosureVoteUseCase = GetActiveClosureVoteUseCase(
+    sl.closureVotingRepository,
+  );
   sl.castClosureVoteUseCase = CastClosureVoteUseCase(
-    sl.projectActionsRepository,
+    sl.submitVoteUseCase,
   );
   sl.extendClosureVotingUseCase = ExtendClosureVotingUseCase(
     sl.projectActionsRepository,
   );
   sl.finalizeClosureVotingUseCase = FinalizeClosureVotingUseCase(
-    sl.projectActionsRepository,
+    sl.closureVotingRepository,
   );
   sl.resolveGoalUseCase = ResolveGoalUseCase(sl.projectActionsRepository);
   sl.extendDeadlineUseCase = ExtendDeadlineUseCase(sl.projectActionsRepository);
   sl.completeProjectUseCase = CompleteProjectUseCase(
     sl.projectActionsRepository,
   );
+
+  sl.investmentReturnsRemoteDataSource = InvestmentReturnsRemoteDataSourceImpl(
+    apiClient: sl.apiClient,
+  );
+  sl.investmentReturnsRepository = InvestmentReturnsRepositoryImpl(
+    remoteDataSource: sl.investmentReturnsRemoteDataSource,
+  );
+  sl.getMyInvestmentReturnsUseCase = GetMyInvestmentReturnsUseCase(
+    sl.investmentReturnsRepository,
+  );
+  sl.getInvestmentDistributionsUseCase = GetInvestmentDistributionsUseCase(
+    sl.investmentReturnsRepository,
+  );
+  sl.previewInvestmentDistributionUseCase = PreviewInvestmentDistributionUseCase(
+    sl.investmentReturnsRepository,
+  );
+  sl.confirmInvestmentDistributionUseCase =
+      ConfirmInvestmentDistributionUseCase(sl.investmentReturnsRepository);
 
   sl.projectPotRemoteDataSource = ProjectPotRemoteDataSourceImpl(
     apiClient: sl.apiClient,
@@ -136,7 +173,6 @@ void registerProjectDependencies(ServiceLocator sl) {
   sl.votingRepository = VotingRepositoryImpl(
     remoteDataSource: sl.votingRemoteDataSource,
   );
-  sl.submitVoteUseCase = SubmitVoteUseCase(repository: sl.votingRepository);
   sl.moderateMemberUseCase = ModerateMemberUseCase(
     repository: sl.projectActionsRepository,
   );

@@ -16,6 +16,7 @@ import 'package:vestie/core/widgets/common/app_outline_neutral_button.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/flow_hero_image_card.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
+import 'package:vestie/features/project_detail/presentation/project_detail_reload_coordinator.dart';
 import 'package:vestie/app/router/route_args/project_detail_flow_args.dart';
 import '../widgets/cancel_project_confirm_dialog.dart';
 
@@ -41,7 +42,11 @@ Future<void> _executeProjectCancel(
             : AppStrings.errorGeneric,
       );
     },
-    (_) {
+    (cancelResult) async {
+      await ProjectDetailReloadCoordinator.reload(projectId);
+
+      if (!context.mounted) return;
+
       context.go(
         AppRoutes.dashboard,
         extra: DashboardShellArgs(
@@ -54,7 +59,10 @@ Future<void> _executeProjectCancel(
         if (!context.mounted) return;
         context.push(
           AppRoutes.projectCancelled,
-          extra: ProjectCancelledRouteArgs(projectName: projectName),
+          extra: ProjectCancelledRouteArgs.fromCancelResult(
+            projectName: projectName,
+            result: cancelResult,
+          ),
         );
       });
     },

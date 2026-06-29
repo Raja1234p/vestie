@@ -9,15 +9,15 @@ import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/app/router/route_args/project_wallet_flow_args.dart';
-import 'package:vestie/user/features/contributions/data/models/contribution_submit_result_model.dart';
 import '../../domain/entities/project_detail_entity.dart';
 import '../navigation/project_detail_navigation.dart';
+import 'package:vestie/user/features/contributions/data/models/contribution_submit_result_model.dart';
 
-/// Contribute (+ Borrow) or [AppStrings.btnViewSuccessVotes] when vote is active.
+/// Contribute (+ Borrow), [AppStrings.btnViewSuccessVotes], or [AppStrings.btnCastVote].
 class ProjectDetailWalletActions extends StatelessWidget {
   final ProjectDetailEntity project;
 
-  /// Dev / API: success vote open — Contribute and Borrow hidden (Figma).
+  /// Leader / co-leader monitor CTA while a closure vote is open.
   final bool showViewSuccessVotesCta;
 
   const ProjectDetailWalletActions({
@@ -26,18 +26,50 @@ class ProjectDetailWalletActions extends StatelessWidget {
     this.showViewSuccessVotesCta = false,
   });
 
+  bool get _showsWalletMoneyActions =>
+      !showViewSuccessVotesCta &&
+      !project.showsCastVoteAction &&
+      !project.hidesWalletActionsForVoting;
+
   @override
   Widget build(BuildContext context) {
-    if (showViewSuccessVotesCta) {
-      return AppButton(
-        text: AppStrings.btnViewSuccessVotes,
-        onPressed: () => ProjectDetailNavigation.openLeaderViewSuccessVotes(
-          context,
-          project: project,
-        ),
-      );
+    if (_showsWalletMoneyActions) {
+      return _WalletMoneyActions(project: project);
     }
 
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (showViewSuccessVotesCta)
+          AppButton(
+            text: AppStrings.btnViewSuccessVotes,
+            onPressed: () => ProjectDetailNavigation.openLeaderViewSuccessVotes(
+              context,
+              project: project,
+            ),
+          ),
+        if (showViewSuccessVotesCta && project.showsCastVoteAction)
+          SizedBox(height: 13.h),
+        if (project.showsCastVoteAction)
+          AppButton(
+            text: AppStrings.btnCastVote,
+            onPressed: () => ProjectDetailNavigation.openCastVote(
+              context,
+              project: project,
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _WalletMoneyActions extends StatelessWidget {
+  final ProjectDetailEntity project;
+
+  const _WalletMoneyActions({required this.project});
+
+  @override
+  Widget build(BuildContext context) {
     final walletArgs = ProjectDetailNavigation.walletArgs(project);
 
     return Column(

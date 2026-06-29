@@ -31,7 +31,9 @@ import '../../features/payment_methods/domain/usecases/payment_methods_usecases.
 import '../../features/project_announcements/data/datasources/project_announcements_remote_data_source.dart';
 import '../../features/project_announcements/domain/repositories/project_announcements_repository.dart';
 import '../../features/project_announcements/domain/usecases/project_announcements_usecases.dart';
+import '../../features/project_detail/data/datasources/closure_voting_remote_data_source.dart';
 import '../../features/project_detail/data/datasources/project_actions_remote_data_source.dart';
+import '../../features/project_detail/domain/repositories/closure_voting_repository.dart';
 import '../../features/project_detail/data/datasources/project_detail_remote_data_source.dart';
 import '../../features/project_detail/data/datasources/voting_remote_data_source.dart';
 import '../../features/project_detail/domain/repositories/project_actions_repository.dart';
@@ -40,10 +42,20 @@ import '../../features/project_detail/domain/repositories/voting_repository.dart
 import '../../features/project_detail/domain/usecases/get_member_activity_usecase.dart';
 import '../../features/project_detail/domain/usecases/list_pending_join_requests_usecase.dart';
 import '../../features/project_detail/domain/usecases/moderate_member_usecase.dart';
+import '../../features/project_detail/domain/usecases/closure_voting_usecases.dart';
 import '../../features/project_detail/domain/usecases/project_actions_usecases.dart';
+import '../../features/project_detail/domain/usecases/get_active_closure_vote_usecase.dart';
 import '../../features/project_detail/domain/usecases/submit_vote_usecase.dart';
 import '../../features/project_detail/presentation/bloc/moderation_bloc.dart';
 import '../../features/project_detail/presentation/bloc/voting_bloc.dart';
+import '../../features/success_vote/presentation/cubit/success_vote_cast_cubit.dart';
+import '../../leader/features/project_detail/presentation/cubit/leader_view_success_votes_cubit.dart';
+import '../../app/router/route_args/project_detail_flow_args.dart';
+import '../../features/project_detail/data/datasources/investment_returns_remote_data_source.dart';
+import '../../features/project_detail/domain/repositories/investment_returns_repository.dart';
+import '../../features/project_detail/domain/usecases/investment_returns_usecases.dart';
+import '../../features/project_detail/presentation/cubit/investment_distribution_cubit.dart';
+import '../../features/project_detail/presentation/cubit/investment_returns_cubit.dart';
 import '../../features/project_pot/data/datasources/project_pot_remote_data_source.dart';
 import '../../features/project_pot/domain/repositories/project_pot_repository.dart';
 import '../../features/project_pot/domain/usecases/get_project_pot_use_case.dart';
@@ -157,6 +169,8 @@ class ServiceLocator {
   late final ProjectDetailRemoteDataSource projectDetailRemoteDataSource;
   late final ProjectDetailRepository projectDetailRepository;
   late final GetProjectDetailUseCase getProjectDetailUseCase;
+  late final ClosureVotingRemoteDataSource closureVotingRemoteDataSource;
+  late final ClosureVotingRepository closureVotingRepository;
   late final ProjectActionsRemoteDataSource projectActionsRemoteDataSource;
   late final ProjectActionsRepository projectActionsRepository;
   late final OpenClosureVotingUseCase openClosureVotingUseCase;
@@ -181,6 +195,15 @@ class ServiceLocator {
   late final ResolveGoalUseCase resolveGoalUseCase;
   late final ExtendDeadlineUseCase extendDeadlineUseCase;
   late final CompleteProjectUseCase completeProjectUseCase;
+
+  late final InvestmentReturnsRemoteDataSource investmentReturnsRemoteDataSource;
+  late final InvestmentReturnsRepository investmentReturnsRepository;
+  late final GetMyInvestmentReturnsUseCase getMyInvestmentReturnsUseCase;
+  late final GetInvestmentDistributionsUseCase getInvestmentDistributionsUseCase;
+  late final PreviewInvestmentDistributionUseCase
+  previewInvestmentDistributionUseCase;
+  late final ConfirmInvestmentDistributionUseCase
+  confirmInvestmentDistributionUseCase;
 
   late final WalletRemoteDataSource walletRemoteDataSource;
   late final WalletRepository walletRepository;
@@ -280,6 +303,7 @@ class ServiceLocator {
   late final VotingRemoteDataSource votingRemoteDataSource;
   late final VotingRepository votingRepository;
   late final SubmitVoteUseCase submitVoteUseCase;
+  late final GetActiveClosureVoteUseCase getActiveClosureVoteUseCase;
   late final ModerateMemberUseCase moderateMemberUseCase;
 
   late final ModerationBloc moderationBloc;
@@ -307,5 +331,38 @@ class ServiceLocator {
     listPendingJoinRequests: listPendingJoinRequestsUseCase,
     listBorrowRequests: listBorrowRequestsUseCase,
     sendVffRequestUseCase: sendVffRequestUseCase,
+    getActiveClosureVoteUseCase: getActiveClosureVoteUseCase,
+  );
+
+  SuccessVoteCastCubit createSuccessVoteCastCubit(
+    SuccessVoteCastRouteArgs args,
+  ) => SuccessVoteCastCubit(
+    args: args,
+    getActiveClosureVoteUseCase: getActiveClosureVoteUseCase,
+    submitVoteUseCase: submitVoteUseCase,
+  );
+
+  LeaderViewSuccessVotesCubit createLeaderViewSuccessVotesCubit(
+    LeaderViewSuccessVotesRouteArgs args,
+  ) => LeaderViewSuccessVotesCubit(
+    args: args,
+    getActiveClosureVoteUseCase: getActiveClosureVoteUseCase,
+    finalizeClosureVotingUseCase: finalizeClosureVotingUseCase,
+  );
+
+  InvestmentReturnsCubit createInvestmentReturnsCubit(
+    InvestmentReturnsRouteArgs args,
+  ) => InvestmentReturnsCubit(
+    args: args,
+    getMyInvestmentReturnsUseCase: getMyInvestmentReturnsUseCase,
+    getInvestmentDistributionsUseCase: getInvestmentDistributionsUseCase,
+  );
+
+  InvestmentDistributionCubit createInvestmentDistributionCubit(
+    InvestmentDistributionRouteArgs args,
+  ) => InvestmentDistributionCubit(
+    args: args,
+    previewUseCase: previewInvestmentDistributionUseCase,
+    confirmUseCase: confirmInvestmentDistributionUseCase,
   );
 }

@@ -11,14 +11,6 @@ class VotingRepositoryImpl implements VotingRepository {
   VotingRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<Either<Failure, void>> submitVote(
-    String projectId,
-    bool isPositive,
-  ) async {
-    return _execute(() => remoteDataSource.submitVote(projectId, isPositive));
-  }
-
-  @override
   Future<Either<Failure, void>> requestVoteExtension(
     String projectId,
     int extraDays,
@@ -27,11 +19,6 @@ class VotingRepositoryImpl implements VotingRepository {
     return _execute(
       () => remoteDataSource.requestVoteExtension(projectId, extraDays, reason),
     );
-  }
-
-  @override
-  Future<Either<Failure, void>> finalizeVote(String projectId) async {
-    return _execute(() => remoteDataSource.finalizeVote(projectId));
   }
 
   @override

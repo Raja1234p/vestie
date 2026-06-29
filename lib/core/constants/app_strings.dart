@@ -788,6 +788,12 @@ class AppStrings {
   static const String errVotingWindowRequired = 'Voting window is required';
   static const String errVotingWindowInvalid =
       'Enter a number between 1 and 365';
+  static const String errorClosureVoteGroupLeaderCannotVote =
+      'Group leaders cannot vote on closure votes.';
+  static const String errorClosureVoteDeadlinePassed =
+      'The voting deadline has passed.';
+  static const String errorClosureVoteNoOpenVote =
+      'There is no open vote for this project.';
   static const String errPenaltyRequired = 'Penalty is required';
   static const String errPenaltyInvalid = 'Enter a value between 0–100';
 
@@ -1419,6 +1425,27 @@ class AppStrings {
   static const String successVoteCastNotVoted = 'Not voted';
 
   static const String btnViewSuccessVotes = 'View Success Votes';
+  static const String btnCastVote = 'Cast Vote';
+
+  // ── Week 11+ project detail voting card ───────────────────────────────
+  static const String projectBannerOngoing = 'Ongoing';
+  static const String projectBannerCompleted = 'Completed';
+  static const String projectBannerCancelled = 'Cancelled';
+  static const String projectDetailVotingCardTitle = 'Voting';
+  static const String projectVotingNotStartedMessage =
+      "Voting hasn't started yet";
+  static const String projectVotingVoteSubmitted = 'Vote Submitted';
+  static const String projectVotingStartedLabel = 'Voting started';
+  static const String projectVotingDeadlineLabel = 'Voting deadline';
+  static const String projectVotingAgreedLabel = 'Agreed';
+  static const String projectVotingDisagreedLabel = 'Disagreed';
+  static const String projectVotingPendingLabel = 'Pending';
+  static const String btnViewVotes = 'View Votes';
+  static const String btnCloseVoting = 'Close Voting';
+  static const String btnFinalizeDecision = 'Finalize Decision';
+  static String projectVotingEndsOn(String date, int daysRemaining) =>
+      'Ends on $date ($daysRemaining days remaining)';
+
   static const String btnPreviewViewSuccessVotes =
       'Preview View Success Votes UI';
 
@@ -1433,6 +1460,7 @@ class AppStrings {
 
   static String leaderSuccessVoteMajorityNeeded(int required, int total) =>
       'Majority needed: $required of $total members must Agree to release funds.';
+  static const String leaderSuccessVoteFinalizeButton = 'Finalize vote';
   static const String btnPreviewVoteOutcomeApproved =
       'Preview vote approved UI';
   static const String btnPreviewVoteOutcomeRejected =
@@ -1597,6 +1625,22 @@ class AppStrings {
   static String projectCancelledDescription(String projectName) =>
       '$projectName has been permanently cancelled. All eligible contributions '
       'have been refunded to members\' wallets.';
+
+  static String projectCancelledIntro(String projectName) =>
+      '$projectName has been permanently cancelled.';
+
+  static String projectCancelledMembersRefundedLine(
+    int count,
+    String formattedTotal,
+  ) {
+    final unit = count == 1 ? 'member' : 'members';
+    return '$count $unit received a total refund of \$$formattedTotal to their wallets.';
+  }
+
+  static String projectCancelledDefaultedMembersLine(int count) {
+    final unit = count == 1 ? 'member was' : 'members were';
+    return '$count $unit marked as defaulted and received no refund.';
+  }
 
   static String coLeaderAssignedDescription(
     String memberName,

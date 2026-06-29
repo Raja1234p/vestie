@@ -1,6 +1,7 @@
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/network/base_api_client.dart';
 
+import '../models/cancel_project_response_model.dart';
 import '../models/member_activity_response_model.dart';
 import '../models/pending_membership_model.dart';
 
@@ -22,15 +23,7 @@ abstract class ProjectActionsRemoteDataSource {
   Future<void> removeMember(String projectId, String userId);
   Future<void> promoteToCoLeader(String projectId, String userId);
   Future<void> demoteCoLeader(String projectId, String userId);
-  Future<void> openClosureVoting({
-    required String projectId,
-    required int votingWindowDays,
-  });
-  Future<void> openStopContributionsVoting({
-    required String projectId,
-    required int votingWindowDays,
-  });
-  Future<void> cancelProject({required String projectId});
+  Future<CancelProjectResponseModel> cancelProject({required String projectId});
   Future<void> leaveProject({required String projectId});
   Future<String> createInvite({
     required String projectId,
@@ -46,15 +39,10 @@ abstract class ProjectActionsRemoteDataSource {
     required String projectId,
     required String userId,
   });
-  Future<void> castClosureVote({
-    required String projectId,
-    required bool voteForSuccess,
-  });
   Future<void> extendClosureVoting({
     required String projectId,
     required int extraDays,
   });
-  Future<void> finalizeClosureVoting({required String projectId});
   Future<void> resolveGoal({required String projectId});
   Future<void> extendDeadline({
     required String projectId,
@@ -129,30 +117,15 @@ class ProjectActionsRemoteDataSourceImpl
   }
 
   @override
-  Future<void> openClosureVoting({
+  Future<CancelProjectResponseModel> cancelProject({
     required String projectId,
-    required int votingWindowDays,
   }) async {
-    await apiClient.post(
-      '${ApiConstants.projects}/$projectId/closure-voting/open',
-      data: {'successVoteWindowHours': votingWindowDays * 24},
+    final response = await apiClient.post<Map<String, dynamic>>(
+      ApiConstants.projectCancel(projectId),
     );
-  }
-
-  @override
-  Future<void> openStopContributionsVoting({
-    required String projectId,
-    required int votingWindowDays,
-  }) async {
-    await apiClient.post(
-      '${ApiConstants.projects}/$projectId/contributions/stop-voting/open',
-      data: {'stopContributionsVoteWindowHours': votingWindowDays * 24},
+    return CancelProjectResponseModel.fromJson(
+      parseCancelProjectResponseMap(response),
     );
-  }
-
-  @override
-  Future<void> cancelProject({required String projectId}) async {
-    await apiClient.post('${ApiConstants.projects}/$projectId/cancel');
   }
 
   @override
@@ -205,31 +178,13 @@ class ProjectActionsRemoteDataSourceImpl
   }
 
   @override
-  Future<void> castClosureVote({
-    required String projectId,
-    required bool voteForSuccess,
-  }) async {
-    await apiClient.post(
-      '${ApiConstants.projects}/$projectId/closure-voting/vote',
-      data: {'decision': voteForSuccess ? 'Approve' : 'Reject'},
-    );
-  }
-
-  @override
   Future<void> extendClosureVoting({
     required String projectId,
     required int extraDays,
   }) async {
     await apiClient.post(
-      '${ApiConstants.projects}/$projectId/closure-voting/extend',
+      ApiConstants.projectClosureVotingExtend(projectId),
       data: {'additionalHours': extraDays * 24},
-    );
-  }
-
-  @override
-  Future<void> finalizeClosureVoting({required String projectId}) async {
-    await apiClient.post(
-      '${ApiConstants.projects}/$projectId/closure-voting/finalize',
     );
   }
 

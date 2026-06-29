@@ -208,6 +208,7 @@ class AppRadius {
   static double get r22 => 22.0.r;
   static double get r24 => 24.0.r;
   static double get r32 => 32.0.r;
+  static double get r100 => 100.0.r;
 
   static double get button => 12.0.r; // Standard button radius
   static double get card => 16.0.r; // Standard card radius

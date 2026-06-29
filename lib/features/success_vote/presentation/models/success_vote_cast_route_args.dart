@@ -11,6 +11,10 @@ class SuccessVoteCastRouteArgs {
   final double totalRaised;
   final String deadlineLabel;
   final int daysRemaining;
+  final int? thumbsUp;
+  final int? thumbsDown;
+  final int? notYetVoted;
+  final bool isPreview;
 
   const SuccessVoteCastRouteArgs({
     this.projectId,
@@ -22,6 +26,10 @@ class SuccessVoteCastRouteArgs {
     required this.totalRaised,
     required this.deadlineLabel,
     required this.daysRemaining,
+    this.thumbsUp,
+    this.thumbsDown,
+    this.notYetVoted,
+    this.isPreview = false,
   });
 }
 

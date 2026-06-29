@@ -14,6 +14,7 @@ import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_announcements_section.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_cast_vote_dev_previews.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_vote_outcome_dev_previews.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_detail_voting_sections.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_tab_section.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_trailing_actions.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_scroll_insets.dart';
@@ -131,6 +132,10 @@ class _ProjectDetailModeratorScrollContentState
                     sliver: SliverToBoxAdapter(
                       child: Column(
                         children: [
+                          ProjectDetailVotingSections(
+                            project: project,
+                            onRefresh: widget.onRefresh,
+                          ),
                           SizedBox(height: 12.h),
                           ProjectAnnouncementsSection(
                             project: project,

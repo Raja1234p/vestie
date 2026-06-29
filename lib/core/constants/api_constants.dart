@@ -180,6 +180,38 @@ class ApiConstants {
 
   static String projectPot(String projectId) => '$projects/$projectId/pot';
 
+  // ── Closure voting (Week 10) ─────────────────────────────────────────────
+  static String projectClosureVotingOpen(String projectId) =>
+      '$projects/$projectId/closure-voting/open';
+
+  static String projectClosureVotingVote(String projectId) =>
+      '$projects/$projectId/closure-voting/vote';
+
+  static String projectClosureVotingActive(String projectId) =>
+      '$projects/$projectId/closure-voting/active';
+
+  static String projectClosureVotingFinalize(String projectId) =>
+      '$projects/$projectId/closure-voting/finalize';
+
+  /// Legacy — not in Week 10 spec; kept for existing use cases.
+  static String projectClosureVotingExtend(String projectId) =>
+      '$projects/$projectId/closure-voting/extend';
+
+  static String projectCancel(String projectId) => '$projects/$projectId/cancel';
+
+  // ── Investment returns & distribute (Week 10) ────────────────────────────
+  static String projectInvestmentDistributePreview(String projectId) =>
+      '$projects/$projectId/investment/distribute/preview';
+
+  static String projectInvestmentDistribute(String projectId) =>
+      '$projects/$projectId/investment/distribute';
+
+  static String projectInvestmentMyReturns(String projectId) =>
+      '$projects/$projectId/investment/my-returns';
+
+  static String projectInvestmentDistributions(String projectId) =>
+      '$projects/$projectId/investment/distributions';
+
   // ── Wallet ───────────────────────────────────────────────────────────────
   static const String wallet = '/wallet';
 

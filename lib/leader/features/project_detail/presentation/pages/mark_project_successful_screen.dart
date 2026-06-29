@@ -11,16 +11,19 @@ import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_outline_neutral_button.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
+import 'package:vestie/user/features/home/domain/entities/project.dart';
 import '../widgets/mark_project_successful_widgets.dart';
 
 class MarkProjectSuccessfulScreen extends StatelessWidget {
   final String projectId;
   final int memberCount;
+  final ProjectCategory projectCategory;
 
   const MarkProjectSuccessfulScreen({
     super.key,
     required this.projectId,
     required this.memberCount,
+    required this.projectCategory,
   });
 
   @override
@@ -74,7 +77,10 @@ class MarkProjectSuccessfulScreen extends StatelessWidget {
                   onPressed: () {
                     context.push(
                       AppRoutes.votingWindow,
-                      extra: VotingWindowRouteArgs(projectId: projectId),
+                      extra: VotingWindowRouteArgs(
+                        projectId: projectId,
+                        projectCategory: projectCategory,
+                      ),
                     );
                   },
                   useGradient: false,

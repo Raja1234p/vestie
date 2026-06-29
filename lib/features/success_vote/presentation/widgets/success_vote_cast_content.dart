@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
+import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/widgets/common/app_outline_neutral_button.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
+import 'package:vestie/core/widgets/text/app_text.dart';
 
 import '../models/success_vote_cast_choice.dart';
 import '../models/success_vote_cast_copy.dart';
@@ -12,12 +18,16 @@ import 'success_vote_cast_scroll_body.dart';
 /// Embeddable cast-vote UI for member / co-leader. Parent must wrap in [Expanded].
 class SuccessVoteCastContent extends StatefulWidget {
   final SuccessVoteCastUiData data;
+  final SuccessVoteCastChoice choice;
+  final bool canVote;
   final bool isLoading;
   final Future<bool> Function(bool voteForSuccess)? onSubmitVote;
 
   const SuccessVoteCastContent({
     super.key,
     required this.data,
+    this.choice = SuccessVoteCastChoice.pending,
+    this.canVote = true,
     this.isLoading = false,
     this.onSubmitVote,
   });
@@ -27,18 +37,32 @@ class SuccessVoteCastContent extends StatefulWidget {
 }
 
 class _SuccessVoteCastContentState extends State<SuccessVoteCastContent> {
-  SuccessVoteCastChoice _choice = SuccessVoteCastChoice.pending;
+  late SuccessVoteCastChoice _choice;
   bool _localLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _choice = widget.choice;
+  }
+
+  @override
+  void didUpdateWidget(covariant SuccessVoteCastContent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.choice != widget.choice) {
+      _choice = widget.choice;
+    }
+  }
 
   bool get _loading => widget.isLoading || _localLoading;
 
   SuccessVoteCastCopy get _copy => SuccessVoteCastCopy.forViewer(
-        category: widget.data.projectCategory,
-        isCoLeader: widget.data.isCoLeader,
-      );
+    category: widget.data.projectCategory,
+    isCoLeader: widget.data.isCoLeader,
+  );
 
   Future<void> _castVote(bool voteForSuccess) async {
-    if (_choice != SuccessVoteCastChoice.pending) return;
+    if (_choice != SuccessVoteCastChoice.pending || !widget.canVote) return;
     final submit = widget.onSubmitVote;
     if (submit != null) {
       setState(() => _localLoading = true);
@@ -47,15 +71,19 @@ class _SuccessVoteCastContentState extends State<SuccessVoteCastContent> {
       setState(() => _localLoading = false);
       if (!ok) return;
     }
-    setState(() {
-      _choice = voteForSuccess
-          ? SuccessVoteCastChoice.agreed
-          : SuccessVoteCastChoice.disagreed;
-    });
+    if (widget.onSubmitVote == null) {
+      setState(() {
+        _choice = voteForSuccess
+            ? SuccessVoteCastChoice.agreed
+            : SuccessVoteCastChoice.disagreed;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final choice = widget.onSubmitVote != null ? widget.choice : _choice;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -70,20 +98,50 @@ class _SuccessVoteCastContentState extends State<SuccessVoteCastContent> {
             child: SuccessVoteCastScrollBody(
               data: widget.data,
               copy: _copy,
-              choice: _choice,
+              choice: choice,
             ),
           ),
         ),
         FlowScreenFooter(
-          child: SuccessVoteCastActions(
-            copy: _copy,
-            choice: _choice,
-            isLoading: _loading,
-            onVoteYes: () => _castVote(true),
-            onVoteNo: () => _castVote(false),
-          ),
+          child: widget.canVote
+              ? SuccessVoteCastActions(
+                  copy: _copy,
+                  choice: choice,
+                  isLoading: _loading,
+                  onVoteYes: () => _castVote(true),
+                  onVoteNo: () => _castVote(false),
+                )
+              : _CannotVoteFooter(choice: choice),
         ),
       ],
+    );
+  }
+}
+
+class _CannotVoteFooter extends StatelessWidget {
+  final SuccessVoteCastChoice choice;
+
+  const _CannotVoteFooter({required this.choice});
+
+  @override
+  Widget build(BuildContext context) {
+    if (choice != SuccessVoteCastChoice.pending) {
+      return AppOutlineNeutralButton(
+        label: AppStrings.btnBackToHome,
+        onPressed: () => context.go(AppRoutes.dashboard),
+        borderRadius: AppRadius.r8,
+        borderColor: AppColors.backToHomeButtonBorder,
+      );
+    }
+
+    final theme = Theme.of(context);
+    return AppText(
+      AppStrings.errorClosureVoteGroupLeaderCannotVote,
+      textAlign: TextAlign.center,
+      style: theme.textTheme.bodyMedium?.copyWith(
+        color: AppColors.grey1100,
+        height: 1.4,
+      ),
     );
   }
 }

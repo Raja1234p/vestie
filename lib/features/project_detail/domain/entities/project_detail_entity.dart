@@ -2,7 +2,9 @@ import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
 import 'borrow_request_entity.dart';
+import 'closure_vote_entities.dart';
 import 'member_entity.dart';
+import 'project_detail_voting_entities.dart';
 import 'project_announcement_entity.dart';
 import 'project_invite_entity.dart';
 import 'viewer_membership_role.dart';
@@ -37,8 +39,27 @@ class ProjectDetailEntity {
   final int repaymentGraceDays;
   final bool contributionsAreNonRefundable;
 
-  /// From API `displayStatus` (e.g. Draft, On Going).
+  /// From API `displayStatus` (e.g. Draft, On Going) — list/card pills only.
   final String displayStatusLabel;
+
+  /// Raw `project.state` / `lifecycleState` from API (e.g. active, funded).
+  final String projectLifecycleState;
+
+  /// Week 11+ `projectStatus` — detail screen status banner.
+  final ProjectDetailBannerStatus projectBannerStatus;
+
+  /// Week 11+ `votingStatus` — voting card on detail when [projectBannerStatus] is ongoing.
+  final ProjectVotingStatus votingStatus;
+
+  /// Week 11+ top-level `userRole` — prefer for voting UI over [viewerRole].
+  final ProjectDetailUserRole detailUserRole;
+
+  /// Week 11+ `voting` — populated when [votingStatus] is pending or done.
+  final ProjectVotingSummaryEntity? voting;
+
+  /// Set when `GET /projects/{id}` includes Week 11 envelope fields.
+  final bool hasWeek11ProjectDetailEnvelope;
+
   final bool borrowingEnabled;
 
   /// From API `project.pendingRequestCount` (join requests awaiting approval).
@@ -52,6 +73,9 @@ class ProjectDetailEntity {
 
   /// Success vote in progress — hide Contribute/Borrow; show View Success Votes.
   final bool hasActiveSuccessVote;
+
+  /// From `GET …/closure-voting/active` when a vote window is open.
+  final ActiveClosureVoteEntity? activeClosureVote;
 
   final List<ProjectInviteEntity> invites;
 
@@ -78,6 +102,12 @@ class ProjectDetailEntity {
     this.repaymentGraceDays = 0,
     this.contributionsAreNonRefundable = false,
     this.displayStatusLabel = '',
+    this.projectLifecycleState = '',
+    this.projectBannerStatus = ProjectDetailBannerStatus.ongoing,
+    this.votingStatus = ProjectVotingStatus.notStarted,
+    this.detailUserRole = ProjectDetailUserRole.member,
+    this.voting,
+    this.hasWeek11ProjectDetailEnvelope = false,
     this.borrowingEnabled = false,
     this.pendingJoinRequestCount = 0,
     this.projectInviteCode = '',
@@ -87,6 +117,7 @@ class ProjectDetailEntity {
     this.penaltyPercentage,
     this.successVoteWindowHours = 0,
     this.hasActiveSuccessVote = false,
+    this.activeClosureVote,
     this.invites = const [],
     this.hasCoLeader = false,
   });
@@ -112,11 +143,83 @@ class ProjectDetailEntity {
   /// GroupLeader and CoLeader share the same detail UI (until product splits them).
   bool get isModeratorView => isGroupLeader || isCoLeader;
 
-  /// Mark successful / initiate success vote — GroupLeader only.
+  /// Mark successful / initiate success vote — leader menu (legacy); card uses [canStartVotingOnDetail].
   bool get canMarkProjectSuccessful => isGroupLeader;
 
   /// Stop contributions vote — group leader on investment projects only (not VAC / emergency).
   bool get canStopContributions => isGroupLeader && category.isInvestment;
+
+  bool get isDetailLeader =>
+      resolvedDetailUserRole == ProjectDetailUserRole.leader;
+
+  bool get isDetailCoLeader =>
+      resolvedDetailUserRole == ProjectDetailUserRole.coLeader;
+
+  bool get isDetailMember =>
+      resolvedDetailUserRole == ProjectDetailUserRole.member;
+
+  /// Prefer Week 11 `userRole`; fall back to nested `project.viewerRole` for legacy paths.
+  ProjectDetailUserRole get resolvedDetailUserRole {
+    if (hasWeek11ProjectDetailEnvelope) return detailUserRole;
+    return projectDetailUserRoleFromViewerRole(
+      switch (viewerRole) {
+        ViewerMembershipRole.groupLeader => 'leader',
+        ViewerMembershipRole.coLeader => 'co_leader',
+        ViewerMembershipRole.member => 'member',
+      },
+    );
+  }
+
+  /// Leader and co-leader share the same voting card actions (Week 11+).
+  bool get isDetailModeratorForVoting =>
+      isDetailLeader || isDetailCoLeader;
+
+  bool get showsProjectDetailStatusBanner => hasWeek11ProjectDetailEnvelope;
+
+  /// True when `GET /projects/{id}` includes Week 11 voting fields.
+  bool get hasWeek11VotingPayload => hasWeek11ProjectDetailEnvelope;
+
+  /// Voting card only when project is ongoing and Week 11 voting data is present.
+  bool get showsProjectDetailVotingCard =>
+      projectBannerStatus == ProjectDetailBannerStatus.ongoing &&
+      hasWeek11VotingPayload;
+
+  bool get votingIsInProgress =>
+      votingStatus == ProjectVotingStatus.pending ||
+      votingStatus == ProjectVotingStatus.done;
+
+  /// Week 11+: start vote from detail card (leader + co-leader).
+  bool get canStartVotingOnDetail =>
+      isDetailModeratorForVoting &&
+      votingStatus == ProjectVotingStatus.notStarted;
+
+  bool get canViewVotesOnDetail =>
+      isDetailModeratorForVoting && votingIsInProgress;
+
+  bool get canCloseVotingOnDetail =>
+      isDetailModeratorForVoting &&
+      votingStatus == ProjectVotingStatus.pending &&
+      voting != null &&
+      !voting!.isFinalized;
+
+  bool get canFinalizeVotingOnDetail =>
+      isDetailLeader &&
+      votingStatus == ProjectVotingStatus.done &&
+      voting != null &&
+      !voting!.isFinalized;
+
+  /// Member inline cast on project detail (Week 11+).
+  bool get showsInlineMemberCastVote =>
+      isDetailMember &&
+      votingStatus == ProjectVotingStatus.pending &&
+      voting != null &&
+      !voting!.hasVoted;
+
+  bool get showsMemberVoteSubmittedLabel =>
+      isDetailMember &&
+      votingIsInProgress &&
+      voting != null &&
+      voting!.hasVoted;
 
   /// Edit project / cancel project — GroupLeader only (CoLeader popup Figma).
   bool get canEditProject => isGroupLeader;
@@ -138,6 +241,12 @@ class ProjectDetailEntity {
         ? AppStrings.statusOnGoing
         : AppStrings.statusCompleted;
   }
+
+  String get projectBannerLabel => switch (projectBannerStatus) {
+    ProjectDetailBannerStatus.ongoing => AppStrings.projectBannerOngoing,
+    ProjectDetailBannerStatus.completed => AppStrings.projectBannerCompleted,
+    ProjectDetailBannerStatus.cancelled => AppStrings.projectBannerCancelled,
+  };
 
   bool get isDraftStatus => displayStatusLabel.toLowerCase() == 'draft';
 
@@ -165,11 +274,21 @@ class ProjectDetailEntity {
   bool get showsInvestmentVoteOutcomeDevPreviews =>
       isModeratorView && category.isInvestment;
 
-  /// Leader / co-leader: replace wallet CTAs while a success vote is open.
+  /// Legacy wallet CTA — superseded by [ProjectDetailVotingCard] when Week 11 fields are active.
   bool get showsViewSuccessVotesAction =>
       hasActiveSuccessVote &&
       usesLeaderDetailPanels &&
-      showsSuccessVoteDevPreviews;
+      !hasWeek11VotingPayload;
+
+  /// Legacy navigation cast button when Week 11 card is not active.
+  bool get showsCastVoteAction =>
+      hasActiveSuccessVote &&
+      isMemberView &&
+      !hasWeek11VotingPayload;
+
+  /// Hide Contribute/Borrow while a vote is in progress on the detail card.
+  bool get hidesWalletActionsForVoting =>
+      hasWeek11VotingPayload && votingIsInProgress;
 
   /// Promote / demote co-leader — vacation and emergency only (see [ProjectCategoryX.supportsCoLeader]).
   bool get supportsCoLeader => category.supportsCoLeader;

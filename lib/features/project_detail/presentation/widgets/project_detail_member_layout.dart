@@ -12,6 +12,7 @@ import 'package:vestie/features/success_vote/presentation/models/success_vote_ca
 import 'package:vestie/features/success_vote/presentation/widgets/success_vote_cast_content.dart';
 
 import 'project_detail_cast_vote_dev_previews.dart';
+import 'project_detail_inline_cast_vote.dart';
 import 'project_detail_member_scroll_content.dart';
 import 'project_detail_scroll_insets.dart';
 import 'project_detail_vote_outcome_dev_previews.dart';
@@ -102,6 +103,24 @@ class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
       );
     }
 
+    if (widget.project.showsInlineMemberCastVote) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _header(context),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: ProjectDetailInlineCastVote(
+                project: widget.project,
+                onRefresh: widget.onRefresh,
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -137,6 +156,7 @@ class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
                           ProjectDetailMemberScrollContent(
                             project: widget.project,
                             onMemberTap: widget.onMemberTap,
+                            onRefresh: widget.onRefresh,
                           ),
                         ],
                       ),

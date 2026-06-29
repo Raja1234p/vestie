@@ -95,13 +95,17 @@ Future<void> _handleLeaderAction(
         extra: MarkSuccessfulRouteArgs(
           projectId: project.id,
           memberCount: project.members.length,
+          projectCategory: project.category,
         ),
       );
       break;
     case LeaderMenuAction.stopContributions:
       context.push(
         AppRoutes.stopContributions,
-        extra: StopContributionsRouteArgs(projectId: project.id),
+        extra: StopContributionsRouteArgs(
+          projectId: project.id,
+          projectCategory: project.category,
+        ),
       );
       break;
     case LeaderMenuAction.cancelProject:

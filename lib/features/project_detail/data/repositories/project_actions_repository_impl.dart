@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 
 import '../../../../core/error/failure_mapper.dart';
 import '../../../../core/error/failures.dart';
+import '../../domain/entities/cancel_project_entities.dart';
 import '../../domain/entities/member_activity_entity.dart';
 import '../../domain/entities/pending_join_request_entity.dart';
 import '../../domain/repositories/project_actions_repository.dart';
@@ -92,36 +93,17 @@ class ProjectActionsRepositoryImpl implements ProjectActionsRepository {
   }
 
   @override
-  Future<Either<Failure, void>> openClosureVoting({
-    required String projectId,
-    required int votingWindowDays,
-  }) async {
-    return _execute(
-      () => remoteDataSource.openClosureVoting(
-        projectId: projectId,
-        votingWindowDays: votingWindowDays,
-      ),
-    );
-  }
-
-  @override
-  Future<Either<Failure, void>> openStopContributionsVoting({
-    required String projectId,
-    required int votingWindowDays,
-  }) async {
-    return _execute(
-      () => remoteDataSource.openStopContributionsVoting(
-        projectId: projectId,
-        votingWindowDays: votingWindowDays,
-      ),
-    );
-  }
-
-  @override
-  Future<Either<Failure, void>> cancelProject({
+  Future<Either<Failure, CancelProjectResultEntity>> cancelProject({
     required String projectId,
   }) async {
-    return _execute(() => remoteDataSource.cancelProject(projectId: projectId));
+    try {
+      final model = await remoteDataSource.cancelProject(projectId: projectId);
+      return Right(model.toEntity());
+    } on Failure catch (f) {
+      return Left(f);
+    } catch (e) {
+      return Left(FailureMapper.fromException(e));
+    }
   }
 
   @override
@@ -178,19 +160,6 @@ class ProjectActionsRepositoryImpl implements ProjectActionsRepository {
   }
 
   @override
-  Future<Either<Failure, void>> castClosureVote({
-    required String projectId,
-    required bool voteForSuccess,
-  }) async {
-    return _execute(
-      () => remoteDataSource.castClosureVote(
-        projectId: projectId,
-        voteForSuccess: voteForSuccess,
-      ),
-    );
-  }
-
-  @override
   Future<Either<Failure, void>> extendClosureVoting({
     required String projectId,
     required int extraDays,
@@ -200,15 +169,6 @@ class ProjectActionsRepositoryImpl implements ProjectActionsRepository {
         projectId: projectId,
         extraDays: extraDays,
       ),
-    );
-  }
-
-  @override
-  Future<Either<Failure, void>> finalizeClosureVoting({
-    required String projectId,
-  }) async {
-    return _execute(
-      () => remoteDataSource.finalizeClosureVoting(projectId: projectId),
     );
   }
 

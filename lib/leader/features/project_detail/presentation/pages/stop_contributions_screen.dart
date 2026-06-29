@@ -12,13 +12,19 @@ import 'package:vestie/core/widgets/common/app_outline_neutral_button.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/features/project_detail/domain/entities/leader_voting_flow_kind.dart';
+import 'package:vestie/user/features/home/domain/entities/project.dart';
 import '../widgets/stop_contributions_widgets.dart';
 
 /// GroupLeader — initiate stop-contributions member vote (Figma).
 class StopContributionsScreen extends StatelessWidget {
   final String projectId;
+  final ProjectCategory projectCategory;
 
-  const StopContributionsScreen({super.key, required this.projectId});
+  const StopContributionsScreen({
+    super.key,
+    required this.projectId,
+    this.projectCategory = ProjectCategory.investment,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +70,7 @@ class StopContributionsScreen extends StatelessWidget {
                       extra: VotingWindowRouteArgs(
                         projectId: projectId,
                         flowKind: LeaderVotingFlowKind.stopContributions,
+                        projectCategory: projectCategory,
                       ),
                     );
                   },

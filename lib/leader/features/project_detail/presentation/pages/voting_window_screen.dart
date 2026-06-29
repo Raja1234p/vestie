@@ -18,17 +18,21 @@ import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_flow_sub_header.dart';
 import 'package:vestie/features/project_detail/domain/entities/leader_voting_flow_kind.dart';
+import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation.dart';
+import 'package:vestie/user/features/home/domain/entities/project.dart';
 import '../cubit/voting_window_cubit.dart';
 
 /// Leader sets voting window (days) before starting a member vote.
 class VotingWindowScreen extends StatefulWidget {
   final String projectId;
   final LeaderVotingFlowKind flowKind;
+  final ProjectCategory projectCategory;
 
   const VotingWindowScreen({
     super.key,
     required this.projectId,
     this.flowKind = LeaderVotingFlowKind.markProjectSuccessful,
+    required this.projectCategory,
   });
 
   @override
@@ -38,6 +42,7 @@ class VotingWindowScreen extends StatefulWidget {
 class _VotingWindowScreenState extends State<VotingWindowScreen> {
   late final TextEditingController _daysController;
   late final FocusNode _daysFocus;
+  bool _isSubmitting = false;
 
   @override
   void initState() {
@@ -57,8 +62,23 @@ class _VotingWindowScreenState extends State<VotingWindowScreen> {
   }
 
   Future<void> _onStartVoting(VotingWindowCubit cubit) async {
+    if (_isSubmitting || cubit.state.loading) return;
+
+    _daysFocus.unfocus();
+    setState(() => _isSubmitting = true);
+
     final ok = await cubit.submit();
-    if (!mounted || !ok) return;
+    if (!mounted) return;
+    if (!ok) {
+      setState(() => _isSubmitting = false);
+      return;
+    }
+
+    await ProjectDetailNavigation.reloadProjectDetailAndWait(
+      context,
+      projectId: widget.projectId,
+    );
+    if (!mounted) return;
 
     if (widget.flowKind == LeaderVotingFlowKind.stopContributions) {
       context.pop();
@@ -100,6 +120,7 @@ class _VotingWindowScreenState extends State<VotingWindowScreen> {
       create: (_) => VotingWindowCubit(
         projectId: widget.projectId,
         flowKind: widget.flowKind,
+        projectCategory: widget.projectCategory,
       ),
       child: BlocListener<VotingWindowCubit, VotingWindowState>(
         listenWhen: (prev, curr) =>
@@ -113,6 +134,7 @@ class _VotingWindowScreenState extends State<VotingWindowScreen> {
         child: BlocBuilder<VotingWindowCubit, VotingWindowState>(
           builder: (context, state) {
             final cubit = context.read<VotingWindowCubit>();
+            final isBusy = _isSubmitting || state.loading;
             final labelStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
               fontSize: 16.sp,
               fontWeight: FontWeight.w500,
@@ -128,7 +150,7 @@ class _VotingWindowScreenState extends State<VotingWindowScreen> {
                   children: [
                     PostAuthFlowSubHeader(
                       title: AppStrings.votingWindowTitle,
-                      onBack: state.loading ? () {} : () => context.pop(),
+                      onBack: isBusy ? () {} : () => context.pop(),
                     ),
                     Expanded(
                       child: SingleChildScrollView(
@@ -142,6 +164,7 @@ class _VotingWindowScreenState extends State<VotingWindowScreen> {
                           hint: AppStrings.hintVotingWindowDays,
                           controller: _daysController,
                           focusNode: _daysFocus,
+                          readOnly: isBusy,
                           keyboardType: TextInputType.number,
                           textInputAction: TextInputAction.done,
                           maxLength: VotingWindowCubit.maxDigits,
@@ -149,7 +172,9 @@ class _VotingWindowScreenState extends State<VotingWindowScreen> {
                           labelStyle: labelStyle,
                           fillColor: AppColors.searchBarBg,
                           labelTrailing: GestureDetector(
-                            onTap: () => _showVotingWindowInfo(context),
+                            onTap: isBusy
+                                ? null
+                                : () => _showVotingWindowInfo(context),
                             child: AppSvgIcon(
                               assetPath: AppAssets.iconInfoCircle,
                               size: 20.w,
@@ -164,21 +189,19 @@ class _VotingWindowScreenState extends State<VotingWindowScreen> {
                             ),
                           ],
                           onChanged: cubit.setDigitsFromField,
-                          onSubmitted: (_) {
-                            if (state.canSubmit) _onStartVoting(cubit);
-                          },
+                          onSubmitted: (_) => _daysFocus.unfocus(),
                         ),
                       ),
                     ),
                     FlowScreenFooter(
                       child: AppButton(
                         text: AppStrings.btnStartVoting,
-                        isLoading: state.loading,
+                        isLoading: isBusy,
                         useGradient: false,
                         hasShadow: false,
                         color: AppColors.green800,
-                        borderRadius: AppRadius.r8,
-                        onPressed: state.canSubmit
+                        borderRadius: AppRadius.r100,
+                        onPressed: state.digits.isNotEmpty
                             ? () => _onStartVoting(cubit)
                             : null,
                       ),

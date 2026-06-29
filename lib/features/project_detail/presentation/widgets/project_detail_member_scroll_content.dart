@@ -9,16 +9,19 @@ import 'package:vestie/features/project_detail/presentation/widgets/project_info
 
 import 'project_detail_scroll_insets.dart';
 import 'project_detail_tab_section.dart';
+import 'project_detail_voting_sections.dart';
 
 /// Default member project detail body (announcement, wallet, tabs).
 class ProjectDetailMemberScrollContent extends StatelessWidget {
   final ProjectDetailEntity project;
   final ValueChanged<MemberEntity> onMemberTap;
+  final Future<void> Function() onRefresh;
 
   const ProjectDetailMemberScrollContent({
     super.key,
     required this.project,
     required this.onMemberTap,
+    required this.onRefresh,
   });
 
   @override
@@ -27,6 +30,7 @@ class ProjectDetailMemberScrollContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SizedBox(height: 12.h),
+        ProjectDetailVotingSections(project: project, onRefresh: onRefresh),
         ProjectAnnouncementsSection(project: project, gapAfter: 12.h),
         ProjectInfoCard(project: project),
         SizedBox(height: 16.h),

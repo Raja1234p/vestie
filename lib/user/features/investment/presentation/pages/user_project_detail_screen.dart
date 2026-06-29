@@ -132,6 +132,7 @@ class _UserProjectDetailScreenState extends State<UserProjectDetailScreen> {
                         AppRoutes.userInvestmentReturns,
                         extra: InvestmentReturnsRouteArgs(
                           data: InvestmentReturnsUiData.fromLegacySnapshot(_s),
+                          isPreview: true,
                         ),
                       );
                     },

@@ -1,4 +1,6 @@
+import 'package:vestie/features/project_detail/domain/entities/closure_vote_entities.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
+import 'package:vestie/features/project_detail/presentation/mappers/closure_vote_ui_mappers.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 
 import 'success_vote_cast_route_args.dart';
@@ -57,9 +59,48 @@ class SuccessVoteCastUiData {
       totalRaised: args.totalRaised,
       deadlineLabel: args.deadlineLabel,
       daysRemaining: args.daysRemaining,
-      thumbsUp: 4,
-      thumbsDown: 2,
-      notVoted: 5,
+      thumbsUp: args.thumbsUp ?? 4,
+      thumbsDown: args.thumbsDown ?? 2,
+      notVoted: args.notYetVoted ?? 5,
+    );
+  }
+
+  factory SuccessVoteCastUiData.fromActiveVote({
+    required ActiveClosureVoteEntity vote,
+    required SuccessVoteCastRouteArgs args,
+  }) {
+    return SuccessVoteCastUiData(
+      projectId: args.projectId,
+      projectCategory: args.projectCategory,
+      isCoLeader: args.isCoLeader,
+      goalAmount: vote.goalAmount > 0 ? vote.goalAmount : args.goalAmount,
+      memberCount: vote.memberCount > 0 ? vote.memberCount : args.memberCount,
+      totalRaised: vote.totalRaised > 0 ? vote.totalRaised : args.totalRaised,
+      deadlineLabel: formatClosureVoteDeadlineLabel(vote.votingDeadlineUtc),
+      daysRemaining: vote.daysRemaining,
+      thumbsUp: vote.thumbsUp,
+      thumbsDown: vote.thumbsDown,
+      notVoted: vote.notYetVoted,
+    );
+  }
+
+  SuccessVoteCastUiData copyWithTallies({
+    required int thumbsUp,
+    required int thumbsDown,
+    required int notVoted,
+  }) {
+    return SuccessVoteCastUiData(
+      projectId: projectId,
+      projectCategory: projectCategory,
+      isCoLeader: isCoLeader,
+      goalAmount: goalAmount,
+      memberCount: memberCount,
+      totalRaised: totalRaised,
+      deadlineLabel: deadlineLabel,
+      daysRemaining: daysRemaining,
+      thumbsUp: thumbsUp,
+      thumbsDown: thumbsDown,
+      notVoted: notVoted,
     );
   }
 }

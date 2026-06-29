@@ -1,3 +1,5 @@
+import 'package:vestie/user/features/home/domain/entities/project.dart';
+import 'package:vestie/features/project_detail/domain/entities/cancel_project_entities.dart';
 import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/leader_voting_flow_kind.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
@@ -79,15 +81,35 @@ class MyBorrowRequestRouteArgs {
 }
 
 class InvestmentReturnsRouteArgs {
-  final InvestmentReturnsUiData data;
+  final InvestmentReturnsUiData? data;
+  final String? projectId;
+  final String? projectName;
+  final bool isLeaderView;
+  final bool isPreview;
 
-  const InvestmentReturnsRouteArgs({required this.data});
+  const InvestmentReturnsRouteArgs({
+    this.data,
+    this.projectId,
+    this.projectName,
+    this.isLeaderView = false,
+    this.isPreview = false,
+  });
 }
 
 class InvestmentDistributionRouteArgs {
-  final InvestmentDistributionUiData data;
+  final InvestmentDistributionUiData? data;
+  final String projectId;
+  final String? projectName;
+  final double distributeAmountUsd;
+  final bool isPreview;
 
-  const InvestmentDistributionRouteArgs({required this.data});
+  const InvestmentDistributionRouteArgs({
+    required this.projectId,
+    this.projectName,
+    this.distributeAmountUsd = 0,
+    this.data,
+    this.isPreview = false,
+  });
 }
 
 class InvestmentDistributionSuccessRouteArgs {
@@ -249,26 +271,34 @@ enum MemberPenaltyActionOutcome {
 class MarkSuccessfulRouteArgs {
   final String projectId;
   final int memberCount;
+  final ProjectCategory projectCategory;
 
   const MarkSuccessfulRouteArgs({
     required this.projectId,
     required this.memberCount,
+    required this.projectCategory,
   });
 }
 
 class StopContributionsRouteArgs {
   final String projectId;
+  final ProjectCategory projectCategory;
 
-  const StopContributionsRouteArgs({required this.projectId});
+  const StopContributionsRouteArgs({
+    required this.projectId,
+    this.projectCategory = ProjectCategory.investment,
+  });
 }
 
 class VotingWindowRouteArgs {
   final String projectId;
   final LeaderVotingFlowKind flowKind;
+  final ProjectCategory projectCategory;
 
   const VotingWindowRouteArgs({
     required this.projectId,
     this.flowKind = LeaderVotingFlowKind.markProjectSuccessful,
+    required this.projectCategory,
   });
 }
 
@@ -305,8 +335,33 @@ class LeaveProjectRouteArgs {
 
 class ProjectCancelledRouteArgs {
   final String projectName;
+  final int refundedMemberCount;
+  final int defaultedMemberCount;
+  final double totalRefunded;
 
-  const ProjectCancelledRouteArgs({required this.projectName});
+  const ProjectCancelledRouteArgs({
+    required this.projectName,
+    this.refundedMemberCount = 0,
+    this.defaultedMemberCount = 0,
+    this.totalRefunded = 0,
+  });
+
+  factory ProjectCancelledRouteArgs.fromCancelResult({
+    required String projectName,
+    required CancelProjectResultEntity result,
+  }) {
+    return ProjectCancelledRouteArgs(
+      projectName: projectName,
+      refundedMemberCount: result.refundedMemberCount,
+      defaultedMemberCount: result.defaultedMemberCount,
+      totalRefunded: result.totalRefunded,
+    );
+  }
+
+  bool get hasRefundSummary =>
+      refundedMemberCount > 0 ||
+      defaultedMemberCount > 0 ||
+      totalRefunded > 0;
 }
 
 /// Full-screen join / mark-vote outcomes (member flows).
@@ -327,10 +382,18 @@ class UserStatusFlowArgs {
 /// Group leader monitors active success vote (Figma voting window).
 class LeaderViewSuccessVotesRouteArgs {
   final String projectName;
+  final String? projectId;
+  final bool isPreview;
   final LeaderSuccessVoteProgressUiData data;
+
+  /// Production context for navigating to vote outcome after finalize.
+  final ProjectDetailEntity? project;
 
   const LeaderViewSuccessVotesRouteArgs({
     required this.projectName,
     required this.data,
+    this.projectId,
+    this.isPreview = false,
+    this.project,
   });
 }

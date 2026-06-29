@@ -7,10 +7,12 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/error/failures.dart';
 import '../../../project_detail/domain/entities/member_entity.dart';
 import '../../../project_detail/domain/entities/member_entity_extensions.dart';
+import '../../../project_detail/domain/entities/project_detail_closure_extensions.dart';
 import '../../../project_detail/domain/entities/project_detail_entity.dart';
 import '../../../project_detail/domain/entities/project_detail_entity_extensions.dart';
 import '../../../project_detail/domain/entities/viewer_membership_role.dart';
 import '../../../project_detail/domain/repositories/project_detail_repository.dart';
+import '../../../project_detail/domain/usecases/get_active_closure_vote_usecase.dart';
 import '../../../project_detail/domain/usecases/list_pending_join_requests_usecase.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
@@ -166,6 +168,7 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
   final ListPendingJoinRequestsUseCase? _listPendingJoinRequests;
   final ListBorrowRequestsUseCase? _listBorrowRequests;
   final SendVffRequestUseCase? _sendVffRequestUseCase;
+  final GetActiveClosureVoteUseCase? _getActiveClosureVoteUseCase;
   final List<Completer<void>> _detailLoadWaiters = [];
   bool _detailLoadInFlight = false;
   String? _detailLoadProjectId;
@@ -177,10 +180,12 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
     ListPendingJoinRequestsUseCase? listPendingJoinRequests,
     ListBorrowRequestsUseCase? listBorrowRequests,
     SendVffRequestUseCase? sendVffRequestUseCase,
+    GetActiveClosureVoteUseCase? getActiveClosureVoteUseCase,
   }) : _getProjectPotUseCase = getProjectPotUseCase,
        _listPendingJoinRequests = listPendingJoinRequests,
        _listBorrowRequests = listBorrowRequests,
        _sendVffRequestUseCase = sendVffRequestUseCase,
+       _getActiveClosureVoteUseCase = getActiveClosureVoteUseCase,
        super(ProjectDetailInitial()) {
     on<LoadProjectDetailEvent>(_onLoadProjectDetail);
     on<RefreshProjectPotEvent>(_onRefreshProjectPot);
@@ -262,6 +267,17 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
             borrowResult.fold((_) {}, (requests) {
               loadedProject = loadedProject.withBorrowRequests(requests);
             });
+          }
+
+          final activeVoteUseCase = _getActiveClosureVoteUseCase;
+          if (activeVoteUseCase != null && !loadedProject.votingIsInProgress) {
+            final activeResult = await activeVoteUseCase(event.projectId);
+            activeResult.fold((_) {}, (vote) {
+              loadedProject = loadedProject.withActiveClosureVote(vote);
+            });
+          } else if (loadedProject.votingIsInProgress) {
+            loadedProject =
+                loadedProject.withSyntheticClosureVoteFromDetailVoting();
           }
 
           emit(

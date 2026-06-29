@@ -296,6 +296,7 @@ List<RouteBase> buildProjectRoutes({
         return MarkProjectSuccessfulScreen(
           projectId: extra.projectId,
           memberCount: extra.memberCount,
+          projectCategory: extra.projectCategory,
         );
       },
     ),
@@ -304,7 +305,10 @@ List<RouteBase> buildProjectRoutes({
       builder: (context, state) {
         final extra = state.extra;
         if (extra is! StopContributionsRouteArgs) return invalidRouteScreen();
-        return StopContributionsScreen(projectId: extra.projectId);
+        return StopContributionsScreen(
+          projectId: extra.projectId,
+          projectCategory: extra.projectCategory,
+        );
       },
     ),
     GoRoute(
@@ -315,6 +319,7 @@ List<RouteBase> buildProjectRoutes({
         return VotingWindowScreen(
           projectId: extra.projectId,
           flowKind: extra.flowKind,
+          projectCategory: extra.projectCategory,
         );
       },
     ),
@@ -339,7 +344,7 @@ List<RouteBase> buildProjectRoutes({
       builder: (context, state) {
         final extra = state.extra;
         if (extra is! ProjectCancelledRouteArgs) return invalidRouteScreen();
-        return ProjectCancelledScreen(projectName: extra.projectName);
+        return ProjectCancelledScreen(args: extra);
       },
     ),
     GoRoute(
@@ -402,11 +407,14 @@ List<RouteBase> buildProjectRoutes({
       builder: (context, state) {
         final extra = state.extra;
         if (extra is InvestmentReturnsRouteArgs) {
-          return UserInvestmentReturnsScreen(data: extra.data);
+          return UserInvestmentReturnsScreen(args: extra);
         }
         if (extra is UserInvestmentUiSnapshot) {
           return UserInvestmentReturnsScreen(
-            data: InvestmentReturnsUiData.fromLegacySnapshot(extra),
+            args: InvestmentReturnsRouteArgs(
+              data: InvestmentReturnsUiData.fromLegacySnapshot(extra),
+              isPreview: true,
+            ),
           );
         }
         return invalidRouteScreen();
@@ -417,7 +425,7 @@ List<RouteBase> buildProjectRoutes({
       builder: (context, state) {
         final extra = state.extra;
         if (extra is InvestmentReturnsRouteArgs) {
-          return LeaderDistributeFundsScreen(data: extra.data);
+          return LeaderDistributeFundsScreen(args: extra);
         }
         return invalidRouteScreen();
       },
@@ -427,7 +435,7 @@ List<RouteBase> buildProjectRoutes({
       builder: (context, state) {
         final extra = state.extra;
         if (extra is InvestmentDistributionRouteArgs) {
-          return InvestmentDistributionScreen(data: extra.data);
+          return InvestmentDistributionScreen(args: extra);
         }
         return invalidRouteScreen();
       },

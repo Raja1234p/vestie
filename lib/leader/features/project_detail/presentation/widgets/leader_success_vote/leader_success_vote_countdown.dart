@@ -38,6 +38,14 @@ class _LeaderSuccessVoteCountdownState
   }
 
   @override
+  void didUpdateWidget(LeaderSuccessVoteCountdown oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialRemaining != widget.initialRemaining) {
+      _remaining = widget.initialRemaining;
+    }
+  }
+
+  @override
   void dispose() {
     _timer?.cancel();
     super.dispose();

@@ -24,7 +24,10 @@ import 'package:vestie/features/project_detail/presentation/widgets/project_memb
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_trailing_actions.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_load_error.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_loading_body.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_voting_entities.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_cast_vote_dev_previews.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_detail_inline_cast_vote.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_detail_voting_sections.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_vote_outcome_dev_previews.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_wallet_actions.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_reload_scope.dart';
@@ -173,13 +176,24 @@ class _InvestmentProjectDetailBodyState
             if (state is ProjectDetailLoaded) {
               final project = state.project;
               final pendingCount = state.pendingJoinRequestCount;
-              final isCompleted = project.status == ProjectStatus.completed;
+              final isCompleted = project.status == ProjectStatus.completed ||
+                  project.projectBannerStatus ==
+                      ProjectDetailBannerStatus.completed;
               final showCompletedLayout =
                   isCompleted || _previewCompletedInvestment;
               final showMemberCastVotePreview =
                   project.isMemberView &&
                   !showCompletedLayout &&
                   _previewCastVote;
+
+              Future<void> refreshDetail() async {
+                context.read<ProjectDetailBloc>().add(
+                  LoadProjectDetailEvent(projectId: widget.projectId),
+                );
+                await context.read<ProjectDetailBloc>().stream.firstWhere(
+                  (s) => s is ProjectDetailLoaded || s is ProjectDetailError,
+                );
+              }
 
               Future<void> openMemberDetail(MemberEntity member) async {
                 final result = await ProjectDetailNavigation.openMemberProfile(
@@ -232,6 +246,24 @@ class _InvestmentProjectDetailBodyState
                 );
               }
 
+              if (project.showsInlineMemberCastVote && !showCompletedLayout) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    header(),
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        child: ProjectDetailInlineCastVote(
+                          project: project,
+                          onRefresh: refreshDetail,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }
+
               if (showMemberCastVotePreview) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -251,14 +283,7 @@ class _InvestmentProjectDetailBodyState
 
               return RefreshIndicator(
                 color: AppColors.primary,
-                onRefresh: () async {
-                  context.read<ProjectDetailBloc>().add(
-                    LoadProjectDetailEvent(projectId: widget.projectId),
-                  );
-                  await context.read<ProjectDetailBloc>().stream.firstWhere(
-                    (s) => s is ProjectDetailLoaded || s is ProjectDetailError,
-                  );
-                },
+                onRefresh: refreshDetail,
                 child: CustomScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   slivers: [
@@ -290,6 +315,10 @@ class _InvestmentProjectDetailBodyState
                                     : null,
                               )
                             else ...[
+                              ProjectDetailVotingSections(
+                                project: project,
+                                onRefresh: refreshDetail,
+                              ),
                               if (project.isModeratorView)
                                 ProjectDetailVoteOutcomeDevPreviews(
                                   project: project,

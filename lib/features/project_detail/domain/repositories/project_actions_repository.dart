@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/error/failures.dart';
+import '../entities/cancel_project_entities.dart';
 import '../entities/member_activity_entity.dart';
 import '../entities/pending_join_request_entity.dart';
 
@@ -28,15 +29,9 @@ abstract class ProjectActionsRepository {
   );
   Future<Either<Failure, void>> demoteCoLeader(String projectId, String userId);
 
-  Future<Either<Failure, void>> openClosureVoting({
+  Future<Either<Failure, CancelProjectResultEntity>> cancelProject({
     required String projectId,
-    required int votingWindowDays,
   });
-  Future<Either<Failure, void>> openStopContributionsVoting({
-    required String projectId,
-    required int votingWindowDays,
-  });
-  Future<Either<Failure, void>> cancelProject({required String projectId});
   Future<Either<Failure, void>> leaveProject({required String projectId});
   Future<Either<Failure, String>> createInvite({
     required String projectId,
@@ -52,16 +47,9 @@ abstract class ProjectActionsRepository {
     required String projectId,
     required String userId,
   });
-  Future<Either<Failure, void>> castClosureVote({
-    required String projectId,
-    required bool voteForSuccess,
-  });
   Future<Either<Failure, void>> extendClosureVoting({
     required String projectId,
     required int extraDays,
-  });
-  Future<Either<Failure, void>> finalizeClosureVoting({
-    required String projectId,
   });
   Future<Either<Failure, void>> resolveGoal({required String projectId});
   Future<Either<Failure, void>> extendDeadline({

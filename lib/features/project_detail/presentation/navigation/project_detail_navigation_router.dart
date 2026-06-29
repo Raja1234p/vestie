@@ -82,11 +82,9 @@ Future<void> _openDistributeFundsFlow(
   context.push(
     AppRoutes.leaderInvestmentDistribution,
     extra: InvestmentDistributionRouteArgs(
-      data: InvestmentDistributionUiData.preview(
-        projectId: returnsData.projectId,
-        projectName: returnsData.projectName,
-        distributeAmountUsd: amountUsd,
-      ),
+      projectId: returnsData.projectId,
+      projectName: returnsData.projectName,
+      distributeAmountUsd: amountUsd,
     ),
   );
 }
@@ -99,7 +97,9 @@ void _openInvestmentReturns(
     context.push(
       AppRoutes.leaderDistributeFunds,
       extra: InvestmentReturnsRouteArgs(
-        data: InvestmentReturnsUiData.previewLeaderForProject(project),
+        projectId: project.id,
+        projectName: project.name,
+        isLeaderView: true,
       ),
     );
     return;
@@ -107,7 +107,8 @@ void _openInvestmentReturns(
   context.push(
     AppRoutes.userInvestmentReturns,
     extra: InvestmentReturnsRouteArgs(
-      data: InvestmentReturnsUiData.previewForProject(project),
+      projectId: project.id,
+      projectName: project.name,
     ),
   );
 }
@@ -116,14 +117,46 @@ void _openLeaderViewSuccessVotes(
   BuildContext context, {
   required ProjectDetailEntity project,
 }) {
+  if (project.hasActiveSuccessVote && project.activeClosureVote != null) {
+    final vote = project.activeClosureVote!;
+    context.push(
+      AppRoutes.leaderViewSuccessVotes,
+      extra: LeaderViewSuccessVotesRouteArgs(
+        projectName: project.name,
+        projectId: project.id,
+        project: project,
+        data: leaderSuccessVoteProgressFromActiveVote(
+          vote: vote,
+          project: project,
+        ),
+      ),
+    );
+    return;
+  }
+
   if (!project.showsSuccessVoteDevPreviews) return;
 
   context.push(
     AppRoutes.leaderViewSuccessVotes,
     extra: LeaderViewSuccessVotesRouteArgs(
       projectName: project.name,
+      isPreview: true,
       data: LeaderSuccessVoteProgressUiData.preview(project: project),
     ),
+  );
+}
+
+void _openCastVote(
+  BuildContext context, {
+  required ProjectDetailEntity project,
+}) {
+  if (!project.showsCastVoteAction || project.activeClosureVote == null) {
+    return;
+  }
+
+  context.push(
+    AppRoutes.userSuccessVote,
+    extra: successVoteCastRouteArgsFromProject(project),
   );
 }
 
@@ -151,6 +184,7 @@ void _openCastVotePreview(
           ? project.endsIn
           : 'May 12, 2025',
       daysRemaining: 21,
+      isPreview: true,
     ),
   );
 }
@@ -199,6 +233,26 @@ void _openStopContributionsVoteRejectedPreview(
       viewerRole: role,
       variant: SuccessVoteOutcomeVariant.stopContributionsRejected,
       project: project,
+    ),
+  );
+}
+
+void _openClosureVoteOutcome(
+  BuildContext context, {
+  required ProjectDetailEntity project,
+  required FinalizeClosureVoteResultEntity finalizeResult,
+  bool popCurrentRoute = false,
+}) {
+  if (popCurrentRoute && context.canPop()) {
+    context.pop();
+  }
+  if (!context.mounted) return;
+
+  context.push(
+    AppRoutes.userVoteOutcome,
+    extra: successVoteOutcomeRouteArgsFromFinalize(
+      project: project,
+      result: finalizeResult,
     ),
   );
 }

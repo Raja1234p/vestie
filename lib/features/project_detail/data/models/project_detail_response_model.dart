@@ -7,7 +7,9 @@ import '../../domain/entities/borrow_request_entity.dart';
 import '../../domain/entities/member_entity.dart';
 import '../../domain/entities/member_entity_extensions.dart';
 import '../../domain/entities/project_announcement_entity.dart';
+import '../../domain/entities/project_detail_closure_extensions.dart';
 import '../../domain/entities/project_detail_entity.dart';
+import '../../domain/entities/project_detail_voting_entities.dart';
 import '../../domain/entities/project_invite_entity.dart';
 import '../../domain/entities/viewer_membership_role.dart';
 
@@ -19,6 +21,10 @@ class ProjectDetailResponseModel {
   final List<_MembershipPayload> _members;
   final List<_InvitePayload> _invites;
   final List<_AnnouncementPayload> _announcements;
+  final String? _projectStatusRaw;
+  final String? _votingStatusRaw;
+  final String? _userRoleRaw;
+  final _VotingPayload? _voting;
 
   const ProjectDetailResponseModel._({
     required _ProjectPayload project,
@@ -27,12 +33,20 @@ class ProjectDetailResponseModel {
     required List<_MembershipPayload> members,
     required List<_InvitePayload> invites,
     required List<_AnnouncementPayload> announcements,
+    String? projectStatusRaw,
+    String? votingStatusRaw,
+    String? userRoleRaw,
+    _VotingPayload? voting,
   }) : _project = project,
        _rules = rules,
        _viewerMembership = viewerMembership,
        _members = members,
        _invites = invites,
-       _announcements = announcements;
+       _announcements = announcements,
+       _projectStatusRaw = projectStatusRaw,
+       _votingStatusRaw = votingStatusRaw,
+       _userRoleRaw = userRoleRaw,
+       _voting = voting;
 
   factory ProjectDetailResponseModel.fromJson(Map<String, dynamic> json) {
     final projectJson =
@@ -44,24 +58,10 @@ class ProjectDetailResponseModel {
     final viewerMembershipJson =
         (json['viewerMembership'] as Map?)?.cast<String, dynamic>() ??
         const <String, dynamic>{};
-    final membersJson =
-        (json['members'] as List?)
-            ?.whereType<Map>()
-            .map((m) => m.cast<String, dynamic>())
-            .toList() ??
-        const <Map<String, dynamic>>[];
-    final invitesJson =
-        (json['invites'] as List?)
-            ?.whereType<Map>()
-            .map((m) => m.cast<String, dynamic>())
-            .toList() ??
-        const <Map<String, dynamic>>[];
-    final announcementsJson =
-        (json['announcements'] as List?)
-            ?.whereType<Map>()
-            .map((m) => m.cast<String, dynamic>())
-            .toList() ??
-        const <Map<String, dynamic>>[];
+    final membersJson = _parseSectionList(json['members']);
+    final invitesJson = _parseSectionList(json['invites']);
+    final announcementsJson = _parseSectionList(json['announcements']);
+    final votingJson = (json['voting'] as Map?)?.cast<String, dynamic>();
 
     return ProjectDetailResponseModel._(
       project: _ProjectPayload.fromJson(projectJson),
@@ -74,7 +74,36 @@ class ProjectDetailResponseModel {
       announcements: announcementsJson
           .map(_AnnouncementPayload.fromJson)
           .toList(growable: false),
+      projectStatusRaw: _nullableString(json['projectStatus']),
+      votingStatusRaw: _nullableString(json['votingStatus']),
+      userRoleRaw: _nullableString(json['userRole']),
+      voting: votingJson == null ? null : _VotingPayload.fromJson(votingJson),
     );
+  }
+
+  static List<Map<String, dynamic>> _parseSectionList(dynamic raw) {
+    if (raw is List) {
+      return raw
+          .whereType<Map>()
+          .map((m) => m.cast<String, dynamic>())
+          .toList();
+    }
+    if (raw is Map) {
+      final items = raw['items'] ?? raw['data'] ?? raw['results'];
+      if (items is List) {
+        return items
+            .whereType<Map>()
+            .map((m) => m.cast<String, dynamic>())
+            .toList();
+      }
+    }
+    return const <Map<String, dynamic>>[];
+  }
+
+  static String? _nullableString(dynamic value) {
+    if (value == null) return null;
+    final s = value.toString().trim();
+    return s.isEmpty ? null : s;
   }
 
   ProjectDetailEntity toEntity() {
@@ -109,11 +138,38 @@ class ProjectDetailResponseModel {
         )
         .toList(growable: false);
 
-    return ProjectDetailEntity(
+    final lifecycleState = _project.lifecycleState;
+    final projectBannerStatus = _projectStatusRaw != null
+        ? parseProjectDetailBannerStatus(_projectStatusRaw)
+        : projectDetailBannerStatusFromLifecycleState(lifecycleState);
+    final votingStatus = _votingStatusRaw != null
+        ? parseProjectVotingStatus(_votingStatusRaw)
+        : ProjectVotingStatus.notStarted;
+    final detailUserRole = _userRoleRaw != null
+        ? parseProjectDetailUserRole(_userRoleRaw)
+        : projectDetailUserRoleFromViewerRole(_project.viewerRole);
+    final votingSummary = _voting?.toEntity();
+
+    final entityStatus = switch (projectBannerStatus) {
+      ProjectDetailBannerStatus.completed ||
+      ProjectDetailBannerStatus.cancelled => ProjectStatus.completed,
+      ProjectDetailBannerStatus.ongoing => ProjectStatus.ongoing,
+    };
+
+    final hasWeek11Envelope =
+        _projectStatusRaw != null ||
+        _votingStatusRaw != null ||
+        _userRoleRaw != null;
+
+    final hasActiveVote = hasWeek11Envelope &&
+        (votingStatus == ProjectVotingStatus.pending ||
+            votingStatus == ProjectVotingStatus.done);
+
+    final entity = ProjectDetailEntity(
       id: _project.id,
       name: _project.name,
       category: _mapCategory(_project.type),
-      status: _mapStatus(_project.lifecycleState),
+      status: entityStatus,
       goalAmount: _project.targetAmount,
       currentAmount: _project.displayPotAmount,
       endsIn: _project.endsAtUtc,
@@ -130,6 +186,12 @@ class ProjectDetailResponseModel {
       displayStatusLabel: _project.displayStatus.isNotEmpty
           ? _project.displayStatus
           : _project.lifecycleState,
+      projectLifecycleState: lifecycleState,
+      projectBannerStatus: projectBannerStatus,
+      votingStatus: votingStatus,
+      detailUserRole: detailUserRole,
+      voting: votingSummary,
+      hasWeek11ProjectDetailEnvelope: hasWeek11Envelope,
       borrowingEnabled: _project.borrowingEnabled && _rules.borrowingAllowed,
       pendingJoinRequestCount: _project.pendingRequestCount,
       projectInviteCode: _project.projectInviteCode,
@@ -138,9 +200,14 @@ class ProjectDetailResponseModel {
       minimumContributionAmount: _rules.minimumContributionAmount,
       penaltyPercentage: _rules.penaltyPercentage,
       successVoteWindowHours: _rules.successVoteWindowHours,
+      hasActiveSuccessVote: hasActiveVote,
       invites: mappedInvites,
       hasCoLeader: _project.hasCoLeader,
     );
+
+    if (!hasActiveVote) return entity;
+
+    return entity.withSyntheticClosureVoteFromDetailVoting();
   }
 
   static ProjectInviteEntity _mapInvite(_InvitePayload json) {
@@ -281,13 +348,49 @@ class ProjectDetailResponseModel {
     if (t.contains('emerg')) return ProjectCategory.emergency;
     return ProjectCategory.vacations;
   }
+}
 
-  static ProjectStatus _mapStatus(String state) {
-    final s = state.toLowerCase().trim();
-    if (s.contains('complete') || s.contains('cancel')) {
-      return ProjectStatus.completed;
-    }
-    return ProjectStatus.ongoing;
+class _VotingPayload {
+  final String startedAtUtc;
+  final String deadlineAtUtc;
+  final int agreedCount;
+  final int disagreedCount;
+  final int pendingCount;
+  final bool hasVoted;
+  final bool isFinalized;
+
+  const _VotingPayload({
+    required this.startedAtUtc,
+    required this.deadlineAtUtc,
+    required this.agreedCount,
+    required this.disagreedCount,
+    required this.pendingCount,
+    this.hasVoted = false,
+    this.isFinalized = false,
+  });
+
+  factory _VotingPayload.fromJson(Map<String, dynamic> json) {
+    return _VotingPayload(
+      startedAtUtc: _jsonString(json['startedAtUtc']),
+      deadlineAtUtc: _jsonString(json['deadlineAtUtc']),
+      agreedCount: (json['agreedCount'] as num?)?.toInt() ?? 0,
+      disagreedCount: (json['disagreedCount'] as num?)?.toInt() ?? 0,
+      pendingCount: (json['pendingCount'] as num?)?.toInt() ?? 0,
+      hasVoted: json['hasVoted'] == true,
+      isFinalized: json['isFinalized'] == true,
+    );
+  }
+
+  ProjectVotingSummaryEntity toEntity() {
+    return ProjectVotingSummaryEntity(
+      startedAtUtc: DateTime.parse(startedAtUtc).toUtc(),
+      deadlineAtUtc: DateTime.parse(deadlineAtUtc).toUtc(),
+      agreedCount: agreedCount,
+      disagreedCount: disagreedCount,
+      pendingCount: pendingCount,
+      hasVoted: hasVoted,
+      isFinalized: isFinalized,
+    );
   }
 }
 
