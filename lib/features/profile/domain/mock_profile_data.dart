@@ -6,7 +6,8 @@ class MockProfileData {
   MockProfileData._();
 
   static const UserProfile profile = UserProfile(
-    fullName: 'Alex Johnson',
+    firstName: 'Alex',
+    lastName: 'Johnson',
     username: '@alexj',
     email: 'alex@example.com',
   );

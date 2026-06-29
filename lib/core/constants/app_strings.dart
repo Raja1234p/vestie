@@ -141,6 +141,8 @@ class AppStrings {
       'Use 8+ characters with uppercase, lowercase, a number, and a symbol.';
   static const String errorPasswordMismatch = 'Passwords do not match.';
   static const String errorNameRequired = 'Full name is required.';
+  static const String errorFirstNameRequired = 'First name is required.';
+  static const String errorLastNameRequired = 'Last name is required.';
   static const String errorPersonNameInvalidChars =
       'Use letters and spaces only. Numbers and symbols are not allowed.';
   static const String errUsernameRequired = 'Username is required.';
@@ -559,6 +561,10 @@ class AppStrings {
   // ── Edit Profile ─────────────────────────────────────────────────────────
   static const String editProfileTitle = 'Edit Profile';
   static const String labelFullName2 = 'Full Name';
+  static const String labelFirstName = 'First Name';
+  static const String labelLastName = 'Last Name';
+  static const String hintFirstName = 'John';
+  static const String hintLastName = 'Doe';
   static const String labelUsername = 'Username';
   static const String hintUsername = '@username';
   static const String btnSaveChanges = 'Save Changes';

@@ -6,6 +6,8 @@ class UserModel extends User {
   const UserModel({
     required super.id,
     required super.name,
+    super.firstName,
+    super.lastName,
     required super.email,
     super.userName,
     super.photoUrl,
@@ -15,10 +17,10 @@ class UserModel extends User {
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
-    final firstName = (json['firstName'] as String?) ?? '';
-    final lastName = (json['lastName'] as String?) ?? '';
+    final firstName = (json['firstName'] as String?)?.trim() ?? '';
+    final lastName = (json['lastName'] as String?)?.trim() ?? '';
     final fullName =
-        (json['fullName'] as String?) ?? '$firstName $lastName'.trim();
+        (json['fullName'] as String?)?.trim() ?? '$firstName $lastName'.trim();
     final email = (json['email'] as String?) ?? '';
     final handle = (json['userName'] as String?)?.trim() ?? '';
     final rawPhoto =
@@ -29,6 +31,8 @@ class UserModel extends User {
     return UserModel(
       id: (json['id'] as String?) ?? '',
       name: fullName,
+      firstName: firstName,
+      lastName: lastName,
       email: email,
       userName: handle,
       photoUrl: rawPhoto != null && rawPhoto.isNotEmpty ? rawPhoto : null,
@@ -39,5 +43,12 @@ class UserModel extends User {
     );
   }
 
-  Map<String, dynamic> toJson() => {'id': id, 'email': email, 'name': name};
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'email': email,
+    'name': name,
+    'firstName': firstName,
+    'lastName': lastName,
+    'fullName': fullName,
+  };
 }

@@ -25,6 +25,8 @@ class UserProfileEntity extends Equatable {
     required this.roles,
   });
 
+  String get fullName => '$firstName $lastName'.trim();
+
   @override
   List<Object?> get props => [
     id,

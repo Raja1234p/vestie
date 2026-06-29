@@ -140,7 +140,7 @@ class _EditProfileFormState extends State<_EditProfileForm> {
                           controller: _nameCtrl,
                           hint: AppStrings.hintCardHolder,
                           errorText: state.fullNameError,
-                          inputFormatters: [
+                          inputFormatters: const [
                             PersonNameInputFormatter(allowSpaces: true),
                           ],
                           onChanged: cubit.setFullName,

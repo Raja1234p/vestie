@@ -282,6 +282,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     final formData = FormData.fromMap({
       'firstName': firstName,
       'lastName': lastName,
+      'fullName': '$firstName $lastName'.trim(),
       'userName': userName,
     });
 

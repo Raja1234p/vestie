@@ -60,6 +60,38 @@ class ValidationUtils {
     return null;
   }
 
+  /// Splits a display full name into API `firstName` + optional `lastName`.
+  static ({String firstName, String lastName}) splitFullNameParts(
+    String? value,
+  ) {
+    final trimmed = value?.trim() ?? '';
+    if (trimmed.isEmpty) return (firstName: '', lastName: '');
+    final parts = trimmed.split(RegExp(r'\s+'));
+    final first = parts.first;
+    final last = parts.length > 1 ? parts.sublist(1).join(' ') : '';
+    return (firstName: first, lastName: last);
+  }
+
+  /// Profile first name — letters only (no spaces).
+  static String? validateFirstName(String? value) {
+    final v = value?.trim() ?? '';
+    if (v.isEmpty) return AppStrings.errorFirstNameRequired;
+    if (!PersonNameInputFormatter.isValidTrimmed(v, allowSpaces: false)) {
+      return AppStrings.errorPersonNameInvalidChars;
+    }
+    return null;
+  }
+
+  /// Optional last name — validates format only when non-empty.
+  static String? validateLastName(String? value) {
+    final v = value?.trim() ?? '';
+    if (v.isEmpty) return null;
+    if (!PersonNameInputFormatter.isValidTrimmed(v, allowSpaces: true)) {
+      return AppStrings.errorPersonNameInvalidChars;
+    }
+    return null;
+  }
+
   /// Profile handle — letters, numbers, symbols; no spaces; max 50 characters.
   static String? validateProfileUsernameHandle(String? value) {
     final t = UsernameInputFormatter.normalize(value ?? '');

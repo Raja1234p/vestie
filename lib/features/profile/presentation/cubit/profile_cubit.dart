@@ -82,7 +82,12 @@ class ProfileCubit extends Cubit<ProfileState> {
        _getMeUseCase = getMeUseCase ?? ServiceLocator.instance.getMeUseCase,
        super(
          const ProfileState(
-           profile: UserProfile(fullName: '', username: '', email: ''),
+           profile: UserProfile(
+             firstName: '',
+             lastName: '',
+             username: '',
+             email: '',
+           ),
          ),
        );
 
@@ -194,13 +199,10 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   Future<String?> _updateProfilePhoto(UpdateMePhoto photo) async {
     final profile = state.profile;
-    final parts = profile.fullName.trim().split(RegExp(r'\s+'));
-    final firstName = parts.isEmpty ? '' : parts.first;
-    final lastName = parts.length > 1 ? parts.sublist(1).join(' ') : '';
 
     final updateResult = await _updateMeUseCase(
-      firstName: firstName,
-      lastName: lastName,
+      firstName: profile.firstName.trim(),
+      lastName: profile.lastName.trim(),
       userName: UsernameInputFormatter.normalize(profile.username),
       photo: photo,
     );

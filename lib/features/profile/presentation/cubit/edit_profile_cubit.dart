@@ -127,13 +127,11 @@ class EditProfileCubit extends Cubit<EditProfileState> {
       ),
     );
 
-    final parts = state.fullName.trim().split(RegExp(r'\s+'));
-    final firstName = parts.isEmpty ? '' : parts.first;
-    final lastName = parts.length > 1 ? parts.sublist(1).join(' ') : '';
+    final parts = ValidationUtils.splitFullNameParts(state.fullName);
 
     final updateResult = await _updateMeUseCase(
-      firstName: firstName,
-      lastName: lastName,
+      firstName: parts.firstName,
+      lastName: parts.lastName,
       userName: UsernameInputFormatter.normalize(state.username),
     );
 

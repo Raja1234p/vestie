@@ -4,6 +4,8 @@ import 'package:equatable/equatable.dart';
 class User extends Equatable {
   final String id;
   final String name;
+  final String firstName;
+  final String lastName;
   final String email;
 
   /// Handle from `GET/PUT /users/me` (`userName` in JSON).
@@ -16,6 +18,8 @@ class User extends Equatable {
   const User({
     required this.id,
     required this.name,
+    this.firstName = '',
+    this.lastName = '',
     required this.email,
     this.userName = '',
     this.photoUrl,
@@ -24,6 +28,20 @@ class User extends Equatable {
     this.refreshToken,
   });
 
+  String get fullName {
+    final combined = '$firstName $lastName'.trim();
+    return combined.isNotEmpty ? combined : name;
+  }
+
   @override
-  List<Object?> get props => [id, name, email, userName, photoUrl, isVerified];
+  List<Object?> get props => [
+    id,
+    name,
+    firstName,
+    lastName,
+    email,
+    userName,
+    photoUrl,
+    isVerified,
+  ];
 }
