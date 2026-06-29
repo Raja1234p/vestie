@@ -1,7 +1,10 @@
 import 'package:dartz/dartz.dart';
+
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/domain/entities/paginated_result.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
+import '../../../../core/models/pagination_dto.dart';
 import 'package:vestie/features/project_detail/domain/entities/viewer_membership_role.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/leader/features/create_project/domain/create_project_form.dart';
@@ -16,32 +19,44 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
   ProjectsRepositoryImpl(this.remoteDataSource);
 
   @override
-  Future<Either<Failure, List<Project>>> listProjects({
+  Future<Either<Failure, PaginatedResult<Project>>> listProjects({
     required String scope,
+    int page = PaginationQuery.defaultPage,
+    int? pageSize,
   }) async {
     try {
-      final models = await remoteDataSource.listProjects(scope: scope);
+      final pageModel = await remoteDataSource.listProjects(
+        scope: scope,
+        page: page,
+        pageSize: pageSize,
+      );
       return Right(
-        models.map((m) {
-          final statusLabel = m.displayStatus.isNotEmpty
-              ? m.displayStatus
-              : m.state;
-          return Project(
-            id: m.id,
-            name: m.name,
-            category: _mapCategory(m.type),
-            status: _mapStatus(statusLabel),
-            relation: _mapRelation(scope: scope, viewerRole: m.viewerRole),
-            goalAmount: m.targetAmount,
-            currentAmount: m.raisedAmount,
-            description: m.description,
-            endsIn: m.endsAtUtc?.toIso8601String(),
-            roiPercentage: m.roiPercentage,
-            displayStatus: m.displayStatus.isNotEmpty ? m.displayStatus : null,
-            projectInviteCode: m.projectInviteCode,
-            isPublic: _isPublicVisibility(m.visibility),
-          );
-        }).toList(),
+        PaginatedResult.fromPaginatedList(
+          PaginatedListModel(
+            items: pageModel.items.map((m) {
+              final statusLabel = m.displayStatus.isNotEmpty
+                  ? m.displayStatus
+                  : m.state;
+              return Project(
+                id: m.id,
+                name: m.name,
+                category: _mapCategory(m.type),
+                status: _mapStatus(statusLabel),
+                relation: _mapRelation(scope: scope, viewerRole: m.viewerRole),
+                goalAmount: m.targetAmount,
+                currentAmount: m.raisedAmount,
+                description: m.description,
+                endsIn: m.endsAtUtc?.toIso8601String(),
+                roiPercentage: m.roiPercentage,
+                displayStatus:
+                    m.displayStatus.isNotEmpty ? m.displayStatus : null,
+                projectInviteCode: m.projectInviteCode,
+                isPublic: _isPublicVisibility(m.visibility),
+              );
+            }).toList(growable: false),
+            pagination: pageModel.pagination,
+          ),
+        ),
       );
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message, e.title));

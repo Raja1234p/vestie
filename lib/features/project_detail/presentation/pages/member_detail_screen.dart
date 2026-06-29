@@ -20,6 +20,7 @@ import '../../../../core/widgets/common/app_shimmer.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 
 import '../../../../core/widgets/common/post_auth_header.dart';
+import '../../../../core/presentation/widgets/list_load_more_footer.dart';
 
 import '../../domain/entities/member_activity_entity.dart';
 
@@ -503,7 +504,8 @@ class _MemberDetailView extends StatelessWidget {
       case MemberDetailLoadStatus.loaded:
         final loaded = activity!;
 
-        return CustomScrollView(
+        return _MemberDetailLoadedScroll(
+          state: state,
           slivers: [
             SliverPadding(
               padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 24.h),
@@ -539,6 +541,61 @@ class _MemberDetailView extends StatelessWidget {
           ],
         );
     }
+  }
+}
+
+class _MemberDetailLoadedScroll extends StatefulWidget {
+  const _MemberDetailLoadedScroll({
+    required this.state,
+    required this.slivers,
+  });
+
+  final MemberDetailState state;
+  final List<Widget> slivers;
+
+  @override
+  State<_MemberDetailLoadedScroll> createState() =>
+      _MemberDetailLoadedScrollState();
+}
+
+class _MemberDetailLoadedScrollState extends State<_MemberDetailLoadedScroll> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    final max = _scrollController.position.maxScrollExtent;
+    final offset = _scrollController.offset;
+    if (max - offset <= 200) {
+      context.read<MemberDetailCubit>().loadMoreTransactions();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      controller: _scrollController,
+      slivers: [
+        ...widget.slivers,
+        SliverToBoxAdapter(
+          child: ListLoadMoreFooter(
+            loadingMore: widget.state.transactionsLoadingMore,
+          ),
+        ),
+      ],
+    );
   }
 }
 

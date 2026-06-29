@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/error/exceptions.dart';
+import '../../../../core/models/pagination_dto.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/utils/logger.dart';
 import '../models/create_project_request_model.dart';
@@ -79,25 +80,49 @@ class ProjectsRemoteDataSourceImpl implements ProjectsRemoteDataSource {
   }
 
   @override
-  Future<List<ProjectSummaryModel>> listProjects({
+  Future<PaginatedListModel<ProjectSummaryModel>> listProjects({
     required String scope,
+    int page = PaginationQuery.defaultPage,
+    int? pageSize,
   }) async {
     try {
       final response = await _client.get(
         ApiConstants.projects,
-        queryParameters: {'scope': scope},
+        queryParameters: {
+          'scope': scope,
+          ...PaginationQuery.pageAndSize(page: page, pageSize: pageSize),
+        },
       );
 
       final data = response.data;
-      if (data is! List) return const <ProjectSummaryModel>[];
-      return data
-          .whereType<Map>()
-          .map(
-            (m) => ProjectSummaryModel.fromJson(
-              m.map((k, v) => MapEntry(k.toString(), v)),
-            ),
-          )
-          .toList(growable: false);
+      if (data is Map) {
+        return PaginatedListParser.parseKeyedList(
+          data.map((k, v) => MapEntry(k.toString(), v)),
+          'projects',
+          (m) => ProjectSummaryModel.fromJson(m),
+        );
+      }
+      if (data is List) {
+        final items = data
+            .whereType<Map>()
+            .map(
+              (m) => ProjectSummaryModel.fromJson(
+                m.map((k, v) => MapEntry(k.toString(), v)),
+              ),
+            )
+            .toList(growable: false);
+        return PaginatedListModel(
+          items: items,
+          pagination: PaginationDto.fromJson(
+            null,
+            fallbackItemCount: items.length,
+          ),
+        );
+      }
+      return PaginatedListModel(
+        items: const [],
+        pagination: PaginationDto.fromJson(null),
+      );
     } on DioException catch (e) {
       AppLogger.error(
         'API ListProjects Error: ${e.response?.statusCode}',

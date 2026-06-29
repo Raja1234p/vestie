@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/presentation/paginated_scroll_listener.dart';
+import 'package:vestie/core/presentation/widgets/list_load_more_footer.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_shimmer.dart';
@@ -30,8 +32,32 @@ class CompletedProjectsScreen extends StatelessWidget {
   }
 }
 
-class _CompletedProjectsBody extends StatelessWidget {
+class _CompletedProjectsBody extends StatefulWidget {
   const _CompletedProjectsBody();
+
+  @override
+  State<_CompletedProjectsBody> createState() => _CompletedProjectsBodyState();
+}
+
+class _CompletedProjectsBodyState extends State<_CompletedProjectsBody> {
+  final ScrollController _scrollController = ScrollController();
+  PaginatedScrollListener? _scrollListener;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollListener = PaginatedScrollListener(
+      controller: _scrollController,
+      onLoadMore: () => context.read<CompletedProjectsCubit>().loadMore(),
+    );
+  }
+
+  @override
+  void dispose() {
+    _scrollListener?.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,9 +102,13 @@ class _CompletedProjectsBody extends StatelessWidget {
       return const _EmptyView();
     }
     return ListView.builder(
+      controller: _scrollController,
       padding: FlowScreenFooterInsets.listPadding(context, horizontal: 16.w),
-      itemCount: state.projects.length,
+      itemCount: state.projects.length + 1,
       itemBuilder: (_, i) {
+        if (i == state.projects.length) {
+          return ListLoadMoreFooter(loadingMore: state.loadingMore);
+        }
         final project = state.projects[i];
         return ProjectCard(
           project: project,

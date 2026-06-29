@@ -44,7 +44,21 @@ final class UserVffHubCubit extends Cubit<UserVffHubState>
   ListMyVffsUseCase? get myVffsUseCase => _listMyVffsUseCase;
 
   Future<void> load() async {
-    await _fetchMyVffs(silent: false);
+    await _fetchMyVffs(silent: false, page: 1, replace: true);
+  }
+
+  Future<void> loadMoreMyVffs() async {
+    if (state.loadStatus == UserVffHubLoadStatus.loading ||
+        state.myVffsLoadingMore ||
+        !state.myVffsHasMore) {
+      return;
+    }
+    await _fetchMyVffs(
+      silent: true,
+      page: state.myVffsCurrentPage + 1,
+      replace: false,
+      loadingMore: true,
+    );
   }
 
   /// Refreshes My VFFs after profile remove without a full-tab shimmer.
@@ -90,27 +104,44 @@ final class UserVffHubCubit extends Cubit<UserVffHubState>
     await _fetchReceivedInbox(silent: silent);
   }
 
-  Future<void> _fetchMyVffs({required bool silent}) async {
-    if (!silent) {
+  Future<void> _fetchMyVffs({
+    required bool silent,
+    int page = 1,
+    bool replace = true,
+    bool loadingMore = false,
+  }) async {
+    if (!silent && !loadingMore) {
       emit(
         state.copyWith(
           loadStatus: UserVffHubLoadStatus.loading,
+          myVffsLoadingMore: false,
           clearError: true,
         ),
       );
+    } else if (loadingMore) {
+      emit(state.copyWith(myVffsLoadingMore: true, clearError: true));
     }
 
-    final vffsResult = await _listMyVffsUseCase();
+    final vffsResult = await _listMyVffsUseCase(page: page);
     if (isClosed) return;
 
     String? errorMessage;
     var connections = state.myVffConnections;
+    var currentPage = state.myVffsCurrentPage;
+    var totalCount = state.myVffsTotalCount;
 
     vffsResult.fold(
       (f) => errorMessage = FailureMapper.userMessage(f),
-      (list) => connections = list
-          .map(UserVffHubMapper.connection)
-          .toList(growable: false),
+      (pageResult) {
+        final mapped = pageResult.items
+            .map(UserVffHubMapper.connection)
+            .toList(growable: false);
+        connections = replace
+            ? mapped
+            : [...connections, ...mapped];
+        currentPage = pageResult.page;
+        totalCount = pageResult.totalCount;
+      },
     );
 
     emit(
@@ -120,6 +151,9 @@ final class UserVffHubCubit extends Cubit<UserVffHubState>
             : UserVffHubLoadStatus.loaded,
         errorMessage: errorMessage,
         myVffConnections: connections,
+        myVffsCurrentPage: currentPage,
+        myVffsTotalCount: totalCount,
+        myVffsLoadingMore: false,
       ),
     );
   }
@@ -235,7 +269,7 @@ final class UserVffHubCubit extends Cubit<UserVffHubState>
           state.requestsLoadStatus == UserVffHubRequestsLoadStatus.loaded;
       loadReceivedInbox(force: alreadyLoaded, silent: alreadyLoaded);
     } else if (index == 0 && state.loadStatus == UserVffHubLoadStatus.loaded) {
-      _fetchMyVffs(silent: true);
+      _fetchMyVffs(silent: true, page: 1, replace: true);
     }
   }
 

@@ -20,6 +20,9 @@ class MyBorrowRequestState {
   final bool startingRepay;
   final BorrowRequestEntity? activeRequest;
   final List<MyBorrowHistoryEntry> history;
+  final bool historyLoadingMore;
+  final int historyCurrentPage;
+  final int historyTotalCount;
   final BorrowRepaySummaryEntity? repaySummary;
   final String? errorMessage;
 
@@ -29,6 +32,9 @@ class MyBorrowRequestState {
     this.startingRepay = false,
     this.activeRequest,
     this.history = const [],
+    this.historyLoadingMore = false,
+    this.historyCurrentPage = 0,
+    this.historyTotalCount = 0,
     this.repaySummary,
     this.errorMessage,
   });
@@ -36,6 +42,8 @@ class MyBorrowRequestState {
   bool get hasPending => activeRequest != null;
 
   bool get hasRepayableBorrow => repaySummary != null;
+
+  bool get historyHasMore => history.length < historyTotalCount;
 
   bool get loadFailed =>
       errorMessage != null && !loading && !hasPending && !hasRepayableBorrow;
@@ -53,6 +61,9 @@ class MyBorrowRequestState {
     BorrowRequestEntity? activeRequest,
     bool clearActiveRequest = false,
     List<MyBorrowHistoryEntry>? history,
+    bool? historyLoadingMore,
+    int? historyCurrentPage,
+    int? historyTotalCount,
     BorrowRepaySummaryEntity? repaySummary,
     bool clearRepaySummary = false,
     String? errorMessage,
@@ -66,6 +77,9 @@ class MyBorrowRequestState {
           ? null
           : (activeRequest ?? this.activeRequest),
       history: history ?? this.history,
+      historyLoadingMore: historyLoadingMore ?? this.historyLoadingMore,
+      historyCurrentPage: historyCurrentPage ?? this.historyCurrentPage,
+      historyTotalCount: historyTotalCount ?? this.historyTotalCount,
       repaySummary: clearRepaySummary
           ? null
           : (repaySummary ?? this.repaySummary),
@@ -131,6 +145,8 @@ class MyBorrowRequestCubit extends Cubit<MyBorrowRequestState> {
             loading: false,
             activeRequest: pending,
             history: screen.history,
+            historyCurrentPage: screen.historyPagination.page,
+            historyTotalCount: screen.historyPagination.totalCount,
             repaySummary: repaySummary,
           ),
         );
@@ -235,6 +251,38 @@ class MyBorrowRequestCubit extends Cubit<MyBorrowRequestState> {
     if (state.startingRepay) {
       emit(state.copyWith(startingRepay: false));
     }
+  }
+
+  Future<void> loadMoreHistory() async {
+    if (state.loading || state.historyLoadingMore || !state.historyHasMore) {
+      return;
+    }
+
+    emit(state.copyWith(historyLoadingMore: true, clearError: true));
+    final nextPage = state.historyCurrentPage + 1;
+    final result = await _getMyBorrowScreenUseCase(
+      projectId: projectId,
+      historyPage: nextPage,
+    );
+    if (isClosed) return;
+
+    result.fold(
+      (failure) => emit(
+        state.copyWith(
+          historyLoadingMore: false,
+          errorMessage: FailureMapper.userMessage(failure),
+        ),
+      ),
+      (screen) => emit(
+        state.copyWith(
+          history: [...state.history, ...screen.history],
+          historyCurrentPage: screen.historyPagination.page,
+          historyTotalCount: screen.historyPagination.totalCount,
+          historyLoadingMore: false,
+          clearError: true,
+        ),
+      ),
+    );
   }
 
   Future<bool> cancelActiveRequest() async {

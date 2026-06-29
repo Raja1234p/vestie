@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vestie/core/presentation/paginated_scroll_listener.dart';
+import 'package:vestie/core/presentation/widgets/list_load_more_footer.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/constants/app_strings.dart';
@@ -42,30 +44,71 @@ class BorrowRequestsScreen extends StatefulWidget {
 class _BorrowRequestsScreenState extends State<BorrowRequestsScreen> {
   late List<BorrowRequestEntity> _requests;
   bool _loading = true;
+  bool _loadingMore = false;
+  int _currentPage = 0;
+  int _totalCount = 0;
+  final ScrollController _scrollController = ScrollController();
+  PaginatedScrollListener? _scrollListener;
+
+  bool get _hasMore => _requests.length < _totalCount;
 
   @override
   void initState() {
     super.initState();
     _requests = List<BorrowRequestEntity>.from(widget.requests);
+    _scrollListener = PaginatedScrollListener(
+      controller: _scrollController,
+      onLoadMore: _loadMore,
+    );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _reloadRequests();
     });
   }
 
+  @override
+  void dispose() {
+    _scrollListener?.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   Future<void> _reloadRequests() async {
+    setState(() => _loading = true);
     final result = await ServiceLocator.instance.listBorrowRequestsUseCase(
       projectId: widget.projectId,
       status: 'Pending',
+      page: 1,
     );
     if (!mounted) return;
     result.fold(
       (_) {
-        // Load failure — keep route snapshot; no toast (AppErrorView pattern).
         setState(() => _loading = false);
       },
-      (items) => setState(() {
-        _requests = items;
+      (page) => setState(() {
+        _requests = page.items;
+        _currentPage = page.page;
+        _totalCount = page.totalCount;
         _loading = false;
+      }),
+    );
+  }
+
+  Future<void> _loadMore() async {
+    if (_loading || _loadingMore || !_hasMore) return;
+    setState(() => _loadingMore = true);
+    final result = await ServiceLocator.instance.listBorrowRequestsUseCase(
+      projectId: widget.projectId,
+      status: 'Pending',
+      page: _currentPage + 1,
+    );
+    if (!mounted) return;
+    result.fold(
+      (_) => setState(() => _loadingMore = false),
+      (page) => setState(() {
+        _requests = [..._requests, ...page.items];
+        _currentPage = page.page;
+        _totalCount = page.totalCount;
+        _loadingMore = false;
       }),
     );
   }
@@ -179,9 +222,15 @@ class _BorrowRequestsScreenState extends State<BorrowRequestsScreen> {
       return const BorrowRequestsEmptyState(centered: true);
     }
     return ListView.builder(
+      controller: _scrollController,
       padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 32.h),
-      itemCount: _requests.length,
-      itemBuilder: (_, i) => _buildRequestCard(context, _requests[i]),
+      itemCount: _requests.length + 1,
+      itemBuilder: (_, i) {
+        if (i == _requests.length) {
+          return ListLoadMoreFooter(loadingMore: _loadingMore);
+        }
+        return _buildRequestCard(context, _requests[i]);
+      },
     );
   }
 

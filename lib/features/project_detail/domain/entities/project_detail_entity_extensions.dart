@@ -62,6 +62,9 @@ extension ProjectDetailEntityMemberUpdates on ProjectDetailEntity {
       activeClosureVote: activeClosureVote,
       invites: invites,
       hasCoLeader: hasCoLeader,
+      membersPagination: membersPagination,
+      invitesPagination: invitesPagination,
+      announcementsPagination: announcementsPagination,
     );
   }
 }

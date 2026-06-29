@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:vestie/core/presentation/widgets/list_load_more_footer.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
@@ -18,13 +19,45 @@ import 'user_vff_profile_connected_metrics.dart';
 import 'user_vff_profile_footer_actions.dart';
 
 /// Connected VFF peer profile — hero + metrics over screen background image.
-final class UserVffProfileConnectedBody extends StatelessWidget {
+final class UserVffProfileConnectedBody extends StatefulWidget {
   final UserVffProfileUiModel profile;
 
   const UserVffProfileConnectedBody({super.key, required this.profile});
 
   @override
+  State<UserVffProfileConnectedBody> createState() =>
+      _UserVffProfileConnectedBodyState();
+}
+
+class _UserVffProfileConnectedBodyState
+    extends State<UserVffProfileConnectedBody> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    final max = _scrollController.position.maxScrollExtent;
+    final offset = _scrollController.offset;
+    if (max - offset <= 200) {
+      context.read<UserVffProfileCubit>().loadMoreJoinedProjects();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final profile = widget.profile;
     final cubit = context.read<UserVffProfileCubit>();
     final joinedList =
         profile.joinedProjects ?? const <UserVffJoinedProjectRowUi>[];
@@ -34,6 +67,7 @@ final class UserVffProfileConnectedBody extends StatelessWidget {
       children: [
         Expanded(
           child: ListView(
+            controller: _scrollController,
             physics: const BouncingScrollPhysics(),
             padding: EdgeInsets.only(top: AppDimens.v8, bottom: AppDimens.v20),
             children: [
@@ -96,6 +130,11 @@ final class UserVffProfileConnectedBody extends StatelessWidget {
                                 );
                               },
                             ),
+                      ),
+                      BlocSelector<UserVffProfileCubit, UserVffProfileState, bool>(
+                        selector: (state) => state.joinedProjectsLoadingMore,
+                        builder: (context, loadingMore) =>
+                            ListLoadMoreFooter(loadingMore: loadingMore),
                       ),
                     ],
                   ],

@@ -18,19 +18,30 @@ enum UserVffGroupInvitationListStatus { loading, loaded, error }
 final class UserVffGroupInvitationListState extends Equatable {
   final UserVffGroupInvitationListStatus status;
   final List<UserVffGroupInviteUi> items;
+  final bool loadingMore;
+  final int currentPage;
+  final int totalCount;
   final String? errorMessage;
   final UserVffInboxRowAction? actingRow;
 
   const UserVffGroupInvitationListState({
     this.status = UserVffGroupInvitationListStatus.loading,
     this.items = const [],
+    this.loadingMore = false,
+    this.currentPage = 0,
+    this.totalCount = 0,
     this.errorMessage,
     this.actingRow,
   });
 
+  bool get hasMore => items.length < totalCount;
+
   UserVffGroupInvitationListState copyWith({
     UserVffGroupInvitationListStatus? status,
     List<UserVffGroupInviteUi>? items,
+    bool? loadingMore,
+    int? currentPage,
+    int? totalCount,
     String? errorMessage,
     bool clearError = false,
     UserVffInboxRowAction? actingRow,
@@ -39,13 +50,24 @@ final class UserVffGroupInvitationListState extends Equatable {
     return UserVffGroupInvitationListState(
       status: status ?? this.status,
       items: items ?? this.items,
+      loadingMore: loadingMore ?? this.loadingMore,
+      currentPage: currentPage ?? this.currentPage,
+      totalCount: totalCount ?? this.totalCount,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
       actingRow: clearActingRow ? null : (actingRow ?? this.actingRow),
     );
   }
 
   @override
-  List<Object?> get props => [status, items, errorMessage, actingRow];
+  List<Object?> get props => [
+    status,
+    items,
+    loadingMore,
+    currentPage,
+    totalCount,
+    errorMessage,
+    actingRow,
+  ];
 }
 
 final class UserVffGroupInvitationListCubit
@@ -76,11 +98,12 @@ final class UserVffGroupInvitationListCubit
     emit(
       state.copyWith(
         status: UserVffGroupInvitationListStatus.loading,
+        loadingMore: false,
         clearError: true,
       ),
     );
 
-    final result = await _getVffReceivedInboxUseCase();
+    final result = await _getVffReceivedInboxUseCase(projectInvitesPage: 1);
     if (isClosed) return;
 
     result.fold(
@@ -96,8 +119,49 @@ final class UserVffGroupInvitationListCubit
           items: inbox.projectInvites
               .map(UserVffHubMapper.projectInvite)
               .toList(growable: false),
+          currentPage: inbox.projectInvitesPagination.page,
+          totalCount: inbox.projectInvitesPagination.totalCount,
         ),
       ),
+    );
+  }
+
+  Future<void> loadMore() async {
+    if (state.status == UserVffGroupInvitationListStatus.loading ||
+        state.loadingMore ||
+        !state.hasMore) {
+      return;
+    }
+
+    emit(state.copyWith(loadingMore: true, clearError: true));
+    final nextPage = state.currentPage + 1;
+    final result = await _getVffReceivedInboxUseCase(
+      projectInvitesPage: nextPage,
+    );
+    if (isClosed) return;
+
+    result.fold(
+      (failure) => emit(
+        state.copyWith(
+          loadingMore: false,
+          errorMessage: FailureMapper.userMessage(failure),
+        ),
+      ),
+      (inbox) {
+        final newItems = inbox.projectInvites
+            .map(UserVffHubMapper.projectInvite)
+            .toList(growable: false);
+        emit(
+          state.copyWith(
+            status: UserVffGroupInvitationListStatus.loaded,
+            items: [...state.items, ...newItems],
+            currentPage: inbox.projectInvitesPagination.page,
+            totalCount: inbox.projectInvitesPagination.totalCount,
+            loadingMore: false,
+            clearError: true,
+          ),
+        );
+      },
     );
   }
 

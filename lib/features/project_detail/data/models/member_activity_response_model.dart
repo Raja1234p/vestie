@@ -1,4 +1,6 @@
 import 'package:intl/intl.dart';
+import 'package:vestie/core/domain/entities/pagination_info.dart';
+import 'package:vestie/core/models/pagination_dto.dart';
 import 'package:vestie/core/utils/safe_parser.dart';
 import 'package:vestie/features/projects/data/models/project_list_json_parsing.dart';
 import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
@@ -21,6 +23,7 @@ class MemberActivityResponseModel {
   final bool canSendVffRequest;
   final String? pendingVffRequestId;
   final List<MemberActivityTransactionEntity> transactions;
+  final PaginationDto transactionsPagination;
   final MemberActivityPenaltyEntity? penalty;
 
   const MemberActivityResponseModel({
@@ -36,6 +39,7 @@ class MemberActivityResponseModel {
     this.canSendVffRequest = false,
     this.pendingVffRequestId,
     required this.transactions,
+    required this.transactionsPagination,
     this.penalty,
   });
 
@@ -87,9 +91,21 @@ class MemberActivityResponseModel {
       canSendVffRequest: canSendVffRequest,
       pendingVffRequestId: pendingVffRequestId,
     );
-    final transactions = _transactionMaps(json)
-        .map((row) => _mapTransaction(row, projectName: projectName))
-        .toList(growable: false);
+    final transactionsRaw = json['transactions'];
+    final transactionsParsed = transactionsRaw != null
+        ? PaginatedListParser.parse(
+            transactionsRaw,
+            (row) => _mapTransaction(row, projectName: projectName),
+          )
+        : PaginatedListModel<MemberActivityTransactionEntity>(
+            items: _transactionMaps(json)
+                .map((row) => _mapTransaction(row, projectName: projectName))
+                .toList(growable: false),
+            pagination: PaginationDto.fromJson(
+              null,
+              fallbackItemCount: _transactionMaps(json).length,
+            ),
+          );
     final penalty = _mapPenalty(json);
 
     return MemberActivityResponseModel(
@@ -104,7 +120,8 @@ class MemberActivityResponseModel {
       vffConnectionState: vffConnectionState,
       canSendVffRequest: canSendVffRequest,
       pendingVffRequestId: pendingVffRequestId,
-      transactions: transactions,
+      transactions: transactionsParsed.items,
+      transactionsPagination: transactionsParsed.pagination,
       penalty: penalty,
     );
   }
@@ -122,6 +139,12 @@ class MemberActivityResponseModel {
     canSendVffRequest: canSendVffRequest,
     pendingVffRequestId: pendingVffRequestId,
     transactions: transactions,
+    transactionsPagination: PaginationInfo(
+      page: transactionsPagination.page,
+      pageSize: transactionsPagination.pageSize,
+      totalCount: transactionsPagination.totalCount,
+      totalPages: transactionsPagination.totalPages,
+    ),
     penalty: penalty,
   );
 
@@ -180,8 +203,12 @@ class MemberActivityResponseModel {
   static List<Map<String, dynamic>> _transactionMaps(
     Map<String, dynamic> json,
   ) {
+    final transactions = json['transactions'];
+    if (transactions != null) {
+      final maps = PaginatedListParser.parseItemMaps(transactions);
+      if (maps.isNotEmpty || transactions is Map) return maps;
+    }
     for (final key in const [
-      'transactions',
       'activities',
       'ledger',
       'items',

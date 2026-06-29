@@ -1,4 +1,5 @@
 import 'vff_enums.dart';
+import 'package:vestie/core/domain/entities/pagination_info.dart';
 
 class VffProfileStatsEntity {
   final int joinedProjectsCount;
@@ -41,6 +42,7 @@ class VffConnectedProfileEntity {
   final int mutualProjectsCount;
   final VffProfileStatsEntity stats;
   final List<VffJoinedProjectEntity> joinedProjects;
+  final PaginationInfo joinedProjectsPagination;
 
   const VffConnectedProfileEntity({
     required this.userId,
@@ -50,6 +52,7 @@ class VffConnectedProfileEntity {
     this.mutualProjectsCount = 0,
     required this.stats,
     this.joinedProjects = const [],
+    required this.joinedProjectsPagination,
   });
 }
 
@@ -62,6 +65,7 @@ class VffPublicProfileEntity {
   final bool isVffConnected;
   final VffProfileStatsEntity stats;
   final List<VffJoinedProjectEntity> joinedProjects;
+  final PaginationInfo joinedProjectsPagination;
 
   const VffPublicProfileEntity({
     required this.userId,
@@ -71,5 +75,6 @@ class VffPublicProfileEntity {
     this.isVffConnected = false,
     required this.stats,
     this.joinedProjects = const [],
+    required this.joinedProjectsPagination,
   });
 }

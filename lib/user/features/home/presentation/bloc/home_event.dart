@@ -33,3 +33,11 @@ class HomeProjectPotPatched extends HomeEvent {
   @override
   List<Object> get props => [projectId, projectPot];
 }
+
+/// Appends the next page of `GET /projects?scope=mine`.
+class HomeLoadMoreMyProjects extends HomeEvent {
+  const HomeLoadMoreMyProjects();
+
+  @override
+  List<Object> get props => [];
+}

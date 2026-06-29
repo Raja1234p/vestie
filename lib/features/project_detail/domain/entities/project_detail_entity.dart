@@ -1,4 +1,5 @@
 import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/domain/entities/pagination_info.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
 import 'borrow_request_entity.dart';
@@ -82,6 +83,10 @@ class ProjectDetailEntity {
   /// From API `project.hasCoLeader`.
   final bool hasCoLeader;
 
+  final PaginationInfo membersPagination;
+  final PaginationInfo invitesPagination;
+  final PaginationInfo announcementsPagination;
+
   const ProjectDetailEntity({
     required this.id,
     required this.name,
@@ -120,6 +125,24 @@ class ProjectDetailEntity {
     this.activeClosureVote,
     this.invites = const [],
     this.hasCoLeader = false,
+    this.membersPagination = const PaginationInfo(
+      page: 1,
+      pageSize: 20,
+      totalCount: 0,
+      totalPages: 0,
+    ),
+    this.invitesPagination = const PaginationInfo(
+      page: 1,
+      pageSize: 20,
+      totalCount: 0,
+      totalPages: 0,
+    ),
+    this.announcementsPagination = const PaginationInfo(
+      page: 1,
+      pageSize: 20,
+      totalCount: 0,
+      totalPages: 0,
+    ),
   });
 
   double get progress =>

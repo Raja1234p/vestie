@@ -25,6 +25,10 @@ final class UserVffHubState extends Equatable {
 
   final List<UserVffGroupInviteUi> groupInvitations;
 
+  final bool myVffsLoadingMore;
+  final int myVffsCurrentPage;
+  final int myVffsTotalCount;
+
   final UserVffInboxRowAction? actingRow;
 
   const UserVffHubState({
@@ -44,8 +48,16 @@ final class UserVffHubState extends Equatable {
 
     this.groupInvitations = const [],
 
+    this.myVffsLoadingMore = false,
+
+    this.myVffsCurrentPage = 0,
+
+    this.myVffsTotalCount = 0,
+
     this.actingRow,
   });
+
+  bool get myVffsHasMore => myVffConnections.length < myVffsTotalCount;
 
   factory UserVffHubState.fromHub(UserVffHubUiModel hub) => UserVffHubState(
     loadStatus: UserVffHubLoadStatus.loaded,
@@ -86,6 +98,12 @@ final class UserVffHubState extends Equatable {
 
     List<UserVffGroupInviteUi>? groupInvitations,
 
+    bool? myVffsLoadingMore,
+
+    int? myVffsCurrentPage,
+
+    int? myVffsTotalCount,
+
     UserVffInboxRowAction? actingRow,
 
     bool clearActingRow = false,
@@ -109,6 +127,12 @@ final class UserVffHubState extends Equatable {
 
       groupInvitations: groupInvitations ?? this.groupInvitations,
 
+      myVffsLoadingMore: myVffsLoadingMore ?? this.myVffsLoadingMore,
+
+      myVffsCurrentPage: myVffsCurrentPage ?? this.myVffsCurrentPage,
+
+      myVffsTotalCount: myVffsTotalCount ?? this.myVffsTotalCount,
+
       actingRow: clearActingRow ? null : (actingRow ?? this.actingRow),
     );
   }
@@ -130,6 +154,12 @@ final class UserVffHubState extends Equatable {
     incomingVffRequests,
 
     groupInvitations,
+
+    myVffsLoadingMore,
+
+    myVffsCurrentPage,
+
+    myVffsTotalCount,
 
     actingRow,
   ];

@@ -1,17 +1,25 @@
 import 'package:dartz/dartz.dart';
+import '../../../../core/domain/entities/paginated_result.dart';
 import '../../../../core/error/failures.dart';
+import '../../../../core/models/pagination_dto.dart';
 import '../entities/cancel_project_entities.dart';
 import '../entities/member_activity_entity.dart';
 import '../entities/pending_join_request_entity.dart';
 
 abstract class ProjectActionsRepository {
-  Future<Either<Failure, List<PendingJoinRequestEntity>>>
-  listPendingJoinRequests(String projectId);
+  Future<Either<Failure, PaginatedResult<PendingJoinRequestEntity>>>
+  listPendingJoinRequests(
+    String projectId, {
+    int page = PaginationQuery.defaultPage,
+    int? pageSize,
+  });
 
   Future<Either<Failure, MemberActivityEntity>> getMemberActivity({
     required String projectId,
     required String userId,
     required String projectName,
+    int page = PaginationQuery.defaultPage,
+    int? pageSize,
   });
 
   Future<Either<Failure, void>> approveJoinRequest(

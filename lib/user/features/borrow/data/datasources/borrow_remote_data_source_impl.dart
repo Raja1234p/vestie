@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 
 import 'package:vestie/core/constants/api_constants.dart';
+import 'package:vestie/core/models/pagination_dto.dart';
 import 'package:vestie/core/error/exceptions.dart';
 import 'package:vestie/core/network/dio_client.dart';
 import 'package:vestie/core/utils/logger.dart';
-import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
 import '../models/borrow_request_list_item_model.dart';
 import '../models/borrow_request_model.dart';
 import '../models/borrow_repay_models.dart';
@@ -65,25 +65,32 @@ class BorrowRemoteDataSourceImpl implements BorrowRemoteDataSource {
   }
 
   @override
-  Future<List<BorrowRequestEntity>> listBorrowRequests({
+  Future<PaginatedListModel<BorrowRequestListItemModel>> listBorrowRequests({
     required String projectId,
     String? status,
+    int page = PaginationQuery.defaultPage,
+    int? pageSize,
   }) async {
     try {
-      final query = <String, dynamic>{};
+      final query = <String, dynamic>{
+        ...PaginationQuery.pageAndSize(page: page, pageSize: pageSize),
+      };
       if (status != null && status.trim().isNotEmpty) {
         query['status'] = status.trim();
       }
 
       final response = await _client.get(
         ApiConstants.projectBorrowRequests(projectId),
-        queryParameters: query.isEmpty ? null : query,
+        queryParameters: query,
       );
 
       final model = BorrowRequestListResponseModel.fromJson(
         _asMap(response.data),
       );
-      return model.borrowRequests.map((item) => item.toEntity()).toList();
+      return PaginatedListModel(
+        items: model.borrowRequests,
+        pagination: model.pagination,
+      );
     } on DioException catch (e) {
       AppLogger.error(
         'API ListBorrowRequests Error: ${e.response?.statusCode}',
@@ -139,10 +146,16 @@ class BorrowRemoteDataSourceImpl implements BorrowRemoteDataSource {
   @override
   Future<MyBorrowScreenModel> getMyBorrowScreen({
     required String projectId,
+    int historyPage = PaginationQuery.defaultPage,
+    int? historyPageSize,
   }) async {
     try {
       final response = await _client.get(
         ApiConstants.projectBorrowRequestsMineScreen(projectId),
+        queryParameters: PaginationQuery.historyPage(
+          page: historyPage,
+          pageSize: historyPageSize,
+        ),
       );
       return MyBorrowScreenModel.fromJson(_asMap(response.data));
     } on DioException catch (e) {
@@ -193,19 +206,43 @@ class BorrowRemoteDataSourceImpl implements BorrowRemoteDataSource {
   }
 
   @override
-  Future<List<MyBorrowCurrentRequestModel>> listMyBorrowRequests({
+  Future<PaginatedListModel<MyBorrowCurrentRequestModel>> listMyBorrowRequests({
     required String projectId,
+    int page = PaginationQuery.defaultPage,
+    int? pageSize,
   }) async {
     try {
       final response = await _client.get(
         ApiConstants.projectBorrowRequestsMine(projectId),
+        queryParameters: PaginationQuery.pageAndSize(
+          page: page,
+          pageSize: pageSize,
+        ),
       );
       final data = response.data;
-      if (data is! List) return const [];
-      return data
+      if (data is Map) {
+        return PaginatedListParser.parse(
+          data,
+          (m) => MyBorrowCurrentRequestModel.fromJson(m),
+        );
+      }
+      if (data is! List) {
+        return PaginatedListModel(
+          items: const [],
+          pagination: PaginationDto.fromJson(null),
+        );
+      }
+      final items = data
           .whereType<Map>()
           .map((m) => MyBorrowCurrentRequestModel.fromJson(m.cast()))
           .toList(growable: false);
+      return PaginatedListModel(
+        items: items,
+        pagination: PaginationDto.fromJson(
+          null,
+          fallbackItemCount: items.length,
+        ),
+      );
     } on DioException catch (e) {
       AppLogger.error(
         'API ListMyBorrowRequests Error: ${e.response?.statusCode}',

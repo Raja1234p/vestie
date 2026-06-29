@@ -1,29 +1,50 @@
 import 'package:dartz/dartz.dart';
 
+import 'package:vestie/core/domain/entities/paginated_result.dart';
 import 'package:vestie/core/error/failures.dart';
+import 'package:vestie/core/models/pagination_dto.dart';
 
 import '../entities/vff_connection_entity.dart';
 import '../entities/vff_inbox_entity.dart';
 import '../entities/vff_profile_entity.dart';
 
 abstract class VffRepository {
-  Future<Either<Failure, List<VffConnectionEntity>>> listMyVffs();
+  Future<Either<Failure, PaginatedResult<VffConnectionEntity>>> listMyVffs({
+    int page = PaginationQuery.defaultPage,
+    int? pageSize,
+  });
 
   Future<Either<Failure, VffConnectedProfileEntity>> getConnectedProfile(
-    String userId,
-  );
+    String userId, {
+    int projectsPage = PaginationQuery.defaultPage,
+    int? projectsPageSize,
+  });
 
   Future<Either<Failure, VffPublicProfileEntity>> getPublicProfile(
-    String userId,
-  );
+    String userId, {
+    int projectsPage = PaginationQuery.defaultPage,
+    int? projectsPageSize,
+  });
 
   Future<Either<Failure, VffRemoveConnectionResultEntity>> removeConnection(
     String userId,
   );
 
-  Future<Either<Failure, VffReceivedInboxEntity>> getReceivedInbox();
+  Future<Either<Failure, VffReceivedInboxEntity>> getReceivedInbox({
+    int vffRequestsPage = PaginationQuery.defaultPage,
+    int? vffRequestsPageSize,
+    int projectInvitesPage = PaginationQuery.defaultPage,
+    int? projectInvitesPageSize,
+  });
 
-  Future<Either<Failure, VffSentInboxEntity>> getSentInbox();
+  Future<Either<Failure, VffSentInboxEntity>> getSentInbox({
+    int vffRequestsPage = PaginationQuery.defaultPage,
+    int? vffRequestsPageSize,
+    int projectInvitesPage = PaginationQuery.defaultPage,
+    int? projectInvitesPageSize,
+    int joinRequestsPage = PaginationQuery.defaultPage,
+    int? joinRequestsPageSize,
+  });
 
   Future<Either<Failure, VffSendRequestResultEntity>> sendVffRequest({
     required String projectId,

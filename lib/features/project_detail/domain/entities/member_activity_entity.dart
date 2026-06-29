@@ -1,5 +1,6 @@
 import 'member_entity.dart';
 import 'member_activity_penalty_entity.dart';
+import 'package:vestie/core/domain/entities/pagination_info.dart';
 import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
 
 enum MemberActivityTransactionKind { contribution, borrow, other }
@@ -32,6 +33,7 @@ class MemberActivityEntity {
   final bool canSendVffRequest;
   final String? pendingVffRequestId;
   final List<MemberActivityTransactionEntity> transactions;
+  final PaginationInfo transactionsPagination;
   final MemberActivityPenaltyEntity? penalty;
 
   const MemberActivityEntity({
@@ -47,6 +49,7 @@ class MemberActivityEntity {
     this.canSendVffRequest = false,
     this.pendingVffRequestId,
     required this.transactions,
+    required this.transactionsPagination,
     this.penalty,
   });
 
@@ -75,6 +78,7 @@ class MemberActivityEntity {
           ? null
           : (pendingVffRequestId ?? this.pendingVffRequestId),
       transactions: transactions,
+      transactionsPagination: transactionsPagination,
       penalty: this.penalty,
     );
   }

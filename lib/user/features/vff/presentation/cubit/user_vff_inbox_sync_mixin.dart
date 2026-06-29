@@ -1,7 +1,9 @@
 import 'package:dartz/dartz.dart';
 
+import 'package:vestie/core/domain/entities/paginated_result.dart';
 import 'package:vestie/core/error/failures.dart';
 
+import '../../domain/entities/vff_connection_entity.dart';
 import '../../domain/entities/vff_inbox_entity.dart';
 import '../../domain/usecases/vff_usecases.dart';
 import '../mappers/user_vff_hub_mapper.dart';
@@ -58,10 +60,11 @@ mixin UserVffInboxSyncMixin {
     final listUseCase = myVffsUseCase;
     if (listUseCase == null) return null;
 
-    final Either<Failure, dynamic> result = await listUseCase();
+    final Either<Failure, PaginatedResult<VffConnectionEntity>> result =
+        await listUseCase(page: 1);
     return result.fold(
       (_) => null,
-      (list) => list
+      (page) => page.items
           .map<UserVffConnectionRowUi>(UserVffHubMapper.connection)
           .toList(growable: false),
     );

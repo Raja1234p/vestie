@@ -1,14 +1,23 @@
+import 'package:vestie/core/models/pagination_dto.dart';
 import 'package:vestie/core/utils/safe_parser.dart';
 
 import '../../domain/entities/vff_enums.dart';
 import '../../domain/entities/vff_profile_entity.dart';
 
 abstract final class VffJsonParsing {
-  /// `GET /users/me/vffs` — raw array or `{ data: [...] }`.
+  /// `GET /users/me/vffs` — bare array, `{ items, pagination }`, or legacy envelopes.
   static List<Map<String, dynamic>> parseObjectList(dynamic raw) {
-    var data = raw;
-    if (data is Map) {
-      final map = data.cast<String, dynamic>();
+    if (raw is List) {
+      return raw
+          .whereType<Map>()
+          .map((m) => m.cast<String, dynamic>())
+          .toList(growable: false);
+    }
+    if (raw is Map) {
+      final map = raw.cast<String, dynamic>();
+      if (map.containsKey('pagination') || map.containsKey('items')) {
+        return PaginatedListParser.parseItemMaps(map);
+      }
       for (final key in const [
         'data',
         'items',
@@ -18,16 +27,18 @@ abstract final class VffJsonParsing {
       ]) {
         final nested = map[key];
         if (nested is List) {
-          data = nested;
-          break;
+          return nested
+              .whereType<Map>()
+              .map((m) => m.cast<String, dynamic>())
+              .toList(growable: false);
         }
       }
     }
-    if (data is! List) return const [];
-    return data
-        .whereType<Map>()
-        .map((m) => m.cast<String, dynamic>())
-        .toList(growable: false);
+    return const [];
+  }
+
+  static List<Map<String, dynamic>> parseJoinedProjects(dynamic raw) {
+    return PaginatedListParser.parseItemMaps(raw);
   }
 
   static String normalizeUserId(String id) => id.trim().toLowerCase();

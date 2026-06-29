@@ -1,6 +1,8 @@
+import 'package:vestie/core/domain/entities/pagination_info.dart';
 import 'package:vestie/features/project_pot/domain/entities/project_pot_entity.dart';
 
 import 'borrow_request_entity.dart';
+import 'project_announcement_entity.dart';
 import 'project_detail_entity.dart';
 
 extension ProjectDetailEntityPot on ProjectDetailEntity {
@@ -44,6 +46,58 @@ extension ProjectDetailEntityPot on ProjectDetailEntity {
       activeClosureVote: activeClosureVote,
       invites: invites,
       hasCoLeader: hasCoLeader,
+      membersPagination: membersPagination,
+      invitesPagination: invitesPagination,
+      announcementsPagination: announcementsPagination,
+    );
+  }
+
+  /// Appends the next announcements page from `GET /projects/{id}`.
+  ProjectDetailEntity withAppendedAnnouncements({
+    required List<ProjectAnnouncementEntity> nextPage,
+    required PaginationInfo pagination,
+  }) {
+    return ProjectDetailEntity(
+      id: id,
+      name: name,
+      category: category,
+      status: status,
+      goalAmount: goalAmount,
+      currentAmount: currentAmount,
+      contributorCount: contributorCount,
+      endsIn: endsIn,
+      announcement: announcement,
+      announcements: [...announcements, ...nextPage],
+      members: members,
+      borrowRequests: borrowRequests,
+      viewerRole: viewerRole,
+      membershipId: membershipId,
+      borrowLimitAmount: borrowLimitAmount,
+      repaymentWindowDays: repaymentWindowDays,
+      repaymentGraceDays: repaymentGraceDays,
+      contributionsAreNonRefundable: contributionsAreNonRefundable,
+      displayStatusLabel: displayStatusLabel,
+      projectLifecycleState: projectLifecycleState,
+      projectBannerStatus: projectBannerStatus,
+      votingStatus: votingStatus,
+      detailUserRole: detailUserRole,
+      voting: voting,
+      hasWeek11ProjectDetailEnvelope: hasWeek11ProjectDetailEnvelope,
+      borrowingEnabled: borrowingEnabled,
+      pendingJoinRequestCount: pendingJoinRequestCount,
+      projectInviteCode: projectInviteCode,
+      roiPercentage: roiPercentage,
+      joinApprovalRequired: joinApprovalRequired,
+      minimumContributionAmount: minimumContributionAmount,
+      penaltyPercentage: penaltyPercentage,
+      successVoteWindowHours: successVoteWindowHours,
+      hasActiveSuccessVote: hasActiveSuccessVote,
+      activeClosureVote: activeClosureVote,
+      invites: invites,
+      hasCoLeader: hasCoLeader,
+      membersPagination: membersPagination,
+      invitesPagination: invitesPagination,
+      announcementsPagination: pagination,
     );
   }
 
@@ -90,6 +144,9 @@ extension ProjectDetailEntityPot on ProjectDetailEntity {
       activeClosureVote: activeClosureVote,
       invites: invites,
       hasCoLeader: hasCoLeader,
+      membersPagination: membersPagination,
+      invitesPagination: invitesPagination,
+      announcementsPagination: announcementsPagination,
     );
   }
 
@@ -138,6 +195,9 @@ extension ProjectDetailEntityPot on ProjectDetailEntity {
       activeClosureVote: activeClosureVote,
       invites: invites,
       hasCoLeader: hasCoLeader,
+      membersPagination: membersPagination,
+      invitesPagination: invitesPagination,
+      announcementsPagination: announcementsPagination,
     );
   }
 }

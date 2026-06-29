@@ -1,4 +1,5 @@
 import '../../../../../core/constants/api_constants.dart';
+import '../../../../../core/models/pagination_dto.dart';
 import '../../../../../core/network/base_api_client.dart';
 
 import '../models/vff_connection_model.dart';
@@ -7,17 +8,40 @@ import '../models/vff_json_parsing.dart';
 import '../models/vff_profile_model.dart';
 
 abstract class VffRemoteDataSource {
-  Future<List<VffConnectionModel>> listMyVffs();
+  Future<PaginatedListModel<VffConnectionModel>> listMyVffs({
+    int page = PaginationQuery.defaultPage,
+    int? pageSize,
+  });
 
-  Future<VffConnectedProfileModel> getConnectedProfile(String userId);
+  Future<VffConnectedProfileModel> getConnectedProfile(
+    String userId, {
+    int projectsPage = PaginationQuery.defaultPage,
+    int? projectsPageSize,
+  });
 
-  Future<VffPublicProfileModel> getPublicProfile(String userId);
+  Future<VffPublicProfileModel> getPublicProfile(
+    String userId, {
+    int projectsPage = PaginationQuery.defaultPage,
+    int? projectsPageSize,
+  });
 
   Future<VffRemoveConnectionResultModel> removeConnection(String userId);
 
-  Future<VffReceivedInboxModel> getReceivedInbox();
+  Future<VffReceivedInboxModel> getReceivedInbox({
+    int vffRequestsPage = PaginationQuery.defaultPage,
+    int? vffRequestsPageSize,
+    int projectInvitesPage = PaginationQuery.defaultPage,
+    int? projectInvitesPageSize,
+  });
 
-  Future<VffSentInboxModel> getSentInbox();
+  Future<VffSentInboxModel> getSentInbox({
+    int vffRequestsPage = PaginationQuery.defaultPage,
+    int? vffRequestsPageSize,
+    int projectInvitesPage = PaginationQuery.defaultPage,
+    int? projectInvitesPageSize,
+    int joinRequestsPage = PaginationQuery.defaultPage,
+    int? joinRequestsPageSize,
+  });
 
   Future<VffSendRequestResultModel> sendVffRequest({
     required String projectId,
@@ -54,25 +78,56 @@ class VffRemoteDataSourceImpl implements VffRemoteDataSource {
   VffRemoteDataSourceImpl({required this.apiClient});
 
   @override
-  Future<List<VffConnectionModel>> listMyVffs() async {
-    final response = await apiClient.get<dynamic>(ApiConstants.userMeVffs);
-    return VffJsonParsing.parseObjectList(
+  Future<PaginatedListModel<VffConnectionModel>> listMyVffs({
+    int page = PaginationQuery.defaultPage,
+    int? pageSize,
+  }) async {
+    final response = await apiClient.get<dynamic>(
+      ApiConstants.userMeVffs,
+      queryParameters: PaginationQuery.pageAndSize(
+        page: page,
+        pageSize: pageSize,
+      ),
+    );
+    final maps = VffJsonParsing.parseObjectList(response);
+    final pagination = PaginatedListParser.parsePagination(
       response,
-    ).map(VffConnectionModel.fromJson).toList(growable: false);
+      fallbackItemCount: maps.length,
+    );
+    return PaginatedListModel(
+      items: maps.map(VffConnectionModel.fromJson).toList(growable: false),
+      pagination: pagination,
+    );
   }
 
   @override
-  Future<VffConnectedProfileModel> getConnectedProfile(String userId) async {
+  Future<VffConnectedProfileModel> getConnectedProfile(
+    String userId, {
+    int projectsPage = PaginationQuery.defaultPage,
+    int? projectsPageSize,
+  }) async {
     final response = await apiClient.get<Map<String, dynamic>>(
       ApiConstants.userMeVffProfile(userId),
+      queryParameters: PaginationQuery.projectsPage(
+        page: projectsPage,
+        pageSize: projectsPageSize,
+      ),
     );
     return VffConnectedProfileModel.fromJson(response);
   }
 
   @override
-  Future<VffPublicProfileModel> getPublicProfile(String userId) async {
+  Future<VffPublicProfileModel> getPublicProfile(
+    String userId, {
+    int projectsPage = PaginationQuery.defaultPage,
+    int? projectsPageSize,
+  }) async {
     final response = await apiClient.get<Map<String, dynamic>>(
       ApiConstants.userVffPublicProfile(userId),
+      queryParameters: PaginationQuery.projectsPage(
+        page: projectsPage,
+        pageSize: projectsPageSize,
+      ),
     );
     return VffPublicProfileModel.fromJson(response);
   }
@@ -90,17 +145,43 @@ class VffRemoteDataSourceImpl implements VffRemoteDataSource {
   }
 
   @override
-  Future<VffReceivedInboxModel> getReceivedInbox() async {
+  Future<VffReceivedInboxModel> getReceivedInbox({
+    int vffRequestsPage = PaginationQuery.defaultPage,
+    int? vffRequestsPageSize,
+    int projectInvitesPage = PaginationQuery.defaultPage,
+    int? projectInvitesPageSize,
+  }) async {
     final response = await apiClient.get<Map<String, dynamic>>(
       ApiConstants.userInboxReceived,
+      queryParameters: PaginationQuery.inboxReceived(
+        vffRequestsPage: vffRequestsPage,
+        vffRequestsPageSize: vffRequestsPageSize,
+        projectInvitesPage: projectInvitesPage,
+        projectInvitesPageSize: projectInvitesPageSize,
+      ),
     );
     return VffReceivedInboxModel.fromJson(response);
   }
 
   @override
-  Future<VffSentInboxModel> getSentInbox() async {
+  Future<VffSentInboxModel> getSentInbox({
+    int vffRequestsPage = PaginationQuery.defaultPage,
+    int? vffRequestsPageSize,
+    int projectInvitesPage = PaginationQuery.defaultPage,
+    int? projectInvitesPageSize,
+    int joinRequestsPage = PaginationQuery.defaultPage,
+    int? joinRequestsPageSize,
+  }) async {
     final response = await apiClient.get<Map<String, dynamic>>(
       ApiConstants.userInboxSent,
+      queryParameters: PaginationQuery.inboxSent(
+        vffRequestsPage: vffRequestsPage,
+        vffRequestsPageSize: vffRequestsPageSize,
+        projectInvitesPage: projectInvitesPage,
+        projectInvitesPageSize: projectInvitesPageSize,
+        joinRequestsPage: joinRequestsPage,
+        joinRequestsPageSize: joinRequestsPageSize,
+      ),
     );
     return VffSentInboxModel.fromJson(response);
   }

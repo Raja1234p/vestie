@@ -4,6 +4,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:vestie/app/router/route_args/project_detail_flow_args.dart';
 import 'package:vestie/core/error/failures.dart';
 import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
+import 'package:vestie/core/domain/entities/pagination_info.dart';
 import 'package:vestie/user/features/borrow/domain/entities/my_borrow_screen_entity.dart';
 import 'package:vestie/user/features/borrow/domain/usecases/cancel_borrow_request_use_case.dart';
 import 'package:vestie/user/features/borrow/domain/usecases/get_active_repay_summary_use_case.dart';
@@ -59,6 +60,13 @@ void main() {
     cancelBorrowRequestUseCase: cancelRequest,
   );
 
+  const emptyHistoryPagination = PaginationInfo(
+    page: 1,
+    pageSize: 20,
+    totalCount: 0,
+    totalPages: 0,
+  );
+
   group('MyBorrowRequestCubit', () {
     test('loadFailed when initial load fails with no cached data', () async {
       when(
@@ -79,7 +87,10 @@ void main() {
         () => getScreen(projectId: any(named: 'projectId')),
       ).thenAnswer(
         (_) async => const Right(
-          MyBorrowScreenEntity(activeRequest: pendingRequest),
+          MyBorrowScreenEntity(
+            activeRequest: pendingRequest,
+            historyPagination: emptyHistoryPagination,
+          ),
         ),
       );
       when(
@@ -106,7 +117,10 @@ void main() {
         () => getScreen(projectId: any(named: 'projectId')),
       ).thenAnswer(
         (_) async => const Right(
-          MyBorrowScreenEntity(activeRequest: pendingRequest),
+          MyBorrowScreenEntity(
+            activeRequest: pendingRequest,
+            historyPagination: emptyHistoryPagination,
+          ),
         ),
       );
       when(

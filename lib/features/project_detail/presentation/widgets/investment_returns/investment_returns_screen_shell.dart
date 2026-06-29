@@ -15,12 +15,16 @@ class InvestmentReturnsScreenShell extends StatelessWidget {
   final String title;
   final InvestmentReturnsUiData data;
   final Widget? footer;
+  final ScrollController? scrollController;
+  final Widget? listFooter;
 
   const InvestmentReturnsScreenShell({
     super.key,
     required this.title,
     required this.data,
     this.footer,
+    this.scrollController,
+    this.listFooter,
   });
 
   @override
@@ -39,6 +43,8 @@ class InvestmentReturnsScreenShell extends StatelessWidget {
               child: InvestmentReturnsScreenBody(
                 data: data,
                 hasPinnedFooter: footer != null,
+                scrollController: scrollController,
+                listFooter: listFooter,
               ),
             ),
             if (footer != null) FlowScreenFooter(child: footer!),

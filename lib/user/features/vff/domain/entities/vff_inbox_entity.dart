@@ -1,3 +1,4 @@
+import 'package:vestie/core/domain/entities/pagination_info.dart';
 import 'vff_enums.dart';
 
 class VffInboxRequestEntity {
@@ -118,23 +119,33 @@ class VffSentJoinRequestEntity {
 
 class VffReceivedInboxEntity {
   final List<VffInboxRequestEntity> vffRequests;
+  final PaginationInfo vffRequestsPagination;
   final List<VffProjectInviteEntity> projectInvites;
+  final PaginationInfo projectInvitesPagination;
 
   const VffReceivedInboxEntity({
     this.vffRequests = const [],
+    required this.vffRequestsPagination,
     this.projectInvites = const [],
+    required this.projectInvitesPagination,
   });
 }
 
 class VffSentInboxEntity {
   final List<VffInboxSentRequestEntity> vffRequests;
+  final PaginationInfo vffRequestsPagination;
   final List<VffSentProjectInviteEntity> projectInvites;
+  final PaginationInfo projectInvitesPagination;
   final List<VffSentJoinRequestEntity> joinRequests;
+  final PaginationInfo joinRequestsPagination;
 
   const VffSentInboxEntity({
     this.vffRequests = const [],
+    required this.vffRequestsPagination,
     this.projectInvites = const [],
+    required this.projectInvitesPagination,
     this.joinRequests = const [],
+    required this.joinRequestsPagination,
   });
 }
 

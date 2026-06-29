@@ -7,6 +7,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:vestie/core/presentation/paginated_scroll_listener.dart';
+import 'package:vestie/core/presentation/widgets/list_load_more_footer.dart';
 import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/app/router/route_args/user_vff_flow_args.dart';
 
@@ -45,6 +47,24 @@ class AppInviteMembersBottomSheet extends StatefulWidget {
 class _AppInviteMembersBottomSheetState
     extends State<AppInviteMembersBottomSheet> {
   final Set<String> _selectedIds = {};
+  final ScrollController _scrollController = ScrollController();
+  PaginatedScrollListener? _scrollListener;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollListener = PaginatedScrollListener(
+      controller: _scrollController,
+      onLoadMore: () => context.read<InviteMembersSheetCubit>().loadMore(),
+    );
+  }
+
+  @override
+  void dispose() {
+    _scrollListener?.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   void _toggleVff(String id) {
     setState(() {
@@ -165,6 +185,7 @@ class _AppInviteMembersBottomSheetState
               Flexible(
                 fit: FlexFit.loose,
                 child: SingleChildScrollView(
+                  controller: _scrollController,
                   child: _buildVffGrid(
                     sheetState: sheetState,
                     vffs: vffs,
@@ -288,26 +309,32 @@ class _AppInviteMembersBottomSheetState
       );
     }
 
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.symmetric(horizontal: sheetContentInset),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 4,
-        mainAxisSpacing: 12.h,
-        crossAxisSpacing: 34.w,
-        mainAxisExtent: 88.h,
-      ),
-      itemCount: vffs.length,
-      itemBuilder: (_, i) {
-        final vff = vffs[i];
-        final selected = _selectedIds.contains(vff.id);
-        return _VffGridTile(
-          vff: vff,
-          selected: selected,
-          onTap: () => _toggleVff(vff.id),
-        );
-      },
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.symmetric(horizontal: sheetContentInset),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 4,
+            mainAxisSpacing: 12.h,
+            crossAxisSpacing: 34.w,
+            mainAxisExtent: 88.h,
+          ),
+          itemCount: vffs.length,
+          itemBuilder: (_, i) {
+            final vff = vffs[i];
+            final selected = _selectedIds.contains(vff.id);
+            return _VffGridTile(
+              vff: vff,
+              selected: selected,
+              onTap: () => _toggleVff(vff.id),
+            );
+          },
+        ),
+        ListLoadMoreFooter(loadingMore: sheetState.loadingMore),
+      ],
     );
   }
 }

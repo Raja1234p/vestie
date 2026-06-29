@@ -216,6 +216,8 @@ class ApiConstants {
   // ── Wallet ───────────────────────────────────────────────────────────────
   static const String wallet = '/wallet';
 
+  static const String walletTransactions = '/wallet/transactions';
+
   static const String walletDepositIntent = '/wallet/deposit/intent';
 
   static String walletDepositStatus(String paymentIntentId) =>

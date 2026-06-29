@@ -1,7 +1,9 @@
 import 'package:dartz/dartz.dart';
 
+import '../../../../../core/domain/entities/paginated_result.dart';
 import '../../../../../core/error/failure_mapper.dart';
 import '../../../../../core/error/failures.dart';
+import '../../../../../core/models/pagination_dto.dart';
 import '../../domain/entities/vff_connection_entity.dart';
 import '../../domain/entities/vff_inbox_entity.dart';
 import '../../domain/entities/vff_profile_entity.dart';
@@ -14,29 +16,44 @@ class VffRepositoryImpl implements VffRepository {
   VffRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<Either<Failure, List<VffConnectionEntity>>> listMyVffs() async {
-    return _mapList(
-      () => remoteDataSource.listMyVffs(),
+  Future<Either<Failure, PaginatedResult<VffConnectionEntity>>> listMyVffs({
+    int page = PaginationQuery.defaultPage,
+    int? pageSize,
+  }) async {
+    return _mapPage(
+      () => remoteDataSource.listMyVffs(page: page, pageSize: pageSize),
       (models) => models.map((m) => m.toEntity()).toList(growable: false),
     );
   }
 
   @override
   Future<Either<Failure, VffConnectedProfileEntity>> getConnectedProfile(
-    String userId,
-  ) async {
+    String userId, {
+    int projectsPage = PaginationQuery.defaultPage,
+    int? projectsPageSize,
+  }) async {
     return _map(
-      () => remoteDataSource.getConnectedProfile(userId),
+      () => remoteDataSource.getConnectedProfile(
+        userId,
+        projectsPage: projectsPage,
+        projectsPageSize: projectsPageSize,
+      ),
       (model) => model.toEntity(),
     );
   }
 
   @override
   Future<Either<Failure, VffPublicProfileEntity>> getPublicProfile(
-    String userId,
-  ) async {
+    String userId, {
+    int projectsPage = PaginationQuery.defaultPage,
+    int? projectsPageSize,
+  }) async {
     return _map(
-      () => remoteDataSource.getPublicProfile(userId),
+      () => remoteDataSource.getPublicProfile(
+        userId,
+        projectsPage: projectsPage,
+        projectsPageSize: projectsPageSize,
+      ),
       (model) => model.toEntity(),
     );
   }
@@ -52,17 +69,41 @@ class VffRepositoryImpl implements VffRepository {
   }
 
   @override
-  Future<Either<Failure, VffReceivedInboxEntity>> getReceivedInbox() async {
+  Future<Either<Failure, VffReceivedInboxEntity>> getReceivedInbox({
+    int vffRequestsPage = PaginationQuery.defaultPage,
+    int? vffRequestsPageSize,
+    int projectInvitesPage = PaginationQuery.defaultPage,
+    int? projectInvitesPageSize,
+  }) async {
     return _map(
-      () => remoteDataSource.getReceivedInbox(),
+      () => remoteDataSource.getReceivedInbox(
+        vffRequestsPage: vffRequestsPage,
+        vffRequestsPageSize: vffRequestsPageSize,
+        projectInvitesPage: projectInvitesPage,
+        projectInvitesPageSize: projectInvitesPageSize,
+      ),
       (model) => model.toEntity(),
     );
   }
 
   @override
-  Future<Either<Failure, VffSentInboxEntity>> getSentInbox() async {
+  Future<Either<Failure, VffSentInboxEntity>> getSentInbox({
+    int vffRequestsPage = PaginationQuery.defaultPage,
+    int? vffRequestsPageSize,
+    int projectInvitesPage = PaginationQuery.defaultPage,
+    int? projectInvitesPageSize,
+    int joinRequestsPage = PaginationQuery.defaultPage,
+    int? joinRequestsPageSize,
+  }) async {
     return _map(
-      () => remoteDataSource.getSentInbox(),
+      () => remoteDataSource.getSentInbox(
+        vffRequestsPage: vffRequestsPage,
+        vffRequestsPageSize: vffRequestsPageSize,
+        projectInvitesPage: projectInvitesPage,
+        projectInvitesPageSize: projectInvitesPageSize,
+        joinRequestsPage: joinRequestsPage,
+        joinRequestsPageSize: joinRequestsPageSize,
+      ),
       (model) => model.toEntity(),
     );
   }
@@ -158,6 +199,27 @@ class VffRepositoryImpl implements VffRepository {
     try {
       final model = await load();
       return Right(map(model));
+    } on Failure catch (f) {
+      return Left(f);
+    } catch (e) {
+      return Left(FailureMapper.fromException(e));
+    }
+  }
+
+  Future<Either<Failure, PaginatedResult<T>>> _mapPage<T, M>(
+    Future<PaginatedListModel<M>> Function() load,
+    List<T> Function(List<M> models) mapItems,
+  ) async {
+    try {
+      final pageModel = await load();
+      return Right(
+        PaginatedResult.fromPaginatedList(
+          PaginatedListModel(
+            items: mapItems(pageModel.items),
+            pagination: pageModel.pagination,
+          ),
+        ),
+      );
     } on Failure catch (f) {
       return Left(f);
     } catch (e) {

@@ -82,6 +82,7 @@ import '../../features/wallet/data/datasources/wallet_withdrawal_remote_data_sou
 import '../../features/wallet/domain/repositories/wallet_deposit_repository.dart';
 import '../../features/wallet/domain/repositories/wallet_repository.dart';
 import '../../features/wallet/domain/repositories/wallet_withdrawal_repository.dart';
+import '../../features/wallet/domain/usecases/get_wallet_transactions_use_case.dart';
 import '../../features/wallet/domain/usecases/get_wallet_use_case.dart';
 import '../../features/wallet/domain/usecases/run_wallet_deposit_use_case.dart';
 import '../../features/wallet/domain/usecases/wallet_withdrawal_usecases.dart';
@@ -210,6 +211,7 @@ class ServiceLocator {
   late final WalletRemoteDataSource walletRemoteDataSource;
   late final WalletRepository walletRepository;
   late final GetWalletUseCase getWalletUseCase;
+  late final GetWalletTransactionsUseCase getWalletTransactionsUseCase;
   late final ProjectPotRemoteDataSource projectPotRemoteDataSource;
   late final ProjectPotRepository projectPotRepository;
   late final GetProjectPotUseCase getProjectPotUseCase;

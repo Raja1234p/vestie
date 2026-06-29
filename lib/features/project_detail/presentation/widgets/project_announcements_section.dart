@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/presentation/widgets/list_load_more_footer.dart';
+import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/widgets/text/app_text.dart';
+import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
 
 import '../../domain/entities/project_announcement_entity.dart';
 import '../../domain/entities/project_detail_entity.dart';
@@ -102,8 +109,55 @@ class _ProjectAnnouncementsSectionState
                 : null,
           ),
         ],
+        _buildLoadMore(context),
         if (widget.gapAfter > 0) SizedBox(height: widget.gapAfter),
       ],
+    );
+  }
+
+  Widget _buildLoadMore(BuildContext context) {
+    ProjectDetailBloc? bloc;
+    try {
+      bloc = context.read<ProjectDetailBloc>();
+    } on ProviderNotFoundException {
+      return const SizedBox.shrink();
+    }
+
+    return BlocBuilder<ProjectDetailBloc, ProjectDetailState>(
+      bloc: bloc,
+      buildWhen: (prev, curr) =>
+          prev is ProjectDetailLoaded &&
+          curr is ProjectDetailLoaded &&
+          (prev.project.announcementsPagination !=
+                  curr.project.announcementsPagination ||
+              prev.announcementsLoadingMore != curr.announcementsLoadingMore),
+      builder: (context, state) {
+        if (state is! ProjectDetailLoaded) return const SizedBox.shrink();
+        if (!state.project.announcementsPagination.hasMore) {
+          return const SizedBox.shrink();
+        }
+
+        if (state.announcementsLoadingMore) {
+          return const ListLoadMoreFooter(loadingMore: true);
+        }
+
+        return Padding(
+          padding: EdgeInsets.only(top: 8.h),
+          child: Center(
+            child: TextButton(
+              onPressed: () => bloc!.add(const LoadMoreProjectAnnouncementsEvent()),
+              child: AppText(
+                AppStrings.loadMore,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.primary,
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

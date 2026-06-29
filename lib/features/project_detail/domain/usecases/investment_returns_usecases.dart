@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/error/failures.dart';
+import '../../../../core/models/pagination_dto.dart';
 import '../entities/investment_returns_entities.dart';
 import '../repositories/investment_returns_repository.dart';
 
@@ -9,8 +10,16 @@ class GetMyInvestmentReturnsUseCase {
 
   GetMyInvestmentReturnsUseCase(this.repository);
 
-  Future<Either<Failure, MyInvestmentReturnsEntity>> call(String projectId) {
-    return repository.getMyReturns(projectId);
+  Future<Either<Failure, MyInvestmentReturnsEntity>> call(
+    String projectId, {
+    int historyPage = PaginationQuery.defaultPage,
+    int? historyPageSize,
+  }) {
+    return repository.getMyReturns(
+      projectId,
+      historyPage: historyPage,
+      historyPageSize: historyPageSize,
+    );
   }
 }
 
@@ -20,9 +29,15 @@ class GetInvestmentDistributionsUseCase {
   GetInvestmentDistributionsUseCase(this.repository);
 
   Future<Either<Failure, InvestmentDistributionsHistoryEntity>> call(
-    String projectId,
-  ) {
-    return repository.getDistributions(projectId);
+    String projectId, {
+    int page = PaginationQuery.defaultPage,
+    int? pageSize,
+  }) {
+    return repository.getDistributions(
+      projectId,
+      page: page,
+      pageSize: pageSize,
+    );
   }
 }
 

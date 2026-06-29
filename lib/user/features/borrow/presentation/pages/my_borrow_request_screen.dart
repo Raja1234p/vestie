@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/app/router/route_args/project_detail_flow_args.dart';
+import 'package:vestie/core/presentation/widgets/list_load_more_footer.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
@@ -25,10 +26,39 @@ import '../widgets/my_borrow_history_body.dart';
 import '../widgets/my_borrow_request_active_body.dart';
 
 /// Member My Borrow Request — empty, pending, and approved (My Borrow) states.
-class MyBorrowRequestScreen extends StatelessWidget {
+class MyBorrowRequestScreen extends StatefulWidget {
   final MyBorrowRequestRouteArgs args;
 
   const MyBorrowRequestScreen({super.key, required this.args});
+
+  @override
+  State<MyBorrowRequestScreen> createState() => _MyBorrowRequestScreenState();
+}
+
+class _MyBorrowRequestScreenState extends State<MyBorrowRequestScreen> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    final max = _scrollController.position.maxScrollExtent;
+    final offset = _scrollController.offset;
+    if (max - offset <= 200) {
+      context.read<MyBorrowRequestCubit>().loadMoreHistory();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,6 +135,7 @@ class MyBorrowRequestScreen extends StatelessWidget {
         );
       }
       return SingleChildScrollView(
+        controller: _scrollController,
         padding: AppDimens.postAuthFlowScrollPadding,
         child: MyBorrowApprovedBody(data: approved),
       );
@@ -112,18 +143,33 @@ class MyBorrowRequestScreen extends StatelessWidget {
 
     if (showsPending && state.activeRequest != null) {
       return SingleChildScrollView(
+        controller: _scrollController,
         padding: AppDimens.postAuthFlowScrollPadding,
-        child: MyBorrowRequestActiveBody(
-          activeRequest: state.activeRequest!,
-          history: state.history,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            MyBorrowRequestActiveBody(
+              activeRequest: state.activeRequest!,
+              history: state.history,
+            ),
+            if (state.history.isNotEmpty)
+              ListLoadMoreFooter(loadingMore: state.historyLoadingMore),
+          ],
         ),
       );
     }
 
     if (state.history.isNotEmpty) {
       return SingleChildScrollView(
+        controller: _scrollController,
         padding: AppDimens.postAuthFlowScrollPadding,
-        child: MyBorrowHistoryBody(history: state.history),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            MyBorrowHistoryBody(history: state.history),
+            ListLoadMoreFooter(loadingMore: state.historyLoadingMore),
+          ],
+        ),
       );
     }
 
@@ -153,7 +199,7 @@ class MyBorrowRequestScreen extends StatelessWidget {
       );
     }
 
-    final makeRequestBlocked = args.borrowDisabledForViewer && !showsPending;
+    final makeRequestBlocked = widget.args.borrowDisabledForViewer && !showsPending;
 
     return AppButton(
       text: showsPending
@@ -179,8 +225,8 @@ class MyBorrowRequestScreen extends StatelessWidget {
     final cubit = context.read<MyBorrowRequestCubit>();
     try {
       final routeArgs = await cubit.prepareRepayFlow(
-        projectName: args.projectName.isNotEmpty
-            ? args.projectName
+        projectName: widget.args.projectName.isNotEmpty
+            ? widget.args.projectName
             : (state.repaySummary?.projectName ?? ''),
       );
       if (!context.mounted || routeArgs == null) return;
@@ -205,14 +251,14 @@ class MyBorrowRequestScreen extends StatelessWidget {
       return;
     }
 
-    if (args.borrowDisabledForViewer) {
+    if (widget.args.borrowDisabledForViewer) {
       AppToast.showInfo(context, AppStrings.borrowRequiresCoLeaderMessage);
       return;
     }
 
     final submitted = await context.push<bool>(
       AppRoutes.borrowFlow,
-      extra: args.walletFlowArgs,
+      extra: widget.args.walletFlowArgs,
     );
     if (!context.mounted || submitted != true) return;
     await context.read<MyBorrowRequestCubit>().load();

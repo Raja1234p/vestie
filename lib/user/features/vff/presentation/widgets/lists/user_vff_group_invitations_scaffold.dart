@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:vestie/core/presentation/widgets/list_load_more_footer.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
@@ -21,8 +22,39 @@ import '../user_vff_inbox_interaction_lock.dart';
 import '../user_vff_shimmers.dart';
 
 /// Full group invitation list scaffold.
-final class UserVffGroupInvitationsScaffold extends StatelessWidget {
+final class UserVffGroupInvitationsScaffold extends StatefulWidget {
   const UserVffGroupInvitationsScaffold({super.key});
+
+  @override
+  State<UserVffGroupInvitationsScaffold> createState() =>
+      _UserVffGroupInvitationsScaffoldState();
+}
+
+class _UserVffGroupInvitationsScaffoldState
+    extends State<UserVffGroupInvitationsScaffold> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    final max = _scrollController.position.maxScrollExtent;
+    final offset = _scrollController.offset;
+    if (max - offset <= 200) {
+      context.read<UserVffGroupInvitationListCubit>().loadMore();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,16 +139,22 @@ final class UserVffGroupInvitationsScaffold extends StatelessWidget {
                           child: UserVffInboxInteractionLock(
                             locked: inboxBusy,
                             child: ListView.builder(
+                              controller: _scrollController,
                               physics: inboxBusy
                                   ? const NeverScrollableScrollPhysics()
                                   : const BouncingScrollPhysics(),
                               padding: EdgeInsets.only(bottom: AppDimens.v24),
-                              itemCount: items.length + 1,
+                              itemCount: items.length + 2,
                               itemBuilder: (_, i) {
                                 if (i == 0) {
                                   return const UserVffFullListSectionTitle(
                                     title:
                                         AppStrings.userVffGroupInvitationsTitle,
+                                  );
+                                }
+                                if (i == items.length + 1) {
+                                  return ListLoadMoreFooter(
+                                    loadingMore: state.loadingMore,
                                   );
                                 }
                                 final g = items[i - 1];

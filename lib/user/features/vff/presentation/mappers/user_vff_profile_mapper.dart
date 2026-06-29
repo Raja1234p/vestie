@@ -69,6 +69,10 @@ abstract final class UserVffProfileMapper {
     );
   }
 
+  static List<UserVffJoinedProjectRowUi> mapJoinedProjects(
+    List<VffJoinedProjectEntity> entities,
+  ) => entities.map(_joinedProject).toList(growable: false);
+
   static UserVffJoinedProjectRowUi _joinedProject(
     VffJoinedProjectEntity entity,
   ) {

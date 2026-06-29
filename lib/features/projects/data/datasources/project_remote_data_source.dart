@@ -1,4 +1,5 @@
 import '../../../../core/constants/api_constants.dart';
+import '../../../../core/models/pagination_dto.dart';
 import '../../../../core/network/api_response_body.dart';
 import '../../../../core/network/base_api_client.dart';
 import 'join_project_request_body.dart';
@@ -28,15 +29,31 @@ class ProjectRemoteDataSourceImpl implements ProjectRemoteDataSource {
 
   @override
   Future<List<ProjectSummaryModel>> getProjects({required String scope}) async {
-    final response = await apiClient.get<List<dynamic>>(
+    final response = await apiClient.get<dynamic>(
       ApiConstants.projects,
-      queryParameters: {'scope': scope},
+      queryParameters: {
+        'scope': scope,
+        ...PaginationQuery.pageAndSize(),
+      },
     );
-    return response
-        .map(
-          (json) => ProjectSummaryModel.fromJson(json as Map<String, dynamic>),
-        )
-        .toList();
+    if (response is List) {
+      return response
+          .whereType<Map>()
+          .map(
+            (json) =>
+                ProjectSummaryModel.fromJson(json.cast<String, dynamic>()),
+          )
+          .toList(growable: false);
+    }
+    if (response is Map) {
+      final parsed = PaginatedListParser.parseKeyedList(
+        response.cast<String, dynamic>(),
+        'projects',
+        ProjectSummaryModel.fromJson,
+      );
+      return parsed.items;
+    }
+    return const [];
   }
 
   @override

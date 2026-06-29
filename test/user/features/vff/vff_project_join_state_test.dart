@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:vestie/core/domain/entities/pagination_info.dart';
 import 'package:vestie/user/features/vff/data/models/vff_json_parsing.dart';
 import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
 import 'package:vestie/user/features/vff/domain/entities/vff_profile_entity.dart';
@@ -35,6 +36,13 @@ void main() {
     });
   });
 
+  const emptyProjectsPagination = PaginationInfo(
+    page: 1,
+    pageSize: 20,
+    totalCount: 1,
+    totalPages: 1,
+  );
+
   group('joined project row UI', () {
     UserVffJoinedProjectRowUi row(VffProjectJoinState joinState) {
       return UserVffProfileMapper.connected(
@@ -50,6 +58,7 @@ void main() {
               memberCount: 3,
             ),
           ],
+          joinedProjectsPagination: emptyProjectsPagination,
         ),
       ).joinedProjects!.single;
     }

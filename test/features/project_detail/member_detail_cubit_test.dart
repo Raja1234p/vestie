@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:vestie/core/error/failures.dart';
+import 'package:vestie/core/domain/entities/pagination_info.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_activity_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/usecases/get_member_activity_usecase.dart';
@@ -40,12 +41,20 @@ void main() {
     contributedAmount: 0,
   );
 
+  const emptyPagination = PaginationInfo(
+    page: 1,
+    pageSize: 20,
+    totalCount: 0,
+    totalPages: 0,
+  );
+
   const activity = MemberActivityEntity(
     member: member,
     totalContributed: 100,
     contributionCount: 2,
     totalBorrowed: 0,
     transactions: [],
+    transactionsPagination: emptyPagination,
   );
 
   setUp(() {

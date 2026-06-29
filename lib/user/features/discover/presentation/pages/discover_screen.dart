@@ -8,6 +8,8 @@ import 'package:vestie/core/widgets/common/post_auth_scroll_viewport.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:vestie/core/presentation/paginated_scroll_listener.dart';
+import 'package:vestie/core/presentation/widgets/list_load_more_footer.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import '../../../home/domain/entities/project.dart';
@@ -42,9 +44,13 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
   late final DiscoverCubit _cubit = DiscoverCubit(
     reloadDiscoverProjectList: widget.reloadDiscoverProjectList,
   );
+  final ScrollController _scrollController = ScrollController();
+  PaginatedScrollListener? _scrollListener;
 
   @override
   void dispose() {
+    _scrollListener?.dispose();
+    _scrollController.dispose();
     _cubit.close();
     super.dispose();
   }
@@ -52,6 +58,10 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
   @override
   void initState() {
     super.initState();
+    _scrollListener = PaginatedScrollListener(
+      controller: _scrollController,
+      onLoadMore: () => _cubit.loadMore(),
+    );
     if (widget.activate) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) _cubit.onTabActivated();
@@ -73,15 +83,22 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
   Widget build(BuildContext context) {
     return BlocProvider.value(
       value: _cubit,
-      child: _DiscoverBody(visible: widget.activate),
+      child: _DiscoverBody(
+        visible: widget.activate,
+        scrollController: _scrollController,
+      ),
     );
   }
 }
 
 class _DiscoverBody extends StatelessWidget {
   final bool visible;
+  final ScrollController scrollController;
 
-  const _DiscoverBody({required this.visible});
+  const _DiscoverBody({
+    required this.visible,
+    required this.scrollController,
+  });
 
   void _navigateToDetail(BuildContext context, Project p) {
     openProjectFromCard(context, p);
@@ -104,7 +121,8 @@ class _DiscoverBody extends StatelessWidget {
                 previous.filtered != current.filtered ||
                 previous.selectedFilter != current.selectedFilter ||
                 previous.searchQuery != current.searchQuery ||
-                previous.joiningProjectId != current.joiningProjectId,
+                previous.joiningProjectId != current.joiningProjectId ||
+                previous.loadingMore != current.loadingMore,
             builder: (context, state) {
               final hasProjects = state.allProjects.isNotEmpty;
               final filteredEmpty = state.filtered.isEmpty;
@@ -200,6 +218,7 @@ class _DiscoverBody extends StatelessWidget {
                         onRefresh: () =>
                             context.read<DiscoverCubit>().refresh(),
                         child: CustomScrollView(
+                          controller: scrollController,
                           physics: const AlwaysScrollableScrollPhysics(),
                           slivers: [
                             if (state.loading)
@@ -253,30 +272,37 @@ class _DiscoverBody extends StatelessWidget {
                                 padding: EdgeInsets.symmetric(horizontal: 16.w),
                                 sliver: SliverList(
                                   delegate: SliverChildBuilderDelegate(
-                                    (_, i) => ProjectCard(
-                                      project: state.filtered[i],
-                                      discoverCtaStyle: true,
-                                      actionLoading:
-                                          state.joiningProjectId ==
-                                          state.filtered[i].id,
-                                      onAction: () {
-                                        final project = state.filtered[i];
-                                        final isJoinAction =
-                                            project.status ==
-                                                ProjectStatus.ongoing &&
-                                            project.relation !=
-                                                ProjectRelation.owned &&
-                                            !project.requestPending;
-                                        if (isJoinAction) {
-                                          context
-                                              .read<DiscoverCubit>()
-                                              .joinProject(project);
-                                          return;
-                                        }
-                                        _navigateToDetail(context, project);
-                                      },
-                                    ),
-                                    childCount: state.filtered.length,
+                                    (_, i) {
+                                      if (i == state.filtered.length) {
+                                        return ListLoadMoreFooter(
+                                          loadingMore: state.loadingMore,
+                                        );
+                                      }
+                                      return ProjectCard(
+                                        project: state.filtered[i],
+                                        discoverCtaStyle: true,
+                                        actionLoading:
+                                            state.joiningProjectId ==
+                                            state.filtered[i].id,
+                                        onAction: () {
+                                          final project = state.filtered[i];
+                                          final isJoinAction =
+                                              project.status ==
+                                                  ProjectStatus.ongoing &&
+                                              project.relation !=
+                                                  ProjectRelation.owned &&
+                                              !project.requestPending;
+                                          if (isJoinAction) {
+                                            context
+                                                .read<DiscoverCubit>()
+                                                .joinProject(project);
+                                            return;
+                                          }
+                                          _navigateToDetail(context, project);
+                                        },
+                                      );
+                                    },
+                                    childCount: state.filtered.length + 1,
                                   ),
                                 ),
                               ),

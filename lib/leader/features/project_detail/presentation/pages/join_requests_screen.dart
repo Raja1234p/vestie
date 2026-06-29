@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/presentation/paginated_scroll_listener.dart';
+import 'package:vestie/core/presentation/widgets/list_load_more_footer.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/navigation/success_dialog_navigation.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
@@ -42,6 +44,27 @@ class _JoinRequestsScreenState extends State<JoinRequestsScreen> {
   String? _actingMembershipId;
   bool? _actingIsApprove;
   bool _isSyncingAfterModeration = false;
+  final ScrollController _scrollController = ScrollController();
+  PaginatedScrollListener? _scrollListener;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollListener = PaginatedScrollListener(
+      controller: _scrollController,
+      onLoadMore: () {
+        if (!mounted) return;
+        context.read<JoinRequestsCubit>().loadMore();
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _scrollListener?.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   Future<void> _syncAfterModeration(BuildContext context) async {
     setState(() => _isSyncingAfterModeration = true);
@@ -140,6 +163,7 @@ class _JoinRequestsScreenState extends State<JoinRequestsScreen> {
           backgroundColor: Colors.transparent,
           body: PostAuthGradientBackground(
             child: CustomScrollView(
+              controller: _scrollController,
               slivers: [
                 SliverToBoxAdapter(
                   child: PostAuthHeader(
@@ -183,9 +207,19 @@ class _JoinRequestsScreenState extends State<JoinRequestsScreen> {
                           return SliverPadding(
                             padding: EdgeInsets.fromLTRB(16.w, 6.h, 16.w, 22.h),
                             sliver: SliverList.separated(
-                              itemCount: state.requests.length,
-                              separatorBuilder: (_, _) => SizedBox(height: 2.h),
+                              itemCount: state.requests.length + 1,
+                              separatorBuilder: (_, i) {
+                                if (i >= state.requests.length - 1) {
+                                  return const SizedBox.shrink();
+                                }
+                                return SizedBox(height: 2.h);
+                              },
                               itemBuilder: (_, i) {
+                                if (i == state.requests.length) {
+                                  return ListLoadMoreFooter(
+                                    loadingMore: state.loadingMore,
+                                  );
+                                }
                                 final r = state.requests[i];
                                 final username = r.username.isEmpty
                                     ? '@member'

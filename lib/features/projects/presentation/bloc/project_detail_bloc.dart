@@ -83,6 +83,11 @@ class ClearMemberVffSendErrorEvent extends ProjectDetailEvent {
   const ClearMemberVffSendErrorEvent();
 }
 
+/// Fetches the next page of project announcements from `GET /projects/{id}`.
+class LoadMoreProjectAnnouncementsEvent extends ProjectDetailEvent {
+  const LoadMoreProjectAnnouncementsEvent();
+}
+
 // STATES
 abstract class ProjectDetailState extends Equatable {
   const ProjectDetailState();
@@ -108,12 +113,15 @@ class ProjectDetailLoaded extends ProjectDetailState {
   /// Shown once via UI listener (toast).
   final String? vffSendErrorMessage;
 
+  final bool announcementsLoadingMore;
+
   ProjectDetailLoaded({
     required this.project,
     this.activeTab = ProjectDetailTab.borrowRequests,
     int? pendingJoinRequestCount,
     this.sendingVffUserId,
     this.vffSendErrorMessage,
+    this.announcementsLoadingMore = false,
   }) : viewerRole = project.viewerRole,
        pendingJoinRequestCount =
            pendingJoinRequestCount ?? project.pendingJoinRequestCount;
@@ -128,6 +136,7 @@ class ProjectDetailLoaded extends ProjectDetailState {
     bool clearSendingVffUserId = false,
     String? vffSendErrorMessage,
     bool clearVffSendError = false,
+    bool? announcementsLoadingMore,
   }) {
     return ProjectDetailLoaded(
       project: project ?? this.project,
@@ -140,6 +149,8 @@ class ProjectDetailLoaded extends ProjectDetailState {
       vffSendErrorMessage: clearVffSendError
           ? null
           : (vffSendErrorMessage ?? this.vffSendErrorMessage),
+      announcementsLoadingMore:
+          announcementsLoadingMore ?? this.announcementsLoadingMore,
     );
   }
 
@@ -151,6 +162,7 @@ class ProjectDetailLoaded extends ProjectDetailState {
     pendingJoinRequestCount,
     sendingVffUserId,
     vffSendErrorMessage,
+    announcementsLoadingMore,
   ];
 }
 
@@ -193,6 +205,7 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
     on<ChangeTabEvent>(_onChangeTab);
     on<SendMemberVffRequestEvent>(_onSendMemberVffRequest);
     on<ClearMemberVffSendErrorEvent>(_onClearMemberVffSendError);
+    on<LoadMoreProjectAnnouncementsEvent>(_onLoadMoreProjectAnnouncements);
   }
 
   /// Reloads project detail and completes when this load finishes (silent or full).
@@ -247,7 +260,7 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
               project.showsJoinRequestsHeaderChip &&
               listPending != null) {
             final pendingResult = await listPending(event.projectId);
-            pendingResult.fold((_) {}, (list) => pendingCount = list.length);
+            pendingResult.fold((_) {}, (page) => pendingCount = page.totalCount);
           }
           var loadedProject = project;
           final potUseCase = _getProjectPotUseCase;
@@ -264,8 +277,8 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
               projectId: event.projectId,
               status: 'Pending',
             );
-            borrowResult.fold((_) {}, (requests) {
-              loadedProject = loadedProject.withBorrowRequests(requests);
+            borrowResult.fold((_) {}, (page) {
+              loadedProject = loadedProject.withBorrowRequests(page.items);
             });
           }
 
@@ -421,5 +434,45 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
     if (curr is ProjectDetailLoaded) {
       emit(curr.copyWith(activeTab: event.activeTab));
     }
+  }
+
+  Future<void> _onLoadMoreProjectAnnouncements(
+    LoadMoreProjectAnnouncementsEvent event,
+    Emitter<ProjectDetailState> emit,
+  ) async {
+    final curr = state;
+    if (curr is! ProjectDetailLoaded) return;
+    if (curr.announcementsLoadingMore) return;
+    if (!curr.project.announcementsPagination.hasMore) return;
+
+    emit(curr.copyWith(announcementsLoadingMore: true));
+
+    final nextPage = curr.project.announcementsPagination.page + 1;
+    final result = await repository.getProjectDetail(
+      projectId: curr.project.id,
+      announcementsPage: nextPage,
+    );
+
+    final after = state;
+    if (after is! ProjectDetailLoaded) return;
+
+    result.fold(
+      (_) => emit(after.copyWith(announcementsLoadingMore: false)),
+      (detail) {
+        final existingIds = after.project.announcements.map((a) => a.id).toSet();
+        final newItems = detail.announcements
+            .where((a) => !existingIds.contains(a.id))
+            .toList(growable: false);
+        emit(
+          after.copyWith(
+            announcementsLoadingMore: false,
+            project: after.project.withAppendedAnnouncements(
+              nextPage: newItems,
+              pagination: detail.announcementsPagination,
+            ),
+          ),
+        );
+      },
+    );
   }
 }

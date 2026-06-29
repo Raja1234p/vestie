@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:vestie/core/domain/entities/paginated_result.dart';
+import 'package:vestie/core/domain/entities/pagination_info.dart';
 import 'package:vestie/features/projects/domain/usecases/list_projects_use_case.dart';
 import 'package:vestie/features/projects/domain/usecases/join_project_usecase.dart';
 import 'package:vestie/user/features/discover/presentation/cubit/discover_cubit.dart';
@@ -36,7 +38,7 @@ void main() {
     joinProject = _MockJoinProjectUseCase();
 
     when(() => listProjects(scope: any(named: 'scope')))
-        .thenAnswer((_) async => const Right(projects));
+        .thenAnswer((_) async => Right(PaginatedResult.singlePage(projects)));
   });
 
   DiscoverCubit createCubit() => DiscoverCubit(

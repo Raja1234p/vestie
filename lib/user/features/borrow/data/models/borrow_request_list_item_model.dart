@@ -1,26 +1,46 @@
+import 'package:vestie/core/models/pagination_dto.dart';
 import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
 import 'package:vestie/user/features/vff/presentation/mappers/user_vff_profile_mapper.dart';
 
 class BorrowRequestListResponseModel {
   final List<BorrowRequestListItemModel> borrowRequests;
-  final int totalCount;
+  final PaginationDto pagination;
 
   const BorrowRequestListResponseModel({
     required this.borrowRequests,
-    required this.totalCount,
+    required this.pagination,
   });
 
+  /// Legacy field — prefer [pagination.totalCount].
+  int get totalCount => pagination.totalCount;
+
   factory BorrowRequestListResponseModel.fromJson(Map<String, dynamic> json) {
-    final items =
+    final parsed = PaginatedListParser.parseKeyedList(
+      json,
+      'borrowRequests',
+      BorrowRequestListItemModel.fromJson,
+    );
+    if (parsed.items.isNotEmpty || json.containsKey('pagination')) {
+      return BorrowRequestListResponseModel(
+        borrowRequests: parsed.items,
+        pagination: parsed.pagination,
+      );
+    }
+
+    final legacyItems =
         (json['borrowRequests'] as List?)
             ?.whereType<Map>()
             .map((m) => BorrowRequestListItemModel.fromJson(m.cast()))
             .toList(growable: false) ??
         const <BorrowRequestListItemModel>[];
+    final totalCount = (json['totalCount'] as num?)?.toInt() ?? legacyItems.length;
 
     return BorrowRequestListResponseModel(
-      borrowRequests: items,
-      totalCount: (json['totalCount'] as num?)?.toInt() ?? items.length,
+      borrowRequests: legacyItems,
+      pagination: PaginationDto.fromJson(
+        null,
+        fallbackItemCount: totalCount,
+      ),
     );
   }
 }

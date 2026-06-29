@@ -20,6 +20,8 @@ import '../../../home/domain/entities/project.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart';
 import 'package:vestie/leader/features/create_project/presentation/widgets/create_project_amount_sheet.dart';
 import '../bloc/home_bloc.dart';
+import 'package:vestie/core/presentation/paginated_scroll_listener.dart';
+import 'package:vestie/core/presentation/widgets/list_load_more_footer.dart';
 import '../bloc/home_event.dart';
 import '../bloc/home_state.dart';
 import '../cubit/home_sections_cubit.dart';
@@ -227,9 +229,34 @@ class _HomeBody extends StatelessWidget {
   }
 }
 
-class _HomeContent extends StatelessWidget {
+class _HomeContent extends StatefulWidget {
   final HomeLoaded data;
   const _HomeContent({required this.data});
+
+  @override
+  State<_HomeContent> createState() => _HomeContentState();
+}
+
+class _HomeContentState extends State<_HomeContent> {
+  final ScrollController _scrollController = ScrollController();
+  PaginatedScrollListener? _scrollListener;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollListener = PaginatedScrollListener(
+      controller: _scrollController,
+      onLoadMore: () =>
+          context.read<HomeBloc>().add(const HomeLoadMoreMyProjects()),
+    );
+  }
+
+  @override
+  void dispose() {
+    _scrollListener?.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   void _openProjectDetail(BuildContext context, Project p) {
     openProjectFromCard(context, p);
@@ -237,6 +264,7 @@ class _HomeContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final data = widget.data;
     return BlocBuilder<HomeSectionsCubit, HomeSectionsState>(
       buildWhen: (previous, current) => previous != current,
       builder: (context, sections) {
@@ -256,6 +284,7 @@ class _HomeContent extends StatelessWidget {
                       const HomeRefreshRequested(),
                     ),
                     child: CustomScrollView(
+                      controller: _scrollController,
                       physics: const AlwaysScrollableScrollPhysics(),
                       slivers: [
                         SliverToBoxAdapter(
@@ -278,6 +307,11 @@ class _HomeContent extends StatelessWidget {
                           onToggle: cubit.toggleJoined,
                           onProjectAction: (p) =>
                               _openProjectDetail(context, p),
+                        ),
+                        SliverToBoxAdapter(
+                          child: ListLoadMoreFooter(
+                            loadingMore: data.myProjectsLoadingMore,
+                          ),
                         ),
                         SliverToBoxAdapter(child: SizedBox(height: 16.h)),
                       ],

@@ -1,6 +1,7 @@
-import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
+import 'package:vestie/core/models/pagination_dto.dart';
 
 import '../models/borrow_repay_models.dart';
+import '../models/borrow_request_list_item_model.dart';
 import '../models/borrow_request_model.dart';
 import '../models/borrow_terms_model.dart';
 import '../models/my_borrow_screen_model.dart';
@@ -30,9 +31,11 @@ abstract class BorrowRemoteDataSource {
     required double amount,
   });
 
-  Future<List<BorrowRequestEntity>> listBorrowRequests({
+  Future<PaginatedListModel<BorrowRequestListItemModel>> listBorrowRequests({
     required String projectId,
     String? status,
+    int page = PaginationQuery.defaultPage,
+    int? pageSize,
   });
 
   Future<BorrowVoteResultModel> voteBorrowRequest({
@@ -55,6 +58,8 @@ abstract class BorrowRemoteDataSource {
 
   Future<MyBorrowScreenModel> getMyBorrowScreen({
     required String projectId,
+    int historyPage = PaginationQuery.defaultPage,
+    int? historyPageSize,
   });
 
   Future<void> cancelBorrowRequest({
@@ -62,8 +67,10 @@ abstract class BorrowRemoteDataSource {
     required String borrowRequestId,
   });
 
-  Future<List<MyBorrowCurrentRequestModel>> listMyBorrowRequests({
+  Future<PaginatedListModel<MyBorrowCurrentRequestModel>> listMyBorrowRequests({
     required String projectId,
+    int page = PaginationQuery.defaultPage,
+    int? pageSize,
   });
 
   Future<BorrowRepaySummaryModel> getBorrowRepaySummary({

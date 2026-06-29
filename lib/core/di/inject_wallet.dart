@@ -16,6 +16,7 @@ import '../../features/wallet/data/datasources/wallet_withdrawal_remote_data_sou
 import '../../features/wallet/data/repositories/wallet_deposit_repository_impl.dart';
 import '../../features/wallet/data/repositories/wallet_repository_impl.dart';
 import '../../features/wallet/data/repositories/wallet_withdrawal_repository_impl.dart';
+import '../../features/wallet/domain/usecases/get_wallet_transactions_use_case.dart';
 import '../../features/wallet/domain/usecases/get_wallet_use_case.dart';
 import '../../features/wallet/domain/usecases/run_wallet_deposit_use_case.dart';
 import '../../features/wallet/domain/usecases/wallet_withdrawal_usecases.dart';
@@ -31,6 +32,9 @@ void registerWalletDependencies(ServiceLocator sl) {
     remoteDataSource: sl.walletRemoteDataSource,
   );
   sl.getWalletUseCase = GetWalletUseCase(sl.walletRepository);
+  sl.getWalletTransactionsUseCase = GetWalletTransactionsUseCase(
+    sl.walletRepository,
+  );
 
   sl.stripeRemoteDataSource = StripeRemoteDataSourceImpl(
     apiClient: sl.apiClient,

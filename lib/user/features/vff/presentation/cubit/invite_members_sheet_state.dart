@@ -14,20 +14,29 @@ final class InviteMembersSheetState extends Equatable {
   final InviteMembersSheetLoadStatus status;
   final List<InviteVffPickUi> vffs;
   final int loadedConnectionCount;
+  final int totalConnectionCount;
+  final int currentPage;
+  final bool loadingMore;
   final String? errorMessage;
 
   const InviteMembersSheetState({
     this.status = InviteMembersSheetLoadStatus.initial,
     this.vffs = const [],
     this.loadedConnectionCount = 0,
+    this.totalConnectionCount = 0,
+    this.currentPage = 0,
+    this.loadingMore = false,
     this.errorMessage,
   });
+
+  bool get hasMore => loadedConnectionCount < totalConnectionCount;
 
   /// API returned VFFs, but every row is pending or already in this project.
   bool get allConnectionsAlreadyInProject =>
       status == InviteMembersSheetLoadStatus.loaded &&
       loadedConnectionCount > 0 &&
-      vffs.isEmpty;
+      vffs.isEmpty &&
+      !hasMore;
 
   bool get isLoading =>
       status == InviteMembersSheetLoadStatus.loading ||
@@ -39,6 +48,9 @@ final class InviteMembersSheetState extends Equatable {
     InviteMembersSheetLoadStatus? status,
     List<InviteVffPickUi>? vffs,
     int? loadedConnectionCount,
+    int? totalConnectionCount,
+    int? currentPage,
+    bool? loadingMore,
     String? errorMessage,
     bool clearError = false,
   }) {
@@ -47,6 +59,9 @@ final class InviteMembersSheetState extends Equatable {
       vffs: vffs ?? this.vffs,
       loadedConnectionCount:
           loadedConnectionCount ?? this.loadedConnectionCount,
+      totalConnectionCount: totalConnectionCount ?? this.totalConnectionCount,
+      currentPage: currentPage ?? this.currentPage,
+      loadingMore: loadingMore ?? this.loadingMore,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
     );
   }
@@ -56,6 +71,9 @@ final class InviteMembersSheetState extends Equatable {
     status,
     vffs,
     loadedConnectionCount,
+    totalConnectionCount,
+    currentPage,
+    loadingMore,
     errorMessage,
   ];
 }

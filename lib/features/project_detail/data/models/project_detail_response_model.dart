@@ -1,3 +1,5 @@
+import 'package:vestie/core/domain/entities/pagination_info.dart';
+import 'package:vestie/core/models/pagination_dto.dart';
 import 'package:vestie/core/utils/safe_parser.dart';
 import 'package:vestie/features/projects/data/models/project_list_json_parsing.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
@@ -21,6 +23,9 @@ class ProjectDetailResponseModel {
   final List<_MembershipPayload> _members;
   final List<_InvitePayload> _invites;
   final List<_AnnouncementPayload> _announcements;
+  final PaginationDto _membersPagination;
+  final PaginationDto _invitesPagination;
+  final PaginationDto _announcementsPagination;
   final String? _projectStatusRaw;
   final String? _votingStatusRaw;
   final String? _userRoleRaw;
@@ -33,6 +38,9 @@ class ProjectDetailResponseModel {
     required List<_MembershipPayload> members,
     required List<_InvitePayload> invites,
     required List<_AnnouncementPayload> announcements,
+    required PaginationDto membersPagination,
+    required PaginationDto invitesPagination,
+    required PaginationDto announcementsPagination,
     String? projectStatusRaw,
     String? votingStatusRaw,
     String? userRoleRaw,
@@ -43,6 +51,9 @@ class ProjectDetailResponseModel {
        _members = members,
        _invites = invites,
        _announcements = announcements,
+       _membersPagination = membersPagination,
+       _invitesPagination = invitesPagination,
+       _announcementsPagination = announcementsPagination,
        _projectStatusRaw = projectStatusRaw,
        _votingStatusRaw = votingStatusRaw,
        _userRoleRaw = userRoleRaw,
@@ -58,22 +69,27 @@ class ProjectDetailResponseModel {
     final viewerMembershipJson =
         (json['viewerMembership'] as Map?)?.cast<String, dynamic>() ??
         const <String, dynamic>{};
-    final membersJson = _parseSectionList(json['members']);
-    final invitesJson = _parseSectionList(json['invites']);
-    final announcementsJson = _parseSectionList(json['announcements']);
+    final membersSection = _parseSection(json['members']);
+    final invitesSection = _parseSection(json['invites']);
+    final announcementsSection = _parseSection(json['announcements']);
     final votingJson = (json['voting'] as Map?)?.cast<String, dynamic>();
 
     return ProjectDetailResponseModel._(
       project: _ProjectPayload.fromJson(projectJson),
       rules: _RulesPayload.fromJson(rulesJson),
       viewerMembership: _MembershipPayload.fromJson(viewerMembershipJson),
-      members: membersJson
+      members: membersSection.items
           .map(_MembershipPayload.fromJson)
           .toList(growable: false),
-      invites: invitesJson.map(_InvitePayload.fromJson).toList(growable: false),
-      announcements: announcementsJson
+      invites: invitesSection.items
+          .map(_InvitePayload.fromJson)
+          .toList(growable: false),
+      announcements: announcementsSection.items
           .map(_AnnouncementPayload.fromJson)
           .toList(growable: false),
+      membersPagination: membersSection.pagination,
+      invitesPagination: invitesSection.pagination,
+      announcementsPagination: announcementsSection.pagination,
       projectStatusRaw: _nullableString(json['projectStatus']),
       votingStatusRaw: _nullableString(json['votingStatus']),
       userRoleRaw: _nullableString(json['userRole']),
@@ -81,23 +97,13 @@ class ProjectDetailResponseModel {
     );
   }
 
-  static List<Map<String, dynamic>> _parseSectionList(dynamic raw) {
-    if (raw is List) {
-      return raw
-          .whereType<Map>()
-          .map((m) => m.cast<String, dynamic>())
-          .toList();
-    }
-    if (raw is Map) {
-      final items = raw['items'] ?? raw['data'] ?? raw['results'];
-      if (items is List) {
-        return items
-            .whereType<Map>()
-            .map((m) => m.cast<String, dynamic>())
-            .toList();
-      }
-    }
-    return const <Map<String, dynamic>>[];
+  static _PaginatedSection _parseSection(dynamic raw) {
+    final maps = PaginatedListParser.parseItemMaps(raw);
+    final pagination = PaginatedListParser.parsePagination(
+      raw,
+      fallbackItemCount: maps.length,
+    );
+    return _PaginatedSection(items: maps, pagination: pagination);
   }
 
   static String? _nullableString(dynamic value) {
@@ -203,11 +209,23 @@ class ProjectDetailResponseModel {
       hasActiveSuccessVote: hasActiveVote,
       invites: mappedInvites,
       hasCoLeader: _project.hasCoLeader,
+      membersPagination: _toPaginationInfo(_membersPagination),
+      invitesPagination: _toPaginationInfo(_invitesPagination),
+      announcementsPagination: _toPaginationInfo(_announcementsPagination),
     );
 
     if (!hasActiveVote) return entity;
 
     return entity.withSyntheticClosureVoteFromDetailVoting();
+  }
+
+  static PaginationInfo _toPaginationInfo(PaginationDto dto) {
+    return PaginationInfo(
+      page: dto.page,
+      pageSize: dto.pageSize,
+      totalCount: dto.totalCount,
+      totalPages: dto.totalPages,
+    );
   }
 
   static ProjectInviteEntity _mapInvite(_InvitePayload json) {
@@ -348,6 +366,16 @@ class ProjectDetailResponseModel {
     if (t.contains('emerg')) return ProjectCategory.emergency;
     return ProjectCategory.vacations;
   }
+}
+
+class _PaginatedSection {
+  final List<Map<String, dynamic>> items;
+  final PaginationDto pagination;
+
+  const _PaginatedSection({
+    required this.items,
+    required this.pagination,
+  });
 }
 
 class _VotingPayload {

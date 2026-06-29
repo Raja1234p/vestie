@@ -17,6 +17,9 @@ class DiscoverState extends Equatable {
   final String selectedFilter;
   final String searchQuery;
   final bool loading;
+  final bool loadingMore;
+  final int currentPage;
+  final int totalCount;
   final String? errorMessage;
 
   /// Project id while join / request-to-join API is in flight (button spinner).
@@ -29,10 +32,15 @@ class DiscoverState extends Equatable {
     this.selectedFilter = AppStrings.filterAll,
     this.searchQuery = '',
     this.loading = false,
+    this.loadingMore = false,
+    this.currentPage = 0,
+    this.totalCount = 0,
     this.errorMessage,
     this.joiningProjectId,
     this.joinEffect,
   });
+
+  bool get hasMore => allProjects.length < totalCount;
 
   DiscoverState copyWith({
     List<Project>? allProjects,
@@ -40,6 +48,9 @@ class DiscoverState extends Equatable {
     String? selectedFilter,
     String? searchQuery,
     bool? loading,
+    bool? loadingMore,
+    int? currentPage,
+    int? totalCount,
     String? errorMessage,
     String? joiningProjectId,
     DiscoverJoinEffect? joinEffect,
@@ -53,6 +64,9 @@ class DiscoverState extends Equatable {
       selectedFilter: selectedFilter ?? this.selectedFilter,
       searchQuery: searchQuery ?? this.searchQuery,
       loading: loading ?? this.loading,
+      loadingMore: loadingMore ?? this.loadingMore,
+      currentPage: currentPage ?? this.currentPage,
+      totalCount: totalCount ?? this.totalCount,
       errorMessage: clearErrorMessage
           ? null
           : (errorMessage ?? this.errorMessage),
@@ -70,6 +84,9 @@ class DiscoverState extends Equatable {
     selectedFilter,
     searchQuery,
     loading,
+    loadingMore,
+    currentPage,
+    totalCount,
     errorMessage,
     joiningProjectId,
     joinEffect,
@@ -114,10 +131,11 @@ class DiscoverCubit extends Cubit<DiscoverState> {
     emit(
       state.copyWith(
         loading: showLoadingIndicator,
+        loadingMore: false,
         clearErrorMessage: showLoadingIndicator,
       ),
     );
-    final result = await _listProjectsUseCase(scope: 'discover');
+    final result = await _listProjectsUseCase(scope: 'discover', page: 1);
     result.fold(
       (failure) {
         if (!showLoadingIndicator) {
@@ -133,17 +151,60 @@ class DiscoverCubit extends Cubit<DiscoverState> {
           ),
         );
       },
-      (projects) {
+      (page) {
         final filtered = _applyFilters(
-          projects: projects,
+          projects: page.items,
           filter: state.selectedFilter,
           searchQuery: state.searchQuery,
         );
         emit(
           state.copyWith(
             loading: false,
-            allProjects: projects,
+            allProjects: page.items,
             filtered: filtered,
+            currentPage: page.page,
+            totalCount: page.totalCount,
+            clearErrorMessage: true,
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> loadMore() async {
+    if (state.loading ||
+        state.loadingMore ||
+        !state.hasMore ||
+        state.searchQuery.isNotEmpty) {
+      return;
+    }
+
+    emit(state.copyWith(loadingMore: true, clearErrorMessage: true));
+    final nextPage = state.currentPage + 1;
+    final result = await _listProjectsUseCase(
+      scope: 'discover',
+      page: nextPage,
+    );
+    result.fold(
+      (failure) => emit(
+        state.copyWith(
+          loadingMore: false,
+          errorMessage: _userFacingFailureMessage(failure),
+        ),
+      ),
+      (page) {
+        final allProjects = [...state.allProjects, ...page.items];
+        emit(
+          state.copyWith(
+            allProjects: allProjects,
+            filtered: _applyFilters(
+              projects: allProjects,
+              filter: state.selectedFilter,
+              searchQuery: state.searchQuery,
+            ),
+            currentPage: page.page,
+            totalCount: page.totalCount,
+            loadingMore: false,
             clearErrorMessage: true,
           ),
         );

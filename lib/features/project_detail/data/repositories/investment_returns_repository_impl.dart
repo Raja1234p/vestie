@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 
 import '../../../../core/error/failure_mapper.dart';
 import '../../../../core/error/failures.dart';
+import '../../../../core/models/pagination_dto.dart';
 import '../../domain/entities/investment_returns_entities.dart';
 import '../../domain/repositories/investment_returns_repository.dart';
 import '../datasources/investment_returns_remote_data_source.dart';
@@ -13,20 +14,32 @@ class InvestmentReturnsRepositoryImpl implements InvestmentReturnsRepository {
 
   @override
   Future<Either<Failure, MyInvestmentReturnsEntity>> getMyReturns(
-    String projectId,
-  ) async {
+    String projectId, {
+    int historyPage = PaginationQuery.defaultPage,
+    int? historyPageSize,
+  }) async {
     return _execute(() async {
-      final model = await remoteDataSource.getMyReturns(projectId);
+      final model = await remoteDataSource.getMyReturns(
+        projectId,
+        historyPage: historyPage,
+        historyPageSize: historyPageSize,
+      );
       return model.toEntity();
     });
   }
 
   @override
   Future<Either<Failure, InvestmentDistributionsHistoryEntity>> getDistributions(
-    String projectId,
-  ) async {
+    String projectId, {
+    int page = PaginationQuery.defaultPage,
+    int? pageSize,
+  }) async {
     return _execute(() async {
-      final model = await remoteDataSource.getDistributions(projectId);
+      final model = await remoteDataSource.getDistributions(
+        projectId,
+        page: page,
+        pageSize: pageSize,
+      );
       return model.toEntity();
     });
   }

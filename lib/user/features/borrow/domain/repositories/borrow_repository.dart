@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
 
+import 'package:vestie/core/domain/entities/paginated_result.dart';
 import 'package:vestie/core/error/failures.dart';
+import 'package:vestie/core/models/pagination_dto.dart';
 import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
 import '../entities/borrow_repay_entities.dart';
 import '../entities/borrow_terms_entity.dart';
@@ -44,9 +46,11 @@ abstract class BorrowRepository {
     required double amount,
   });
 
-  Future<Either<Failure, List<BorrowRequestEntity>>> listBorrowRequests({
+  Future<Either<Failure, PaginatedResult<BorrowRequestEntity>>> listBorrowRequests({
     required String projectId,
     String? status,
+    int page = PaginationQuery.defaultPage,
+    int? pageSize,
   });
 
   Future<Either<Failure, BorrowVoteResult>> voteBorrowRequest({
@@ -74,6 +78,8 @@ abstract class BorrowRepository {
 
   Future<Either<Failure, MyBorrowScreenEntity>> getMyBorrowScreen({
     required String projectId,
+    int historyPage = PaginationQuery.defaultPage,
+    int? historyPageSize,
   });
 
   Future<Either<Failure, void>> cancelBorrowRequest({

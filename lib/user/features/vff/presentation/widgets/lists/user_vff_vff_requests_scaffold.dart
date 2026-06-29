@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:vestie/core/presentation/widgets/list_load_more_footer.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
@@ -20,8 +21,38 @@ import '../user_vff_incoming_request_card.dart';
 import '../user_vff_shimmers.dart';
 
 /// Full inbound VFF request list scaffold.
-final class UserVffVffRequestsScaffold extends StatelessWidget {
+final class UserVffVffRequestsScaffold extends StatefulWidget {
   const UserVffVffRequestsScaffold({super.key});
+
+  @override
+  State<UserVffVffRequestsScaffold> createState() =>
+      _UserVffVffRequestsScaffoldState();
+}
+
+class _UserVffVffRequestsScaffoldState extends State<UserVffVffRequestsScaffold> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    final max = _scrollController.position.maxScrollExtent;
+    final offset = _scrollController.offset;
+    if (max - offset <= 200) {
+      context.read<UserVffIncomingRequestListCubit>().loadMore();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,15 +137,21 @@ final class UserVffVffRequestsScaffold extends StatelessWidget {
                           child: UserVffInboxInteractionLock(
                             locked: inboxBusy,
                             child: ListView.builder(
+                              controller: _scrollController,
                               physics: inboxBusy
                                   ? const NeverScrollableScrollPhysics()
                                   : const BouncingScrollPhysics(),
                               padding: EdgeInsets.only(bottom: AppDimens.v24),
-                              itemCount: items.length + 1,
+                              itemCount: items.length + 2,
                               itemBuilder: (_, i) {
                                 if (i == 0) {
                                   return const UserVffFullListSectionTitle(
                                     title: AppStrings.userVffSectionVffRequests,
+                                  );
+                                }
+                                if (i == items.length + 1) {
+                                  return ListLoadMoreFooter(
+                                    loadingMore: state.loadingMore,
                                   );
                                 }
                                 final r = items[i - 1];

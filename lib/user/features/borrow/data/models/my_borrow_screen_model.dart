@@ -1,29 +1,31 @@
+import 'package:vestie/core/models/pagination_dto.dart';
 import 'package:vestie/app/router/route_args/project_detail_flow_args.dart';
 import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
 
 class MyBorrowScreenModel {
   final MyBorrowCurrentRequestModel? currentRequest;
   final List<MyBorrowHistoryItemModel> history;
+  final PaginationDto historyPagination;
 
   const MyBorrowScreenModel({
     this.currentRequest,
     this.history = const [],
+    required this.historyPagination,
   });
 
   factory MyBorrowScreenModel.fromJson(Map<String, dynamic> json) {
     final currentJson = json['currentRequest'];
-    final historyJson =
-        (json['history'] as List?)
-            ?.whereType<Map>()
-            .map((m) => MyBorrowHistoryItemModel.fromJson(m.cast()))
-            .toList(growable: false) ??
-        const <MyBorrowHistoryItemModel>[];
+    final historyParsed = PaginatedListParser.parse(
+      json['history'],
+      MyBorrowHistoryItemModel.fromJson,
+    );
 
     return MyBorrowScreenModel(
       currentRequest: currentJson is Map
           ? MyBorrowCurrentRequestModel.fromJson(currentJson.cast())
           : null,
-      history: historyJson,
+      history: historyParsed.items,
+      historyPagination: historyParsed.pagination,
     );
   }
 }

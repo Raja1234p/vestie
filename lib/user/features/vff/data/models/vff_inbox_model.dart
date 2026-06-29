@@ -1,3 +1,5 @@
+import 'package:vestie/core/domain/entities/pagination_info.dart';
+import 'package:vestie/core/models/pagination_dto.dart';
 import 'package:vestie/core/utils/safe_parser.dart';
 
 import '../../domain/entities/vff_enums.dart';
@@ -174,23 +176,31 @@ class VffReceivedInboxModel {
   const VffReceivedInboxModel(this.entity);
 
   factory VffReceivedInboxModel.fromJson(Map<String, dynamic> json) {
-    final vffRequests = json
-        .safeList('vffRequests')
-        .whereType<Map>()
-        .map((m) => VffInboxRequestModel.fromJson(m.cast<String, dynamic>()))
-        .map((m) => m.toEntity())
-        .toList(growable: false);
-    final projectInvites = json
-        .safeList('projectInvites')
-        .whereType<Map>()
-        .map((m) => VffProjectInviteModel.fromJson(m.cast<String, dynamic>()))
-        .map((m) => m.toEntity())
-        .toList(growable: false);
+    final vffRequestsParsed = PaginatedListParser.parse(
+      json['vffRequests'],
+      (m) => VffInboxRequestModel.fromJson(m).toEntity(),
+    );
+    final projectInvitesParsed = PaginatedListParser.parse(
+      json['projectInvites'],
+      (m) => VffProjectInviteModel.fromJson(m).toEntity(),
+    );
 
     return VffReceivedInboxModel(
       VffReceivedInboxEntity(
-        vffRequests: vffRequests,
-        projectInvites: projectInvites,
+        vffRequests: vffRequestsParsed.items,
+        vffRequestsPagination: PaginationInfo(
+          page: vffRequestsParsed.pagination.page,
+          pageSize: vffRequestsParsed.pagination.pageSize,
+          totalCount: vffRequestsParsed.pagination.totalCount,
+          totalPages: vffRequestsParsed.pagination.totalPages,
+        ),
+        projectInvites: projectInvitesParsed.items,
+        projectInvitesPagination: PaginationInfo(
+          page: projectInvitesParsed.pagination.page,
+          pageSize: projectInvitesParsed.pagination.pageSize,
+          totalCount: projectInvitesParsed.pagination.totalCount,
+          totalPages: projectInvitesParsed.pagination.totalPages,
+        ),
       ),
     );
   }
@@ -204,34 +214,42 @@ class VffSentInboxModel {
   const VffSentInboxModel(this.entity);
 
   factory VffSentInboxModel.fromJson(Map<String, dynamic> json) {
-    final vffRequests = json
-        .safeList('vffRequests')
-        .whereType<Map>()
-        .map(
-          (m) => VffInboxSentRequestModel.fromJson(m.cast<String, dynamic>()),
-        )
-        .map((m) => m.toEntity())
-        .toList(growable: false);
-    final projectInvites = json
-        .safeList('projectInvites')
-        .whereType<Map>()
-        .map(
-          (m) => VffSentProjectInviteModel.fromJson(m.cast<String, dynamic>()),
-        )
-        .map((m) => m.toEntity())
-        .toList(growable: false);
-    final joinRequests = json
-        .safeList('joinRequests')
-        .whereType<Map>()
-        .map((m) => VffSentJoinRequestModel.fromJson(m.cast<String, dynamic>()))
-        .map((m) => m.toEntity())
-        .toList(growable: false);
+    final vffRequestsParsed = PaginatedListParser.parse(
+      json['vffRequests'],
+      (m) => VffInboxSentRequestModel.fromJson(m).toEntity(),
+    );
+    final projectInvitesParsed = PaginatedListParser.parse(
+      json['projectInvites'],
+      (m) => VffSentProjectInviteModel.fromJson(m).toEntity(),
+    );
+    final joinRequestsParsed = PaginatedListParser.parse(
+      json['joinRequests'],
+      (m) => VffSentJoinRequestModel.fromJson(m).toEntity(),
+    );
 
     return VffSentInboxModel(
       VffSentInboxEntity(
-        vffRequests: vffRequests,
-        projectInvites: projectInvites,
-        joinRequests: joinRequests,
+        vffRequests: vffRequestsParsed.items,
+        vffRequestsPagination: PaginationInfo(
+          page: vffRequestsParsed.pagination.page,
+          pageSize: vffRequestsParsed.pagination.pageSize,
+          totalCount: vffRequestsParsed.pagination.totalCount,
+          totalPages: vffRequestsParsed.pagination.totalPages,
+        ),
+        projectInvites: projectInvitesParsed.items,
+        projectInvitesPagination: PaginationInfo(
+          page: projectInvitesParsed.pagination.page,
+          pageSize: projectInvitesParsed.pagination.pageSize,
+          totalCount: projectInvitesParsed.pagination.totalCount,
+          totalPages: projectInvitesParsed.pagination.totalPages,
+        ),
+        joinRequests: joinRequestsParsed.items,
+        joinRequestsPagination: PaginationInfo(
+          page: joinRequestsParsed.pagination.page,
+          pageSize: joinRequestsParsed.pagination.pageSize,
+          totalCount: joinRequestsParsed.pagination.totalCount,
+          totalPages: joinRequestsParsed.pagination.totalPages,
+        ),
       ),
     );
   }

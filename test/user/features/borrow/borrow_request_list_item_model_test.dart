@@ -38,7 +38,7 @@ void main() {
       expect(entity.isPending, isTrue);
     });
 
-    test('list response parses borrowRequests array', () {
+    test('list response parses borrowRequests array with pagination', () {
       final response = BorrowRequestListResponseModel.fromJson({
         'borrowRequests': [
           {
@@ -54,10 +54,16 @@ void main() {
             'callerCanDecide': true,
           },
         ],
-        'totalCount': 1,
+        'pagination': {
+          'page': 1,
+          'pageSize': 20,
+          'totalCount': 1,
+          'totalPages': 1,
+        },
       });
 
       expect(response.totalCount, 1);
+      expect(response.pagination.totalPages, 1);
       expect(response.borrowRequests, hasLength(1));
       expect(response.borrowRequests.first.memberName, 'Jane Doe');
     });

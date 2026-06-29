@@ -17,6 +17,10 @@ final class UserVffProfileState extends Equatable {
   /// Join / request-to-join on a joined-project row (not footer send-VFF).
   final String? joiningProjectId;
 
+  final bool joinedProjectsLoadingMore;
+  final int joinedProjectsCurrentPage;
+  final int joinedProjectsTotalCount;
+
   const UserVffProfileState({
     this.loadStatus = UserVffProfileLoadStatus.initial,
     this.profile,
@@ -27,7 +31,15 @@ final class UserVffProfileState extends Equatable {
     this.isRemoveVffLoading = false,
     this.vffRequestSent = false,
     this.joiningProjectId,
+    this.joinedProjectsLoadingMore = false,
+    this.joinedProjectsCurrentPage = 0,
+    this.joinedProjectsTotalCount = 0,
   });
+
+  bool get joinedProjectsHasMore {
+    final count = profile?.joinedProjects?.length ?? 0;
+    return count < joinedProjectsTotalCount;
+  }
 
   UserVffProfileFooterMode? get effectiveFooterMode =>
       footerOverride ?? profile?.footerMode;
@@ -48,6 +60,9 @@ final class UserVffProfileState extends Equatable {
     bool? vffRequestSent,
     String? joiningProjectId,
     bool clearJoiningProjectId = false,
+    bool? joinedProjectsLoadingMore,
+    int? joinedProjectsCurrentPage,
+    int? joinedProjectsTotalCount,
   }) {
     return UserVffProfileState(
       loadStatus: loadStatus ?? this.loadStatus,
@@ -63,6 +78,12 @@ final class UserVffProfileState extends Equatable {
       joiningProjectId: clearJoiningProjectId
           ? null
           : (joiningProjectId ?? this.joiningProjectId),
+      joinedProjectsLoadingMore:
+          joinedProjectsLoadingMore ?? this.joinedProjectsLoadingMore,
+      joinedProjectsCurrentPage:
+          joinedProjectsCurrentPage ?? this.joinedProjectsCurrentPage,
+      joinedProjectsTotalCount:
+          joinedProjectsTotalCount ?? this.joinedProjectsTotalCount,
     );
   }
 
@@ -82,5 +103,8 @@ final class UserVffProfileState extends Equatable {
     isRemoveVffLoading,
     vffRequestSent,
     joiningProjectId,
+    joinedProjectsLoadingMore,
+    joinedProjectsCurrentPage,
+    joinedProjectsTotalCount,
   ];
 }

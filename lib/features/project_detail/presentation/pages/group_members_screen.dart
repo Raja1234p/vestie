@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/presentation/paginated_scroll_listener.dart';
+import 'package:vestie/core/presentation/widgets/list_load_more_footer.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
@@ -42,12 +44,58 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
   late List<MemberEntity> _members;
   ProjectDetailEntity? _project;
   String? _sendingVffUserId;
+  bool _loadingMore = false;
+  int _membersPage = 1;
+  int _membersTotalCount = 0;
+  final ScrollController _scrollController = ScrollController();
+  PaginatedScrollListener? _scrollListener;
+
+  bool get _hasMore => _members.length < _membersTotalCount;
 
   @override
   void initState() {
     super.initState();
     _members = widget.members;
     _project = widget.project;
+    _membersTotalCount = widget.project?.membersPagination.totalCount ??
+        widget.members.length;
+    _scrollListener = PaginatedScrollListener(
+      controller: _scrollController,
+      onLoadMore: _loadMoreMembers,
+    );
+  }
+
+  @override
+  void dispose() {
+    _scrollListener?.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadMoreMembers() async {
+    if (_loadingMore || !_hasMore) return;
+    setState(() => _loadingMore = true);
+    final nextPage = _membersPage + 1;
+    final result =
+        await ServiceLocator.instance.projectDetailRepository.getProjectDetail(
+      projectId: widget.projectId,
+      membersPage: nextPage,
+    );
+    if (!mounted) return;
+    result.fold(
+      (_) => setState(() => _loadingMore = false),
+      (project) => setState(() {
+        final existingIds = _members.map((m) => m.membershipId).toSet();
+        final newMembers = project.members
+            .where((m) => !existingIds.contains(m.membershipId))
+            .toList(growable: false);
+        _members = [..._members, ...newMembers];
+        _project = project;
+        _membersPage = project.membersPagination.page;
+        _membersTotalCount = project.membersPagination.totalCount;
+        _loadingMore = false;
+      }),
+    );
   }
 
   List<MemberEntity> get _activeMembers => _members
@@ -191,9 +239,13 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
     }
 
     return ListView.builder(
+      controller: _scrollController,
       padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 32.h),
-      itemCount: active.length,
+      itemCount: active.length + 1,
       itemBuilder: (_, i) {
+        if (i == active.length) {
+          return ListLoadMoreFooter(loadingMore: _loadingMore);
+        }
         final member = active[i];
         return Padding(
           padding: EdgeInsets.only(bottom: 12.h),

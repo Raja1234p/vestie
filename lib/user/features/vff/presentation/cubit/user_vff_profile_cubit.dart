@@ -65,7 +65,10 @@ final class UserVffProfileCubit extends Cubit<UserVffProfileState> {
     );
 
     if (loadAsConnected) {
-      final result = await _getConnectedVffProfileUseCase(userId);
+      final result = await _getConnectedVffProfileUseCase(
+        userId,
+        projectsPage: 1,
+      );
       if (isClosed) return;
       result.fold(
         (failure) => emit(
@@ -78,13 +81,16 @@ final class UserVffProfileCubit extends Cubit<UserVffProfileState> {
           state.copyWith(
             loadStatus: UserVffProfileLoadStatus.loaded,
             profile: UserVffProfileMapper.connected(entity),
+            joinedProjectsCurrentPage: entity.joinedProjectsPagination.page,
+            joinedProjectsTotalCount:
+                entity.joinedProjectsPagination.totalCount,
           ),
         ),
       );
       return;
     }
 
-    final result = await _getPublicVffProfileUseCase(userId);
+    final result = await _getPublicVffProfileUseCase(userId, projectsPage: 1);
     if (isClosed) return;
     result.fold(
       (failure) => emit(
@@ -105,6 +111,115 @@ final class UserVffProfileCubit extends Cubit<UserVffProfileState> {
               entity,
               canSendVffRequest: canSend,
             ),
+            joinedProjectsCurrentPage: entity.joinedProjectsPagination.page,
+            joinedProjectsTotalCount:
+                entity.joinedProjectsPagination.totalCount,
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> loadMoreJoinedProjects() async {
+    if (state.joinedProjectsLoadingMore || !state.joinedProjectsHasMore) return;
+    final userId = _userId?.trim();
+    final profile = state.profile;
+    if (userId == null || userId.isEmpty || profile == null) return;
+
+    emit(state.copyWith(joinedProjectsLoadingMore: true, clearError: true));
+    final nextPage = state.joinedProjectsCurrentPage + 1;
+
+    if (_loadAsConnected) {
+      final result = await _getConnectedVffProfileUseCase(
+        userId,
+        projectsPage: nextPage,
+      );
+      if (isClosed) return;
+      result.fold(
+        (failure) => emit(
+          state.copyWith(
+            joinedProjectsLoadingMore: false,
+            errorMessage: FailureMapper.userMessage(failure),
+          ),
+        ),
+        (entity) {
+          final existing = profile.joinedProjects ?? const [];
+          final appended = [
+            ...existing,
+            ...UserVffProfileMapper.mapJoinedProjects(entity.joinedProjects),
+          ];
+          emit(
+            state.copyWith(
+              profile: UserVffProfileUiModel(
+                id: profile.id,
+                usernameHandle: profile.usernameHandle,
+                displayName: profile.displayName,
+                initials: profile.initials,
+                photoUrl: profile.photoUrl,
+                mutualProjectsCount: profile.mutualProjectsCount,
+                badgeMode: profile.badgeMode,
+                metricsLayout: profile.metricsLayout,
+                metrics: profile.metrics,
+                transactions: profile.transactions,
+                joinedProjects: appended,
+                footerMode: profile.footerMode,
+                showFooter: profile.showFooter,
+              ),
+              joinedProjectsCurrentPage: entity.joinedProjectsPagination.page,
+              joinedProjectsTotalCount:
+                  entity.joinedProjectsPagination.totalCount,
+              joinedProjectsLoadingMore: false,
+              clearError: true,
+            ),
+          );
+        },
+      );
+      return;
+    }
+
+    final result = await _getPublicVffProfileUseCase(
+      userId,
+      projectsPage: nextPage,
+    );
+    if (isClosed) return;
+    result.fold(
+      (failure) => emit(
+        state.copyWith(
+          joinedProjectsLoadingMore: false,
+          errorMessage: FailureMapper.userMessage(failure),
+        ),
+      ),
+      (entity) {
+        if (!entity.isVffConnected) {
+          emit(state.copyWith(joinedProjectsLoadingMore: false));
+          return;
+        }
+        final existing = profile.joinedProjects ?? const [];
+        final appended = [
+          ...existing,
+          ...UserVffProfileMapper.mapJoinedProjects(entity.joinedProjects),
+        ];
+        emit(
+          state.copyWith(
+            profile: UserVffProfileUiModel(
+              id: profile.id,
+              usernameHandle: profile.usernameHandle,
+              displayName: profile.displayName,
+              initials: profile.initials,
+              photoUrl: profile.photoUrl,
+              mutualProjectsCount: profile.mutualProjectsCount,
+              badgeMode: profile.badgeMode,
+              metricsLayout: profile.metricsLayout,
+              metrics: profile.metrics,
+              transactions: profile.transactions,
+              joinedProjects: appended,
+              footerMode: profile.footerMode,
+              showFooter: profile.showFooter,
+            ),
+            joinedProjectsCurrentPage: entity.joinedProjectsPagination.page,
+            joinedProjectsTotalCount: entity.joinedProjectsPagination.totalCount,
+            joinedProjectsLoadingMore: false,
+            clearError: true,
           ),
         );
       },

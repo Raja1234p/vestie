@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
 
+import 'package:vestie/core/domain/entities/paginated_result.dart';
 import 'package:vestie/core/error/failures.dart';
+import 'package:vestie/core/models/pagination_dto.dart';
 
 import '../entities/vff_connection_entity.dart';
 import '../entities/vff_inbox_entity.dart';
@@ -12,8 +14,11 @@ class ListMyVffsUseCase {
 
   ListMyVffsUseCase(this._repository);
 
-  Future<Either<Failure, List<VffConnectionEntity>>> call() {
-    return _repository.listMyVffs();
+  Future<Either<Failure, PaginatedResult<VffConnectionEntity>>> call({
+    int page = PaginationQuery.defaultPage,
+    int? pageSize,
+  }) {
+    return _repository.listMyVffs(page: page, pageSize: pageSize);
   }
 }
 
@@ -22,8 +27,16 @@ class GetConnectedVffProfileUseCase {
 
   GetConnectedVffProfileUseCase(this._repository);
 
-  Future<Either<Failure, VffConnectedProfileEntity>> call(String userId) {
-    return _repository.getConnectedProfile(userId);
+  Future<Either<Failure, VffConnectedProfileEntity>> call(
+    String userId, {
+    int projectsPage = PaginationQuery.defaultPage,
+    int? projectsPageSize,
+  }) {
+    return _repository.getConnectedProfile(
+      userId,
+      projectsPage: projectsPage,
+      projectsPageSize: projectsPageSize,
+    );
   }
 }
 
@@ -32,8 +45,16 @@ class GetPublicVffProfileUseCase {
 
   GetPublicVffProfileUseCase(this._repository);
 
-  Future<Either<Failure, VffPublicProfileEntity>> call(String userId) {
-    return _repository.getPublicProfile(userId);
+  Future<Either<Failure, VffPublicProfileEntity>> call(
+    String userId, {
+    int projectsPage = PaginationQuery.defaultPage,
+    int? projectsPageSize,
+  }) {
+    return _repository.getPublicProfile(
+      userId,
+      projectsPage: projectsPage,
+      projectsPageSize: projectsPageSize,
+    );
   }
 }
 
@@ -52,8 +73,18 @@ class GetVffReceivedInboxUseCase {
 
   GetVffReceivedInboxUseCase(this._repository);
 
-  Future<Either<Failure, VffReceivedInboxEntity>> call() {
-    return _repository.getReceivedInbox();
+  Future<Either<Failure, VffReceivedInboxEntity>> call({
+    int vffRequestsPage = PaginationQuery.defaultPage,
+    int? vffRequestsPageSize,
+    int projectInvitesPage = PaginationQuery.defaultPage,
+    int? projectInvitesPageSize,
+  }) {
+    return _repository.getReceivedInbox(
+      vffRequestsPage: vffRequestsPage,
+      vffRequestsPageSize: vffRequestsPageSize,
+      projectInvitesPage: projectInvitesPage,
+      projectInvitesPageSize: projectInvitesPageSize,
+    );
   }
 }
 
@@ -62,8 +93,22 @@ class GetVffSentInboxUseCase {
 
   GetVffSentInboxUseCase(this._repository);
 
-  Future<Either<Failure, VffSentInboxEntity>> call() {
-    return _repository.getSentInbox();
+  Future<Either<Failure, VffSentInboxEntity>> call({
+    int vffRequestsPage = PaginationQuery.defaultPage,
+    int? vffRequestsPageSize,
+    int projectInvitesPage = PaginationQuery.defaultPage,
+    int? projectInvitesPageSize,
+    int joinRequestsPage = PaginationQuery.defaultPage,
+    int? joinRequestsPageSize,
+  }) {
+    return _repository.getSentInbox(
+      vffRequestsPage: vffRequestsPage,
+      vffRequestsPageSize: vffRequestsPageSize,
+      projectInvitesPage: projectInvitesPage,
+      projectInvitesPageSize: projectInvitesPageSize,
+      joinRequestsPage: joinRequestsPage,
+      joinRequestsPageSize: joinRequestsPageSize,
+    );
   }
 }
 

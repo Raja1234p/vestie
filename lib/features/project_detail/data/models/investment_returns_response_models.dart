@@ -1,3 +1,6 @@
+import 'package:vestie/core/models/pagination_dto.dart';
+import 'package:vestie/core/domain/entities/pagination_info.dart';
+
 import '../../domain/entities/investment_returns_entities.dart';
 
 class MyInvestmentReturnsResponseModel {
@@ -9,6 +12,7 @@ class MyInvestmentReturnsResponseModel {
   final double roiPercentage;
   final double roiAmount;
   final List<InvestmentPaymentHistoryResponseModel> paymentHistory;
+  final PaginationDto paymentHistoryPagination;
 
   const MyInvestmentReturnsResponseModel({
     required this.myContribution,
@@ -19,10 +23,14 @@ class MyInvestmentReturnsResponseModel {
     required this.roiPercentage,
     required this.roiAmount,
     required this.paymentHistory,
+    required this.paymentHistoryPagination,
   });
 
   factory MyInvestmentReturnsResponseModel.fromJson(Map<String, dynamic> json) {
-    final history = json['paymentHistory'];
+    final historyParsed = PaginatedListParser.parse(
+      json['paymentHistory'],
+      InvestmentPaymentHistoryResponseModel.fromJson,
+    );
     return MyInvestmentReturnsResponseModel(
       myContribution: (json['myContribution'] as num?)?.toDouble() ?? 0,
       myContributionPercentage:
@@ -33,16 +41,8 @@ class MyInvestmentReturnsResponseModel {
           (json['remainingToReceive'] as num?)?.toDouble() ?? 0,
       roiPercentage: (json['roiPercentage'] as num?)?.toDouble() ?? 0,
       roiAmount: (json['roiAmount'] as num?)?.toDouble() ?? 0,
-      paymentHistory: history is List
-          ? history
-                .whereType<Map>()
-                .map(
-                  (e) => InvestmentPaymentHistoryResponseModel.fromJson(
-                    Map<String, dynamic>.from(e),
-                  ),
-                )
-                .toList(growable: false)
-          : const [],
+      paymentHistory: historyParsed.items,
+      paymentHistoryPagination: historyParsed.pagination,
     );
   }
 
@@ -56,6 +56,12 @@ class MyInvestmentReturnsResponseModel {
       roiPercentage: roiPercentage,
       roiAmount: roiAmount,
       paymentHistory: paymentHistory.map((e) => e.toEntity()).toList(),
+      paymentHistoryPagination: PaginationInfo(
+        page: paymentHistoryPagination.page,
+        pageSize: paymentHistoryPagination.pageSize,
+        totalCount: paymentHistoryPagination.totalCount,
+        totalPages: paymentHistoryPagination.totalPages,
+      ),
     );
   }
 }
@@ -100,33 +106,30 @@ class InvestmentDistributionsHistoryResponseModel {
   final double myReceivedShare;
   final int distributionCount;
   final List<InvestmentLeaderDistributionResponseModel> distributions;
+  final PaginationDto distributionsPagination;
 
   const InvestmentDistributionsHistoryResponseModel({
     required this.totalDistributedSoFar,
     required this.myReceivedShare,
     required this.distributionCount,
     required this.distributions,
+    required this.distributionsPagination,
   });
 
   factory InvestmentDistributionsHistoryResponseModel.fromJson(
     Map<String, dynamic> json,
   ) {
-    final list = json['distributions'];
+    final distributionsParsed = PaginatedListParser.parse(
+      json['distributions'],
+      InvestmentLeaderDistributionResponseModel.fromJson,
+    );
     return InvestmentDistributionsHistoryResponseModel(
       totalDistributedSoFar:
           (json['totalDistributedSoFar'] as num?)?.toDouble() ?? 0,
       myReceivedShare: (json['myReceivedShare'] as num?)?.toDouble() ?? 0,
       distributionCount: (json['distributionCount'] as num?)?.toInt() ?? 0,
-      distributions: list is List
-          ? list
-                .whereType<Map>()
-                .map(
-                  (e) => InvestmentLeaderDistributionResponseModel.fromJson(
-                    Map<String, dynamic>.from(e),
-                  ),
-                )
-                .toList(growable: false)
-          : const [],
+      distributions: distributionsParsed.items,
+      distributionsPagination: distributionsParsed.pagination,
     );
   }
 
@@ -136,6 +139,12 @@ class InvestmentDistributionsHistoryResponseModel {
       myReceivedShare: myReceivedShare,
       distributionCount: distributionCount,
       distributions: distributions.map((e) => e.toEntity()).toList(),
+      distributionsPagination: PaginationInfo(
+        page: distributionsPagination.page,
+        pageSize: distributionsPagination.pageSize,
+        totalCount: distributionsPagination.totalCount,
+        totalPages: distributionsPagination.totalPages,
+      ),
     );
   }
 }

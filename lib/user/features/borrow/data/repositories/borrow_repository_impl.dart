@@ -1,7 +1,10 @@
 import 'package:dartz/dartz.dart';
 
+import 'package:vestie/core/domain/entities/paginated_result.dart';
+import 'package:vestie/core/domain/mappers/pagination_mapper.dart';
 import 'package:vestie/core/error/exceptions.dart';
 import 'package:vestie/core/error/failures.dart';
+import 'package:vestie/core/models/pagination_dto.dart';
 import 'package:vestie/core/utils/logger.dart';
 import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
 import '../../domain/entities/borrow_repay_entities.dart';
@@ -56,16 +59,27 @@ class BorrowRepositoryImpl implements BorrowRepository {
   }
 
   @override
-  Future<Either<Failure, List<BorrowRequestEntity>>> listBorrowRequests({
+  Future<Either<Failure, PaginatedResult<BorrowRequestEntity>>> listBorrowRequests({
     required String projectId,
     String? status,
+    int page = PaginationQuery.defaultPage,
+    int? pageSize,
   }) async {
     try {
-      final items = await _remote.listBorrowRequests(
+      final pageModel = await _remote.listBorrowRequests(
         projectId: projectId,
         status: status,
+        page: page,
+        pageSize: pageSize,
       );
-      return Right(items);
+      return Right(
+        PaginatedResult.fromPaginatedList(
+          PaginatedListModel(
+            items: pageModel.items.map((item) => item.toEntity()).toList(),
+            pagination: pageModel.pagination,
+          ),
+        ),
+      );
     } on UnauthorizedException catch (e, stack) {
       AppLogger.error('ListBorrowRequests Unauthorized', error: e, stackTrace: stack);
       return Left(ServerFailure(e.message, e.title));
@@ -189,9 +203,15 @@ class BorrowRepositoryImpl implements BorrowRepository {
   @override
   Future<Either<Failure, MyBorrowScreenEntity>> getMyBorrowScreen({
     required String projectId,
+    int historyPage = PaginationQuery.defaultPage,
+    int? historyPageSize,
   }) async {
     try {
-      final model = await _remote.getMyBorrowScreen(projectId: projectId);
+      final model = await _remote.getMyBorrowScreen(
+        projectId: projectId,
+        historyPage: historyPage,
+        historyPageSize: historyPageSize,
+      );
       final mapped = _mapMyBorrowScreen(model);
       final active = mapped.activeRequest;
       if (active != null && active.isPending) {
@@ -199,7 +219,7 @@ class BorrowRepositoryImpl implements BorrowRepository {
       }
 
       final mine = await _remote.listMyBorrowRequests(projectId: projectId);
-      return Right(_mergeMyBorrowScreen(model, mine));
+      return Right(_mergeMyBorrowScreen(model, mine.items));
     } on UnauthorizedException catch (e, stack) {
       AppLogger.error('GetMyBorrowScreen Unauthorized', error: e, stackTrace: stack);
       return Left(ServerFailure(e.message, e.title));
@@ -249,7 +269,7 @@ class BorrowRepositoryImpl implements BorrowRepository {
   }) async {
     try {
       final mine = await _remote.listMyBorrowRequests(projectId: projectId);
-      final repayable = mine
+      final repayable = mine.items
           .map((item) => item.toEntity())
           .where((item) => item.isRepayableBorrow)
           .toList();
@@ -388,6 +408,7 @@ class BorrowRepositoryImpl implements BorrowRepository {
     return MyBorrowScreenEntity(
       activeRequest: model.currentRequest?.toEntity(),
       history: model.history.map((h) => h.toHistoryEntry()).toList(growable: false),
+      historyPagination: paginationInfoFromDto(model.historyPagination),
     );
   }
 
@@ -419,6 +440,7 @@ class BorrowRepositoryImpl implements BorrowRepository {
     return MyBorrowScreenEntity(
       activeRequest: active,
       history: history,
+      historyPagination: paginationInfoFromDto(screen.historyPagination),
     );
   }
 

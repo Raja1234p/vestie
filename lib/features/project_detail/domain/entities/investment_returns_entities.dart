@@ -1,3 +1,5 @@
+import 'package:vestie/core/domain/entities/pagination_info.dart';
+
 /// Member view from `GET …/investment/my-returns`.
 class MyInvestmentReturnsEntity {
   final double myContribution;
@@ -8,6 +10,7 @@ class MyInvestmentReturnsEntity {
   final double roiPercentage;
   final double roiAmount;
   final List<InvestmentPaymentHistoryEntity> paymentHistory;
+  final PaginationInfo paymentHistoryPagination;
 
   const MyInvestmentReturnsEntity({
     required this.myContribution,
@@ -18,6 +21,7 @@ class MyInvestmentReturnsEntity {
     required this.roiPercentage,
     required this.roiAmount,
     required this.paymentHistory,
+    required this.paymentHistoryPagination,
   });
 }
 
@@ -41,12 +45,14 @@ class InvestmentDistributionsHistoryEntity {
   final double myReceivedShare;
   final int distributionCount;
   final List<InvestmentLeaderDistributionEntity> distributions;
+  final PaginationInfo distributionsPagination;
 
   const InvestmentDistributionsHistoryEntity({
     required this.totalDistributedSoFar,
     required this.myReceivedShare,
     required this.distributionCount,
     required this.distributions,
+    required this.distributionsPagination,
   });
 }
 

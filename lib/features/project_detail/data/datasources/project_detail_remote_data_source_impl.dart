@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 
 import '../../../../core/constants/api_constants.dart';
+import '../../../../core/models/pagination_dto.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/utils/logger.dart';
@@ -45,9 +46,25 @@ class ProjectDetailRemoteDataSourceImpl
   @override
   Future<ProjectDetailResponseModel> getProjectDetail({
     required String projectId,
+    int membersPage = PaginationQuery.defaultPage,
+    int? membersPageSize,
+    int announcementsPage = PaginationQuery.defaultPage,
+    int? announcementsPageSize,
+    int invitesPage = PaginationQuery.defaultPage,
+    int? invitesPageSize,
   }) async {
     try {
-      final response = await _client.get('${ApiConstants.projects}/$projectId');
+      final response = await _client.get(
+        '${ApiConstants.projects}/$projectId',
+        queryParameters: PaginationQuery.projectDetailSections(
+          membersPage: membersPage,
+          membersPageSize: membersPageSize,
+          announcementsPage: announcementsPage,
+          announcementsPageSize: announcementsPageSize,
+          invitesPage: invitesPage,
+          invitesPageSize: invitesPageSize,
+        ),
+      );
       final data = response.data;
       if (data is! Map) {
         throw ServerException('Invalid project detail response');

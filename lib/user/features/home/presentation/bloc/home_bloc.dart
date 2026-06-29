@@ -34,6 +34,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HomeFetchStarted>(_onFetch);
     on<HomeRefreshRequested>(_onFetch);
     on<HomeProjectPotPatched>(_onProjectPotPatched);
+    on<HomeLoadMoreMyProjects>(_onLoadMoreMyProjects);
   }
 
   void _onProjectPotPatched(
@@ -45,8 +46,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     if (event.projectId.isEmpty || event.projectPot <= 0) return;
 
     emit(
-      HomeLoaded(
-        totalContributed: curr.totalContributed,
+      curr.copyWith(
         myProjects: _patchProjectPot(
           curr.myProjects,
           projectId: event.projectId,
@@ -77,6 +77,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     return updated ? next : projects;
   }
 
+  ({List<Project> owned, List<Project> joined}) _splitMineProjects(
+    List<Project> mine,
+  ) {
+    var myProjects = mine
+        .where((p) => p.relation == ProjectRelation.owned)
+        .toList(growable: false);
+    var joinedProjects = mine
+        .where((p) => p.relation == ProjectRelation.joined)
+        .toList(growable: false);
+
+    myProjects = HomeProjectListSync.applyPendingPots(myProjects);
+    joinedProjects = HomeProjectListSync.applyPendingPots(joinedProjects);
+    return (owned: myProjects, joined: joinedProjects);
+  }
+
   Future<void> _onFetch(HomeEvent event, Emitter<HomeState> emit) async {
     final silent =
         event is HomeRefreshRequested && event.silent && state is HomeLoaded;
@@ -85,7 +100,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(const HomeLoading());
     }
 
-    final mineResult = await _listProjectsUseCase(scope: 'mine');
+    final mineResult = await _listProjectsUseCase(scope: 'mine', page: 1);
     final summaryResult = await _getUserMeSummaryUseCase();
 
     if (!DashboardPrefetch.userMeLoadedOnDashboard) {
@@ -96,8 +111,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       });
     }
 
-    final mine = mineResult.fold((_) => null, (List<Project> v) => v);
-    if (mine == null) {
+    final minePage = mineResult.fold((_) => null, (page) => page);
+    if (minePage == null) {
       if (silent) return;
       final failure = mineResult.fold((f) => f, (_) => null);
       emit(
@@ -110,16 +125,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       return;
     }
 
-    var myProjects = mine
-        .where((p) => p.relation == ProjectRelation.owned)
-        .toList(growable: false);
-    var joinedProjects = mine
-        .where((p) => p.relation == ProjectRelation.joined)
-        .toList(growable: false);
-
-    myProjects = HomeProjectListSync.applyPendingPots(myProjects);
-    joinedProjects = HomeProjectListSync.applyPendingPots(joinedProjects);
-    HomeProjectListSync.reconcileAfterFetch([...myProjects, ...joinedProjects]);
+    final split = _splitMineProjects(minePage.items);
+    HomeProjectListSync.reconcileAfterFetch([
+      ...split.owned,
+      ...split.joined,
+    ]);
 
     final totalContributed = summaryResult.fold(
       (_) => 0.0,
@@ -129,9 +139,55 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     emit(
       HomeLoaded(
         totalContributed: totalContributed,
-        myProjects: myProjects,
-        joinedProjects: joinedProjects,
+        myProjects: split.owned,
+        joinedProjects: split.joined,
+        mineCurrentPage: minePage.page,
+        mineTotalCount: minePage.totalCount,
       ),
+    );
+  }
+
+  Future<void> _onLoadMoreMyProjects(
+    HomeLoadMoreMyProjects event,
+    Emitter<HomeState> emit,
+  ) async {
+    final curr = state;
+    if (curr is! HomeLoaded) return;
+    if (curr.myProjectsLoadingMore || !curr.mineHasMore) return;
+
+    emit(curr.copyWith(myProjectsLoadingMore: true));
+    final nextPage = curr.mineCurrentPage + 1;
+    final result = await _listProjectsUseCase(scope: 'mine', page: nextPage);
+
+    await result.fold(
+      (failure) async {
+        if (state is HomeLoaded) {
+          emit((state as HomeLoaded).copyWith(myProjectsLoadingMore: false));
+        }
+      },
+      (page) async {
+        final latest = state;
+        if (latest is! HomeLoaded) return;
+
+        final existingIds = {
+          ...latest.myProjects.map((p) => p.id),
+          ...latest.joinedProjects.map((p) => p.id),
+        };
+        final newItems = page.items
+            .where((p) => !existingIds.contains(p.id))
+            .toList(growable: false);
+        final split = _splitMineProjects(newItems);
+
+        emit(
+          latest.copyWith(
+            myProjects: [...latest.myProjects, ...split.owned],
+            joinedProjects: [...latest.joinedProjects, ...split.joined],
+            myProjectsLoadingMore: false,
+            mineCurrentPage: page.page,
+            mineTotalCount: page.totalCount,
+          ),
+        );
+      },
     );
   }
 

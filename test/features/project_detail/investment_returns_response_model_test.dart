@@ -34,6 +34,38 @@ void main() {
       expect(entity.receivedSoFar, 1200);
       expect(ui.distributions.single.myShareUsd, 600);
     });
+
+    test('parses paginated paymentHistory', () {
+      const json = {
+        'myContribution': 500,
+        'myContributionPercentage': 10,
+        'totalEntitlement': 550,
+        'receivedSoFar': 100,
+        'remainingToReceive': 450,
+        'roiPercentage': 10,
+        'roiAmount': 50,
+        'paymentHistory': {
+          'items': [
+            {
+              'distributionNumber': 2,
+              'distributionDate': '2026-06-01',
+              'leaderDistributionAmount': 1000,
+              'myShare': 100,
+            },
+          ],
+          'pagination': {
+            'page': 1,
+            'pageSize': 20,
+            'totalCount': 1,
+            'totalPages': 1,
+          },
+        },
+      };
+
+      final entity = MyInvestmentReturnsResponseModel.fromJson(json).toEntity();
+      expect(entity.paymentHistory, hasLength(1));
+      expect(entity.paymentHistory.first.distributionNumber, 2);
+    });
   });
 
   group('InvestmentDistributionPreviewResponseModel', () {

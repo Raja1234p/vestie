@@ -33,6 +33,7 @@ class AppStrings {
   static const String errorDialogOfflineTitle =
       'Please check your internet connection and try again.';
   static const String btnRetry = 'Try Again';
+  static const String loadMore = 'Load more';
   static const String btnDismiss = 'Dismiss';
   static const String noInternet = 'No internet connection detected.';
   static const String errorGoogleSignInFailed =

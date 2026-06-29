@@ -49,6 +49,8 @@ class MemberDetailState extends Equatable {
 
   final bool isRemoveVffLoading;
 
+  final bool transactionsLoadingMore;
+
   const MemberDetailState({
     this.loadStatus = MemberDetailLoadStatus.initial,
 
@@ -69,7 +71,16 @@ class MemberDetailState extends Equatable {
     this.isVffRequestLoading = false,
 
     this.isRemoveVffLoading = false,
+
+    this.transactionsLoadingMore = false,
   });
+
+  bool get transactionsHasMore {
+    final pagination = activity?.transactionsPagination;
+    final count = activity?.transactions.length ?? 0;
+    if (pagination == null) return false;
+    return count < pagination.totalCount;
+  }
 
   bool get isLoading => isActionLoading;
 
@@ -96,6 +107,8 @@ class MemberDetailState extends Equatable {
     bool? isVffRequestLoading,
 
     bool? isRemoveVffLoading,
+
+    bool? transactionsLoadingMore,
 
     bool clearLoadError = false,
 
@@ -130,6 +143,9 @@ class MemberDetailState extends Equatable {
       isVffRequestLoading: isVffRequestLoading ?? this.isVffRequestLoading,
 
       isRemoveVffLoading: isRemoveVffLoading ?? this.isRemoveVffLoading,
+
+      transactionsLoadingMore:
+          transactionsLoadingMore ?? this.transactionsLoadingMore,
     );
   }
 
@@ -154,6 +170,8 @@ class MemberDetailState extends Equatable {
     isVffRequestLoading,
 
     isRemoveVffLoading,
+
+    transactionsLoadingMore,
   ];
 }
 
@@ -193,6 +211,7 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
   String? _projectId;
   String? _userId;
   String? _projectName;
+  int _transactionsPage = 1;
 
   Future<void> load({
     required String projectId,
@@ -204,6 +223,7 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
     _projectId = projectId;
     _userId = userId;
     _projectName = projectName;
+    _transactionsPage = 1;
 
     emit(
       state.copyWith(
@@ -217,7 +237,22 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
   }
 
   /// Reloads activity without full-screen shimmer (e.g. after penalty / co-leader).
-  Future<bool> refresh() => _fetchActivity(showLoading: false);
+  Future<bool> refresh() {
+    _transactionsPage = 1;
+    return _fetchActivity(showLoading: false);
+  }
+
+  Future<void> loadMoreTransactions() async {
+    if (state.transactionsLoadingMore || !state.transactionsHasMore) return;
+    final projectId = _projectId;
+    final userId = _userId;
+    final projectName = _projectName;
+    if (projectId == null || userId == null || projectName == null) return;
+
+    emit(state.copyWith(transactionsLoadingMore: true));
+    _transactionsPage = (state.activity?.transactionsPagination.page ?? 1) + 1;
+    await _fetchActivity(showLoading: false);
+  }
 
   /// Member activity GET, then active project detail reload (when detail is open).
   Future<void> syncWithProjectDetail({bool refreshMember = true}) =>
@@ -244,6 +279,7 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
       projectId: projectId,
       userId: userId,
       projectName: projectName,
+      page: _transactionsPage,
     );
 
     var ok = false;
@@ -265,13 +301,33 @@ class MemberDetailCubit extends Cubit<MemberDetailState> {
           _userId = apiUserId;
         }
         final previous = state.activity;
-        final merged = previous == null
-            ? activity
-            : _mergeActivityVffState(previous: previous, fetched: activity);
+        MemberActivityEntity merged;
+        if (previous == null || _transactionsPage <= 1) {
+          merged = activity;
+        } else {
+          merged = MemberActivityEntity(
+            member: activity.member,
+            isCoLeader: activity.isCoLeader,
+            totalContributed: activity.totalContributed,
+            contributionCount: activity.contributionCount,
+            totalBorrowed: activity.totalBorrowed,
+            overdueBorrowCount: activity.overdueBorrowCount,
+            overdueAmount: activity.overdueAmount,
+            totalReturned: activity.totalReturned,
+            vffConnectionState: activity.vffConnectionState,
+            canSendVffRequest: activity.canSendVffRequest,
+            pendingVffRequestId: activity.pendingVffRequestId,
+            transactions: [...previous.transactions, ...activity.transactions],
+            transactionsPagination: activity.transactionsPagination,
+            penalty: activity.penalty,
+          );
+          merged = _mergeActivityVffState(previous: previous, fetched: merged);
+        }
         emit(
           state.copyWith(
             loadStatus: MemberDetailLoadStatus.loaded,
             activity: merged,
+            transactionsLoadingMore: false,
             clearLoadError: true,
           ),
         );

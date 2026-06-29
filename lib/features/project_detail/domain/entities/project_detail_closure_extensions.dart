@@ -114,6 +114,9 @@ extension ProjectDetailEntityClosureVote on ProjectDetailEntity {
       activeClosureVote: activeClosureVote ?? this.activeClosureVote,
       invites: invites,
       hasCoLeader: hasCoLeader,
+      membersPagination: membersPagination,
+      invitesPagination: invitesPagination,
+      announcementsPagination: announcementsPagination,
     );
   }
 }

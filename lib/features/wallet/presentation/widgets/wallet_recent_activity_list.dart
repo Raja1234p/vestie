@@ -28,19 +28,35 @@ AppTransactionType walletTransactionTypeFromEntity(TransactionType type) {
 
 /// Recent activity list — uses [AppTransactionItem] with 12.h gaps (Figma).
 class WalletRecentActivityList extends StatelessWidget {
-  const WalletRecentActivityList({super.key, required this.transactions});
+  const WalletRecentActivityList({
+    super.key,
+    required this.transactions,
+    this.scrollController,
+    this.footer,
+  });
 
   final List<Transaction> transactions;
+  final ScrollController? scrollController;
+  final Widget? footer;
 
   @override
   Widget build(BuildContext context) {
+    final footerWidget = footer;
     return ListView.separated(
+      controller: scrollController,
       padding: EdgeInsets.only(bottom: 16.h),
       physics: const BouncingScrollPhysics(),
-      itemCount: transactions.length,
-      separatorBuilder: (context, index) =>
-          SizedBox(height: AppDimens.walletTransactionRowGap),
+      itemCount: transactions.length + (footerWidget != null ? 1 : 0),
+      separatorBuilder: (context, index) {
+        if (footerWidget != null && index >= transactions.length - 1) {
+          return const SizedBox.shrink();
+        }
+        return SizedBox(height: AppDimens.walletTransactionRowGap);
+      },
       itemBuilder: (_, index) {
+        if (footerWidget != null && index == transactions.length) {
+          return footerWidget;
+        }
         final tx = transactions[index];
         return AppTransactionItem(
           spacing: AppTransactionItemSpacing.list,

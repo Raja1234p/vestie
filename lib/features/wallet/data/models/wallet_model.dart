@@ -1,3 +1,4 @@
+import 'package:vestie/core/models/pagination_dto.dart';
 import 'package:vestie/core/utils/safe_parser.dart';
 import 'package:vestie/features/wallet/domain/entities/wallet_entity.dart';
 
@@ -43,15 +44,10 @@ class WalletModel extends WalletEntity {
   });
 
   factory WalletModel.fromJson(Map<String, dynamic> json) {
-    final txs = (json['recentTransactions'] as List<dynamic>?)
-            ?.whereType<Map>()
-            .map(
-              (e) => WalletRecentTransactionModel.fromJson(
-                e.cast<String, dynamic>(),
-              ),
-            )
-            .toList(growable: false) ??
-        const <WalletRecentTransactionModel>[];
+    final txMaps = PaginatedListParser.parseItemMaps(json['recentTransactions']);
+    final txs = txMaps
+        .map(WalletRecentTransactionModel.fromJson)
+        .toList(growable: false);
 
     return WalletModel(
       walletId: json.safeString('walletId'),

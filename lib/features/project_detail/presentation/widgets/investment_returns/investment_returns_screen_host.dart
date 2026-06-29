@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vestie/app/router/route_args/project_detail_flow_args.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
+import 'package:vestie/core/presentation/paginated_scroll_listener.dart';
+import 'package:vestie/core/presentation/widgets/list_load_more_footer.dart';
 import 'package:vestie/core/widgets/common/app_error_view.dart';
 import 'package:vestie/core/widgets/common/app_loader.dart';
 import 'package:vestie/features/project_detail/presentation/cubit/investment_returns_cubit.dart';
@@ -67,7 +69,7 @@ class InvestmentReturnsScreenHost extends StatelessWidget {
   }
 }
 
-class _InvestmentReturnsProductionBody extends StatelessWidget {
+class _InvestmentReturnsProductionBody extends StatefulWidget {
   final String title;
   final Widget? Function(BuildContext context, InvestmentReturnsUiData data)?
   footerBuilder;
@@ -76,6 +78,35 @@ class _InvestmentReturnsProductionBody extends StatelessWidget {
     required this.title,
     this.footerBuilder,
   });
+
+  @override
+  State<_InvestmentReturnsProductionBody> createState() =>
+      _InvestmentReturnsProductionBodyState();
+}
+
+class _InvestmentReturnsProductionBodyState
+    extends State<_InvestmentReturnsProductionBody> {
+  final ScrollController _scrollController = ScrollController();
+  PaginatedScrollListener? _scrollListener;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollListener = PaginatedScrollListener(
+      controller: _scrollController,
+      onLoadMore: () {
+        if (!mounted) return;
+        context.read<InvestmentReturnsCubit>().loadMoreDistributions();
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _scrollListener?.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,9 +138,13 @@ class _InvestmentReturnsProductionBody extends StatelessWidget {
         }
 
         return InvestmentReturnsScreenShell(
-          title: title,
+          title: widget.title,
           data: data,
-          footer: footerBuilder?.call(context, data),
+          footer: widget.footerBuilder?.call(context, data),
+          scrollController: _scrollController,
+          listFooter: ListLoadMoreFooter(
+            loadingMore: state.distributionsLoadingMore,
+          ),
         );
       },
     );

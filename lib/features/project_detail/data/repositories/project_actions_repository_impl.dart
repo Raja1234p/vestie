@@ -1,7 +1,9 @@
 import 'package:dartz/dartz.dart';
 
+import '../../../../core/domain/entities/paginated_result.dart';
 import '../../../../core/error/failure_mapper.dart';
 import '../../../../core/error/failures.dart';
+import '../../../../core/models/pagination_dto.dart';
 import '../../domain/entities/cancel_project_entities.dart';
 import '../../domain/entities/member_activity_entity.dart';
 import '../../domain/entities/pending_join_request_entity.dart';
@@ -14,11 +16,26 @@ class ProjectActionsRepositoryImpl implements ProjectActionsRepository {
   ProjectActionsRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<Either<Failure, List<PendingJoinRequestEntity>>>
-  listPendingJoinRequests(String projectId) async {
+  Future<Either<Failure, PaginatedResult<PendingJoinRequestEntity>>>
+  listPendingJoinRequests(
+    String projectId, {
+    int page = PaginationQuery.defaultPage,
+    int? pageSize,
+  }) async {
     try {
-      final models = await remoteDataSource.listPendingJoinRequests(projectId);
-      return Right(models.map((m) => m.toEntity()).toList(growable: false));
+      final pageModel = await remoteDataSource.listPendingJoinRequests(
+        projectId,
+        page: page,
+        pageSize: pageSize,
+      );
+      return Right(
+        PaginatedResult.fromPaginatedList(
+          PaginatedListModel(
+            items: pageModel.items.map((m) => m.toEntity()).toList(),
+            pagination: pageModel.pagination,
+          ),
+        ),
+      );
     } on Failure catch (f) {
       return Left(f);
     } catch (e) {
@@ -31,12 +48,16 @@ class ProjectActionsRepositoryImpl implements ProjectActionsRepository {
     required String projectId,
     required String userId,
     required String projectName,
+    int page = PaginationQuery.defaultPage,
+    int? pageSize,
   }) async {
     try {
       final model = await remoteDataSource.getMemberActivity(
         projectId: projectId,
         userId: userId,
         projectName: projectName,
+        page: page,
+        pageSize: pageSize,
       );
       return Right(model.toEntity());
     } on Failure catch (f) {

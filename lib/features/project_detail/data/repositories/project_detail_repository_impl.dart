@@ -2,6 +2,8 @@ import 'package:dartz/dartz.dart';
 
 import 'package:dio/dio.dart';
 
+import '../../../../core/models/pagination_dto.dart';
+
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/utils/logger.dart';
@@ -17,9 +19,23 @@ class ProjectDetailRepositoryImpl implements ProjectDetailRepository {
   @override
   Future<Either<Failure, ProjectDetailEntity>> getProjectDetail({
     required String projectId,
+    int membersPage = PaginationQuery.defaultPage,
+    int? membersPageSize,
+    int announcementsPage = PaginationQuery.defaultPage,
+    int? announcementsPageSize,
+    int invitesPage = PaginationQuery.defaultPage,
+    int? invitesPageSize,
   }) async {
     try {
-      final model = await _remote.getProjectDetail(projectId: projectId);
+      final model = await _remote.getProjectDetail(
+        projectId: projectId,
+        membersPage: membersPage,
+        membersPageSize: membersPageSize,
+        announcementsPage: announcementsPage,
+        announcementsPageSize: announcementsPageSize,
+        invitesPage: invitesPage,
+        invitesPageSize: invitesPageSize,
+      );
       return Right(model.toEntity());
     } on DioException catch (e, stack) {
       AppLogger.error('ProjectDetail Dio Error', error: e, stackTrace: stack);

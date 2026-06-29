@@ -1,3 +1,5 @@
+import 'package:vestie/core/domain/entities/pagination_info.dart';
+import 'package:vestie/core/models/pagination_dto.dart';
 import 'package:vestie/core/utils/safe_parser.dart';
 
 import '../../domain/entities/vff_profile_entity.dart';
@@ -10,11 +12,10 @@ class VffConnectedProfileModel {
 
   factory VffConnectedProfileModel.fromJson(Map<String, dynamic> json) {
     final statsJson = json.safeMap('stats');
-    final projects = json
-        .safeList('joinedProjects')
-        .whereType<Map>()
-        .map((m) => VffJsonParsing.mapJoinedProject(m.cast<String, dynamic>()))
-        .toList(growable: false);
+    final projectsParsed = PaginatedListParser.parse(
+      json['joinedProjects'],
+      (m) => VffJsonParsing.mapJoinedProject(m),
+    );
 
     return VffConnectedProfileModel(
       VffConnectedProfileEntity(
@@ -24,7 +25,13 @@ class VffConnectedProfileModel {
         profilePhotoUrl: _photoUrl(json),
         mutualProjectsCount: json.safeInt('mutualProjectsCount'),
         stats: VffJsonParsing.mapStats(statsJson),
-        joinedProjects: projects,
+        joinedProjects: projectsParsed.items,
+        joinedProjectsPagination: PaginationInfo(
+          page: projectsParsed.pagination.page,
+          pageSize: projectsParsed.pagination.pageSize,
+          totalCount: projectsParsed.pagination.totalCount,
+          totalPages: projectsParsed.pagination.totalPages,
+        ),
       ),
     );
   }
@@ -47,11 +54,10 @@ class VffPublicProfileModel {
 
   factory VffPublicProfileModel.fromJson(Map<String, dynamic> json) {
     final statsJson = json.safeMap('stats');
-    final projects = json
-        .safeList('joinedProjects')
-        .whereType<Map>()
-        .map((m) => VffJsonParsing.mapJoinedProject(m.cast<String, dynamic>()))
-        .toList(growable: false);
+    final projectsParsed = PaginatedListParser.parse(
+      json['joinedProjects'],
+      (m) => VffJsonParsing.mapJoinedProject(m),
+    );
 
     return VffPublicProfileModel(
       VffPublicProfileEntity(
@@ -61,7 +67,13 @@ class VffPublicProfileModel {
         profilePhotoUrl: VffConnectedProfileModel._photoUrl(json),
         isVffConnected: json.safeBool('isVffConnected'),
         stats: VffJsonParsing.mapStats(statsJson),
-        joinedProjects: projects,
+        joinedProjects: projectsParsed.items,
+        joinedProjectsPagination: PaginationInfo(
+          page: projectsParsed.pagination.page,
+          pageSize: projectsParsed.pagination.pageSize,
+          totalCount: projectsParsed.pagination.totalCount,
+          totalPages: projectsParsed.pagination.totalPages,
+        ),
       ),
     );
   }

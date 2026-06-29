@@ -20,34 +20,77 @@ final class InviteMembersSheetCubit extends Cubit<InviteMembersSheetState> {
 
   Future<void> load({Set<String> excludeUserIds = const {}}) async {
     _excludeUserIds = excludeUserIds;
-    emit(
-      state.copyWith(
-        status: InviteMembersSheetLoadStatus.loading,
-        clearError: true,
-      ),
-    );
+    await _fetch(page: 1, replace: true);
+  }
 
-    final result = await _listMyVffsUseCase();
+  Future<void> loadMore() async {
+    if (state.isLoading ||
+        state.loadingMore ||
+        !state.hasMore ||
+        state.isSubmitting) {
+      return;
+    }
+    await _fetch(page: state.currentPage + 1, replace: false, loadingMore: true);
+  }
+
+  Future<void> _fetch({
+    required int page,
+    required bool replace,
+    bool loadingMore = false,
+  }) async {
+    if (!loadingMore) {
+      emit(
+        state.copyWith(
+          status: InviteMembersSheetLoadStatus.loading,
+          loadingMore: false,
+          clearError: true,
+        ),
+      );
+    } else {
+      emit(state.copyWith(loadingMore: true, clearError: true));
+    }
+
+    final result = await _listMyVffsUseCase(page: page);
 
     if (isClosed) return;
 
     result.fold(
       (failure) => emit(
         state.copyWith(
-          status: InviteMembersSheetLoadStatus.error,
+          status: replace && state.vffs.isEmpty
+              ? InviteMembersSheetLoadStatus.error
+              : InviteMembersSheetLoadStatus.loaded,
+          loadingMore: false,
           errorMessage: FailureMapper.userMessage(failure),
         ),
       ),
-      (connections) {
+      (pageResult) {
+        final connections = pageResult.items;
         final inviteable = InviteMembersMapper.fromConnections(
           connections,
-          excludeUserIds: excludeUserIds,
+          excludeUserIds: _excludeUserIds,
         );
+        final existingIds = replace
+            ? const <String>{}
+            : state.vffs.map((v) => v.id).toSet();
+        final mergedVffs = replace
+            ? inviteable
+            : [
+                ...state.vffs,
+                ...inviteable.where((v) => !existingIds.contains(v.id)),
+              ];
+        final loadedCount = replace
+            ? connections.length
+            : state.loadedConnectionCount + connections.length;
+
         emit(
           state.copyWith(
             status: InviteMembersSheetLoadStatus.loaded,
-            loadedConnectionCount: connections.length,
-            vffs: inviteable,
+            loadedConnectionCount: loadedCount,
+            totalConnectionCount: pageResult.totalCount,
+            currentPage: pageResult.page,
+            vffs: mergedVffs,
+            loadingMore: false,
           ),
         );
       },

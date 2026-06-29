@@ -14,16 +14,21 @@ import 'investment_returns_received_chip.dart';
 class InvestmentReturnsScreenBody extends StatelessWidget {
   final InvestmentReturnsUiData data;
   final bool hasPinnedFooter;
+  final ScrollController? scrollController;
+  final Widget? listFooter;
 
   const InvestmentReturnsScreenBody({
     super.key,
     required this.data,
     this.hasPinnedFooter = false,
+    this.scrollController,
+    this.listFooter,
   });
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      controller: scrollController,
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,6 +84,7 @@ class InvestmentReturnsScreenBody extends StatelessWidget {
               defaultLeftColumnLabel: data.defaultLeftColumnLabel,
             ),
           ),
+          if (listFooter != null) listFooter!,
           SizedBox(height: hasPinnedFooter ? 16.h : 32.h),
         ],
       ),

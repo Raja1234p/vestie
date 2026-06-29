@@ -1,4 +1,5 @@
 import '../../../../core/constants/api_constants.dart';
+import '../../../../core/models/pagination_dto.dart';
 import '../../../../core/network/base_api_client.dart';
 
 import '../models/cancel_project_response_model.dart';
@@ -7,15 +8,19 @@ import '../models/pending_membership_model.dart';
 
 abstract class ProjectActionsRemoteDataSource {
   /// Week 3 — `GET /projects/{id}/memberships/pending`
-  Future<List<PendingMembershipModel>> listPendingJoinRequests(
-    String projectId,
-  );
+  Future<PaginatedListModel<PendingMembershipModel>> listPendingJoinRequests(
+    String projectId, {
+    int page = PaginationQuery.defaultPage,
+    int? pageSize,
+  });
 
   /// `GET /projects/{projectId}/members/{userId}/activity`
   Future<MemberActivityResponseModel> getMemberActivity({
     required String projectId,
     required String userId,
     required String projectName,
+    int page = PaginationQuery.defaultPage,
+    int? pageSize,
   });
 
   Future<void> approveJoinRequest(String projectId, String membershipId);
@@ -58,16 +63,41 @@ class ProjectActionsRemoteDataSourceImpl
   ProjectActionsRemoteDataSourceImpl({required this.apiClient});
 
   @override
-  Future<List<PendingMembershipModel>> listPendingJoinRequests(
-    String projectId,
-  ) async {
-    final response = await apiClient.get<List<dynamic>>(
+  Future<PaginatedListModel<PendingMembershipModel>> listPendingJoinRequests(
+    String projectId, {
+    int page = PaginationQuery.defaultPage,
+    int? pageSize,
+  }) async {
+    final response = await apiClient.get<dynamic>(
       '${ApiConstants.projects}/$projectId/memberships/pending',
+      queryParameters: PaginationQuery.pageAndSize(
+        page: page,
+        pageSize: pageSize,
+      ),
     );
-    return response
-        .whereType<Map>()
-        .map((m) => PendingMembershipModel.fromJson(m.cast<String, dynamic>()))
-        .toList(growable: false);
+    if (response is List) {
+      final items = response
+          .whereType<Map>()
+          .map((m) => PendingMembershipModel.fromJson(m.cast<String, dynamic>()))
+          .toList(growable: false);
+      return PaginatedListModel(
+        items: items,
+        pagination: PaginationDto.fromJson(
+          null,
+          fallbackItemCount: items.length,
+        ),
+      );
+    }
+    if (response is Map) {
+      return PaginatedListParser.parse(
+        response.cast<String, dynamic>(),
+        PendingMembershipModel.fromJson,
+      );
+    }
+    return PaginatedListModel(
+      items: const [],
+      pagination: PaginationDto.fromJson(null),
+    );
   }
 
   @override
@@ -75,9 +105,15 @@ class ProjectActionsRemoteDataSourceImpl
     required String projectId,
     required String userId,
     required String projectName,
+    int page = PaginationQuery.defaultPage,
+    int? pageSize,
   }) async {
     final response = await apiClient.get<dynamic>(
       ApiConstants.projectMemberActivity(projectId, userId),
+      queryParameters: PaginationQuery.pageAndSize(
+        page: page,
+        pageSize: pageSize,
+      ),
     );
     final map = _unwrapActivityPayload(response);
     return MemberActivityResponseModel.fromJson(map, projectName: projectName);
