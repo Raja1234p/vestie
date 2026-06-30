@@ -171,6 +171,7 @@ void main() {
 
       expect(project.showsViewContributionSuccessVoteAction, isTrue);
       expect(project.isStopContributionsClosureVote, isTrue);
+      expect(project.canCancelProject, isFalse);
     });
 
     test('false for investment group leader during mark-successful vote', () {
@@ -184,6 +185,7 @@ void main() {
 
       expect(project.showsViewContributionSuccessVoteAction, isFalse);
       expect(project.isStopContributionsClosureVote, isFalse);
+      expect(project.showsLeaderViewSuccessVotesAction, isTrue);
     });
 
     test('false for co-leader during stop-contributions vote', () {

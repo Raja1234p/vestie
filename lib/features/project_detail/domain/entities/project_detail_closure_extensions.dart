@@ -27,6 +27,13 @@ extension ProjectDetailEntityClosureVote on ProjectDetailEntity {
       isStopContributionsClosureVote &&
       (votingIsInProgress || activeClosureVote?.isOpen == true);
 
+  /// Group leader — monitor mark-successful / vacation / emergency closure vote.
+  bool get showsLeaderViewSuccessVotesAction =>
+      isDetailLeader &&
+      hasActiveSuccessVote &&
+      !isStopContributionsClosureVote &&
+      (votingIsInProgress || activeClosureVote?.isOpen == true);
+
   ProjectDetailEntity withActiveClosureVote(ActiveClosureVoteEntity? vote) {
     return _copy(
       hasActiveSuccessVote: vote?.isOpen ?? false,

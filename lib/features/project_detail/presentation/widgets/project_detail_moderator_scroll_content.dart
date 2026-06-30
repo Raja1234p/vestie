@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_closure_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation.dart';
@@ -17,6 +20,8 @@ import 'package:vestie/features/project_detail/presentation/widgets/project_deta
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_vote_outcome_dev_previews.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_voting_sections.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_tab_section.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_members_preview_section.dart';
+import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_trailing_actions.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_scroll_insets.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_wallet_actions.dart';
@@ -75,6 +80,8 @@ class _ProjectDetailModeratorScrollContentState
 
   bool get _showViewSuccessVotesCta =>
       widget.project.showsViewSuccessVotesAction ||
+      widget.project.showsViewContributionSuccessVoteAction ||
+      widget.project.showsLeaderViewSuccessVotesAction ||
       _previewViewSuccessVotesScenario;
 
   @override
@@ -208,10 +215,38 @@ class _ProjectDetailModeratorScrollContentState
                             showViewSuccessVotesCta: _showViewSuccessVotesCta,
                           ),
                           SizedBox(height: 20.h),
-                          ProjectDetailTabSection(
-                            project: project,
-                            onMemberTap: widget.onMemberTap,
-                          ),
+                          if (project.showsMembersOnlyLeaderDetailDuringVoting)
+                            BlocBuilder<ProjectDetailBloc, ProjectDetailState>(
+                              buildWhen: (prev, curr) =>
+                                  prev is ProjectDetailLoaded &&
+                                  curr is ProjectDetailLoaded &&
+                                  (prev.project.members != curr.project.members ||
+                                      prev.sendingVffUserId !=
+                                          curr.sendingVffUserId),
+                              builder: (context, detailState) {
+                                if (detailState is! ProjectDetailLoaded) {
+                                  return const SizedBox.shrink();
+                                }
+                                final loaded = detailState;
+                                return ProjectMembersPreviewSection(
+                                  project: loaded.project,
+                                  title: AppStrings.tabManageMembers,
+                                  onMemberTap: widget.onMemberTap,
+                                  onSendVffRequest: (member) =>
+                                      ProjectDetailNavigation
+                                          .sendVffRequestFromMemberRow(
+                                        context,
+                                        member: member,
+                                      ),
+                                  sendingVffUserId: loaded.sendingVffUserId,
+                                );
+                              },
+                            )
+                          else
+                            ProjectDetailTabSection(
+                              project: project,
+                              onMemberTap: widget.onMemberTap,
+                            ),
                           SizedBox(
                             height: ProjectDetailScrollInsets.scrollBottomGap(
                               context,

@@ -40,9 +40,13 @@ class ProjectDetailTrailingActions extends StatelessWidget {
         audience: project.isGroupLeader
             ? LeaderMenuAudience.primaryLeader
             : LeaderMenuAudience.coLeader,
-        includeMyBorrows: project.isVacationOrEmergency,
+        includeMyBorrows:
+            project.isVacationOrEmergency &&
+            !project.hasActiveClosureVotingWindow,
         showMarkAsSuccessful: project.canMarkProjectSuccessful,
         showStopContributions: project.canStopContributions,
+        showCancelProject: project.canCancelProject,
+        showEditProject: project.canEditProject,
         onSelected: onLeaderMenuSelected,
       ),
     };

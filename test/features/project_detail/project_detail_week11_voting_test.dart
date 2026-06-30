@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vestie/features/project_detail/data/models/project_detail_response_model.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_closure_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_voting_entities.dart';
 
 void main() {
@@ -274,6 +275,104 @@ void main() {
 
       expect(entity.showsInlineMemberCastVote, isFalse);
       expect(entity.showsProjectDetailOverflowMenu, isTrue);
+    });
+
+    test('vacation group leader shows view success votes during pending vote', () {
+      final entity = ProjectDetailResponseModel.fromJson({
+        'project': {
+          'id': 'p1',
+          'name': 'Trip',
+          'description': '',
+          'type': 'vacation',
+          'visibility': 'private',
+          'state': 'active',
+          'targetAmount': 5000,
+          'raisedAmount': 4000,
+          'endsAtUtc': '2026-12-31T00:00:00Z',
+          'viewerRole': 'GroupLeader',
+        },
+        'rules': {},
+        'viewerMembership': {
+          'membershipId': 'vm1',
+          'userId': 'u1',
+          'userName': 'leader',
+          'firstName': 'Lead',
+          'lastName': 'Er',
+          'role': 'leader',
+          'status': 'active',
+        },
+        'members': [],
+        'invites': [],
+        'announcements': [],
+        'projectStatus': 'ongoing',
+        'votingStatus': 'pending',
+        'userRole': 'leader',
+        'voting': {
+          'startedAtUtc': '2026-05-01T10:00:00Z',
+          'deadlineAtUtc': '2026-05-12T23:59:59Z',
+          'agreedCount': 2,
+          'disagreedCount': 0,
+          'pendingCount': 3,
+          'hasVoted': false,
+          'isFinalized': false,
+        },
+      }).toEntity();
+
+      expect(entity.isVacationOrEmergency, isTrue);
+      expect(entity.showsLeaderViewSuccessVotesAction, isTrue);
+      expect(entity.showsViewContributionSuccessVoteAction, isFalse);
+      expect(entity.canMarkProjectSuccessful, isFalse);
+      expect(entity.canCancelProject, isFalse);
+      expect(entity.canEditProject, isFalse);
+      expect(entity.showsMembersOnlyLeaderDetailDuringVoting, isTrue);
+    });
+
+    test('emergency group leader shows view success votes during pending vote', () {
+      final entity = ProjectDetailResponseModel.fromJson({
+        'project': {
+          'id': 'p1',
+          'name': 'Fund',
+          'description': '',
+          'type': 'emergency',
+          'visibility': 'private',
+          'state': 'active',
+          'targetAmount': 3000,
+          'raisedAmount': 1500,
+          'endsAtUtc': '2026-12-31T00:00:00Z',
+          'viewerRole': 'GroupLeader',
+        },
+        'rules': {},
+        'viewerMembership': {
+          'membershipId': 'vm1',
+          'userId': 'u1',
+          'userName': 'leader',
+          'firstName': 'Lead',
+          'lastName': 'Er',
+          'role': 'leader',
+          'status': 'active',
+        },
+        'members': [],
+        'invites': [],
+        'announcements': [],
+        'projectStatus': 'ongoing',
+        'votingStatus': 'pending',
+        'userRole': 'leader',
+        'voting': {
+          'startedAtUtc': '2026-05-01T10:00:00Z',
+          'deadlineAtUtc': '2026-05-12T23:59:59Z',
+          'agreedCount': 1,
+          'disagreedCount': 1,
+          'pendingCount': 2,
+          'hasVoted': false,
+          'isFinalized': false,
+        },
+      }).toEntity();
+
+      expect(entity.showsLeaderViewSuccessVotesAction, isTrue);
+      expect(entity.canMarkProjectSuccessful, isFalse);
+      expect(entity.canCancelProject, isFalse);
+      expect(entity.canEditProject, isFalse);
+      expect(entity.showsMembersOnlyLeaderDetailDuringVoting, isTrue);
     });
   });
 }

@@ -107,7 +107,7 @@ class _LeaderProjectSettingsBody extends StatelessWidget {
           title: AppStrings.menuAddAnnouncement,
           onTap: () => onAction(LeaderMenuAction.addAnnouncement),
         ),
-        if (!isCoLeader) ...[
+        if (!isCoLeader && project.canEditProject) ...[
           SizedBox(height: 10.h),
           AppNavigationRowTile(
             title: AppStrings.menuEditProject,
@@ -119,7 +119,8 @@ class _LeaderProjectSettingsBody extends StatelessWidget {
           title: AppStrings.menuProjectFundsHistory,
           onTap: () => onAction(LeaderMenuAction.projectFundsHistory),
         ),
-        if (project.isVacationOrEmergency) ...[
+        if (project.isVacationOrEmergency &&
+            !project.hasActiveClosureVotingWindow) ...[
           SizedBox(height: 10.h),
           AppNavigationRowTile(
             title: AppStrings.menuMyBorrows,
@@ -147,7 +148,7 @@ class _LeaderProjectSettingsBody extends StatelessWidget {
             onTap: () => onAction(LeaderMenuAction.stopContributions),
           ),
         ],
-        if (!isCoLeader) ...[
+        if (!isCoLeader && project.canCancelProject) ...[
           SizedBox(height: 10.h),
           AppNavigationRowTile(
             title: AppStrings.menuCancelProject,

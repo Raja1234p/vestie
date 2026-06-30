@@ -31,6 +31,8 @@ class LeaderActionMenu extends StatelessWidget {
   final bool includeMyBorrows;
   final bool showMarkAsSuccessful;
   final bool showStopContributions;
+  final bool showCancelProject;
+  final bool showEditProject;
   final void Function(LeaderMenuAction) onSelected;
 
   const LeaderActionMenu({
@@ -40,6 +42,8 @@ class LeaderActionMenu extends StatelessWidget {
     this.includeMyBorrows = false,
     this.showMarkAsSuccessful = true,
     this.showStopContributions = true,
+    this.showCancelProject = true,
+    this.showEditProject = true,
   });
 
   static const _primaryLabelColor = AppColors.grey900;
@@ -159,11 +163,13 @@ class LeaderActionMenu extends StatelessWidget {
       AppAssets.leaderAddAnnouncement,
       AppStrings.menuAddAnnouncement,
     );
-    push(
-      LeaderMenuAction.editProject,
-      AppAssets.leaderEditProject,
-      AppStrings.menuEditProject,
-    );
+    if (showEditProject) {
+      push(
+        LeaderMenuAction.editProject,
+        AppAssets.leaderEditProject,
+        AppStrings.menuEditProject,
+      );
+    }
     push(
       LeaderMenuAction.projectFundsHistory,
       AppAssets.memberFundsHistory,
@@ -199,13 +205,15 @@ class LeaderActionMenu extends StatelessWidget {
         labelColor: AppColors.actionStopContributions,
       );
     }
-    push(
-      LeaderMenuAction.cancelProject,
-      AppAssets.leaderCancelProject,
-      AppStrings.menuCancelProject,
-      iconColor: AppColors.red900,
-      labelColor: AppColors.red900,
-    );
+    if (showCancelProject) {
+      push(
+        LeaderMenuAction.cancelProject,
+        AppAssets.leaderCancelProject,
+        AppStrings.menuCancelProject,
+        iconColor: AppColors.red900,
+        labelColor: AppColors.red900,
+      );
+    }
 
     return out;
   }

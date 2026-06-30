@@ -170,8 +170,14 @@ class ProjectDetailEntity {
   /// GroupLeader and CoLeader share the same detail UI (until product splits them).
   bool get isModeratorView => isGroupLeader || isCoLeader;
 
+  /// Active success / closure vote window — locks ownership actions and borrow UI.
+  bool get hasActiveClosureVotingWindow =>
+      hasActiveSuccessVote &&
+      (votingIsInProgress || activeClosureVote?.isOpen == true);
+
   /// Mark successful — investment phase 2 only (after stop-contributions vote).
   bool get canMarkProjectSuccessful {
+    if (hasActiveClosureVotingWindow) return false;
     if (!isGroupLeader) return false;
     if (!category.isInvestment) return true;
     final api = apiCanStopContributions;
@@ -181,6 +187,7 @@ class ProjectDetailEntity {
 
   /// Stop contributions — shown only when API allows (investment group leader).
   bool get canStopContributions {
+    if (hasActiveClosureVotingWindow) return false;
     if (!isGroupLeader || !category.isInvestment) return false;
     final api = apiCanStopContributions;
     if (api != null) return api;
@@ -276,13 +283,21 @@ class ProjectDetailEntity {
       voting != null &&
       voting!.hasVoted;
 
-  /// Edit project / cancel project — GroupLeader only (CoLeader popup Figma).
-  bool get canEditProject => isGroupLeader;
+  /// Edit project — GroupLeader only; locked while a closure vote is open.
+  bool get canEditProject =>
+      isGroupLeader && !hasActiveClosureVotingWindow;
 
-  bool get canCancelProject => isGroupLeader;
+  bool get canCancelProject =>
+      isGroupLeader && !hasActiveClosureVotingWindow;
 
   /// Leader tabs / borrow-management panels (GroupLeader + CoLeader).
   bool get usesLeaderDetailPanels => isModeratorView;
+
+  /// Vacation / emergency leader detail — members list only while vote is open.
+  bool get showsMembersOnlyLeaderDetailDuringVoting =>
+      usesLeaderDetailPanels &&
+      isVacationOrEmergency &&
+      hasActiveClosureVotingWindow;
 
   String get categoryLabel {
     return category.detailLabel;

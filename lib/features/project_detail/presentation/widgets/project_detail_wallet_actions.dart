@@ -29,7 +29,9 @@ class ProjectDetailWalletActions extends StatelessWidget {
   });
 
   bool get _showsLeaderVoteMonitorCta =>
-      showViewSuccessVotesCta || project.showsViewContributionSuccessVoteAction;
+      showViewSuccessVotesCta ||
+      project.showsViewContributionSuccessVoteAction ||
+      project.showsLeaderViewSuccessVotesAction;
 
   bool get _showsWalletMoneyActions =>
       !_showsLeaderVoteMonitorCta &&
