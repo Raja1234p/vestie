@@ -1,3 +1,4 @@
+import 'package:vestie/features/project_detail/domain/entities/project_detail_closure_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
 
@@ -30,6 +31,35 @@ class ProjectDetailReloadCoordinator {
     final id = projectId.trim();
     if (id.isEmpty) return null;
     return _lastProjectById[id];
+  }
+
+  /// Stores a detail payload without running the full bloc reload (pot/borrow/pending).
+  static void cacheProject(String projectId, ProjectDetailEntity project) {
+    final id = projectId.trim();
+    if (id.isEmpty) return;
+    _lastProjectById[id] = project;
+  }
+
+  /// Voting-only sync from leader monitor / lightweight detail fetch.
+  /// Preserves pot, borrow, and pending merges on the active detail bloc.
+  static void mergeVotingSnapshot(
+    String projectId,
+    ProjectDetailEntity snapshot,
+  ) {
+    final id = projectId.trim();
+    if (id.isEmpty) return;
+    final bloc = _blocsByProjectId[id];
+    final curr = bloc?.state;
+    if (bloc != null && curr is ProjectDetailLoaded) {
+      final merged = curr.project.withVotingDetailSnapshot(snapshot);
+      cacheProject(id, merged);
+      bloc.add(MergeProjectVotingSnapshotEvent(snapshot: snapshot));
+      return;
+    }
+    cacheProject(
+      id,
+      snapshot.withSyntheticClosureVoteFromDetailVoting(),
+    );
   }
 
   static Future<void> reload(String projectId) async {

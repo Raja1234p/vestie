@@ -13,7 +13,8 @@ import 'package:vestie/features/success_vote/presentation/widgets/success_vote_c
 /// Production inline member cast vote on project detail (Week 11+).
 ///
 /// Stays mounted only while [ProjectDetailEntity.showsInlineMemberCastVote] is true.
-/// Parent [ProjectDetailBloc] refresh after submit swaps back to the scroll layout.
+/// After submit, tallies update from the cast response, detail reloads, and the
+/// parent swaps to [ProjectDetailInlineVoteSubmitted].
 class ProjectDetailInlineCastVote extends StatefulWidget {
   final ProjectDetailEntity project;
   final Future<void> Function() onRefresh;
@@ -73,8 +74,16 @@ class _ProjectDetailInlineCastVoteState extends State<ProjectDetailInlineCastVot
         AppToast.showError(context, FailureMapper.userMessage(failure));
         return false;
       },
-      (_) async {
+      (castResult) async {
         if (!mounted) return false;
+        setState(() {
+          _isSubmitting = false;
+          _data = _data.copyWithTallies(
+            thumbsUp: castResult.thumbsUp,
+            thumbsDown: castResult.thumbsDown,
+            notVoted: castResult.notYetVoted,
+          );
+        });
         await widget.onRefresh();
         return true;
       },

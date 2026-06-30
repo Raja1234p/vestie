@@ -19,6 +19,27 @@ enum ProjectDetailUserRole {
   member,
 }
 
+/// Per-member row on `GET /projects/{id}` → `voting.memberVotes[]`.
+enum ProjectMemberVoteStatus {
+  agreed,
+  disagreed,
+  waiting,
+}
+
+class ProjectVotingMemberVoteEntity {
+  final String membershipId;
+  final String userId;
+  final String displayName;
+  final ProjectMemberVoteStatus status;
+
+  const ProjectVotingMemberVoteEntity({
+    required this.membershipId,
+    required this.userId,
+    required this.displayName,
+    required this.status,
+  });
+}
+
 /// Week 11+ `voting` object when `votingStatus` is `pending` or `done`.
 class ProjectVotingSummaryEntity {
   final DateTime startedAtUtc;
@@ -28,6 +49,7 @@ class ProjectVotingSummaryEntity {
   final int pendingCount;
   final bool hasVoted;
   final bool isFinalized;
+  final List<ProjectVotingMemberVoteEntity> memberVotes;
 
   const ProjectVotingSummaryEntity({
     required this.startedAtUtc,
@@ -37,6 +59,7 @@ class ProjectVotingSummaryEntity {
     required this.pendingCount,
     this.hasVoted = false,
     this.isFinalized = false,
+    this.memberVotes = const [],
   });
 
   int get totalVotes => agreedCount + disagreedCount + pendingCount;
@@ -93,4 +116,12 @@ ProjectDetailBannerStatus projectDetailBannerStatusFromLifecycleState(
   if (s == 'completed') return ProjectDetailBannerStatus.completed;
   if (s == 'cancelled') return ProjectDetailBannerStatus.cancelled;
   return ProjectDetailBannerStatus.ongoing;
+}
+
+ProjectMemberVoteStatus parseProjectMemberVoteStatus(String? raw) {
+  return switch (raw?.toLowerCase().trim()) {
+    'agreed' || 'agree' || 'yes' => ProjectMemberVoteStatus.agreed,
+    'disagreed' || 'disagree' || 'no' => ProjectMemberVoteStatus.disagreed,
+    _ => ProjectMemberVoteStatus.waiting,
+  };
 }

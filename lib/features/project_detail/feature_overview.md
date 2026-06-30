@@ -29,9 +29,13 @@ Shared project detail entity, bloc, navigation helpers, member list, funds histo
 `ProjectDetailScreen` → `ProjectDetailBloc` → `GetProjectDetailUseCase` → `GET /projects/{id}`
 
 Closure voting (Week 10): `ClosureVotingRepository` → `POST/GET …/closure-voting/*`  
-On project detail load: Week 11+ `GET /projects/{id}` supplies `projectStatus`, `votingStatus`, `userRole`, `voting`, `canStopContributions`. Legacy probe `GET …/closure-voting/active` runs only when detail has no in-progress voting.
+On project detail load: Week 11+ `GET /projects/{id}` supplies `projectStatus`, `votingStatus`, `userRole`, `voting` (including `memberVotes[]`), `canStopContributions`. Legacy probe `GET …/closure-voting/active` runs for leader monitor when detail has no in-progress voting payload.
 
-**Production (target):** status banner + voting card on detail; members **cast inline** (`ProjectDetailInlineCastVote`). **Current gaps:** see `DOCS/week_11_voting_flow_audit_handoff.md` — card and banner not shown; previews still in layouts.
+**Production member / co-leader vote flow:** while `votingStatus == pending` and the viewer has not voted, detail shows inline cast (`ProjectDetailInlineCastVote`). After vote (`hasVoted` + viewer `memberVotes[].voteStatus`), detail shows post-vote Figma UI (`ProjectDetailInlineVoteSubmitted`) — tallies + summary + Back to Home, no per-member roster on member flow.
+
+**Leader monitor:** View Success Votes loads **`GET /projects/{id}` only** when Week 11 `voting` is present. Voting fields merge back into the open detail bloc via `ProjectDetailReloadCoordinator.mergeVotingSnapshot` (preserves pot/borrow). Legacy detail without `voting` falls back to `GET …/closure-voting/active`.
+
+**Dev previews** (cast vote, vote outcome) are gated with `kDebugMode` only.
 
 ## See also
 

@@ -1,5 +1,6 @@
 import 'package:vestie/features/project_detail/domain/entities/closure_vote_entities.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_voting_entities.dart';
 import 'package:vestie/features/project_detail/presentation/mappers/closure_vote_ui_mappers.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 
@@ -18,6 +19,7 @@ class SuccessVoteCastUiData {
   final int thumbsUp;
   final int thumbsDown;
   final int notVoted;
+  final List<ProjectVotingMemberVoteEntity> memberVotes;
 
   const SuccessVoteCastUiData({
     this.projectId,
@@ -31,6 +33,7 @@ class SuccessVoteCastUiData {
     required this.thumbsUp,
     required this.thumbsDown,
     required this.notVoted,
+    this.memberVotes = const [],
   });
 
   factory SuccessVoteCastUiData.fromProject(ProjectDetailEntity project) {
@@ -101,6 +104,7 @@ class SuccessVoteCastUiData {
       thumbsUp: thumbsUp,
       thumbsDown: thumbsDown,
       notVoted: notVoted,
+      memberVotes: memberVotes,
     );
   }
 }

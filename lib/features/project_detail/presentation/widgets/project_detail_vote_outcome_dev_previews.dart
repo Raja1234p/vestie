@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:vestie/core/constants/app_strings.dart';
@@ -26,7 +27,9 @@ class ProjectDetailVoteOutcomeDevPreviews extends StatelessWidget {
       project.showsSuccessVoteDevPreviews ||
       project.showsInvestmentVoteOutcomeDevPreviews;
 
-  bool get _shows => project.showsMemberSuccessVoteDevPreviews || _showsModerator;
+  bool get _shows =>
+      kDebugMode &&
+      (project.showsMemberSuccessVoteDevPreviews || _showsModerator);
 
   bool get _showsViewSuccessVotesPreview =>
       includeViewSuccessVotesPreview &&

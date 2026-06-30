@@ -6,13 +6,14 @@ import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_member_vote_extensions.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_cast_ui_data.dart';
 import 'package:vestie/features/success_vote/presentation/widgets/success_vote_cast_content.dart';
 
 import 'project_detail_cast_vote_dev_previews.dart';
-import 'project_detail_inline_cast_vote.dart';
+import 'project_detail_inline_member_vote_flow.dart';
 import 'project_detail_member_scroll_content.dart';
 import 'project_detail_scroll_insets.dart';
 import 'project_detail_vote_outcome_dev_previews.dart';
@@ -100,13 +101,13 @@ class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
       );
     }
 
-    if (widget.project.showsInlineMemberCastVote) {
+    if (widget.project.showsInlineMemberVoteFlow) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _header(context),
           Expanded(
-            child: ProjectDetailInlineCastVote(
+            child: ProjectDetailInlineMemberVoteFlow(
               project: widget.project,
               onRefresh: widget.onRefresh,
             ),

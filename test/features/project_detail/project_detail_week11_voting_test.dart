@@ -1,7 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vestie/features/project_detail/data/models/project_detail_response_model.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_closure_extensions.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_member_vote_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_voting_entities.dart';
+import 'package:vestie/features/success_vote/presentation/models/success_vote_cast_choice.dart';
 
 void main() {
   group('ProjectDetailResponseModel Week 11 voting fields', () {
@@ -72,6 +74,51 @@ void main() {
       expect(entity.activeClosureVote, isNotNull);
     });
 
+    test('parses voting.memberVotes with voteStatus', () {
+      final entity = ProjectDetailResponseModel.fromJson(
+        minimalJson(
+          projectStatus: 'ongoing',
+          votingStatus: 'pending',
+          userRole: 'member',
+          voting: {
+            'startedAtUtc': '2026-05-01T10:00:00Z',
+            'deadlineAtUtc': '2026-05-12T23:59:59Z',
+            'agreedCount': 1,
+            'disagreedCount': 1,
+            'pendingCount': 1,
+            'hasVoted': true,
+            'isFinalized': false,
+            'memberVotes': [
+              {
+                'membershipId': 'm1',
+                'userId': 'u1',
+                'displayName': 'Maha',
+                'voteStatus': 'agreed',
+              },
+              {
+                'membershipId': 'm2',
+                'userId': 'u2',
+                'displayName': 'James',
+                'voteStatus': 'disagreed',
+              },
+              {
+                'membershipId': 'm3',
+                'userId': 'u3',
+                'displayName': 'Sarah',
+                'voteStatus': 'waiting',
+              },
+            ],
+          },
+        ),
+      ).toEntity();
+
+      expect(entity.voting?.memberVotes, hasLength(3));
+      expect(entity.voting!.memberVotes[0].displayName, 'Maha');
+      expect(entity.voting!.memberVotes[0].status, ProjectMemberVoteStatus.agreed);
+      expect(entity.voting!.memberVotes[1].status, ProjectMemberVoteStatus.disagreed);
+      expect(entity.voting!.memberVotes[2].status, ProjectMemberVoteStatus.waiting);
+    });
+
     test('member with hasVoted true does not show inline cast', () {
       final entity = ProjectDetailResponseModel.fromJson(
         minimalJson(
@@ -86,11 +133,21 @@ void main() {
             'pendingCount': 0,
             'hasVoted': true,
             'isFinalized': false,
+            'memberVotes': [
+              {
+                'membershipId': 'vm1',
+                'userId': 'u1',
+                'displayName': 'Mem Ber',
+                'voteStatus': 'agreed',
+              },
+            ],
           },
         ),
       ).toEntity();
 
       expect(entity.showsInlineMemberCastVote, isFalse);
+      expect(entity.showsInlineMemberVoteSubmittedView, isTrue);
+      expect(entity.memberSubmittedVoteChoice, SuccessVoteCastChoice.agreed);
       expect(entity.showsMemberVoteSubmittedLabel, isTrue);
     });
 
@@ -136,6 +193,8 @@ void main() {
 
       expect(entity.showsInlineMemberCastVote, isFalse);
       expect(entity.showsMemberVoteSubmittedLabel, isTrue);
+      expect(entity.showsInlineMemberVoteSubmittedView, isFalse);
+      expect(entity.memberSubmittedVoteChoice, SuccessVoteCastChoice.pending);
     });
 
     test('co-leader can start voting when not_started', () {

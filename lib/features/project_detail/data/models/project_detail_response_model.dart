@@ -393,6 +393,7 @@ class _VotingPayload {
   final int pendingCount;
   final bool hasVoted;
   final bool isFinalized;
+  final List<ProjectVotingMemberVoteEntity> memberVotes;
 
   const _VotingPayload({
     required this.startedAtUtc,
@@ -402,6 +403,7 @@ class _VotingPayload {
     required this.pendingCount,
     this.hasVoted = false,
     this.isFinalized = false,
+    this.memberVotes = const [],
   });
 
   factory _VotingPayload.fromJson(Map<String, dynamic> json) {
@@ -413,6 +415,40 @@ class _VotingPayload {
       pendingCount: (json['pendingCount'] as num?)?.toInt() ?? 0,
       hasVoted: json['hasVoted'] == true,
       isFinalized: json['isFinalized'] == true,
+      memberVotes: _parseMemberVotes(json['memberVotes']),
+    );
+  }
+
+  static List<ProjectVotingMemberVoteEntity> _parseMemberVotes(dynamic raw) {
+    if (raw is! List) return const [];
+    return raw
+        .whereType<Map>()
+        .map((item) => item.cast<String, dynamic>())
+        .map(_memberVoteFromJson)
+        .toList(growable: false);
+  }
+
+  static ProjectVotingMemberVoteEntity _memberVoteFromJson(
+    Map<String, dynamic> json,
+  ) {
+    final firstName = _jsonString(json['firstName']);
+    final lastName = _jsonString(json['lastName']);
+    final userName = _jsonString(json['userName']);
+    final displayName = _jsonString(json['displayName']).isNotEmpty
+        ? _jsonString(json['displayName'])
+        : [
+            firstName,
+            lastName,
+          ].where((s) => s.isNotEmpty).join(' ').trim().isNotEmpty
+        ? [firstName, lastName].where((s) => s.isNotEmpty).join(' ')
+        : userName;
+
+    final voteStatusRaw = json['voteStatus'] ?? json['vote'];
+    return ProjectVotingMemberVoteEntity(
+      membershipId: _jsonString(json['membershipId']),
+      userId: _jsonString(json['userId']),
+      displayName: displayName,
+      status: parseProjectMemberVoteStatus(voteStatusRaw?.toString()),
     );
   }
 
@@ -425,6 +461,7 @@ class _VotingPayload {
       pendingCount: pendingCount,
       hasVoted: hasVoted,
       isFinalized: isFinalized,
+      memberVotes: memberVotes,
     );
   }
 }

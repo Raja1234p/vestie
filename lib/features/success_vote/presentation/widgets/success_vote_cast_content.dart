@@ -23,6 +23,8 @@ class SuccessVoteCastContent extends StatefulWidget {
   final bool isLoading;
   final Future<bool> Function(bool voteForSuccess)? onSubmitVote;
 
+  final bool showPerMemberVoteRoster;
+
   const SuccessVoteCastContent({
     super.key,
     required this.data,
@@ -30,6 +32,7 @@ class SuccessVoteCastContent extends StatefulWidget {
     this.canVote = true,
     this.isLoading = false,
     this.onSubmitVote,
+    this.showPerMemberVoteRoster = false,
   });
 
   @override
@@ -99,6 +102,7 @@ class _SuccessVoteCastContentState extends State<SuccessVoteCastContent> {
               data: widget.data,
               copy: _copy,
               choice: choice,
+              showPerMemberVoteRoster: widget.showPerMemberVoteRoster,
             ),
           ),
         ),

@@ -350,6 +350,7 @@ class ServiceLocator {
     LeaderViewSuccessVotesRouteArgs args,
   ) => LeaderViewSuccessVotesCubit(
     args: args,
+    projectDetailRepository: projectDetailRepository,
     getActiveClosureVoteUseCase: getActiveClosureVoteUseCase,
     finalizeClosureVotingUseCase: finalizeClosureVotingUseCase,
   );

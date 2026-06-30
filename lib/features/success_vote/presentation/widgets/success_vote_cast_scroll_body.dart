@@ -11,11 +11,14 @@ class SuccessVoteCastScrollBody extends StatefulWidget {
   final SuccessVoteCastCopy copy;
   final SuccessVoteCastChoice choice;
 
+  final bool showPerMemberVoteRoster;
+
   const SuccessVoteCastScrollBody({
     super.key,
     required this.data,
     required this.copy,
     required this.choice,
+    this.showPerMemberVoteRoster = false,
   });
 
   @override
@@ -57,6 +60,7 @@ class _SuccessVoteCastScrollBodyState extends State<SuccessVoteCastScrollBody> {
       data: widget.data,
       copy: widget.copy,
       choice: widget.choice,
+      showPerMemberVoteRoster: widget.showPerMemberVoteRoster,
     );
   }
 

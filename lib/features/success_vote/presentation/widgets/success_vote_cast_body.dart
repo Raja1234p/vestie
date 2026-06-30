@@ -8,6 +8,7 @@ import 'package:vestie/features/project_detail/presentation/widgets/project_info
 import '../models/success_vote_cast_choice.dart';
 import '../models/success_vote_cast_copy.dart';
 import '../models/success_vote_cast_ui_data.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_voting_member_vote_list.dart';
 import 'success_vote_cast_member_votes.dart';
 
 /// Banner, deadline, member votes, and financial summary (cast vote).
@@ -15,12 +16,14 @@ class SuccessVoteCastBody extends StatelessWidget {
   final SuccessVoteCastUiData data;
   final SuccessVoteCastCopy copy;
   final SuccessVoteCastChoice choice;
+  final bool showPerMemberVoteRoster;
 
   const SuccessVoteCastBody({
     super.key,
     required this.data,
     required this.copy,
     required this.choice,
+    this.showPerMemberVoteRoster = false,
   });
 
   @override
@@ -46,6 +49,10 @@ class SuccessVoteCastBody extends StatelessWidget {
           thumbsDown: data.thumbsDown,
           notVoted: data.notVoted,
         ),
+        if (showPerMemberVoteRoster && data.memberVotes.isNotEmpty) ...[
+          SizedBox(height: 20.h),
+          ProjectVotingMemberVoteList(members: data.memberVotes),
+        ],
         SizedBox(height: 20.h),
         _FinancialSummaryCard(
           copy: copy,

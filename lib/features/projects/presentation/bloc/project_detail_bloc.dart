@@ -88,6 +88,17 @@ class LoadMoreProjectAnnouncementsEvent extends ProjectDetailEvent {
   const LoadMoreProjectAnnouncementsEvent();
 }
 
+/// Applies voting fields from a lightweight `GET /projects/{id}` refresh
+/// without replacing pot / borrow merges on the loaded detail.
+class MergeProjectVotingSnapshotEvent extends ProjectDetailEvent {
+  final ProjectDetailEntity snapshot;
+
+  const MergeProjectVotingSnapshotEvent({required this.snapshot});
+
+  @override
+  List<Object?> get props => [snapshot];
+}
+
 // STATES
 abstract class ProjectDetailState extends Equatable {
   const ProjectDetailState();
@@ -206,6 +217,7 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
     on<SendMemberVffRequestEvent>(_onSendMemberVffRequest);
     on<ClearMemberVffSendErrorEvent>(_onClearMemberVffSendError);
     on<LoadMoreProjectAnnouncementsEvent>(_onLoadMoreProjectAnnouncements);
+    on<MergeProjectVotingSnapshotEvent>(_onMergeProjectVotingSnapshot);
   }
 
   /// Reloads project detail and completes when this load finishes (silent or full).
@@ -419,6 +431,18 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
     final curr = state;
     if (curr is! ProjectDetailLoaded) return;
     emit(curr.copyWith(clearVffSendError: true));
+  }
+
+  void _onMergeProjectVotingSnapshot(
+    MergeProjectVotingSnapshotEvent event,
+    Emitter<ProjectDetailState> emit,
+  ) {
+    final curr = state;
+    if (curr is! ProjectDetailLoaded) return;
+    if (curr.project.id != event.snapshot.id) return;
+
+    final merged = curr.project.withVotingDetailSnapshot(event.snapshot);
+    emit(curr.copyWith(project: merged));
   }
 
   static String _messageFor(Failure failure) {

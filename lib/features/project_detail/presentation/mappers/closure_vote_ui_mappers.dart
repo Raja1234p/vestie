@@ -1,7 +1,10 @@
 import 'package:intl/intl.dart';
 
+import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/features/project_detail/domain/entities/closure_vote_entities.dart';
+import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_voting_entities.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_cast_route_args.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_role.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_route_args.dart';
@@ -12,6 +15,128 @@ import 'package:vestie/leader/features/project_detail/presentation/models/leader
 /// Formats closure vote deadline for cast / monitor screens.
 String formatClosureVoteDeadlineLabel(DateTime deadlineUtc) {
   return DateFormat('MMM d, yyyy').format(deadlineUtc.toLocal());
+}
+
+LeaderMemberVoteStatus leaderMemberVoteStatusFromProjectVote(
+  ProjectMemberVoteStatus status,
+) {
+  return switch (status) {
+    ProjectMemberVoteStatus.agreed => LeaderMemberVoteStatus.agreed,
+    ProjectMemberVoteStatus.disagreed => LeaderMemberVoteStatus.disagreed,
+    ProjectMemberVoteStatus.waiting => LeaderMemberVoteStatus.waiting,
+  };
+}
+
+List<LeaderSuccessVoteMemberRow> leaderMemberVoteRowsFromProjectVoting({
+  required List<ProjectVotingMemberVoteEntity> memberVotes,
+  List<MemberEntity> projectMembers = const [],
+}) {
+  if (memberVotes.isEmpty) return const [];
+
+  final membersById = <String, MemberEntity>{
+    for (final member in projectMembers)
+      if (member.membershipId.isNotEmpty) member.membershipId: member,
+  };
+  final membersByUserId = <String, MemberEntity>{
+    for (final member in projectMembers)
+      if (member.userId.isNotEmpty) member.userId: member,
+  };
+
+  return memberVotes
+      .map((vote) {
+        final matched = membersById[vote.membershipId] ??
+            membersByUserId[vote.userId];
+        final name = vote.displayName.isNotEmpty
+            ? vote.displayName
+            : matched != null
+            ? (matched.name.isNotEmpty ? matched.name : matched.username)
+            : '';
+        return LeaderSuccessVoteMemberRow(
+          name: name.isNotEmpty ? name : AppStrings.tabMember,
+          status: leaderMemberVoteStatusFromProjectVote(vote.status),
+        );
+      })
+      .toList(growable: false);
+}
+
+List<LeaderSuccessVoteMemberRow> _leaderMemberVoteRowsForProject(
+  ProjectDetailEntity? project,
+) {
+  final memberVotes = project?.voting?.memberVotes ?? const [];
+  if (memberVotes.isNotEmpty) {
+    return leaderMemberVoteRowsFromProjectVoting(
+      memberVotes: memberVotes,
+      projectMembers: project?.members ?? const [],
+    );
+  }
+
+  final eligibleMembers = _eligibleClosureVoteMembers(project?.members ?? const []);
+  if (eligibleMembers.isNotEmpty) {
+    return eligibleMembers
+        .map((m) {
+          final name = m.name.isNotEmpty ? m.name : m.username;
+          return LeaderSuccessVoteMemberRow(
+            name: name,
+            status: LeaderMemberVoteStatus.waiting,
+          );
+        })
+        .toList(growable: false);
+  }
+
+  return const [];
+}
+
+/// Eligible voter count for tallies / summary cards from Week 11 detail.
+int closureVoteEligibleMemberCountFromProject(ProjectDetailEntity project) {
+  final voting = project.voting;
+  return _closureVoteEligibleMemberCount(
+    project: project,
+    talliedTotal: voting?.totalVotes ?? 0,
+    memberVotes: voting?.memberVotes ?? const [],
+  );
+}
+
+List<MemberEntity> _eligibleClosureVoteMembers(List<MemberEntity> members) {
+  return members
+      .where((member) => member.role != MemberRole.leader)
+      .toList(growable: false);
+}
+
+int _closureVoteEligibleMemberCount({
+  required ProjectDetailEntity? project,
+  required int talliedTotal,
+  required List<ProjectVotingMemberVoteEntity> memberVotes,
+}) {
+  if (memberVotes.isNotEmpty) return memberVotes.length;
+  if (talliedTotal > 0) return talliedTotal;
+  final eligible = _eligibleClosureVoteMembers(project?.members ?? const []);
+  if (eligible.isNotEmpty) return eligible.length;
+  return project != null && project.members.isNotEmpty ? project.members.length : 1;
+}
+
+/// Week 11+ leader monitor from `GET /projects/{id}` → `voting` only.
+LeaderSuccessVoteProgressUiData leaderSuccessVoteProgressFromProjectVoting({
+  required ProjectDetailEntity project,
+  required ProjectVotingSummaryEntity voting,
+}) {
+  final total = _closureVoteEligibleMemberCount(
+    project: project,
+    talliedTotal: voting.totalVotes,
+    memberVotes: voting.memberVotes,
+  );
+  final majority = total <= 1 ? 1 : (total / 2).floor() + 1;
+  final remaining = voting.deadlineAtUtc.difference(DateTime.now().toUtc());
+  final clampedRemaining = remaining.isNegative ? Duration.zero : remaining;
+
+  return LeaderSuccessVoteProgressUiData(
+    agreedCount: voting.agreedCount,
+    disagreedCount: voting.disagreedCount,
+    notVotedCount: voting.pendingCount,
+    majorityRequired: majority,
+    totalMembers: total,
+    remaining: clampedRemaining,
+    members: _leaderMemberVoteRowsForProject(project),
+  );
 }
 
 LeaderSuccessVoteProgressUiData leaderSuccessVoteProgressFromActiveVote({
@@ -28,18 +153,7 @@ LeaderSuccessVoteProgressUiData leaderSuccessVoteProgressFromActiveVote({
             : 1);
   final majority = total <= 1 ? 1 : (total / 2).floor() + 1;
 
-  final members = memberRoster ??
-      (project != null && project.members.isNotEmpty
-          ? project.members
-                .map((m) {
-                  final name = m.name.isNotEmpty ? m.name : m.username;
-                  return LeaderSuccessVoteMemberRow(
-                    name: name,
-                    status: LeaderMemberVoteStatus.waiting,
-                  );
-                })
-                .toList(growable: false)
-          : LeaderSuccessVoteProgressUiData.preview(project: project).members);
+  final members = memberRoster ?? _leaderMemberVoteRowsForProject(project);
 
   return LeaderSuccessVoteProgressUiData(
     agreedCount: vote.thumbsUp,

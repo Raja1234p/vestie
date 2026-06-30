@@ -1,8 +1,12 @@
+import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
+
+import 'member_entity.dart';
 
 import 'closure_vote_entities.dart';
 import 'leader_voting_flow_kind.dart';
 import 'project_detail_entity.dart';
+import 'project_detail_member_vote_extensions.dart';
 import 'project_detail_voting_entities.dart';
 
 extension ProjectDetailEntityClosureVote on ProjectDetailEntity {
@@ -64,7 +68,7 @@ extension ProjectDetailEntityClosureVote on ProjectDetailEntity {
       notYetVoted: summary.pendingCount,
       goalAmount: goalAmount,
       totalRaised: currentAmount,
-      memberCount: members.isNotEmpty ? members.length : summary.totalVotes,
+      memberCount: _syntheticClosureVoteMemberCount(summary),
       callerVote: _callerVoteFromSummary(summary),
       callerIsGroupLeader: isDetailLeader,
     );
@@ -91,10 +95,35 @@ extension ProjectDetailEntityClosureVote on ProjectDetailEntity {
   }
 
   ClosureVoteValue? _callerVoteFromSummary(ProjectVotingSummaryEntity summary) {
-    if (!(isDetailMember || isDetailCoLeader) || !summary.hasVoted) {
-      return null;
-    }
-    return null;
+    return closureCallerVoteFromVotingSummary(project: this, summary: summary);
+  }
+
+  int _syntheticClosureVoteMemberCount(ProjectVotingSummaryEntity summary) {
+    if (summary.memberVotes.isNotEmpty) return summary.memberVotes.length;
+    if (summary.totalVotes > 0) return summary.totalVotes;
+    final eligible = members
+        .where((member) => member.role != MemberRole.leader)
+        .length;
+    return eligible > 0 ? eligible : 1;
+  }
+
+  /// Merges Week 11 voting fields from a fresh `GET /projects/{id}` snapshot
+  /// while keeping pot / borrow / pending merges on the current entity.
+  ProjectDetailEntity withVotingDetailSnapshot(ProjectDetailEntity snapshot) {
+    if (id != snapshot.id) return this;
+    return _copy(
+      status: snapshot.status,
+      projectBannerStatus: snapshot.projectBannerStatus,
+      votingStatus: snapshot.votingStatus,
+      detailUserRole: snapshot.detailUserRole,
+      voting: snapshot.voting,
+      hasWeek11ProjectDetailEnvelope:
+          snapshot.hasWeek11ProjectDetailEnvelope ||
+          hasWeek11ProjectDetailEnvelope,
+      apiCanStopContributions: snapshot.apiCanStopContributions,
+      hasActiveSuccessVote: snapshot.votingIsInProgress,
+      clearActiveClosureVote: true,
+    ).withSyntheticClosureVoteFromDetailVoting();
   }
 
   LeaderVotingFlowKind resolveLeaderVotingFlowKindForStart() {
@@ -106,14 +135,22 @@ extension ProjectDetailEntityClosureVote on ProjectDetailEntity {
   }
 
   ProjectDetailEntity _copy({
+    ProjectStatus? status,
+    ProjectDetailBannerStatus? projectBannerStatus,
+    ProjectVotingStatus? votingStatus,
+    ProjectDetailUserRole? detailUserRole,
+    ProjectVotingSummaryEntity? voting,
+    bool? hasWeek11ProjectDetailEnvelope,
+    bool? apiCanStopContributions,
     bool? hasActiveSuccessVote,
     ActiveClosureVoteEntity? activeClosureVote,
+    bool clearActiveClosureVote = false,
   }) {
     return ProjectDetailEntity(
       id: id,
       name: name,
       category: category,
-      status: status,
+      status: status ?? this.status,
       goalAmount: goalAmount,
       currentAmount: currentAmount,
       contributorCount: contributorCount,
@@ -130,12 +167,14 @@ extension ProjectDetailEntityClosureVote on ProjectDetailEntity {
       contributionsAreNonRefundable: contributionsAreNonRefundable,
       displayStatusLabel: displayStatusLabel,
       projectLifecycleState: projectLifecycleState,
-      projectBannerStatus: projectBannerStatus,
-      votingStatus: votingStatus,
-      detailUserRole: detailUserRole,
-      voting: voting,
-      hasWeek11ProjectDetailEnvelope: hasWeek11ProjectDetailEnvelope,
-      apiCanStopContributions: apiCanStopContributions,
+      projectBannerStatus: projectBannerStatus ?? this.projectBannerStatus,
+      votingStatus: votingStatus ?? this.votingStatus,
+      detailUserRole: detailUserRole ?? this.detailUserRole,
+      voting: voting ?? this.voting,
+      hasWeek11ProjectDetailEnvelope:
+          hasWeek11ProjectDetailEnvelope ?? this.hasWeek11ProjectDetailEnvelope,
+      apiCanStopContributions:
+          apiCanStopContributions ?? this.apiCanStopContributions,
       borrowingEnabled: borrowingEnabled,
       pendingJoinRequestCount: pendingJoinRequestCount,
       projectInviteCode: projectInviteCode,
@@ -145,7 +184,9 @@ extension ProjectDetailEntityClosureVote on ProjectDetailEntity {
       penaltyPercentage: penaltyPercentage,
       successVoteWindowHours: successVoteWindowHours,
       hasActiveSuccessVote: hasActiveSuccessVote ?? this.hasActiveSuccessVote,
-      activeClosureVote: activeClosureVote ?? this.activeClosureVote,
+      activeClosureVote: clearActiveClosureVote
+          ? null
+          : (activeClosureVote ?? this.activeClosureVote),
       invites: invites,
       hasCoLeader: hasCoLeader,
       membersPagination: membersPagination,

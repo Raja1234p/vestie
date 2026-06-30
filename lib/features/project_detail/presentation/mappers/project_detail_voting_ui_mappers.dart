@@ -28,6 +28,7 @@ SuccessVoteCastUiData successVoteCastUiDataFromProjectDetail(
   final deadlineLabel = deadlineUtc != null
       ? formatClosureVoteDeadlineLabel(deadlineUtc)
       : project.endsIn;
+  final eligibleMemberCount = closureVoteEligibleMemberCountFromProject(project);
 
   return SuccessVoteCastUiData(
     projectId: project.id,
@@ -36,9 +37,7 @@ SuccessVoteCastUiData successVoteCastUiDataFromProjectDetail(
     goalAmount: vote != null && vote.goalAmount > 0
         ? vote.goalAmount
         : project.goalAmount,
-    memberCount: vote != null && vote.memberCount > 0
-        ? vote.memberCount
-        : project.members.length,
+    memberCount: eligibleMemberCount,
     totalRaised: vote != null && vote.totalRaised > 0
         ? vote.totalRaised
         : project.currentAmount,
@@ -48,5 +47,6 @@ SuccessVoteCastUiData successVoteCastUiDataFromProjectDetail(
     thumbsUp: summary?.agreedCount ?? vote?.thumbsUp ?? 0,
     thumbsDown: summary?.disagreedCount ?? vote?.thumbsDown ?? 0,
     notVoted: summary?.pendingCount ?? vote?.notYetVoted ?? 0,
+    memberVotes: summary?.memberVotes ?? const [],
   );
 }

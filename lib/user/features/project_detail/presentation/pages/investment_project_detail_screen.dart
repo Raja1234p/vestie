@@ -26,7 +26,8 @@ import 'package:vestie/features/project_detail/presentation/widgets/project_deta
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_loading_body.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_voting_entities.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_cast_vote_dev_previews.dart';
-import 'package:vestie/features/project_detail/presentation/widgets/project_detail_inline_cast_vote.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_member_vote_extensions.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_detail_inline_member_vote_flow.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_voting_sections.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_vote_outcome_dev_previews.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_wallet_actions.dart';
@@ -246,13 +247,13 @@ class _InvestmentProjectDetailBodyState
                 );
               }
 
-              if (project.showsInlineMemberCastVote && !showCompletedLayout) {
+              if (project.showsInlineMemberVoteFlow && !showCompletedLayout) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     header(),
                     Expanded(
-                      child: ProjectDetailInlineCastVote(
+                      child: ProjectDetailInlineMemberVoteFlow(
                         project: project,
                         onRefresh: refreshDetail,
                       ),

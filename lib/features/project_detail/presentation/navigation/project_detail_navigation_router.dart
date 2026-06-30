@@ -147,7 +147,7 @@ void _openLeaderViewSuccessVotes(
     return;
   }
 
-  if (!project.showsSuccessVoteDevPreviews) return;
+  if (!kDebugMode || !project.showsSuccessVoteDevPreviews) return;
 
   context.push(
     AppRoutes.leaderViewSuccessVotes,
@@ -177,6 +177,7 @@ void _openCastVotePreview(
   BuildContext context, {
   required ProjectDetailEntity project,
 }) {
+  if (!kDebugMode) return;
   if (!project.showsMemberSuccessVoteDevPreviews) return;
   if (!project.isMemberView && !project.isCoLeader) return;
 
@@ -207,6 +208,7 @@ void _openMemberVoteOutcomePreview(
   required ProjectDetailEntity project,
   required bool approved,
 }) {
+  if (!kDebugMode) return;
   final canPreview = project.showsMemberSuccessVoteDevPreviews ||
       (project.isModeratorView &&
           (project.showsSuccessVoteDevPreviews ||
@@ -231,6 +233,7 @@ void _openStopContributionsVoteRejectedPreview(
   BuildContext context, {
   required ProjectDetailEntity project,
 }) {
+  if (!kDebugMode) return;
   final isInvestmentMember =
       project.isMemberView && project.category.isInvestment;
   if (!project.canStopContributions && !isInvestmentMember) return;

@@ -1,9 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/closure_vote_entities.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_closure_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/viewer_membership_role.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_voting_entities.dart';
 import 'package:vestie/features/project_detail/presentation/mappers/closure_vote_ui_mappers.dart';
+import 'package:vestie/leader/features/project_detail/presentation/models/leader_success_vote_progress_ui_data.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 
 ProjectDetailEntity _baseProject({
@@ -82,6 +85,87 @@ void main() {
       expect(project.showsViewSuccessVotesAction, isTrue);
       expect(project.showsCastVoteAction, isFalse);
     });
+
+    test('withVotingDetailSnapshot keeps borrow merges from loaded detail', () {
+      const borrow = BorrowRequestEntity(
+        id: 'br1',
+        initials: 'T',
+        memberName: 'Test',
+        loanType: 'Personal',
+        requestedAmount: 50,
+        upvotes: 0,
+        downvotes: 0,
+        status: 'Pending',
+      );
+      final loaded = ProjectDetailEntity(
+        id: 'p1',
+        name: 'Trip',
+        category: ProjectCategory.vacations,
+        status: ProjectStatus.ongoing,
+        goalAmount: 5000,
+        currentAmount: 4000,
+        endsIn: '2026-12-01',
+        announcement: '',
+        members: const [],
+        borrowRequests: const [borrow],
+        votingStatus: ProjectVotingStatus.pending,
+        hasWeek11ProjectDetailEnvelope: true,
+        voting: ProjectVotingSummaryEntity(
+          startedAtUtc: DateTime.utc(2026, 5, 1),
+          deadlineAtUtc: DateTime.utc(2027, 5, 12),
+          agreedCount: 0,
+          disagreedCount: 0,
+          pendingCount: 1,
+          memberVotes: const [
+            ProjectVotingMemberVoteEntity(
+              membershipId: 'm1',
+              userId: 'u1',
+              displayName: 'Maha',
+              status: ProjectMemberVoteStatus.waiting,
+            ),
+          ],
+        ),
+      );
+
+      final fresh = ProjectDetailEntity(
+        id: 'p1',
+        name: 'Trip',
+        category: ProjectCategory.vacations,
+        status: ProjectStatus.ongoing,
+        goalAmount: 5000,
+        currentAmount: 4000,
+        endsIn: '2026-12-01',
+        announcement: '',
+        members: const [],
+        borrowRequests: const [],
+        votingStatus: ProjectVotingStatus.pending,
+        hasWeek11ProjectDetailEnvelope: true,
+        voting: ProjectVotingSummaryEntity(
+          startedAtUtc: DateTime.utc(2026, 5, 1),
+          deadlineAtUtc: DateTime.utc(2027, 5, 12),
+          agreedCount: 1,
+          disagreedCount: 0,
+          pendingCount: 0,
+          memberVotes: const [
+            ProjectVotingMemberVoteEntity(
+              membershipId: 'm1',
+              userId: 'u1',
+              displayName: 'Maha',
+              status: ProjectMemberVoteStatus.agreed,
+            ),
+          ],
+        ),
+      );
+
+      final merged = loaded.withVotingDetailSnapshot(fresh);
+
+      expect(merged.borrowRequests, hasLength(1));
+      expect(merged.voting?.agreedCount, 1);
+      expect(
+        merged.voting?.memberVotes.first.status,
+        ProjectMemberVoteStatus.agreed,
+      );
+    });
   });
 
   group('closure_vote_ui_mappers', () {
@@ -101,6 +185,52 @@ void main() {
       expect(args.thumbsUp, 2);
       expect(args.thumbsDown, 1);
       expect(args.notYetVoted, 1);
+    });
+
+    test('maps voting.memberVotes to leader member rows', () {
+      final project = ProjectDetailEntity(
+        id: 'p1',
+        name: 'Trip',
+        category: ProjectCategory.vacations,
+        status: ProjectStatus.ongoing,
+        goalAmount: 5000,
+        currentAmount: 4000,
+        endsIn: '2026-12-01',
+        announcement: '',
+        members: const [],
+        borrowRequests: const [],
+        voting: ProjectVotingSummaryEntity(
+          startedAtUtc: DateTime.utc(2026, 5, 1),
+          deadlineAtUtc: DateTime.utc(2026, 5, 12),
+          agreedCount: 1,
+          disagreedCount: 0,
+          pendingCount: 1,
+          memberVotes: const [
+            ProjectVotingMemberVoteEntity(
+              membershipId: 'm1',
+              userId: 'u1',
+              displayName: 'Maha',
+              status: ProjectMemberVoteStatus.agreed,
+            ),
+            ProjectVotingMemberVoteEntity(
+              membershipId: 'm2',
+              userId: 'u2',
+              displayName: 'James',
+              status: ProjectMemberVoteStatus.waiting,
+            ),
+          ],
+        ),
+      );
+
+      final data = leaderSuccessVoteProgressFromActiveVote(
+        vote: _openVote(),
+        project: project,
+      );
+
+      expect(data.members, hasLength(2));
+      expect(data.members[0].name, 'Maha');
+      expect(data.members[0].status, LeaderMemberVoteStatus.agreed);
+      expect(data.members[1].status, LeaderMemberVoteStatus.waiting);
     });
   });
 }

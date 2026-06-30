@@ -8,6 +8,7 @@ import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_closure_extensions.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_member_vote_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation.dart';
@@ -16,7 +17,7 @@ import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_announcements_section.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_cast_vote_dev_previews.dart';
-import 'package:vestie/features/project_detail/presentation/widgets/project_detail_inline_cast_vote.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_detail_inline_member_vote_flow.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_vote_outcome_dev_previews.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_voting_sections.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_tab_section.dart';
@@ -88,7 +89,7 @@ class _ProjectDetailModeratorScrollContentState
   Widget build(BuildContext context) {
     final project = widget.project;
 
-    if (project.showsInlineMemberCastVote) {
+    if (project.showsInlineMemberVoteFlow) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -125,7 +126,7 @@ class _ProjectDetailModeratorScrollContentState
                 : null,
           ),
           Expanded(
-            child: ProjectDetailInlineCastVote(
+            child: ProjectDetailInlineMemberVoteFlow(
               project: project,
               onRefresh: widget.onRefresh,
             ),
