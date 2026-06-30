@@ -132,6 +132,12 @@ class ProjectDetailNavigation {
     required ProjectDetailEntity project,
   }) => _openGroupMembers(context, project: project);
 
+  /// Pops vote-started success → mark/stop intro so project detail is restored.
+  static void popAfterVoteStarted(
+    BuildContext context, {
+    required String projectId,
+  }) => _popAfterVoteStarted(context, projectId: projectId);
+
   /// Pops success → distribution → distribute funds so the existing detail
   /// screen (and its bloc) is restored — avoids a full reload shimmer.
   static void popAfterFundsDistributed(

@@ -307,6 +307,13 @@ class VotingWindowRouteArgs {
   });
 }
 
+/// Leader — after `POST …/closure-voting/open` (mark successful or stop contributions).
+class VotingStartedSuccessRouteArgs {
+  final String projectId;
+
+  const VotingStartedSuccessRouteArgs({required this.projectId});
+}
+
 class CancelProjectRouteArgs {
   final String projectId;
   final String projectName;

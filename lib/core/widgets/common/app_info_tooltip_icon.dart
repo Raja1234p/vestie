@@ -47,7 +47,7 @@ class AppInfoTooltipIcon extends StatelessWidget {
       richMessage: titledMessage
           ? TextSpan(
               children: [
-                TextSpan(text: '$title\n', style: titleStyle),
+                TextSpan(text: '$title\n\n', style: titleStyle),
                 TextSpan(text: message, style: bodyStyle),
               ],
             )

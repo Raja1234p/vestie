@@ -53,7 +53,7 @@ class MarkProjectSuccessfulScreen extends StatelessWidget {
                         fontWeight: FontWeight.w400,
                       ),
                     ),
-                    SizedBox(height: 14.h),
+                    SizedBox(height: 30.h),
                     AppText(
                       AppStrings.markSuccessfulIntro2,
                       style: theme.textTheme.bodyLarge?.copyWith(
@@ -73,7 +73,7 @@ class MarkProjectSuccessfulScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 AppButton(
-                  text: AppStrings.btnInitiateSuccessVote,
+                  text: AppStrings.menuMarkSuccessful,
                   onPressed: () {
                     context.push(
                       AppRoutes.votingWindow,

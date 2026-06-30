@@ -118,12 +118,9 @@ class _ProjectDetailModeratorScrollContentState
                 : null,
           ),
           Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: ProjectDetailInlineCastVote(
-                project: project,
-                onRefresh: widget.onRefresh,
-              ),
+            child: ProjectDetailInlineCastVote(
+              project: project,
+              onRefresh: widget.onRefresh,
             ),
           ),
         ],

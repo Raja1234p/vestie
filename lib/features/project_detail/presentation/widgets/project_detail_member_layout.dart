@@ -92,11 +92,8 @@ class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
         children: [
           _header(context),
           Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: SuccessVoteCastContent(
-                data: SuccessVoteCastUiData.fromProject(widget.project),
-              ),
+            child: SuccessVoteCastContent(
+              data: SuccessVoteCastUiData.fromProject(widget.project),
             ),
           ),
         ],
@@ -109,12 +106,9 @@ class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
         children: [
           _header(context),
           Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: ProjectDetailInlineCastVote(
-                project: widget.project,
-                onRefresh: widget.onRefresh,
-              ),
+            child: ProjectDetailInlineCastVote(
+              project: widget.project,
+              onRefresh: widget.onRefresh,
             ),
           ),
         ],
@@ -143,13 +137,15 @@ class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          if (_canPreviewCastVote)
+                          if (_canPreviewCastVote &&
+                              !widget.project.votingIsInProgress)
                             ProjectDetailCastVoteDevPreviews(
                               project: widget.project,
                               onPreviewCastVoteInPlace: () =>
                                   setState(() => _previewCastVote = true),
                             ),
-                          if (widget.project.showsMemberSuccessVoteDevPreviews)
+                          if (widget.project.showsMemberSuccessVoteDevPreviews &&
+                              !widget.project.votingIsInProgress)
                             ProjectDetailVoteOutcomeDevPreviews(
                               project: widget.project,
                             ),

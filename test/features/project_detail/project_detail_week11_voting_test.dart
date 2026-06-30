@@ -209,5 +209,71 @@ void main() {
       expect(entity.showsViewSuccessVotesAction, isFalse);
       expect(entity.hidesWalletActionsForVoting, isFalse);
     });
+
+    test('member hides overflow menu while vote is pending', () {
+      final entity = ProjectDetailResponseModel.fromJson(
+        minimalJson(
+          projectStatus: 'ongoing',
+          votingStatus: 'pending',
+          userRole: 'member',
+          voting: {
+            'startedAtUtc': '2026-05-01T10:00:00Z',
+            'deadlineAtUtc': '2026-05-12T23:59:59Z',
+            'agreedCount': 1,
+            'disagreedCount': 0,
+            'pendingCount': 2,
+            'hasVoted': false,
+            'isFinalized': false,
+          },
+        ),
+      ).toEntity();
+
+      expect(entity.showsInlineMemberCastVote, isTrue);
+      expect(entity.showsProjectDetailOverflowMenu, isFalse);
+    });
+
+    test('co-leader hides overflow menu while vote is pending', () {
+      final entity = ProjectDetailResponseModel.fromJson(
+        minimalJson(
+          projectStatus: 'ongoing',
+          votingStatus: 'pending',
+          userRole: 'co_leader',
+          voting: {
+            'startedAtUtc': '2026-05-01T10:00:00Z',
+            'deadlineAtUtc': '2026-05-12T23:59:59Z',
+            'agreedCount': 1,
+            'disagreedCount': 0,
+            'pendingCount': 2,
+            'hasVoted': false,
+            'isFinalized': false,
+          },
+        ),
+      ).toEntity();
+
+      expect(entity.showsInlineMemberCastVote, isTrue);
+      expect(entity.showsProjectDetailOverflowMenu, isFalse);
+    });
+
+    test('leader keeps overflow menu while vote is pending', () {
+      final entity = ProjectDetailResponseModel.fromJson(
+        minimalJson(
+          projectStatus: 'ongoing',
+          votingStatus: 'pending',
+          userRole: 'leader',
+          voting: {
+            'startedAtUtc': '2026-05-01T10:00:00Z',
+            'deadlineAtUtc': '2026-05-12T23:59:59Z',
+            'agreedCount': 1,
+            'disagreedCount': 0,
+            'pendingCount': 2,
+            'hasVoted': false,
+            'isFinalized': false,
+          },
+        ),
+      ).toEntity();
+
+      expect(entity.showsInlineMemberCastVote, isFalse);
+      expect(entity.showsProjectDetailOverflowMenu, isTrue);
+    });
   });
 }

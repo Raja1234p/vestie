@@ -7,8 +7,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
+import 'package:vestie/app/router/route_args/project_detail_flow_args.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
-import 'package:vestie/core/constants/api_constants.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
@@ -43,7 +43,6 @@ class VotingWindowScreen extends StatefulWidget {
 class _VotingWindowScreenState extends State<VotingWindowScreen> {
   late final TextEditingController _daysController;
   late final FocusNode _daysFocus;
-  bool _isSubmitting = false;
 
   @override
   void initState() {
@@ -63,57 +62,31 @@ class _VotingWindowScreenState extends State<VotingWindowScreen> {
   }
 
   Future<void> _onStartVoting(VotingWindowCubit cubit) async {
-    if (_isSubmitting || cubit.state.loading) return;
+    if (cubit.state.loading) return;
 
-    _daysFocus.unfocus();
-    setState(() => _isSubmitting = true);
+    FocusManager.instance.primaryFocus?.unfocus();
 
-    bool ok = false;
-    try {
-      ok = await cubit.submit().timeout(
-        ApiConstants.requestTimeout * 2,
-        onTimeout: () => false,
-      );
-    } on Object {
-      ok = false;
-    }
-    if (!mounted) return;
-    if (!ok) {
-      cubit.cancelInFlightSubmit(
-        apiErrorMessage: cubit.state.apiErrorMessage ?? AppStrings.errorTimeout,
-      );
-      setState(() => _isSubmitting = false);
-      if (cubit.state.apiErrorMessage == AppStrings.errorTimeout) {
-        AppToast.showError(context, AppStrings.errorTimeout);
-      }
-      return;
-    }
+    final ok = await cubit.submit();
+    if (!mounted || !ok) return;
 
     try {
       await ProjectDetailNavigation.reloadProjectDetailAndWait(
         context,
         projectId: widget.projectId,
-      ).timeout(ApiConstants.requestTimeout);
+      );
     } on TimeoutException {
-      // Voting already started — still navigate; detail can refresh on next open.
+      // Vote already started — still show success; detail refreshes on next open.
     }
     if (!mounted) return;
 
-    if (widget.flowKind == LeaderVotingFlowKind.stopContributions) {
-      context.pop();
-      if (!context.mounted) return;
-      context.pop();
-      if (!context.mounted) return;
-      context.push(AppRoutes.leaderVoteStarted);
-      return;
-    }
+    _openVotingStartedSuccess(context);
+  }
 
-    context.pop();
-    if (!context.mounted) return;
-    context.pop();
-    if (context.mounted) {
-      AppToast.showSuccess(context, AppStrings.successVoteStartedMessage);
-    }
+  void _openVotingStartedSuccess(BuildContext context) {
+    context.pushReplacement(
+      AppRoutes.leaderVoteStarted,
+      extra: VotingStartedSuccessRouteArgs(projectId: widget.projectId),
+    );
   }
 
   @override
@@ -126,17 +99,15 @@ class _VotingWindowScreenState extends State<VotingWindowScreen> {
       ),
       child: BlocListener<VotingWindowCubit, VotingWindowState>(
         listenWhen: (prev, curr) =>
-            prev.apiErrorMessage != curr.apiErrorMessage,
+            prev.apiErrorMessage != curr.apiErrorMessage &&
+            curr.apiErrorMessage != null &&
+            curr.apiErrorMessage!.isNotEmpty,
         listener: (context, state) {
-          final msg = state.apiErrorMessage;
-          if (msg != null && msg.isNotEmpty) {
-            AppToast.showError(context, msg);
-          }
+          AppToast.showError(context, state.apiErrorMessage!);
         },
         child: BlocBuilder<VotingWindowCubit, VotingWindowState>(
           builder: (context, state) {
             final cubit = context.read<VotingWindowCubit>();
-            final isBusy = _isSubmitting || state.loading;
             final labelStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
               fontSize: 16.sp,
               fontWeight: FontWeight.w500,
@@ -152,7 +123,7 @@ class _VotingWindowScreenState extends State<VotingWindowScreen> {
                   children: [
                     PostAuthFlowSubHeader(
                       title: AppStrings.votingWindowTitle,
-                      onBack: isBusy ? () {} : () => context.pop(),
+                      onBack: state.loading ? () {} : () => context.pop(),
                     ),
                     Expanded(
                       child: SingleChildScrollView(
@@ -166,7 +137,7 @@ class _VotingWindowScreenState extends State<VotingWindowScreen> {
                           hint: AppStrings.hintVotingWindowDays,
                           controller: _daysController,
                           focusNode: _daysFocus,
-                          readOnly: isBusy,
+                          readOnly: state.loading,
                           keyboardType: TextInputType.number,
                           textInputAction: TextInputAction.done,
                           maxLength: VotingWindowCubit.maxDigits,
@@ -174,7 +145,7 @@ class _VotingWindowScreenState extends State<VotingWindowScreen> {
                           labelStyle: labelStyle,
                           fillColor: AppColors.searchBarBg,
                           labelTrailing: IgnorePointer(
-                            ignoring: isBusy,
+                            ignoring: state.loading,
                             child: AppInfoTooltipIcon(
                               title: AppStrings.votingWindowTitle,
                               message: AppStrings.votingWindowTooltipBody,
@@ -190,19 +161,20 @@ class _VotingWindowScreenState extends State<VotingWindowScreen> {
                             ),
                           ],
                           onChanged: cubit.setDigitsFromField,
-                          onSubmitted: (_) => _daysFocus.unfocus(),
+                          onSubmitted: (_) =>
+                              FocusManager.instance.primaryFocus?.unfocus(),
                         ),
                       ),
                     ),
                     FlowScreenFooter(
                       child: AppButton(
                         text: AppStrings.btnStartVoting,
-                        isLoading: isBusy,
+                        isLoading: state.loading,
                         useGradient: false,
                         hasShadow: false,
                         color: AppColors.green800,
                         borderRadius: AppRadius.r100,
-                        onPressed: state.digits.isNotEmpty
+                        onPressed: state.canSubmit
                             ? () => _onStartVoting(cubit)
                             : null,
                       ),

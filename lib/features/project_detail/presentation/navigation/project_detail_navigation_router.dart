@@ -32,6 +32,19 @@ Future<void> _openGroupMembers(
   _reloadProjectDetailBloc(context, projectId: project.id);
 }
 
+void _popAfterVoteStarted(
+  BuildContext context, {
+  required String projectId,
+}) {
+  final router = GoRouter.of(context);
+  const routesAboveDetail = 2;
+  for (var i = 0; i < routesAboveDetail; i++) {
+    if (!router.canPop()) break;
+    router.pop();
+    if (!context.mounted) return;
+  }
+}
+
 void _popAfterFundsDistributed(
   BuildContext context, {
   required String projectId,

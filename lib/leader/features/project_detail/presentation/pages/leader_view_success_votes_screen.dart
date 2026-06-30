@@ -10,7 +10,6 @@ import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_error_view.dart';
-import 'package:vestie/core/widgets/common/app_loader.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
@@ -21,6 +20,7 @@ import 'package:vestie/leader/features/project_detail/presentation/models/leader
 import 'package:vestie/leader/features/project_detail/presentation/widgets/leader_success_vote/leader_success_vote_majority_banner.dart';
 import 'package:vestie/leader/features/project_detail/presentation/widgets/leader_success_vote/leader_success_vote_member_list.dart';
 import 'package:vestie/leader/features/project_detail/presentation/widgets/leader_success_vote/leader_success_vote_top_section.dart';
+import 'package:vestie/leader/features/project_detail/presentation/widgets/leader_success_vote/leader_view_success_votes_screen_shimmer.dart';
 import 'package:vestie/leader/features/project_detail/presentation/widgets/leader_success_vote/leader_success_vote_tally_cards.dart';
 
 /// Group leader monitors an active success vote (Figma Post-Success — voting window).
@@ -78,8 +78,13 @@ class _LeaderViewSuccessVotesProductionBody extends StatelessWidget {
   }
 
   Widget _buildBody(BuildContext context, LeaderViewSuccessVotesState state) {
-    if (state.isLoading) {
-      return const Center(child: AppLoader());
+    final showsInitialShimmer =
+        state.data == null &&
+        (state.isLoading ||
+            state.loadStatus == LeaderViewSuccessVotesLoadStatus.initial);
+
+    if (showsInitialShimmer) {
+      return const LeaderViewSuccessVotesScreenShimmer();
     }
 
     if (state.loadFailed) {

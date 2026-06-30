@@ -31,7 +31,12 @@ Future<void> _handleLeaderAction(
   }
   if (action == LeaderMenuAction.markSuccessful &&
       !project.canMarkProjectSuccessful) {
-    AppToast.showError(context, AppStrings.errorForbidden);
+    AppToast.showError(
+      context,
+      project.category.isInvestment
+          ? AppStrings.errorMarkProjectSuccessfulUnavailable
+          : AppStrings.errorForbidden,
+    );
     return;
   }
   if (action == LeaderMenuAction.stopContributions &&

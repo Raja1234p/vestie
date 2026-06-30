@@ -99,15 +99,4 @@ class VotingWindowCubit extends Cubit<VotingWindowState> {
       },
     );
   }
-
-  /// Clears [loading] when the parent flow times out while [submit] is in flight.
-  void cancelInFlightSubmit({String? apiErrorMessage}) {
-    if (!state.loading) return;
-    emit(
-      state.copyWith(
-        loading: false,
-        apiErrorMessage: apiErrorMessage,
-      ),
-    );
-  }
 }

@@ -19,7 +19,7 @@ import 'package:vestie/features/project_detail/domain/entities/create_announceme
 import 'package:vestie/leader/features/project_detail/presentation/pages/create_announcement_screen.dart';
 import 'package:vestie/leader/features/project_detail/presentation/pages/join_requests_screen.dart';
 import 'package:vestie/leader/features/project_detail/presentation/pages/leader_view_success_votes_screen.dart';
-import 'package:vestie/leader/features/project_detail/presentation/pages/leader_vote_started_screen.dart';
+import 'package:vestie/leader/features/project_detail/presentation/pages/voting_started_success_screen.dart';
 import 'package:vestie/leader/features/project_detail/presentation/pages/mark_project_successful_screen.dart';
 import 'package:vestie/leader/features/project_detail/presentation/pages/stop_contributions_screen.dart';
 import 'package:vestie/leader/features/project_detail/presentation/pages/voting_window_screen.dart';
@@ -326,7 +326,13 @@ List<RouteBase> buildProjectRoutes({
     ),
     GoRoute(
       path: AppRoutes.leaderVoteStarted,
-      builder: (context, state) => const LeaderVoteStartedScreen(),
+      builder: (context, state) {
+        final extra = state.extra;
+        if (extra is! VotingStartedSuccessRouteArgs) {
+          return invalidRouteScreen();
+        }
+        return VotingStartedSuccessScreen(args: extra);
+      },
     ),
     GoRoute(
       path: AppRoutes.cancelProject,

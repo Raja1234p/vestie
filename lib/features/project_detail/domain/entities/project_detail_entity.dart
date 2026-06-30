@@ -170,9 +170,10 @@ class ProjectDetailEntity {
   /// GroupLeader and CoLeader share the same detail UI (until product splits them).
   bool get isModeratorView => isGroupLeader || isCoLeader;
 
-  /// Mark successful — hidden while [apiCanStopContributions] is true (investment phase 1).
+  /// Mark successful — investment phase 2 only (after stop-contributions vote).
   bool get canMarkProjectSuccessful {
     if (!isGroupLeader) return false;
+    if (!category.isInvestment) return true;
     final api = apiCanStopContributions;
     if (api != null) return !api;
     return true;
@@ -244,11 +245,30 @@ class ProjectDetailEntity {
       !voting!.isFinalized;
 
   /// Member and co-leader inline cast on project detail (Week 11+).
-  bool get showsInlineMemberCastVote =>
-      (isDetailMember || isDetailCoLeader) &&
-      votingStatus == ProjectVotingStatus.pending &&
-      voting != null &&
-      !voting!.hasVoted;
+  bool get memberHasSubmittedClosureVote =>
+      voting?.hasVoted == true ||
+      activeClosureVote?.callerHasAgreed == true ||
+      activeClosureVote?.callerHasDisagreed == true;
+
+  bool get hasOpenMemberClosureVotePayload =>
+      voting != null || activeClosureVote?.isOpen == true;
+
+  bool get showsInlineMemberCastVote {
+    if (!(isDetailMember || isDetailCoLeader)) return false;
+    if (memberHasSubmittedClosureVote) return false;
+
+    if (votingStatus == ProjectVotingStatus.pending) {
+      return hasOpenMemberClosureVotePayload;
+    }
+
+    if (!hasWeek11VotingPayload &&
+        hasActiveSuccessVote &&
+        activeClosureVote?.isOpen == true) {
+      return true;
+    }
+
+    return false;
+  }
 
   bool get showsMemberVoteSubmittedLabel =>
       (isDetailMember || isDetailCoLeader) &&
@@ -346,7 +366,13 @@ class ProjectDetailEntity {
   /// Join-requests pill — GroupLeader and CoLeader only.
   bool get showsJoinRequestsHeaderChip => isModeratorView;
 
-  bool get showsProjectDetailOverflowMenu => isMemberView || isModeratorView;
+  /// Hide ⋯ menu for members and co-leaders while a vote window is open.
+  bool get hidesProjectDetailOverflowMenuDuringVoting =>
+      votingIsInProgress && (isDetailMember || isDetailCoLeader);
+
+  bool get showsProjectDetailOverflowMenu =>
+      (isMemberView || isModeratorView) &&
+      !hidesProjectDetailOverflowMenuDuringVoting;
 
   /// GroupLeader, CoLeader, and Member can open the invite-members sheet.
   bool get canInviteMembers => showsProjectDetailOverflowMenu;

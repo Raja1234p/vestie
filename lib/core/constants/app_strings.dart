@@ -17,6 +17,8 @@ class AppStrings {
   static const String projectUpdatedSuccess = 'Project updated successfully.';
   static const String errorForbidden =
       'You do not have permission to view this.';
+  static const String errorMarkProjectSuccessfulUnavailable =
+      'Stop contributions must be completed before you can mark this project as successful.';
   static const String projectNotFound =
       'Project not found or is no longer available.';
   static const String joinRequestsEmpty = 'No pending join requests.';
@@ -1264,12 +1266,12 @@ class AppStrings {
       'Marking the project as successful will notify all members to vote. '
       'A majority must agree before funds are released to your wallet.';
   static const String markSuccessfulIntro2 =
-      'Voting window: 21 days. If majority disagrees, all contributions are refunded.';
+      'The voting window is set by you. If the majority disagrees, '
+      'all contributions will be refunded to members.';
   static const String stopContributionsIntro1 =
       'All members will be notified to vote. If the majority agrees, '
       'contributions will stop and you can begin investing the funds.';
   static const String btnStopContributions = 'Stop Contributions';
-  static const String btnInitiateSuccessVote = 'Initiate Success Vote';
   static const String startSuccessVoteDialogTitle = 'Start the success vote?';
   static const String btnStartVoting = 'Start Voting';
   static const String votingWindowTitle = 'Voting window';
@@ -1288,9 +1290,13 @@ class AppStrings {
       'Members can vote to stop project contributions during this window.';
   static const String successVoteStartedMessage =
       'Success vote started. Members have been notified.';
-  static const String stopContributionsVoteStartedTitle = 'Vote has started';
-  static const String stopContributionsVoteStartedSubtitle =
+  static const String votingStartedSuccessTitle = 'Vote has started';
+  static const String votingStartedSuccessSubtitle =
       'The vote has started. A decision will be made once the voting window closes.';
+  static const String stopContributionsVoteStartedTitle =
+      votingStartedSuccessTitle;
+  static const String stopContributionsVoteStartedSubtitle =
+      votingStartedSuccessSubtitle;
   static const String cancelProjectHeroWarning =
       'This will permanently cancel the project for all members.';
   static const String cancelProjectRefundParagraph =
@@ -1450,6 +1456,8 @@ class AppStrings {
   static const String successVoteCastNotVoted = 'Not voted';
 
   static const String btnViewSuccessVotes = 'View Success Votes';
+  static const String btnViewContributionSuccessVote =
+      'View Contribution Success Vote';
   static const String btnCastVote = 'Cast Vote';
 
   // ── Week 11+ project detail voting card ───────────────────────────────

@@ -6,6 +6,27 @@ import 'project_detail_entity.dart';
 import 'project_detail_voting_entities.dart';
 
 extension ProjectDetailEntityClosureVote on ProjectDetailEntity {
+  /// Investment stop-contributions vote (phase 1), not final closure / success vote.
+  bool get isStopContributionsClosureVote {
+    if (!category.isInvestment) return false;
+    if (apiCanStopContributions == false) return false;
+    final voteType = activeClosureVote?.voteType;
+    if (voteType == ClosureVoteType.stopContributionsVote) return true;
+    if (voteType == ClosureVoteType.finalClosureVote ||
+        voteType == ClosureVoteType.successVote) {
+      return false;
+    }
+    if (votingIsInProgress) return true;
+    return false;
+  }
+
+  /// Group leader — monitor stop-contributions vote from project detail wallet row.
+  bool get showsViewContributionSuccessVoteAction =>
+      isDetailLeader &&
+      hasActiveSuccessVote &&
+      isStopContributionsClosureVote &&
+      (votingIsInProgress || activeClosureVote?.isOpen == true);
+
   ProjectDetailEntity withActiveClosureVote(ActiveClosureVoteEntity? vote) {
     return _copy(
       hasActiveSuccessVote: vote?.isOpen ?? false,
@@ -49,6 +70,9 @@ extension ProjectDetailEntityClosureVote on ProjectDetailEntity {
 
   ClosureVoteType _inferClosureVoteType() {
     if (category.isInvestment) {
+      if (apiCanStopContributions == false) {
+        return ClosureVoteType.finalClosureVote;
+      }
       final state = projectLifecycleState.toLowerCase().trim();
       if (state == 'funded' ||
           displayStatusLabel.toLowerCase().contains('funded')) {

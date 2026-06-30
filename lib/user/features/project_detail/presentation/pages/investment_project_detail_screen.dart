@@ -252,12 +252,9 @@ class _InvestmentProjectDetailBodyState
                   children: [
                     header(),
                     Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
-                        child: ProjectDetailInlineCastVote(
-                          project: project,
-                          onRefresh: refreshDetail,
-                        ),
+                      child: ProjectDetailInlineCastVote(
+                        project: project,
+                        onRefresh: refreshDetail,
                       ),
                     ),
                   ],
@@ -270,11 +267,8 @@ class _InvestmentProjectDetailBodyState
                   children: [
                     header(),
                     Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
-                        child: SuccessVoteCastContent(
-                          data: SuccessVoteCastUiData.fromProject(project),
-                        ),
+                      child: SuccessVoteCastContent(
+                        data: SuccessVoteCastUiData.fromProject(project),
                       ),
                     ),
                   ],
@@ -324,7 +318,8 @@ class _InvestmentProjectDetailBodyState
                                   project: project,
                                   includeViewSuccessVotesPreview: false,
                                 ),
-                              if (project.isMemberView) ...[
+                              if (project.isMemberView &&
+                                  !project.votingIsInProgress) ...[
                                 ProjectDetailCastVoteDevPreviews(
                                   project: project,
                                   onPreviewCastVoteInPlace: () => setState(

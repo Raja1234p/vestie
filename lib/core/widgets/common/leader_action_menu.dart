@@ -29,6 +29,7 @@ enum LeaderMenuAudience { primaryLeader, coLeader }
 class LeaderActionMenu extends StatelessWidget {
   final LeaderMenuAudience audience;
   final bool includeMyBorrows;
+  final bool showMarkAsSuccessful;
   final bool showStopContributions;
   final void Function(LeaderMenuAction) onSelected;
 
@@ -37,6 +38,7 @@ class LeaderActionMenu extends StatelessWidget {
     required this.onSelected,
     this.audience = LeaderMenuAudience.primaryLeader,
     this.includeMyBorrows = false,
+    this.showMarkAsSuccessful = true,
     this.showStopContributions = true,
   });
 
@@ -179,13 +181,15 @@ class LeaderActionMenu extends StatelessWidget {
       AppAssets.iconAdd,
       AppStrings.menuInviteMembers,
     );
-    push(
-      LeaderMenuAction.markSuccessful,
-      AppAssets.leaderMarkSuccessful,
-      AppStrings.menuMarkSuccessful,
-      iconColor: AppColors.green900,
-      labelColor: AppColors.green900,
-    );
+    if (showMarkAsSuccessful) {
+      push(
+        LeaderMenuAction.markSuccessful,
+        AppAssets.leaderMarkSuccessful,
+        AppStrings.menuMarkSuccessful,
+        iconColor: AppColors.green900,
+        labelColor: AppColors.green900,
+      );
+    }
     if (showStopContributions) {
       push(
         LeaderMenuAction.stopContributions,

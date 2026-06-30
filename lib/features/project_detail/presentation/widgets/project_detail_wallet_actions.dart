@@ -10,10 +10,12 @@ import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/app/router/route_args/project_wallet_flow_args.dart';
 import '../../domain/entities/project_detail_entity.dart';
+import '../../domain/entities/project_detail_closure_extensions.dart';
 import '../navigation/project_detail_navigation.dart';
 import 'package:vestie/user/features/contributions/data/models/contribution_submit_result_model.dart';
 
-/// Contribute (+ Borrow), [AppStrings.btnViewSuccessVotes], or [AppStrings.btnCastVote].
+/// Contribute (+ Borrow), [AppStrings.btnViewSuccessVotes],
+/// [AppStrings.btnViewContributionSuccessVote], or [AppStrings.btnCastVote].
 class ProjectDetailWalletActions extends StatelessWidget {
   final ProjectDetailEntity project;
 
@@ -26,10 +28,18 @@ class ProjectDetailWalletActions extends StatelessWidget {
     this.showViewSuccessVotesCta = false,
   });
 
+  bool get _showsLeaderVoteMonitorCta =>
+      showViewSuccessVotesCta || project.showsViewContributionSuccessVoteAction;
+
   bool get _showsWalletMoneyActions =>
-      !showViewSuccessVotesCta &&
+      !_showsLeaderVoteMonitorCta &&
       !project.showsCastVoteAction &&
       !project.hidesWalletActionsForVoting;
+
+  String get _leaderVoteMonitorButtonLabel =>
+      project.showsViewContributionSuccessVoteAction
+      ? AppStrings.btnViewContributionSuccessVote
+      : AppStrings.btnViewSuccessVotes;
 
   @override
   Widget build(BuildContext context) {
@@ -40,15 +50,15 @@ class ProjectDetailWalletActions extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (showViewSuccessVotesCta)
+        if (_showsLeaderVoteMonitorCta)
           AppButton(
-            text: AppStrings.btnViewSuccessVotes,
+            text: _leaderVoteMonitorButtonLabel,
             onPressed: () => ProjectDetailNavigation.openLeaderViewSuccessVotes(
               context,
               project: project,
             ),
           ),
-        if (showViewSuccessVotesCta && project.showsCastVoteAction)
+        if (_showsLeaderVoteMonitorCta && project.showsCastVoteAction)
           SizedBox(height: 13.h),
         if (project.showsCastVoteAction)
           AppButton(
