@@ -16,6 +16,7 @@ import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/leader/features/project_detail/presentation/cubit/leader_view_success_votes_cubit.dart';
 import 'package:vestie/leader/features/project_detail/presentation/cubit/leader_view_success_votes_state.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_detail_scroll_insets.dart';
 import 'package:vestie/leader/features/project_detail/presentation/models/leader_success_vote_progress_ui_data.dart';
 import 'package:vestie/leader/features/project_detail/presentation/widgets/leader_success_vote/leader_success_vote_majority_banner.dart';
 import 'package:vestie/leader/features/project_detail/presentation/widgets/leader_success_vote/leader_success_vote_member_list.dart';
@@ -180,56 +181,72 @@ class _LeaderViewSuccessVotesContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scrollView = SingleChildScrollView(
-      physics: onRefresh != null
-          ? const AlwaysScrollableScrollPhysics()
-          : null,
-      padding: EdgeInsets.only(bottom: 24.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          LeaderSuccessVoteCountdownSection(
-            initialRemaining: data.remaining,
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                LeaderSuccessVoteTallyCards(
-                  agreedCount: data.agreedCount,
-                  disagreedCount: data.disagreedCount,
-                  notVotedCount: data.notVotedCount,
+    return ColoredBox(
+      color: Colors.white,
+      child: SafeArea(
+        top: false,
+        bottom: ProjectDetailScrollInsets.applyBottomSafeAreaToViewport,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final scrollView = SingleChildScrollView(
+              physics: onRefresh != null
+                  ? const AlwaysScrollableScrollPhysics()
+                  : null,
+              padding: EdgeInsets.only(
+                bottom: ProjectDetailScrollInsets.scrollBottomGap(context),
+              ),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    LeaderSuccessVoteCountdownSection(
+                      initialRemaining: data.remaining,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          LeaderSuccessVoteTallyCards(
+                            agreedCount: data.agreedCount,
+                            disagreedCount: data.disagreedCount,
+                            notVotedCount: data.notVotedCount,
+                          ),
+                          SizedBox(height: 12.h),
+                          LeaderSuccessVoteMajorityBanner(
+                            majorityRequired: data.majorityRequired,
+                            totalMembers: data.totalMembers,
+                          ),
+                          SizedBox(height: 20.h),
+                          LeaderSuccessVoteMemberList(members: data.members),
+                          if (canFinalize && onFinalize != null) ...[
+                            SizedBox(height: 24.h),
+                            AppButton(
+                              text: AppStrings.leaderSuccessVoteFinalizeButton,
+                              isLoading: isFinalizing,
+                              onPressed: onFinalize,
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(height: 12.h),
-                LeaderSuccessVoteMajorityBanner(
-                  majorityRequired: data.majorityRequired,
-                  totalMembers: data.totalMembers,
-                ),
-                SizedBox(height: 20.h),
-                LeaderSuccessVoteMemberList(members: data.members),
-                if (canFinalize && onFinalize != null) ...[
-                  SizedBox(height: 24.h),
-                  AppButton(
-                    text: AppStrings.leaderSuccessVoteFinalizeButton,
-                    isLoading: isFinalizing,
-                    onPressed: onFinalize,
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ],
+              ),
+            );
+
+            if (onRefresh == null) {
+              return scrollView;
+            }
+
+            return RefreshIndicator(
+              onRefresh: onRefresh!,
+              child: scrollView,
+            );
+          },
+        ),
       ),
-    );
-
-    if (onRefresh == null) {
-      return scrollView;
-    }
-
-    return RefreshIndicator(
-      onRefresh: onRefresh!,
-      child: scrollView,
     );
   }
 }

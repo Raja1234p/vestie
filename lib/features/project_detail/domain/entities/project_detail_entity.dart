@@ -299,6 +299,15 @@ class ProjectDetailEntity {
       isVacationOrEmergency &&
       hasActiveClosureVotingWindow;
 
+  /// Leader/co-leader members tab — read-only "Members" while vote is in progress.
+  String get leaderMembersTabLabel {
+    if (!usesLeaderDetailPanels) return AppStrings.tabMember;
+    if (isVacationOrEmergency && votingIsInProgress) {
+      return AppStrings.tabMembers;
+    }
+    return AppStrings.tabManageMembers;
+  }
+
   String get categoryLabel {
     return category.detailLabel;
   }

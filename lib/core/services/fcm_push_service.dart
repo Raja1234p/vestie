@@ -13,6 +13,9 @@ import '../di/service_locator.dart';
 /// Top-level handler — required to be a plain static function by FCM.
 @pragma('vm:entry-point')
 Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
+  // Background isolate does not inherit Firebase init from bootstrap.
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   if (kDebugMode) {
     debugPrint(
       'FcmPushService: background message received '

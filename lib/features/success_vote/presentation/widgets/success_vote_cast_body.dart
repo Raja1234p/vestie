@@ -78,23 +78,16 @@ class _StatusBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final titleStyle = theme.textTheme.titleMedium?.copyWith(
-      fontSize: 16.sp,
+      fontSize: 20.sp,
       fontWeight: FontWeight.w700,
       color: AppColors.grey1100,
     );
-    final bodyStyle = choice == SuccessVoteCastChoice.pending
-        ? theme.textTheme.bodyMedium?.copyWith(
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w400,
-            color: AppColors.grey800,
-            height: 1.45,
-          )
-        : theme.textTheme.bodyLarge?.copyWith(
-            fontSize: 20.sp,
-            fontWeight: FontWeight.w400,
-            color: AppColors.grey900,
-            height: 1.5,
-          );
+    final bodyStyle = theme.textTheme.bodyMedium?.copyWith(
+      fontSize: 16.sp,
+      fontWeight: FontWeight.w400,
+      color: AppColors.grey900,
+      height: 1.5,
+    );
 
     final (title, body) = switch (choice) {
       SuccessVoteCastChoice.pending => (

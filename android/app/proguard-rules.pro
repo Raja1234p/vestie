@@ -18,3 +18,7 @@
 -dontwarn com.google.android.play.core.tasks.OnFailureListener
 -dontwarn com.google.android.play.core.tasks.OnSuccessListener
 -dontwarn com.google.android.play.core.tasks.Task
+-keep class com.google.firebase.** { *; }
+-dontwarn com.google.firebase.**
+# If using flutter_local_notifications add:
+-keep class com.dexterous.** { *; }

@@ -34,6 +34,7 @@ import 'package:vestie/features/project_detail/presentation/widgets/project_deta
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_reload_scope.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_realtime_scope.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_info_card.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_detail_scroll_insets.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_cast_ui_data.dart';
 import 'package:vestie/features/success_vote/presentation/widgets/success_vote_cast_content.dart';
 
@@ -276,110 +277,138 @@ class _InvestmentProjectDetailBodyState
                 );
               }
 
-              return RefreshIndicator(
-                color: AppColors.primary,
-                onRefresh: refreshDetail,
-                child: CustomScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  slivers: [
-                    SliverToBoxAdapter(child: header()),
-                    SliverPadding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w),
-                      sliver: SliverToBoxAdapter(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            if (!isCompleted)
-                              InvestmentDetailPreviewButton(
-                                onPressed: () => setState(
-                                  () => _previewCompletedInvestment = true,
-                                ),
-                              ),
-                            if (showCompletedLayout)
-                              InvestmentCompletedDetailContent(
-                                project: project,
-                                onMemberTap: (m) => openMemberDetail(m),
-                                onSendVffRequest: (member) =>
-                                    sendMemberVffFromProjectDetail(
-                                      context,
-                                      member: member,
-                                    ),
-                                sendingVffUserId: state.sendingVffUserId,
-                                onDeleteAnnouncement: project.isModeratorView
-                                    ? _deleteAnnouncement
-                                    : null,
-                              )
-                            else ...[
-                              ProjectDetailVotingSections(
-                                project: project,
-                                onRefresh: refreshDetail,
-                              ),
-                              if (project.isModeratorView)
-                                ProjectDetailVoteOutcomeDevPreviews(
-                                  project: project,
-                                  includeViewSuccessVotesPreview: false,
-                                ),
-                              if (project.isMemberView &&
-                                  !project.votingIsInProgress) ...[
-                                ProjectDetailCastVoteDevPreviews(
-                                  project: project,
-                                  onPreviewCastVoteInPlace: () => setState(
-                                    () => _previewCastVote = true,
-                                  ),
-                                ),
-                                ProjectDetailVoteOutcomeDevPreviews(
-                                  project: project,
-                                ),
-                              ],
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ProjectAnnouncementsSection(
-                                    project: project,
-                                    onDeleteAnnouncement: _deleteAnnouncement,
-                                    gapAfter: 12.h,
-                                  ),
-                                  ProjectInfoCard(project: project),
-                                  SizedBox(height: 16.h),
-                                  ProjectDetailWalletActions(project: project),
-                                  SizedBox(height: 16.h),
-                                  BlocBuilder<
-                                    ProjectDetailBloc,
-                                    ProjectDetailState
-                                  >(
-                                    buildWhen: (prev, curr) =>
-                                        prev is ProjectDetailLoaded &&
-                                        curr is ProjectDetailLoaded &&
-                                        (prev.project.members !=
-                                                curr.project.members ||
-                                            prev.sendingVffUserId !=
-                                                curr.sendingVffUserId),
-                                    builder: (context, detailState) {
-                                      final loaded =
-                                          detailState as ProjectDetailLoaded;
-                                      return ProjectMembersPreviewSection(
-                                        project: loaded.project,
-                                        onMemberTap: openMemberDetail,
-                                        onSendVffRequest: (member) =>
-                                            sendMemberVffFromProjectDetail(
-                                              context,
-                                              member: member,
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  header(),
+                  Expanded(
+                    child: SafeArea(
+                      top: false,
+                      bottom:
+                          ProjectDetailScrollInsets.applyBottomSafeAreaToViewport,
+                      child: ColoredBox(
+                        color: Colors.white,
+                        child: RefreshIndicator(
+                          color: AppColors.primary,
+                          onRefresh: refreshDetail,
+                          child: CustomScrollView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            slivers: [
+                              SliverPadding(
+                                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                                sliver: SliverToBoxAdapter(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      if (!isCompleted)
+                                        InvestmentDetailPreviewButton(
+                                          onPressed: () => setState(
+                                            () => _previewCompletedInvestment =
+                                                true,
+                                          ),
+                                        ),
+                                      if (showCompletedLayout)
+                                        InvestmentCompletedDetailContent(
+                                          project: project,
+                                          onMemberTap: (m) => openMemberDetail(m),
+                                          onSendVffRequest: (member) =>
+                                              sendMemberVffFromProjectDetail(
+                                                context,
+                                                member: member,
+                                              ),
+                                          sendingVffUserId: state.sendingVffUserId,
+                                          onDeleteAnnouncement:
+                                              project.isModeratorView
+                                              ? _deleteAnnouncement
+                                              : null,
+                                        )
+                                      else ...[
+                                        ProjectDetailVotingSections(
+                                          project: project,
+                                          onRefresh: refreshDetail,
+                                        ),
+                                        if (project.isModeratorView)
+                                          ProjectDetailVoteOutcomeDevPreviews(
+                                            project: project,
+                                            includeViewSuccessVotesPreview: false,
+                                          ),
+                                        if (project.isMemberView &&
+                                            !project.votingIsInProgress) ...[
+                                          ProjectDetailCastVoteDevPreviews(
+                                            project: project,
+                                            onPreviewCastVoteInPlace: () =>
+                                                setState(
+                                                  () => _previewCastVote = true,
+                                                ),
+                                          ),
+                                          ProjectDetailVoteOutcomeDevPreviews(
+                                            project: project,
+                                          ),
+                                        ],
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            ProjectAnnouncementsSection(
+                                              project: project,
+                                              onDeleteAnnouncement:
+                                                  _deleteAnnouncement,
+                                              gapAfter: 12.h,
                                             ),
-                                        sendingVffUserId:
-                                            loaded.sendingVffUserId,
-                                      );
-                                    },
+                                            ProjectInfoCard(project: project),
+                                            SizedBox(height: 16.h),
+                                            ProjectDetailWalletActions(
+                                              project: project,
+                                            ),
+                                            SizedBox(height: 16.h),
+                                            BlocBuilder<
+                                              ProjectDetailBloc,
+                                              ProjectDetailState
+                                            >(
+                                              buildWhen: (prev, curr) =>
+                                                  prev is ProjectDetailLoaded &&
+                                                  curr is ProjectDetailLoaded &&
+                                                  (prev.project.members !=
+                                                          curr.project.members ||
+                                                      prev.sendingVffUserId !=
+                                                          curr.sendingVffUserId),
+                                              builder: (context, detailState) {
+                                                final loaded =
+                                                    detailState
+                                                        as ProjectDetailLoaded;
+                                                return ProjectMembersPreviewSection(
+                                                  project: loaded.project,
+                                                  onMemberTap: openMemberDetail,
+                                                  onSendVffRequest: (member) =>
+                                                      sendMemberVffFromProjectDetail(
+                                                        context,
+                                                        member: member,
+                                                      ),
+                                                  sendingVffUserId:
+                                                      loaded.sendingVffUserId,
+                                                );
+                                              },
+                                            ),
+                                            SizedBox(
+                                              height:
+                                                  ProjectDetailScrollInsets
+                                                      .scrollBottomGap(context),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ],
                                   ),
-                                  SizedBox(height: 32.h),
-                                ],
+                                ),
                               ),
                             ],
-                          ],
+                          ),
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               );
             }
 

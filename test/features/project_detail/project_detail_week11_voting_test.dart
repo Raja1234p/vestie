@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/features/project_detail/data/models/project_detail_response_model.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_closure_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_member_vote_extensions.dart';
@@ -384,6 +385,7 @@ void main() {
       expect(entity.canCancelProject, isFalse);
       expect(entity.canEditProject, isFalse);
       expect(entity.showsMembersOnlyLeaderDetailDuringVoting, isTrue);
+      expect(entity.leaderMembersTabLabel, AppStrings.tabMembers);
     });
 
     test('emergency group leader shows view success votes during pending vote', () {
@@ -432,6 +434,46 @@ void main() {
       expect(entity.canCancelProject, isFalse);
       expect(entity.canEditProject, isFalse);
       expect(entity.showsMembersOnlyLeaderDetailDuringVoting, isTrue);
+      expect(entity.leaderMembersTabLabel, AppStrings.tabMembers);
     });
+
+    test(
+      'vacation leader shows Manage Members before vote starts',
+      () {
+        final entity = ProjectDetailResponseModel.fromJson({
+          'project': {
+            'id': 'p1',
+            'name': 'Trip',
+            'description': '',
+            'type': 'vacation',
+            'visibility': 'private',
+            'state': 'active',
+            'targetAmount': 5000,
+            'raisedAmount': 2500,
+            'endsAtUtc': '2026-12-31T00:00:00Z',
+            'viewerRole': 'GroupLeader',
+          },
+          'rules': {},
+          'viewerMembership': {
+            'membershipId': 'vm1',
+            'userId': 'u1',
+            'userName': 'leader',
+            'firstName': 'Lead',
+            'lastName': 'Er',
+            'role': 'leader',
+            'status': 'active',
+          },
+          'members': [],
+          'invites': [],
+          'announcements': [],
+          'projectStatus': 'ongoing',
+          'votingStatus': 'not_started',
+          'userRole': 'leader',
+        }).toEntity();
+
+        expect(entity.leaderMembersTabLabel, AppStrings.tabManageMembers);
+        expect(entity.showsMembersOnlyLeaderDetailDuringVoting, isFalse);
+      },
+    );
   });
 }

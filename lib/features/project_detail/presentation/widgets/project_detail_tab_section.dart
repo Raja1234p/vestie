@@ -62,9 +62,7 @@ class ProjectDetailTabSection extends StatelessWidget {
               labelFontWeight: FontWeight.w500,
               tabs: [
                 AppStrings.tabBorrowRequests,
-                project.usesLeaderDetailPanels
-                    ? AppStrings.tabManageMembers
-                    : AppStrings.tabMember,
+                project.leaderMembersTabLabel,
               ],
               activeIndex: isBorrowTab ? 0 : 1,
               onTabSelected: (i) => bloc.add(
