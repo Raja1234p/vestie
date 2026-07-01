@@ -42,6 +42,10 @@ class AppStrings {
       'Could not sign in with Google. Please try again.';
   static const String errorGoogleSignInNoToken =
       'Could not complete Google sign-in. Please try again.';
+  static const String errorAppleSignInFailed =
+      'Could not sign in with Apple. Please try again.';
+  static const String errorAppleSignInNoToken =
+      'Could not complete Apple sign-in. Please try again.';
 
   // Auth Flow
   static const String loginTitle = 'Welcome Back';

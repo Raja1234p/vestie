@@ -8,7 +8,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/widgets/common/app_toast.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import 'auth_password_visibility_icon.dart';
 import '../../../../core/widgets/common/app_text_field.dart';
@@ -39,9 +38,6 @@ class _LoginFormState extends State<LoginForm> {
     super.dispose();
   }
 
-  void _showComingSoon(BuildContext context) =>
-      AppToast.showInfo(context, AppStrings.socialComingSoon);
-
   void _submit(BuildContext context) {
     FocusScope.of(context).unfocus();
     final formCubit = context.read<LoginFormCubit>();
@@ -60,6 +56,8 @@ class _LoginFormState extends State<LoginForm> {
         final loginState = context.watch<LoginBloc>().state;
         final isEmailLoading = loginState is LoginLoading;
         final isGoogleLoading = loginState is LoginGoogleLoading;
+        final isAppleLoading = loginState is LoginAppleLoading;
+        final isSocialLoading = isGoogleLoading || isAppleLoading;
         final bottomInset = MediaQuery.paddingOf(context).bottom;
         return CustomScrollView(
           slivers: [
@@ -154,7 +152,7 @@ class _LoginFormState extends State<LoginForm> {
                     text: AppStrings.btnContinue,
                     isLoading: isEmailLoading,
                     onPressed:
-                        isEmailLoading || isGoogleLoading || !form.isValid
+                        isEmailLoading || isSocialLoading || !form.isValid
                         ? null
                         : () => _submit(context),
                   ),
@@ -166,7 +164,7 @@ class _LoginFormState extends State<LoginForm> {
                       SocialAuthButton(
                         provider: SocialProvider.google,
                         isLoading: isGoogleLoading,
-                        onPressed: isEmailLoading || isGoogleLoading
+                        onPressed: isEmailLoading || isSocialLoading
                             ? null
                             : () => context.read<LoginBloc>().add(
                                 const GoogleLoginRequested(),
@@ -175,7 +173,12 @@ class _LoginFormState extends State<LoginForm> {
                     if (Platform.isIOS)
                       SocialAuthButton(
                         provider: SocialProvider.apple,
-                        onPressed: () => _showComingSoon(context),
+                        isLoading: isAppleLoading,
+                        onPressed: isEmailLoading || isSocialLoading
+                            ? null
+                            : () => context.read<LoginBloc>().add(
+                                const AppleLoginRequested(),
+                              ),
                       ),
                   ],
                   SizedBox(height: 12.h),

@@ -31,6 +31,7 @@ class RegisterScreen extends StatelessWidget {
         listenWhen: (prev, curr) =>
             curr is RegisterSuccess ||
             curr is RegisterGoogleSuccess ||
+            curr is RegisterAppleSuccess ||
             curr is RegisterError,
         listener: (context, state) async {
           if (state is RegisterSuccess) {
@@ -44,12 +45,16 @@ class RegisterScreen extends StatelessWidget {
             );
             if (!context.mounted) return;
             context.read<RegisterBloc>().add(const RegisterReset());
-          } else if (state is RegisterGoogleSuccess) {
+          } else if (state is RegisterGoogleSuccess ||
+              state is RegisterAppleSuccess) {
+            final disclaimerAccepted = state is RegisterGoogleSuccess
+                ? state.isDisclaimerAccepted
+                : (state as RegisterAppleSuccess).isDisclaimerAccepted;
             await AppAuthSession.instance.syncFromStorage();
             if (!context.mounted) return;
             await ProjectInviteNavigation.goAfterAuth(
               context,
-              disclaimerAccepted: state.isDisclaimerAccepted,
+              disclaimerAccepted: disclaimerAccepted,
             );
           } else if (state is RegisterError) {
             AppFailureDialog.show(

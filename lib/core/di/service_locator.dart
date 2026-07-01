@@ -8,6 +8,7 @@ import '../../features/auth/domain/usecases/delete_me_profile_picture_use_case.d
 import '../../features/auth/domain/usecases/forgot_password_use_case.dart';
 import '../../features/auth/domain/usecases/get_me_use_case.dart';
 import '../../features/auth/domain/usecases/get_risk_disclaimer_use_case.dart';
+import '../../features/auth/domain/usecases/apple_login_use_case.dart';
 import '../../features/auth/domain/usecases/google_login_use_case.dart';
 import '../../features/auth/domain/usecases/login_use_case.dart';
 import '../../features/auth/domain/usecases/logout_use_case.dart';
@@ -155,6 +156,7 @@ class ServiceLocator {
   late final GetRiskDisclaimerUseCase getRiskDisclaimerUseCase;
   late final AcceptRiskDisclaimerUseCase acceptRiskDisclaimerUseCase;
   late final GoogleLoginUseCase googleLoginUseCase;
+  late final AppleLoginUseCase appleLoginUseCase;
   late final UpdateMeUseCase updateMeUseCase;
   late final DeleteMeProfilePictureUseCase deleteMeProfilePictureUseCase;
 

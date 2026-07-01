@@ -387,4 +387,28 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       _handleError(e, AppStrings.errorGoogleSignInFailed);
     }
   }
+
+  @override
+  Future<AuthTokenModel> loginWithApple({
+    required String idToken,
+    required String deviceName,
+  }) async {
+    try {
+      final response = await _client.post(
+        ApiConstants.appleLogin,
+        data: {
+          'idToken': idToken,
+          'deviceName': deviceName,
+          'ipAddress': ApiConstants.defaultIpAddress,
+        },
+      );
+      return AuthTokenModel.fromJson(response.data);
+    } on DioException catch (e) {
+      AppLogger.error(
+        'API AppleLogin Error: ${e.response?.statusCode}',
+        error: e.response?.data,
+      );
+      _handleError(e, AppStrings.errorAppleSignInFailed);
+    }
+  }
 }

@@ -9,6 +9,7 @@ import '../../../../core/bloc/form_submission_state.dart';
 import '../../../../core/bloc/base_form_bloc.dart';
 import '../../../../core/utils/validators.dart';
 import '../../domain/usecases/login_use_case.dart';
+import '../../domain/usecases/apple_login_use_case.dart';
 import '../../domain/usecases/google_login_use_case.dart';
 import '../../domain/usecases/get_risk_disclaimer_use_case.dart';
 import '../../domain/entities/user.dart';
@@ -19,21 +20,26 @@ import 'login_state.dart';
 class LoginBloc extends BaseFormBloc<LoginEvent, LoginState> {
   final LoginUseCase _loginUseCase;
   final GoogleLoginUseCase _googleLoginUseCase;
+  final AppleLoginUseCase _appleLoginUseCase;
   final GetRiskDisclaimerUseCase _getRiskDisclaimerUseCase;
 
   LoginBloc({
     LoginUseCase? loginUseCase,
     GoogleLoginUseCase? googleLoginUseCase,
+    AppleLoginUseCase? appleLoginUseCase,
     GetRiskDisclaimerUseCase? getRiskDisclaimerUseCase,
   }) : _loginUseCase = loginUseCase ?? ServiceLocator.instance.loginUseCase,
        _googleLoginUseCase =
            googleLoginUseCase ?? ServiceLocator.instance.googleLoginUseCase,
+       _appleLoginUseCase =
+           appleLoginUseCase ?? ServiceLocator.instance.appleLoginUseCase,
        _getRiskDisclaimerUseCase =
            getRiskDisclaimerUseCase ??
            ServiceLocator.instance.getRiskDisclaimerUseCase,
        super(const LoginInitial()) {
     on<LoginSubmitted>(_onLoginSubmitted);
     on<GoogleLoginRequested>(_onGoogleLoginRequested);
+    on<AppleLoginRequested>(_onAppleLoginRequested);
     on<LoginReset>((_, emit) => emit(const LoginInitial()));
   }
 
@@ -170,6 +176,57 @@ class LoginBloc extends BaseFormBloc<LoginEvent, LoginState> {
 
         await OnboardingPrefs.markCompleted();
         emit(LoginGoogleSuccess(isDisclaimerAccepted: isDisclaimerAccepted));
+      },
+    );
+  }
+
+  Future<void> _onAppleLoginRequested(
+    AppleLoginRequested event,
+    Emitter<LoginState> emit,
+  ) async {
+    emit(const LoginAppleLoading());
+
+    final result = await _appleLoginUseCase();
+
+    await result.fold(
+      (failure) async {
+        if (failure is SignInCanceledFailure) {
+          emit(const LoginInitial());
+          return;
+        }
+        emit(
+          LoginError(
+            message: FailureMapper.userMessage(failure),
+            title: FailureMapper.dialogTitle(failure),
+          ),
+        );
+      },
+      (user) async {
+        if (user.accessToken != null) {
+          await ServiceLocator.instance.secureStorage.saveString(
+            StorageKeys.accessToken,
+            user.accessToken!,
+          );
+        }
+        if (user.refreshToken != null && user.refreshToken!.isNotEmpty) {
+          await ServiceLocator.instance.secureStorage.saveString(
+            StorageKeys.refreshToken,
+            user.refreshToken!,
+          );
+        }
+        await ServiceLocator.instance.sharedPrefs.saveBool(
+          StorageKeys.isLoggedIn,
+          true,
+        );
+
+        final disclaimerResult = await _getRiskDisclaimerUseCase();
+        final isDisclaimerAccepted = disclaimerResult.fold(
+          (_) => false,
+          (disclaimer) => disclaimer.accepted,
+        );
+
+        await OnboardingPrefs.markCompleted();
+        emit(LoginAppleSuccess(isDisclaimerAccepted: isDisclaimerAccepted));
       },
     );
   }

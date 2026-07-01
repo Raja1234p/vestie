@@ -23,6 +23,11 @@ class LoginGoogleLoading extends LoginState {
   const LoginGoogleLoading() : super(status: FormSubmissionStatus.submitting);
 }
 
+/// Apple sign-in in progress (Apple button inline loader).
+class LoginAppleLoading extends LoginState {
+  const LoginAppleLoading() : super(status: FormSubmissionStatus.submitting);
+}
+
 class LoginSuccess extends LoginState {
   final User user;
   final bool isDisclaimerAccepted;
@@ -44,6 +49,21 @@ class LoginGoogleSuccess extends LoginState {
   final bool isDisclaimerAccepted;
 
   const LoginGoogleSuccess({required this.isDisclaimerAccepted})
+    : super(status: FormSubmissionStatus.success);
+
+  @override
+  List<Object?> get props => [
+    status,
+    errorMessage,
+    validationErrors,
+    isDisclaimerAccepted,
+  ];
+}
+
+class LoginAppleSuccess extends LoginState {
+  final bool isDisclaimerAccepted;
+
+  const LoginAppleSuccess({required this.isDisclaimerAccepted})
     : super(status: FormSubmissionStatus.success);
 
   @override

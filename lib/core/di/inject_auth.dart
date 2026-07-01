@@ -5,6 +5,7 @@ import '../../features/auth/domain/usecases/delete_me_profile_picture_use_case.d
 import '../../features/auth/domain/usecases/forgot_password_use_case.dart';
 import '../../features/auth/domain/usecases/get_me_use_case.dart';
 import '../../features/auth/domain/usecases/get_risk_disclaimer_use_case.dart';
+import '../../features/auth/domain/usecases/apple_login_use_case.dart';
 import '../../features/auth/domain/usecases/google_login_use_case.dart';
 import '../../features/auth/domain/usecases/login_use_case.dart';
 import '../../features/auth/domain/usecases/logout_use_case.dart';
@@ -39,6 +40,7 @@ void registerAuthDependencies(ServiceLocator sl) {
     sl.authRepository,
   );
   sl.googleLoginUseCase = GoogleLoginUseCase(sl.authRepository);
+  sl.appleLoginUseCase = AppleLoginUseCase(sl.authRepository);
   sl.updateMeUseCase = UpdateMeUseCase(sl.authRepository);
   sl.deleteMeProfilePictureUseCase = DeleteMeProfilePictureUseCase(
     sl.authRepository,

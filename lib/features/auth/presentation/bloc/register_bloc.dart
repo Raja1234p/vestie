@@ -5,6 +5,7 @@ import '../../../../core/error/failure_mapper.dart';
 import '../../../../core/utils/validation_utils.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/usecases/register_use_case.dart';
+import '../../domain/usecases/apple_login_use_case.dart';
 import '../../domain/usecases/google_login_use_case.dart';
 import '../../domain/usecases/get_risk_disclaimer_use_case.dart';
 import '../../../../core/constants/storage_keys.dart';
@@ -16,22 +17,27 @@ import 'register_state.dart';
 class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   final RegisterUseCase _registerUseCase;
   final GoogleLoginUseCase _googleLoginUseCase;
+  final AppleLoginUseCase _appleLoginUseCase;
   final GetRiskDisclaimerUseCase _getRiskDisclaimerUseCase;
 
   RegisterBloc({
     RegisterUseCase? registerUseCase,
     GoogleLoginUseCase? googleLoginUseCase,
+    AppleLoginUseCase? appleLoginUseCase,
     GetRiskDisclaimerUseCase? getRiskDisclaimerUseCase,
   }) : _registerUseCase =
            registerUseCase ?? ServiceLocator.instance.registerUseCase,
        _googleLoginUseCase =
            googleLoginUseCase ?? ServiceLocator.instance.googleLoginUseCase,
+       _appleLoginUseCase =
+           appleLoginUseCase ?? ServiceLocator.instance.appleLoginUseCase,
        _getRiskDisclaimerUseCase =
            getRiskDisclaimerUseCase ??
            ServiceLocator.instance.getRiskDisclaimerUseCase,
        super(const RegisterInitial()) {
     on<RegisterSubmitted>(_onRegisterSubmitted);
     on<GoogleRegisterRequested>(_onGoogleRegisterRequested);
+    on<AppleRegisterRequested>(_onAppleRegisterRequested);
     on<RegisterReset>((_, emit) => emit(const RegisterInitial()));
   }
 
@@ -124,6 +130,57 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
         await OnboardingPrefs.markCompleted();
         emit(RegisterGoogleSuccess(isDisclaimerAccepted: isDisclaimerAccepted));
+      },
+    );
+  }
+
+  Future<void> _onAppleRegisterRequested(
+    AppleRegisterRequested event,
+    Emitter<RegisterState> emit,
+  ) async {
+    emit(const RegisterAppleLoading());
+
+    final result = await _appleLoginUseCase();
+
+    await result.fold(
+      (failure) async {
+        if (failure is SignInCanceledFailure) {
+          emit(const RegisterInitial());
+          return;
+        }
+        emit(
+          RegisterError(
+            message: FailureMapper.userMessage(failure),
+            title: FailureMapper.dialogTitle(failure),
+          ),
+        );
+      },
+      (user) async {
+        if (user.accessToken != null) {
+          await ServiceLocator.instance.secureStorage.saveString(
+            StorageKeys.accessToken,
+            user.accessToken!,
+          );
+        }
+        if (user.refreshToken != null && user.refreshToken!.isNotEmpty) {
+          await ServiceLocator.instance.secureStorage.saveString(
+            StorageKeys.refreshToken,
+            user.refreshToken!,
+          );
+        }
+        await ServiceLocator.instance.sharedPrefs.saveBool(
+          StorageKeys.isLoggedIn,
+          true,
+        );
+
+        final disclaimerResult = await _getRiskDisclaimerUseCase();
+        final isDisclaimerAccepted = disclaimerResult.fold(
+          (_) => false,
+          (disclaimer) => disclaimer.accepted,
+        );
+
+        await OnboardingPrefs.markCompleted();
+        emit(RegisterAppleSuccess(isDisclaimerAccepted: isDisclaimerAccepted));
       },
     );
   }

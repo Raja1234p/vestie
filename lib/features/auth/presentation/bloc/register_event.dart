@@ -34,3 +34,10 @@ class GoogleRegisterRequested extends RegisterEvent {
   @override
   List<Object> get props => [];
 }
+
+class AppleRegisterRequested extends RegisterEvent {
+  const AppleRegisterRequested();
+
+  @override
+  List<Object> get props => [];
+}

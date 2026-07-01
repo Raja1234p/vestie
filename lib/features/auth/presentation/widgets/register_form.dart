@@ -8,7 +8,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/widgets/common/app_toast.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/common/app_text_field.dart';
 import 'auth_password_visibility_icon.dart';
@@ -45,9 +44,6 @@ class _RegisterFormState extends State<RegisterForm> {
     super.dispose();
   }
 
-  void _showComingSoon(BuildContext context) =>
-      AppToast.showInfo(context, AppStrings.socialComingSoon);
-
   void _submit(BuildContext context) {
     FocusScope.of(context).unfocus();
     final formCubit = context.read<RegisterFormCubit>();
@@ -76,6 +72,8 @@ class _RegisterFormState extends State<RegisterForm> {
         final registerState = context.watch<RegisterBloc>().state;
         final isEmailLoading = registerState is RegisterLoading;
         final isGoogleLoading = registerState is RegisterGoogleLoading;
+        final isAppleLoading = registerState is RegisterAppleLoading;
+        final isSocialLoading = isGoogleLoading || isAppleLoading;
         final bottomInset = MediaQuery.paddingOf(context).bottom;
         return CustomScrollView(
           slivers: [
@@ -191,7 +189,7 @@ class _RegisterFormState extends State<RegisterForm> {
                   AppButton(
                     text: AppStrings.btnContinue,
                     isLoading: isEmailLoading,
-                    onPressed: isEmailLoading || isGoogleLoading
+                    onPressed: isEmailLoading || isSocialLoading
                         ? null
                         : () => _submit(context),
                   ),
@@ -203,7 +201,7 @@ class _RegisterFormState extends State<RegisterForm> {
                       SocialAuthButton(
                         provider: SocialProvider.google,
                         isLoading: isGoogleLoading,
-                        onPressed: isEmailLoading || isGoogleLoading
+                        onPressed: isEmailLoading || isSocialLoading
                             ? null
                             : () => context.read<RegisterBloc>().add(
                                 const GoogleRegisterRequested(),
@@ -212,7 +210,12 @@ class _RegisterFormState extends State<RegisterForm> {
                     if (Platform.isIOS)
                       SocialAuthButton(
                         provider: SocialProvider.apple,
-                        onPressed: () => _showComingSoon(context),
+                        isLoading: isAppleLoading,
+                        onPressed: isEmailLoading || isSocialLoading
+                            ? null
+                            : () => context.read<RegisterBloc>().add(
+                                const AppleRegisterRequested(),
+                              ),
                       ),
                   ],
                   SizedBox(height: 12.h),

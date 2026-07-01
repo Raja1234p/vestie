@@ -69,4 +69,9 @@ abstract class AuthRemoteDataSource {
     required String deviceId,
     required String deviceName,
   });
+
+  Future<AuthTokenModel> loginWithApple({
+    required String idToken,
+    required String deviceName,
+  });
 }

@@ -68,5 +68,5 @@ abstract class AuthRepository {
 
   Future<Either<Failure, User>> loginWithGoogle();
 
-  Future<Either<Failure, void>> loginWithApple();
+  Future<Either<Failure, User>> loginWithApple();
 }

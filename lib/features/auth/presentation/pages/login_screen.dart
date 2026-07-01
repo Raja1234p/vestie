@@ -26,6 +26,7 @@ class LoginScreen extends StatelessWidget {
         listenWhen: (prev, curr) =>
             curr is LoginSuccess ||
             curr is LoginGoogleSuccess ||
+            curr is LoginAppleSuccess ||
             curr is LoginError,
         listener: (context, state) async {
           if (state is LoginSuccess) {
@@ -36,12 +37,16 @@ class LoginScreen extends StatelessWidget {
               context,
               disclaimerAccepted: state.isDisclaimerAccepted,
             );
-          } else if (state is LoginGoogleSuccess) {
+          } else if (state is LoginGoogleSuccess ||
+              state is LoginAppleSuccess) {
+            final disclaimerAccepted = state is LoginGoogleSuccess
+                ? state.isDisclaimerAccepted
+                : (state as LoginAppleSuccess).isDisclaimerAccepted;
             await AppAuthSession.instance.syncFromStorage();
             if (!context.mounted) return;
             await ProjectInviteNavigation.goAfterAuth(
               context,
-              disclaimerAccepted: state.isDisclaimerAccepted,
+              disclaimerAccepted: disclaimerAccepted,
             );
           } else if (state is LoginError) {
             AppFailureDialog.show(

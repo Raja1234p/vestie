@@ -27,3 +27,10 @@ class GoogleLoginRequested extends LoginEvent {
   @override
   List<Object> get props => [];
 }
+
+class AppleLoginRequested extends LoginEvent {
+  const AppleLoginRequested();
+
+  @override
+  List<Object> get props => [];
+}

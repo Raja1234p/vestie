@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/constants/storage_keys.dart';
@@ -550,8 +551,63 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, void>> loginWithApple() async {
-    // TODO: Implement Apple Sign-In logic and then call API
-    return const Left(ServerFailure('Apple sign-in coming soon.'));
+  Future<Either<Failure, User>> loginWithApple() async {
+    try {
+      final isAvailable = await SignInWithApple.isAvailable();
+      if (!isAvailable) {
+        return const Left(ServerFailure(AppStrings.errorAppleSignInFailed));
+      }
+
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+
+      final idToken = credential.identityToken;
+      if (idToken == null || idToken.isEmpty) {
+        return const Left(ServerFailure(AppStrings.errorAppleSignInNoToken));
+      }
+
+      final device = await _deviceInfoService.getIdentity();
+      final userModel = await _remoteDataSource.loginWithApple(
+        idToken: idToken,
+        deviceName: device.name,
+      );
+
+      return Right(userModel);
+    } on SignInWithAppleAuthorizationException catch (e, stack) {
+      AppLogger.error(
+        'Apple Sign-In platform error: ${e.code}',
+        error: e,
+        stackTrace: stack,
+      );
+      if (e.code == AuthorizationErrorCode.canceled) {
+        return const Left(SignInCanceledFailure());
+      }
+      return const Left(ServerFailure(AppStrings.errorAppleSignInFailed));
+    } on UnauthorizedException catch (e, stack) {
+      AppLogger.error(
+        'Apple Sign-In Unauthorized',
+        error: e,
+        stackTrace: stack,
+      );
+      return Left(ServerFailure(e.message, e.title));
+    } on ServerException catch (e, stack) {
+      AppLogger.error(
+        'Apple Sign-In Server Exception',
+        error: e,
+        stackTrace: stack,
+      );
+      return Left(ServerFailure(e.message, e.title));
+    } catch (e, stack) {
+      AppLogger.error(
+        'Apple Sign-In Unexpected Exception',
+        error: e,
+        stackTrace: stack,
+      );
+      return const Left(ServerFailure(AppStrings.errorAppleSignInFailed));
+    }
   }
 }
