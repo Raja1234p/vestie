@@ -744,6 +744,7 @@ class AppStrings {
   static const String btnEdit = 'Edit';
   static const String btnCreateProject2 = 'Create Project';
   static const String btnEditProject = 'Edit Project';
+  static const String btnSave = 'Save';
   static const String reviewRoiNotSet = 'Not set';
 
   // Success

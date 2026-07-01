@@ -156,7 +156,7 @@ class CreateProjectReviewScreen extends StatelessWidget {
 
                           return AppButton(
                             text: isEdit
-                                ? AppStrings.btnEditProject
+                                ? AppStrings.btnSave
                                 : AppStrings.btnCreateProject2,
                             useGradient: false,
                             hasShadow: false,
