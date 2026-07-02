@@ -56,6 +56,10 @@ android {
         }
         release {
             signingConfig = signingConfigs.getByName("vestie")
+            // R8 minify for code shrinking (Stripe, etc.). shrinkResources=false keeps
+            // notification drawables referenced only from Dart/plugin strings.
+            isMinifyEnabled = true
+            isShrinkResources = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",

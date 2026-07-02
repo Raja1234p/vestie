@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/auth/app_auth_session.dart';
 import '../../core/constants/storage_keys.dart';
 import '../../core/di/service_locator.dart';
+import '../../core/services/fcm_push_service.dart';
 import '../../core/storage/pending_project_invite_store.dart';
 import '../../features/dashboard/domain/dashboard_prefetch.dart';
 import 'app_routes.dart';
@@ -45,6 +48,9 @@ final class ProjectInviteNavigation {
       context.go(AppRoutes.login);
       return;
     }
+
+    // Register FCM token with backend once per login (new install, reinstall, token change).
+    unawaited(FcmPushService.syncDeviceToken(force: true));
 
     final accepted = disclaimerAccepted || await isRiskDisclaimerAccepted();
     if (!context.mounted) return;

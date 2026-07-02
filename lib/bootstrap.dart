@@ -19,6 +19,7 @@ abstract final class AppBootstrap {
   static Future<void> run() async {
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
+    FcmPushService.attachBackgroundMessageHandler();
     _log('start');
     await StripeSdkInitializer.initialize();
     _log('stripe ready');
