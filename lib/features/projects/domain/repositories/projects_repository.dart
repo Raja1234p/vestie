@@ -15,6 +15,11 @@ abstract class ProjectsRepository {
     int? pageSize,
   });
 
+  Future<Either<Failure, PaginatedResult<Project>>> listCompletedProjects({
+    int page = PaginationQuery.defaultPage,
+    int? pageSize,
+  });
+
   Future<Either<Failure, CreatedProjectEntity>> createProject({
     required CreateProjectForm form,
   });

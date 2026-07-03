@@ -10,6 +10,11 @@ abstract class ProjectsRemoteDataSource {
     int? pageSize,
   });
 
+  Future<PaginatedListModel<ProjectSummaryModel>> listCompletedProjects({
+    int page = PaginationQuery.defaultPage,
+    int? pageSize,
+  });
+
   Future<CreateProjectResponseModel> createProject({
     required CreateProjectRequestModel request,
   });

@@ -79,6 +79,39 @@ class ProjectsRemoteDataSourceImpl implements ProjectsRemoteDataSource {
     return lines.join('\n');
   }
 
+  PaginatedListModel<ProjectSummaryModel> _parseProjectsListResponse(
+    dynamic data,
+  ) {
+    if (data is Map) {
+      return PaginatedListParser.parseKeyedList(
+        data.map((k, v) => MapEntry(k.toString(), v)),
+        'projects',
+        (m) => ProjectSummaryModel.fromJson(m),
+      );
+    }
+    if (data is List) {
+      final items = data
+          .whereType<Map>()
+          .map(
+            (m) => ProjectSummaryModel.fromJson(
+              m.map((k, v) => MapEntry(k.toString(), v)),
+            ),
+          )
+          .toList(growable: false);
+      return PaginatedListModel(
+        items: items,
+        pagination: PaginationDto.fromJson(
+          null,
+          fallbackItemCount: items.length,
+        ),
+      );
+    }
+    return PaginatedListModel(
+      items: const [],
+      pagination: PaginationDto.fromJson(null),
+    );
+  }
+
   @override
   Future<PaginatedListModel<ProjectSummaryModel>> listProjects({
     required String scope,
@@ -93,42 +126,36 @@ class ProjectsRemoteDataSourceImpl implements ProjectsRemoteDataSource {
           ...PaginationQuery.pageAndSize(page: page, pageSize: pageSize),
         },
       );
-
-      final data = response.data;
-      if (data is Map) {
-        return PaginatedListParser.parseKeyedList(
-          data.map((k, v) => MapEntry(k.toString(), v)),
-          'projects',
-          (m) => ProjectSummaryModel.fromJson(m),
-        );
-      }
-      if (data is List) {
-        final items = data
-            .whereType<Map>()
-            .map(
-              (m) => ProjectSummaryModel.fromJson(
-                m.map((k, v) => MapEntry(k.toString(), v)),
-              ),
-            )
-            .toList(growable: false);
-        return PaginatedListModel(
-          items: items,
-          pagination: PaginationDto.fromJson(
-            null,
-            fallbackItemCount: items.length,
-          ),
-        );
-      }
-      return PaginatedListModel(
-        items: const [],
-        pagination: PaginationDto.fromJson(null),
-      );
+      return _parseProjectsListResponse(response.data);
     } on DioException catch (e) {
       AppLogger.error(
         'API ListProjects Error: ${e.response?.statusCode}',
         error: e.response?.data,
       );
       _handleError(e, 'Failed to load projects');
+    }
+  }
+
+  @override
+  Future<PaginatedListModel<ProjectSummaryModel>> listCompletedProjects({
+    int page = PaginationQuery.defaultPage,
+    int? pageSize,
+  }) async {
+    try {
+      final response = await _client.get(
+        ApiConstants.projectsCompleted,
+        queryParameters: PaginationQuery.pageAndSize(
+          page: page,
+          pageSize: pageSize,
+        ),
+      );
+      return _parseProjectsListResponse(response.data);
+    } on DioException catch (e) {
+      AppLogger.error(
+        'API ListCompletedProjects Error: ${e.response?.statusCode}',
+        error: e.response?.data,
+      );
+      _handleError(e, AppStrings.errorLoadCompletedProjects);
     }
   }
 

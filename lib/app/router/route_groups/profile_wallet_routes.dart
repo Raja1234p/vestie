@@ -18,9 +18,16 @@ import 'package:vestie/features/bank_accounts/presentation/pages/my_accounts_scr
 import 'package:vestie/features/kyc/presentation/pages/kyc_onboarding_screen.dart';
 import 'package:vestie/features/wallet/presentation/pages/select_bank_account_screen.dart';
 import 'package:vestie/features/profile/presentation/pages/completed_projects_screen.dart';
+import 'package:vestie/features/profile/presentation/pages/completed_project_detail_screen.dart';
+import 'package:vestie/features/profile/domain/entities/completed_project_detail_route_args.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/material.dart';
 
 import '../app_routes.dart';
+
+const Widget _invalidCompletedProjectDetailRoute = Scaffold(
+  body: Center(child: Text('Invalid route')),
+);
 
 List<RouteBase> buildProfileWalletRoutes() {
   return [
@@ -43,6 +50,19 @@ List<RouteBase> buildProfileWalletRoutes() {
     GoRoute(
       path: AppRoutes.completedProjects,
       builder: (context, _) => const CompletedProjectsScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.completedProjectDetail,
+      builder: (context, state) {
+        final extra = state.extra;
+        if (extra is! CompletedProjectDetailRouteArgs) {
+          return _invalidCompletedProjectDetailRoute;
+        }
+        return CompletedProjectDetailScreen(
+          projectId: extra.projectId,
+          initialProjectName: extra.initialProjectName,
+        );
+      },
     ),
     GoRoute(
       path: AppRoutes.keyGuidelines,

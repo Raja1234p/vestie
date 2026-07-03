@@ -12,6 +12,7 @@ import '../../domain/entities/created_project_entity.dart';
 import '../../domain/repositories/projects_repository.dart';
 import '../datasources/projects_remote_data_source.dart';
 import '../models/create_project_request_model.dart';
+import '../models/project_summary_model.dart';
 
 class ProjectsRepositoryImpl implements ProjectsRepository {
   final ProjectsRemoteDataSource remoteDataSource;
@@ -30,34 +31,7 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
         page: page,
         pageSize: pageSize,
       );
-      return Right(
-        PaginatedResult.fromPaginatedList(
-          PaginatedListModel(
-            items: pageModel.items.map((m) {
-              final statusLabel = m.displayStatus.isNotEmpty
-                  ? m.displayStatus
-                  : m.state;
-              return Project(
-                id: m.id,
-                name: m.name,
-                category: _mapCategory(m.type),
-                status: _mapStatus(statusLabel),
-                relation: _mapRelation(scope: scope, viewerRole: m.viewerRole),
-                goalAmount: m.targetAmount,
-                currentAmount: m.raisedAmount,
-                description: m.description,
-                endsIn: m.endsAtUtc?.toIso8601String(),
-                roiPercentage: m.roiPercentage,
-                displayStatus:
-                    m.displayStatus.isNotEmpty ? m.displayStatus : null,
-                projectInviteCode: m.projectInviteCode,
-                isPublic: _isPublicVisibility(m.visibility),
-              );
-            }).toList(growable: false),
-            pagination: pageModel.pagination,
-          ),
-        ),
-      );
+      return Right(_mapProjectPage(pageModel, scope: scope));
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message, e.title));
     } on UnauthorizedException catch (e) {
@@ -67,6 +41,64 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
     } catch (_) {
       return const Left(ServerFailure('Failed to load projects'));
     }
+  }
+
+  @override
+  Future<Either<Failure, PaginatedResult<Project>>> listCompletedProjects({
+    int page = PaginationQuery.defaultPage,
+    int? pageSize,
+  }) async {
+    try {
+      final pageModel = await remoteDataSource.listCompletedProjects(
+        page: page,
+        pageSize: pageSize,
+      );
+      return Right(_mapProjectPage(pageModel, scope: 'mine'));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message, e.title));
+    } on UnauthorizedException catch (e) {
+      return Left(UnauthorizedFailure(e.message, e.title));
+    } on Failure catch (f) {
+      return Left(f);
+    } catch (_) {
+      return const Left(ServerFailure(AppStrings.errorLoadCompletedProjects));
+    }
+  }
+
+  PaginatedResult<Project> _mapProjectPage(
+    PaginatedListModel<ProjectSummaryModel> pageModel, {
+    required String scope,
+  }) {
+    return PaginatedResult.fromPaginatedList(
+      PaginatedListModel(
+        items: pageModel.items.map((m) => _mapSummary(m, scope: scope)).toList(
+          growable: false,
+        ),
+        pagination: pageModel.pagination,
+      ),
+    );
+  }
+
+  Project _mapSummary(
+    ProjectSummaryModel m, {
+    required String scope,
+  }) {
+    final statusLabel = m.displayStatus.isNotEmpty ? m.displayStatus : m.state;
+    return Project(
+      id: m.id,
+      name: m.name,
+      category: _mapCategory(m.type),
+      status: _mapStatus(statusLabel),
+      relation: _mapRelation(scope: scope, viewerRole: m.viewerRole),
+      goalAmount: m.targetAmount,
+      currentAmount: m.raisedAmount,
+      description: m.description,
+      endsIn: m.endsAtUtc?.toIso8601String(),
+      roiPercentage: m.roiPercentage,
+      displayStatus: m.displayStatus.isNotEmpty ? m.displayStatus : null,
+      projectInviteCode: m.projectInviteCode,
+      isPublic: _isPublicVisibility(m.visibility),
+    );
   }
 
   @override

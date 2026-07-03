@@ -19,11 +19,13 @@ enum MemberProjectMenuAction {
 class MemberProjectActionMenu extends StatelessWidget {
   final void Function(MemberProjectMenuAction) onSelected;
   final bool includeMyBorrows;
+  final bool fundsHistoryOnly;
 
   const MemberProjectActionMenu({
     super.key,
     required this.onSelected,
     this.includeMyBorrows = true,
+    this.fundsHistoryOnly = false,
   });
 
   @override
@@ -58,6 +60,18 @@ class MemberProjectActionMenu extends StatelessWidget {
   }
 
   List<PopupMenuEntry<MemberProjectMenuAction>> _entries() {
+    if (fundsHistoryOnly) {
+      return [
+        _item(
+          value: MemberProjectMenuAction.projectFundsHistory,
+          iconPath: AppAssets.memberFundsHistory,
+          label: AppStrings.menuProjectFundsHistory,
+          iconColor: AppColors.primary,
+          labelColor: AppColors.grey900,
+        ),
+      ];
+    }
+
     final out = <PopupMenuEntry<MemberProjectMenuAction>>[];
 
     void push(PopupMenuItem<MemberProjectMenuAction> item) {

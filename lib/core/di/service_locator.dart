@@ -27,6 +27,9 @@ import '../../features/kyc/domain/usecases/kyc_usecases.dart';
 import '../../features/notifications/data/datasources/notifications_remote_data_source.dart';
 import '../../features/notifications/domain/repositories/notifications_repository.dart';
 import '../../features/notifications/domain/usecases/notifications_usecases.dart';
+import '../../features/profile/data/datasources/user_guidelines_remote_data_source.dart';
+import '../../features/profile/domain/repositories/user_guidelines_repository.dart';
+import '../../features/profile/domain/usecases/get_user_guidelines_use_case.dart';
 import '../../features/payment_methods/data/datasources/payment_methods_remote_data_source.dart';
 import '../../features/payment_methods/domain/repositories/payment_methods_repository.dart';
 import '../../features/payment_methods/domain/usecases/payment_methods_usecases.dart';
@@ -72,6 +75,7 @@ import '../../features/projects/domain/usecases/create_project_use_case.dart';
 import '../../features/projects/domain/usecases/get_project_detail_usecase.dart';
 import '../../features/projects/domain/usecases/join_project_usecase.dart';
 import '../../features/projects/domain/usecases/list_projects_use_case.dart';
+import '../../features/projects/domain/usecases/list_completed_projects_use_case.dart';
 import '../../features/projects/domain/usecases/preview_invite_usecase.dart';
 import '../../features/projects/presentation/bloc/project_detail_bloc.dart';
 import '../../features/stripe/data/datasources/stripe_remote_data_source.dart';
@@ -123,6 +127,7 @@ import '../stripe/stripe_payment_service.dart';
 import 'inject_auth.dart';
 import 'inject_core.dart';
 import 'inject_notifications.dart';
+import 'inject_profile.dart';
 import 'inject_project.dart';
 import 'inject_user.dart';
 import 'inject_wallet.dart';
@@ -165,6 +170,7 @@ class ServiceLocator {
   late final ProjectsRepository projectsRepository;
   late final ProjectRepository projectRepository;
   late final ListProjectsUseCase listProjectsUseCase;
+  late final ListCompletedProjectsUseCase listCompletedProjectsUseCase;
   late final CreateProjectUseCase createProjectUseCase;
   late final CreateAndLaunchProjectUseCase createAndLaunchProjectUseCase;
   late final UpdateProjectUseCase updateProjectUseCase;
@@ -263,6 +269,10 @@ class ServiceLocator {
   late final RegisterDeviceTokenUseCase registerDeviceTokenUseCase;
   late final UnregisterDeviceTokenUseCase unregisterDeviceTokenUseCase;
 
+  late final UserGuidelinesRemoteDataSource userGuidelinesRemoteDataSource;
+  late final UserGuidelinesRepository userGuidelinesRepository;
+  late final GetUserGuidelinesUseCase getUserGuidelinesUseCase;
+
   late final ContributionRemoteDataSource contributionRemoteDataSource;
   late final ContributionRepository contributionRepository;
   late final FetchContributionConfigUseCase fetchContributionConfigUseCase;
@@ -321,6 +331,7 @@ class ServiceLocator {
     registerProjectDependencies(this);
     registerWalletDependencies(this);
     registerNotificationsDependencies(this);
+    registerProfileDependencies(this);
     registerUserFeatureDependencies(this);
   }
 
@@ -338,6 +349,12 @@ class ServiceLocator {
     listBorrowRequests: listBorrowRequestsUseCase,
     sendVffRequestUseCase: sendVffRequestUseCase,
     getActiveClosureVoteUseCase: getActiveClosureVoteUseCase,
+  );
+
+  /// Profile completed detail — `GET /projects/{id}` only (no pot / borrow / vote).
+  ProjectDetailBloc createCompletedProjectDetailBloc() => ProjectDetailBloc(
+    repository: projectDetailRepository,
+    sendVffRequestUseCase: sendVffRequestUseCase,
   );
 
   SuccessVoteCastCubit createSuccessVoteCastCubit(

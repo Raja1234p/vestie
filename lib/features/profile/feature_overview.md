@@ -22,6 +22,7 @@ Profile tab, edit profile, payment methods entry, transaction history, completed
 | `/profile/payment-methods` | `PaymentMethodsScreen` |
 | `/profile/transaction-history` | `TransactionHistoryScreen` |
 | `/profile/completed-projects` | `CompletedProjectsScreen` |
+| `/profile/key-guidelines` | `KeyGuidelinesScreen` |
 | `/profile/my-accounts` | `MyAccountsScreen` (bank accounts) |
 
 ## Trace
@@ -31,6 +32,7 @@ Profile tab, edit profile, payment methods entry, transaction history, completed
 | Profile header | `GET /users/me` |
 | Transaction history | **Pending** — dedicated ledger/history API (UI uses mock until backend ships) |
 | Payment methods entry | `features/payment_methods/` |
+| Vestie User Guidelines | `GET /content/user-guidelines` |
 | My Accounts entry | `features/bank_accounts/` |
 
 ## See also

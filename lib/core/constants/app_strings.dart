@@ -536,6 +536,8 @@ class AppStrings {
   static const String completedProjectsEmptyTitle = 'No completed projects yet';
   static const String completedProjectsEmptySubtitle =
       'Projects you finish will show up here.';
+  static const String errorLoadCompletedProjects =
+      'Could not load completed projects. Please try again.';
   static const String menuTransactionHistory = 'Transaction History';
   static const String menuKeyGuidelines = 'Vestie User Guidelines';
   static const String menuDeleteAccount = 'Delete Account';

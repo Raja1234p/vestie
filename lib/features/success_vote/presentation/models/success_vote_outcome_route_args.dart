@@ -16,12 +16,18 @@ class SuccessVoteOutcomeRouteArgs {
   /// Used for category-specific copy when [project] is null.
   final ProjectCategory? projectCategory;
 
+  /// Profile completed list → outcome → **View Details** opens this project.
+  final String? completedProjectDetailId;
+  final String? completedProjectName;
+
   const SuccessVoteOutcomeRouteArgs({
     required this.data,
     required this.viewerRole,
     this.variant = SuccessVoteOutcomeVariant.successVote,
     this.project,
     this.projectCategory,
+    this.completedProjectDetailId,
+    this.completedProjectName,
   });
 
   ProjectCategory? get resolvedCategory => projectCategory ?? project?.category;

@@ -86,6 +86,9 @@ class ApiConstants {
   static const String meProfilePicture = '/users/me/profile-picture';
   static const String riskDisclaimer = '/users/me/risk-disclaimer';
 
+  // ── Content ──────────────────────────────────────────────────────────────
+  static const String contentUserGuidelines = '/content/user-guidelines';
+
   // ── VFF ──────────────────────────────────────────────────────────────────
   static const String userMeVffs = '/users/me/vffs';
   static String userMeVffProfile(String userId) => '/users/me/vffs/$userId';
@@ -111,6 +114,9 @@ class ApiConstants {
 
   // ── Projects ─────────────────────────────────────────────────────────────
   static const String projects = '/projects';
+
+  /// `GET /projects/completed` — profile completed projects list.
+  static const String projectsCompleted = '/projects/completed';
 
   /// `GET` / `PUT /projects/{id}` — project detail and leader edit.
   static String projectById(String projectId) => '$projects/$projectId';

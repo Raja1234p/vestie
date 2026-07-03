@@ -10,23 +10,28 @@ import 'package:vestie/features/project_detail/presentation/navigation/project_d
 import 'package:vestie/features/project_detail/presentation/widgets/project_announcements_section.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/completed_project_notice_bar.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_info_card.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_detail_members_only_section.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_members_preview_section.dart';
 
 /// Completed investment project detail (Figma — raised, returns CTA, notice, members).
 class InvestmentCompletedDetailContent extends StatelessWidget {
   final ProjectDetailEntity project;
-  final ValueChanged<MemberEntity> onMemberTap;
+  final ValueChanged<MemberEntity>? onMemberTap;
   final ValueChanged<MemberEntity>? onSendVffRequest;
   final String? sendingVffUserId;
   final Future<bool> Function(String announcementId)? onDeleteAnnouncement;
+  final bool hideInvestmentActions;
+  final bool membersOnlyLayout;
 
   const InvestmentCompletedDetailContent({
     super.key,
     required this.project,
-    required this.onMemberTap,
+    this.onMemberTap,
     this.onSendVffRequest,
     this.sendingVffUserId,
     this.onDeleteAnnouncement,
+    this.hideInvestmentActions = false,
+    this.membersOnlyLayout = false,
   });
 
   @override
@@ -44,16 +49,18 @@ class InvestmentCompletedDetailContent extends StatelessWidget {
           gapAfter: 12.h,
         ),
         ProjectInfoCard(project: project, displayAsCompleted: true),
-        SizedBox(height: 16.h),
-        AppButton(
-          text: project.isModeratorView
-              ? AppStrings.btnDistributeFunds
-              : AppStrings.btnInvestmentReturns,
-          onPressed: () => ProjectDetailNavigation.openInvestmentReturns(
-            context,
-            project: project,
+        if (!hideInvestmentActions) ...[
+          SizedBox(height: 16.h),
+          AppButton(
+            text: project.isModeratorView
+                ? AppStrings.btnDistributeFunds
+                : AppStrings.btnInvestmentReturns,
+            onPressed: () => ProjectDetailNavigation.openInvestmentReturns(
+              context,
+              project: project,
+            ),
           ),
-        ),
+        ],
         if (memberNotice != null) ...[
           SizedBox(height: 16.h),
           CompletedProjectNoticeBar(
@@ -62,12 +69,20 @@ class InvestmentCompletedDetailContent extends StatelessWidget {
           ),
         ],
         SizedBox(height: 16.h),
-        ProjectMembersPreviewSection(
-          project: project,
-          onMemberTap: onMemberTap,
-          onSendVffRequest: onSendVffRequest,
-          sendingVffUserId: sendingVffUserId,
-        ),
+        if (membersOnlyLayout)
+          ProjectDetailMembersOnlySection(
+            project: project,
+            onMemberTap: onMemberTap,
+            onSendVffRequest: onSendVffRequest,
+            sendingVffUserId: sendingVffUserId,
+          )
+        else
+          ProjectMembersPreviewSection(
+            project: project,
+            onMemberTap: onMemberTap,
+            onSendVffRequest: onSendVffRequest,
+            sendingVffUserId: sendingVffUserId,
+          ),
         SizedBox(height: 32.h),
       ],
     );

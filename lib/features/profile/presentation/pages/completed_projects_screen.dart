@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/presentation/paginated_scroll_listener.dart';
 import 'package:vestie/core/presentation/widgets/list_load_more_footer.dart';
-import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_shimmer.dart';
+import 'package:vestie/core/widgets/common/app_error_view.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
-import 'package:vestie/core/widgets/text/app_text.dart';
-import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart'
-    show openCompletedProjectView;
+import 'package:vestie/features/profile/presentation/navigation/open_completed_project_detail.dart';
 import 'package:vestie/user/features/home/presentation/widgets/project_card.dart';
 import 'package:vestie/user/features/vff/presentation/widgets/user_vff_hub_empty_body.dart';
 import '../cubit/completed_projects_cubit.dart';
@@ -71,14 +67,6 @@ class _CompletedProjectsBodyState extends State<_CompletedProjectsBody> {
               children: [
                 ProfileSubHeader(title: AppStrings.completedProjectsTitle),
                 Expanded(child: _buildBody(context, state)),
-                if (state.errorMessage != null && !state.loading)
-                  FlowScreenFooter(
-                    child: AppButton(
-                      text: AppStrings.btnRetry,
-                      onPressed: () =>
-                          context.read<CompletedProjectsCubit>().load(),
-                    ),
-                  ),
               ],
             ),
           ),
@@ -95,8 +83,11 @@ class _CompletedProjectsBodyState extends State<_CompletedProjectsBody> {
         itemBuilder: (_, __) => const ProjectCardShimmer(),
       );
     }
-    if (state.errorMessage != null) {
-      return _ErrorView(message: state.errorMessage!);
+    if (state.loadFailed) {
+      return AppErrorView(
+        message: state.errorMessage,
+        onRetry: () => context.read<CompletedProjectsCubit>().load(),
+      );
     }
     if (state.projects.isEmpty) {
       return const _EmptyView();
@@ -113,7 +104,7 @@ class _CompletedProjectsBodyState extends State<_CompletedProjectsBody> {
         return ProjectCard(
           project: project,
           forceShowActionButton: true,
-          onAction: () => openCompletedProjectView(context, project),
+          onAction: () => openCompletedProjectDetail(context, project),
         );
       },
     );
@@ -129,31 +120,6 @@ class _EmptyView extends StatelessWidget {
       message: AppStrings.completedProjectsEmptyTitle,
       subtitle: AppStrings.completedProjectsEmptySubtitle,
       illustrationAsset: AppAssets.borrowRequestsEmpty,
-    );
-  }
-}
-
-class _ErrorView extends StatelessWidget {
-  const _ErrorView({required this.message});
-
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 28.w),
-        child: AppText(
-          message,
-          textAlign: TextAlign.center,
-          style: GoogleFonts.lato(
-            fontSize: 15.sp,
-            fontWeight: FontWeight.w500,
-            color: AppColors.textBody,
-            height: 1.45,
-          ),
-        ),
-      ),
     );
   }
 }

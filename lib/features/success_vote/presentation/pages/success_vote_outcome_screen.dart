@@ -7,6 +7,7 @@ import 'package:vestie/app/router/route_args/project_detail_flow_args.dart';
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/widgets/common/app_success_screen.dart';
+import 'package:vestie/features/profile/domain/entities/completed_project_detail_route_args.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_copy.dart';
 import 'package:vestie/features/success_vote/presentation/widgets/success_vote_outcome_amount_card.dart';
 import 'package:vestie/features/success_vote/presentation/widgets/success_vote_outcome_vote_summary.dart';
@@ -21,6 +22,18 @@ class SuccessVoteOutcomeScreen extends StatelessWidget {
   const SuccessVoteOutcomeScreen({super.key, required this.args});
 
   void _onPrimaryPressed(BuildContext context) {
+    final completedId = args.completedProjectDetailId?.trim();
+    if (completedId != null && completedId.isNotEmpty) {
+      context.push(
+        AppRoutes.completedProjectDetail,
+        extra: CompletedProjectDetailRouteArgs(
+          projectId: completedId,
+          initialProjectName: args.completedProjectName,
+        ),
+      );
+      return;
+    }
+
     final data = args.data;
     final copy = SuccessVoteOutcomeCopy.forRole(
       args.viewerRole,

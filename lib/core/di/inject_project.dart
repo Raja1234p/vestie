@@ -34,6 +34,7 @@ import '../../features/projects/domain/usecases/create_project_use_case.dart';
 import '../../features/projects/domain/usecases/get_project_detail_usecase.dart';
 import '../../features/projects/domain/usecases/join_project_usecase.dart';
 import '../../features/projects/domain/usecases/list_projects_use_case.dart';
+import '../../features/projects/domain/usecases/list_completed_projects_use_case.dart';
 import '../../features/projects/domain/usecases/preview_invite_usecase.dart';
 import 'service_locator.dart';
 
@@ -50,6 +51,9 @@ void registerProjectDependencies(ServiceLocator sl) {
     networkInfo: sl.networkInfo,
   );
   sl.listProjectsUseCase = ListProjectsUseCase(sl.projectsRepository);
+  sl.listCompletedProjectsUseCase = ListCompletedProjectsUseCase(
+    sl.projectsRepository,
+  );
   sl.createProjectUseCase = CreateProjectUseCase(sl.projectsRepository);
   sl.createAndLaunchProjectUseCase = CreateAndLaunchProjectUseCase(
     sl.projectsRepository,
