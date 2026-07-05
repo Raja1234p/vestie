@@ -9,9 +9,6 @@ import 'package:vestie/features/project_detail/presentation/models/investment_di
 import 'package:vestie/features/project_detail/presentation/models/investment_returns_ui_data.dart';
 import 'package:vestie/leader/features/project_detail/presentation/models/leader_success_vote_progress_ui_data.dart';
 import 'package:vestie/user/features/borrow/presentation/models/my_borrow_approved_ui_data.dart';
-import 'package:vestie/features/success_vote/presentation/models/success_vote_cast_route_args.dart';
-import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_route_args.dart';
-import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_ui_data.dart';
 
 export 'package:vestie/features/success_vote/presentation/models/success_vote_cast_route_args.dart';
 export 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_route_args.dart';
@@ -157,12 +154,11 @@ class BorrowRequestsRouteArgs<T> {
   });
 }
 
+/// Navigation extras for `/project/funds-history` — the screen loads the
+/// ledger itself from `GET /projects/{projectId}/funds-history` via
+/// [ProjectFundsHistoryCubit]; these fields are navigation context only.
 class ProjectFundsHistoryRouteArgs {
   final String projectId;
-  final double currentPotBalance;
-  final double totalContribution;
-  final double activeBorrows;
-  final List<ProjectFundsHistoryEntryArgs> entries;
 
   /// Investment projects: balance + Breakdown only (Figma).
   final bool isInvestment;
@@ -172,16 +168,9 @@ class ProjectFundsHistoryRouteArgs {
 
   const ProjectFundsHistoryRouteArgs({
     required this.projectId,
-    required this.currentPotBalance,
-    required this.totalContribution,
-    required this.activeBorrows,
-    this.entries = const [],
     this.isInvestment = false,
     this.useBreakdownSectionTitle = false,
   });
-
-  /// Legacy alias — same as [currentPotBalance].
-  double get totalFundsUsd => currentPotBalance;
 }
 
 class ProjectFundsHistoryEntryArgs {

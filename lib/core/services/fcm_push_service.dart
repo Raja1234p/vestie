@@ -11,137 +11,53 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../../firebase_options.dart';
 import '../constants/storage_keys.dart';
 import '../di/service_locator.dart';
+import 'notifications/push_notification_payload.dart';
+import 'notifications/push_notification_router.dart';
 
+/// FCM push notifications — [official pattern](https://firebase.google.com/docs/cloud-messaging/flutter/receive):
+///
+/// | State | Notification payload | Data-only |
+/// |---|---|---|
+/// | Foreground (Android + iOS) | app shows it — OS never presents foreground messages by default on either platform | app shows it |
+/// | Background / terminated | OS always shows it (cannot be suppressed) | [fcmBackgroundMessageHandler] shows it |
+///
+/// We deliberately do **not** override
+/// [FirebaseMessaging.setForegroundNotificationPresentationOptions] to let iOS
+/// auto-present — that path is known to double-fire `onMessage` on iOS 18
+/// (flutterfire#13366) and race with our own local notification, producing
+/// the exact duplicate this service exists to avoid. Instead the app is the
+/// single source of truth for foreground display on both platforms, and the
+/// OS is the single source of truth for background/terminated display —
+/// the two never overlap.
 const _androidChannelId = 'vestie_high';
 const _androidChannelName = 'Vestie Notifications';
-const _androidChannelDescription =
-    'Vestie app notifications (deposits, updates)';
-
-final AndroidNotificationChannel _fcmAndroidChannel = AndroidNotificationChannel(
+const _androidChannel = AndroidNotificationChannel(
   _androidChannelId,
   _androidChannelName,
-  description: _androidChannelDescription,
+  description: 'Vestie app notifications (deposits, updates)',
   importance: Importance.high,
 );
 
-final FlutterLocalNotificationsPlugin _localNotifications =
-    FlutterLocalNotificationsPlugin();
-
+final _localNotifications = FlutterLocalNotificationsPlugin();
 bool _localNotificationsReady = false;
 
-/// Top-level handler — required by FCM; must keep [@pragma('vm:entry-point')].
-///
-/// Only displays a local notification for **data-only** messages. Payloads that
-/// include `notification` are already shown by the OS (iOS and Android).
+/// Top-level background/terminated handler — required by FCM (`@pragma('vm:entry-point')`).
 @pragma('vm:entry-point')
 Future<void> fcmBackgroundMessageHandler(RemoteMessage message) async {
+  _logPayload('background', message);
+  if (message.notification != null) return; // OS already shows this.
   try {
-    // Notification payloads are displayed by the system tray / APNs.
-    if (message.notification != null) return;
-
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
     await _ensureLocalNotificationsReady();
     await _showLocalNotification(message);
-    _fcmLog(
-      'background data-only message handled '
-      'id=${message.messageId ?? "null"}',
-    );
   } catch (e, stack) {
     _fcmLog('background handler failed: $e', level: 1000);
-    if (kDebugMode) {
-      debugPrintStack(stackTrace: stack);
-    }
+    if (kDebugMode) debugPrintStack(stackTrace: stack);
   }
 }
 
-Future<void> _ensureLocalNotificationsReady() async {
-  if (_localNotificationsReady) return;
-
-  const androidInit = AndroidInitializationSettings('@drawable/ic_notification');
-  const iosInit = DarwinInitializationSettings(
-    // Permissions are requested via [FirebaseMessaging.requestPermission].
-    requestAlertPermission: false,
-    requestBadgePermission: false,
-    requestSoundPermission: false,
-  );
-  await _localNotifications.initialize(
-    const InitializationSettings(android: androidInit, iOS: iosInit),
-  );
-
-  await _localNotifications
-      .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin
-      >()
-      ?.createNotificationChannel(_fcmAndroidChannel);
-
-  _localNotificationsReady = true;
-}
-
-({String title, String body})? _fcmTitleAndBody(RemoteMessage message) {
-  final notification = message.notification;
-  var title = notification?.title?.trim() ?? '';
-  var body = notification?.body?.trim() ?? '';
-
-  if (title.isEmpty) {
-    title = message.data['title']?.toString().trim() ?? '';
-  }
-  if (body.isEmpty) {
-    body =
-        message.data['body']?.toString().trim() ??
-        message.data['message']?.toString().trim() ??
-        '';
-  }
-
-  if (title.isEmpty && body.isEmpty) return null;
-  if (title.isEmpty) title = _androidChannelName;
-  return (title: title, body: body);
-}
-
-/// Local heads-up when the OS will not present the message itself.
-Future<void> _showLocalNotification(RemoteMessage message) async {
-  final content = _fcmTitleAndBody(message);
-  if (content == null) return;
-
-  final notificationId = message.messageId?.hashCode ?? message.hashCode;
-
-  await _localNotifications.show(
-    notificationId,
-    content.title,
-    content.body,
-    NotificationDetails(
-      android: AndroidNotificationDetails(
-        _fcmAndroidChannel.id,
-        _fcmAndroidChannel.name,
-        channelDescription: _fcmAndroidChannel.description,
-        importance: Importance.high,
-        priority: Priority.high,
-        icon: '@drawable/ic_notification',
-        color: const Color(0xFF4C24A0),
-      ),
-      iOS: const DarwinNotificationDetails(
-        presentAlert: true,
-        presentBadge: true,
-        presentSound: true,
-      ),
-    ),
-  );
-}
-
-void _fcmLog(String message, {int level = 800}) {
-  developer.log(message, name: 'FcmPushService', level: level);
-  if (kDebugMode) {
-    debugPrint('FcmPushService: $message');
-  }
-}
-
-/// Registers FCM device tokens with the Vestie API after login.
-///
-/// Display rules (Firebase official):
-/// - **Notification payload** — OS presents (background/terminated always;
-///   foreground on iOS via [setForegroundNotificationPresentationOptions]).
-/// - **Data-only** — app shows a local notification (foreground + background).
-/// - **Android foreground + notification payload** — OS does not present; show
-///   local notification once.
+/// Registers device tokens with the Vestie API and displays notifications the
+/// OS does not present itself (see table above).
 class FcmPushService {
   FcmPushService._();
 
@@ -151,32 +67,31 @@ class FcmPushService {
   static Future<void>? _syncInFlight;
   static String? _sessionSyncedToken;
 
-  /// Call immediately after [Firebase.initializeApp] — before [runApp].
+  /// Call immediately after [Firebase.initializeApp] — before `runApp`.
   static void attachBackgroundMessageHandler() {
     if (_backgroundHandlerAttached || kIsWeb) return;
     FirebaseMessaging.onBackgroundMessage(fcmBackgroundMessageHandler);
     _backgroundHandlerAttached = true;
-    _fcmLog('background handler attached');
   }
 
   static Future<void> initialize() async {
     if (kIsWeb) return;
-    _fcmLog('initialize() start');
     try {
       attachBackgroundMessageHandler();
-
       _firebaseReady = true;
-      final messaging = FirebaseMessaging.instance;
 
+      final messaging = FirebaseMessaging.instance;
       final settings = await messaging.requestPermission(
         alert: true,
         badge: true,
         sound: true,
       );
-      _fcmLog('Notification permission: ${settings.authorizationStatus}');
+      _fcmLog('permission: ${settings.authorizationStatus}');
 
       await _ensureLocalNotificationsReady();
 
+      // Runtime POST_NOTIFICATIONS prompt (Android 13+) — requires a foreground
+      // Activity, so this must only run here, never from a background isolate.
       if (Platform.isAndroid) {
         await _localNotifications
             .resolvePlatformSpecificImplementation<
@@ -185,81 +100,63 @@ class FcmPushService {
             ?.requestNotificationsPermission();
       }
 
-      // iOS foreground: present notification payloads via APNs (do not also
-      // post a local notification for the same message).
+      // Keep iOS foreground auto-presentation off (its default) — see class
+      // doc for why. The app always shows its own local notification instead.
       await messaging.setForegroundNotificationPresentationOptions(
-        alert: true,
-        badge: true,
-        sound: true,
+        alert: false,
+        badge: false,
+        sound: false,
       );
 
-      final fcmToken = await messaging.getToken();
-      _fcmLog('FCM token: ${fcmToken != null ? _maskToken(fcmToken) : "null"}');
-
       FirebaseMessaging.onMessage.listen(_onForegroundMessage);
+      FirebaseMessaging.onMessageOpenedApp.listen(_onNotificationTapped);
 
-      FirebaseMessaging.onMessageOpenedApp.listen((message) {
-        _fcmLog(
-          'onMessageOpenedApp: '
-          'title=${message.notification?.title ?? message.data['title'] ?? "(no-title)"}',
-        );
-      });
+      // Terminated-state launch via notification tap (official docs: handle
+      // both this and onMessageOpenedApp for full interaction coverage).
+      final initialMessage = await messaging.getInitialMessage();
+      if (initialMessage != null) _onNotificationTapped(initialMessage);
 
       if (!_tokenRefreshAttached) {
         _tokenRefreshAttached = true;
-        messaging.onTokenRefresh.listen((newToken) {
-          _fcmLog('onTokenRefresh: ${_maskToken(newToken)}');
-          syncDeviceToken(force: true);
-        });
+        messaging.onTokenRefresh.listen((_) => syncDeviceToken(force: true));
       }
     } catch (e, stack) {
       _fcmLog('initialize() failed: $e', level: 1000);
-      if (kDebugMode) {
-        debugPrintStack(stackTrace: stack);
-      }
+      if (kDebugMode) debugPrintStack(stackTrace: stack);
     }
   }
 
+  static String? _lastForegroundMessageId;
+
   static void _onForegroundMessage(RemoteMessage message) {
-    // iOS: notification payloads are presented by
-    // [setForegroundNotificationPresentationOptions] — avoid a second banner.
-    if (Platform.isIOS && message.notification != null) {
-      _fcmLog(
-        'foreground iOS notification payload (system presented): '
-        '${message.notification?.title ?? "(no-title)"}',
-      );
-      return;
-    }
+    _logPayload('foreground', message);
 
-    // Android foreground never auto-presents notification payloads.
-    // Data-only messages need a local notification on both platforms.
-    final content = _fcmTitleAndBody(message);
-    if (content == null) {
-      _fcmLog('foreground: no displayable title/body');
-      return;
-    }
+    // iOS 18 is known to fire onMessage twice for the same payload
+    // (flutterfire#13366) — de-dupe on messageId as Firebase recommends.
+    final id = message.messageId;
+    if (id != null && id == _lastForegroundMessageId) return;
+    _lastForegroundMessageId = id;
 
-    unawaited(
-      _showLocalNotification(message).then(
-        (_) => _fcmLog('foreground notification shown: ${content.title}'),
-        onError: (Object e) =>
-            _fcmLog('foreground show failed: $e', level: 1000),
-      ),
+    unawaited(_showLocalNotification(message));
+  }
+
+  /// Fires when the user taps a notification (background tap or terminated
+  /// launch). Routes via [PushNotificationRouter], which switches on
+  /// [PushNotificationPayload.type] — see that class for the wire shape.
+  static void _onNotificationTapped(RemoteMessage message) {
+    _logPayload('tapped', message);
+    PushNotificationRouter.handleTap(
+      PushNotificationPayload.fromData(message.data),
     );
   }
 
   /// Registers the current FCM token with `POST /notifications/device-token`.
   ///
-  /// [force] — when `true`, always hits the API even if the token matches local
-  /// storage (use after login and on [FirebaseMessaging.onTokenRefresh]). When
-  /// `false`, skips redundant calls when the token is unchanged this session.
+  /// [force] always hits the API (use after login and on token refresh);
+  /// otherwise skips redundant calls when the token is unchanged this session.
   static Future<void> syncDeviceToken({bool force = false}) async {
     if (!_firebaseReady || kIsWeb) return;
-
-    if (_syncInFlight != null) {
-      await _syncInFlight;
-      return;
-    }
+    if (_syncInFlight != null) return _syncInFlight;
 
     _syncInFlight = _syncDeviceTokenBody(force: force);
     try {
@@ -271,41 +168,27 @@ class FcmPushService {
 
   static Future<void> _syncDeviceTokenBody({required bool force}) async {
     final sl = ServiceLocator.instance;
-    final loggedIn = await sl.sharedPrefs.getBool(StorageKeys.isLoggedIn);
-    if (!loggedIn) return;
+    if (!await sl.sharedPrefs.getBool(StorageKeys.isLoggedIn)) return;
 
     try {
       final token = await FirebaseMessaging.instance.getToken();
-      if (token == null || token.isEmpty) {
-        _fcmLog('token sync: getToken empty', level: 1000);
+      if (token == null || token.isEmpty) return;
+      if (!force && token == _sessionSyncedToken) return;
+      if (!force &&
+          token == await sl.sharedPrefs.getString(StorageKeys.fcmDeviceToken)) {
+        _sessionSyncedToken = token;
         return;
       }
 
-      if (!force && _sessionSyncedToken == token) return;
-
-      if (!force) {
-        final stored = await sl.sharedPrefs.getString(
-          StorageKeys.fcmDeviceToken,
-        );
-        if (stored == token) {
-          _sessionSyncedToken = token;
-          return;
-        }
-      }
-
-      final platform = Platform.isIOS ? 'iOS' : 'Android';
       final result = await sl.registerDeviceTokenUseCase(
         token: token,
-        platform: platform,
+        platform: Platform.isIOS ? 'iOS' : 'Android',
       );
       await result.fold(
-        (failure) async {
-          _fcmLog('registerDeviceToken failed: ${failure.message}', level: 1000);
-        },
+        (failure) async => _fcmLog('registerDeviceToken failed: ${failure.message}', level: 1000),
         (_) async {
           await sl.sharedPrefs.saveString(StorageKeys.fcmDeviceToken, token);
           _sessionSyncedToken = token;
-          _fcmLog('registerDeviceToken success ${_maskToken(token)}');
         },
       );
     } catch (e) {
@@ -328,9 +211,81 @@ class FcmPushService {
       await FirebaseMessaging.instance.deleteToken();
     } catch (_) {}
   }
+}
 
-  static String _maskToken(String token) {
-    if (token.length <= 10) return token;
-    return '${token.substring(0, 6)}...${token.substring(token.length - 4)}';
-  }
+Future<void> _ensureLocalNotificationsReady() async {
+  if (_localNotificationsReady) return;
+
+  await _localNotifications.initialize(
+    const InitializationSettings(
+      android: AndroidInitializationSettings('@drawable/ic_notification'),
+      iOS: DarwinInitializationSettings(
+        // Permission is requested via FirebaseMessaging.requestPermission above.
+        requestAlertPermission: false,
+        requestBadgePermission: false,
+        requestSoundPermission: false,
+      ),
+    ),
+  );
+
+  await _localNotifications
+      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(_androidChannel);
+
+  _localNotificationsReady = true;
+}
+
+/// Shows a heads-up local notification for messages the OS does not present
+/// itself: every foreground message, plus data-only background messages.
+Future<void> _showLocalNotification(RemoteMessage message) async {
+  final notification = message.notification;
+  final title = notification?.title ?? message.data['title']?.toString() ?? '';
+  final body =
+      notification?.body ??
+      message.data['body']?.toString() ??
+      message.data['message']?.toString() ??
+      '';
+  if (title.isEmpty && body.isEmpty) return;
+
+  await _localNotifications.show(
+    message.messageId?.hashCode ?? message.hashCode,
+    title.isEmpty ? _androidChannelName : title,
+    body,
+    NotificationDetails(
+      android: AndroidNotificationDetails(
+        _androidChannel.id,
+        _androidChannel.name,
+        channelDescription: _androidChannel.description,
+        importance: Importance.high,
+        priority: Priority.high,
+        icon: '@drawable/ic_notification',
+        color: const Color(0xFF4C24A0),
+      ),
+      iOS: const DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+      ),
+    ),
+  );
+}
+
+void _fcmLog(String message, {int level = 800}) {
+  developer.log(message, name: 'FcmPushService', level: level);
+  if (kDebugMode) debugPrint('FcmPushService: $message');
+}
+
+/// Logs the full payload shape (title/body/data) for a given [event] —
+/// use this to see what the backend actually sends before wiring routing.
+///
+/// Always prints (not gated by [kDebugMode]) so it shows up in `adb logcat`
+/// / Xcode console on release/profile builds too, not just `flutter run`.
+void _logPayload(String event, RemoteMessage message) {
+  final payload =
+      'FcmPushService: $event | id=${message.messageId} '
+      'notification.title=${message.notification?.title} '
+      'notification.body=${message.notification?.body} '
+      'data=${message.data}';
+  developer.log(payload, name: 'FcmPushService');
+  debugPrint(payload);
 }

@@ -29,6 +29,11 @@ class AppFormatters {
     return dateFormatter.format(date);
   }
 
+  /// Short date, no year — ledger/history rows. E.g. "Mar 12"
+  static String formatShortDate(DateTime date) {
+    return DateFormat('MMM d').format(date);
+  }
+
   /// Compact number formatter. E.g., 1.2k, 10M
   static String formatCompactNumber(num number) {
     return NumberFormat.compact().format(number);

@@ -1265,6 +1265,8 @@ class AppStrings {
   static const String menuLeaveProject = 'Leave Project';
   static const String projectFundsHistoryEmpty =
       'No contributions recorded yet.';
+  static const String errorLoadProjectFundsHistory =
+      'Could not load funds history. Please try again.';
   static const String projectFundsCurrentPotBalance = 'Current Pot Balance';
   static const String projectFundsTotalContribution = 'Total Contribution';
   static const String projectFundsActiveBorrows = 'Active Borrows';

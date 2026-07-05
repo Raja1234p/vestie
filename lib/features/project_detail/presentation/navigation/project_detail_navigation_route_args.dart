@@ -57,5 +57,10 @@ GroupMembersRouteArgs _groupMembersArgs(ProjectDetailEntity project) {
 }
 
 ProjectFundsHistoryRouteArgs _fundsHistoryArgs(ProjectDetailEntity project) {
-  return ProjectFundsHistoryLedgerBuilder.fromProject(project);
+  return ProjectFundsHistoryRouteArgs(
+    projectId: project.id,
+    isInvestment: project.category.isInvestment,
+    useBreakdownSectionTitle:
+        project.category.isInvestment || project.isCoLeader,
+  );
 }

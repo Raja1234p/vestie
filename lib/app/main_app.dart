@@ -11,6 +11,7 @@ import '../core/di/service_locator.dart';
 import '../features/wallet/presentation/cubit/wallet_cubit.dart';
 import '../features/wallet/presentation/cubit/wallet_transaction_cubit.dart';
 import '../core/services/project_invite_deep_link_service.dart';
+import '../core/services/notifications/push_notification_router.dart';
 import 'router/app_router.dart';
 
 class MainApp extends StatefulWidget {
@@ -37,6 +38,7 @@ class _MainAppState extends State<MainApp> {
         debugPrint('MainApp: first frame — starting deep link listener');
       }
       ProjectInviteDeepLinkService.instance.start(AppRouter.router);
+      PushNotificationRouter.attach(AppRouter.router);
     });
   }
 

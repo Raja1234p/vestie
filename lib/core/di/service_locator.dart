@@ -59,8 +59,12 @@ import '../../app/router/route_args/project_detail_flow_args.dart';
 import '../../features/project_detail/data/datasources/investment_returns_remote_data_source.dart';
 import '../../features/project_detail/domain/repositories/investment_returns_repository.dart';
 import '../../features/project_detail/domain/usecases/investment_returns_usecases.dart';
+import '../../features/project_detail/data/datasources/project_funds_history_remote_data_source.dart';
+import '../../features/project_detail/domain/repositories/project_funds_history_repository.dart';
+import '../../features/project_detail/domain/usecases/get_project_funds_history_use_case.dart';
 import '../../features/project_detail/presentation/cubit/investment_distribution_cubit.dart';
 import '../../features/project_detail/presentation/cubit/investment_returns_cubit.dart';
+import '../../features/project_detail/presentation/cubit/project_funds_history_cubit.dart';
 import '../../features/project_pot/data/datasources/project_pot_remote_data_source.dart';
 import '../../features/project_pot/domain/repositories/project_pot_repository.dart';
 import '../../features/project_pot/domain/usecases/get_project_pot_use_case.dart';
@@ -215,6 +219,11 @@ class ServiceLocator {
   previewInvestmentDistributionUseCase;
   late final ConfirmInvestmentDistributionUseCase
   confirmInvestmentDistributionUseCase;
+
+  late final ProjectFundsHistoryRemoteDataSource
+  projectFundsHistoryRemoteDataSource;
+  late final ProjectFundsHistoryRepository projectFundsHistoryRepository;
+  late final GetProjectFundsHistoryUseCase getProjectFundsHistoryUseCase;
 
   late final WalletRemoteDataSource walletRemoteDataSource;
   late final WalletRepository walletRepository;
@@ -389,4 +398,10 @@ class ServiceLocator {
     previewUseCase: previewInvestmentDistributionUseCase,
     confirmUseCase: confirmInvestmentDistributionUseCase,
   );
+
+  ProjectFundsHistoryCubit createProjectFundsHistoryCubit(String projectId) =>
+      ProjectFundsHistoryCubit(
+        projectId: projectId,
+        getFundsHistoryUseCase: getProjectFundsHistoryUseCase,
+      );
 }

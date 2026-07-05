@@ -37,7 +37,6 @@ import 'package:vestie/core/services/home_project_list_sync.dart';
 import 'package:vestie/features/wallet/domain/wallet_balance_cache.dart';
 import 'package:vestie/user/features/contributions/data/models/contribution_submit_result_model.dart';
 import 'package:vestie/user/features/vff/presentation/mappers/invite_members_mapper.dart';
-import '../data/project_funds_history_ledger_builder.dart';
 import 'package:vestie/user/features/borrow/presentation/data/my_borrow_request_args_builder.dart';
 
 part 'project_detail_navigation_route_args.dart';

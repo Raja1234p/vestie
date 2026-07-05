@@ -367,6 +367,54 @@ class BankAccountListShimmer extends StatelessWidget {
   }
 }
 
+/// `GET /projects/{projectId}/funds-history` skeleton — summary + ledger rows.
+class ProjectFundsHistoryListShimmer extends StatelessWidget {
+  const ProjectFundsHistoryListShimmer({super.key, this.itemCount = 4});
+
+  final int itemCount;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppShimmer(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AppShimmer.box(width: 160, height: 18, borderRadius: 4),
+          const SizedBox(height: 8),
+          AppShimmer.box(width: 200, height: 32, borderRadius: 4),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: AppShimmer.box(
+                  width: double.infinity,
+                  height: 64,
+                  borderRadius: 12,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: AppShimmer.box(
+                  width: double.infinity,
+                  height: 64,
+                  borderRadius: 12,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          AppShimmer.box(width: 140, height: 18, borderRadius: 4),
+          const SizedBox(height: 12),
+          for (var i = 0; i < itemCount; i++) ...[
+            AppShimmer.box(width: double.infinity, height: 68, borderRadius: 14),
+            const SizedBox(height: 10),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
 /// KYC / bank Stripe hosted onboarding loading placeholder.
 class StripeOnboardingShimmer extends StatelessWidget {
   const StripeOnboardingShimmer({super.key});

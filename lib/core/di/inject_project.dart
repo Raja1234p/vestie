@@ -21,6 +21,9 @@ import '../../features/project_detail/presentation/bloc/voting_bloc.dart';
 import '../../features/project_detail/data/datasources/investment_returns_remote_data_source.dart';
 import '../../features/project_detail/data/repositories/investment_returns_repository_impl.dart';
 import '../../features/project_detail/domain/usecases/investment_returns_usecases.dart';
+import '../../features/project_detail/data/datasources/project_funds_history_remote_data_source.dart';
+import '../../features/project_detail/data/repositories/project_funds_history_repository_impl.dart';
+import '../../features/project_detail/domain/usecases/get_project_funds_history_use_case.dart';
 import '../../features/project_pot/data/datasources/project_pot_remote_data_source.dart';
 import '../../features/project_pot/data/repositories/project_pot_repository_impl.dart';
 import '../../features/project_pot/domain/usecases/get_project_pot_use_case.dart';
@@ -150,6 +153,15 @@ void registerProjectDependencies(ServiceLocator sl) {
   );
   sl.confirmInvestmentDistributionUseCase =
       ConfirmInvestmentDistributionUseCase(sl.investmentReturnsRepository);
+
+  sl.projectFundsHistoryRemoteDataSource =
+      ProjectFundsHistoryRemoteDataSourceImpl(apiClient: sl.apiClient);
+  sl.projectFundsHistoryRepository = ProjectFundsHistoryRepositoryImpl(
+    remoteDataSource: sl.projectFundsHistoryRemoteDataSource,
+  );
+  sl.getProjectFundsHistoryUseCase = GetProjectFundsHistoryUseCase(
+    sl.projectFundsHistoryRepository,
+  );
 
   sl.projectPotRemoteDataSource = ProjectPotRemoteDataSourceImpl(
     apiClient: sl.apiClient,

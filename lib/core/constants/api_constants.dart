@@ -219,6 +219,10 @@ class ApiConstants {
   static String projectInvestmentDistributions(String projectId) =>
       '$projects/$projectId/investment/distributions';
 
+  /// `GET /projects/{projectId}/funds-history` — pot ledger (contributions + borrows).
+  static String projectFundsHistory(String projectId) =>
+      '$projects/$projectId/funds-history';
+
   // ── Wallet ───────────────────────────────────────────────────────────────
   static const String wallet = '/wallet';
 
