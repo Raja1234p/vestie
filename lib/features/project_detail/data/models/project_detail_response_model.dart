@@ -173,9 +173,11 @@ class ProjectDetailResponseModel {
         _votingStatusRaw != null ||
         _userRoleRaw != null;
 
+    // Finalized `done` votes are complete — unlock Mark as Successful / ownership actions.
     final hasActiveVote = hasWeek11Envelope &&
         (votingStatus == ProjectVotingStatus.pending ||
-            votingStatus == ProjectVotingStatus.done);
+            (votingStatus == ProjectVotingStatus.done &&
+                votingSummary?.isFinalized != true));
 
     final entity = ProjectDetailEntity(
       id: _project.id,

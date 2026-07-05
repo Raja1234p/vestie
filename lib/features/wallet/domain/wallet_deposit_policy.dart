@@ -1,6 +1,6 @@
 /// Deposit fee and balance preview for the confirm step (Figma, client-only).
 abstract final class WalletDepositPolicy {
-  static const double feePercent = 2.5;
+  static const double feePercent = 2.9;
 
   static String get feePercentLabel => '${feePercent.toStringAsFixed(1)}%';
 

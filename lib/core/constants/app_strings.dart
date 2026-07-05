@@ -1204,7 +1204,7 @@ class AppStrings {
       'This member has been removed from the project.';
   static const String markDefaultedConfirmTitle = 'Mark as Defaulted';
   static const String markDefaultedConfirmBody =
-      'Marking a user as defaulted blocks them from contributing or borrowing in any group until all dues are cleared.';
+      'Marking a user as defaulted blocks them from contributing or borrowing in this project. Their access is restored only once they repay the full borrowed amount.';
   static const String markDefaultedSuccessTitle = 'Member Marked as Defaulted';
   static const String markDefaultedSuccessBody =
       'This member can no longer contribute or borrow in any group until all dues are cleared.';

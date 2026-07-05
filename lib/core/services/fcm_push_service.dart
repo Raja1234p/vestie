@@ -24,25 +24,27 @@ final AndroidNotificationChannel _fcmAndroidChannel = AndroidNotificationChannel
   importance: Importance.high,
 );
 
-final FlutterLocalNotificationsPlugin _backgroundLocalNotifications =
+final FlutterLocalNotificationsPlugin _localNotifications =
     FlutterLocalNotificationsPlugin();
 
-bool _backgroundNotificationsReady = false;
+bool _localNotificationsReady = false;
 
 /// Top-level handler — required by FCM; must keep [@pragma('vm:entry-point')].
+///
+/// Only displays a local notification for **data-only** messages. Payloads that
+/// include `notification` are already shown by the OS (iOS and Android).
 @pragma('vm:entry-point')
 Future<void> fcmBackgroundMessageHandler(RemoteMessage message) async {
   try {
+    // Notification payloads are displayed by the system tray / APNs.
+    if (message.notification != null) return;
+
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-    await _ensureBackgroundLocalNotificationsReady();
-    await _showFcmLocalNotification(
-      plugin: _backgroundLocalNotifications,
-      message: message,
-    );
+    await _ensureLocalNotificationsReady();
+    await _showLocalNotification(message);
     _fcmLog(
-      'background message handled '
-      'id=${message.messageId ?? "null"} '
-      'title=${message.notification?.title ?? message.data['title'] ?? "(no-title)"}',
+      'background data-only message handled '
+      'id=${message.messageId ?? "null"}',
     );
   } catch (e, stack) {
     _fcmLog('background handler failed: $e', level: 1000);
@@ -52,21 +54,27 @@ Future<void> fcmBackgroundMessageHandler(RemoteMessage message) async {
   }
 }
 
-Future<void> _ensureBackgroundLocalNotificationsReady() async {
-  if (_backgroundNotificationsReady) return;
+Future<void> _ensureLocalNotificationsReady() async {
+  if (_localNotificationsReady) return;
 
   const androidInit = AndroidInitializationSettings('@drawable/ic_notification');
-  await _backgroundLocalNotifications.initialize(
-    const InitializationSettings(android: androidInit),
+  const iosInit = DarwinInitializationSettings(
+    // Permissions are requested via [FirebaseMessaging.requestPermission].
+    requestAlertPermission: false,
+    requestBadgePermission: false,
+    requestSoundPermission: false,
+  );
+  await _localNotifications.initialize(
+    const InitializationSettings(android: androidInit, iOS: iosInit),
   );
 
-  await _backgroundLocalNotifications
+  await _localNotifications
       .resolvePlatformSpecificImplementation<
         AndroidFlutterLocalNotificationsPlugin
       >()
       ?.createNotificationChannel(_fcmAndroidChannel);
 
-  _backgroundNotificationsReady = true;
+  _localNotificationsReady = true;
 }
 
 ({String title, String body})? _fcmTitleAndBody(RemoteMessage message) {
@@ -89,17 +97,14 @@ Future<void> _ensureBackgroundLocalNotificationsReady() async {
   return (title: title, body: body);
 }
 
-Future<void> _showFcmLocalNotification({
-  required FlutterLocalNotificationsPlugin plugin,
-  required RemoteMessage message,
-}) async {
+/// Local heads-up when the OS will not present the message itself.
+Future<void> _showLocalNotification(RemoteMessage message) async {
   final content = _fcmTitleAndBody(message);
   if (content == null) return;
 
-  final notificationId =
-      message.messageId?.hashCode ?? message.hashCode;
+  final notificationId = message.messageId?.hashCode ?? message.hashCode;
 
-  await plugin.show(
+  await _localNotifications.show(
     notificationId,
     content.title,
     content.body,
@@ -130,7 +135,13 @@ void _fcmLog(String message, {int level = 800}) {
 }
 
 /// Registers FCM device tokens with the Vestie API after login.
-/// Shows in-app heads-up notifications when the app is in foreground.
+///
+/// Display rules (Firebase official):
+/// - **Notification payload** — OS presents (background/terminated always;
+///   foreground on iOS via [setForegroundNotificationPresentationOptions]).
+/// - **Data-only** — app shows a local notification (foreground + background).
+/// - **Android foreground + notification payload** — OS does not present; show
+///   local notification once.
 class FcmPushService {
   FcmPushService._();
 
@@ -139,9 +150,6 @@ class FcmPushService {
   static bool _tokenRefreshAttached = false;
   static Future<void>? _syncInFlight;
   static String? _sessionSyncedToken;
-
-  static final FlutterLocalNotificationsPlugin _localNotifications =
-      FlutterLocalNotificationsPlugin();
 
   /// Call immediately after [Firebase.initializeApp] — before [runApp].
   static void attachBackgroundMessageHandler() {
@@ -160,19 +168,6 @@ class FcmPushService {
       _firebaseReady = true;
       final messaging = FirebaseMessaging.instance;
 
-      await _localNotifications
-          .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin
-          >()
-          ?.createNotificationChannel(_fcmAndroidChannel);
-
-      const androidInit = AndroidInitializationSettings('@drawable/ic_notification');
-      const iosInit = DarwinInitializationSettings(
-        requestAlertPermission: true,
-        requestBadgePermission: true,
-        requestSoundPermission: true,
-        requestProvisionalPermission: false,
-      );
       final settings = await messaging.requestPermission(
         alert: true,
         badge: true,
@@ -180,12 +175,7 @@ class FcmPushService {
       );
       _fcmLog('Notification permission: ${settings.authorizationStatus}');
 
-      final fcmToken = await messaging.getToken();
-      _fcmLog('FCM token: ${fcmToken != null ? _maskToken(fcmToken) : "null"}');
-
-      await _localNotifications.initialize(
-        const InitializationSettings(android: androidInit, iOS: iosInit),
-      );
+      await _ensureLocalNotificationsReady();
 
       if (Platform.isAndroid) {
         await _localNotifications
@@ -195,11 +185,16 @@ class FcmPushService {
             ?.requestNotificationsPermission();
       }
 
+      // iOS foreground: present notification payloads via APNs (do not also
+      // post a local notification for the same message).
       await messaging.setForegroundNotificationPresentationOptions(
         alert: true,
         badge: true,
         sound: true,
       );
+
+      final fcmToken = await messaging.getToken();
+      _fcmLog('FCM token: ${fcmToken != null ? _maskToken(fcmToken) : "null"}');
 
       FirebaseMessaging.onMessage.listen(_onForegroundMessage);
 
@@ -226,6 +221,18 @@ class FcmPushService {
   }
 
   static void _onForegroundMessage(RemoteMessage message) {
+    // iOS: notification payloads are presented by
+    // [setForegroundNotificationPresentationOptions] — avoid a second banner.
+    if (Platform.isIOS && message.notification != null) {
+      _fcmLog(
+        'foreground iOS notification payload (system presented): '
+        '${message.notification?.title ?? "(no-title)"}',
+      );
+      return;
+    }
+
+    // Android foreground never auto-presents notification payloads.
+    // Data-only messages need a local notification on both platforms.
     final content = _fcmTitleAndBody(message);
     if (content == null) {
       _fcmLog('foreground: no displayable title/body');
@@ -233,10 +240,7 @@ class FcmPushService {
     }
 
     unawaited(
-      _showFcmLocalNotification(
-        plugin: _localNotifications,
-        message: message,
-      ).then(
+      _showLocalNotification(message).then(
         (_) => _fcmLog('foreground notification shown: ${content.title}'),
         onError: (Object e) =>
             _fcmLog('foreground show failed: $e', level: 1000),

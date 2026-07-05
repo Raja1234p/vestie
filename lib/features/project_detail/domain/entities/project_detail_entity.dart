@@ -227,9 +227,13 @@ class ProjectDetailEntity {
   /// Detail voting card is disabled — active votes use dedicated screens/widgets.
   bool get showsProjectDetailVotingCard => false;
 
-  bool get votingIsInProgress =>
-      votingStatus == ProjectVotingStatus.pending ||
-      votingStatus == ProjectVotingStatus.done;
+  /// Open vote window, or `done` awaiting leader finalize.
+  /// Finalized votes are complete — do not lock Mark as Successful / edit / cancel.
+  bool get votingIsInProgress {
+    if (votingStatus == ProjectVotingStatus.pending) return true;
+    if (votingStatus != ProjectVotingStatus.done) return false;
+    return voting?.isFinalized != true;
+  }
 
   /// Week 11+: start vote from detail card (leader + co-leader).
   bool get canStartVotingOnDetail =>

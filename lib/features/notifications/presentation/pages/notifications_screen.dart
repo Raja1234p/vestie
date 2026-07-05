@@ -337,7 +337,7 @@ class _NotificationListTile extends StatelessWidget {
                       SizedBox(height: 4.h),
                       Text(
                         item.body,
-                        maxLines: 3,
+                        maxLines: 12,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.lato(
                           fontSize: 14.sp,
