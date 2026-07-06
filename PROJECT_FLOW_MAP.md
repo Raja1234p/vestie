@@ -262,9 +262,18 @@ Bank link (withdraw prerequisite) mirrors pattern with `vestie://bank/*` returns
 FCM token sync (FcmPushService) + in-app list
 NotificationsScreen → NotificationsCubit → GET notifications
 Header bell from Home/Discover → /notifications
+
+Push tap (background / terminated) →
+  FcmPushService._onNotificationTapped → PushNotificationPayload.fromData
+    → PushNotificationRouter.handleTap
+        → (queued until GoRouter attached on cold start)
+        → auth check → GET /projects/{id} (resolve category)
+        → openProjectDetailById → /project/detail | /project/investment-detail
 ```
 
-**Code:** `lib/features/notifications/`, `lib/core/services/fcm_push_service.dart`
+**Code:** `lib/features/notifications/`, `lib/core/services/fcm_push_service.dart`, `lib/core/services/notifications/push_notification_router.dart`
+
+**Details:** [`DOCS/push_notification_routing.md`](DOCS/push_notification_routing.md)
 
 ---
 

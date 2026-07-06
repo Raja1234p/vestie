@@ -43,6 +43,9 @@ Quick index for onboarding: **where code lives**, **primary APIs**, **entry rout
 | Project detail | `features/project_detail/` | `GET /projects/{id}` | `/project/detail` |
 | Investment detail | `user/features/project_detail/` | same + investment UI | `/project/investment-detail` |
 | Detail navigation | `features/project_detail/presentation/navigation/project_detail_navigation.dart` | — | push helpers |
+| Funds history ledger | `features/project_detail/` | `GET /projects/{id}/funds-history` | `/project/funds-history` |
+| Completed projects | `features/profile/` | `GET /projects/completed` | `/profile/completed-projects` |
+| Completed project detail (read-only) | `features/profile/` | `GET /projects/{id}` only | `/profile/completed-projects/detail` |
 
 ---
 
@@ -93,7 +96,8 @@ Quick index for onboarding: **where code lives**, **primary APIs**, **entry rout
 | Feature | Location | APIs |
 |---------|----------|------|
 | In-app list | `features/notifications/` | list, mark read |
-| FCM | `core/services/fcm_push_service.dart` | register device token |
+| FCM | `core/services/fcm_push_service.dart` | register device token, foreground/background display |
+| Tap routing | `core/services/notifications/push_notification_router.dart` | see [`DOCS/push_notification_routing.md`](DOCS/push_notification_routing.md) |
 
 ---
 

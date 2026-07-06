@@ -1,7 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/utils/formatters.dart';
 
 import '../../../profile/domain/entities/payment_card.dart';
+import '../../domain/wallet_deposit_policy.dart';
 import '../../domain/wallet_transaction_type.dart';
 import 'package:vestie/core/utils/wallet_withdraw_validation.dart';
 import '../../domain/withdraw_delivery_method.dart';
@@ -61,6 +63,11 @@ class WalletTransactionState {
   String get formattedAmount {
     return '\$${amountParsed.toStringAsFixed(2)}';
   }
+
+  /// Net wallet credit after the 2.9% deposit fee — matches confirm breakdown.
+  String get formattedDepositNetCredit => AppFormatters.formatCurrency(
+    WalletDepositPolicy.netDepositCredit(amountParsed),
+  );
 
   bool get canConfirmDeposit {
     if (payFromWallet) return false;

@@ -28,6 +28,8 @@ Shared project detail entity, bloc, navigation helpers, member list, funds histo
 
 `ProjectDetailScreen` → `ProjectDetailBloc` → `GetProjectDetailUseCase` → `GET /projects/{id}`
 
+**Funds history ledger** (`/project/funds-history`): `ProjectFundsHistoryScreen` → `ProjectFundsHistoryCubit` → `GetProjectFundsHistoryUseCase` → `GET /projects/{projectId}/funds-history` (own paginated call, independent of the parent detail load). Route args (`ProjectFundsHistoryRouteArgs`) carry only `projectId` / `isInvestment` / `useBreakdownSectionTitle` — the screen's Cubit fetches `currentPotBalance`, `totalContribution`, `activeBorrows`, and paginated `entries` itself (see `architecture.mdc` §5 — route args are navigation metadata, not mock screen data). `ProjectFundsHistoryListShimmer` on initial load; `PaginatedScrollListener` + `ListLoadMoreFooter` for load-more; `AppErrorView` on initial load failure, `AppToast` on load-more failure.
+
 Closure voting (Week 10): `ClosureVotingRepository` → `POST/GET …/closure-voting/*`  
 On project detail load: Week 11+ `GET /projects/{id}` supplies `projectStatus`, `votingStatus`, `userRole`, `voting` (including `memberVotes[]`), `canStopContributions`. Legacy probe `GET …/closure-voting/active` runs for leader monitor when detail has no in-progress voting payload.
 

@@ -51,7 +51,8 @@ Widget → Cubit/Bloc → UseCase → Repository → RemoteDataSource → BaseAp
 
 | Service | File | Responsibility |
 |---------|------|----------------|
-| FCM push | `core/services/fcm_push_service.dart` | Firebase init, token sync, foreground notifications |
+| FCM push | `core/services/fcm_push_service.dart` | Firebase init, token sync, foreground/background notification display |
+| Push tap routing | `core/services/notifications/push_notification_router.dart` | Notification tap → `GoRouter` navigation (no `BuildContext`); see `DOCS/push_notification_routing.md` |
 | Deep links | `core/services/project_invite_deep_link_service.dart` | `/join/{code}` capture |
 | Invite parser | `core/services/project_invite_link_parser.dart` | URI parsing |
 | Projects SignalR | `core/realtime/projects_signalr_service.dart` | `/hubs/projects` |

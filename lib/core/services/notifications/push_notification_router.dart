@@ -2,12 +2,18 @@ import 'dart:async' show unawaited;
 
 import 'package:go_router/go_router.dart';
 
-import '../../auth/app_auth_session.dart';
-import '../../di/service_locator.dart';
+import '../../../app/router/app_routes.dart';
+import '../../../features/dashboard/presentation/models/dashboard_shell_args.dart';
 import '../../../features/project_detail/domain/entities/project_detail_entity.dart';
 import '../../../features/project_detail/presentation/navigation/open_project_from_card.dart';
 import '../../../user/features/home/domain/entities/project_category_extensions.dart';
+import '../../auth/app_auth_session.dart';
+import '../../di/service_locator.dart';
 import 'push_notification_payload.dart';
+
+/// Bottom-nav tab indices — match `DashboardScreen`'s tab order.
+const _homeTabIndex = 0;
+const _walletTabIndex = 3;
 
 /// Routes a tapped push notification to its matching screen.
 ///
@@ -46,9 +52,29 @@ class PushNotificationRouter {
     switch (payload.type) {
       case PushNotificationType.projectCreated:
         await _openProject(payload.projectId);
+      case PushNotificationType.withdrawalFailed:
+        _openDashboardTab(_walletTabIndex, reloadWallet: true);
       case PushNotificationType.unknown:
-        break;
+        _openDashboardTab(_homeTabIndex);
     }
+  }
+
+  static void _openDashboardTab(
+    int tabIndex, {
+    bool reloadWallet = false,
+  }) {
+    if (!AppAuthSession.instance.isAuthenticated) return;
+    final router = _router;
+    if (router == null) return;
+
+    router.go(
+      AppRoutes.dashboard,
+      extra: DashboardShellArgs(
+        initialTabIndex: tabIndex,
+        reloadWallet: reloadWallet,
+        navigationMark: DateTime.now().microsecondsSinceEpoch,
+      ),
+    );
   }
 
   /// Resolves [projectId] via `GET /projects/{id}` first because the notify

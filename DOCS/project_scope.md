@@ -270,7 +270,7 @@ Three join paths (all use `POST /projects/join` with **either** `projectId` **or
 | Payment methods & cards | CRUD via Stripe |
 | My accounts (banks) | Withdraw destinations |
 | Transaction history | Wallet movements |
-| Completed projects | Historical projects → vote outcome navigation |
+| Completed projects | Historical projects list → vote outcome (if voting occurred) or dedicated read-only completed project detail (funds history only in menu) |
 | User guidelines | Static risk copy |
 | Logout | Clears caches (wallet, payments, Stripe, KYC, bank, FCM) |
 | Delete account | Confirmation dialog + API |

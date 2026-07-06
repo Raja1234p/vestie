@@ -34,6 +34,9 @@ Use this when verifying **data on screen matches API** after actions (refresh, n
 | Contribute submit | `POST /projects/{id}/contributions` | — | Wallet tab; project detail reload |
 | Project detail | `GET /projects/{id}` | Shimmer | After contribute / announcement |
 | Project pot UI | `GET /projects/{id}/pot` | — | **Not wired to UI** |
+| Project funds history (ledger) | `GET /projects/{projectId}/funds-history` | `ProjectFundsHistoryListShimmer`; load fail → `AppErrorView` + retry | `PaginatedScrollListener` load-more; own Cubit load, independent of parent detail |
+| Completed projects list | `GET /projects/completed?page=&pageSize=` | `ProjectCardShimmer` list | `PaginatedScrollListener` load-more |
+| Completed project detail | `GET /projects/{id}` only | `ProjectDetailLoadingBody` | Pull-to-refresh; menu limited to Project fund history |
 
 ---
 

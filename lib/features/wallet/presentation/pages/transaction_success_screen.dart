@@ -32,7 +32,9 @@ class TransactionSuccessScreen extends StatelessWidget {
       builder: (context, state) {
         final isDeposit =
             state.transactionType == WalletTransactionType.deposit;
-        final amountText = state.formattedAmount;
+        final amountText = isDeposit
+            ? state.formattedDepositNetCredit
+            : state.formattedAmount;
         return AppSuccessScreen(
           title: isDeposit
               ? AppStrings.depositSuccessTitle
