@@ -19,7 +19,6 @@ import '../../../../core/widgets/common/leader_action_menu.dart';
 import '../../../../core/widgets/common/member_project_action_menu.dart';
 import '../../domain/entities/member_entity.dart';
 import '../widgets/project_member_vff_send_actions.dart';
-import '../../domain/entities/closure_vote_entities.dart';
 import '../../domain/entities/project_detail_entity.dart';
 import '../../domain/entities/create_announcement_route_args.dart';
 import '../../domain/entities/project_detail_route_args.dart';
@@ -207,19 +206,6 @@ class ProjectDetailNavigation {
     required ProjectDetailEntity project,
   }) => _openStopContributionsVoteRejectedPreview(context, project: project);
 
-  /// Production — vote outcome after closure vote finalize.
-  static void openClosureVoteOutcome(
-    BuildContext context, {
-    required ProjectDetailEntity project,
-    required FinalizeClosureVoteResultEntity finalizeResult,
-    bool popCurrentRoute = false,
-  }) => _openClosureVoteOutcome(
-    context,
-    project: project,
-    finalizeResult: finalizeResult,
-    popCurrentRoute: popCurrentRoute,
-  );
-
   static Future<void> openInviteMembers(
     BuildContext context, {
     required ProjectDetailEntity project,
@@ -240,8 +226,10 @@ class ProjectDetailNavigation {
   );
 
   static ProjectFundsHistoryRouteArgs fundsHistoryArgs(
-    ProjectDetailEntity project,
-  ) => _fundsHistoryArgs(project);
+    ProjectDetailEntity project, {
+    bool forLeaderMenu = false,
+  }) =>
+      _fundsHistoryArgs(project, forLeaderMenu: forLeaderMenu);
 
   static Future<void> handleMemberAction(
     BuildContext context, {

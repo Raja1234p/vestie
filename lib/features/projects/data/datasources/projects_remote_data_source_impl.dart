@@ -80,12 +80,13 @@ class ProjectsRemoteDataSourceImpl implements ProjectsRemoteDataSource {
   }
 
   PaginatedListModel<ProjectSummaryModel> _parseProjectsListResponse(
-    dynamic data,
-  ) {
+    dynamic data, {
+    String listKey = 'projects',
+  }) {
     if (data is Map) {
       return PaginatedListParser.parseKeyedList(
         data.map((k, v) => MapEntry(k.toString(), v)),
-        'projects',
+        listKey,
         (m) => ProjectSummaryModel.fromJson(m),
       );
     }
@@ -149,7 +150,10 @@ class ProjectsRemoteDataSourceImpl implements ProjectsRemoteDataSource {
           pageSize: pageSize,
         ),
       );
-      return _parseProjectsListResponse(response.data);
+      return _parseProjectsListResponse(
+        response.data,
+        listKey: 'completedProjects',
+      );
     } on DioException catch (e) {
       AppLogger.error(
         'API ListCompletedProjects Error: ${e.response?.statusCode}',

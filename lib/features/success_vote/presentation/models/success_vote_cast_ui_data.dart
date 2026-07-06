@@ -1,8 +1,10 @@
 import 'package:vestie/features/project_detail/domain/entities/closure_vote_entities.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_closure_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_voting_entities.dart';
 import 'package:vestie/features/project_detail/presentation/mappers/closure_vote_ui_mappers.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
+import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
 
 import 'success_vote_cast_route_args.dart';
 
@@ -20,6 +22,8 @@ class SuccessVoteCastUiData {
   final int thumbsDown;
   final int notVoted;
   final List<ProjectVotingMemberVoteEntity> memberVotes;
+  /// Investment phase 1 (stop contributions) vs phase 2 (mark successful).
+  final bool isInvestmentStopContributionsVote;
 
   const SuccessVoteCastUiData({
     this.projectId,
@@ -34,6 +38,7 @@ class SuccessVoteCastUiData {
     required this.thumbsDown,
     required this.notVoted,
     this.memberVotes = const [],
+    this.isInvestmentStopContributionsVote = false,
   });
 
   factory SuccessVoteCastUiData.fromProject(ProjectDetailEntity project) {
@@ -49,6 +54,8 @@ class SuccessVoteCastUiData {
       thumbsUp: 4,
       thumbsDown: 2,
       notVoted: 5,
+      isInvestmentStopContributionsVote:
+          project.category.isInvestment && project.isStopContributionsClosureVote,
     );
   }
 
@@ -65,6 +72,7 @@ class SuccessVoteCastUiData {
       thumbsUp: args.thumbsUp ?? 4,
       thumbsDown: args.thumbsDown ?? 2,
       notVoted: args.notYetVoted ?? 5,
+      isInvestmentStopContributionsVote: args.isInvestmentStopContributionsVote,
     );
   }
 
@@ -84,6 +92,9 @@ class SuccessVoteCastUiData {
       thumbsUp: vote.thumbsUp,
       thumbsDown: vote.thumbsDown,
       notVoted: vote.notYetVoted,
+      isInvestmentStopContributionsVote:
+          args.projectCategory == ProjectCategory.investment &&
+          vote.voteType == ClosureVoteType.stopContributionsVote,
     );
   }
 
@@ -105,6 +116,7 @@ class SuccessVoteCastUiData {
       thumbsDown: thumbsDown,
       notVoted: notVoted,
       memberVotes: memberVotes,
+      isInvestmentStopContributionsVote: isInvestmentStopContributionsVote,
     );
   }
 }

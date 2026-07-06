@@ -45,20 +45,31 @@ class SuccessVoteCastCopy {
     return switch (category) {
       ProjectCategory.vacations => _vacation,
       ProjectCategory.emergency => _emergency,
-      ProjectCategory.investment => _investment,
+      ProjectCategory.investment => _investmentStopContributions,
     };
   }
 
   /// Member vs co-leader — only the pending banner body differs on vacation/emergency.
+  ///
+  /// Investment has two vote phases: stop-contributions (phase 1) vs mark-as-successful
+  /// (phase 2). Phase 2 reuses vacation success-vote copy (Figma).
   static SuccessVoteCastCopy forViewer({
     required ProjectCategory category,
     required bool isCoLeader,
+    bool isInvestmentStopContributionsVote = false,
   }) {
+    if (category == ProjectCategory.investment) {
+      if (isInvestmentStopContributionsVote) {
+        return _investmentStopContributions;
+      }
+      if (!isCoLeader) return _vacation;
+      return _vacationCoLeader;
+    }
     if (!isCoLeader) return forCategory(category);
     return switch (category) {
       ProjectCategory.vacations => _vacationCoLeader,
       ProjectCategory.emergency => _emergencyCoLeader,
-      _ => forCategory(category),
+      ProjectCategory.investment => _investmentStopContributions,
     };
   }
 
@@ -142,7 +153,7 @@ class SuccessVoteCastCopy {
     voteNoLabel: AppStrings.successVoteCastEmergencyVoteNo,
   );
 
-  static const SuccessVoteCastCopy _investment = SuccessVoteCastCopy(
+  static const SuccessVoteCastCopy _investmentStopContributions = SuccessVoteCastCopy(
     pendingBannerTitle: AppStrings.successVoteCastInvestmentPendingBannerTitle,
     pendingBannerBody: AppStrings.successVoteCastInvestmentPendingBannerBody,
     agreedTitle: AppStrings.successVoteCastInvestmentAgreedTitle,

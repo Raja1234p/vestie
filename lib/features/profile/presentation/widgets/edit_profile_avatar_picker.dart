@@ -69,7 +69,10 @@ class EditProfileAvatarPicker extends StatelessWidget {
               title: const AppText(AppStrings.takePhoto),
               onTap: () {
                 sheetContext.pop();
-                _pick(context, ImageSource.camera);
+                AppPermissionHelper.runAfterModalClosed(
+                  context,
+                  () => _pick(context, ImageSource.camera),
+                );
               },
             ),
             ListTile(
@@ -81,7 +84,10 @@ class EditProfileAvatarPicker extends StatelessWidget {
               title: const AppText(AppStrings.chooseFromGallery),
               onTap: () {
                 sheetContext.pop();
-                _pick(context, ImageSource.gallery);
+                AppPermissionHelper.runAfterModalClosed(
+                  context,
+                  () => _pick(context, ImageSource.gallery),
+                );
               },
             ),
           ],

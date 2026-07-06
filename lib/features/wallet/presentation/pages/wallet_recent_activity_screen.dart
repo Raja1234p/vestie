@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:vestie/core/constants/app_dimens.dart';
@@ -10,6 +11,7 @@ import 'package:vestie/core/presentation/widgets/list_load_more_footer.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_error_view.dart';
+import 'package:vestie/core/widgets/common/app_shimmer.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/features/wallet/presentation/cubit/wallet_transactions_cubit.dart';
@@ -86,7 +88,16 @@ class _WalletRecentActivityScreenState extends State<WalletRecentActivityScreen>
                         0,
                       ),
                       child: state.loading
-                          ? const Center(child: CircularProgressIndicator())
+                          ? ListView.builder(
+                              padding: EdgeInsets.only(top: 16.h, bottom: 16.h),
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: 7,
+                              itemBuilder: (_, __) => Padding(
+                                padding: EdgeInsets.only(bottom: 10.h),
+                                child: const WalletRecentActivityRowShimmer(),
+                              ),
+                            )
                           : state.hasLoadError
                           ? AppErrorView(
                               message: state.errorMessage ?? AppStrings.errorGeneric,

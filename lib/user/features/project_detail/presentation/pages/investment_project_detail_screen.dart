@@ -17,6 +17,8 @@ import 'package:vestie/features/project_detail/presentation/navigation/project_d
 import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_announcements_section.dart';
 import '../widgets/investment_detail_preview_button.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_completed_outcome_extensions.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_detail_completed_vote_outcome_content.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/investment_completed_detail_content.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_member_vff_send_actions.dart';
@@ -178,14 +180,16 @@ class _InvestmentProjectDetailBodyState
             if (state is ProjectDetailLoaded) {
               final project = state.project;
               final pendingCount = state.pendingJoinRequestCount;
-              final isCompleted = project.status == ProjectStatus.completed ||
-                  project.projectBannerStatus ==
-                      ProjectDetailBannerStatus.completed;
-              final showCompletedLayout =
-                  isCompleted || _previewCompletedInvestment;
+              final showCompletedOutcome =
+                  project.showsCompletedProjectVoteOutcome ||
+                  _previewCompletedInvestment;
+              final showDistributionLayout =
+                  project.showsInvestmentDistributionActions &&
+                  !showCompletedOutcome;
               final showMemberCastVotePreview =
                   project.isMemberView &&
-                  !showCompletedLayout &&
+                  !showDistributionLayout &&
+                  !showCompletedOutcome &&
                   _previewCastVote;
 
               Future<void> refreshDetail() async {
@@ -248,7 +252,9 @@ class _InvestmentProjectDetailBodyState
                 );
               }
 
-              if (project.showsInlineMemberVoteFlow && !showCompletedLayout) {
+              if (project.showsInlineMemberVoteFlow &&
+                  !showDistributionLayout &&
+                  !showCompletedOutcome) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -301,16 +307,33 @@ class _InvestmentProjectDetailBodyState
                                     crossAxisAlignment:
                                         CrossAxisAlignment.stretch,
                                     children: [
-                                      if (!isCompleted)
+                                      if (!showCompletedOutcome)
                                         InvestmentDetailPreviewButton(
                                           onPressed: () => setState(
                                             () => _previewCompletedInvestment =
                                                 true,
                                           ),
                                         ),
-                                      if (showCompletedLayout)
+                                      if (showCompletedOutcome)
+                                        ProjectDetailCompletedVoteOutcomeContent(
+                                          project: project,
+                                          onMemberTap: (m) => openMemberDetail(m),
+                                          onSendVffRequest: (member) =>
+                                              sendMemberVffFromProjectDetail(
+                                                context,
+                                                member: member,
+                                              ),
+                                          sendingVffUserId: state.sendingVffUserId,
+                                          onDeleteAnnouncement:
+                                              project.isModeratorView
+                                              ? _deleteAnnouncement
+                                              : null,
+                                        )
+                                      else if (showDistributionLayout)
                                         InvestmentCompletedDetailContent(
                                           project: project,
+                                          displayAsCompleted: false,
+                                          showCompletedNotice: false,
                                           onMemberTap: (m) => openMemberDetail(m),
                                           onSendVffRequest: (member) =>
                                               sendMemberVffFromProjectDetail(

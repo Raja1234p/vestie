@@ -7,12 +7,8 @@ import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/app/router/route_args/project_detail_flow_args.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
-import 'package:vestie/core/di/service_locator.dart';
-import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/core/theme/app_colors.dart';
-import 'package:vestie/core/widgets/common/app_action_dialog.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
-import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_closure_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
@@ -21,7 +17,7 @@ import 'package:vestie/features/project_detail/presentation/mappers/project_deta
 import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation.dart';
 
 /// Week 11+ voting card on project detail — switches on [ProjectVotingStatus].
-class ProjectDetailVotingCard extends StatefulWidget {
+class ProjectDetailVotingCard extends StatelessWidget {
   final ProjectDetailEntity project;
   final Future<void> Function() onRefresh;
 
@@ -31,26 +27,7 @@ class ProjectDetailVotingCard extends StatefulWidget {
     required this.onRefresh,
   });
 
-  @override
-  State<ProjectDetailVotingCard> createState() =>
-      _ProjectDetailVotingCardState();
-}
-
-class _ProjectDetailVotingCardState extends State<ProjectDetailVotingCard> {
-  bool _isSubmitting = false;
-
-  ProjectDetailEntity get project => widget.project;
-
-  Future<void> _runAction(Future<bool> Function() action) async {
-    if (_isSubmitting) return;
-    setState(() => _isSubmitting = true);
-    final ok = await action();
-    if (!mounted) return;
-    setState(() => _isSubmitting = false);
-    if (ok) await widget.onRefresh();
-  }
-
-  void _onStartVoting() {
+  void _onStartVoting(BuildContext context) {
     final flowKind = project.resolveLeaderVotingFlowKindForStart();
     context.push(
       AppRoutes.votingWindow,
@@ -62,64 +39,12 @@ class _ProjectDetailVotingCardState extends State<ProjectDetailVotingCard> {
     );
   }
 
-  void _onViewVotes() {
+  void _onViewVotes(BuildContext context) {
     ProjectDetailNavigation.openLeaderViewSuccessVotes(
       context,
       project: project,
     );
   }
-
-  Future<bool> _onFinalize() async {
-    final totalMembers = project.members.isNotEmpty
-        ? project.members.length
-        : (project.voting?.totalVotes ?? 1);
-    final majority = closureVoteMajorityRequired(totalMembers);
-
-    final confirmed = await AppActionDialog.showAsync(
-      context,
-      title: AppStrings.btnFinalizeDecision,
-      description: AppStrings.leaderSuccessVoteMajorityNeeded(
-        majority,
-        totalMembers,
-      ),
-      primaryLabel: AppStrings.btnFinalizeDecision,
-      showSecondary: true,
-      primaryColor: AppColors.green800,
-      onPrimary: () async {
-        final result = await ServiceLocator.instance.finalizeClosureVotingUseCase(
-          projectId: project.id,
-        );
-        return result.fold(
-          (failure) {
-            if (mounted) {
-              AppToast.showError(
-                context,
-                FailureMapper.userMessage(failure),
-              );
-            }
-            return false;
-          },
-          (finalizeResult) async {
-            if (!mounted) return true;
-            await ProjectDetailNavigation.reloadProjectDetailAndWait(
-              context,
-              projectId: project.id,
-            );
-            if (!mounted) return true;
-            ProjectDetailNavigation.openClosureVoteOutcome(
-              context,
-              project: project,
-              finalizeResult: finalizeResult,
-            );
-            return true;
-          },
-        );
-      },
-    );
-    return confirmed;
-  }
-
-  Future<bool> _onCloseVoting() => _onFinalize();
 
   @override
   Widget build(BuildContext context) {
@@ -146,24 +71,17 @@ class _ProjectDetailVotingCardState extends State<ProjectDetailVotingCard> {
           switch (project.votingStatus) {
             ProjectVotingStatus.notStarted => _NotStartedBody(
               project: project,
-              isSubmitting: _isSubmitting,
-              onStartVoting: _onStartVoting,
+              onStartVoting: () => _onStartVoting(context),
             ),
             ProjectVotingStatus.pending => _PendingOrDoneBody(
               project: project,
-              isSubmitting: _isSubmitting,
               showResultSummary: false,
-              onViewVotes: _onViewVotes,
-              onCloseVoting: () => _runAction(_onCloseVoting),
-              onFinalize: () => _runAction(_onFinalize),
+              onViewVotes: () => _onViewVotes(context),
             ),
             ProjectVotingStatus.done => _PendingOrDoneBody(
               project: project,
-              isSubmitting: _isSubmitting,
               showResultSummary: true,
-              onViewVotes: _onViewVotes,
-              onCloseVoting: () => _runAction(_onCloseVoting),
-              onFinalize: () => _runAction(_onFinalize),
+              onViewVotes: () => _onViewVotes(context),
             ),
           },
         ],
@@ -174,12 +92,10 @@ class _ProjectDetailVotingCardState extends State<ProjectDetailVotingCard> {
 
 class _NotStartedBody extends StatelessWidget {
   final ProjectDetailEntity project;
-  final bool isSubmitting;
   final VoidCallback onStartVoting;
 
   const _NotStartedBody({
     required this.project,
-    required this.isSubmitting,
     required this.onStartVoting,
   });
 
@@ -200,12 +116,11 @@ class _NotStartedBody extends StatelessWidget {
           SizedBox(height: 14.h),
           AppButton(
             text: AppStrings.btnStartVoting,
-            isLoading: isSubmitting,
             useGradient: false,
             hasShadow: false,
             color: AppColors.green800,
             borderRadius: AppRadius.r100,
-            onPressed: isSubmitting ? null : onStartVoting,
+            onPressed: onStartVoting,
           ),
         ],
       ],
@@ -215,19 +130,13 @@ class _NotStartedBody extends StatelessWidget {
 
 class _PendingOrDoneBody extends StatelessWidget {
   final ProjectDetailEntity project;
-  final bool isSubmitting;
   final bool showResultSummary;
   final VoidCallback onViewVotes;
-  final VoidCallback onCloseVoting;
-  final VoidCallback onFinalize;
 
   const _PendingOrDoneBody({
     required this.project,
-    required this.isSubmitting,
     required this.showResultSummary,
     required this.onViewVotes,
-    required this.onCloseVoting,
-    required this.onFinalize,
   });
 
   @override
@@ -293,36 +202,12 @@ class _PendingOrDoneBody extends StatelessWidget {
           SizedBox(height: 14.h),
           AppButton(
             text: AppStrings.btnViewVotes,
-            onPressed: isSubmitting ? null : onViewVotes,
+            onPressed: onViewVotes,
             useGradient: false,
             hasShadow: false,
             color: AppColors.grey1200,
             borderRadius: AppRadius.r100,
           ),
-          if (project.canCloseVotingOnDetail) ...[
-            SizedBox(height: 10.h),
-            AppButton(
-              text: AppStrings.btnCloseVoting,
-              isLoading: isSubmitting,
-              onPressed: isSubmitting ? null : onCloseVoting,
-              useGradient: false,
-              hasShadow: false,
-              color: AppColors.green800,
-              borderRadius: AppRadius.r100,
-            ),
-          ],
-          if (project.canFinalizeVotingOnDetail) ...[
-            SizedBox(height: 10.h),
-            AppButton(
-              text: AppStrings.btnFinalizeDecision,
-              isLoading: isSubmitting,
-              onPressed: isSubmitting ? null : onFinalize,
-              useGradient: false,
-              hasShadow: false,
-              color: AppColors.green800,
-              borderRadius: AppRadius.r100,
-            ),
-          ],
         ],
       ],
     );

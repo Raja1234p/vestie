@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
@@ -106,7 +105,10 @@ class CreateProjectSavingSettingsScreen extends StatelessWidget {
                     hasShadow: false,
                     color: AppColors.neutral1200,
                     borderRadius: 10.r,
-                    onPressed: () => context.push(AppRoutes.createProjectReview),
+                    onPressed: () => pushBeforeCreateProjectReview(
+                      context,
+                      editFlow: entryMode.isEditFlow,
+                    ),
                   ),
                 ),
               ],

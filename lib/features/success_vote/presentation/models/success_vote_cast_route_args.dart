@@ -15,6 +15,7 @@ class SuccessVoteCastRouteArgs {
   final int? thumbsDown;
   final int? notYetVoted;
   final bool isPreview;
+  final bool isInvestmentStopContributionsVote;
 
   const SuccessVoteCastRouteArgs({
     this.projectId,
@@ -30,6 +31,7 @@ class SuccessVoteCastRouteArgs {
     this.thumbsDown,
     this.notYetVoted,
     this.isPreview = false,
+    this.isInvestmentStopContributionsVote = false,
   });
 }
 

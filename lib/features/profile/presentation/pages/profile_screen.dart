@@ -184,7 +184,10 @@ class _ProfileBody extends StatelessWidget {
               title: AppStrings.takePhoto,
               onTap: () {
                 Navigator.pop(sheetContext);
-                _pickAndUpload(context, ImageSource.camera);
+                AppPermissionHelper.runAfterModalClosed(
+                  context,
+                  () => _pickAndUpload(context, ImageSource.camera),
+                );
               },
             ),
             _PickerTile(
@@ -192,7 +195,10 @@ class _ProfileBody extends StatelessWidget {
               title: AppStrings.chooseFromGallery,
               onTap: () {
                 Navigator.pop(sheetContext);
-                _pickAndUpload(context, ImageSource.gallery);
+                AppPermissionHelper.runAfterModalClosed(
+                  context,
+                  () => _pickAndUpload(context, ImageSource.gallery),
+                );
               },
             ),
           ],

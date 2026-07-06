@@ -13,7 +13,7 @@ import 'package:vestie/features/project_detail/presentation/widgets/project_info
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_members_only_section.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_members_preview_section.dart';
 
-/// Completed investment project detail (Figma — raised, returns CTA, notice, members).
+/// Investment post-contribution / completed detail — raised summary, returns CTA, members.
 class InvestmentCompletedDetailContent extends StatelessWidget {
   final ProjectDetailEntity project;
   final ValueChanged<MemberEntity>? onMemberTap;
@@ -22,6 +22,8 @@ class InvestmentCompletedDetailContent extends StatelessWidget {
   final Future<bool> Function(String announcementId)? onDeleteAnnouncement;
   final bool hideInvestmentActions;
   final bool membersOnlyLayout;
+  final bool displayAsCompleted;
+  final bool showCompletedNotice;
 
   const InvestmentCompletedDetailContent({
     super.key,
@@ -32,11 +34,13 @@ class InvestmentCompletedDetailContent extends StatelessWidget {
     this.onDeleteAnnouncement,
     this.hideInvestmentActions = false,
     this.membersOnlyLayout = false,
+    this.displayAsCompleted = true,
+    this.showCompletedNotice = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    final memberNotice = !project.isModeratorView
+    final memberNotice = showCompletedNotice && !project.isModeratorView
         ? CompletedProjectNoticeCopy.forCategory(project.category)
         : null;
     return Column(
@@ -48,7 +52,10 @@ class InvestmentCompletedDetailContent extends StatelessWidget {
           onDeleteAnnouncement: onDeleteAnnouncement,
           gapAfter: 12.h,
         ),
-        ProjectInfoCard(project: project, displayAsCompleted: true),
+        ProjectInfoCard(
+          project: project,
+          displayAsCompleted: displayAsCompleted,
+        ),
         if (!hideInvestmentActions) ...[
           SizedBox(height: 16.h),
           AppButton(

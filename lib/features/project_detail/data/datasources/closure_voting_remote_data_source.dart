@@ -21,8 +21,6 @@ abstract class ClosureVotingRemoteDataSource {
 
   /// Returns `null` when no open vote (`404`).
   Future<ActiveClosureVoteResponseModel?> getActive(String projectId);
-
-  Future<FinalizeClosureVoteResponseModel> finalize(String projectId);
 }
 
 class ClosureVotingRemoteDataSourceImpl implements ClosureVotingRemoteDataSource {
@@ -86,15 +84,5 @@ class ClosureVotingRemoteDataSourceImpl implements ClosureVotingRemoteDataSource
       if (e.response?.statusCode == 404) return null;
       throw FailureMapper.fromDioException(e);
     }
-  }
-
-  @override
-  Future<FinalizeClosureVoteResponseModel> finalize(String projectId) async {
-    final data = await apiClient.post<dynamic>(
-      ApiConstants.projectClosureVotingFinalize(projectId),
-    );
-    return FinalizeClosureVoteResponseModel.fromJson(
-      parseClosureVotingResponseMap(data),
-    );
   }
 }

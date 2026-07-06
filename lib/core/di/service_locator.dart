@@ -206,7 +206,6 @@ class ServiceLocator {
   late final RemoveForNonRepaymentUseCase removeForNonRepaymentUseCase;
   late final CastClosureVoteUseCase castClosureVoteUseCase;
   late final ExtendClosureVotingUseCase extendClosureVotingUseCase;
-  late final FinalizeClosureVotingUseCase finalizeClosureVotingUseCase;
   late final ResolveGoalUseCase resolveGoalUseCase;
   late final ExtendDeadlineUseCase extendDeadlineUseCase;
   late final CompleteProjectUseCase completeProjectUseCase;
@@ -380,7 +379,6 @@ class ServiceLocator {
     args: args,
     projectDetailRepository: projectDetailRepository,
     getActiveClosureVoteUseCase: getActiveClosureVoteUseCase,
-    finalizeClosureVotingUseCase: finalizeClosureVotingUseCase,
   );
 
   InvestmentReturnsCubit createInvestmentReturnsCubit(

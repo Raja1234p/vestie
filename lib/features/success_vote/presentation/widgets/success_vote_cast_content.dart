@@ -62,6 +62,8 @@ class _SuccessVoteCastContentState extends State<SuccessVoteCastContent> {
   SuccessVoteCastCopy get _copy => SuccessVoteCastCopy.forViewer(
     category: widget.data.projectCategory,
     isCoLeader: widget.data.isCoLeader,
+    isInvestmentStopContributionsVote:
+        widget.data.isInvestmentStopContributionsVote,
   );
 
   Future<void> _castVote(bool voteForSuccess) async {

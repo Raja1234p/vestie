@@ -156,7 +156,9 @@ class BorrowRepayPreviewModel {
   });
 
   factory BorrowRepayPreviewModel.fromJson(Map<String, dynamic> json) {
-    final penaltyJson = json['penalty'];
+    final principalAmount = (json['principalAmount'] as num?)?.toDouble() ?? 0;
+    final totalRepayment = (json['totalRepayment'] as num?)?.toDouble() ?? 0;
+
     return BorrowRepayPreviewModel(
       borrowRequestId: (json['borrowRequestId'] as String?) ?? '',
       projectId: (json['projectId'] as String?) ?? '',
@@ -166,12 +168,51 @@ class BorrowRepayPreviewModel {
       paymentSourceType: (json['paymentSourceType'] as String?) ?? '',
       paymentMethodDisplay: (json['paymentMethodDisplay'] as String?) ?? '',
       dueDate: json['dueDate'] as String?,
-      principalAmount: (json['principalAmount'] as num?)?.toDouble() ?? 0,
-      penalty: penaltyJson is Map
-          ? BorrowRepayPenaltyModel.fromJson(penaltyJson.cast())
-          : null,
-      totalRepayment: (json['totalRepayment'] as num?)?.toDouble() ?? 0,
+      principalAmount: principalAmount,
+      penalty: _parsePreviewPenalty(
+        json,
+        principalAmount: principalAmount,
+        totalRepayment: totalRepayment,
+      ),
+      totalRepayment: totalRepayment,
     );
+  }
+
+  /// Preview may send nested `penalty`, flat `penaltyAmount` / `penaltyPercentage`
+  /// (same as GET repay summary), or only principal + total.
+  static BorrowRepayPenaltyModel? _parsePreviewPenalty(
+    Map<String, dynamic> json, {
+    required double principalAmount,
+    required double totalRepayment,
+  }) {
+    final penaltyJson = json['penalty'];
+    if (penaltyJson is Map) {
+      final parsed = BorrowRepayPenaltyModel.fromJson(penaltyJson.cast());
+      if (parsed.amount > 0 || parsed.percentage > 0) return parsed;
+    }
+
+    final rootAmount = (json['penaltyAmount'] as num?)?.toDouble() ?? 0;
+    final rootPercent = (json['penaltyPercentage'] as num?)?.toDouble() ?? 0;
+    if (rootAmount > 0 || rootPercent > 0) {
+      return BorrowRepayPenaltyModel(
+        percentage: rootPercent,
+        amount: rootAmount,
+        display: (json['penaltyDisplay'] as String?) ?? '',
+      );
+    }
+
+    if (principalAmount > 0 && totalRepayment > principalAmount) {
+      final amount = totalRepayment - principalAmount;
+      if (amount > 0.009) {
+        return BorrowRepayPenaltyModel(
+          percentage: (amount / principalAmount) * 100,
+          amount: amount,
+          display: '',
+        );
+      }
+    }
+
+    return null;
   }
 }
 
@@ -188,8 +229,14 @@ class BorrowRepayPenaltyModel {
 
   factory BorrowRepayPenaltyModel.fromJson(Map<String, dynamic> json) {
     return BorrowRepayPenaltyModel(
-      percentage: (json['percentage'] as num?)?.toDouble() ?? 0,
-      amount: (json['amount'] as num?)?.toDouble() ?? 0,
+      percentage:
+          (json['percentage'] as num?)?.toDouble() ??
+          (json['penaltyPercentage'] as num?)?.toDouble() ??
+          0,
+      amount:
+          (json['amount'] as num?)?.toDouble() ??
+          (json['penaltyAmount'] as num?)?.toDouble() ??
+          0,
       display: (json['display'] as String?) ?? '',
     );
   }

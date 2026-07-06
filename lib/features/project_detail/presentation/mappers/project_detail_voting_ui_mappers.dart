@@ -1,6 +1,8 @@
 import 'package:intl/intl.dart';
 
+import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_closure_extensions.dart';
 import 'package:vestie/features/project_detail/presentation/mappers/closure_vote_ui_mappers.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_cast_ui_data.dart';
 
@@ -48,5 +50,7 @@ SuccessVoteCastUiData successVoteCastUiDataFromProjectDetail(
     thumbsDown: summary?.disagreedCount ?? vote?.thumbsDown ?? 0,
     notVoted: summary?.pendingCount ?? vote?.notYetVoted ?? 0,
     memberVotes: summary?.memberVotes ?? const [],
+    isInvestmentStopContributionsVote:
+        project.category.isInvestment && project.isStopContributionsClosureVote,
   );
 }

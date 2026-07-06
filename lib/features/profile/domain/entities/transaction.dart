@@ -31,8 +31,8 @@ class Transaction {
   }
 
   /// Filter category mapping
-  bool get isDeposit =>
-      type == TransactionType.deposit || type == TransactionType.borrow;
+  bool get isDeposit => type == TransactionType.deposit;
+  bool get isBorrow => type == TransactionType.borrow;
   bool get isWithdrawal =>
       type == TransactionType.lend || type == TransactionType.withdrawal;
   bool get isContribution => type == TransactionType.contribution;

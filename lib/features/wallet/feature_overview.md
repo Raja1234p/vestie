@@ -40,6 +40,7 @@ Wallet tab, deposit (Stripe PaymentSheet), withdraw (preview/submit/poll), recen
 | Flow | Endpoints |
 |------|-----------|
 | Balances + activity | `GET /wallet` (`recentTransactions[]`) |
+| Full activity + profile history | `GET /wallet/transactions?page=&pageSize=` |
 | Deposit | `POST /wallet/deposit/intent` → SDK → poll status |
 | Withdraw | `POST /wallet/withdrawals/preview`, `POST /wallet/withdrawals`, poll status |
 

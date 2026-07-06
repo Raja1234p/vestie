@@ -33,6 +33,10 @@ import 'package:vestie/leader/features/create_project/presentation/pages/create_
 
 import 'package:vestie/leader/features/create_project/presentation/pages/create_project_saving_settings_screen.dart';
 
+import 'package:vestie/leader/features/create_project/presentation/pages/create_project_upload_images_screen.dart';
+
+import 'package:vestie/leader/features/create_project/presentation/pages/create_project_selected_images_screen.dart';
+
 import 'package:vestie/app/router/route_args/create_project_success_route_args.dart';
 import 'package:vestie/leader/features/create_project/presentation/pages/create_project_success_screen.dart';
 
@@ -199,6 +203,18 @@ List<RouteBase> buildCoreRoutes() {
       builder: (context, state) => CreateProjectInvestmentSettingsScreen(
         entryMode: createProjectEntryModeFromExtra(state.extra),
       ),
+    ),
+
+    GoRoute(
+      path: AppRoutes.createProjectUploadImages,
+
+      builder: (context, _) => const CreateProjectUploadImagesScreen(),
+    ),
+
+    GoRoute(
+      path: AppRoutes.createProjectSelectedImages,
+
+      builder: (context, _) => const CreateProjectSelectedImagesScreen(),
     ),
 
     GoRoute(

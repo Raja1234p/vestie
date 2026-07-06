@@ -83,5 +83,45 @@ void main() {
       expect(entity.penaltyPercent, 15);
       expect(entity.totalRepayment, 345);
     });
+
+    test('fromJson maps flat penaltyAmount on preview root', () {
+      final model = BorrowRepayPreviewModel.fromJson({
+        'borrowRequestId': 'req-1',
+        'projectId': 'proj-1',
+        'projectName': 'Europe 2025',
+        'repayAmount': 345,
+        'currency': 'USD',
+        'paymentSourceType': 'Card',
+        'paymentMethodDisplay': 'Visa •••• 4242',
+        'dueDate': '2026-06-01T00:00:00Z',
+        'principalAmount': 300,
+        'penaltyAmount': 45,
+        'penaltyPercentage': 15,
+        'totalRepayment': 345,
+      });
+
+      final entity = BorrowRepayMapper.toPreviewEntity(model);
+      expect(entity.penaltyAmount, 45);
+      expect(entity.penaltyPercent, 15);
+    });
+
+    test('fromJson derives penalty from principal and total when omitted', () {
+      final model = BorrowRepayPreviewModel.fromJson({
+        'borrowRequestId': 'req-1',
+        'projectId': 'proj-1',
+        'projectName': 'Europe 2025',
+        'repayAmount': 345,
+        'currency': 'USD',
+        'paymentSourceType': 'Wallet',
+        'paymentMethodDisplay': 'Wallet',
+        'dueDate': '2026-06-01T00:00:00Z',
+        'principalAmount': 300,
+        'totalRepayment': 345,
+      });
+
+      final entity = BorrowRepayMapper.toPreviewEntity(model);
+      expect(entity.penaltyAmount, 45);
+      expect(entity.penaltyPercent, 15);
+    });
   });
 }

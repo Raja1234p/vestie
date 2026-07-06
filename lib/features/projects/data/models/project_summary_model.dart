@@ -35,8 +35,11 @@ class ProjectSummaryModel extends ProjectSummaryEntity {
       state: projectListStateLabel(json),
       targetAmount: json.safeDouble('targetAmount'),
       raisedAmount: json.safeDouble('raisedAmount'),
-      maxMembers: json.safeInt('maxMembers'),
-      endsAtUtc: json.safeDateTimeUtc('endsAtUtc'),
+      maxMembers: json['maxMembers'] != null
+          ? json.safeInt('maxMembers')
+          : json.safeInt('memberCount'),
+      endsAtUtc: json.safeDateTimeUtc('endsAtUtc') ??
+          json.safeDateTimeUtc('completedAtUtc'),
       launchedAtUtc: json.safeDateTimeUtc('launchedAtUtc'),
       borrowingEnabled: json.safeBool('borrowingEnabled'),
       suggestedContributionAmount: json.safeDoubleNullable(

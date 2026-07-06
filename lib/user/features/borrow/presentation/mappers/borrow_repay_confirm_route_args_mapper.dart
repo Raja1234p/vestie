@@ -16,7 +16,9 @@ abstract final class BorrowRepayConfirmRouteArgsMapper {
           ? preview.projectName
           : fallbackProjectName,
       borrowRequestId: preview.borrowRequestId,
-      repayAmount: preview.repayAmount,
+      repayAmount: preview.principalAmount > 0
+          ? preview.principalAmount
+          : preview.repayAmount,
       totalRepayment: preview.totalRepayment,
       dueDateLabel: preview.dueDateLabel,
       paymentMethodLabel: preview.paymentMethodDisplay,

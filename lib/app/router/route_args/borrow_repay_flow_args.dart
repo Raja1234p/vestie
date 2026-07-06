@@ -30,7 +30,7 @@ class BorrowRepayConfirmRouteArgs {
     this.successMessage,
   });
 
-  bool get showsPenalty => penaltyPercent > 0 && penaltyAmount > 0;
+  bool get showsPenalty => penaltyAmount > 0;
 }
 
 /// Payment method picker for borrow repay (Week 8 API).

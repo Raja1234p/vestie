@@ -4,6 +4,8 @@ import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/features/project_detail/domain/entities/closure_vote_entities.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_closure_extensions.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_completed_outcome_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_voting_entities.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_cast_route_args.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_role.dart';
@@ -11,6 +13,7 @@ import 'package:vestie/features/success_vote/presentation/models/success_vote_ou
 import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_ui_data.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_variant.dart';
 import 'package:vestie/leader/features/project_detail/presentation/models/leader_success_vote_progress_ui_data.dart';
+import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
 
 /// Formats closure vote deadline for cast / monitor screens.
 String formatClosureVoteDeadlineLabel(DateTime deadlineUtc) {
@@ -191,6 +194,7 @@ SuccessVoteCastRouteArgs successVoteCastRouteArgsFromProject(
     thumbsUp: vote?.thumbsUp,
     thumbsDown: vote?.thumbsDown,
     notYetVoted: vote?.notYetVoted,
+    isInvestmentStopContributionsVote: project.isStopContributionsClosureVote,
   );
 }
 
@@ -256,4 +260,47 @@ SuccessVoteOutcomeRouteArgs successVoteOutcomeRouteArgsFromFinalize({
     project: role.isModerator ? project : null,
     projectCategory: project.category,
   );
+}
+
+/// Completed project detail — approved / rejected / refund outcome block.
+SuccessVoteOutcomeUiData successVoteOutcomeUiDataFromProjectDetail(
+  ProjectDetailEntity project,
+) {
+  final voting = project.voting;
+  final eligibleTotal = closureVoteEligibleMemberCountFromProject(project);
+
+  if (voting != null && project.hasCompletedVoteTallies) {
+    final tallied =
+        voting.agreedCount + voting.disagreedCount + voting.pendingCount;
+    final total = tallied > 0 ? tallied : eligibleTotal;
+    return SuccessVoteOutcomeUiData(
+      isApproved: project.isClosureVoteOutcomeApproved,
+      amountUsd: project.currentAmount,
+      agreedCount: voting.agreedCount,
+      disagreedCount: voting.disagreedCount,
+      totalMemberCount: total > 0 ? total : 1,
+    );
+  }
+
+  final total = eligibleTotal > 0 ? eligibleTotal : 1;
+  final approved = project.isClosureVoteOutcomeApproved;
+  final majority = total <= 1 ? 1 : (total / 2).floor() + 1;
+  return SuccessVoteOutcomeUiData(
+    isApproved: approved,
+    amountUsd: project.currentAmount,
+    agreedCount: approved ? majority : total - majority,
+    disagreedCount: approved ? total - majority : majority,
+    totalMemberCount: total,
+  );
+}
+
+SuccessVoteOutcomeVariant completedOutcomeVariantFromProjectDetail(
+  ProjectDetailEntity project,
+) {
+  if (project.category.isInvestment &&
+      !project.investmentContributionsAreClosed &&
+      !project.isClosureVoteOutcomeApproved) {
+    return SuccessVoteOutcomeVariant.stopContributionsRejected;
+  }
+  return SuccessVoteOutcomeVariant.successVote;
 }

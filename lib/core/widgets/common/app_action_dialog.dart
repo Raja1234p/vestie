@@ -110,10 +110,12 @@ class AppActionDialog extends StatelessWidget {
     Color? iconColor,
     bool actionsInRow = false,
     bool barrierDismissible = true,
+    bool useRootNavigator = false,
     required VoidCallback onPrimary,
   }) {
     return showDialog(
       context: context,
+      useRootNavigator: useRootNavigator,
       barrierDismissible: barrierDismissible,
       builder: (_) => Dialog(
         backgroundColor: Colors.transparent,

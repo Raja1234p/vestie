@@ -83,31 +83,36 @@ class _WalletMoneyActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final walletArgs = ProjectDetailNavigation.walletArgs(project);
+    final showContribute = project.showsContributeAction;
+    final showBorrow = project.showsBorrowAction;
+
+    if (!showContribute && !showBorrow) {
+      return const SizedBox.shrink();
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        AppButton(
-          text: AppStrings.btnContribute,
-          onPressed: () async {
-            final accepted = await RiskDisclaimerGate.ensureAccepted(context);
-            if (!accepted || !context.mounted) return;
-            final result = await context.push<ContributionSubmitResultModel>(
-              AppRoutes.contributeFlow,
-              extra: walletArgs,
-            );
-            if (!context.mounted || result == null) return;
-            await ProjectDetailNavigation.refreshAfterContribution(
-              context,
-              projectId: project.id,
-              submitResult: result,
-            );
-          },
-        ),
-        if (project.showsBorrowAction) ...[
-          SizedBox(height: 13.h),
-          _BorrowButton(project: project, walletArgs: walletArgs),
-        ],
+        if (showContribute)
+          AppButton(
+            text: AppStrings.btnContribute,
+            onPressed: () async {
+              final accepted = await RiskDisclaimerGate.ensureAccepted(context);
+              if (!accepted || !context.mounted) return;
+              final result = await context.push<ContributionSubmitResultModel>(
+                AppRoutes.contributeFlow,
+                extra: walletArgs,
+              );
+              if (!context.mounted || result == null) return;
+              await ProjectDetailNavigation.refreshAfterContribution(
+                context,
+                projectId: project.id,
+                submitResult: result,
+              );
+            },
+          ),
+        if (showContribute && showBorrow) SizedBox(height: 13.h),
+        if (showBorrow) _BorrowButton(project: project, walletArgs: walletArgs),
       ],
     );
   }

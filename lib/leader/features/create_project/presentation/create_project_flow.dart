@@ -57,7 +57,7 @@ String? createProjectInvestmentSettingsStepBadge(
   return '3/${form.flowType.wizardStepTotal}';
 }
 
-/// After validating details, routes to Saving settings, Borrowing settings, or Review.
+/// After validating details, routes to Saving settings, Borrowing settings, or Upload images.
 void pushNextAfterDetailsStep(
   BuildContext context,
   CreateProjectCubit cubit, {
@@ -93,11 +93,23 @@ void pushNextAfterDetailsStep(
     case ProjectCreationFlowType.fundsBorrowing:
       context.push(AppRoutes.createProjectFundsBorrowing, extra: settingsExtra);
     case ProjectCreationFlowType.streamlined:
-      context.push(AppRoutes.createProjectReview);
+      pushBeforeCreateProjectReview(context, editFlow: entryMode.isEditFlow);
     case ProjectCreationFlowType.investmentOptionalRoi:
       context.push(
         AppRoutes.createProjectInvestmentSettings,
         extra: settingsExtra,
       );
   }
+}
+
+/// Upload images step for create wizard; edit flows skip straight to review.
+void pushBeforeCreateProjectReview(
+  BuildContext context, {
+  required bool editFlow,
+}) {
+  if (editFlow) {
+    context.push(AppRoutes.createProjectReview);
+    return;
+  }
+  context.push(AppRoutes.createProjectUploadImages);
 }

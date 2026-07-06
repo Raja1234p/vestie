@@ -13,13 +13,18 @@ class WalletRecentTransactionModel extends WalletRecentTransactionEntity {
   });
 
   factory WalletRecentTransactionModel.fromJson(Map<String, dynamic> json) {
+    final description = json['description']?.toString().trim();
+    final title = (description != null && description.isNotEmpty)
+        ? description
+        : json.safeString('title');
+
     return WalletRecentTransactionModel(
       id: json.safeString('id'),
       type: json.safeString('type'),
-      title: json.safeString('title'),
+      title: title,
       amount: json.safeDouble('amount'),
       direction: json.safeString('direction', defaultValue: 'Debit'),
-      dateUtc: _parseDate(json['date'] ?? json['createdAtUtc']),
+      dateUtc: _parseDate(json['createdAtUtc'] ?? json['date']),
     );
   }
 }

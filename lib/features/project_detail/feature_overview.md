@@ -39,6 +39,10 @@ On project detail load: Week 11+ `GET /projects/{id}` supplies `projectStatus`, 
 
 **Dev previews** (cast vote, vote outcome) are gated with `kDebugMode` only.
 
+**Closure vote finalize:** backend cron auto-`POST …/closure-voting/finalize` after deadline — app does not call finalize; leaders monitor via View Success Votes; project moves to completed on detail refresh.
+
+**Investment Distribute / Returns:** `showsInvestmentDistributionActions` on `ProjectDetailEntity` — visible on investment detail after the stop-contributions vote succeeds (`investmentContributionsAreClosed` + vote not in progress), while the project is still ongoing/funded. **Completed** projects use `ProjectDetailCompletedVoteOutcomeContent` (approved / rejected / refund copy from `SuccessVoteOutcomeCopy`).
+
 ## See also
 
 - `presentation/navigation/project_detail_navigation.dart`

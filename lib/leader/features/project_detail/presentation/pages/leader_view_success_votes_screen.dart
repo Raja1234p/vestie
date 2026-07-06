@@ -6,16 +6,12 @@ import 'package:go_router/go_router.dart';
 import 'package:vestie/app/router/route_args/project_detail_flow_args.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
-import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
-import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_error_view.dart';
-import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/leader/features/project_detail/presentation/cubit/leader_view_success_votes_cubit.dart';
 import 'package:vestie/leader/features/project_detail/presentation/cubit/leader_view_success_votes_state.dart';
-import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_scroll_insets.dart';
 import 'package:vestie/leader/features/project_detail/presentation/models/leader_success_vote_progress_ui_data.dart';
 import 'package:vestie/leader/features/project_detail/presentation/widgets/leader_success_vote/leader_success_vote_majority_banner.dart';
@@ -60,15 +56,7 @@ class _LeaderViewSuccessVotesProductionBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<LeaderViewSuccessVotesCubit, LeaderViewSuccessVotesState>(
-      listenWhen: (prev, curr) =>
-          prev.finalizeFailure != curr.finalizeFailure,
-      listener: (context, state) {
-        final failure = state.finalizeFailure;
-        if (failure != null) {
-          AppToast.showError(context, FailureMapper.userMessage(failure));
-        }
-      },
+    return BlocBuilder<LeaderViewSuccessVotesCubit, LeaderViewSuccessVotesState>(
       builder: (context, state) {
         return _LeaderViewSuccessVotesShell(
           projectName: args.projectName,
@@ -105,32 +93,7 @@ class _LeaderViewSuccessVotesProductionBody extends StatelessWidget {
 
     return _LeaderViewSuccessVotesContent(
       data: data,
-      canFinalize: state.canFinalize,
-      isFinalizing: state.isFinalizing,
       onRefresh: () => context.read<LeaderViewSuccessVotesCubit>().load(),
-      onFinalize: state.canFinalize && !state.isFinalizing
-          ? () async {
-              final result = await context
-                  .read<LeaderViewSuccessVotesCubit>()
-                  .finalizeVote();
-              if (!context.mounted || result == null) return;
-
-              final project = args.project;
-              if (project != null) {
-                ProjectDetailNavigation.openClosureVoteOutcome(
-                  context,
-                  project: project,
-                  finalizeResult: result,
-                  popCurrentRoute: true,
-                );
-                return;
-              }
-
-              if (context.canPop()) {
-                context.pop();
-              }
-            }
-          : null,
     );
   }
 }
@@ -166,17 +129,11 @@ class _LeaderViewSuccessVotesShell extends StatelessWidget {
 
 class _LeaderViewSuccessVotesContent extends StatelessWidget {
   final LeaderSuccessVoteProgressUiData data;
-  final bool canFinalize;
-  final bool isFinalizing;
   final Future<void> Function()? onRefresh;
-  final VoidCallback? onFinalize;
 
   const _LeaderViewSuccessVotesContent({
     required this.data,
-    this.canFinalize = false,
-    this.isFinalizing = false,
     this.onRefresh,
-    this.onFinalize,
   });
 
   @override
@@ -220,14 +177,6 @@ class _LeaderViewSuccessVotesContent extends StatelessWidget {
                           ),
                           SizedBox(height: 20.h),
                           LeaderSuccessVoteMemberList(members: data.members),
-                          if (canFinalize && onFinalize != null) ...[
-                            SizedBox(height: 24.h),
-                            AppButton(
-                              text: AppStrings.leaderSuccessVoteFinalizeButton,
-                              isLoading: isFinalizing,
-                              onPressed: onFinalize,
-                            ),
-                          ],
                         ],
                       ),
                     ),

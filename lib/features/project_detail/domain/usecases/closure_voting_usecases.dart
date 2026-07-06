@@ -36,14 +36,3 @@ class OpenStopContributionsVotingUseCase {
     );
   }
 }
-
-class FinalizeClosureVotingUseCase {
-  final ClosureVotingRepository repository;
-  FinalizeClosureVotingUseCase(this.repository);
-
-  Future<Either<Failure, FinalizeClosureVoteResultEntity>> call({
-    required String projectId,
-  }) {
-    return repository.finalizeClosureVoting(projectId);
-  }
-}

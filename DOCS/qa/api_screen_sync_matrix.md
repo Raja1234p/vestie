@@ -29,14 +29,17 @@ Use this when verifying **data on screen matches API** after actions (refresh, n
 | Wallet tab | `GET /wallet` | `WalletTabShimmer` | Tab open; after deposit/contribute/withdraw |
 | Recent activity (wallet) | `recentTransactions[]` from wallet | Part of wallet shimmer | Same as wallet |
 | Recent activity (wallet tab) | `recentTransactions[]` from wallet | Part of wallet shimmer | Same as wallet |
-| Transaction history (profile) | **Dedicated API (TBD)** | Shimmer then mock | N/A until new endpoint |
+| Recent activity (full screen) | `GET /wallet/transactions?page=&pageSize=` | `WalletRecentActivityRowShimmer`; load fail → `AppErrorView` + retry | `PaginatedScrollListener` load-more |
+| Transaction history (profile) | `GET /wallet/transactions?page=&pageSize=` | `WalletRecentActivityRowShimmer`; load fail → `AppErrorView` + retry | `PaginatedScrollListener` load-more; client-side type filters |
 | Contribute amount/confirm | `GET /wallet` (balance), preview client-side | — | — |
 | Contribute submit | `POST /projects/{id}/contributions` | — | Wallet tab; project detail reload |
 | Project detail | `GET /projects/{id}` | Shimmer | After contribute / announcement |
 | Project pot UI | `GET /projects/{id}/pot` | — | **Not wired to UI** |
 | Project funds history (ledger) | `GET /projects/{projectId}/funds-history` | `ProjectFundsHistoryListShimmer`; load fail → `AppErrorView` + retry | `PaginatedScrollListener` load-more; own Cubit load, independent of parent detail |
-| Completed projects list | `GET /projects/completed?page=&pageSize=` | `ProjectCardShimmer` list | `PaginatedScrollListener` load-more |
+| Completed projects list | `GET /projects/completed?page=&pageSize=` — list key `completedProjects` | `ProjectCardShimmer` list | `PaginatedScrollListener` load-more |
 | Completed project detail | `GET /projects/{id}` only | `ProjectDetailLoadingBody` | Pull-to-refresh; menu limited to Project fund history |
+| Investment detail — Distribute / Returns | `GET /projects/{id}` — funded phase only (`investmentContributionsAreClosed`, not completed) | — | Pull-to-refresh after vote finalize |
+| Investment / completed detail — vote outcome | `GET /projects/{id}` — `projectStatus: completed` or `cancelled`; `displayStatus` for approved vs refund | — | Profile completed list → outcome screen → detail |
 
 ---
 

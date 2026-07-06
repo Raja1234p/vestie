@@ -134,10 +134,12 @@ String projectStateApiValueToSummaryString(dynamic raw) {
   return s;
 }
 
-/// Prefers [displayStatus] from list payloads; falls back to [state] int/string.
+/// Prefers [displayStatus] from list payloads; falls back to [status] or [state].
 String projectListStateLabel(Map<String, dynamic> json) {
   final display = json.safeString('displayStatus');
   if (display.isNotEmpty) return display;
+  final status = json.safeString('status');
+  if (status.isNotEmpty) return status;
   return projectStateApiValueToSummaryString(json['state']);
 }
 

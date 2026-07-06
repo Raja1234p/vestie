@@ -17,7 +17,7 @@ class ProjectFundsHistorySummary extends StatelessWidget {
   final double totalContribution;
   final double activeBorrows;
 
-  /// Co-leader + investment use “Breakdown”; group leader pooled uses contribution history.
+  /// Group leader menu (all categories) and co-leader use “Breakdown”; members use contribution history.
   final bool useBreakdownSectionTitle;
 
   const ProjectFundsHistorySummary({

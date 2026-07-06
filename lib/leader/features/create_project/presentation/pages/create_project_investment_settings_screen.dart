@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/utils/percent_digits_input_formatter.dart';
@@ -158,7 +157,10 @@ class _CreateProjectInvestmentSettingsScreenState
                     borderRadius: 10.r,
                     onPressed: () {
                       if (!cubit.validateInvestmentOptionalRoi()) return;
-                      context.push(AppRoutes.createProjectReview);
+                      pushBeforeCreateProjectReview(
+                        context,
+                        editFlow: widget.entryMode.isEditFlow,
+                      );
                     },
                   ),
                 ),

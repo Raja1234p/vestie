@@ -56,11 +56,13 @@ GroupMembersRouteArgs _groupMembersArgs(ProjectDetailEntity project) {
   );
 }
 
-ProjectFundsHistoryRouteArgs _fundsHistoryArgs(ProjectDetailEntity project) {
+ProjectFundsHistoryRouteArgs _fundsHistoryArgs(
+  ProjectDetailEntity project, {
+  bool forLeaderMenu = false,
+}) {
   return ProjectFundsHistoryRouteArgs(
     projectId: project.id,
     isInvestment: project.category.isInvestment,
-    useBreakdownSectionTitle:
-        project.category.isInvestment || project.isCoLeader,
+    useBreakdownSectionTitle: forLeaderMenu || project.isCoLeader,
   );
 }

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vestie/features/project_detail/data/models/project_detail_response_model.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_closure_extensions.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_completed_outcome_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_voting_entities.dart';
 import 'package:vestie/features/project_detail/domain/entities/viewer_membership_role.dart';
@@ -316,6 +317,203 @@ void main() {
       ).withSyntheticClosureVoteFromDetailVoting();
 
       expect(project.showsViewContributionSuccessVoteAction, isFalse);
+    });
+  });
+
+  group('ProjectDetailEntity.showsContributeAction', () {
+    ProjectDetailEntity memberInvestment({
+      bool? apiCanStopContributions,
+      String projectLifecycleState = '',
+      String displayStatusLabel = '',
+    }) {
+      return ProjectDetailEntity(
+        id: 'p1',
+        name: 'Fund',
+        category: ProjectCategory.investment,
+        status: ProjectStatus.ongoing,
+        goalAmount: 10000,
+        currentAmount: 5000,
+        endsIn: '30d',
+        announcement: '',
+        members: const [],
+        borrowRequests: const [],
+        viewerRole: ViewerMembershipRole.member,
+        apiCanStopContributions: apiCanStopContributions,
+        projectLifecycleState: projectLifecycleState,
+        displayStatusLabel: displayStatusLabel,
+      );
+    }
+
+    test('true for investment member while contribution phase is open', () {
+      expect(
+        memberInvestment(apiCanStopContributions: true).showsContributeAction,
+        isTrue,
+      );
+    });
+
+    test('false after stop-contributions vote closes contribution phase', () {
+      expect(
+        memberInvestment(apiCanStopContributions: false).showsContributeAction,
+        isFalse,
+      );
+    });
+
+    test('false when project lifecycle is funded', () {
+      expect(
+        memberInvestment(projectLifecycleState: 'funded').showsContributeAction,
+        isFalse,
+      );
+    });
+
+    test('still true for vacation member regardless of canStopContributions',
+        () {
+      final project = ProjectDetailEntity(
+        id: 'p1',
+        name: 'Trip',
+        category: ProjectCategory.vacations,
+        status: ProjectStatus.ongoing,
+        goalAmount: 1000,
+        currentAmount: 0,
+        endsIn: '30d',
+        announcement: '',
+        members: const [],
+        borrowRequests: const [],
+        viewerRole: ViewerMembershipRole.member,
+        apiCanStopContributions: false,
+      );
+
+      expect(project.showsContributeAction, isTrue);
+    });
+  });
+
+  group('ProjectDetailEntity.showsInvestmentDistributionActions', () {
+    ProjectDetailEntity investmentProject({
+      ProjectStatus status = ProjectStatus.ongoing,
+      bool? apiCanStopContributions,
+      String projectLifecycleState = '',
+      ProjectVotingStatus votingStatus = ProjectVotingStatus.notStarted,
+      bool isFinalized = false,
+    }) {
+      return ProjectDetailEntity(
+        id: 'p1',
+        name: 'Fund',
+        category: ProjectCategory.investment,
+        status: status,
+        goalAmount: 10000,
+        currentAmount: 5000,
+        endsIn: '30d',
+        announcement: '',
+        members: const [],
+        borrowRequests: const [],
+        viewerRole: ViewerMembershipRole.groupLeader,
+        apiCanStopContributions: apiCanStopContributions,
+        projectLifecycleState: projectLifecycleState,
+        votingStatus: votingStatus,
+        hasWeek11ProjectDetailEnvelope: true,
+        detailUserRole: ProjectDetailUserRole.leader,
+        voting: votingStatus == ProjectVotingStatus.notStarted
+            ? null
+            : ProjectVotingSummaryEntity(
+                startedAtUtc: DateTime.utc(2026, 6, 1),
+                deadlineAtUtc: DateTime.utc(2026, 6, 30),
+                agreedCount: 2,
+                disagreedCount: 0,
+                pendingCount: 0,
+                isFinalized: isFinalized,
+              ),
+      );
+    }
+
+    test('hidden while stop-contributions vote is in progress', () {
+      expect(
+        investmentProject(
+          apiCanStopContributions: true,
+          votingStatus: ProjectVotingStatus.pending,
+        ).showsInvestmentDistributionActions,
+        isFalse,
+      );
+    });
+
+    test('shown after stop-contributions vote succeeds (funded, vote finalized)',
+        () {
+      expect(
+        investmentProject(
+          apiCanStopContributions: false,
+          projectLifecycleState: 'funded',
+          votingStatus: ProjectVotingStatus.done,
+          isFinalized: true,
+        ).showsInvestmentDistributionActions,
+        isTrue,
+      );
+    });
+
+    test('hidden when project is completed', () {
+      expect(
+        investmentProject(
+          status: ProjectStatus.completed,
+          apiCanStopContributions: false,
+          projectLifecycleState: 'funded',
+        ).showsInvestmentDistributionActions,
+        isFalse,
+      );
+    });
+
+    test('hidden for vacation projects', () {
+      final project = ProjectDetailEntity(
+        id: 'p1',
+        name: 'Trip',
+        category: ProjectCategory.vacations,
+        status: ProjectStatus.completed,
+        goalAmount: 1000,
+        currentAmount: 1000,
+        endsIn: '30d',
+        announcement: '',
+        members: const [],
+        borrowRequests: const [],
+      );
+
+      expect(project.showsInvestmentDistributionActions, isFalse);
+    });
+  });
+
+  group('ProjectDetailEntity completed vote outcome', () {
+    test('shows outcome UI when project is completed', () {
+      final project = ProjectDetailEntity(
+        id: 'p1',
+        name: 'Trip',
+        category: ProjectCategory.vacations,
+        status: ProjectStatus.completed,
+        goalAmount: 1000,
+        currentAmount: 900,
+        endsIn: '30d',
+        announcement: '',
+        members: const [],
+        borrowRequests: const [],
+        projectBannerStatus: ProjectDetailBannerStatus.completed,
+      );
+
+      expect(project.showsCompletedProjectVoteOutcome, isTrue);
+      expect(project.isClosureVoteOutcomeApproved, isTrue);
+    });
+
+    test('refund outcome when display status contains refund', () {
+      final project = ProjectDetailEntity(
+        id: 'p1',
+        name: 'Fund',
+        category: ProjectCategory.investment,
+        status: ProjectStatus.completed,
+        goalAmount: 1000,
+        currentAmount: 900,
+        endsIn: '30d',
+        announcement: '',
+        members: const [],
+        borrowRequests: const [],
+        displayStatusLabel: 'Refund in progress',
+        projectBannerStatus: ProjectDetailBannerStatus.cancelled,
+      );
+
+      expect(project.isClosureVoteOutcomeApproved, isFalse);
+      expect(project.showsClosureVoteRefundOutcome, isTrue);
     });
   });
 }

@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
@@ -155,7 +154,10 @@ class _CreateProjectBorrowingSettingsScreenState
                     borderRadius: 10.r,
                     onPressed: () {
                       if (!cubit.validateFundsBorrowing()) return;
-                      context.push(AppRoutes.createProjectReview);
+                      pushBeforeCreateProjectReview(
+                        context,
+                        editFlow: widget.entryMode.isEditFlow,
+                      );
                     },
                   ),
                 ),

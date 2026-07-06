@@ -10,7 +10,7 @@ Profile tab, edit profile, payment methods entry, transaction history, completed
 
 - `ProfileRepository`, profile cubits
 - `features/payment_methods/` (cards)
-- `features/wallet/` — wallet tab recent activity only (transaction history awaits **dedicated API**)
+- `features/wallet/` — wallet tab + `GET /wallet/transactions` for profile history
 - Dashboard tab 4
 
 ## Routes
@@ -31,7 +31,7 @@ Profile tab, edit profile, payment methods entry, transaction history, completed
 | Screen | API |
 |--------|-----|
 | Profile header | `GET /users/me` |
-| Transaction history | **Pending** — dedicated ledger/history API (UI uses mock until backend ships) |
+| Transaction history | `GET /wallet/transactions?page=&pageSize=` → `TransactionHistoryCubit` (shimmer, filters client-side, paginated) |
 | Completed projects list | `GET /projects/completed?page=&pageSize=` → `CompletedProjectsCubit` (paginated) |
 | Completed project detail | `GET /projects/{id}` only — via `ServiceLocator.createCompletedProjectDetailBloc()` (own `ProjectDetailBloc` instance; no pot/borrow/voting side calls) |
 | Payment methods entry | `features/payment_methods/` |

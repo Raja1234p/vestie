@@ -2,7 +2,7 @@
 
 Test on **physical devices** (simulators work but camera/push differ).
 
-**App behavior:** `AppPermissionHelper` requests access; on deny shows snackbar; on permanent deny shows **Open Settings** → OS settings for Vestie.
+**App behavior:** `AppPermissionHelper` requests access; on deny shows **Open Settings** dialog (same as profile photo flows).
 
 ---
 
@@ -49,7 +49,7 @@ In-app: dashboard may show **Enable** dialog once; profile flows do not block if
 |---|------|--------|----------|--------|
 | C1 | First request | Tap Take Photo | System camera permission dialog | |
 | C2 | Allow | Allow → take photo → confirm | Photo uploads or shows API error (not permission loop) | |
-| C3 | Deny once | Don’t allow | Snackbar: camera denied | |
+| C3 | Deny once | Don’t allow | **Open Settings** dialog with instructions | |
 | C4 | Deny permanently | Deny + “Don’t ask again” (Android) or deny twice (iOS) | **Open Settings** dialog with instructions | |
 | C5 | Enable in settings | Settings → Vestie → Camera → On → retry | Picker opens | |
 
@@ -63,7 +63,7 @@ In-app: dashboard may show **Enable** dialog once; profile flows do not block if
 |---|------|--------|----------|--------|
 | G1 | First request | Tap gallery | Photos permission dialog | |
 | G2 | Allow | Pick image | Preview / upload works | |
-| G3 | Deny | Deny access | Snackbar + optional settings dialog | |
+| G3 | Deny | Deny access | **Open Settings** dialog | |
 | G4 | Limited (iOS) | Select “Limited Photos” | Can still pick from allowed set | |
 | G5 | Re-enable | Settings → Vestie → Photos → Full Access | Retry succeeds | |
 

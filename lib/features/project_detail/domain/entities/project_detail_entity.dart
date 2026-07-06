@@ -227,7 +227,7 @@ class ProjectDetailEntity {
   /// Detail voting card is disabled — active votes use dedicated screens/widgets.
   bool get showsProjectDetailVotingCard => false;
 
-  /// Open vote window, or `done` awaiting leader finalize.
+  /// Open vote window, or `done` awaiting backend auto-finalize (cron).
   /// Finalized votes are complete — do not lock Mark as Successful / edit / cancel.
   bool get votingIsInProgress {
     if (votingStatus == ProjectVotingStatus.pending) return true;
@@ -242,18 +242,6 @@ class ProjectDetailEntity {
 
   bool get canViewVotesOnDetail =>
       isDetailModeratorForVoting && votingIsInProgress;
-
-  bool get canCloseVotingOnDetail =>
-      isDetailModeratorForVoting &&
-      votingStatus == ProjectVotingStatus.pending &&
-      voting != null &&
-      !voting!.isFinalized;
-
-  bool get canFinalizeVotingOnDetail =>
-      isDetailLeader &&
-      votingStatus == ProjectVotingStatus.done &&
-      voting != null &&
-      !voting!.isFinalized;
 
   /// Member and co-leader inline cast on project detail (Week 11+).
   bool get memberHasSubmittedClosureVote =>
@@ -335,6 +323,32 @@ class ProjectDetailEntity {
 
   /// Investment projects: Contribute only (Figma). Others: Contribute + Borrow when enabled.
   bool get showsBorrowAction => !category.isInvestment && borrowingEnabled;
+
+  /// Investment — contribution phase ended after a successful stop-contributions vote.
+  bool get investmentContributionsAreClosed {
+    if (!category.isInvestment) return false;
+    if (apiCanStopContributions == false) return true;
+    final state = projectLifecycleState.toLowerCase().trim();
+    if (state == 'funded') return true;
+    return displayStatusLabel.toLowerCase().contains('funded');
+  }
+
+  /// Members cannot contribute once the investment group leaves the contribution phase.
+  bool get showsContributeAction =>
+      !(category.isInvestment && isMemberView && investmentContributionsAreClosed);
+
+  /// Investment — show Distribute Funds / Investment Returns after the
+  /// stop-contributions vote succeeds (funded), before project completion.
+  bool get showsInvestmentDistributionActions {
+    if (!category.isInvestment) return false;
+    if (votingIsInProgress) return false;
+    if (isInvestmentProjectCompleted) return false;
+    return investmentContributionsAreClosed;
+  }
+
+  bool get isInvestmentProjectCompleted =>
+      status == ProjectStatus.completed ||
+      projectBannerStatus == ProjectDetailBannerStatus.completed;
 
   /// Vacation / emergency group leaders cannot borrow until a co-leader is assigned.
   bool get isBorrowDisabledForViewer =>

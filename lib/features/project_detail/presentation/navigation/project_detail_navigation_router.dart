@@ -253,26 +253,6 @@ void _openStopContributionsVoteRejectedPreview(
   );
 }
 
-void _openClosureVoteOutcome(
-  BuildContext context, {
-  required ProjectDetailEntity project,
-  required FinalizeClosureVoteResultEntity finalizeResult,
-  bool popCurrentRoute = false,
-}) {
-  if (popCurrentRoute && context.canPop()) {
-    context.pop();
-  }
-  if (!context.mounted) return;
-
-  context.push(
-    AppRoutes.userVoteOutcome,
-    extra: successVoteOutcomeRouteArgsFromFinalize(
-      project: project,
-      result: finalizeResult,
-    ),
-  );
-}
-
 Future<void> _openInviteMembers(
   BuildContext context, {
   required ProjectDetailEntity project,

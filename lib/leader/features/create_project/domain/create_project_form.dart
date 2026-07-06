@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import 'create_project_image_limits.dart';
+
 /// Sentinel: distinguishes "not passed to copyWith" from "explicitly set to null".
 const Object _absent = Object();
 
@@ -94,6 +96,9 @@ class CreateProjectForm extends Equatable {
   final String? descError;
   final String? deadlineError;
 
+  /// Local file paths selected before submit (upload API deferred).
+  final List<String> projectImagePaths;
+
   const CreateProjectForm({
     this.editingProjectId,
     this.amountDigits = '',
@@ -114,6 +119,7 @@ class CreateProjectForm extends Equatable {
     this.nameError,
     this.descError,
     this.deadlineError,
+    this.projectImagePaths = const [],
   });
 
   double get displayAmount => amountDigits.isEmpty
@@ -145,6 +151,12 @@ class CreateProjectForm extends Equatable {
   bool get isEditingProject =>
       editingProjectId != null && editingProjectId!.isNotEmpty;
 
+  bool get canAddMoreProjectImages =>
+      projectImagePaths.length < CreateProjectImageLimits.maxImages;
+
+  int get remainingProjectImageSlots =>
+      CreateProjectImageLimits.maxImages - projectImagePaths.length;
+
   CreateProjectForm copyWith({
     String? editingProjectId,
     String? amountDigits,
@@ -165,6 +177,7 @@ class CreateProjectForm extends Equatable {
     Object? nameError = _absent,
     Object? descError = _absent,
     Object? deadlineError = _absent,
+    List<String>? projectImagePaths,
   }) {
     return CreateProjectForm(
       editingProjectId: editingProjectId ?? this.editingProjectId,
@@ -200,6 +213,7 @@ class CreateProjectForm extends Equatable {
       deadlineError: identical(deadlineError, _absent)
           ? this.deadlineError
           : deadlineError as String?,
+      projectImagePaths: projectImagePaths ?? this.projectImagePaths,
     );
   }
 
@@ -224,5 +238,6 @@ class CreateProjectForm extends Equatable {
     nameError,
     descError,
     deadlineError,
+    projectImagePaths,
   ];
 }

@@ -92,15 +92,28 @@ class ProjectInfoStatusBadge extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(100.r),
       ),
-      child: AppText(
-        completed && project.status != ProjectStatus.completed
-            ? AppStrings.statusCompleted
-            : project.statusBadgeLabel,
-        style: GoogleFonts.lato(
-          fontSize: 12.sp,
-          fontWeight: FontWeight.w600,
-          color: AppColors.surface,
-        ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (completed) ...[
+            SvgPicture.asset(
+              AppAssets.statusCompletedTick,
+              width: 12.w,
+              height: 12.w,
+            ),
+            SizedBox(width: 4.w),
+          ],
+          AppText(
+            completed && project.status != ProjectStatus.completed
+                ? AppStrings.statusCompleted
+                : project.statusBadgeLabel,
+            style: GoogleFonts.lato(
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.surface,
+            ),
+          ),
+        ],
       ),
     );
   }

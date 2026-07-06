@@ -160,6 +160,11 @@ class AppAssets {
   static const String walletPaymentChevron =
       '$_iconPath/wallet_payment_chevron.svg';
 
+  // ── Create project images ─────────────────────────────────────────────────
+  static const String createProjectUploadEmptyState =
+      '$_imagePath/create_project_upload_empty_state.png';
+  static const String iconAddImage = '$_iconPath/icon_add_image.png';
+
   // ── Voting ──────────────────────────────────────────────────────────────────
   static const String voteThumbsUp = '$_iconPath/vote_thumbs_up.svg';
   static const String voteThumbsDown = '$_iconPath/vote_thumbs_down.svg';
@@ -227,6 +232,10 @@ class AppAssets {
 
   // ── Shared UI glyphs ──────────────────────────────────────────────────────
   static const String iconCheckCircle = '$_iconPath/icon_check_circle.svg';
+
+  /// Completed project status chip — white tick on green pill (Figma).
+  static const String statusCompletedTick =
+      '$_iconPath/status_completed_tick.svg';
 
   /// [AppTickSwitch] selected state — purple tile + white check (design PNG).
   static const String iconTickSwitchOn = '$_iconPath/icon_tick_switch_on.png';

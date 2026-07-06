@@ -127,9 +127,6 @@ void registerProjectDependencies(ServiceLocator sl) {
   sl.extendClosureVotingUseCase = ExtendClosureVotingUseCase(
     sl.projectActionsRepository,
   );
-  sl.finalizeClosureVotingUseCase = FinalizeClosureVotingUseCase(
-    sl.closureVotingRepository,
-  );
   sl.resolveGoalUseCase = ResolveGoalUseCase(sl.projectActionsRepository);
   sl.extendDeadlineUseCase = ExtendDeadlineUseCase(sl.projectActionsRepository);
   sl.completeProjectUseCase = CompleteProjectUseCase(

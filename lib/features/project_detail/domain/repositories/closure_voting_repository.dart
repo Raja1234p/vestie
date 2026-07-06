@@ -19,8 +19,4 @@ abstract class ClosureVotingRepository {
   Future<Either<Failure, ActiveClosureVoteEntity?>> getActiveClosureVote(
     String projectId,
   );
-
-  Future<Either<Failure, FinalizeClosureVoteResultEntity>> finalizeClosureVoting(
-    String projectId,
-  );
 }

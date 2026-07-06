@@ -45,6 +45,7 @@ abstract final class BorrowRepayMapper {
 
   static BorrowRepayPreviewEntity toPreviewEntity(BorrowRepayPreviewModel model) {
     final penalty = model.penalty;
+    final penaltyAmount = penalty?.amount ?? 0;
     return BorrowRepayPreviewEntity(
       borrowRequestId: model.borrowRequestId,
       projectId: model.projectId,
@@ -54,10 +55,25 @@ abstract final class BorrowRepayMapper {
       paymentMethodDisplay: model.paymentMethodDisplay,
       dueDateLabel: formatBorrowRepayDateLabel(model.dueDate),
       principalAmount: model.principalAmount,
-      penaltyAmount: penalty?.amount ?? 0,
-      penaltyPercent: penalty != null ? penalty.percentage.round() : 0,
+      penaltyAmount: penaltyAmount,
+      penaltyPercent: _previewPenaltyPercent(
+        penaltyAmount: penaltyAmount,
+        penaltyPercentage: penalty?.percentage ?? 0,
+        principalAmount: model.principalAmount,
+      ),
       totalRepayment: model.totalRepayment,
     );
+  }
+
+  static int _previewPenaltyPercent({
+    required double penaltyAmount,
+    required double penaltyPercentage,
+    required double principalAmount,
+  }) {
+    if (penaltyAmount <= 0) return 0;
+    if (penaltyPercentage > 0) return penaltyPercentage.round();
+    if (principalAmount <= 0) return 0;
+    return ((penaltyAmount / principalAmount) * 100).round();
   }
 
   static CardBrand _mapCardBrand(String raw) {

@@ -28,6 +28,10 @@ class AppRoutes {
       '/create-project/funds-borrowing';
   static const String createProjectInvestmentSettings =
       '/create-project/investment-settings';
+  static const String createProjectUploadImages =
+      '/create-project/upload-images';
+  static const String createProjectSelectedImages =
+      '/create-project/selected-images';
   static const String createProjectReview = '/create-project/review';
   static const String createProjectSuccess = '/create-project/success';
 

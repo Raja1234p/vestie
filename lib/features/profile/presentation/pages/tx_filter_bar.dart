@@ -15,6 +15,7 @@ class TxFilterBar extends StatelessWidget {
   static const _filters = [
     AppStrings.filterAllTx,
     AppStrings.filterDeposits,
+    AppStrings.filterBorrow,
     AppStrings.filterWithdrawals,
     AppStrings.filterContributions,
     AppStrings.filterRepayments,

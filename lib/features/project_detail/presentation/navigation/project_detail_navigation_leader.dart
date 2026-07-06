@@ -86,7 +86,7 @@ Future<void> _handleLeaderAction(
     case LeaderMenuAction.projectFundsHistory:
       context.push(
         AppRoutes.projectFundsHistory,
-        extra: _fundsHistoryArgs(project),
+        extra: _fundsHistoryArgs(project, forLeaderMenu: true),
       );
       break;
     case LeaderMenuAction.myBorrows:

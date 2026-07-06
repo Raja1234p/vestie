@@ -60,17 +60,6 @@ class ClosureVotingRepositoryImpl implements ClosureVotingRepository {
     }
   }
 
-  @override
-  Future<Either<Failure, FinalizeClosureVoteResultEntity>>
-  finalizeClosureVoting(String projectId) async {
-    return _execute(
-      () async {
-        final model = await remoteDataSource.finalize(projectId);
-        return model.toEntity();
-      },
-    );
-  }
-
   Future<Either<Failure, T>> _execute<T>(Future<T> Function() action) async {
     try {
       final result = await action();

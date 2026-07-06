@@ -197,9 +197,6 @@ class ApiConstants {
   static String projectClosureVotingActive(String projectId) =>
       '$projects/$projectId/closure-voting/active';
 
-  static String projectClosureVotingFinalize(String projectId) =>
-      '$projects/$projectId/closure-voting/finalize';
-
   /// Legacy — not in Week 10 spec; kept for existing use cases.
   static String projectClosureVotingExtend(String projectId) =>
       '$projects/$projectId/closure-voting/extend';

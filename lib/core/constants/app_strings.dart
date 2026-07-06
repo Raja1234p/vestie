@@ -625,10 +625,17 @@ class AppStrings {
 
   // ── Transaction History ───────────────────────────────────────────────────
   static const String transactionHistoryTitle = 'Transaction History';
+  static const String transactionHistoryEmptyTitle = 'No Transactions';
+  static const String transactionHistoryEmptySubtitle =
+      'All of your wallet transactions will appear here.';
+  static const String transactionHistoryFilterEmptyTitle = 'No Results';
+  static const String transactionHistoryFilterEmptySubtitle =
+      'No transactions match this filter. Try another category.';
   static const String memberActivityEmptyTransactions =
       'No transactions yet for this member.';
   static const String filterAllTx = 'All';
   static const String filterDeposits = 'Deposits';
+  static const String filterBorrow = 'Borrow';
   static const String filterWithdrawals = 'Withdrawals';
   static const String filterContributions = 'Contributions';
   static const String filterRepayments = 'Repayments';
@@ -710,6 +717,21 @@ class AppStrings {
       'Automatically save a portion of your income to this project.';
   static const String reviewSectionSaving = 'Project settings';
   static const String reviewLabelAutoSave = 'Auto-save';
+
+  // Upload images (wizard — before review)
+  static const String createProjectUploadImagesTitle = 'Upload Images';
+  static const String createProjectUploadImagesHeadline = 'It starts from here';
+  static const String createProjectUploadImagesSubtitlePrefix = 'Upload ';
+  static const String createProjectUploadImagesSubtitleBold = 'upto 5 images';
+  static const String createProjectUploadImagesSubtitleSuffix =
+      ' and start saving from today.';
+  static const String createProjectUploadImagesCta = 'Upload Images';
+  static const String btnSkip = 'Skip';
+  static const String createProjectSelectedImagesTitle = 'Selected Images';
+  static const String createProjectAddedImagesLabel = 'Added Images';
+  static const String createProjectUploadImageTileLabel = 'Upload Image';
+  static String createProjectImagesCountBadge(int current, int max) =>
+      '$current/$max';
 
   // Borrowing path (Vacation / Emergency — production frames)
   static const String createFundsBorrowingTitle = 'Borrowing Setup';

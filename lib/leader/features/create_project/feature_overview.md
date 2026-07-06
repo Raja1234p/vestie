@@ -22,8 +22,20 @@ Multi-step wizard to create and launch vacation, emergency, or investment projec
 | `/create-project/saving-settings` | Collaborative saving branch |
 | `/create-project/funds-borrowing` | Vacation/emergency borrow rules |
 | `/create-project/investment-settings` | ROI branch |
+| `/create-project/upload-images` | Optional project images (create wizard; skip → review) |
+| `/create-project/selected-images` | 114×114 grid, max **5** images; upload tile hidden at cap |
 | `/create-project/review` | Review & submit |
 | `/create-project/success` | Post-launch success |
+
+## Project images (wizard)
+
+| Rule | Implementation |
+|------|----------------|
+| Max count | `CreateProjectImageLimits.maxImages` (5) |
+| State | `CreateProjectForm.projectImagePaths` (local file paths) |
+| Add / remove | `CreateProjectCubit.addProjectImages` / `removeProjectImageAt` |
+| UI | `CreateProjectSelectedImagesGrid` — upload tile until 5 images |
+| API upload | Deferred — paths held in form until backend endpoint ships |
 
 ## Trace (create)
 

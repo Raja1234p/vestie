@@ -1,12 +1,11 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 
 import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/core/models/pagination_dto.dart';
 import 'package:vestie/features/profile/domain/entities/transaction.dart';
-import 'package:vestie/features/wallet/domain/entities/wallet_entity.dart';
 import 'package:vestie/features/wallet/domain/usecases/get_wallet_transactions_use_case.dart';
+import 'package:vestie/features/wallet/presentation/mappers/wallet_transaction_ui_mapper.dart';
 
 class WalletTransactionsState extends Equatable {
   final List<Transaction> items;
@@ -90,7 +89,7 @@ class WalletTransactionsCubit extends Cubit<WalletTransactionsState> {
       ),
       (page) => emit(
         WalletTransactionsState(
-          items: _mapTransactions(page.items),
+          items: WalletTransactionUiMapper.toTransactions(page.items),
           loading: false,
           currentPage: page.page,
           totalCount: page.totalCount,
@@ -117,7 +116,10 @@ class WalletTransactionsCubit extends Cubit<WalletTransactionsState> {
       ),
       (page) => emit(
         state.copyWith(
-          items: [...state.items, ..._mapTransactions(page.items)],
+          items: [
+            ...state.items,
+            ...WalletTransactionUiMapper.toTransactions(page.items),
+          ],
           currentPage: page.page,
           totalCount: page.totalCount,
           loadingMore: false,
@@ -125,41 +127,5 @@ class WalletTransactionsCubit extends Cubit<WalletTransactionsState> {
         ),
       ),
     );
-  }
-
-  List<Transaction> _mapTransactions(List<WalletRecentTransactionEntity> raw) {
-    if (raw.isEmpty) return const [];
-    final dateFmt = DateFormat('MMM d');
-    return raw
-        .map((t) {
-          final signed = t.isDebit ? -t.amount.abs() : t.amount.abs();
-          return Transaction(
-            id: t.id,
-            title: t.title,
-            date: t.dateUtc != null ? dateFmt.format(t.dateUtc!.toLocal()) : '',
-            amount: signed,
-            type: _mapType(t.type),
-          );
-        })
-        .toList(growable: false);
-  }
-
-  TransactionType _mapType(String apiType) {
-    switch (apiType.toLowerCase()) {
-      case 'withdrawal':
-        return TransactionType.withdrawal;
-      case 'contribution':
-        return TransactionType.contribution;
-      case 'deposit':
-        return TransactionType.deposit;
-      case 'repayment':
-        return TransactionType.repayment;
-      case 'fee':
-        return TransactionType.fee;
-      case 'borrow':
-        return TransactionType.borrow;
-      default:
-        return TransactionType.deposit;
-    }
   }
 }

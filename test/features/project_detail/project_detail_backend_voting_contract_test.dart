@@ -168,32 +168,6 @@ void main() {
       expect(entity.memberSubmittedVoteChoice, SuccessVoteCastChoice.agreed);
     });
 
-    test('leader finalize when votingStatus is done', () {
-      final json = handoffLeaderPendingJson()
-        ..['votingStatus'] = 'done';
-      json['voting'] = {
-        'startedAtUtc': '2026-06-30T17:55:23+00:00',
-        'deadlineAtUtc': '2020-01-01T00:00:00+00:00',
-        'agreedCount': 1,
-        'disagreedCount': 0,
-        'pendingCount': 0,
-        'hasVoted': false,
-        'isFinalized': false,
-        'memberVotes': [
-          {
-            'membershipId': 'ea6f4b46-b032-42d7-9aae-9890f34f8d84',
-            'userId': '2e820ba5-1f36-4ce8-b8bd-af108c00e232',
-            'displayName': 'maha zehra',
-            'voteStatus': 'agreed',
-          },
-        ],
-      };
-
-      final entity = ProjectDetailResponseModel.fromJson(json).toEntity();
-
-      expect(entity.canFinalizeVotingOnDetail, isTrue);
-    });
-
     test('parses vote alias yes/no on memberVotes', () {
       expect(parseProjectMemberVoteStatus('yes'), ProjectMemberVoteStatus.agreed);
       expect(parseProjectMemberVoteStatus('no'), ProjectMemberVoteStatus.disagreed);

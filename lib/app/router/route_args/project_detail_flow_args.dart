@@ -163,7 +163,7 @@ class ProjectFundsHistoryRouteArgs {
   /// Investment projects: balance + Breakdown only (Figma).
   final bool isInvestment;
 
-  /// Co-leader (and investment) fund history list title — [AppStrings.labelBreakdown].
+  /// Group leader menu (vacation / emergency / investment) and co-leader use [AppStrings.labelBreakdown].
   final bool useBreakdownSectionTitle;
 
   const ProjectFundsHistoryRouteArgs({

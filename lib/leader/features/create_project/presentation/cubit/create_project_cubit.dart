@@ -129,6 +129,19 @@ class CreateProjectCubit extends Cubit<CreateProjectForm> {
 
   void reset() => emit(const CreateProjectForm());
 
+  void addProjectImages(List<String> paths) {
+    if (paths.isEmpty || !state.canAddMoreProjectImages) return;
+    final slots = state.remainingProjectImageSlots;
+    final merged = [...state.projectImagePaths, ...paths.take(slots)];
+    emit(state.copyWith(projectImagePaths: merged));
+  }
+
+  void removeProjectImageAt(int index) {
+    if (index < 0 || index >= state.projectImagePaths.length) return;
+    final next = [...state.projectImagePaths]..removeAt(index);
+    emit(state.copyWith(projectImagePaths: next));
+  }
+
   /// Pre-fills wizard fields when leader opens Edit Project from detail.
   void hydrateFromProjectDetail(ProjectDetailEntity project) {
     emit(CreateProjectFormFromDetail.map(project));
