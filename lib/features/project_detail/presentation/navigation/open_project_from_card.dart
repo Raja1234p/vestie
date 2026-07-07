@@ -15,18 +15,9 @@ import 'package:vestie/user/features/home/domain/entities/project_category_exten
 import 'package:vestie/features/success_vote/presentation/navigation/open_success_vote_outcome.dart';
 import '../../domain/entities/project_detail_route_args.dart';
 
-/// Profile → Completed Projects: **View** opens vote outcome, then **View Details** → detail.
+/// Profile → Completed Projects: **View** opens project detail (API-driven outcome).
 void openCompletedProjectView(BuildContext context, Project project) {
-  if (project.userFlow != null) {
-    openProjectFromCard(context, project);
-    return;
-  }
-  openSuccessVoteOutcomeFromProject(
-    context,
-    project,
-    completedProjectDetailId: project.id,
-    completedProjectName: project.name,
-  );
+  openProjectFromCard(context, project);
 }
 
 /// Pops detail or returns to dashboard with a fresh project list.
@@ -276,7 +267,11 @@ void openProjectFromCard(BuildContext context, Project p) {
   }
 
   if (p.status == ProjectStatus.completed) {
-    openSuccessVoteOutcomeFromProject(context, p);
+    _pushProjectDetail(
+      context,
+      args: projectDetailRouteArgsForProject(p),
+      isInvestment: p.category.isInvestment,
+    );
     return;
   }
 

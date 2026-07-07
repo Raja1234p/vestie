@@ -15,6 +15,7 @@ class ProjectDetailUserCompletedContent extends StatelessWidget {
   final String? sendingVffUserId;
   final Future<bool> Function(String announcementId)? onDeleteAnnouncement;
   final bool hideInvestmentActions;
+  final bool membersOnlyLayout;
 
   const ProjectDetailUserCompletedContent({
     super.key,
@@ -24,6 +25,7 @@ class ProjectDetailUserCompletedContent extends StatelessWidget {
     this.sendingVffUserId,
     this.onDeleteAnnouncement,
     this.hideInvestmentActions = false,
+    this.membersOnlyLayout = false,
   });
 
   @override
@@ -34,6 +36,7 @@ class ProjectDetailUserCompletedContent extends StatelessWidget {
       onSendVffRequest: onSendVffRequest,
       sendingVffUserId: sendingVffUserId,
       onDeleteAnnouncement: onDeleteAnnouncement,
+      membersOnlyLayout: membersOnlyLayout,
     );
   }
 }

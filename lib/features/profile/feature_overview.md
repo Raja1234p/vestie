@@ -38,12 +38,11 @@ Profile tab, edit profile, payment methods entry, transaction history, completed
 | Vestie User Guidelines | `GET /content/user-guidelines` |
 | My Accounts entry | `features/bank_accounts/` |
 
-## Completed projects — View vs View Details
+## Completed projects — View
 
-`openCompletedProjectDetail` (`presentation/navigation/open_completed_project_detail.dart`) branches on `project.userFlow`:
+`openCompletedProjectDetail` → `openProjectFromCard` → project detail → `GET /projects/{id}` → `ProjectDetailCompletedVoteOutcomeContent` (real `voting` tallies, amount, and role/category copy).
 
-- **Vote in progress / outcome available** (`userFlow != null`) → `openProjectFromCard` (existing vote-outcome shortcut).
-- **Otherwise** → `openSuccessVoteOutcomeFromProject` → `SuccessVoteOutcomeScreen` with copy from API `viewerRole` (GroupLeader / CoLeader / Member) and project category; **Back to Home** or profile path to completed detail via `completedProjectDetailId`.
+`SuccessVoteOutcomeScreen` is still used after in-app vote finalize (`successVoteOutcomeRouteArgsFromFinalize`), not from home/profile list **View**.
 
 `CompletedProjectDetailScreen` popup menu (`MemberProjectActionMenu(fundsHistoryOnly: true)`) exposes **only** "Project fund history" — no contribute/borrow/leave actions on a completed project.
 

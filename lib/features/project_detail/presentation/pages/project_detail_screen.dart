@@ -9,7 +9,6 @@ import '../../../../core/widgets/text/app_text.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../../core/widgets/common/post_auth_header.dart';
 import '../../../../core/di/service_locator.dart';
-import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_completed_outcome_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
@@ -23,6 +22,7 @@ import '../widgets/project_detail_load_error.dart';
 import '../widgets/project_detail_loading_body.dart';
 import '../widgets/project_detail_moderator_scroll_content.dart';
 import '../widgets/project_detail_reload_scope.dart';
+import '../widgets/project_detail_trailing_actions.dart';
 import '../widgets/project_realtime_scope.dart';
 
 /// Loads `GET /projects/{id}` via [ProjectDetailBloc] on open.
@@ -135,10 +135,6 @@ class _ProjectDetailBody extends StatelessWidget {
             if (state is ProjectDetailLoaded) {
               final project = state.project;
               final pendingCount = state.pendingJoinRequestCount;
-              final isMemberCompletedView =
-                  project.isMemberView &&
-                  (project.status == ProjectStatus.completed ||
-                      project.hasFinalizedClosureVoteOutcome);
 
               Future<void> onRefresh() async {
                 context.read<ProjectDetailBloc>().add(
@@ -149,7 +145,7 @@ class _ProjectDetailBody extends StatelessWidget {
                 );
               }
 
-              if (isMemberCompletedView) {
+              if (project.showsCompletedProjectVoteOutcome) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -162,6 +158,28 @@ class _ProjectDetailBody extends StatelessWidget {
                           refreshDiscoverOnPop: refreshDiscoverOnPop,
                         ),
                       ),
+                      trailing: project.showsProjectDetailOverflowMenu
+                          ? ProjectDetailTrailingActions(
+                              project: project,
+                              pendingJoinRequestCount: pendingCount,
+                              onLeaderMenuSelected: (action) =>
+                                  ProjectDetailNavigation.handleLeaderAction(
+                                    context,
+                                    project: project,
+                                    action: action,
+                                    refreshHomeOnPop: refreshHomeOnPop,
+                                    refreshDiscoverOnPop: refreshDiscoverOnPop,
+                                  ),
+                              onMemberMenuSelected: (action) =>
+                                  ProjectDetailNavigation.handleMemberAction(
+                                    context,
+                                    project: project,
+                                    action: action,
+                                    refreshHomeOnPop: refreshHomeOnPop,
+                                    refreshDiscoverOnPop: refreshDiscoverOnPop,
+                                  ),
+                            )
+                          : null,
                     ),
                     Expanded(
                       child: ColoredBox(
@@ -177,6 +195,7 @@ class _ProjectDetailBody extends StatelessWidget {
                                 sliver: SliverToBoxAdapter(
                                   child: ProjectDetailUserCompletedContent(
                                     project: project,
+                                    membersOnlyLayout: project.isModeratorView,
                                     onMemberTap: (member) =>
                                         _openMemberProfile(
                                           context,
