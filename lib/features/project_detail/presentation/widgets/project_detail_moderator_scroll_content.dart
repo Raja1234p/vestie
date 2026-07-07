@@ -14,9 +14,7 @@ import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_announcements_section.dart';
-import 'package:vestie/features/project_detail/presentation/widgets/project_detail_cast_vote_dev_previews.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_inline_member_vote_flow.dart';
-import 'package:vestie/features/project_detail/presentation/widgets/project_detail_vote_outcome_dev_previews.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_voting_sections.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_tab_section.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_members_only_section.dart';
@@ -51,7 +49,6 @@ class ProjectDetailModeratorScrollContent extends StatefulWidget {
 
 class _ProjectDetailModeratorScrollContentState
     extends State<ProjectDetailModeratorScrollContent> {
-  bool _previewViewSuccessVotesScenario = false;
   bool _deletingAnnouncement = false;
 
   Future<bool> _deleteAnnouncement(String announcementId) async {
@@ -79,8 +76,7 @@ class _ProjectDetailModeratorScrollContentState
   bool get _showViewSuccessVotesCta =>
       widget.project.showsViewSuccessVotesAction ||
       widget.project.showsViewContributionSuccessVoteAction ||
-      widget.project.showsLeaderViewSuccessVotesAction ||
-      _previewViewSuccessVotesScenario;
+      widget.project.showsLeaderViewSuccessVotesAction;
 
   @override
   Widget build(BuildContext context) {
@@ -195,18 +191,6 @@ class _ProjectDetailModeratorScrollContentState
                             gapAfter: 12.h,
                           ),
                           ProjectInfoCard(project: project),
-                          if (project.isCoLeader)
-                            ProjectDetailCastVoteDevPreviews(project: project),
-                          if (project.showsSuccessVoteDevPreviews) ...[
-                            ProjectDetailVoteOutcomeDevPreviews(
-                              project: project,
-                              onPreviewViewSuccessVotesScenario: () =>
-                                  setState(
-                                    () => _previewViewSuccessVotesScenario =
-                                        true,
-                                  ),
-                            ),
-                          ],
                           SizedBox(height: 16.h),
                           ProjectDetailWalletActions(
                             project: project,

@@ -371,16 +371,6 @@ class ProjectDetailEntity {
       category == ProjectCategory.vacations ||
       category == ProjectCategory.emergency;
 
-  /// Member success-vote dev previews — all project categories.
-  bool get showsMemberSuccessVoteDevPreviews => true;
-
-  /// Leader / co-leader success-vote dev previews — vacation and emergency.
-  bool get showsSuccessVoteDevPreviews => isVacationOrEmergency;
-
-  /// Investment group leader — vote outcome dev previews (approve / reject).
-  bool get showsInvestmentVoteOutcomeDevPreviews =>
-      isModeratorView && category.isInvestment;
-
   /// Legacy wallet CTA — superseded by [ProjectDetailVotingCard] when Week 11 fields are active.
   bool get showsViewSuccessVotesAction =>
       hasActiveSuccessVote &&

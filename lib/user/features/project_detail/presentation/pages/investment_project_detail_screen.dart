@@ -9,14 +9,12 @@ import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/core/di/service_locator.dart';
-import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_announcements_section.dart';
-import '../widgets/investment_detail_preview_button.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_completed_outcome_extensions.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_completed_vote_outcome_content.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/investment_completed_detail_content.dart';
@@ -26,19 +24,14 @@ import 'package:vestie/features/project_detail/presentation/widgets/project_memb
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_trailing_actions.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_load_error.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_loading_body.dart';
-import 'package:vestie/features/project_detail/domain/entities/project_detail_voting_entities.dart';
-import 'package:vestie/features/project_detail/presentation/widgets/project_detail_cast_vote_dev_previews.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_member_vote_extensions.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_inline_member_vote_flow.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_voting_sections.dart';
-import 'package:vestie/features/project_detail/presentation/widgets/project_detail_vote_outcome_dev_previews.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_wallet_actions.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_reload_scope.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_realtime_scope.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_info_card.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_scroll_insets.dart';
-import 'package:vestie/features/success_vote/presentation/models/success_vote_cast_ui_data.dart';
-import 'package:vestie/features/success_vote/presentation/widgets/success_vote_cast_content.dart';
 
 class InvestmentProjectDetailScreen extends StatelessWidget {
   final String projectId;
@@ -109,9 +102,6 @@ class InvestmentProjectDetailBody extends StatefulWidget {
 
 class _InvestmentProjectDetailBodyState
     extends State<InvestmentProjectDetailBody> {
-  bool _previewCompletedInvestment = false;
-  bool _previewCastVote = false;
-
   Future<bool> _deleteAnnouncement(String announcementId) async {
     final result = await ServiceLocator.instance
         .deleteProjectAnnouncementUseCase(
@@ -181,16 +171,10 @@ class _InvestmentProjectDetailBodyState
               final project = state.project;
               final pendingCount = state.pendingJoinRequestCount;
               final showCompletedOutcome =
-                  project.showsCompletedProjectVoteOutcome ||
-                  _previewCompletedInvestment;
+                  project.showsCompletedProjectVoteOutcome;
               final showDistributionLayout =
                   project.showsInvestmentDistributionActions &&
                   !showCompletedOutcome;
-              final showMemberCastVotePreview =
-                  project.isMemberView &&
-                  !showDistributionLayout &&
-                  !showCompletedOutcome &&
-                  _previewCastVote;
 
               Future<void> refreshDetail() async {
                 context.read<ProjectDetailBloc>().add(
@@ -269,20 +253,6 @@ class _InvestmentProjectDetailBodyState
                 );
               }
 
-              if (showMemberCastVotePreview) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    header(),
-                    Expanded(
-                      child: SuccessVoteCastContent(
-                        data: SuccessVoteCastUiData.fromProject(project),
-                      ),
-                    ),
-                  ],
-                );
-              }
-
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -307,13 +277,6 @@ class _InvestmentProjectDetailBodyState
                                     crossAxisAlignment:
                                         CrossAxisAlignment.stretch,
                                     children: [
-                                      if (!showCompletedOutcome)
-                                        InvestmentDetailPreviewButton(
-                                          onPressed: () => setState(
-                                            () => _previewCompletedInvestment =
-                                                true,
-                                          ),
-                                        ),
                                       if (showCompletedOutcome)
                                         ProjectDetailCompletedVoteOutcomeContent(
                                           project: project,
@@ -351,24 +314,6 @@ class _InvestmentProjectDetailBodyState
                                           project: project,
                                           onRefresh: refreshDetail,
                                         ),
-                                        if (project.isModeratorView)
-                                          ProjectDetailVoteOutcomeDevPreviews(
-                                            project: project,
-                                            includeViewSuccessVotesPreview: false,
-                                          ),
-                                        if (project.isMemberView &&
-                                            !project.votingIsInProgress) ...[
-                                          ProjectDetailCastVoteDevPreviews(
-                                            project: project,
-                                            onPreviewCastVoteInPlace: () =>
-                                                setState(
-                                                  () => _previewCastVote = true,
-                                                ),
-                                          ),
-                                          ProjectDetailVoteOutcomeDevPreviews(
-                                            project: project,
-                                          ),
-                                        ],
                                         Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,

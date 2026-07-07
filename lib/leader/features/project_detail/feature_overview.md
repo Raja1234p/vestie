@@ -20,7 +20,7 @@ Leader-only moderation: join requests, borrow approvals, voting monitors, cancel
 | `/leader/borrow-requests` | Borrow moderation |
 | `/mark-project-successful` | Start success vote |
 | `/leader/investment-distribution` | Distribute returns |
-| `/leader/view-success-votes` | Vote progress (dev preview) |
+| `/leader/view-success-votes` | Vote progress monitor |
 | `/cancel-project`, `/stop-contributions` | Lifecycle actions |
 
 ## Trace

@@ -162,20 +162,6 @@ void _openLeaderViewSuccessVotes(
     );
     return;
   }
-
-  if (!kDebugMode || !project.showsSuccessVoteDevPreviews) return;
-
-  context.push(
-    AppRoutes.leaderViewSuccessVotes,
-    extra: LeaderViewSuccessVotesRouteArgs(
-      projectName: project.name,
-      isPreview: true,
-      data: LeaderSuccessVoteProgressUiData.preview(
-        project: project,
-        isStopContributionsVote: project.isStopContributionsClosureVote,
-      ),
-    ),
-  );
 }
 
 void _openCastVote(
@@ -189,86 +175,6 @@ void _openCastVote(
   context.push(
     AppRoutes.userSuccessVote,
     extra: successVoteCastRouteArgsFromProject(project),
-  );
-}
-
-void _openCastVotePreview(
-  BuildContext context, {
-  required ProjectDetailEntity project,
-}) {
-  if (!kDebugMode) return;
-  if (!project.showsMemberSuccessVoteDevPreviews) return;
-  if (!project.isMemberView && !project.isCoLeader) return;
-
-  final memberCount = project.members.isNotEmpty ? project.members.length : 7;
-  context.push(
-    AppRoutes.userSuccessVote,
-    extra: SuccessVoteCastRouteArgs(
-      projectId: project.id,
-      projectName: project.name,
-      projectCategory: project.category,
-      isCoLeader: project.isCoLeader,
-      goalAmount: project.goalAmount > 0 ? project.goalAmount : 5000,
-      memberCount: memberCount,
-      totalRaised: project.currentAmount > 0
-          ? project.currentAmount
-          : project.goalAmount * 0.96,
-      deadlineLabel: project.endsIn.trim().isNotEmpty
-          ? project.endsIn
-          : 'May 12, 2025',
-      daysRemaining: 21,
-      isPreview: true,
-    ),
-  );
-}
-
-void _openMemberVoteOutcomePreview(
-  BuildContext context, {
-  required ProjectDetailEntity project,
-  required bool approved,
-}) {
-  if (!kDebugMode) return;
-  final canPreview = project.showsMemberSuccessVoteDevPreviews ||
-      (project.isModeratorView &&
-          (project.showsSuccessVoteDevPreviews ||
-              project.showsInvestmentVoteOutcomeDevPreviews));
-  if (!canPreview) return;
-
-  final role = SuccessVoteOutcomeRole.fromViewerRole(project.viewerRole);
-  context.push(
-    AppRoutes.userVoteOutcome,
-    extra: SuccessVoteOutcomeRouteArgs(
-      data: SuccessVoteOutcomeUiData.preview(
-        isApproved: approved,
-        project: project,
-      ),
-      viewerRole: role,
-      project: role.isModerator ? project : null,
-    ),
-  );
-}
-
-void _openStopContributionsVoteRejectedPreview(
-  BuildContext context, {
-  required ProjectDetailEntity project,
-}) {
-  if (!kDebugMode) return;
-  final isInvestmentMember =
-      project.isMemberView && project.category.isInvestment;
-  if (!project.canStopContributions && !isInvestmentMember) return;
-
-  final role = SuccessVoteOutcomeRole.fromViewerRole(project.viewerRole);
-  context.push(
-    AppRoutes.userVoteOutcome,
-    extra: SuccessVoteOutcomeRouteArgs(
-      data: SuccessVoteOutcomeUiData.preview(
-        isApproved: false,
-        project: project,
-      ),
-      viewerRole: role,
-      variant: SuccessVoteOutcomeVariant.stopContributionsRejected,
-      project: project,
-    ),
   );
 }
 

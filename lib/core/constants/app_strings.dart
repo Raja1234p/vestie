@@ -386,8 +386,6 @@ class AppStrings {
   static const String investmentDistributionColReceives = 'RECEIVES';
   static const String distributeFundsActionPending =
       'Distribute funds flow coming soon.';
-  static const String btnPreviewCompletedInvestment =
-      'Preview completed investment UI';
   static const String userInvestmentInvestedAmountLabel = 'Invested Amount';
   static const String userInvestmentReturnsHistoryTitle = 'Returns History';
   static const String userInvestmentFundsHistoryTitle = 'Project Funds History';
@@ -1178,13 +1176,9 @@ class AppStrings {
       'You\'ve successfully repaid $amount to $projectName.';
   static String borrowRepayPenaltyValue(int percent, String amountFormatted) =>
       '$percent% ($amountFormatted)';
-  static const String btnPreviewApprovedBorrowRequest =
-      'Preview approved borrow request UI';
   static const String myBorrowMemberVotesLabel = 'Member Votes';
   static const String myBorrowPendingBanner = 'Pending — waiting for decision';
   static const String myBorrowHistoryLabel = 'Borrow History';
-  static const String btnPreviewPendingBorrowRequest =
-      'Preview pending borrow request UI';
   static const String btnMakeBorrowRequest = 'Make Request';
   static const String btnCancelBorrowRequest = 'Cancel Request';
   static const String cancelBorrowRequestDialogTitle = 'Are You Sure?';
@@ -1428,9 +1422,6 @@ class AppStrings {
       'You\'ve marked the project as incomplete. If the majority agrees, all '
       'money will be refunded to wallet.';
 
-  /// Dev preview — member/co-leader cast vote (give vote), not outcome.
-  static const String btnPreviewCastVote = 'Preview cast vote UI';
-
   // ── Cast vote copy (member & co-leader — same UI; role/category text) ─
   // Vacation — member
   static const String successVoteCastVacationPendingBannerTitle =
@@ -1557,9 +1548,6 @@ class AppStrings {
   static String projectVotingEndsOn(String date, int daysRemaining) =>
       'Ends on $date ($daysRemaining days remaining)';
 
-  static const String btnPreviewViewSuccessVotes =
-      'Preview View Success Votes UI';
-
   // ── Group leader: active success vote (Figma voting window) ───────────
   static const String leaderSuccessVoteWindowClosesIn =
       'Voting window closes in';
@@ -1577,12 +1565,6 @@ class AppStrings {
   ) =>
       'Majority needed: $required of $total members must Agree to stop contributions.';
   static const String leaderSuccessVoteFinalizeButton = 'Finalize vote';
-  static const String btnPreviewVoteOutcomeApproved =
-      'Preview vote approved UI';
-  static const String btnPreviewVoteOutcomeRejected =
-      'Preview vote rejected UI';
-  static const String btnPreviewStopContributionsVoteRejected =
-      'Preview stop contributions vote rejected UI';
 
   // ── Member: success vote final outcome (majority result) ─────────────
   static const String projectVoteApprovedTitle = 'Project Approved!';

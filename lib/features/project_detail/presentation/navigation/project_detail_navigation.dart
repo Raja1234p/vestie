@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -26,9 +25,6 @@ import '../../domain/entities/project_detail_route_args.dart';
 import '../mappers/closure_vote_ui_mappers.dart';
 import '../models/investment_distribution_ui_data.dart';
 import '../models/investment_returns_ui_data.dart';
-import 'package:vestie/leader/features/project_detail/presentation/models/leader_success_vote_progress_ui_data.dart';
-import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_role.dart';
-import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_variant.dart';
 import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
 import '../widgets/distribute_funds_amount_sheet.dart';
 import 'package:vestie/features/project_detail/presentation/project_detail_reload_coordinator.dart';
@@ -177,35 +173,6 @@ class ProjectDetailNavigation {
     BuildContext context, {
     required ProjectDetailEntity project,
   }) => _openCastVote(context, project: project);
-
-  /// Temporary preview — member/co-leader cast vote (give vote).
-  static void openCastVotePreview(
-    BuildContext context, {
-    required ProjectDetailEntity project,
-  }) => _openCastVotePreview(context, project: project);
-
-  /// @deprecated Use [openCastVotePreview].
-  static void openSuccessVoteScreenPreview(
-    BuildContext context, {
-    required ProjectDetailEntity project,
-  }) => openCastVotePreview(context, project: project);
-
-  /// Temporary preview — member vote outcome (approved / rejected).
-  static void openMemberVoteOutcomePreview(
-    BuildContext context, {
-    required ProjectDetailEntity project,
-    required bool approved,
-  }) => _openMemberVoteOutcomePreview(
-    context,
-    project: project,
-    approved: approved,
-  );
-
-  /// Temporary preview — investment GL stop-contributions vote rejected.
-  static void openStopContributionsVoteRejectedPreview(
-    BuildContext context, {
-    required ProjectDetailEntity project,
-  }) => _openStopContributionsVoteRejectedPreview(context, project: project);
 
   static Future<void> openInviteMembers(
     BuildContext context, {
