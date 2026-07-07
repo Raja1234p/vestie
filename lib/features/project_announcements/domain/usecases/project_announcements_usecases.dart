@@ -12,10 +12,12 @@ class CreateProjectAnnouncementUseCase {
     required String projectId,
     required String heading,
     required String content,
+    List<String> attachmentPaths = const [],
   }) => repository.create(
     projectId: projectId,
     heading: heading,
     content: content,
+    attachmentPaths: attachmentPaths,
   );
 }
 

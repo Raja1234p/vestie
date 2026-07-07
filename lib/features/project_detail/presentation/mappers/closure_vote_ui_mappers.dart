@@ -8,11 +8,14 @@ import 'package:vestie/features/project_detail/domain/entities/project_detail_cl
 import 'package:vestie/features/project_detail/domain/entities/project_detail_completed_outcome_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_voting_entities.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_cast_route_args.dart';
+import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_distribution_phase.dart';
+import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_refund_phase.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_role.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_route_args.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_ui_data.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_variant.dart';
 import 'package:vestie/leader/features/project_detail/presentation/models/leader_success_vote_progress_ui_data.dart';
+import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
 
 /// Formats closure vote deadline for cast / monitor screens.
@@ -110,11 +113,21 @@ int _closureVoteEligibleMemberCount({
   required int talliedTotal,
   required List<ProjectVotingMemberVoteEntity> memberVotes,
 }) {
+  final eligibleFromApi = project?.voting?.eligibleVoterCount;
+  if (eligibleFromApi != null && eligibleFromApi > 0) return eligibleFromApi;
   if (memberVotes.isNotEmpty) return memberVotes.length;
   if (talliedTotal > 0) return talliedTotal;
   final eligible = _eligibleClosureVoteMembers(project?.members ?? const []);
   if (eligible.isNotEmpty) return eligible.length;
   return project != null && project.members.isNotEmpty ? project.members.length : 1;
+}
+
+bool _isStopContributionsMonitorVote({
+  required ProjectDetailEntity? project,
+  ActiveClosureVoteEntity? vote,
+}) {
+  if (vote?.voteType == ClosureVoteType.stopContributionsVote) return true;
+  return project?.isStopContributionsClosureVote ?? false;
 }
 
 /// Week 11+ leader monitor from `GET /projects/{id}` → `voting` only.
@@ -139,6 +152,7 @@ LeaderSuccessVoteProgressUiData leaderSuccessVoteProgressFromProjectVoting({
     totalMembers: total,
     remaining: clampedRemaining,
     members: _leaderMemberVoteRowsForProject(project),
+    isStopContributionsVote: _isStopContributionsMonitorVote(project: project),
   );
 }
 
@@ -166,6 +180,10 @@ LeaderSuccessVoteProgressUiData leaderSuccessVoteProgressFromActiveVote({
     totalMembers: total,
     remaining: vote.remainingDuration,
     members: members,
+    isStopContributionsVote: _isStopContributionsMonitorVote(
+      project: project,
+      vote: vote,
+    ),
   );
 }
 
@@ -195,20 +213,11 @@ SuccessVoteCastRouteArgs successVoteCastRouteArgsFromProject(
     thumbsDown: vote?.thumbsDown,
     notYetVoted: vote?.notYetVoted,
     isInvestmentStopContributionsVote: project.isStopContributionsClosureVote,
+    isInvestmentMarkSuccessfulVote: project.isInvestmentMarkSuccessfulClosureVote,
   );
 }
 
-/// Week 10 `outcome` → approved / rejected for outcome UI.
-bool isClosureVoteOutcomeApproved(ClosureVoteOutcome outcome) {
-  return switch (outcome) {
-    ClosureVoteOutcome.success => true,
-    ClosureVoteOutcome.investmentStarted => true,
-    ClosureVoteOutcome.refund => false,
-    ClosureVoteOutcome.disputed => false,
-  };
-}
-
-/// Maps finalize payload to the existing outcome screen variants.
+/// Maps finalize / detail payload to the existing outcome screen variants.
 SuccessVoteOutcomeVariant successVoteOutcomeVariantFromClosureVote({
   required ClosureVoteType voteType,
   required ClosureVoteOutcome outcome,
@@ -257,6 +266,8 @@ SuccessVoteOutcomeRouteArgs successVoteOutcomeRouteArgsFromFinalize({
       voteType: result.voteType,
       outcome: result.outcome,
     ),
+    refundPhase: refundPhaseFromProjectDetail(project),
+    distributionPhase: distributionPhaseFromProjectDetail(project),
     project: role.isModerator ? project : null,
     projectCategory: project.category,
   );
@@ -297,10 +308,165 @@ SuccessVoteOutcomeUiData successVoteOutcomeUiDataFromProjectDetail(
 SuccessVoteOutcomeVariant completedOutcomeVariantFromProjectDetail(
   ProjectDetailEntity project,
 ) {
+  final voteType = project.voting?.voteType;
+  if (voteType != null) {
+    final outcome = project.voting?.outcome ??
+        (project.isClosureVoteOutcomeApproved
+            ? ClosureVoteOutcome.success
+            : ClosureVoteOutcome.disputed);
+    return successVoteOutcomeVariantFromClosureVote(
+      voteType: voteType,
+      outcome: outcome,
+    );
+  }
   if (project.category.isInvestment &&
       !project.investmentContributionsAreClosed &&
       !project.isClosureVoteOutcomeApproved) {
     return SuccessVoteOutcomeVariant.stopContributionsRejected;
   }
   return SuccessVoteOutcomeVariant.successVote;
+}
+
+SuccessVoteOutcomeVariant completedOutcomeVariantFromProject(Project project) {
+  final voteTypeRaw = project.lastVoteType;
+  if (voteTypeRaw != null && voteTypeRaw.trim().isNotEmpty) {
+    final voteType = parseClosureVoteType(voteTypeRaw);
+    final outcomeRaw = project.lastVoteOutcome;
+    final outcome = outcomeRaw != null && outcomeRaw.trim().isNotEmpty
+        ? parseClosureVoteOutcome(outcomeRaw)
+        : (project.isSuccessVoteApproved
+            ? ClosureVoteOutcome.success
+            : ClosureVoteOutcome.disputed);
+    return successVoteOutcomeVariantFromClosureVote(
+      voteType: voteType,
+      outcome: outcome,
+    );
+  }
+  if (project.category.isInvestment &&
+      !project.investmentContributionsAreClosed &&
+      !project.isSuccessVoteApproved) {
+    return SuccessVoteOutcomeVariant.stopContributionsRejected;
+  }
+  return SuccessVoteOutcomeVariant.successVote;
+}
+
+SuccessVoteOutcomeRefundPhase refundPhaseFromProjectDetail(
+  ProjectDetailEntity project,
+) {
+  if (project.voting?.outcome == ClosureVoteOutcome.refund) {
+    final phase = refundPhaseFromDisplayStatus(project.displayStatusLabel);
+    return phase.isRefund ? phase : SuccessVoteOutcomeRefundPhase.inProgress;
+  }
+  if (project.showsClosureVoteRefundOutcome) {
+    final phase = refundPhaseFromDisplayStatus(project.displayStatusLabel);
+    if (phase.isRefund) return phase;
+    return SuccessVoteOutcomeRefundPhase.inProgress;
+  }
+  return refundPhaseFromDisplayStatus(project.displayStatusLabel);
+}
+
+SuccessVoteOutcomeRefundPhase refundPhaseFromProject(Project project) {
+  final outcomeRaw = project.lastVoteOutcome;
+  if (outcomeRaw != null &&
+      parseClosureVoteOutcome(outcomeRaw) == ClosureVoteOutcome.refund) {
+    final phase = refundPhaseFromDisplayStatus(project.displayStatus);
+    return phase.isRefund ? phase : SuccessVoteOutcomeRefundPhase.inProgress;
+  }
+  return refundPhaseFromDisplayStatus(project.displayStatus);
+}
+
+bool _isApprovedInvestmentFinalClosure(ProjectDetailEntity project) {
+  if (!project.category.isInvestment || !project.isClosureVoteOutcomeApproved) {
+    return false;
+  }
+  final voteType = project.voting?.voteType;
+  if (voteType == ClosureVoteType.stopContributionsVote) return false;
+  if (voteType == ClosureVoteType.finalClosureVote) return true;
+  final outcome = project.voting?.outcome;
+  if (outcome == ClosureVoteOutcome.investmentStarted) return true;
+  return project.investmentContributionsAreClosed &&
+      project.isClosureVoteOutcomeApproved;
+}
+
+bool _isApprovedInvestmentFinalClosureFromList(Project project) {
+  if (!project.category.isInvestment || !project.isSuccessVoteApproved) {
+    return false;
+  }
+  final voteTypeRaw = project.lastVoteType;
+  if (voteTypeRaw != null &&
+      parseClosureVoteType(voteTypeRaw) ==
+          ClosureVoteType.stopContributionsVote) {
+    return false;
+  }
+  if (voteTypeRaw != null &&
+      parseClosureVoteType(voteTypeRaw) == ClosureVoteType.finalClosureVote) {
+    return true;
+  }
+  final outcomeRaw = project.lastVoteOutcome;
+  if (outcomeRaw != null &&
+      parseClosureVoteOutcome(outcomeRaw) ==
+          ClosureVoteOutcome.investmentStarted) {
+    return true;
+  }
+  return project.investmentContributionsAreClosed;
+}
+
+SuccessVoteOutcomeDistributionPhase _resolveDistributionPhase({
+  required bool isApprovedInvestmentFinalClosure,
+  String? distributionStatus,
+  String? displayStatus,
+}) {
+  if (!isApprovedInvestmentFinalClosure) {
+    return SuccessVoteOutcomeDistributionPhase.none;
+  }
+
+  if (distributionStatus != null && distributionStatus.trim().isNotEmpty) {
+    final fromApi = distributionPhaseFromApiValue(distributionStatus);
+    if (fromApi.isDistribution) return fromApi;
+  }
+
+  return distributionPhaseFromStatusLabel(displayStatus);
+}
+
+SuccessVoteOutcomeDistributionPhase distributionPhaseFromProjectDetail(
+  ProjectDetailEntity project,
+) {
+  return _resolveDistributionPhase(
+    isApprovedInvestmentFinalClosure: _isApprovedInvestmentFinalClosure(project),
+    distributionStatus: project.voting?.distributionStatus,
+    displayStatus: project.displayStatusLabel,
+  );
+}
+
+SuccessVoteOutcomeDistributionPhase distributionPhaseFromProject(
+  Project project,
+) {
+  return _resolveDistributionPhase(
+    isApprovedInvestmentFinalClosure:
+        _isApprovedInvestmentFinalClosureFromList(project),
+    distributionStatus: project.distributionStatus,
+    displayStatus: project.displayStatus,
+  );
+}
+
+SuccessVoteOutcomeRouteArgs successVoteOutcomeRouteArgsFromProject(
+  Project project, {
+  String? completedProjectDetailId,
+  String? completedProjectName,
+}) {
+  final role = SuccessVoteOutcomeRole.fromViewerRole(project.viewerRole);
+
+  return SuccessVoteOutcomeRouteArgs(
+    data: SuccessVoteOutcomeUiData.fromProject(
+      project,
+      isApproved: project.isSuccessVoteApproved,
+    ),
+    viewerRole: role,
+    variant: completedOutcomeVariantFromProject(project),
+    refundPhase: refundPhaseFromProject(project),
+    distributionPhase: distributionPhaseFromProject(project),
+    projectCategory: project.category,
+    completedProjectDetailId: completedProjectDetailId,
+    completedProjectName: completedProjectName ?? project.name,
+  );
 }

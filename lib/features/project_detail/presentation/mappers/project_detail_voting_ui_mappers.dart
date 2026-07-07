@@ -52,5 +52,7 @@ SuccessVoteCastUiData successVoteCastUiDataFromProjectDetail(
     memberVotes: summary?.memberVotes ?? const [],
     isInvestmentStopContributionsVote:
         project.category.isInvestment && project.isStopContributionsClosureVote,
+    isInvestmentMarkSuccessfulVote:
+        project.category.isInvestment && project.isInvestmentMarkSuccessfulClosureVote,
   );
 }

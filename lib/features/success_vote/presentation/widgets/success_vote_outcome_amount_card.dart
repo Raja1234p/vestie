@@ -10,11 +10,15 @@ import 'package:vestie/features/success_vote/presentation/models/success_vote_ou
 class SuccessVoteOutcomeAmountCard extends StatelessWidget {
   final SuccessVoteOutcomeUiData data;
   final SuccessVoteOutcomeCopy copy;
+  final String? captionOverride;
+  final bool rejectedCaptionAccentRed;
 
   const SuccessVoteOutcomeAmountCard({
     super.key,
     required this.data,
     required this.copy,
+    this.captionOverride,
+    this.rejectedCaptionAccentRed = false,
   });
 
   static BoxDecoration _cardDecoration({
@@ -31,13 +35,14 @@ class SuccessVoteOutcomeAmountCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final caption = copy.amountCaptionFor(data.isApproved);
+    final caption = captionOverride ?? copy.amountCaptionFor(data.isApproved);
     final radius = BorderRadius.circular(12.r);
+    final isApproved = data.isApproved;
 
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-      decoration: _cardDecoration(radius: radius, isApproved: data.isApproved),
+      decoration: _cardDecoration(radius: radius, isApproved: isApproved),
       child: Column(
         children: [
           AppText(
@@ -46,7 +51,11 @@ class SuccessVoteOutcomeAmountCard extends StatelessWidget {
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontSize: 14.sp,
               fontWeight: FontWeight.w600,
-              color: AppColors.neutral700,
+              color: isApproved
+                  ? AppColors.neutral700
+                  : rejectedCaptionAccentRed
+                  ? AppColors.red800
+                  : AppColors.neutral700,
             ),
           ),
           SizedBox(height: 6.h),
@@ -55,7 +64,7 @@ class SuccessVoteOutcomeAmountCard extends StatelessWidget {
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               fontSize: 32.sp,
               fontWeight: FontWeight.w700,
-              color: data.isApproved ? AppColors.green900 : AppColors.red900,
+              color: isApproved ? AppColors.green900 : AppColors.red900,
             ),
           ),
         ],

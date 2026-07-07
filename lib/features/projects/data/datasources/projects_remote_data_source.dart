@@ -17,6 +17,7 @@ abstract class ProjectsRemoteDataSource {
 
   Future<CreateProjectResponseModel> createProject({
     required CreateProjectRequestModel request,
+    List<String> imagePaths = const [],
   });
 
   /// `POST /projects/{id}/launch` — activates a draft project (leader only).

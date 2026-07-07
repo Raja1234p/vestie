@@ -21,6 +21,9 @@ class LeaderSuccessVoteProgressUiData {
   final Duration remaining;
   final List<LeaderSuccessVoteMemberRow> members;
 
+  /// Investment phase 1 — stop-contributions vote (Figma majority banner copy).
+  final bool isStopContributionsVote;
+
   const LeaderSuccessVoteProgressUiData({
     required this.agreedCount,
     required this.disagreedCount,
@@ -29,11 +32,13 @@ class LeaderSuccessVoteProgressUiData {
     required this.totalMembers,
     required this.remaining,
     required this.members,
+    this.isStopContributionsVote = false,
   });
 
   /// Figma-style preview until vote-status API is wired.
   factory LeaderSuccessVoteProgressUiData.preview({
     ProjectDetailEntity? project,
+    bool isStopContributionsVote = true,
   }) {
     final total = project != null && project.members.isNotEmpty
         ? project.members.length
@@ -52,6 +57,7 @@ class LeaderSuccessVoteProgressUiData {
       totalMembers: total,
       remaining: const Duration(hours: 31, minutes: 22, seconds: 9),
       members: previewMembers,
+      isStopContributionsVote: isStopContributionsVote,
     );
   }
 

@@ -72,7 +72,7 @@ Use this when verifying **data on screen matches API** after actions (refresh, n
 | Bank picker | `GET /bank-accounts` | `BankAccountListShimmer` | — |
 | Withdraw preview | `POST /wallet/withdrawals/preview` | — | — |
 | Withdraw submit | `POST /wallet/withdrawals` + poll | — | Wallet |
-| Announcements (detail) | `announcements[]` on `GET /projects/{id}` | With detail | Create/delete → detail reload |
+| Announcements (detail) | `announcements[]` on `GET /projects/{id}` (incl. `attachments[]`) | With detail | Create: multipart POST → detail reload; card shows **View Image** when attachments present → `ProjectImagesViewer` |
 | Notifications | `GET /notifications` | `NotificationListShimmer` | Tap → `POST …/mark-read` |
 | FCM | `POST/DELETE …/device-token` | — | Login / logout |
 

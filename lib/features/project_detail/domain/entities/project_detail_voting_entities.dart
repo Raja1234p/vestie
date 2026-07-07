@@ -1,3 +1,5 @@
+import 'closure_vote_entities.dart';
+
 /// Week 11+ top-level `projectStatus` on `GET /projects/{id}` — detail banner.
 enum ProjectDetailBannerStatus {
   ongoing,
@@ -50,6 +52,11 @@ class ProjectVotingSummaryEntity {
   final bool hasVoted;
   final bool isFinalized;
   final List<ProjectVotingMemberVoteEntity> memberVotes;
+  final ClosureVoteType? voteType;
+  final ClosureVoteOutcome? outcome;
+  final bool? isApproved;
+  final int? eligibleVoterCount;
+  final String? distributionStatus;
 
   const ProjectVotingSummaryEntity({
     required this.startedAtUtc,
@@ -60,7 +67,24 @@ class ProjectVotingSummaryEntity {
     this.hasVoted = false,
     this.isFinalized = false,
     this.memberVotes = const [],
+    this.voteType,
+    this.outcome,
+    this.isApproved,
+    this.eligibleVoterCount,
+    this.distributionStatus,
   });
+
+  /// Backend `voting.isApproved` or derived from [outcome].
+  bool? get resolvedIsApproved {
+    if (isApproved != null) return isApproved;
+    if (outcome != null) {
+      return isClosureVoteOutcomeApproved(outcome!);
+    }
+    return null;
+  }
+
+  bool get hasOutcomeEnvelope =>
+      voteType != null || outcome != null || isApproved != null;
 
   int get totalVotes => agreedCount + disagreedCount + pendingCount;
 

@@ -9,6 +9,8 @@ import 'package:vestie/core/utils/project_end_relative_label.dart';
 import 'package:vestie/core/utils/roi_display_format.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/project_end_and_roi_row.dart';
+import 'package:vestie/core/widgets/common/project_cover_image.dart';
+import 'package:vestie/core/widgets/common/project_images_viewer.dart';
 import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import '../../domain/entities/project.dart';
@@ -18,7 +20,7 @@ import 'project_card_formatters.dart';
 /// Figma-accurate project card.
 ///
 /// Ongoing  : category chip | status badge | project name | goal + progress + date | action button
-/// Completed: project-name chip | ✓ Completed badge | "Raised/Total $X" large | button only for Joined
+/// Completed: category chip | ✓ Completed badge | project name + raised/total amount | button only for Joined
 class ProjectCard extends StatelessWidget {
   final Project project;
   final VoidCallback onAction;
@@ -46,7 +48,6 @@ class ProjectCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final devicePixelRatio = MediaQuery.devicePixelRatioOf(context);
     return RepaintBoundary(
       child: Container(
         margin: EdgeInsets.only(bottom: 12.h),
@@ -67,7 +68,7 @@ class ProjectCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Category / project-name chip + status badge ───
+            // ── Category chip + status badge ───
             Row(
               children: [
                 ProjectCategoryChip(project: project),
@@ -124,13 +125,18 @@ class ProjectCard extends StatelessWidget {
                     SizedBox(width: 8.w),
                   ] else
                     const Spacer(),
-                  Image.asset(
-                    project.category.cardImageAsset,
+                  ProjectCoverImage(
+                    coverImageUrl: project.coverImageUrl,
+                    category: project.category,
                     width: 100.w,
                     height: 69.h,
-                    fit: BoxFit.contain,
-                    cacheWidth: (100.w * devicePixelRatio).round(),
-                    cacheHeight: (69.h * devicePixelRatio).round(),
+                    onTap: project.galleryImageUrls.isEmpty
+                        ? null
+                        : () => ProjectImagesViewer.openGallery(
+                            context,
+                            coverImageUrl: project.coverImageUrl,
+                            images: project.images,
+                          ),
                   ),
                 ],
               ),

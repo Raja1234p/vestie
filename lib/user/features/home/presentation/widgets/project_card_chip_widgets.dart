@@ -14,14 +14,9 @@ class ProjectCategoryChip extends StatelessWidget {
 
   const ProjectCategoryChip({super.key, required this.project});
 
-  String get _label => project.status == ProjectStatus.completed
-      ? project.name
-      : project.categoryLabel;
-
-  String? get _iconAsset => project.category.iconAsset;
-
   @override
   Widget build(BuildContext context) {
+    final iconAsset = project.category.iconAsset;
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
       decoration: BoxDecoration(
@@ -32,9 +27,9 @@ class ProjectCategoryChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (_iconAsset != null)
+          if (iconAsset != null)
             SvgPicture.asset(
-              _iconAsset!,
+              iconAsset,
               width: 12.w,
               height: 12.w,
               colorFilter: const ColorFilter.mode(
@@ -50,7 +45,7 @@ class ProjectCategoryChip extends StatelessWidget {
             ),
           SizedBox(width: 4.w),
           Text(
-            _label,
+            project.categoryLabel,
             style: GoogleFonts.lato(
               fontSize: 11.sp,
               color: AppColors.textBody,
@@ -109,10 +104,10 @@ class ProjectStatusBadge extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (completed) ...[
-            AppSvgIcon(
-              assetPath: AppAssets.iconCheckCircle,
-              size: 11.w,
-              color: AppColors.surface,
+            SvgPicture.asset(
+              AppAssets.statusCompletedTick,
+              width: 11.w,
+              height: 11.w,
             ),
             SizedBox(width: 3.w),
           ],

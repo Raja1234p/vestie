@@ -241,6 +241,8 @@ class AppAssets {
   static const String iconTickSwitchOn = '$_iconPath/icon_tick_switch_on.png';
   static const String iconAlertTriangle = '$_iconPath/icon_alert_triangle.svg';
   static const String iconArrowBack = '$_iconPath/icon_arrow_back.png';
+  static const String galleryArrowLeft = '$_iconPath/gallery_arrow_left.svg';
+  static const String galleryArrowRight = '$_iconPath/gallery_arrow_right.svg';
   static const String iconChevronRight = '$_iconPath/icon_chevron_right.svg';
   static const String iconClose = '$_iconPath/icon_close.svg';
   static const String iconChevronDown = '$_iconPath/icon_chevron_down.svg';

@@ -9,11 +9,13 @@ import 'package:vestie/core/widgets/text/app_text.dart';
 class LeaderSuccessVoteMajorityBanner extends StatelessWidget {
   final int majorityRequired;
   final int totalMembers;
+  final bool isStopContributionsVote;
 
   const LeaderSuccessVoteMajorityBanner({
     super.key,
     required this.majorityRequired,
     required this.totalMembers,
+    this.isStopContributionsVote = false,
   });
 
   @override
@@ -26,10 +28,15 @@ class LeaderSuccessVoteMajorityBanner extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.r),
       ),
       child: AppText(
-        AppStrings.leaderSuccessVoteMajorityNeeded(
-          majorityRequired,
-          totalMembers,
-        ),
+        isStopContributionsVote
+            ? AppStrings.leaderSuccessVoteMajorityNeededStopContributions(
+                majorityRequired,
+                totalMembers,
+              )
+            : AppStrings.leaderSuccessVoteMajorityNeeded(
+                majorityRequired,
+                totalMembers,
+              ),
         textAlign: TextAlign.center,
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
           fontSize: 14.sp,

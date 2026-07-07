@@ -39,14 +39,15 @@ class SuccessVoteOutcomeUiData {
     required bool isApproved,
   }) {
     final amount = project.currentAmount ?? 0;
-    const defaultMembers = 7;
-    final agreed = isApproved ? 5 : 2;
+    final total = project.memberCount > 0 ? project.memberCount : 7;
+    final majority = total <= 1 ? 1 : (total / 2).floor() + 1;
+    final agreed = isApproved ? majority : total - majority;
     return SuccessVoteOutcomeUiData(
       isApproved: isApproved,
       amountUsd: amount,
       agreedCount: agreed,
-      disagreedCount: defaultMembers - agreed,
-      totalMemberCount: defaultMembers,
+      disagreedCount: total - agreed,
+      totalMemberCount: total,
     );
   }
 

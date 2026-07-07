@@ -1,5 +1,7 @@
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/domain/entities/pagination_info.dart';
+import 'package:vestie/core/utils/project_gallery_image_urls.dart';
+import 'package:vestie/features/projects/domain/entities/project_image_entity.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
 import 'borrow_request_entity.dart';
@@ -86,6 +88,11 @@ class ProjectDetailEntity {
   /// From API `project.hasCoLeader`.
   final bool hasCoLeader;
 
+  /// `coverImageUrl` from `GET /projects/{id}` — category illustration when empty.
+  final String? coverImageUrl;
+
+  final List<ProjectImageEntity> images;
+
   final PaginationInfo membersPagination;
   final PaginationInfo invitesPagination;
   final PaginationInfo announcementsPagination;
@@ -129,6 +136,8 @@ class ProjectDetailEntity {
     this.activeClosureVote,
     this.invites = const [],
     this.hasCoLeader = false,
+    this.coverImageUrl,
+    this.images = const [],
     this.membersPagination = const PaginationInfo(
       page: 1,
       pageSize: 20,
@@ -325,13 +334,14 @@ class ProjectDetailEntity {
   bool get showsBorrowAction => !category.isInvestment && borrowingEnabled;
 
   /// Investment — contribution phase ended after a successful stop-contributions vote.
-  bool get investmentContributionsAreClosed {
+  bool get investmentFundedPhase {
     if (!category.isInvestment) return false;
-    if (apiCanStopContributions == false) return true;
     final state = projectLifecycleState.toLowerCase().trim();
     if (state == 'funded') return true;
     return displayStatusLabel.toLowerCase().contains('funded');
   }
+
+  bool get investmentContributionsAreClosed => investmentFundedPhase;
 
   /// Members cannot contribute once the investment group leaves the contribution phase.
   bool get showsContributeAction =>
@@ -417,7 +427,18 @@ class ProjectDetailEntity {
       !hidesProjectDetailOverflowMenuDuringVoting;
 
   /// GroupLeader, CoLeader, and Member can open the invite-members sheet.
-  bool get canInviteMembers => showsProjectDetailOverflowMenu;
+  /// Hidden after stop-contributions (investment funded) or during mark-successful /
+  /// closure voting.
+  bool get canInviteMembers {
+    if (!showsProjectDetailOverflowMenu) return false;
+    if (investmentContributionsAreClosed) return false;
+    if (hasActiveClosureVotingWindow) return false;
+    final normalized = displayStatusLabel.trim().toLowerCase();
+    if (normalized.contains('closure') && normalized.contains('voting')) {
+      return false;
+    }
+    return true;
+  }
 
   /// Any active participant can open another member's profile and send VFF
   /// to anyone except themselves (same for all project categories).
@@ -425,4 +446,9 @@ class ProjectDetailEntity {
 
   /// Vacation / emergency members: 4 items; investment members: 3 (no My Borrows).
   bool get memberProjectMenuIncludesMyBorrows => isVacationOrEmergency;
+
+  List<String> get galleryImageUrls => ProjectGalleryImageUrls.resolve(
+    coverImageUrl: coverImageUrl,
+    images: images,
+  );
 }

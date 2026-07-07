@@ -19,6 +19,9 @@ class ProjectGoalRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final current = formatProjectWhole(project.currentAmount);
     final goal = formatProjectWhole(project.goalAmount);
+    final label = project.investmentContributionsAreClosed
+        ? AppStrings.labelRaised
+        : AppStrings.labelGoal;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -28,7 +31,7 @@ class ProjectGoalRow extends StatelessWidget {
             style: GoogleFonts.lato(fontSize: 25.sp, color: AppColors.textBody),
             children: [
               TextSpan(
-                text: '${AppStrings.labelGoal} ',
+                text: '$label ',
                 style: const TextStyle(fontWeight: FontWeight.w700),
               ),
               TextSpan(

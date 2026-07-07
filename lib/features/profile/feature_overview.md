@@ -43,7 +43,7 @@ Profile tab, edit profile, payment methods entry, transaction history, completed
 `openCompletedProjectDetail` (`presentation/navigation/open_completed_project_detail.dart`) branches on `project.userFlow`:
 
 - **Vote in progress / outcome available** (`userFlow != null`) → `openProjectFromCard` (existing vote-outcome shortcut).
-- **Otherwise** → pushes `AppRoutes.completedProjectDetail` with `CompletedProjectDetailRouteArgs { projectId, initialProjectName }` — the dedicated read-only `CompletedProjectDetailScreen`.
+- **Otherwise** → `openSuccessVoteOutcomeFromProject` → `SuccessVoteOutcomeScreen` with copy from API `viewerRole` (GroupLeader / CoLeader / Member) and project category; **Back to Home** or profile path to completed detail via `completedProjectDetailId`.
 
 `CompletedProjectDetailScreen` popup menu (`MemberProjectActionMenu(fundsHistoryOnly: true)`) exposes **only** "Project fund history" — no contribute/borrow/leave actions on a completed project.
 

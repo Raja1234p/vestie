@@ -1,3 +1,4 @@
+import 'package:vestie/features/projects/domain/entities/project_image_entity.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
 
@@ -10,16 +11,27 @@ import 'project_detail_member_vote_extensions.dart';
 import 'project_detail_voting_entities.dart';
 
 extension ProjectDetailEntityClosureVote on ProjectDetailEntity {
+  /// Investment mark-successful / ROI confirmation vote (phase 2, funded project).
+  bool get isInvestmentMarkSuccessfulClosureVote {
+    if (!category.isInvestment) return false;
+    if (isStopContributionsClosureVote) return false;
+    final voteType = activeClosureVote?.voteType;
+    if (voteType == ClosureVoteType.finalClosureVote) return true;
+    if (investmentFundedPhase && votingIsInProgress) return true;
+    return false;
+  }
+
   /// Investment stop-contributions vote (phase 1), not final closure / success vote.
   bool get isStopContributionsClosureVote {
     if (!category.isInvestment) return false;
-    if (apiCanStopContributions == false) return false;
+    if (voting?.voteType == ClosureVoteType.stopContributionsVote) return true;
     final voteType = activeClosureVote?.voteType;
     if (voteType == ClosureVoteType.stopContributionsVote) return true;
     if (voteType == ClosureVoteType.finalClosureVote ||
         voteType == ClosureVoteType.successVote) {
       return false;
     }
+    if (investmentFundedPhase) return false;
     if (votingIsInProgress) return true;
     return false;
   }
@@ -80,14 +92,14 @@ extension ProjectDetailEntityClosureVote on ProjectDetailEntity {
   }
 
   ClosureVoteType _inferClosureVoteType() {
+    final fromApi = voting?.voteType;
+    if (fromApi != null) return fromApi;
     if (category.isInvestment) {
-      if (apiCanStopContributions == false) {
+      if (investmentFundedPhase) {
         return ClosureVoteType.finalClosureVote;
       }
-      final state = projectLifecycleState.toLowerCase().trim();
-      if (state == 'funded' ||
-          displayStatusLabel.toLowerCase().contains('funded')) {
-        return ClosureVoteType.finalClosureVote;
+      if (votingIsInProgress) {
+        return ClosureVoteType.stopContributionsVote;
       }
       return ClosureVoteType.stopContributionsVote;
     }
@@ -122,6 +134,8 @@ extension ProjectDetailEntityClosureVote on ProjectDetailEntity {
           hasWeek11ProjectDetailEnvelope,
       apiCanStopContributions: snapshot.apiCanStopContributions,
       hasActiveSuccessVote: snapshot.votingIsInProgress,
+      coverImageUrl: snapshot.coverImageUrl,
+      images: snapshot.images,
       clearActiveClosureVote: true,
     ).withSyntheticClosureVoteFromDetailVoting();
   }
@@ -144,6 +158,8 @@ extension ProjectDetailEntityClosureVote on ProjectDetailEntity {
     bool? apiCanStopContributions,
     bool? hasActiveSuccessVote,
     ActiveClosureVoteEntity? activeClosureVote,
+    String? coverImageUrl,
+    List<ProjectImageEntity>? images,
     bool clearActiveClosureVote = false,
   }) {
     return ProjectDetailEntity(
@@ -189,6 +205,8 @@ extension ProjectDetailEntityClosureVote on ProjectDetailEntity {
           : (activeClosureVote ?? this.activeClosureVote),
       invites: invites,
       hasCoLeader: hasCoLeader,
+      coverImageUrl: coverImageUrl ?? this.coverImageUrl,
+      images: images ?? this.images,
       membersPagination: membersPagination,
       invitesPagination: invitesPagination,
       announcementsPagination: announcementsPagination,

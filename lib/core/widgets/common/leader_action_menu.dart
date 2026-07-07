@@ -33,6 +33,7 @@ class LeaderActionMenu extends StatelessWidget {
   final bool showStopContributions;
   final bool showCancelProject;
   final bool showEditProject;
+  final bool showInviteMembers;
   final void Function(LeaderMenuAction) onSelected;
 
   const LeaderActionMenu({
@@ -44,6 +45,7 @@ class LeaderActionMenu extends StatelessWidget {
     this.showStopContributions = true,
     this.showCancelProject = true,
     this.showEditProject = true,
+    this.showInviteMembers = true,
   });
 
   static const _primaryLabelColor = AppColors.grey900;
@@ -117,11 +119,13 @@ class LeaderActionMenu extends StatelessWidget {
         AppStrings.menuMyBorrows,
       );
     }
-    push(
-      LeaderMenuAction.inviteMembers,
-      AppAssets.iconAdd,
-      AppStrings.menuInviteMembers,
-    );
+    if (showInviteMembers) {
+      push(
+        LeaderMenuAction.inviteMembers,
+        AppAssets.iconAdd,
+        AppStrings.menuInviteMembers,
+      );
+    }
     if (out.isNotEmpty) out.add(_divider());
     out.add(
       _buildItem(
@@ -182,11 +186,13 @@ class LeaderActionMenu extends StatelessWidget {
         AppStrings.menuMyBorrows,
       );
     }
-    push(
-      LeaderMenuAction.inviteMembers,
-      AppAssets.iconAdd,
-      AppStrings.menuInviteMembers,
-    );
+    if (showInviteMembers) {
+      push(
+        LeaderMenuAction.inviteMembers,
+        AppAssets.iconAdd,
+        AppStrings.menuInviteMembers,
+      );
+    }
     if (showMarkAsSuccessful) {
       push(
         LeaderMenuAction.markSuccessful,

@@ -33,6 +33,15 @@ void main() {
       expect(cubit.state.projectImagePaths, hasLength(5));
     });
 
+    test('clearProjectImages empties selection', () {
+      cubit.addProjectImages(const ['/tmp/a.jpg', '/tmp/b.jpg']);
+      expect(cubit.state.projectImagePaths, hasLength(2));
+
+      cubit.clearProjectImages();
+      expect(cubit.state.projectImagePaths, isEmpty);
+      expect(cubit.state.canAddMoreProjectImages, isTrue);
+    });
+
     test('removeProjectImageAt re-enables upload slot', () {
       cubit.addProjectImages(
         List.generate(

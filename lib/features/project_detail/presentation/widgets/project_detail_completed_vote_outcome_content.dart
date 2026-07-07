@@ -12,6 +12,7 @@ import 'package:vestie/features/project_detail/presentation/widgets/project_anno
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_members_only_section.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_members_preview_section.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_copy.dart';
+import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_presentation.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_role.dart';
 import 'package:vestie/features/success_vote/presentation/widgets/success_vote_outcome_amount_card.dart';
 import 'package:vestie/features/success_vote/presentation/widgets/success_vote_outcome_vote_summary.dart';
@@ -40,10 +41,20 @@ class ProjectDetailCompletedVoteOutcomeContent extends StatelessWidget {
     final data = successVoteOutcomeUiDataFromProjectDetail(project);
     final role = SuccessVoteOutcomeRole.fromViewerRole(project.viewerRole);
     final variant = completedOutcomeVariantFromProjectDetail(project);
+    final refundPhase = refundPhaseFromProjectDetail(project);
+    final distributionPhase = distributionPhaseFromProjectDetail(project);
     final copy = SuccessVoteOutcomeCopy.forRole(
       role,
       category: project.category,
       variant: variant,
+    );
+    final resolved = SuccessVoteOutcomePresentation.resolve(
+      data: data,
+      copy: copy,
+      refundPhase: refundPhase,
+      distributionPhase: distributionPhase,
+      variant: variant,
+      category: project.category,
     );
     final isApproved = data.isApproved;
 
@@ -63,7 +74,7 @@ class ProjectDetailCompletedVoteOutcomeContent extends StatelessWidget {
         ),
         SizedBox(height: 16.h),
         AppText(
-          copy.titleFor(isApproved),
+          resolved.title,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
             fontSize: 26.sp,
@@ -73,7 +84,7 @@ class ProjectDetailCompletedVoteOutcomeContent extends StatelessWidget {
         ),
         SizedBox(height: 8.h),
         AppText(
-          copy.subtitleFor(isApproved),
+          resolved.subtitle,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             fontSize: 20.sp,
@@ -82,7 +93,12 @@ class ProjectDetailCompletedVoteOutcomeContent extends StatelessWidget {
           ),
         ),
         SizedBox(height: 20.h),
-        SuccessVoteOutcomeAmountCard(data: data, copy: copy),
+        SuccessVoteOutcomeAmountCard(
+          data: data,
+          copy: copy,
+          captionOverride: resolved.amountCaption,
+          rejectedCaptionAccentRed: resolved.rejectedCaptionAccentRed,
+        ),
         if (project.hasCompletedVoteTallies) ...[
           SizedBox(height: 24.h),
           SuccessVoteOutcomeVoteSummary(data: data, copy: copy),

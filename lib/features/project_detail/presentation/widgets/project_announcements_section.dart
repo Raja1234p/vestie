@@ -103,6 +103,7 @@ class _ProjectAnnouncementsSectionState
             announcementId: _visible[i].id,
             heading: _visible[i].heading,
             text: _visible[i].content,
+            attachmentImageUrls: _visible[i].attachmentImageUrls,
             canDeleteAnnouncement: _canDelete,
             onDelete: _canDelete && widget.onDeleteAnnouncement != null
                 ? () => _onDismissed(_visible[i].id)

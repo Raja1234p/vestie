@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
-import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
@@ -115,20 +114,26 @@ class CreateProjectUploadImagesScreen extends StatelessWidget {
                       onPressed: () =>
                           context.push(AppRoutes.createProjectSelectedImages),
                     ),
-                    SizedBox(height: AppDimens.v16),
-                    TextButton(
-                      onPressed: () =>
-                          context.push(AppRoutes.createProjectReview),
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.symmetric(vertical: 4.h),
-                        minimumSize: Size(0, 36.h),
-                      ),
-                      child: AppText(
-                        AppStrings.btnSkip,
-                        style: GoogleFonts.lato(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.grey800,
+                    SizedBox(height: 16.h),
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () =>
+                            context.push(AppRoutes.createProjectReview),
+                        borderRadius: BorderRadius.circular(8.r),
+                        splashColor:
+                            AppColors.grey800.withValues(alpha: 0.12),
+                        highlightColor:
+                            AppColors.grey800.withValues(alpha: 0.06),
+                        child: Center(
+                          child: AppText(
+                            AppStrings.btnSkip,
+                            style: GoogleFonts.lato(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.grey800,
+                            ),
+                          ),
                         ),
                       ),
                     ),

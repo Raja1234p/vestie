@@ -20,12 +20,14 @@ class MemberProjectActionMenu extends StatelessWidget {
   final void Function(MemberProjectMenuAction) onSelected;
   final bool includeMyBorrows;
   final bool fundsHistoryOnly;
+  final bool showInviteMembers;
 
   const MemberProjectActionMenu({
     super.key,
     required this.onSelected,
     this.includeMyBorrows = true,
     this.fundsHistoryOnly = false,
+    this.showInviteMembers = true,
   });
 
   @override
@@ -101,15 +103,17 @@ class MemberProjectActionMenu extends StatelessWidget {
         ),
       );
     }
-    push(
-      _item(
-        value: MemberProjectMenuAction.inviteMembers,
-        iconPath: AppAssets.iconAdd,
-        label: AppStrings.menuInviteMembers,
-        iconColor: AppColors.primary,
-        labelColor: AppColors.grey900,
-      ),
-    );
+    if (showInviteMembers) {
+      push(
+        _item(
+          value: MemberProjectMenuAction.inviteMembers,
+          iconPath: AppAssets.iconAdd,
+          label: AppStrings.menuInviteMembers,
+          iconColor: AppColors.primary,
+          labelColor: AppColors.grey900,
+        ),
+      );
+    }
     push(
       _item(
         value: MemberProjectMenuAction.leaveProject,

@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:vestie/features/project_announcements/domain/announcement_attachment_limits.dart';
+
 import '../constants/app_strings.dart';
 import 'person_name_input_formatter.dart';
 import 'username_input_formatter.dart';
@@ -274,6 +278,9 @@ class ValidationUtils {
     final v = value?.trim() ?? '';
     if (v.isEmpty) return AppStrings.errAnnouncementHeadingRequired;
     if (v.length < 3) return AppStrings.errAnnouncementHeadingShort;
+    if (v.length > AnnouncementAttachmentLimits.maxHeadingLength) {
+      return AppStrings.errAnnouncementHeadingTooLong;
+    }
     return null;
   }
 
@@ -281,6 +288,31 @@ class ValidationUtils {
     final v = value?.trim() ?? '';
     if (v.isEmpty) return AppStrings.errAnnouncementContentRequired;
     if (v.length < 5) return AppStrings.errAnnouncementContentShort;
+    if (v.length > AnnouncementAttachmentLimits.maxContentLength) {
+      return AppStrings.errAnnouncementContentTooLong;
+    }
+    return null;
+  }
+
+  /// Validates a local attachment path before multipart upload.
+  static String? validateAnnouncementAttachmentPath(String path) {
+    final trimmed = path.trim();
+    if (trimmed.isEmpty) return AppStrings.announcementUploadImageInvalid;
+
+    final extension = trimmed.split('.').last.toLowerCase();
+    if (!AnnouncementAttachmentLimits.allowedExtensions.contains(extension)) {
+      return AppStrings.announcementUploadImageFormatInvalid;
+    }
+
+    final file = File(trimmed);
+    if (!file.existsSync()) {
+      return AppStrings.announcementUploadImageInvalid;
+    }
+
+    if (file.lengthSync() > AnnouncementAttachmentLimits.maxBytesPerFile) {
+      return AppStrings.announcementUploadImageTooLarge;
+    }
+
     return null;
   }
 }

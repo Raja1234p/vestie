@@ -12,37 +12,20 @@ import 'package:vestie/features/projects/domain/entities/invite_preview_entity.d
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
-import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_role.dart';
+import 'package:vestie/features/success_vote/presentation/navigation/open_success_vote_outcome.dart';
 import '../../domain/entities/project_detail_route_args.dart';
 
-void _openMemberVoteOutcome(
-  BuildContext context,
-  Project project, {
-  required bool isApproved,
-}) {
-  context.push(
-    AppRoutes.userVoteOutcome,
-    extra: SuccessVoteOutcomeRouteArgs(
-      data: SuccessVoteOutcomeUiData.fromProject(
-        project,
-        isApproved: isApproved,
-      ),
-      viewerRole: SuccessVoteOutcomeRole.member,
-      projectCategory: project.category,
-    ),
-  );
-}
-
-/// Profile → Completed Projects: **View** opens vote outcome (approved / rejected).
+/// Profile → Completed Projects: **View** opens vote outcome, then **View Details** → detail.
 void openCompletedProjectView(BuildContext context, Project project) {
   if (project.userFlow != null) {
     openProjectFromCard(context, project);
     return;
   }
-  _openMemberVoteOutcome(
+  openSuccessVoteOutcomeFromProject(
     context,
     project,
-    isApproved: project.isSuccessVoteApproved,
+    completedProjectDetailId: project.id,
+    completedProjectName: project.name,
   );
 }
 
@@ -278,12 +261,23 @@ void openProjectFromCard(BuildContext context, Project p) {
         );
         return;
       case UserFlowOnOpen.showVoteOutcomeApproved:
-        _openMemberVoteOutcome(context, p, isApproved: true);
+        openSuccessVoteOutcomeFromProject(
+          context,
+          p.copyWith(successVoteApproved: true),
+        );
         return;
       case UserFlowOnOpen.showVoteOutcomeRejected:
-        _openMemberVoteOutcome(context, p, isApproved: false);
+        openSuccessVoteOutcomeFromProject(
+          context,
+          p.copyWith(successVoteApproved: false),
+        );
         return;
     }
+  }
+
+  if (p.status == ProjectStatus.completed) {
+    openSuccessVoteOutcomeFromProject(context, p);
+    return;
   }
 
   _pushProjectDetail(

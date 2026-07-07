@@ -24,6 +24,7 @@ class SuccessVoteCastUiData {
   final List<ProjectVotingMemberVoteEntity> memberVotes;
   /// Investment phase 1 (stop contributions) vs phase 2 (mark successful).
   final bool isInvestmentStopContributionsVote;
+  final bool isInvestmentMarkSuccessfulVote;
 
   const SuccessVoteCastUiData({
     this.projectId,
@@ -39,6 +40,7 @@ class SuccessVoteCastUiData {
     required this.notVoted,
     this.memberVotes = const [],
     this.isInvestmentStopContributionsVote = false,
+    this.isInvestmentMarkSuccessfulVote = false,
   });
 
   factory SuccessVoteCastUiData.fromProject(ProjectDetailEntity project) {
@@ -56,6 +58,8 @@ class SuccessVoteCastUiData {
       notVoted: 5,
       isInvestmentStopContributionsVote:
           project.category.isInvestment && project.isStopContributionsClosureVote,
+      isInvestmentMarkSuccessfulVote:
+          project.category.isInvestment && project.isInvestmentMarkSuccessfulClosureVote,
     );
   }
 
@@ -73,6 +77,7 @@ class SuccessVoteCastUiData {
       thumbsDown: args.thumbsDown ?? 2,
       notVoted: args.notYetVoted ?? 5,
       isInvestmentStopContributionsVote: args.isInvestmentStopContributionsVote,
+      isInvestmentMarkSuccessfulVote: args.isInvestmentMarkSuccessfulVote,
     );
   }
 
@@ -95,6 +100,9 @@ class SuccessVoteCastUiData {
       isInvestmentStopContributionsVote:
           args.projectCategory == ProjectCategory.investment &&
           vote.voteType == ClosureVoteType.stopContributionsVote,
+      isInvestmentMarkSuccessfulVote:
+          args.projectCategory == ProjectCategory.investment &&
+          vote.voteType == ClosureVoteType.finalClosureVote,
     );
   }
 
@@ -117,6 +125,7 @@ class SuccessVoteCastUiData {
       notVoted: notVoted,
       memberVotes: memberVotes,
       isInvestmentStopContributionsVote: isInvestmentStopContributionsVote,
+      isInvestmentMarkSuccessfulVote: isInvestmentMarkSuccessfulVote,
     );
   }
 }

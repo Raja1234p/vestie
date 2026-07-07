@@ -35,7 +35,7 @@ Multi-step wizard to create and launch vacation, emergency, or investment projec
 | State | `CreateProjectForm.projectImagePaths` (local file paths) |
 | Add / remove | `CreateProjectCubit.addProjectImages` / `removeProjectImageAt` |
 | UI | `CreateProjectSelectedImagesGrid` — upload tile until 5 images |
-| API upload | Deferred — paths held in form until backend endpoint ships |
+| API upload | `POST /projects` `multipart/form-data` — scalar fields + repeated `images` files (0–5, 5 MB each, JPEG/PNG/WebP/GIF) via `CreateProjectMultipartBuilder` |
 
 ## Trace (create)
 

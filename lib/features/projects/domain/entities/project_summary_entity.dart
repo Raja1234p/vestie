@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import 'package:vestie/features/project_detail/domain/entities/viewer_membership_role.dart';
+import 'project_image_entity.dart';
 
 /// One row from `GET /projects?scope=mine|discover` (flat project object).
 class ProjectSummaryEntity extends Equatable {
@@ -27,6 +28,13 @@ class ProjectSummaryEntity extends Equatable {
   final String? projectInviteCode;
   final int pendingRequestCount;
   final double? roiPercentage;
+  final String? coverImageUrl;
+  final List<ProjectImageEntity> images;
+  final bool? successVoteApproved;
+  final String? lastVoteType;
+  final String? lastVoteOutcome;
+  final int eligibleMemberCount;
+  final String? distributionStatus;
 
   const ProjectSummaryEntity({
     required this.id,
@@ -48,6 +56,13 @@ class ProjectSummaryEntity extends Equatable {
     this.projectInviteCode,
     this.pendingRequestCount = 0,
     this.roiPercentage,
+    this.coverImageUrl,
+    this.images = const [],
+    this.successVoteApproved,
+    this.lastVoteType,
+    this.lastVoteOutcome,
+    this.eligibleMemberCount = 0,
+    this.distributionStatus,
   });
 
   ViewerMembershipRole get viewerMembershipRole =>
@@ -80,5 +95,12 @@ class ProjectSummaryEntity extends Equatable {
     projectInviteCode,
     pendingRequestCount,
     roiPercentage,
+    coverImageUrl,
+    images,
+    successVoteApproved,
+    lastVoteType,
+    lastVoteOutcome,
+    eligibleMemberCount,
+    distributionStatus,
   ];
 }

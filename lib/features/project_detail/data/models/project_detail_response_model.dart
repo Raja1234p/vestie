@@ -1,6 +1,7 @@
 import 'package:vestie/core/domain/entities/pagination_info.dart';
 import 'package:vestie/core/models/pagination_dto.dart';
 import 'package:vestie/core/utils/safe_parser.dart';
+import 'package:vestie/features/projects/data/models/project_image_model.dart';
 import 'package:vestie/features/projects/data/models/project_list_json_parsing.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
@@ -8,7 +9,11 @@ import 'package:vestie/user/features/vff/domain/entities/vff_enums.dart';
 import '../../domain/entities/borrow_request_entity.dart';
 import '../../domain/entities/member_entity.dart';
 import '../../domain/entities/member_entity_extensions.dart';
+import 'package:vestie/features/project_announcements/data/models/project_announcement_attachment_model.dart';
+import 'package:vestie/features/project_announcements/data/models/project_announcement_response_model.dart';
+
 import '../../domain/entities/project_announcement_entity.dart';
+import '../../domain/entities/closure_vote_entities.dart';
 import '../../domain/entities/project_detail_closure_extensions.dart';
 import '../../domain/entities/project_detail_entity.dart';
 import '../../domain/entities/project_detail_voting_entities.dart';
@@ -118,6 +123,12 @@ class ProjectDetailResponseModel {
     return s.isEmpty ? null : s;
   }
 
+  /// Cover image from nested `project.coverImageUrl`.
+  String? get coverImageUrl => _project.coverImageUrl;
+
+  /// Gallery images from nested `project.images`.
+  List<ProjectImageModel> get images => _project.images;
+
   ProjectDetailEntity toEntity() {
     final mappedMembers = _members.map(_mapMember).toList(growable: false);
     final viewerRole = ViewerMembershipRole.forProjectDetail(
@@ -140,14 +151,7 @@ class ProjectDetailResponseModel {
     );
     final mappedInvites = _invites.map(_mapInvite).toList(growable: false);
     final mappedAnnouncements = _announcements
-        .map(
-          (a) => ProjectAnnouncementEntity(
-            id: a.id,
-            heading: a.heading,
-            content: a.content,
-            createdAtUtc: a.createdAtUtc,
-          ),
-        )
+        .map((a) => a.toEntity())
         .toList(growable: false);
 
     final lifecycleState = _project.lifecycleState;
@@ -218,6 +222,8 @@ class ProjectDetailResponseModel {
       hasActiveSuccessVote: hasActiveVote,
       invites: mappedInvites,
       hasCoLeader: _project.hasCoLeader,
+      coverImageUrl: _project.coverImageUrl,
+      images: _project.images,
       membersPagination: _toPaginationInfo(_membersPagination),
       invitesPagination: _toPaginationInfo(_invitesPagination),
       announcementsPagination: _toPaginationInfo(_announcementsPagination),
@@ -396,6 +402,11 @@ class _VotingPayload {
   final bool hasVoted;
   final bool isFinalized;
   final List<ProjectVotingMemberVoteEntity> memberVotes;
+  final ClosureVoteType? voteType;
+  final ClosureVoteOutcome? outcome;
+  final bool? isApproved;
+  final int? eligibleVoterCount;
+  final String? distributionStatus;
 
   const _VotingPayload({
     required this.startedAtUtc,
@@ -406,9 +417,16 @@ class _VotingPayload {
     this.hasVoted = false,
     this.isFinalized = false,
     this.memberVotes = const [],
+    this.voteType,
+    this.outcome,
+    this.isApproved,
+    this.eligibleVoterCount,
+    this.distributionStatus,
   });
 
   factory _VotingPayload.fromJson(Map<String, dynamic> json) {
+    final voteTypeRaw = json['voteType']?.toString();
+    final outcomeRaw = json['outcome']?.toString();
     return _VotingPayload(
       startedAtUtc: _jsonString(json['startedAtUtc']),
       deadlineAtUtc: _jsonString(json['deadlineAtUtc']),
@@ -418,6 +436,17 @@ class _VotingPayload {
       hasVoted: json['hasVoted'] == true,
       isFinalized: json['isFinalized'] == true,
       memberVotes: _parseMemberVotes(json['memberVotes']),
+      voteType: voteTypeRaw != null && voteTypeRaw.trim().isNotEmpty
+          ? parseClosureVoteType(voteTypeRaw)
+          : null,
+      outcome: outcomeRaw != null && outcomeRaw.trim().isNotEmpty
+          ? parseClosureVoteOutcome(outcomeRaw)
+          : null,
+      isApproved: json['isApproved'] is bool
+          ? json['isApproved'] as bool
+          : null,
+      eligibleVoterCount: (json['eligibleVoterCount'] as num?)?.toInt(),
+      distributionStatus: _nullableString(json['distributionStatus']),
     );
   }
 
@@ -464,6 +493,11 @@ class _VotingPayload {
       hasVoted: hasVoted,
       isFinalized: isFinalized,
       memberVotes: memberVotes,
+      voteType: voteType,
+      outcome: outcome,
+      isApproved: isApproved,
+      eligibleVoterCount: eligibleVoterCount,
+      distributionStatus: distributionStatus,
     );
   }
 }
@@ -513,6 +547,8 @@ class _ProjectPayload {
   final int pendingRequestCount;
   final double? roi;
   final bool hasCoLeader;
+  final String? coverImageUrl;
+  final List<ProjectImageModel> images;
 
   const _ProjectPayload({
     required this.id,
@@ -535,6 +571,8 @@ class _ProjectPayload {
     required this.pendingRequestCount,
     this.roi,
     this.hasCoLeader = false,
+    this.coverImageUrl,
+    this.images = const [],
   });
 
   factory _ProjectPayload.fromJson(Map<String, dynamic> json) {
@@ -565,6 +603,8 @@ class _ProjectPayload {
       pendingRequestCount: (json['pendingRequestCount'] as num?)?.toInt() ?? 0,
       roi: parseApiRoiPercent(json),
       hasCoLeader: json['hasCoLeader'] == true,
+      coverImageUrl: json.safeStringNullable('coverImageUrl'),
+      images: ProjectImageModel.listFromJson(json['images']),
     );
   }
 
@@ -716,12 +756,14 @@ class _AnnouncementPayload {
   final String heading;
   final String content;
   final String? createdAtUtc;
+  final List<ProjectAnnouncementAttachmentModel> attachments;
 
   const _AnnouncementPayload({
     required this.id,
     required this.heading,
     required this.content,
     this.createdAtUtc,
+    this.attachments = const [],
   });
 
   factory _AnnouncementPayload.fromJson(Map<String, dynamic> json) =>
@@ -732,5 +774,18 @@ class _AnnouncementPayload {
         createdAtUtc:
             _nullableString(json['createdAtUtc']) ??
             _nullableString(json['createdUtc']),
+        attachments: ProjectAnnouncementAttachmentModel.listFromJson(
+          json['attachments'],
+        ),
       );
+
+  ProjectAnnouncementEntity toEntity() {
+    return ProjectAnnouncementResponseModel(
+      id: id,
+      heading: heading,
+      content: content,
+      createdAtUtc: createdAtUtc,
+      attachments: attachments,
+    ).toEntity();
+  }
 }

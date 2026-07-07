@@ -112,8 +112,10 @@ class _StatusBanner extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          AppText(title, textAlign: TextAlign.center, style: titleStyle),
-          SizedBox(height: 6.h),
+          if (title.isNotEmpty) ...[
+            AppText(title, textAlign: TextAlign.center, style: titleStyle),
+            SizedBox(height: 6.h),
+          ],
           AppText(body, textAlign: TextAlign.center, style: bodyStyle),
         ],
       ),

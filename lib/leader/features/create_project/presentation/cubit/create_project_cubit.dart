@@ -136,6 +136,11 @@ class CreateProjectCubit extends Cubit<CreateProjectForm> {
     emit(state.copyWith(projectImagePaths: merged));
   }
 
+  void clearProjectImages() {
+    if (state.projectImagePaths.isEmpty) return;
+    emit(state.copyWith(projectImagePaths: const []));
+  }
+
   void removeProjectImageAt(int index) {
     if (index < 0 || index >= state.projectImagePaths.length) return;
     final next = [...state.projectImagePaths]..removeAt(index);

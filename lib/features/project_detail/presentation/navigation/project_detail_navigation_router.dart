@@ -130,6 +130,22 @@ void _openLeaderViewSuccessVotes(
   BuildContext context, {
   required ProjectDetailEntity project,
 }) {
+  if (project.votingIsInProgress && project.voting != null) {
+    context.push(
+      AppRoutes.leaderViewSuccessVotes,
+      extra: LeaderViewSuccessVotesRouteArgs(
+        projectName: project.name,
+        projectId: project.id,
+        project: project,
+        data: leaderSuccessVoteProgressFromProjectVoting(
+          project: project,
+          voting: project.voting!,
+        ),
+      ),
+    );
+    return;
+  }
+
   if (project.hasActiveSuccessVote && project.activeClosureVote != null) {
     final vote = project.activeClosureVote!;
     context.push(
@@ -154,7 +170,10 @@ void _openLeaderViewSuccessVotes(
     extra: LeaderViewSuccessVotesRouteArgs(
       projectName: project.name,
       isPreview: true,
-      data: LeaderSuccessVoteProgressUiData.preview(project: project),
+      data: LeaderSuccessVoteProgressUiData.preview(
+        project: project,
+        isStopContributionsVote: project.isStopContributionsClosureVote,
+      ),
     ),
   );
 }

@@ -11,6 +11,7 @@ import '../../../../core/widgets/common/post_auth_header.dart';
 import '../../../../core/di/service_locator.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_completed_outcome_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
 import '../navigation/open_project_from_card.dart';
@@ -136,7 +137,8 @@ class _ProjectDetailBody extends StatelessWidget {
               final pendingCount = state.pendingJoinRequestCount;
               final isMemberCompletedView =
                   project.isMemberView &&
-                  project.status == ProjectStatus.completed;
+                  (project.status == ProjectStatus.completed ||
+                      project.hasFinalizedClosureVoteOutcome);
 
               Future<void> onRefresh() async {
                 context.read<ProjectDetailBloc>().add(

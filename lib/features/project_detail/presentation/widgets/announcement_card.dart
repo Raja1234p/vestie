@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/project_images_viewer.dart';
 import '../../../../core/widgets/text/app_text.dart';
 
 /// Announcement block on project detail — card + swipe-to-delete for moderators.
@@ -15,6 +16,7 @@ class AnnouncementCard extends StatelessWidget {
   final String? announcementId;
   final String? heading;
   final String? text;
+  final List<String> attachmentImageUrls;
   final bool canDeleteAnnouncement;
   final VoidCallback? onDelete;
 
@@ -23,13 +25,18 @@ class AnnouncementCard extends StatelessWidget {
     this.announcementId,
     this.heading,
     this.text,
+    this.attachmentImageUrls = const [],
     this.canDeleteAnnouncement = false,
     this.onDelete,
   });
 
   @override
   Widget build(BuildContext context) {
-    final body = _AnnouncementBody(heading: heading, text: text);
+    final body = _AnnouncementBody(
+      heading: heading,
+      text: text,
+      attachmentImageUrls: attachmentImageUrls,
+    );
     final showDelete = canDeleteAnnouncement && onDelete != null;
 
     if (!showDelete) return body;
@@ -49,11 +56,18 @@ class AnnouncementCard extends StatelessWidget {
 class _AnnouncementBody extends StatelessWidget {
   final String? heading;
   final String? text;
+  final List<String> attachmentImageUrls;
 
-  const _AnnouncementBody({this.heading, this.text});
+  const _AnnouncementBody({
+    required this.heading,
+    required this.text,
+    required this.attachmentImageUrls,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final showViewImage = attachmentImageUrls.isNotEmpty;
+
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(16.w),
@@ -96,7 +110,49 @@ class _AnnouncementBody extends StatelessWidget {
               height: 1.45,
             ),
           ),
+          if (showViewImage) ...[
+            SizedBox(height: 12.h),
+            _AnnouncementViewImageButton(
+              onPressed: () => ProjectImagesViewer.show(
+                context,
+                imageUrls: attachmentImageUrls,
+              ),
+            ),
+          ],
         ],
+      ),
+    );
+  }
+}
+
+class _AnnouncementViewImageButton extends StatelessWidget {
+  final VoidCallback onPressed;
+
+  const _AnnouncementViewImageButton({required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.searchBarBg,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(999.r),
+        side: BorderSide(color: AppColors.border, width: 1.w),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(999.r),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+          child: AppText(
+            AppStrings.btnViewImage,
+            style: GoogleFonts.lato(
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.grey1100,
+            ),
+          ),
+        ),
       ),
     );
   }

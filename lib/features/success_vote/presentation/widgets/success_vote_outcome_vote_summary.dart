@@ -101,7 +101,7 @@ class _VoteRow extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
       decoration: BoxDecoration(
-        color: AppColors.grey100,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(color: AppColors.neutral500),
       ),

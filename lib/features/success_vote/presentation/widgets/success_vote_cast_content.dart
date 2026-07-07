@@ -64,6 +64,7 @@ class _SuccessVoteCastContentState extends State<SuccessVoteCastContent> {
     isCoLeader: widget.data.isCoLeader,
     isInvestmentStopContributionsVote:
         widget.data.isInvestmentStopContributionsVote,
+    isInvestmentMarkSuccessfulVote: widget.data.isInvestmentMarkSuccessfulVote,
   );
 
   Future<void> _castVote(bool voteForSuccess) async {

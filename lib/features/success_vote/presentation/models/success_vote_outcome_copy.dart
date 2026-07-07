@@ -69,13 +69,21 @@ class SuccessVoteOutcomeCopy {
       };
     }
 
-    if (role == SuccessVoteOutcomeRole.coLeader ||
-        role == SuccessVoteOutcomeRole.member) {
+    if (role == SuccessVoteOutcomeRole.coLeader) {
+      return switch (category) {
+        ProjectCategory.vacations => _vacationCoLeaderAndMember,
+        ProjectCategory.emergency => _emergencyCoLeaderApproved,
+        ProjectCategory.investment => _investmentCoLeaderAndMember,
+        _ => _vacationCoLeaderAndMember,
+      };
+    }
+
+    if (role == SuccessVoteOutcomeRole.member) {
       return switch (category) {
         ProjectCategory.vacations => _vacationCoLeaderAndMember,
         ProjectCategory.emergency => _emergencyCoLeaderAndMember,
         ProjectCategory.investment => _investmentCoLeaderAndMember,
-        _ => role == SuccessVoteOutcomeRole.coLeader ? _coLeader : _member,
+        _ => _member,
       };
     }
 
@@ -133,7 +141,7 @@ class SuccessVoteOutcomeCopy {
     amountCaptionRejected:
         AppStrings.successVoteOutcomeLeaderAmountRejectedCaption,
     primaryButtonApproved: AppStrings.btnBackToHome,
-    primaryButtonRejected: AppStrings.btnResumeContributions,
+    primaryButtonRejected: AppStrings.btnBackToHome,
     voteSummaryLabel: AppStrings.projectVoteSummaryLabel,
     agreedLabel: AppStrings.projectVoteAgreedLabel,
     disagreedLabel: AppStrings.projectVoteDisagreedLabel,
@@ -189,8 +197,8 @@ class SuccessVoteOutcomeCopy {
     rejectedSubtitle: AppStrings.successVoteOutcomeCoLeaderRejectedSubtitle,
     amountCaptionApproved:
         AppStrings.successVoteOutcomeCoLeaderAmountApprovedCaption,
-    amountCaptionRejected: AppStrings
-        .successVoteOutcomeVacationCoLeaderMemberAmountRejectedCaption,
+    amountCaptionRejected:
+        AppStrings.successVoteOutcomeLeaderAmountRejectedCaption,
     primaryButtonApproved: AppStrings.successVoteOutcomeCoLeaderBtnApproved,
     primaryButtonRejected: AppStrings.successVoteOutcomeCoLeaderBtnRejected,
     voteSummaryLabel: AppStrings.projectVoteSummaryLabel,
@@ -198,21 +206,43 @@ class SuccessVoteOutcomeCopy {
     disagreedLabel: AppStrings.projectVoteDisagreedLabel,
   );
 
-  /// Emergency — co-leader and member share the same approved copy.
+  /// Emergency — co-leader approved (Figma).
+  static const SuccessVoteOutcomeCopy _emergencyCoLeaderApproved =
+      SuccessVoteOutcomeCopy(
+    approvedTitle:
+        AppStrings.successVoteOutcomeEmergencyCoLeaderMemberApprovedTitle,
+    approvedSubtitle:
+        AppStrings.successVoteOutcomeEmergencyCoLeaderMemberApprovedSubtitle,
+    rejectedTitle: AppStrings.successVoteOutcomeEmergencyLeaderRejectedTitle,
+    rejectedSubtitle:
+        AppStrings.successVoteOutcomeEmergencyLeaderRejectedSubtitle,
+    amountCaptionApproved:
+        AppStrings.successVoteOutcomeEmergencyCoLeaderAmountApprovedCaption,
+    amountCaptionRejected:
+        AppStrings.successVoteOutcomeEmergencyLeaderAmountRejectedCaption,
+    primaryButtonApproved: AppStrings.successVoteOutcomeCoLeaderBtnApproved,
+    primaryButtonRejected: AppStrings.btnBackToHome,
+    voteSummaryLabel: AppStrings.projectVoteSummaryLabel,
+    agreedLabel: AppStrings.projectVoteAgreedLabel,
+    disagreedLabel: AppStrings.projectVoteDisagreedLabel,
+  );
+
+  /// Emergency — member approved (Figma).
   static const SuccessVoteOutcomeCopy _emergencyCoLeaderAndMember =
       SuccessVoteOutcomeCopy(
     approvedTitle:
         AppStrings.successVoteOutcomeEmergencyCoLeaderMemberApprovedTitle,
     approvedSubtitle:
         AppStrings.successVoteOutcomeEmergencyCoLeaderMemberApprovedSubtitle,
-    rejectedTitle: AppStrings.successVoteOutcomeCoLeaderRejectedTitle,
-    rejectedSubtitle: AppStrings.successVoteOutcomeCoLeaderRejectedSubtitle,
+    rejectedTitle: AppStrings.successVoteOutcomeEmergencyLeaderRejectedTitle,
+    rejectedSubtitle:
+        AppStrings.successVoteOutcomeEmergencyLeaderRejectedSubtitle,
     amountCaptionApproved: AppStrings
         .successVoteOutcomeEmergencyCoLeaderMemberAmountApprovedCaption,
     amountCaptionRejected:
-        AppStrings.successVoteOutcomeCoLeaderAmountRejectedCaption,
+        AppStrings.successVoteOutcomeEmergencyLeaderAmountRejectedCaption,
     primaryButtonApproved: AppStrings.successVoteOutcomeCoLeaderBtnApproved,
-    primaryButtonRejected: AppStrings.successVoteOutcomeCoLeaderBtnRejected,
+    primaryButtonRejected: AppStrings.btnBackToHome,
     voteSummaryLabel: AppStrings.projectVoteSummaryLabel,
     agreedLabel: AppStrings.projectVoteAgreedLabel,
     disagreedLabel: AppStrings.projectVoteDisagreedLabel,

@@ -27,13 +27,28 @@ abstract final class CreateProjectImagePicker {
     );
     if (!allowed) return const [];
 
+    final requestFullMetadata =
+        AppPermissionHelper.galleryPickRequestsFullMetadata(
+      ImageSource.gallery,
+    );
+
+    // pickMultiImage requires limit >= 2 on some platforms; delegate to single pick.
+    if (remainingSlots == 1) {
+      final picked = await _picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 85,
+        maxWidth: 1600,
+        requestFullMetadata: requestFullMetadata,
+      );
+      if (picked == null) return const [];
+      return [picked.path];
+    }
+
     final picked = await _picker.pickMultiImage(
       imageQuality: 85,
       maxWidth: 1600,
       limit: remainingSlots,
-      requestFullMetadata: AppPermissionHelper.galleryPickRequestsFullMetadata(
-        ImageSource.gallery,
-      ),
+      requestFullMetadata: requestFullMetadata,
     );
     if (picked.isEmpty) return const [];
     return picked.map((file) => file.path).toList(growable: false);

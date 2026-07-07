@@ -104,4 +104,28 @@ class CreateProjectRequestModel {
     'repaymentWindowDays': repaymentWindowDays,
     'penaltyPercentage': penaltyPercentage,
   };
+
+  /// Scalar fields for `POST /projects` multipart body (images added separately).
+  Map<String, dynamic> toMultipartFields() {
+    final fields = <String, dynamic>{
+      'name': name,
+      'description': description,
+      'type': type,
+      'visibility': visibility,
+      'targetAmount': targetAmount,
+      'borrowingEnabled': borrowingEnabled,
+      'joinApprovalRequired': joinApprovalRequired,
+      'repaymentWindowDays': repaymentWindowDays,
+    };
+    if (endsAtUtc != null) {
+      fields['endsAtUtc'] = endsAtUtc;
+    }
+    if (roiPercentage != null) {
+      fields['roiPercentage'] = roiPercentage;
+    }
+    if (penaltyPercentage != null) {
+      fields['penaltyPercentage'] = penaltyPercentage;
+    }
+    return fields;
+  }
 }

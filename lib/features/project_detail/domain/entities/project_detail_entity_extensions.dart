@@ -63,6 +63,8 @@ extension ProjectDetailEntityMemberUpdates on ProjectDetailEntity {
       activeClosureVote: activeClosureVote,
       invites: invites,
       hasCoLeader: hasCoLeader,
+      coverImageUrl: coverImageUrl,
+      images: images,
       membersPagination: membersPagination,
       invitesPagination: invitesPagination,
       announcementsPagination: announcementsPagination,

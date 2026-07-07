@@ -42,21 +42,24 @@ class SuccessVoteCastActions extends StatelessWidget {
     }
 
     final theme = Theme.of(context);
+    final showVoteQuestion = copy.voteQuestion.trim().isNotEmpty;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: [
-        AppText(
-          copy.voteQuestion,
-          textAlign: TextAlign.center,
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontSize: 20.sp,
-            fontWeight: FontWeight.w600,
-            color: AppColors.grey1100,
-            height: 1.3,
+        if (showVoteQuestion) ...[
+          AppText(
+            copy.voteQuestion,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontSize: 20.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.grey1100,
+              height: 1.3,
+            ),
           ),
-        ),
-        SizedBox(height: 20.h),
+          SizedBox(height: 20.h),
+        ],
         Row(
           children: [
             Expanded(

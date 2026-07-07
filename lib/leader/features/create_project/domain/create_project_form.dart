@@ -96,7 +96,7 @@ class CreateProjectForm extends Equatable {
   final String? descError;
   final String? deadlineError;
 
-  /// Local file paths selected before submit (upload API deferred).
+  /// Local file paths selected before submit (`multipart` field `images`).
   final List<String> projectImagePaths;
 
   const CreateProjectForm({

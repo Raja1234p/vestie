@@ -174,6 +174,8 @@ class _LeaderViewSuccessVotesContent extends StatelessWidget {
                           LeaderSuccessVoteMajorityBanner(
                             majorityRequired: data.majorityRequired,
                             totalMembers: data.totalMembers,
+                            isStopContributionsVote:
+                                data.isStopContributionsVote,
                           ),
                           SizedBox(height: 20.h),
                           LeaderSuccessVoteMemberList(members: data.members),

@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vestie/features/project_detail/data/models/project_detail_response_model.dart';
+import 'package:vestie/features/project_detail/domain/entities/closure_vote_entities.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_closure_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_completed_outcome_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
@@ -10,6 +11,8 @@ import 'package:vestie/user/features/home/domain/entities/project.dart';
 ProjectDetailEntity _leaderProject(
   ProjectCategory category, {
   bool? apiCanStopContributions,
+  String displayStatusLabel = '',
+  String projectLifecycleState = '',
 }) {
   return ProjectDetailEntity(
     id: 'p1',
@@ -24,6 +27,8 @@ ProjectDetailEntity _leaderProject(
     borrowRequests: const [],
     viewerRole: ViewerMembershipRole.groupLeader,
     apiCanStopContributions: apiCanStopContributions,
+    displayStatusLabel: displayStatusLabel,
+    projectLifecycleState: projectLifecycleState,
   );
 }
 
@@ -167,6 +172,79 @@ void main() {
     );
   });
 
+  group('ProjectDetailEntity.canInviteMembers', () {
+    test('true for leader while contributions are open', () {
+      expect(
+        _leaderProject(
+          ProjectCategory.investment,
+          apiCanStopContributions: true,
+        ).canInviteMembers,
+        isTrue,
+      );
+    });
+
+    test('false after stop-contributions (investment funded)', () {
+      expect(
+        _leaderProject(
+          ProjectCategory.investment,
+          apiCanStopContributions: false,
+          displayStatusLabel: 'Funded',
+        ).canInviteMembers,
+        isFalse,
+      );
+    });
+
+    test('false during mark-successful / closure vote', () {
+      final project = _leaderProject(ProjectCategory.vacations).copyWithWeek11Voting(
+        votingStatus: ProjectVotingStatus.pending,
+        detailUserRole: ProjectDetailUserRole.leader,
+      );
+
+      expect(project.canInviteMembers, isFalse);
+    });
+
+    test('false when displayStatus is Closure Voting', () {
+      final project = ProjectDetailEntity(
+        id: 'p1',
+        name: 'Trip',
+        category: ProjectCategory.vacations,
+        status: ProjectStatus.ongoing,
+        goalAmount: 1000,
+        currentAmount: 500,
+        endsIn: '30d',
+        announcement: '',
+        members: const [],
+        borrowRequests: const [],
+        viewerRole: ViewerMembershipRole.member,
+        displayStatusLabel: 'Closure Voting',
+      );
+
+      expect(project.canInviteMembers, isFalse);
+    });
+
+    test('false for member during stop-contributions vote', () {
+      final project = ProjectDetailEntity(
+        id: 'p1',
+        name: 'Fund',
+        category: ProjectCategory.investment,
+        status: ProjectStatus.ongoing,
+        goalAmount: 1000,
+        currentAmount: 500,
+        endsIn: '30d',
+        announcement: '',
+        members: const [],
+        borrowRequests: const [],
+        viewerRole: ViewerMembershipRole.member,
+        apiCanStopContributions: true,
+      ).copyWithWeek11Voting(
+        votingStatus: ProjectVotingStatus.pending,
+        detailUserRole: ProjectDetailUserRole.member,
+      );
+
+      expect(project.canInviteMembers, isFalse);
+    });
+  });
+
   group('ProjectDetailResponseModel canStopContributions', () {
     test('parses root canStopContributions from GET project detail', () {
       final entity = ProjectDetailResponseModel.fromJson({
@@ -277,15 +355,61 @@ void main() {
       final project = _leaderProject(
         ProjectCategory.investment,
         apiCanStopContributions: false,
+        displayStatusLabel: 'Funded',
       ).copyWithWeek11Voting(
         votingStatus: ProjectVotingStatus.pending,
         detailUserRole: ProjectDetailUserRole.leader,
       );
 
-      expect(project.showsViewContributionSuccessVoteAction, isFalse);
       expect(project.isStopContributionsClosureVote, isFalse);
       expect(project.showsLeaderViewSuccessVotesAction, isTrue);
+      expect(project.isInvestmentMarkSuccessfulClosureVote, isTrue);
+      expect(
+        project.activeClosureVote?.voteType,
+        ClosureVoteType.finalClosureVote,
+      );
     });
+
+    test(
+      'true for investment member during stop-contributions vote '
+      'when canStopContributions is already false',
+      () {
+        final project = ProjectDetailEntity(
+          id: 'p1',
+          name: 'Fund',
+          category: ProjectCategory.investment,
+          status: ProjectStatus.ongoing,
+          goalAmount: 5000,
+          currentAmount: 4800,
+          endsIn: '30d',
+          announcement: '',
+          members: const [],
+          borrowRequests: const [],
+          viewerRole: ViewerMembershipRole.member,
+          apiCanStopContributions: false,
+          hasWeek11ProjectDetailEnvelope: true,
+          detailUserRole: ProjectDetailUserRole.member,
+          votingStatus: ProjectVotingStatus.pending,
+          voting: ProjectVotingSummaryEntity(
+            startedAtUtc: DateTime.utc(2026, 5, 1),
+            deadlineAtUtc: DateTime.utc(2026, 5, 12),
+            agreedCount: 4,
+            disagreedCount: 2,
+            pendingCount: 5,
+            hasVoted: false,
+            isFinalized: false,
+          ),
+          hasActiveSuccessVote: true,
+        ).withSyntheticClosureVoteFromDetailVoting();
+
+        expect(project.isStopContributionsClosureVote, isTrue);
+        expect(project.showsInlineMemberCastVote, isTrue);
+        expect(
+          project.activeClosureVote?.voteType,
+          ClosureVoteType.stopContributionsVote,
+        );
+      },
+    );
 
     test('false for co-leader during stop-contributions vote', () {
       final project = ProjectDetailEntity(
@@ -353,7 +477,10 @@ void main() {
 
     test('false after stop-contributions vote closes contribution phase', () {
       expect(
-        memberInvestment(apiCanStopContributions: false).showsContributeAction,
+        memberInvestment(
+          apiCanStopContributions: false,
+          displayStatusLabel: 'Funded',
+        ).showsContributeAction,
         isFalse,
       );
     });
@@ -538,6 +665,8 @@ extension on ProjectDetailEntity {
       borrowRequests: borrowRequests,
       viewerRole: viewerRole,
       apiCanStopContributions: apiCanStopContributions,
+      displayStatusLabel: displayStatusLabel,
+      projectLifecycleState: projectLifecycleState,
       hasWeek11ProjectDetailEnvelope: true,
       detailUserRole: detailUserRole,
       votingStatus: votingStatus,

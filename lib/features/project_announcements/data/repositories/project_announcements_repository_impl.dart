@@ -17,12 +17,14 @@ class ProjectAnnouncementsRepositoryImpl
     required String projectId,
     required String heading,
     required String content,
+    List<String> attachmentPaths = const [],
   }) async {
     try {
       await remoteDataSource.create(
         projectId: projectId,
         heading: heading,
         content: content,
+        attachmentPaths: attachmentPaths,
       );
       return const Right(null);
     } on Failure catch (f) {

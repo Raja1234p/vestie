@@ -98,6 +98,14 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
       displayStatus: m.displayStatus.isNotEmpty ? m.displayStatus : null,
       projectInviteCode: m.projectInviteCode,
       isPublic: _isPublicVisibility(m.visibility),
+      coverImageUrl: m.coverImageUrl,
+      images: m.images,
+      viewerRole: m.viewerMembershipRole,
+      memberCount: m.eligibleMemberCount > 0 ? m.eligibleMemberCount : m.maxMembers,
+      successVoteApproved: m.successVoteApproved,
+      lastVoteType: m.lastVoteType,
+      lastVoteOutcome: m.lastVoteOutcome,
+      distributionStatus: m.distributionStatus,
     );
   }
 
@@ -108,6 +116,7 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
     try {
       final response = await remoteDataSource.createProject(
         request: CreateProjectRequestModel.fromForm(form),
+        imagePaths: form.projectImagePaths,
       );
       return Right(response.entity);
     } on ServerException catch (e) {

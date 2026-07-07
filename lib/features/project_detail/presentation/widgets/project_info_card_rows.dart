@@ -18,11 +18,13 @@ String formatProjectInfoAmount(double value) {
 class ProjectInfoGoalRow extends StatelessWidget {
   final double goal;
   final double current;
+  final String prefix;
 
   const ProjectInfoGoalRow({
     super.key,
     required this.goal,
     required this.current,
+    this.prefix = AppStrings.goalPrefix,
   });
 
   @override
@@ -38,7 +40,7 @@ class ProjectInfoGoalRow extends StatelessWidget {
         ),
         children: [
           TextSpan(
-            text: AppStrings.goalPrefix,
+            text: prefix,
             style: const TextStyle(fontWeight: FontWeight.w700),
           ),
           TextSpan(

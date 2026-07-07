@@ -35,6 +35,7 @@ class ProjectDetailTrailingActions extends StatelessWidget {
       ProjectDetailOverflowMenuKind.member => MemberProjectActionMenu(
         onSelected: onMemberMenuSelected,
         includeMyBorrows: project.memberProjectMenuIncludesMyBorrows,
+        showInviteMembers: project.canInviteMembers,
       ),
       ProjectDetailOverflowMenuKind.leader => LeaderActionMenu(
         audience: project.isGroupLeader
@@ -47,6 +48,7 @@ class ProjectDetailTrailingActions extends StatelessWidget {
         showStopContributions: project.canStopContributions,
         showCancelProject: project.canCancelProject,
         showEditProject: project.canEditProject,
+        showInviteMembers: project.canInviteMembers,
         onSelected: onLeaderMenuSelected,
       ),
     };

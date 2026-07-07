@@ -62,11 +62,11 @@ Mobile picks copy using **`category` + `viewerRole` + `isApproved` + `variant` +
 
 | Result | Vote type | Role | Title (example) | Amount caption (example) | CTA |
 |--------|-----------|------|-----------------|--------------------------|-----|
-| Approved (final closure) | `FinalClosureVote` | Leader | Project Successful! | Distributions dispersed… | Back to Home |
-| Approved (final closure) | `FinalClosureVote` | Co-leader / member | Returns Distributed! | Returns added to wallet | Back to Home |
+| Approved (final closure) | `FinalClosureVote` | **All roles** | **Distributions In Progress** / **Distribution Complete** | Distribution caption (Figma) | Back to Home |
+| Approved (final closure) | `FinalClosureVote` | Co-leader / member (no `distributionStatus`) | Returns Distributed! | Returns added to wallet | Back to Home |
 | **Stop contributions failed** | `StopContributionsVote` | Leader | **Vote Not Passed** | Contributions continue on schedule. No investing phase yet. | Back to Home |
 | **Stop contributions failed** | `StopContributionsVote` | Member | Vote Not Passed | No changes to your contribution schedule… | Back to Home |
-| Success vote rejected | `SuccessVote` / `FinalClosureVote` | Leader | Project Not Approved | Contributions being refunded | **Resume Contributions** |
+| Success vote rejected | `SuccessVote` / `FinalClosureVote` | Leader | Project Not Approved | Contributions being refunded | Back to Home |
 | Success vote rejected | `SuccessVote` / `FinalClosureVote` | Member | Project Not Approved | Contributions being refunded | Back to Home |
 | Refund | Any | All | Refund In Progress / Complete | Refund copy | Back to Home |
 
@@ -149,6 +149,7 @@ Add **persistent closure outcome fields** when a vote has been finalized (and ke
 | `pendingCount` | int | When vote open | `0` after finalize |
 | `eligibleVoterCount` | int | Recommended | Members + co-leaders who vote (excludes leader on vacation success vote) |
 | `isFinalized` | bool | Always when `voting` present | `true` after leader finalize |
+| **`distributionStatus`** | string | Investment final closure **approved** | `InProgress`, `Complete`, `None` — drives leader “Distributions In Progress” / “Distribution Complete” UI |
 
 **Enum values** must match existing finalize API (`closure_voting_response_model.dart`):
 
@@ -168,7 +169,23 @@ refund UI       = outcome == Refund
 
 stop-contrib    = voteType == StopContributionsVote
 rejected UI       AND isApproved == false
+
+leader distribution UI = category == investment
+                      AND isApproved == true
+                      AND voteType == FinalClosureVote (or outcome InvestmentStarted)
+                      AND distributionStatus / displayStatus maps to InProgress | Complete
+                      (same copy for leader, co-leader, and member)
 ```
+
+**`distributionStatus` values (preferred wire format):**
+
+| Value | Leader UI title |
+|-------|-----------------|
+| `InProgress` | Distributions In Progress |
+| `Complete` | Distribution Complete |
+| `None` / omitted | Falls back to `displayStatus` keywords, then legacy “Project Successful!” |
+
+**`displayStatus` fallbacks** (if `distributionStatus` omitted): `Distributions In Progress`, `Distribution Complete`, `Distribution in progress`, etc.
 
 #### `project.displayStatus` — canonical labels
 
@@ -179,6 +196,8 @@ Keep human-readable `displayStatus`, but mobile will **prefer** `voting.outcome`
 | Ongoing, contributions open | `On Going` |
 | Investment, stop-contrib passed | `Funded` |
 | Completed, success vote passed | `Completed` or `Project Approved` |
+| Investment, distributions processing | `Distributions In Progress` |
+| Investment, all returns sent | `Distribution Complete` |
 | Completed, success vote failed | `Project Not Approved` |
 | Refund processing | `Refund in progress` |
 | Refund done | `Refund complete` |
@@ -200,6 +219,7 @@ Each project row should include enough to open the correct outcome **before** de
 | **`lastVoteType`** | string | Same enum as `voting.voteType` |
 | **`lastVoteOutcome`** | string | Same enum as `voting.outcome` |
 | **`successVoteApproved`** | bool | `true` if last finalized vote passed |
+| **`distributionStatus`** | string | `InProgress` \| `Complete` \| `None` — investment leader distribution UI |
 
 Mobile will map `successVoteApproved` directly when present and stop parsing `displayStatus` for approval.
 
@@ -319,6 +339,7 @@ Mobile shows **Vote Not Passed** embedded or full-screen.
     "outcome": "InvestmentStarted",
     "isApproved": true,
     "isFinalized": true,
+    "distributionStatus": "InProgress",
     "agreedCount": 6,
     "disagreedCount": 1,
     "pendingCount": 0,
@@ -327,7 +348,37 @@ Mobile shows **Vote Not Passed** embedded or full-screen.
 }
 ```
 
-### 5.5 Completed list row (minimal)
+Mobile leader UI: **Distributions In Progress** / caption *Investment returns are being calculated…*
+
+### 5.5 Investment — final closure approved, distributions **complete**
+
+```json
+{
+  "projectStatus": "completed",
+  "votingStatus": "done",
+  "userRole": "leader",
+  "project": {
+    "type": "investment",
+    "displayStatus": "Distribution Complete",
+    "potAmount": 9800.0
+  },
+  "voting": {
+    "voteType": "FinalClosureVote",
+    "outcome": "InvestmentStarted",
+    "isApproved": true,
+    "isFinalized": true,
+    "distributionStatus": "Complete",
+    "agreedCount": 6,
+    "disagreedCount": 1,
+    "pendingCount": 0,
+    "eligibleVoterCount": 7
+  }
+}
+```
+
+Mobile leader UI: **Distribution Complete** / caption *All investment returns have been distributed…*
+
+### 5.6 Completed list row (minimal)
 
 ```json
 {
@@ -344,6 +395,8 @@ Mobile shows **Vote Not Passed** embedded or full-screen.
 }
 ```
 
+Investment approved list row should also include `"distributionStatus": "InProgress"` or `"Complete"` when applicable.
+
 ---
 
 ## 6. Acceptance checklist (backend QA)
@@ -353,6 +406,7 @@ Mobile shows **Vote Not Passed** embedded or full-screen.
 - [ ] Investment stop-contrib **failed**: `canStopContributions` stays `true`, `displayStatus` does not become `Funded`.
 - [ ] Investment stop-contrib **passed**: `canStopContributions` becomes `false`, `displayStatus` includes `Funded`.
 - [ ] `GET /projects/completed` rows include `successVoteApproved`, `lastVoteType`, `lastVoteOutcome`, correct `memberCount`.
+- [ ] Investment final closure approved: `voting.distributionStatus` transitions `InProgress` → `Complete` (or `displayStatus` uses distribution labels).
 - [ ] `userRole` / `viewerRole` aligned with caller membership on detail and list.
 - [ ] Refund lifecycle updates `displayStatus` (`Refund in progress` → `Refund complete`) **and** `outcome: Refund`.
 
@@ -362,12 +416,14 @@ Mobile shows **Vote Not Passed** embedded or full-screen.
 
 When `voting.isApproved`, `voting.voteType`, and `voting.outcome` are present on detail + list:
 
-1. Replace `displayStatus` substring heuristics in `project_detail_completed_outcome_extensions.dart` and `Project.isSuccessVoteApproved`.
-2. Map `successVoteApproved` / `lastVoteType` / `lastVoteOutcome` in `projects_repository_impl.dart`.
-3. Parse `voting.voteType` / `voting.outcome` in `project_detail_response_model.dart` (fields are listed as optional in the Week 11 handoff but not wired for completed outcome).
-4. Update `DOCS/qa/api_screen_sync_matrix.md` rows for completed / outcome screens.
+1. ~~Replace `displayStatus` substring heuristics~~ — **Done (2026-07-07):** prefers API envelope, falls back to legacy `displayStatus`.
+2. ~~Map `successVoteApproved` / `lastVoteType` / `lastVoteOutcome` in list repository~~ — **Done.**
+3. ~~Parse `voting.voteType` / `voting.outcome` in `project_detail_response_model.dart`~~ — **Done.**
+4. Detail shows outcome block when `voting.isFinalized` + outcome envelope, even if `projectStatus` is still `ongoing` (investment stop-contrib rejected, emergency not resolved).
+5. **Investment leader distribution UI** — `distributionStatus` / `displayStatus` → Distributions In Progress \| Distribution Complete (**Done 2026-07-08**).
+6. Update `DOCS/qa/api_screen_sync_matrix.md` when QA validates against staging.
 
-Until then, mobile uses the heuristics documented in §3.
+Until backend ships the new fields, mobile continues to use the §3 heuristics as fallback.
 
 ---
 
@@ -377,5 +433,5 @@ Until then, mobile uses the heuristics documented in §3.
 |----------|--------|
 | Does mobile need backend changes? | **Yes** — for reliable outcome UI on detail and list |
 | Which API? | **`GET /projects/{id}`** (primary), **`GET /projects/completed`**, home **`GET /projects?scope=`** |
-| Minimum new fields | `voting.voteType`, `voting.outcome`, `voting.isApproved`, persist tallies; list: `successVoteApproved`, `lastVoteType`, `lastVoteOutcome`, correct `memberCount` |
+| Minimum new fields | `voting.voteType`, `voting.outcome`, `voting.isApproved`, `voting.distributionStatus`, persist tallies; list: `successVoteApproved`, `lastVoteType`, `lastVoteOutcome`, `distributionStatus`, correct `memberCount` |
 | Can we ship with `displayStatus` only? | **Risky** — investment stop-contrib rejected and emergency “not resolved” are easy to misclassify |

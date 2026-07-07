@@ -1,5 +1,6 @@
 import '../../../../core/utils/safe_parser.dart';
 import '../../domain/entities/project_summary_entity.dart';
+import 'project_image_model.dart';
 import 'project_list_json_parsing.dart';
 
 class ProjectSummaryModel extends ProjectSummaryEntity {
@@ -23,6 +24,13 @@ class ProjectSummaryModel extends ProjectSummaryEntity {
     super.projectInviteCode,
     super.pendingRequestCount,
     super.roiPercentage,
+    super.coverImageUrl,
+    super.images,
+    super.successVoteApproved,
+    super.lastVoteType,
+    super.lastVoteOutcome,
+    super.eligibleMemberCount,
+    super.distributionStatus,
   });
 
   factory ProjectSummaryModel.fromJson(Map<String, dynamic> json) {
@@ -38,6 +46,7 @@ class ProjectSummaryModel extends ProjectSummaryEntity {
       maxMembers: json['maxMembers'] != null
           ? json.safeInt('maxMembers')
           : json.safeInt('memberCount'),
+      eligibleMemberCount: json.safeInt('memberCount'),
       endsAtUtc: json.safeDateTimeUtc('endsAtUtc') ??
           json.safeDateTimeUtc('completedAtUtc'),
       launchedAtUtc: json.safeDateTimeUtc('launchedAtUtc'),
@@ -51,6 +60,14 @@ class ProjectSummaryModel extends ProjectSummaryEntity {
       projectInviteCode: json.safeStringNullable('projectInviteCode'),
       pendingRequestCount: json.safeInt('pendingRequestCount'),
       roiPercentage: _parseRoiPercentage(json),
+      coverImageUrl: json.safeStringNullable('coverImageUrl'),
+      images: ProjectImageModel.listFromJson(json['images']),
+      successVoteApproved: json['successVoteApproved'] is bool
+          ? json['successVoteApproved'] as bool
+          : null,
+      lastVoteType: json.safeStringNullable('lastVoteType'),
+      lastVoteOutcome: json.safeStringNullable('lastVoteOutcome'),
+      distributionStatus: json.safeStringNullable('distributionStatus'),
     );
   }
 
@@ -85,6 +102,17 @@ class ProjectSummaryModel extends ProjectSummaryEntity {
       'displayStatus': displayStatus,
       'projectInviteCode': projectInviteCode,
       'pendingRequestCount': pendingRequestCount,
+      if (coverImageUrl != null) 'coverImageUrl': coverImageUrl,
+      if (images.isNotEmpty)
+        'images': images
+            .map(
+              (image) => {
+                'id': image.id,
+                'imageUrl': image.imageUrl,
+                'sortOrder': image.sortOrder,
+              },
+            )
+            .toList(),
     };
   }
 }

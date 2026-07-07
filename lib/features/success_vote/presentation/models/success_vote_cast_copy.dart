@@ -52,15 +52,19 @@ class SuccessVoteCastCopy {
   /// Member vs co-leader — only the pending banner body differs on vacation/emergency.
   ///
   /// Investment has two vote phases: stop-contributions (phase 1) vs mark-as-successful
-  /// (phase 2). Phase 2 reuses vacation success-vote copy (Figma).
+  /// (phase 2). Each phase has dedicated Figma copy.
   static SuccessVoteCastCopy forViewer({
     required ProjectCategory category,
     required bool isCoLeader,
     bool isInvestmentStopContributionsVote = false,
+    bool isInvestmentMarkSuccessfulVote = false,
   }) {
     if (category == ProjectCategory.investment) {
       if (isInvestmentStopContributionsVote) {
         return _investmentStopContributions;
+      }
+      if (isInvestmentMarkSuccessfulVote) {
+        return _investmentMarkSuccessful;
       }
       if (!isCoLeader) return _vacation;
       return _vacationCoLeader;
@@ -171,5 +175,29 @@ class SuccessVoteCastCopy {
     voteQuestion: AppStrings.successVoteCastInvestmentVoteQuestion,
     voteYesLabel: AppStrings.successVoteCastInvestmentVoteYes,
     voteNoLabel: AppStrings.successVoteCastInvestmentVoteNo,
+  );
+
+  static const SuccessVoteCastCopy _investmentMarkSuccessful = SuccessVoteCastCopy(
+    pendingBannerTitle:
+        AppStrings.successVoteCastInvestmentMarkSuccessfulPendingBannerTitle,
+    pendingBannerBody:
+        AppStrings.successVoteCastInvestmentMarkSuccessfulPendingBannerBody,
+    agreedTitle: AppStrings.successVoteCastInvestmentMarkSuccessfulAgreedTitle,
+    agreedBody: AppStrings.successVoteCastInvestmentMarkSuccessfulAgreedBody,
+    disagreedTitle:
+        AppStrings.successVoteCastInvestmentMarkSuccessfulDisagreedTitle,
+    disagreedBody:
+        AppStrings.successVoteCastInvestmentMarkSuccessfulDisagreedBody,
+    deadlineLabel: AppStrings.successVoteCastDeadlineLabel,
+    statGoalLabel: AppStrings.successVoteCastInvestmentTotalInvested,
+    statMembersLabel: AppStrings.successVoteCastStatMembers,
+    totalRaisedLabel: AppStrings.successVoteCastInvestmentTotalDistributedInclRoi,
+    memberVotesLabel: AppStrings.successVoteCastMemberVotesLabel,
+    thumbsUpLabel: AppStrings.successVoteCastThumbsUp,
+    thumbsDownLabel: AppStrings.successVoteCastThumbsDown,
+    notVotedLabel: AppStrings.successVoteCastNotYetVotedLabel,
+    voteQuestion: AppStrings.successVoteCastInvestmentMarkSuccessfulVoteQuestion,
+    voteYesLabel: AppStrings.successVoteCastInvestmentMarkSuccessfulVoteYes,
+    voteNoLabel: AppStrings.successVoteCastInvestmentMarkSuccessfulVoteNo,
   );
 }

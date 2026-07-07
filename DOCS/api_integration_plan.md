@@ -498,7 +498,7 @@ Map `recentTransactions` → `AppTransactionItem` (`type`, `title`, `amount`, `d
 | Action | API | UI |
 |--------|-----|-----|
 | Load | `GET /projects/{id}` → `announcements[]` | Announcements panel on detail (leader + member views) |
-| Create | `POST /projects/{projectId}/announcements` `{ heading, content }` | `create_announcement_screen.dart` |
+| Create | `POST /projects/{projectId}/announcements` multipart (`heading`, `content`, optional repeatable `attachments`) | `create_announcement_screen.dart` |
 | Delete | `DELETE .../announcements/{announcementId}` | Leader moderation UI |
 
 Merge into existing `ProjectDetailBloc` refresh after create/delete.

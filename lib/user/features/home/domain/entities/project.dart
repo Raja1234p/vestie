@@ -1,4 +1,8 @@
 import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/utils/project_gallery_image_urls.dart';
+import 'package:vestie/features/project_detail/domain/entities/viewer_membership_role.dart';
+import 'package:vestie/features/projects/domain/entities/project_image_entity.dart';
+
 import 'user_flow_on_open.dart';
 import 'project_category_extensions.dart';
 
@@ -34,6 +38,26 @@ class Project {
   /// When set, drives completed-project **View** → vote outcome (approved / not).
   final bool? successVoteApproved;
 
+  /// List API — last finalized vote type (`SuccessVote`, etc.).
+  final String? lastVoteType;
+
+  /// List API — last finalized vote outcome (`Success`, `Refund`, etc.).
+  final String? lastVoteOutcome;
+
+  /// List API — `voting.distributionStatus` mirror (`InProgress` / `Complete`).
+  final String? distributionStatus;
+
+  /// `coverImageUrl` from `GET /projects` — category illustration when empty.
+  final String? coverImageUrl;
+
+  /// API `viewerRole` on list rows — drives completed outcome copy.
+  final ViewerMembershipRole viewerRole;
+
+  /// `memberCount` / `maxMembers` from list payloads — vote summary denominator.
+  final int memberCount;
+
+  final List<ProjectImageEntity> images;
+
   const Project({
     required this.id,
     required this.name,
@@ -51,9 +75,25 @@ class Project {
     this.isPublic = true,
     this.userFlow,
     this.successVoteApproved,
+    this.lastVoteType,
+    this.lastVoteOutcome,
+    this.distributionStatus,
+    this.coverImageUrl,
+    this.viewerRole = ViewerMembershipRole.member,
+    this.memberCount = 0,
+    this.images = const [],
   });
 
-  Project copyWith({double? currentAmount}) {
+  Project copyWith({
+    double? currentAmount,
+    String? coverImageUrl,
+    ViewerMembershipRole? viewerRole,
+    int? memberCount,
+    bool? successVoteApproved,
+    String? lastVoteType,
+    String? lastVoteOutcome,
+    String? distributionStatus,
+  }) {
     return Project(
       id: id,
       name: name,
@@ -70,9 +110,21 @@ class Project {
       requestPending: requestPending,
       isPublic: isPublic,
       userFlow: userFlow,
-      successVoteApproved: successVoteApproved,
+      successVoteApproved: successVoteApproved ?? this.successVoteApproved,
+      lastVoteType: lastVoteType ?? this.lastVoteType,
+      lastVoteOutcome: lastVoteOutcome ?? this.lastVoteOutcome,
+      distributionStatus: distributionStatus ?? this.distributionStatus,
+      coverImageUrl: coverImageUrl ?? this.coverImageUrl,
+      viewerRole: viewerRole ?? this.viewerRole,
+      memberCount: memberCount ?? this.memberCount,
+      images: images,
     );
   }
+
+  List<String> get galleryImageUrls => ProjectGalleryImageUrls.resolve(
+    coverImageUrl: coverImageUrl,
+    images: images,
+  );
 
   String get categoryLabel {
     return category.label;
@@ -109,13 +161,20 @@ class Project {
   String get _normalizedDisplayStatus =>
       (displayStatus ?? '').trim().toLowerCase();
 
+  /// API `displayStatus` e.g. "Closure Voting" — member may open project detail from Home.
+  bool get isClosureVotingDisplayStatus {
+    final normalized = _normalizedDisplayStatus;
+    return normalized.contains('closure') && normalized.contains('voting');
+  }
+
   /// Majority success-vote result for completed projects (profile list **View**).
   bool get isSuccessVoteApproved {
     if (successVoteApproved != null) return successVoteApproved!;
     final status = _normalizedDisplayStatus;
     if (status.contains('not approved') ||
         status.contains('reject') ||
-        status.contains('cancel')) {
+        status.contains('cancel') ||
+        status.contains('refund')) {
       return false;
     }
     return true;
@@ -124,11 +183,11 @@ class Project {
   /// Home / mine list card CTA (not Discover join).
   bool get showsHomeActionButton {
     if (isWaitingForApproval) return false;
-    if (status == ProjectStatus.completed) {
-      return relation == ProjectRelation.joined;
-    }
+    if (status == ProjectStatus.completed) return true;
     if (status == ProjectStatus.ongoing) {
-      if (relation == ProjectRelation.joined) return isDisplayOnGoing;
+      if (relation == ProjectRelation.joined) {
+        return isDisplayOnGoing || isClosureVotingDisplayStatus;
+      }
       return true;
     }
     return false;
@@ -138,4 +197,11 @@ class Project {
       (goalAmount != null && currentAmount != null && goalAmount! > 0)
       ? (currentAmount! / goalAmount!).clamp(0.0, 1.0)
       : 0.0;
+
+  /// Investment — contribution phase ended after stop-contributions vote (Funded).
+  bool get investmentContributionsAreClosed {
+    if (!category.isInvestment) return false;
+    final normalized = _normalizedDisplayStatus;
+    return normalized == 'funded' || normalized.contains('funded');
+  }
 }

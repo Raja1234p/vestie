@@ -6,6 +6,7 @@ import '../../../../core/error/exceptions.dart';
 import '../../../../core/models/pagination_dto.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/utils/logger.dart';
+import '../models/create_project_multipart_builder.dart';
 import '../models/create_project_request_model.dart';
 import '../models/create_project_response_model.dart';
 import '../models/project_summary_model.dart';
@@ -166,11 +167,16 @@ class ProjectsRemoteDataSourceImpl implements ProjectsRemoteDataSource {
   @override
   Future<CreateProjectResponseModel> createProject({
     required CreateProjectRequestModel request,
+    List<String> imagePaths = const [],
   }) async {
     try {
+      final formData = await CreateProjectMultipartBuilder.build(
+        request: request,
+        imagePaths: imagePaths,
+      );
       final response = await _client.post(
         ApiConstants.projects,
-        data: request.toJson(),
+        data: formData,
       );
       final data = response.data;
       if (data is! Map) {

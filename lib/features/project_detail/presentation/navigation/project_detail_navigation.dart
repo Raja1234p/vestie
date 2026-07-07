@@ -19,6 +19,7 @@ import '../../../../core/widgets/common/leader_action_menu.dart';
 import '../../../../core/widgets/common/member_project_action_menu.dart';
 import '../../domain/entities/member_entity.dart';
 import '../widgets/project_member_vff_send_actions.dart';
+import '../../domain/entities/project_detail_closure_extensions.dart';
 import '../../domain/entities/project_detail_entity.dart';
 import '../../domain/entities/create_announcement_route_args.dart';
 import '../../domain/entities/project_detail_route_args.dart';

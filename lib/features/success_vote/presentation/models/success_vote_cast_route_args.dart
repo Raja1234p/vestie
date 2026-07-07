@@ -16,6 +16,7 @@ class SuccessVoteCastRouteArgs {
   final int? notYetVoted;
   final bool isPreview;
   final bool isInvestmentStopContributionsVote;
+  final bool isInvestmentMarkSuccessfulVote;
 
   const SuccessVoteCastRouteArgs({
     this.projectId,
@@ -32,6 +33,7 @@ class SuccessVoteCastRouteArgs {
     this.notYetVoted,
     this.isPreview = false,
     this.isInvestmentStopContributionsVote = false,
+    this.isInvestmentMarkSuccessfulVote = false,
   });
 }
 

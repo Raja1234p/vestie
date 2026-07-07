@@ -30,6 +30,53 @@ enum ClosureVoteOutcome {
   disputed,
 }
 
+/// API wire values for [ClosureVoteType] / [ClosureVoteOutcome].
+abstract final class ClosureVoteApiValues {
+  static const voteTypeSuccess = 'SuccessVote';
+  static const voteTypeStopContributions = 'StopContributionsVote';
+  static const voteTypeFinalClosure = 'FinalClosureVote';
+  static const outcomeSuccess = 'Success';
+  static const outcomeInvestmentStarted = 'InvestmentStarted';
+  static const outcomeRefund = 'Refund';
+  static const outcomeDisputed = 'Disputed';
+}
+
+/// Majority passed — maps Week 10 `outcome` from detail or finalize payloads.
+bool isClosureVoteOutcomeApproved(ClosureVoteOutcome outcome) {
+  return switch (outcome) {
+    ClosureVoteOutcome.success => true,
+    ClosureVoteOutcome.investmentStarted => true,
+    ClosureVoteOutcome.refund => false,
+    ClosureVoteOutcome.disputed => false,
+  };
+}
+
+ClosureVoteType parseClosureVoteType(String? raw) {
+  switch (raw?.trim()) {
+    case ClosureVoteApiValues.voteTypeStopContributions:
+      return ClosureVoteType.stopContributionsVote;
+    case ClosureVoteApiValues.voteTypeFinalClosure:
+      return ClosureVoteType.finalClosureVote;
+    case ClosureVoteApiValues.voteTypeSuccess:
+    default:
+      return ClosureVoteType.successVote;
+  }
+}
+
+ClosureVoteOutcome parseClosureVoteOutcome(String? raw) {
+  switch (raw?.trim()) {
+    case ClosureVoteApiValues.outcomeInvestmentStarted:
+      return ClosureVoteOutcome.investmentStarted;
+    case ClosureVoteApiValues.outcomeRefund:
+      return ClosureVoteOutcome.refund;
+    case ClosureVoteApiValues.outcomeDisputed:
+      return ClosureVoteOutcome.disputed;
+    case ClosureVoteApiValues.outcomeSuccess:
+    default:
+      return ClosureVoteOutcome.success;
+  }
+}
+
 /// Active vote payload from `GET /projects/{id}/closure-voting/active`.
 class ActiveClosureVoteEntity {
   final String closureVoteId;

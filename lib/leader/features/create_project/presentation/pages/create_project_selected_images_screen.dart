@@ -23,6 +23,11 @@ import 'package:vestie/leader/features/create_project/presentation/widgets/creat
 class CreateProjectSelectedImagesScreen extends StatelessWidget {
   const CreateProjectSelectedImagesScreen({super.key});
 
+  void _backToUploadImages(BuildContext context) {
+    context.read<CreateProjectCubit>().clearProjectImages();
+    if (context.mounted) context.pop();
+  }
+
   void _pickMore(BuildContext context, CreateProjectForm form) {
     if (!form.canAddMoreProjectImages) return;
 
@@ -44,53 +49,61 @@ class CreateProjectSelectedImagesScreen extends StatelessWidget {
           CreateProjectImageLimits.maxImages,
         );
 
-        return Scaffold(
-          backgroundColor: Colors.transparent,
-          resizeToAvoidBottomInset: false,
-          body: PostAuthGradientBackground(
-            child: Column(
-              children: [
-                CreateProjectHeader(
-                  title: AppStrings.createProjectSelectedImagesTitle,
-                  stepBadge: badge,
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: AppDimens.postAuthFlowScrollPadding,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        AppText(
-                          AppStrings.createProjectAddedImagesLabel,
-                          style: GoogleFonts.lato(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.neutral1200,
+        return PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, _) {
+            if (!didPop) _backToUploadImages(context);
+          },
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            resizeToAvoidBottomInset: false,
+            body: PostAuthGradientBackground(
+              child: Column(
+                children: [
+                  CreateProjectHeader(
+                    title: AppStrings.createProjectSelectedImagesTitle,
+                    stepBadge: badge,
+                    onBack: () => _backToUploadImages(context),
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: AppDimens.postAuthFlowScrollPadding,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AppText(
+                            AppStrings.createProjectAddedImagesLabel,
+                            style: GoogleFonts.lato(
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.authLabel,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: AppDimens.v12),
-                        CreateProjectSelectedImagesGrid(
-                          imagePaths: images,
-                          onRemoveAt: (index) => context
-                              .read<CreateProjectCubit>()
-                              .removeProjectImageAt(index),
-                          onUploadTap: () => _pickMore(context, form),
-                        ),
-                      ],
+                          SizedBox(height: 4.h),
+                          CreateProjectSelectedImagesGrid(
+                            imagePaths: images,
+                            onRemoveAt: (index) => context
+                                .read<CreateProjectCubit>()
+                                .removeProjectImageAt(index),
+                            onUploadTap: () => _pickMore(context, form),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                FlowScreenFooter(
-                  child: AppButton(
-                    text: AppStrings.btnNext,
-                    useGradient: false,
-                    hasShadow: false,
-                    color: AppColors.neutral1200,
-                    borderRadius: 10.r,
-                    onPressed: () => context.push(AppRoutes.createProjectReview),
+                  FlowScreenFooter(
+                    child: AppButton(
+                      text: AppStrings.btnNext,
+                      useGradient: false,
+                      hasShadow: false,
+                      color: AppColors.neutral1200,
+                      borderRadius: 10.r,
+                      onPressed: () =>
+                          context.push(AppRoutes.createProjectReview),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );

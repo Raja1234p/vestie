@@ -16,6 +16,10 @@ import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
 
+import 'package:vestie/features/project_announcements/domain/announcement_attachment_limits.dart';
+import 'package:vestie/leader/features/create_project/presentation/utils/create_project_image_picker.dart';
+import 'package:vestie/leader/features/project_detail/presentation/widgets/announcement_image_upload_field.dart';
+
 class CreateAnnouncementScreen extends StatefulWidget {
   final String projectId;
 
@@ -34,6 +38,7 @@ class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
 
   String? _headingError;
   String? _contentError;
+  String? _imagePath;
   bool _submitting = false;
 
   @override
@@ -58,6 +63,27 @@ class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
     FocusManager.instance.primaryFocus?.unfocus();
   }
 
+  Future<void> _pickImage() async {
+    _unfocusKeyboard();
+    await CreateProjectImagePicker.showSourceSheet(
+      context,
+      remainingSlots: 1,
+      onPicked: (paths) {
+        if (paths.isEmpty || !mounted) return;
+        final error = ValidationUtils.validateAnnouncementAttachmentPath(paths.first);
+        if (error != null) {
+          AppToast.showError(context, error);
+          return;
+        }
+        setState(() => _imagePath = paths.first);
+      },
+    );
+  }
+
+  void _removeImage() {
+    setState(() => _imagePath = null);
+  }
+
   bool _validate() {
     final h = ValidationUtils.validateAnnouncementHeading(
       _headingController.text,
@@ -75,12 +101,26 @@ class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
   Future<void> _onSubmit() async {
     if (!_validate()) return;
     _unfocusKeyboard();
+
+    final attachmentPaths = <String>[];
+    final imagePath = _imagePath?.trim();
+    if (imagePath != null && imagePath.isNotEmpty) {
+      final attachmentError =
+          ValidationUtils.validateAnnouncementAttachmentPath(imagePath);
+      if (attachmentError != null) {
+        AppToast.showError(context, attachmentError);
+        return;
+      }
+      attachmentPaths.add(imagePath);
+    }
+
     setState(() => _submitting = true);
     final result = await ServiceLocator.instance
         .createProjectAnnouncementUseCase(
           projectId: widget.projectId,
           heading: _headingController.text.trim(),
           content: _contentController.text.trim(),
+          attachmentPaths: attachmentPaths,
         );
     if (!mounted) return;
     setState(() => _submitting = false);
@@ -128,6 +168,7 @@ class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
                         hint: AppStrings.announcementHeadingHint,
                         controller: _headingController,
                         fillColor: AppColors.searchBarBg,
+                        maxLength: AnnouncementAttachmentLimits.maxHeadingLength,
                         textInputAction: TextInputAction.next,
                         errorText: _headingError,
                         onChanged: (_) {
@@ -144,6 +185,7 @@ class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
                         hint: AppStrings.announcementContentHint,
                         controller: _contentController,
                         fillColor: AppColors.searchBarBg,
+                        maxLength: AnnouncementAttachmentLimits.maxContentLength,
                         textInputAction: TextInputAction.done,
                         minLines: 5,
                         maxLines: 5,
@@ -154,6 +196,12 @@ class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
                           }
                         },
                         onSubmitted: (_) => _unfocusKeyboard(),
+                      ),
+                      SizedBox(height: 18.h),
+                      AnnouncementImageUploadField(
+                        imagePath: _imagePath,
+                        onTap: _pickImage,
+                        onRemove: _removeImage,
                       ),
                       SizedBox(height: 22.h),
                       const AppInfoNotice(

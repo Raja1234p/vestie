@@ -7,6 +7,7 @@ abstract class ProjectAnnouncementsRepository {
     required String projectId,
     required String heading,
     required String content,
+    List<String> attachmentPaths = const [],
   });
 
   Future<Either<Failure, void>> delete({

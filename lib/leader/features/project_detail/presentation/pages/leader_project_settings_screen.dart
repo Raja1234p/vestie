@@ -127,11 +127,13 @@ class _LeaderProjectSettingsBody extends StatelessWidget {
             onTap: () => onAction(LeaderMenuAction.myBorrows),
           ),
         ],
-        SizedBox(height: 10.h),
-        AppNavigationRowTile(
-          title: AppStrings.menuInviteMembers,
-          onTap: () => onAction(LeaderMenuAction.inviteMembers),
-        ),
+        if (project.canInviteMembers) ...[
+          SizedBox(height: 10.h),
+          AppNavigationRowTile(
+            title: AppStrings.menuInviteMembers,
+            onTap: () => onAction(LeaderMenuAction.inviteMembers),
+          ),
+        ],
         if (!isCoLeader && project.canMarkProjectSuccessful) ...[
           SizedBox(height: 10.h),
           AppNavigationRowTile(
