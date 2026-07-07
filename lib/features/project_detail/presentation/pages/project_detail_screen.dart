@@ -1,28 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/widgets/common/app_toast.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/widgets/common/app_back_button.dart';
 import '../../../../core/widgets/text/app_text.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
-import '../../../../core/widgets/common/post_auth_header.dart';
 import '../../../../core/di/service_locator.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_completed_outcome_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
+import 'package:vestie/features/project_detail/presentation/mappers/closure_vote_ui_mappers.dart';
+import 'package:vestie/features/success_vote/presentation/pages/success_vote_outcome_screen.dart';
 import '../navigation/open_project_from_card.dart';
 import '../navigation/project_detail_navigation.dart';
-import '../widgets/project_member_vff_send_actions.dart';
 import '../widgets/project_detail_member_layout.dart';
-import 'package:vestie/user/features/project_detail/presentation/widgets/project_detail_user_completed_content.dart';
 import '../widgets/project_detail_load_error.dart';
 import '../widgets/project_detail_loading_body.dart';
 import '../widgets/project_detail_moderator_scroll_content.dart';
 import '../widgets/project_detail_reload_scope.dart';
-import '../widgets/project_detail_trailing_actions.dart';
 import '../widgets/project_realtime_scope.dart';
 
 /// Loads `GET /projects/{id}` via [ProjectDetailBloc] on open.
@@ -90,27 +86,42 @@ class _ProjectDetailBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: PostAuthGradientBackground(
-        child: BlocConsumer<ProjectDetailBloc, ProjectDetailState>(
-          listenWhen: (prev, curr) =>
-              curr is ProjectDetailLoaded &&
-              curr.vffSendErrorMessage != null &&
-              curr.vffSendErrorMessage !=
-                  (prev is ProjectDetailLoaded
-                      ? prev.vffSendErrorMessage
-                      : null),
-          listener: (context, state) {
-            if (state is! ProjectDetailLoaded) return;
-            final message = state.vffSendErrorMessage;
-            if (message == null || message.isEmpty) return;
-            AppToast.showError(context, message);
-            context.read<ProjectDetailBloc>().add(
-              const ClearMemberVffSendErrorEvent(),
-            );
-          },
-          builder: (context, state) {
+    return BlocConsumer<ProjectDetailBloc, ProjectDetailState>(
+      listenWhen: (prev, curr) =>
+          curr is ProjectDetailLoaded &&
+          curr.vffSendErrorMessage != null &&
+          curr.vffSendErrorMessage !=
+              (prev is ProjectDetailLoaded ? prev.vffSendErrorMessage : null),
+      listener: (context, state) {
+        if (state is! ProjectDetailLoaded) return;
+        final message = state.vffSendErrorMessage;
+        if (message == null || message.isEmpty) return;
+        AppToast.showError(context, message);
+        context.read<ProjectDetailBloc>().add(
+          const ClearMemberVffSendErrorEvent(),
+        );
+      },
+      builder: (context, state) {
+        if (state is ProjectDetailLoaded &&
+            state.project.showsCompletedProjectVoteOutcome) {
+          return SuccessVoteOutcomeScreen(
+            args: successVoteOutcomeRouteArgsFromProjectDetail(state.project),
+          );
+        }
+
+        return Scaffold(
+          backgroundColor: Colors.transparent,
+          body: PostAuthGradientBackground(
+            child: _buildDetailBody(context, state),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildDetailBody(BuildContext context, ProjectDetailState state) {
+    return Builder(
+      builder: (context) {
             if (state is ProjectDetailError) {
               return ProjectDetailLoadError(
                 message: state.message,
@@ -142,81 +153,6 @@ class _ProjectDetailBody extends StatelessWidget {
                 );
                 await context.read<ProjectDetailBloc>().stream.firstWhere(
                   (s) => s is ProjectDetailLoaded || s is ProjectDetailError,
-                );
-              }
-
-              if (project.showsCompletedProjectVoteOutcome) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    PostAuthHeader(
-                      title: project.name,
-                      leading: AppBackButton(
-                        onPressed: () => popProjectDetailNavigation(
-                          context,
-                          refreshHomeOnPop: refreshHomeOnPop,
-                          refreshDiscoverOnPop: refreshDiscoverOnPop,
-                        ),
-                      ),
-                      trailing: project.showsProjectDetailOverflowMenu
-                          ? ProjectDetailTrailingActions(
-                              project: project,
-                              pendingJoinRequestCount: pendingCount,
-                              onLeaderMenuSelected: (action) =>
-                                  ProjectDetailNavigation.handleLeaderAction(
-                                    context,
-                                    project: project,
-                                    action: action,
-                                    refreshHomeOnPop: refreshHomeOnPop,
-                                    refreshDiscoverOnPop: refreshDiscoverOnPop,
-                                  ),
-                              onMemberMenuSelected: (action) =>
-                                  ProjectDetailNavigation.handleMemberAction(
-                                    context,
-                                    project: project,
-                                    action: action,
-                                    refreshHomeOnPop: refreshHomeOnPop,
-                                    refreshDiscoverOnPop: refreshDiscoverOnPop,
-                                  ),
-                            )
-                          : null,
-                    ),
-                    Expanded(
-                      child: ColoredBox(
-                        color: Colors.white,
-                        child: RefreshIndicator(
-                          color: AppColors.primary,
-                          onRefresh: onRefresh,
-                          child: CustomScrollView(
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            slivers: [
-                              SliverPadding(
-                                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                                sliver: SliverToBoxAdapter(
-                                  child: ProjectDetailUserCompletedContent(
-                                    project: project,
-                                    membersOnlyLayout: project.isModeratorView,
-                                    onMemberTap: (member) =>
-                                        _openMemberProfile(
-                                          context,
-                                          project: project,
-                                          member: member,
-                                        ),
-                                    onSendVffRequest: (member) =>
-                                        sendMemberVffFromProjectDetail(
-                                          context,
-                                          member: member,
-                                        ),
-                                    sendingVffUserId: state.sendingVffUserId,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
                 );
               }
 
@@ -257,9 +193,7 @@ class _ProjectDetailBody extends StatelessWidget {
                 ).textTheme.bodyLarge?.copyWith(color: AppColors.textBody),
               ),
             );
-          },
-        ),
-      ),
+      },
     );
   }
 }

@@ -68,6 +68,7 @@ void main() {
       final resolved = SuccessVoteOutcomePresentation.resolve(
         data: approvedData,
         copy: leaderCopy,
+        role: SuccessVoteOutcomeRole.groupLeader,
         distributionPhase: SuccessVoteOutcomeDistributionPhase.inProgress,
         category: ProjectCategory.investment,
       );
@@ -91,6 +92,7 @@ void main() {
       final resolved = SuccessVoteOutcomePresentation.resolve(
         data: approvedData,
         copy: leaderCopy,
+        role: SuccessVoteOutcomeRole.groupLeader,
         distributionPhase: SuccessVoteOutcomeDistributionPhase.complete,
         category: ProjectCategory.investment,
       );
@@ -105,7 +107,7 @@ void main() {
       );
     });
 
-    test('member uses same Figma distribution copy', () {
+    test('member uses Returns Distributed copy (not leader distribution)', () {
       final memberCopy = SuccessVoteOutcomeCopy.forRole(
         SuccessVoteOutcomeRole.member,
         category: ProjectCategory.investment,
@@ -113,22 +115,24 @@ void main() {
       final resolved = SuccessVoteOutcomePresentation.resolve(
         data: approvedData,
         copy: memberCopy,
+        role: SuccessVoteOutcomeRole.member,
         distributionPhase: SuccessVoteOutcomeDistributionPhase.inProgress,
         category: ProjectCategory.investment,
       );
 
       expect(
         resolved.title,
-        AppStrings.successVoteOutcomeInvestmentDistributionInProgressTitle,
+        AppStrings.successVoteOutcomeInvestmentCoLeaderMemberApprovedTitle,
       );
       expect(
         resolved.subtitle,
-        AppStrings.successVoteOutcomeInvestmentLeaderApprovedSubtitle,
+        AppStrings.successVoteOutcomeInvestmentCoLeaderMemberApprovedSubtitle,
       );
       expect(
         resolved.amountCaption,
-        AppStrings.successVoteOutcomeInvestmentDistributionInProgressAmountCaption,
+        AppStrings.successVoteOutcomeInvestmentCoLeaderMemberAmountApprovedCaption,
       );
+      expect(resolved.buttonText, AppStrings.btnBackToHome);
     });
   });
 

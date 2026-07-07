@@ -3,12 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:vestie/app/router/app_routes.dart';
-import 'package:vestie/app/router/route_args/project_detail_flow_args.dart';
 import 'package:vestie/core/constants/app_assets.dart';
+import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/widgets/common/app_success_screen.dart';
-import 'package:vestie/features/profile/domain/entities/completed_project_detail_route_args.dart';
-import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_presentation.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_copy.dart';
+import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_route_args.dart';
+import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_presentation.dart';
 import 'package:vestie/features/success_vote/presentation/widgets/success_vote_outcome_amount_card.dart';
 import 'package:vestie/features/success_vote/presentation/widgets/success_vote_outcome_vote_summary.dart';
 
@@ -22,18 +22,6 @@ class SuccessVoteOutcomeScreen extends StatelessWidget {
   const SuccessVoteOutcomeScreen({super.key, required this.args});
 
   void _onPrimaryPressed(BuildContext context) {
-    final completedId = args.completedProjectDetailId?.trim();
-    if (completedId != null && completedId.isNotEmpty) {
-      context.push(
-        AppRoutes.completedProjectDetail,
-        extra: CompletedProjectDetailRouteArgs(
-          projectId: completedId,
-          initialProjectName: args.completedProjectName,
-        ),
-      );
-      return;
-    }
-
     context.go(AppRoutes.dashboard);
   }
 
@@ -48,6 +36,7 @@ class SuccessVoteOutcomeScreen extends StatelessWidget {
     final resolved = SuccessVoteOutcomePresentation.resolve(
       data: data,
       copy: copy,
+      role: args.viewerRole,
       refundPhase: args.refundPhase,
       distributionPhase: args.distributionPhase,
       variant: args.variant,
@@ -74,7 +63,7 @@ class SuccessVoteOutcomeScreen extends StatelessWidget {
           SuccessVoteOutcomeVoteSummary(data: data, copy: copy),
         ],
       ),
-      buttonText: resolved.buttonText,
+      buttonText: AppStrings.btnBackToHome,
       onButtonPressed: () => _onPrimaryPressed(context),
     );
   }

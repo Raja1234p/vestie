@@ -1,7 +1,7 @@
 # Backend handoff — Completed / rejected vote outcome UI
 
 **Audience:** Vestie backend team  
-**From:** Mobile (Flutter) — success-vote outcome screens + completed project detail  
+**From:** Mobile (Flutter) — success-vote outcome screens  
 **Date:** 2026-07-07  
 **Status:** **Action required** — mobile works today with heuristics; explicit API fields needed for production reliability
 
@@ -11,15 +11,18 @@
 
 ## 1. What mobile shows
 
-One shared layout (`SuccessVoteOutcomeScreen` / `ProjectDetailCompletedVoteOutcomeContent`) renders **different copy and styling** based on:
+**Primary surface:** `SuccessVoteOutcomeScreen` (`AppSuccessScreen` — white background, top illustration, **no post-auth gradient header**). Completed card **View** loads `GET /projects/{id}` via `SuccessVoteOutcomeLoadScreen`, then renders API-driven copy.
 
-| Input | Source today | Drives |
-|-------|----------------|--------|
+One shared layout renders **different copy and styling** based on:
+
+| Input | Source (production) | Drives |
+|-------|---------------------|--------|
 | Project category | `project.type` | Vacation vs Emergency vs Investment strings |
 | Viewer role | `userRole` / `viewerRole` | Leader vs co-leader vs member copy |
-| Majority result | **Heuristic** on `displayStatus` | Approved vs rejected hero + amount card color |
-| Vote variant | **Inferred** (investment only) | Success vote vs **stop-contributions rejected** |
-| Refund phase | **Heuristic** on `displayStatus` | Refund in progress vs refund complete |
+| Majority result | `voting.isApproved` / `voting.outcome` | Approved vs rejected hero + amount card color |
+| Vote variant | `voting.voteType` | Success vote vs **stop-contributions rejected** |
+| Refund phase | `voting.outcome` + `displayStatus` | Refund in progress vs refund complete |
+| Distribution phase | `voting.distributionStatus` | Leader distribution titles vs member Returns Distributed! |
 | Vote tallies | `voting.agreedCount` / `disagreedCount` | Vote summary rows |
 | Amount | `project.potAmount` / `raisedAmount` | Amount card (`$9,800.00`) |
 
@@ -27,15 +30,13 @@ One shared layout (`SuccessVoteOutcomeScreen` / `ProjectDetailCompletedVoteOutco
 
 | Surface | When | API loaded |
 |---------|------|------------|
-| **Full-screen outcome** | Home / Profile completed card → **View** | `GET /projects/completed` or `GET /projects?scope=` row, then optional `GET /projects/{id}` on “View Details” |
-| **Embedded in project detail** | `projectStatus = completed` (or cancelled) on detail | `GET /projects/{id}` |
-| **After leader finalize** | Leader taps finalize after vote deadline | `POST …/closure-voting/finalize` response **then** reload `GET /projects/{id}` |
+| **Full-screen outcome** | Home / Profile completed card → **View** | `GET /projects/{id}` (load screen) |
+| **Full-screen outcome** | Direct open of completed vacation / emergency / investment detail | `GET /projects/{id}` (detail bloc) → `SuccessVoteOutcomeScreen` |
+| **Full-screen outcome** | Profile route `/profile/completed-projects/detail` (deep link / legacy path) | `GET /projects/{id}` (load screen) |
+| **After leader finalize** | Leader taps finalize after vote deadline | `POST …/finalize` then `GET /projects/{id}` |
+| **Stop-contributions rejected** | Investment detail while project still `ongoing` | `GET /projects/{id}` → full-screen **Vote Not Passed** |
 
-Detail screens that embed the outcome block:
-
-- Vacation / Emergency member detail (completed)
-- Investment detail (completed)
-- Profile → Completed project detail
+**CTA:** **Back to Home** → dashboard (all Figma variants). No gradient-header embedded outcome UI.
 
 ---
 
@@ -45,30 +46,36 @@ Mobile picks copy using **`category` + `viewerRole` + `isApproved` + `variant` +
 
 ### 2.1 Vacation
 
-| Result | Role | Title (example) | Amount caption (example) | CTA |
-|--------|------|-----------------|--------------------------|-----|
-| Approved | All | Project Approved! | Funds released to your wallet | Back to Home |
-| Rejected (no refund) | All | Project Not Approved | Contributions being refunded | Back to Home |
-| Rejected (refund) | All | Refund In Progress / Refund Complete | Refund copy | Back to Home |
+| Result | Role | Title | Subtitle | Amount caption | CTA |
+|--------|------|-------|----------|----------------|-----|
+| Approved | Leader | Project Approved! | Majority of members agreed. | Unused money has been released to your wallet. | Back to Home |
+| Approved | Co-leader / member | Project Approved! | Majority of members agreed. | Funds released to the project leader | Back to Home |
+| Rejected (leader) | Leader | Project Not Approved | Majority of members disagreed. | Contributions being refunded | Back to Home |
+| Rejected (member) | Co-leader / member | Project Not Approved | Majority of members disagreed. | Your contributions are being refunded to your wallet. | Back to Home |
+| Refund in progress | All | Refund In Progress | Your refund is being processed. | Funds will appear in your wallet within 1–3 business days | Back to Home |
+| Refund complete | All | Refund Complete | All contributions have been returned. | Your full contribution has been added to your wallet | Back to Home |
 
 ### 2.2 Emergency
 
-| Result | Role | Title (example) | Amount caption (example) | CTA |
-|--------|------|-----------------|--------------------------|-----|
-| Approved | Leader / co-leader / member | Project Approved! (role-specific amount) | Role-specific | Back to Home |
-| Rejected | **All same copy** | **Project Not Resolved** | Emergency project continues. Review your group's goal and try again. | Back to Home |
+| Result | Role | Title | Subtitle | Amount caption | CTA |
+|--------|------|-------|----------|----------------|-----|
+| Approved | Co-leader / member | Project Resolved! | Majority of members agreed. | The project has been closed. Unused funds will be sent to wallet. | Back to Home |
+| Approved | Leader | Project Approved! | Majority of members agreed. | Unused money has been released to your wallet. | Back to Home |
+| Rejected | **All** | **Project Not Resolved** | Majority of members disagreed. | Emergency project continues. Review your group's goal and try again. | Back to Home |
 
 ### 2.3 Investment
 
-| Result | Vote type | Role | Title (example) | Amount caption (example) | CTA |
-|--------|-----------|------|-----------------|--------------------------|-----|
-| Approved (final closure) | `FinalClosureVote` | **All roles** | **Distributions In Progress** / **Distribution Complete** | Distribution caption (Figma) | Back to Home |
-| Approved (final closure) | `FinalClosureVote` | Co-leader / member (no `distributionStatus`) | Returns Distributed! | Returns added to wallet | Back to Home |
-| **Stop contributions failed** | `StopContributionsVote` | Leader | **Vote Not Passed** | Contributions continue on schedule. No investing phase yet. | Back to Home |
-| **Stop contributions failed** | `StopContributionsVote` | Member | Vote Not Passed | No changes to your contribution schedule… | Back to Home |
-| Success vote rejected | `SuccessVote` / `FinalClosureVote` | Leader | Project Not Approved | Contributions being refunded | Back to Home |
-| Success vote rejected | `SuccessVote` / `FinalClosureVote` | Member | Project Not Approved | Contributions being refunded | Back to Home |
-| Refund | Any | All | Refund In Progress / Complete | Refund copy | Back to Home |
+| Result | Vote type | Role | Title | Subtitle | Amount caption | CTA |
+|--------|-----------|------|-------|----------|----------------|-----|
+| Approved (legacy) | `FinalClosureVote` | Leader | Project Successful! | Majority of members agreed. | Your dividends have been distributed to all the members in the group. | Back to Home |
+| Distribution processing | `FinalClosureVote` | **Leader only** | Distributions In Progress | Majority of members agreed. | Investment returns are being calculated… | Back to Home |
+| Distribution done | `FinalClosureVote` | **Leader only** | Distribution Complete | Majority of members agreed. | All investment returns have been distributed… | Back to Home |
+| Returns received | `FinalClosureVote` | Co-leader / member | Returns Distributed! | Majority of members agreed. | Your investment returns have been distributed and added to your wallet. | Back to Home |
+| **Stop contributions failed** | `StopContributionsVote` | Leader | Vote Not Passed | Majority chose to keep contributing. | Contributions continue on schedule. No investing phase yet. | Back to Home |
+| **Stop contributions failed** | `StopContributionsVote` | Member | Vote Not Passed | Majority voted to keep contributing. | No changes to your contribution schedule. Keep contributing as planned | Back to Home |
+| Success vote rejected | `SuccessVote` / `FinalClosureVote` | Leader | Project Not Approved | Majority of members disagreed. | Contributions being refunded | Back to Home |
+| Success vote rejected | `SuccessVote` / `FinalClosureVote` | Member | Project Not Approved | Majority of members disagreed. | Your contributions are being refunded to your wallet. | Back to Home |
+| Refund | Any | All | Refund In Progress / Refund Complete | (refund copy) | (refund amount caption) | Back to Home |
 
 **Vote summary order:** rejected outcomes show **Disagreed** row first, then **Agreed**.
 
@@ -173,8 +180,11 @@ rejected UI       AND isApproved == false
 leader distribution UI = category == investment
                       AND isApproved == true
                       AND voteType == FinalClosureVote (or outcome InvestmentStarted)
-                      AND distributionStatus / displayStatus maps to InProgress | Complete
-                      (same copy for leader, co-leader, and member)
+                      AND distributionStatus in (InProgress, Complete)
+                      AND viewerRole == GroupLeader
+
+member/co-leader investment approved final closure
+                      → Returns Distributed! (ignores distributionStatus for title)
 ```
 
 **`distributionStatus` values (preferred wire format):**
@@ -237,7 +247,7 @@ Mobile will map `successVoteApproved` directly when present and stop parsing `di
 
 ### 5.1 Investment — stop-contributions vote **rejected** (leader) — project still ongoing
 
-Mobile shows **Vote Not Passed** embedded or full-screen.
+Mobile shows **Vote Not Passed** full-screen (`SuccessVoteOutcomeScreen`).
 
 ```json
 {

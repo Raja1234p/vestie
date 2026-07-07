@@ -1574,7 +1574,7 @@ class AppStrings {
   static const String projectVoteNotApprovedSubtitle =
       'Majority of members disagreed.';
   static const String projectVoteFundsReleasedToGlWallet =
-      'Funds released to GL wallet';
+      'Funds released to the project leader';
   static const String projectVoteContributionsRefunding =
       'Contributions being refunded';
   static const String projectVoteSummaryLabel = 'Vote Summary';
@@ -1604,7 +1604,7 @@ class AppStrings {
   static const String successVoteOutcomeLeaderRejectedSubtitle =
       'Majority of members disagreed.';
   static const String successVoteOutcomeLeaderAmountApprovedCaption =
-      'Funds released to your wallet';
+      'Unused money has been released to your wallet.';
   static const String successVoteOutcomeLeaderAmountRejectedCaption =
       'Contributions being refunded';
 
@@ -1622,7 +1622,7 @@ class AppStrings {
   static const String successVoteOutcomeInvestmentLeaderApprovedSubtitle =
       'Majority of members agreed.';
   static const String successVoteOutcomeInvestmentLeaderAmountApprovedCaption =
-      'Your distributions have been dispersed to all the members in the group.';
+      'Your dividends have been distributed to all the members in the group.';
 
   // Investment group leader — distributions in progress / complete (Figma)
   static const String successVoteOutcomeInvestmentDistributionInProgressTitle =
@@ -1690,7 +1690,7 @@ class AppStrings {
       'Majority of members agreed.';
   static const String
       successVoteOutcomeEmergencyCoLeaderMemberAmountApprovedCaption =
-      'Emergency project closed. Unused funds released to leader.';
+      'The project has been closed. Unused funds will be sent to wallet.';
 
   /// Emergency co-leader — success vote approved amount caption (Figma).
   static const String successVoteOutcomeEmergencyCoLeaderAmountApprovedCaption =

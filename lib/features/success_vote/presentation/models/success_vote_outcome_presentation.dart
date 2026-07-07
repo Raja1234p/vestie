@@ -6,6 +6,7 @@ import 'success_vote_outcome_distribution_copy.dart';
 import 'success_vote_outcome_distribution_phase.dart';
 import 'success_vote_outcome_refund_copy.dart';
 import 'success_vote_outcome_refund_phase.dart';
+import 'success_vote_outcome_role.dart';
 import 'success_vote_outcome_ui_data.dart';
 import 'success_vote_outcome_variant.dart';
 
@@ -16,6 +17,7 @@ class SuccessVoteOutcomePresentation {
   static SuccessVoteOutcomeResolvedCopy resolve({
     required SuccessVoteOutcomeUiData data,
     required SuccessVoteOutcomeCopy copy,
+    SuccessVoteOutcomeRole role = SuccessVoteOutcomeRole.member,
     SuccessVoteOutcomeRefundPhase refundPhase =
         SuccessVoteOutcomeRefundPhase.none,
     SuccessVoteOutcomeDistributionPhase distributionPhase =
@@ -39,7 +41,8 @@ class SuccessVoteOutcomePresentation {
     if (data.isApproved &&
         distributionPhase.isDistribution &&
         category == ProjectCategory.investment &&
-        variant == SuccessVoteOutcomeVariant.successVote) {
+        variant == SuccessVoteOutcomeVariant.successVote &&
+        role == SuccessVoteOutcomeRole.groupLeader) {
       final distribution =
           SuccessVoteOutcomeDistributionCopy.forPhase(distributionPhase);
       return SuccessVoteOutcomeResolvedCopy(

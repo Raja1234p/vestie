@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:vestie/features/project_detail/data/models/closure_voting_response_model.dart';
+import 'package:vestie/features/project_detail/data/models/closure_voting_response_model.dart'
+    hide ClosureVoteApiValues;
 import 'package:vestie/features/project_detail/domain/entities/closure_vote_entities.dart';
 import 'package:vestie/features/project_detail/domain/entities/leader_voting_flow_kind.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';

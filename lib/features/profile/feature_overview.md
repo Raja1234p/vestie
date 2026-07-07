@@ -22,7 +22,7 @@ Profile tab, edit profile, payment methods entry, transaction history, completed
 | `/profile/payment-methods` | `PaymentMethodsScreen` |
 | `/profile/transaction-history` | `TransactionHistoryScreen` |
 | `/profile/completed-projects` | `CompletedProjectsScreen` |
-| `/profile/completed-projects/detail` | `CompletedProjectDetailScreen` — typed `CompletedProjectDetailRouteArgs` |
+| `/profile/completed-projects/detail` | `SuccessVoteOutcomeLoadScreen` — typed `CompletedProjectDetailRouteArgs` (redirects to full-screen outcome) |
 | `/profile/key-guidelines` | `KeyGuidelinesScreen` |
 | `/profile/my-accounts` | `MyAccountsScreen` (bank accounts) |
 
@@ -33,18 +33,14 @@ Profile tab, edit profile, payment methods entry, transaction history, completed
 | Profile header | `GET /users/me` |
 | Transaction history | `GET /wallet/transactions?page=&pageSize=` → `TransactionHistoryCubit` (shimmer, filters client-side, paginated) |
 | Completed projects list | `GET /projects/completed?page=&pageSize=` → `CompletedProjectsCubit` (paginated) |
-| Completed project detail | `GET /projects/{id}` only — via `ServiceLocator.createCompletedProjectDetailBloc()` (own `ProjectDetailBloc` instance; no pot/borrow/voting side calls) |
+| Completed project detail | `GET /projects/{id}` via `SuccessVoteOutcomeLoadScreen` → `SuccessVoteOutcomeScreen` |
 | Payment methods entry | `features/payment_methods/` |
 | Vestie User Guidelines | `GET /content/user-guidelines` |
 | My Accounts entry | `features/bank_accounts/` |
 
 ## Completed projects — View
 
-`openCompletedProjectDetail` → `openProjectFromCard` → project detail → `GET /projects/{id}` → `ProjectDetailCompletedVoteOutcomeContent` (real `voting` tallies, amount, and role/category copy).
-
-`SuccessVoteOutcomeScreen` is still used after in-app vote finalize (`successVoteOutcomeRouteArgsFromFinalize`), not from home/profile list **View**.
-
-`CompletedProjectDetailScreen` popup menu (`MemberProjectActionMenu(fundsHistoryOnly: true)`) exposes **only** "Project fund history" — no contribute/borrow/leave actions on a completed project.
+Home / profile **View** on a completed card → `openSuccessVoteOutcomeForCompletedListProject` → `GET /projects/{id}` → `SuccessVoteOutcomeScreen` (Figma layout, **Back to Home**). Direct project-detail opens with a finalized vote outcome use the same full-screen UI. See `DOCS/backend_handoff_completed_vote_outcome_api.md` §2 for full outcome matrix.
 
 ## See also
 

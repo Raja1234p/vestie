@@ -198,9 +198,9 @@ class SuccessVoteOutcomeCopy {
     amountCaptionApproved:
         AppStrings.successVoteOutcomeCoLeaderAmountApprovedCaption,
     amountCaptionRejected:
-        AppStrings.successVoteOutcomeLeaderAmountRejectedCaption,
-    primaryButtonApproved: AppStrings.successVoteOutcomeCoLeaderBtnApproved,
-    primaryButtonRejected: AppStrings.successVoteOutcomeCoLeaderBtnRejected,
+        AppStrings.successVoteOutcomeVacationCoLeaderMemberAmountRejectedCaption,
+    primaryButtonApproved: AppStrings.btnBackToHome,
+    primaryButtonRejected: AppStrings.btnBackToHome,
     voteSummaryLabel: AppStrings.projectVoteSummaryLabel,
     agreedLabel: AppStrings.projectVoteAgreedLabel,
     disagreedLabel: AppStrings.projectVoteDisagreedLabel,
@@ -259,7 +259,8 @@ class SuccessVoteOutcomeCopy {
     rejectedSubtitle: AppStrings.projectVoteNotApprovedSubtitle,
     amountCaptionApproved: AppStrings
         .successVoteOutcomeInvestmentCoLeaderMemberAmountApprovedCaption,
-    amountCaptionRejected: AppStrings.projectVoteContributionsRefunding,
+    amountCaptionRejected:
+        AppStrings.successVoteOutcomeVacationCoLeaderMemberAmountRejectedCaption,
     primaryButtonApproved: AppStrings.btnBackToHome,
     primaryButtonRejected: AppStrings.btnBackToHome,
     voteSummaryLabel: AppStrings.projectVoteSummaryLabel,
@@ -274,10 +275,11 @@ class SuccessVoteOutcomeCopy {
     approvedSubtitle: AppStrings.projectVoteApprovedSubtitle,
     rejectedTitle: AppStrings.projectVoteNotApprovedTitle,
     rejectedSubtitle: AppStrings.projectVoteNotApprovedSubtitle,
-    amountCaptionApproved: AppStrings.projectVoteFundsReleasedToGlWallet,
-    amountCaptionRejected: AppStrings.projectVoteContributionsRefunding,
-    primaryButtonApproved: AppStrings.btnViewDetails,
-    primaryButtonRejected: AppStrings.btnViewDetails,
+    amountCaptionApproved: AppStrings.successVoteOutcomeCoLeaderAmountApprovedCaption,
+    amountCaptionRejected:
+        AppStrings.successVoteOutcomeVacationCoLeaderMemberAmountRejectedCaption,
+    primaryButtonApproved: AppStrings.btnBackToHome,
+    primaryButtonRejected: AppStrings.btnBackToHome,
     voteSummaryLabel: AppStrings.projectVoteSummaryLabel,
     agreedLabel: AppStrings.projectVoteAgreedLabel,
     disagreedLabel: AppStrings.projectVoteDisagreedLabel,

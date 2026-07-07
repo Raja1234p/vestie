@@ -359,12 +359,6 @@ class ServiceLocator {
     getActiveClosureVoteUseCase: getActiveClosureVoteUseCase,
   );
 
-  /// Profile completed detail — `GET /projects/{id}` only (no pot / borrow / vote).
-  ProjectDetailBloc createCompletedProjectDetailBloc() => ProjectDetailBloc(
-    repository: projectDetailRepository,
-    sendVffRequestUseCase: sendVffRequestUseCase,
-  );
-
   SuccessVoteCastCubit createSuccessVoteCastCubit(
     SuccessVoteCastRouteArgs args,
   ) => SuccessVoteCastCubit(

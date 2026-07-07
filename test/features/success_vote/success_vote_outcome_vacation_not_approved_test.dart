@@ -5,35 +5,40 @@ import 'package:vestie/features/success_vote/presentation/models/success_vote_ou
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 
 void main() {
-  group('vacation not approved — all roles share Figma copy', () {
-    const rejectedTitle = AppStrings.successVoteOutcomeLeaderRejectedTitle;
-    const rejectedSubtitle =
-        AppStrings.successVoteOutcomeLeaderRejectedSubtitle;
-    const rejectedAmount =
-        AppStrings.successVoteOutcomeLeaderAmountRejectedCaption;
-    const rejectedButton = AppStrings.btnBackToHome;
-
-    void expectVacationNotApproved(SuccessVoteOutcomeRole role) {
+  group('vacation not approved — Figma copy by role', () {
+    test('group leader — contributions being refunded', () {
       final copy = SuccessVoteOutcomeCopy.forRole(
-        role,
+        SuccessVoteOutcomeRole.groupLeader,
         category: ProjectCategory.vacations,
       );
-      expect(copy.titleFor(false), rejectedTitle);
-      expect(copy.subtitleFor(false), rejectedSubtitle);
-      expect(copy.amountCaptionFor(false), rejectedAmount);
-      expect(copy.primaryButtonFor(false), rejectedButton);
-    }
+      expect(copy.titleFor(false), AppStrings.successVoteOutcomeLeaderRejectedTitle);
+      expect(
+        copy.subtitleFor(false),
+        AppStrings.successVoteOutcomeLeaderRejectedSubtitle,
+      );
+      expect(
+        copy.amountCaptionFor(false),
+        AppStrings.successVoteOutcomeLeaderAmountRejectedCaption,
+      );
+      expect(copy.primaryButtonFor(false), AppStrings.btnBackToHome);
+    });
 
-    test('group leader', () => expectVacationNotApproved(
-          SuccessVoteOutcomeRole.groupLeader,
-        ));
-
-    test('co-leader', () => expectVacationNotApproved(
-          SuccessVoteOutcomeRole.coLeader,
-        ));
-
-    test('member', () => expectVacationNotApproved(
-          SuccessVoteOutcomeRole.member,
-        ));
+    test('co-leader and member — wallet refund caption', () {
+      for (final role in [
+        SuccessVoteOutcomeRole.coLeader,
+        SuccessVoteOutcomeRole.member,
+      ]) {
+        final copy = SuccessVoteOutcomeCopy.forRole(
+          role,
+          category: ProjectCategory.vacations,
+        );
+        expect(copy.titleFor(false), AppStrings.projectVoteNotApprovedTitle);
+        expect(
+          copy.amountCaptionFor(false),
+          AppStrings.successVoteOutcomeVacationCoLeaderMemberAmountRejectedCaption,
+        );
+        expect(copy.primaryButtonFor(false), AppStrings.btnBackToHome);
+      }
+    });
   });
 }

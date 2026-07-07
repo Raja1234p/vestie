@@ -50,6 +50,9 @@ import 'package:vestie/user/features/investment/presentation/pages/user_project_
 import 'package:vestie/user/features/project_detail/presentation/pages/project_cancelled_screen.dart';
 import 'package:vestie/user/features/project_detail/presentation/pages/user_status_flow_screen.dart';
 import 'package:vestie/features/success_vote/presentation/pages/success_vote_cast_screen.dart';
+import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_load_route_args.dart';
+import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_route_args.dart';
+import 'package:vestie/features/success_vote/presentation/pages/success_vote_outcome_load_screen.dart';
 import 'package:vestie/features/success_vote/presentation/pages/success_vote_outcome_screen.dart';
 import '../app_routes.dart';
 import '../route_args/project_detail_flow_args.dart';
@@ -397,8 +400,13 @@ List<RouteBase> buildProjectRoutes({
       path: AppRoutes.userVoteOutcome,
       builder: (context, state) {
         final extra = state.extra;
-        if (extra is! SuccessVoteOutcomeRouteArgs) return invalidRouteScreen();
-        return SuccessVoteOutcomeScreen(args: extra);
+        if (extra is SuccessVoteOutcomeRouteArgs) {
+          return SuccessVoteOutcomeScreen(args: extra);
+        }
+        if (extra is SuccessVoteOutcomeLoadRouteArgs) {
+          return SuccessVoteOutcomeLoadScreen(args: extra);
+        }
+        return invalidRouteScreen();
       },
     ),
     GoRoute(

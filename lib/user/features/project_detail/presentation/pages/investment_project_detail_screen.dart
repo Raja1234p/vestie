@@ -11,15 +11,16 @@ import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
+import 'package:vestie/features/project_detail/presentation/mappers/closure_vote_ui_mappers.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_announcements_section.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_completed_outcome_extensions.dart';
-import 'package:vestie/features/project_detail/presentation/widgets/project_detail_completed_vote_outcome_content.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/investment_completed_detail_content.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_member_vff_send_actions.dart';
+import 'package:vestie/features/success_vote/presentation/pages/success_vote_outcome_screen.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_members_preview_section.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_trailing_actions.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_load_error.dart';
@@ -125,29 +126,41 @@ class _InvestmentProjectDetailBodyState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: PostAuthGradientBackground(
-        child: BlocConsumer<ProjectDetailBloc, ProjectDetailState>(
-          listenWhen: (prev, curr) =>
-              curr is ProjectDetailLoaded &&
-              curr.vffSendErrorMessage != null &&
-              curr.vffSendErrorMessage !=
-                  (prev is ProjectDetailLoaded
-                      ? prev.vffSendErrorMessage
-                      : null),
-          listener: (context, state) {
-            if (state is! ProjectDetailLoaded) return;
-            final message = state.vffSendErrorMessage;
-            if (message == null || message.isEmpty) return;
-            AppToast.showError(context, message);
-            context.read<ProjectDetailBloc>().add(
-              const ClearMemberVffSendErrorEvent(),
-            );
-          },
-          builder: (context, state) {
-            if (state is ProjectDetailLoading ||
-                state is ProjectDetailInitial) {
+    return BlocConsumer<ProjectDetailBloc, ProjectDetailState>(
+      listenWhen: (prev, curr) =>
+          curr is ProjectDetailLoaded &&
+          curr.vffSendErrorMessage != null &&
+          curr.vffSendErrorMessage !=
+              (prev is ProjectDetailLoaded ? prev.vffSendErrorMessage : null),
+      listener: (context, state) {
+        if (state is! ProjectDetailLoaded) return;
+        final message = state.vffSendErrorMessage;
+        if (message == null || message.isEmpty) return;
+        AppToast.showError(context, message);
+        context.read<ProjectDetailBloc>().add(
+          const ClearMemberVffSendErrorEvent(),
+        );
+      },
+      builder: (context, state) {
+        if (state is ProjectDetailLoaded &&
+            state.project.showsCompletedProjectVoteOutcome) {
+          return SuccessVoteOutcomeScreen(
+            args: successVoteOutcomeRouteArgsFromProjectDetail(state.project),
+          );
+        }
+
+        return Scaffold(
+          backgroundColor: Colors.transparent,
+          body: PostAuthGradientBackground(
+            child: _buildDetailBody(context, state),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildDetailBody(BuildContext context, ProjectDetailState state) {
+    if (state is ProjectDetailLoading || state is ProjectDetailInitial) {
               return ProjectDetailLoadingBody(
                 title: widget.initialProjectName,
                 onBack: () => popProjectDetailNavigation(
@@ -170,11 +183,8 @@ class _InvestmentProjectDetailBodyState
             if (state is ProjectDetailLoaded) {
               final project = state.project;
               final pendingCount = state.pendingJoinRequestCount;
-              final showCompletedOutcome =
-                  project.showsCompletedProjectVoteOutcome;
               final showDistributionLayout =
-                  project.showsInvestmentDistributionActions &&
-                  !showCompletedOutcome;
+                  project.showsInvestmentDistributionActions;
 
               Future<void> refreshDetail() async {
                 context.read<ProjectDetailBloc>().add(
@@ -236,9 +246,7 @@ class _InvestmentProjectDetailBodyState
                 );
               }
 
-              if (project.showsInlineMemberVoteFlow &&
-                  !showDistributionLayout &&
-                  !showCompletedOutcome) {
+              if (project.showsInlineMemberVoteFlow && !showDistributionLayout) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -277,22 +285,7 @@ class _InvestmentProjectDetailBodyState
                                     crossAxisAlignment:
                                         CrossAxisAlignment.stretch,
                                     children: [
-                                      if (showCompletedOutcome)
-                                        ProjectDetailCompletedVoteOutcomeContent(
-                                          project: project,
-                                          onMemberTap: (m) => openMemberDetail(m),
-                                          onSendVffRequest: (member) =>
-                                              sendMemberVffFromProjectDetail(
-                                                context,
-                                                member: member,
-                                              ),
-                                          sendingVffUserId: state.sendingVffUserId,
-                                          onDeleteAnnouncement:
-                                              project.isModeratorView
-                                              ? _deleteAnnouncement
-                                              : null,
-                                        )
-                                      else if (showDistributionLayout)
+                                      if (showDistributionLayout)
                                         InvestmentCompletedDetailContent(
                                           project: project,
                                           displayAsCompleted: false,
@@ -381,9 +374,5 @@ class _InvestmentProjectDetailBodyState
             }
 
             return Center(child: AppText(AppStrings.errorGeneric));
-          },
-        ),
-      ),
-    );
   }
 }

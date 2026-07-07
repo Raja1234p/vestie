@@ -18,8 +18,9 @@ import 'package:vestie/features/bank_accounts/presentation/pages/my_accounts_scr
 import 'package:vestie/features/kyc/presentation/pages/kyc_onboarding_screen.dart';
 import 'package:vestie/features/wallet/presentation/pages/select_bank_account_screen.dart';
 import 'package:vestie/features/profile/presentation/pages/completed_projects_screen.dart';
-import 'package:vestie/features/profile/presentation/pages/completed_project_detail_screen.dart';
 import 'package:vestie/features/profile/domain/entities/completed_project_detail_route_args.dart';
+import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_load_route_args.dart';
+import 'package:vestie/features/success_vote/presentation/pages/success_vote_outcome_load_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 
@@ -58,9 +59,11 @@ List<RouteBase> buildProfileWalletRoutes() {
         if (extra is! CompletedProjectDetailRouteArgs) {
           return _invalidCompletedProjectDetailRoute;
         }
-        return CompletedProjectDetailScreen(
-          projectId: extra.projectId,
-          initialProjectName: extra.initialProjectName,
+        return SuccessVoteOutcomeLoadScreen(
+          args: SuccessVoteOutcomeLoadRouteArgs(
+            projectId: extra.projectId,
+            initialProjectName: extra.initialProjectName,
+          ),
         );
       },
     ),

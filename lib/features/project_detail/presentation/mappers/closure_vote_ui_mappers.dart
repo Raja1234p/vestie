@@ -450,10 +450,8 @@ SuccessVoteOutcomeDistributionPhase distributionPhaseFromProject(
 }
 
 SuccessVoteOutcomeRouteArgs successVoteOutcomeRouteArgsFromProject(
-  Project project, {
-  String? completedProjectDetailId,
-  String? completedProjectName,
-}) {
+  Project project,
+) {
   final role = SuccessVoteOutcomeRole.fromViewerRole(project.viewerRole);
 
   return SuccessVoteOutcomeRouteArgs(
@@ -466,7 +464,21 @@ SuccessVoteOutcomeRouteArgs successVoteOutcomeRouteArgsFromProject(
     refundPhase: refundPhaseFromProject(project),
     distributionPhase: distributionPhaseFromProject(project),
     projectCategory: project.category,
-    completedProjectDetailId: completedProjectDetailId,
-    completedProjectName: completedProjectName ?? project.name,
+  );
+}
+
+SuccessVoteOutcomeRouteArgs successVoteOutcomeRouteArgsFromProjectDetail(
+  ProjectDetailEntity project,
+) {
+  final role = SuccessVoteOutcomeRole.fromViewerRole(project.viewerRole);
+
+  return SuccessVoteOutcomeRouteArgs(
+    data: successVoteOutcomeUiDataFromProjectDetail(project),
+    viewerRole: role,
+    variant: completedOutcomeVariantFromProjectDetail(project),
+    refundPhase: refundPhaseFromProjectDetail(project),
+    distributionPhase: distributionPhaseFromProjectDetail(project),
+    project: role.isModerator ? project : null,
+    projectCategory: project.category,
   );
 }
