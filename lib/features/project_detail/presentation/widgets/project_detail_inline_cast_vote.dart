@@ -33,7 +33,6 @@ class ProjectDetailInlineCastVote extends StatefulWidget {
 class _ProjectDetailInlineCastVoteState extends State<ProjectDetailInlineCastVote> {
   late SuccessVoteCastUiData _data;
   final SuccessVoteCastChoice _choice = SuccessVoteCastChoice.pending;
-  bool _isSubmitting = false;
 
   @override
   void initState() {
@@ -52,12 +51,10 @@ class _ProjectDetailInlineCastVoteState extends State<ProjectDetailInlineCastVot
   }
 
   Future<bool> _submitVote(bool voteForSuccess) async {
-    if (_isSubmitting || _choice != SuccessVoteCastChoice.pending) {
+    if (_choice != SuccessVoteCastChoice.pending) {
       return false;
     }
     if (!widget.project.showsInlineMemberCastVote) return false;
-
-    setState(() => _isSubmitting = true);
 
     final result = await ServiceLocator.instance.submitVoteUseCase(
       SubmitVoteParams(
@@ -70,14 +67,12 @@ class _ProjectDetailInlineCastVoteState extends State<ProjectDetailInlineCastVot
 
     return result.fold(
       (failure) {
-        setState(() => _isSubmitting = false);
         AppToast.showError(context, FailureMapper.userMessage(failure));
         return false;
       },
       (castResult) async {
         if (!mounted) return false;
         setState(() {
-          _isSubmitting = false;
           _data = _data.copyWithTallies(
             thumbsUp: castResult.thumbsUp,
             thumbsDown: castResult.thumbsDown,
@@ -97,7 +92,6 @@ class _ProjectDetailInlineCastVoteState extends State<ProjectDetailInlineCastVot
       choice: _choice,
       canVote: widget.project.showsInlineMemberCastVote &&
           _choice == SuccessVoteCastChoice.pending,
-      isLoading: _isSubmitting,
       onSubmitVote: _submitVote,
     );
   }

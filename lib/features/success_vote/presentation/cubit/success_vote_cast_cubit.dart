@@ -98,7 +98,12 @@ class SuccessVoteCastCubit extends Cubit<SuccessVoteCastState> {
     }
     if (state.isSubmitting) return false;
 
-    emit(state.copyWith(isSubmitting: true, clearSubmitFailure: true));
+    emit(
+      state.copyWith(
+        submittingVoteForSuccess: voteForSuccess,
+        clearSubmitFailure: true,
+      ),
+    );
 
     final result = await _submitVoteUseCase(
       SubmitVoteParams(projectId: projectId, isPositive: voteForSuccess),
@@ -107,7 +112,10 @@ class SuccessVoteCastCubit extends Cubit<SuccessVoteCastState> {
     return result.fold(
       (failure) {
         emit(
-          state.copyWith(isSubmitting: false, submitFailure: failure),
+          state.copyWith(
+            clearSubmitting: true,
+            submitFailure: failure,
+          ),
         );
         return false;
       },
@@ -121,7 +129,7 @@ class SuccessVoteCastCubit extends Cubit<SuccessVoteCastState> {
 
         emit(
           state.copyWith(
-            isSubmitting: false,
+            clearSubmitting: true,
             data: updatedData,
             choice: voteForSuccess
                 ? SuccessVoteCastChoice.agreed

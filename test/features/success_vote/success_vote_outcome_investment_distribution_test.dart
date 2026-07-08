@@ -7,7 +7,6 @@ import 'package:vestie/features/success_vote/presentation/models/success_vote_ou
 import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_copy.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_role.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_ui_data.dart';
-import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_variant.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 
 void main() {
@@ -50,90 +49,60 @@ void main() {
     });
   });
 
-  group('SuccessVoteOutcomePresentation investment leader distribution', () {
+  group('investment final closure approved — unified Figma copy (all roles)', () {
     const approvedData = SuccessVoteOutcomeUiData(
       isApproved: true,
-      amountUsd: 9800,
+      amountUsd: 19800,
       agreedCount: 5,
       disagreedCount: 2,
       totalMemberCount: 7,
     );
 
-    final leaderCopy = SuccessVoteOutcomeCopy.forRole(
-      SuccessVoteOutcomeRole.groupLeader,
-      category: ProjectCategory.investment,
-    );
-
-    test('in progress uses Figma leader copy', () {
-      final resolved = SuccessVoteOutcomePresentation.resolve(
-        data: approvedData,
-        copy: leaderCopy,
-        role: SuccessVoteOutcomeRole.groupLeader,
-        distributionPhase: SuccessVoteOutcomeDistributionPhase.inProgress,
+    void expectFinalApprovedCopy(SuccessVoteOutcomeRole role) {
+      final copy = SuccessVoteOutcomeCopy.forRole(
+        role,
         category: ProjectCategory.investment,
       );
-
       expect(
-        resolved.title,
-        AppStrings.successVoteOutcomeInvestmentDistributionInProgressTitle,
+        copy.titleFor(true),
+        AppStrings.successVoteOutcomeInvestmentFinalApprovedTitle,
       );
       expect(
-        resolved.subtitle,
-        AppStrings.successVoteOutcomeInvestmentLeaderApprovedSubtitle,
+        copy.subtitleFor(true),
+        AppStrings.successVoteOutcomeInvestmentFinalApprovedSubtitle,
       );
       expect(
-        resolved.amountCaption,
-        AppStrings.successVoteOutcomeInvestmentDistributionInProgressAmountCaption,
-      );
-      expect(resolved.buttonText, AppStrings.btnBackToHome);
-    });
-
-    test('complete uses Figma leader copy', () {
-      final resolved = SuccessVoteOutcomePresentation.resolve(
-        data: approvedData,
-        copy: leaderCopy,
-        role: SuccessVoteOutcomeRole.groupLeader,
-        distributionPhase: SuccessVoteOutcomeDistributionPhase.complete,
-        category: ProjectCategory.investment,
+        copy.amountCaptionFor(true),
+        AppStrings.successVoteOutcomeInvestmentFinalApprovedAmountCaption,
       );
 
-      expect(
-        resolved.title,
-        AppStrings.successVoteOutcomeInvestmentDistributionCompleteTitle,
-      );
-      expect(
-        resolved.amountCaption,
-        AppStrings.successVoteOutcomeInvestmentDistributionCompleteAmountCaption,
-      );
-    });
+      for (final phase in [
+        SuccessVoteOutcomeDistributionPhase.none,
+        SuccessVoteOutcomeDistributionPhase.inProgress,
+        SuccessVoteOutcomeDistributionPhase.complete,
+      ]) {
+        final resolved = SuccessVoteOutcomePresentation.resolve(
+          data: approvedData,
+          copy: copy,
+          category: ProjectCategory.investment,
+        );
+        expect(resolved.title, 'Project Successfully completed!');
+        expect(resolved.subtitle, 'Majority of members agreed.');
+        expect(
+          resolved.amountCaption,
+          'Total Funds distributed to all the contributors',
+        );
+        expect(resolved.buttonText, AppStrings.btnBackToHome);
+      }
+    }
 
-    test('member uses Returns Distributed copy (not leader distribution)', () {
-      final memberCopy = SuccessVoteOutcomeCopy.forRole(
-        SuccessVoteOutcomeRole.member,
-        category: ProjectCategory.investment,
-      );
-      final resolved = SuccessVoteOutcomePresentation.resolve(
-        data: approvedData,
-        copy: memberCopy,
-        role: SuccessVoteOutcomeRole.member,
-        distributionPhase: SuccessVoteOutcomeDistributionPhase.inProgress,
-        category: ProjectCategory.investment,
-      );
+    test('group leader', () =>
+        expectFinalApprovedCopy(SuccessVoteOutcomeRole.groupLeader));
 
-      expect(
-        resolved.title,
-        AppStrings.successVoteOutcomeInvestmentCoLeaderMemberApprovedTitle,
-      );
-      expect(
-        resolved.subtitle,
-        AppStrings.successVoteOutcomeInvestmentCoLeaderMemberApprovedSubtitle,
-      );
-      expect(
-        resolved.amountCaption,
-        AppStrings.successVoteOutcomeInvestmentCoLeaderMemberAmountApprovedCaption,
-      );
-      expect(resolved.buttonText, AppStrings.btnBackToHome);
-    });
+    test('co-leader', () =>
+        expectFinalApprovedCopy(SuccessVoteOutcomeRole.coLeader));
+
+    test('member', () => expectFinalApprovedCopy(SuccessVoteOutcomeRole.member));
   });
 
   group('distributionPhaseFromProject list', () {

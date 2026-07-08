@@ -20,7 +20,7 @@ class SuccessVoteCastContent extends StatefulWidget {
   final SuccessVoteCastUiData data;
   final SuccessVoteCastChoice choice;
   final bool canVote;
-  final bool isLoading;
+  final bool? submittingVoteForSuccess;
   final Future<bool> Function(bool voteForSuccess)? onSubmitVote;
 
   final bool showPerMemberVoteRoster;
@@ -30,7 +30,7 @@ class SuccessVoteCastContent extends StatefulWidget {
     required this.data,
     this.choice = SuccessVoteCastChoice.pending,
     this.canVote = true,
-    this.isLoading = false,
+    this.submittingVoteForSuccess,
     this.onSubmitVote,
     this.showPerMemberVoteRoster = false,
   });
@@ -41,7 +41,7 @@ class SuccessVoteCastContent extends StatefulWidget {
 
 class _SuccessVoteCastContentState extends State<SuccessVoteCastContent> {
   late SuccessVoteCastChoice _choice;
-  bool _localLoading = false;
+  bool? _localSubmittingVoteForSuccess;
 
   @override
   void initState() {
@@ -55,9 +55,16 @@ class _SuccessVoteCastContentState extends State<SuccessVoteCastContent> {
     if (oldWidget.choice != widget.choice) {
       _choice = widget.choice;
     }
+    if (oldWidget.submittingVoteForSuccess == null &&
+        widget.submittingVoteForSuccess == null) {
+      _localSubmittingVoteForSuccess = null;
+    }
   }
 
-  bool get _loading => widget.isLoading || _localLoading;
+  bool? get _activeSubmitting =>
+      _localSubmittingVoteForSuccess ?? widget.submittingVoteForSuccess;
+
+  bool get _isSubmitting => _activeSubmitting != null;
 
   SuccessVoteCastCopy get _copy => SuccessVoteCastCopy.forViewer(
     category: widget.data.projectCategory,
@@ -69,12 +76,13 @@ class _SuccessVoteCastContentState extends State<SuccessVoteCastContent> {
 
   Future<void> _castVote(bool voteForSuccess) async {
     if (_choice != SuccessVoteCastChoice.pending || !widget.canVote) return;
+    if (_isSubmitting) return;
     final submit = widget.onSubmitVote;
     if (submit != null) {
-      setState(() => _localLoading = true);
+      setState(() => _localSubmittingVoteForSuccess = voteForSuccess);
       final ok = await submit(voteForSuccess);
       if (!mounted) return;
-      setState(() => _localLoading = false);
+      setState(() => _localSubmittingVoteForSuccess = null);
       if (!ok) return;
     }
     if (widget.onSubmitVote == null) {
@@ -90,37 +98,41 @@ class _SuccessVoteCastContentState extends State<SuccessVoteCastContent> {
   Widget build(BuildContext context) {
     final choice = widget.onSubmitVote != null ? widget.choice : _choice;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Expanded(
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(
-              AppDimens.p20,
-              0,
-              AppDimens.p20,
-              AppDimens.v16,
-            ),
-            child: SuccessVoteCastScrollBody(
-              data: widget.data,
-              copy: _copy,
-              choice: choice,
-              showPerMemberVoteRoster: widget.showPerMemberVoteRoster,
+    return AbsorbPointer(
+      absorbing: _isSubmitting,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(
+                AppDimens.p20,
+                0,
+                AppDimens.p20,
+                AppDimens.v16,
+              ),
+              child: SuccessVoteCastScrollBody(
+                data: widget.data,
+                copy: _copy,
+                choice: choice,
+                showPerMemberVoteRoster: widget.showPerMemberVoteRoster,
+              ),
             ),
           ),
-        ),
-        FlowScreenFooter(
-          child: widget.canVote
-              ? SuccessVoteCastActions(
-                  copy: _copy,
-                  choice: choice,
-                  isLoading: _loading,
-                  onVoteYes: () => _castVote(true),
-                  onVoteNo: () => _castVote(false),
-                )
-              : _CannotVoteFooter(choice: choice),
-        ),
-      ],
+          FlowScreenFooter(
+            child: widget.canVote
+                ? SuccessVoteCastActions(
+                    copy: _copy,
+                    choice: choice,
+                    isLoadingYes: _activeSubmitting == true,
+                    isLoadingNo: _activeSubmitting == false,
+                    onVoteYes: () => _castVote(true),
+                    onVoteNo: () => _castVote(false),
+                  )
+                : _CannotVoteFooter(choice: choice),
+          ),
+        ],
+      ),
     );
   }
 }

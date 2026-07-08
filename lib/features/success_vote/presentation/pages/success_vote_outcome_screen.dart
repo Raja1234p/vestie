@@ -36,9 +36,7 @@ class SuccessVoteOutcomeScreen extends StatelessWidget {
     final resolved = SuccessVoteOutcomePresentation.resolve(
       data: data,
       copy: copy,
-      role: args.viewerRole,
       refundPhase: args.refundPhase,
-      distributionPhase: args.distributionPhase,
       variant: args.variant,
       category: args.resolvedCategory,
     );
@@ -59,8 +57,10 @@ class SuccessVoteOutcomeScreen extends StatelessWidget {
             captionOverride: resolved.amountCaption,
             rejectedCaptionAccentRed: resolved.rejectedCaptionAccentRed,
           ),
-          SizedBox(height: 24.h),
-          SuccessVoteOutcomeVoteSummary(data: data, copy: copy),
+          if (!resolved.hideVoteSummary) ...[
+            SizedBox(height: 24.h),
+            SuccessVoteOutcomeVoteSummary(data: data, copy: copy),
+          ],
         ],
       ),
       buttonText: AppStrings.btnBackToHome,

@@ -28,6 +28,7 @@ enum ClosureVoteOutcome {
   investmentStarted,
   refund,
   disputed,
+  noVotes,
 }
 
 /// API wire values for [ClosureVoteType] / [ClosureVoteOutcome].
@@ -39,6 +40,7 @@ abstract final class ClosureVoteApiValues {
   static const outcomeInvestmentStarted = 'InvestmentStarted';
   static const outcomeRefund = 'Refund';
   static const outcomeDisputed = 'Disputed';
+  static const outcomeNoVotes = 'NoVotes';
 }
 
 /// Majority passed — maps Week 10 `outcome` from detail or finalize payloads.
@@ -48,6 +50,7 @@ bool isClosureVoteOutcomeApproved(ClosureVoteOutcome outcome) {
     ClosureVoteOutcome.investmentStarted => true,
     ClosureVoteOutcome.refund => false,
     ClosureVoteOutcome.disputed => false,
+    ClosureVoteOutcome.noVotes => false,
   };
 }
 
@@ -71,6 +74,8 @@ ClosureVoteOutcome parseClosureVoteOutcome(String? raw) {
       return ClosureVoteOutcome.refund;
     case ClosureVoteApiValues.outcomeDisputed:
       return ClosureVoteOutcome.disputed;
+    case ClosureVoteApiValues.outcomeNoVotes:
+      return ClosureVoteOutcome.noVotes;
     case ClosureVoteApiValues.outcomeSuccess:
     default:
       return ClosureVoteOutcome.success;

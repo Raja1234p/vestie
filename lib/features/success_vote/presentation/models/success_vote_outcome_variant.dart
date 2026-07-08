@@ -6,4 +6,7 @@ enum SuccessVoteOutcomeVariant {
 
   /// Investment — stop-contributions vote did not pass (leader).
   stopContributionsRejected,
+
+  /// Deadline passed with zero member votes (vacation / emergency / investment stop-contrib).
+  noVotesRejected,
 }

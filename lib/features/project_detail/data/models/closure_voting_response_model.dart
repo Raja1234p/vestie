@@ -15,6 +15,7 @@ abstract final class ClosureVoteApiValues {
   static const outcomeInvestmentStarted = 'InvestmentStarted';
   static const outcomeRefund = 'Refund';
   static const outcomeDisputed = 'Disputed';
+  static const outcomeNoVotes = 'NoVotes';
 }
 
 class ActiveClosureVoteResponseModel {
@@ -253,6 +254,8 @@ ClosureVoteOutcome parseClosureVoteOutcome(String raw) {
       return ClosureVoteOutcome.refund;
     case ClosureVoteApiValues.outcomeDisputed:
       return ClosureVoteOutcome.disputed;
+    case ClosureVoteApiValues.outcomeNoVotes:
+      return ClosureVoteOutcome.noVotes;
     case ClosureVoteApiValues.outcomeSuccess:
     default:
       return ClosureVoteOutcome.success;

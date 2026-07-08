@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/app_error_view.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_completed_outcome_extensions.dart';
+import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart';
 import 'package:vestie/features/project_detail/presentation/mappers/closure_vote_ui_mappers.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_load_route_args.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_route_args.dart';
@@ -55,10 +58,24 @@ class _SuccessVoteOutcomeLoadScreenState
         _loading = false;
         _errorMessage = FailureMapper.userMessage(failure);
       }),
-      (project) => setState(() {
-        _loading = false;
-        _outcomeArgs = successVoteOutcomeRouteArgsFromProjectDetail(project);
-      }),
+      (project) {
+        if (!project.showsCompletedProjectVoteOutcome) {
+          setState(() => _loading = false);
+          final detailArgs = projectDetailRouteArgsForDetail(project);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!mounted) return;
+            context.replace(
+              AppRoutes.investmentProjectDetail,
+              extra: detailArgs,
+            );
+          });
+          return;
+        }
+        setState(() {
+          _loading = false;
+          _outcomeArgs = successVoteOutcomeRouteArgsFromProjectDetail(project);
+        });
+      },
     );
   }
 

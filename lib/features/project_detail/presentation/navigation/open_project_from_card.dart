@@ -12,6 +12,7 @@ import 'package:vestie/features/projects/domain/entities/invite_preview_entity.d
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
+import 'package:vestie/features/project_detail/domain/entities/closure_vote_participation_extensions.dart';
 import 'package:vestie/features/success_vote/presentation/navigation/open_success_vote_outcome.dart';
 import '../../domain/entities/project_detail_route_args.dart';
 
@@ -271,6 +272,14 @@ void openProjectFromCard(BuildContext context, Project p) {
   }
 
   if (p.status == ProjectStatus.completed) {
+    if (p.isInvestmentFinalClosureNoParticipationFromList) {
+      _pushProjectDetail(
+        context,
+        args: projectDetailRouteArgsForProject(p),
+        isInvestment: true,
+      );
+      return;
+    }
     openSuccessVoteOutcomeForCompletedListProject(context, p);
     return;
   }

@@ -65,6 +65,7 @@ class _SuccessVoteCastProductionBody extends StatelessWidget {
       builder: (context, state) {
         return _SuccessVoteCastShell(
           title: args.projectName,
+          blockInteraction: state.isSubmitting,
           child: _buildBody(context, state),
         );
       },
@@ -95,7 +96,7 @@ class _SuccessVoteCastProductionBody extends StatelessWidget {
       data: data,
       choice: state.choice,
       canVote: state.canVote,
-      isLoading: state.isSubmitting,
+      submittingVoteForSuccess: state.submittingVoteForSuccess,
       onSubmitVote: (voteForSuccess) =>
           context.read<SuccessVoteCastCubit>().submitVote(voteForSuccess),
     );
@@ -105,29 +106,40 @@ class _SuccessVoteCastProductionBody extends StatelessWidget {
 class _SuccessVoteCastShell extends StatelessWidget {
   final String title;
   final Widget child;
+  final bool blockInteraction;
 
-  const _SuccessVoteCastShell({required this.title, required this.child});
+  const _SuccessVoteCastShell({
+    required this.title,
+    required this.child,
+    this.blockInteraction = false,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: PostAuthGradientBackground(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            PostAuthFlowSubHeader(
-              title: title,
-              onBack: () {
-                if (context.canPop()) {
-                  context.pop();
-                } else {
-                  context.go(AppRoutes.dashboard);
-                }
-              },
+    return PopScope(
+      canPop: !blockInteraction,
+      child: AbsorbPointer(
+        absorbing: blockInteraction,
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: PostAuthGradientBackground(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                PostAuthFlowSubHeader(
+                  title: title,
+                  onBack: () {
+                    if (context.canPop()) {
+                      context.pop();
+                    } else {
+                      context.go(AppRoutes.dashboard);
+                    }
+                  },
+                ),
+                Expanded(child: child),
+              ],
             ),
-            Expanded(child: child),
-          ],
+          ),
         ),
       ),
     );

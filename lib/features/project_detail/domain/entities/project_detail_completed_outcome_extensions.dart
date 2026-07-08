@@ -2,6 +2,7 @@ import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
 
 import 'closure_vote_entities.dart';
+import 'closure_vote_participation_extensions.dart';
 import 'project_detail_entity.dart';
 import 'project_detail_voting_entities.dart';
 
@@ -52,9 +53,13 @@ extension ProjectDetailEntityCompletedOutcome on ProjectDetailEntity {
     return summary.agreedCount + summary.disagreedCount > 0;
   }
 
-  /// Full-screen vote outcome — not shown during investment distribute/returns phase
-  /// after a **passed** stop-contributions vote (project still ongoing/funded).
-  bool get showsCompletedProjectVoteOutcome =>
-      (isProjectDetailCompleted || hasFinalizedClosureVoteOutcome) &&
-      !showsInvestmentDistributionActions;
+  /// Full-screen vote outcome — not shown during investment distribute/returns phase.
+  /// Investment final-closure with no votes → Distribute Funds (same as No Dispute).
+  bool get showsCompletedProjectVoteOutcome {
+    if (isInvestmentFinalClosureNoParticipation) return false;
+    if (!(isProjectDetailCompleted || hasFinalizedClosureVoteOutcome)) {
+      return false;
+    }
+    return !showsInvestmentDistributionActions;
+  }
 }

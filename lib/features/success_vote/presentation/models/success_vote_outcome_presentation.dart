@@ -2,11 +2,8 @@ import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 
 import 'success_vote_outcome_copy.dart';
-import 'success_vote_outcome_distribution_copy.dart';
-import 'success_vote_outcome_distribution_phase.dart';
 import 'success_vote_outcome_refund_copy.dart';
 import 'success_vote_outcome_refund_phase.dart';
-import 'success_vote_outcome_role.dart';
 import 'success_vote_outcome_ui_data.dart';
 import 'success_vote_outcome_variant.dart';
 
@@ -17,11 +14,8 @@ class SuccessVoteOutcomePresentation {
   static SuccessVoteOutcomeResolvedCopy resolve({
     required SuccessVoteOutcomeUiData data,
     required SuccessVoteOutcomeCopy copy,
-    SuccessVoteOutcomeRole role = SuccessVoteOutcomeRole.member,
     SuccessVoteOutcomeRefundPhase refundPhase =
         SuccessVoteOutcomeRefundPhase.none,
-    SuccessVoteOutcomeDistributionPhase distributionPhase =
-        SuccessVoteOutcomeDistributionPhase.none,
     SuccessVoteOutcomeVariant variant = SuccessVoteOutcomeVariant.successVote,
     ProjectCategory? category,
   }) {
@@ -39,24 +33,13 @@ class SuccessVoteOutcomePresentation {
       );
     }
 
-    if (data.isApproved &&
-        distributionPhase.isDistribution &&
-        category == ProjectCategory.investment &&
-        variant == SuccessVoteOutcomeVariant.successVote &&
-        role == SuccessVoteOutcomeRole.groupLeader) {
-      final distribution =
-          SuccessVoteOutcomeDistributionCopy.forPhase(distributionPhase);
-      return SuccessVoteOutcomeResolvedCopy(
-        title: distribution.title,
-        subtitle: distribution.subtitle,
-        amountCaption: distribution.amountCaption,
-        buttonText: copy.primaryButtonFor(true),
-      );
-    }
-
     final stopContributionsRejected =
         !data.isApproved &&
         variant == SuccessVoteOutcomeVariant.stopContributionsRejected;
+
+    final noVotesRejected =
+        !data.isApproved &&
+        variant == SuccessVoteOutcomeVariant.noVotesRejected;
 
     return SuccessVoteOutcomeResolvedCopy(
       title: copy.titleFor(data.isApproved),
@@ -64,6 +47,7 @@ class SuccessVoteOutcomePresentation {
       amountCaption: copy.amountCaptionFor(data.isApproved),
       buttonText: copy.primaryButtonFor(data.isApproved),
       rejectedCaptionAccentRed: stopContributionsRejected,
+      hideVoteSummary: noVotesRejected,
     );
   }
 }
@@ -74,6 +58,7 @@ class SuccessVoteOutcomeResolvedCopy {
   final String amountCaption;
   final String buttonText;
   final bool rejectedCaptionAccentRed;
+  final bool hideVoteSummary;
 
   const SuccessVoteOutcomeResolvedCopy({
     required this.title,
@@ -81,5 +66,6 @@ class SuccessVoteOutcomeResolvedCopy {
     required this.amountCaption,
     required this.buttonText,
     this.rejectedCaptionAccentRed = false,
+    this.hideVoteSummary = false,
   });
 }

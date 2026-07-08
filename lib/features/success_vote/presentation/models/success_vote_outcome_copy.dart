@@ -60,6 +60,15 @@ class SuccessVoteOutcomeCopy {
       };
     }
 
+    if (variant == SuccessVoteOutcomeVariant.noVotesRejected) {
+      return switch (role) {
+        SuccessVoteOutcomeRole.groupLeader => _noVotesRejectedLeader,
+        SuccessVoteOutcomeRole.coLeader ||
+        SuccessVoteOutcomeRole.member =>
+          _noVotesRejectedMember,
+      };
+    }
+
     if (role == SuccessVoteOutcomeRole.groupLeader) {
       return switch (category) {
         ProjectCategory.investment => _investmentGroupLeader,
@@ -130,13 +139,13 @@ class SuccessVoteOutcomeCopy {
 
   static const SuccessVoteOutcomeCopy _investmentGroupLeader =
       SuccessVoteOutcomeCopy(
-    approvedTitle: AppStrings.successVoteOutcomeInvestmentLeaderApprovedTitle,
+    approvedTitle: AppStrings.successVoteOutcomeInvestmentFinalApprovedTitle,
     approvedSubtitle:
-        AppStrings.successVoteOutcomeInvestmentLeaderApprovedSubtitle,
+        AppStrings.successVoteOutcomeInvestmentFinalApprovedSubtitle,
     rejectedTitle: AppStrings.successVoteOutcomeLeaderRejectedTitle,
     rejectedSubtitle: AppStrings.successVoteOutcomeLeaderRejectedSubtitle,
     amountCaptionApproved:
-        AppStrings.successVoteOutcomeInvestmentLeaderAmountApprovedCaption,
+        AppStrings.successVoteOutcomeInvestmentFinalApprovedAmountCaption,
     amountCaptionRejected:
         AppStrings.successVoteOutcomeLeaderAmountRejectedCaption,
     primaryButtonApproved: AppStrings.btnBackToHome,
@@ -180,6 +189,40 @@ class SuccessVoteOutcomeCopy {
         .successVoteOutcomeInvestmentCoLeaderMemberAmountApprovedCaption,
     amountCaptionRejected: AppStrings
         .successVoteOutcomeInvestmentMemberStopContributionsRejectedAmountCaption,
+    primaryButtonApproved: AppStrings.btnBackToHome,
+    primaryButtonRejected: AppStrings.btnBackToHome,
+    voteSummaryLabel: AppStrings.projectVoteSummaryLabel,
+    agreedLabel: AppStrings.projectVoteAgreedLabel,
+    disagreedLabel: AppStrings.projectVoteDisagreedLabel,
+  );
+
+  static const SuccessVoteOutcomeCopy _noVotesRejectedLeader =
+      SuccessVoteOutcomeCopy(
+    approvedTitle: AppStrings.successVoteOutcomeLeaderApprovedTitle,
+    approvedSubtitle: AppStrings.successVoteOutcomeLeaderApprovedSubtitle,
+    rejectedTitle: AppStrings.successVoteOutcomeNoVotesTitle,
+    rejectedSubtitle: AppStrings.successVoteOutcomeNoVotesSubtitle,
+    amountCaptionApproved:
+        AppStrings.successVoteOutcomeVacationLeaderAmountApprovedCaption,
+    amountCaptionRejected:
+        AppStrings.successVoteOutcomeNoVotesLeaderAmountCaption,
+    primaryButtonApproved: AppStrings.btnBackToHome,
+    primaryButtonRejected: AppStrings.btnBackToHome,
+    voteSummaryLabel: AppStrings.projectVoteSummaryLabel,
+    agreedLabel: AppStrings.projectVoteAgreedLabel,
+    disagreedLabel: AppStrings.projectVoteDisagreedLabel,
+  );
+
+  static const SuccessVoteOutcomeCopy _noVotesRejectedMember =
+      SuccessVoteOutcomeCopy(
+    approvedTitle: AppStrings.successVoteOutcomeCoLeaderApprovedTitle,
+    approvedSubtitle: AppStrings.successVoteOutcomeCoLeaderApprovedSubtitle,
+    rejectedTitle: AppStrings.successVoteOutcomeNoVotesTitle,
+    rejectedSubtitle: AppStrings.successVoteOutcomeNoVotesSubtitle,
+    amountCaptionApproved:
+        AppStrings.successVoteOutcomeCoLeaderAmountApprovedCaption,
+    amountCaptionRejected:
+        AppStrings.successVoteOutcomeNoVotesMemberAmountCaption,
     primaryButtonApproved: AppStrings.btnBackToHome,
     primaryButtonRejected: AppStrings.btnBackToHome,
     voteSummaryLabel: AppStrings.projectVoteSummaryLabel,
@@ -249,13 +292,13 @@ class SuccessVoteOutcomeCopy {
   static const SuccessVoteOutcomeCopy _investmentCoLeaderAndMember =
       SuccessVoteOutcomeCopy(
     approvedTitle:
-        AppStrings.successVoteOutcomeInvestmentCoLeaderMemberApprovedTitle,
+        AppStrings.successVoteOutcomeInvestmentFinalApprovedTitle,
     approvedSubtitle:
-        AppStrings.successVoteOutcomeInvestmentCoLeaderMemberApprovedSubtitle,
+        AppStrings.successVoteOutcomeInvestmentFinalApprovedSubtitle,
     rejectedTitle: AppStrings.projectVoteNotApprovedTitle,
     rejectedSubtitle: AppStrings.projectVoteNotApprovedSubtitle,
     amountCaptionApproved: AppStrings
-        .successVoteOutcomeInvestmentCoLeaderMemberAmountApprovedCaption,
+        .successVoteOutcomeInvestmentFinalApprovedAmountCaption,
     amountCaptionRejected:
         AppStrings.successVoteOutcomeVacationCoLeaderMemberAmountRejectedCaption,
     primaryButtonApproved: AppStrings.btnBackToHome,

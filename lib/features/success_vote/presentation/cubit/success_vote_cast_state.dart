@@ -11,7 +11,7 @@ class SuccessVoteCastState extends Equatable {
   final SuccessVoteCastUiData? data;
   final SuccessVoteCastChoice choice;
   final bool canVote;
-  final bool isSubmitting;
+  final bool? submittingVoteForSuccess;
   final String? loadErrorMessage;
   final Failure? submitFailure;
 
@@ -20,12 +20,14 @@ class SuccessVoteCastState extends Equatable {
     this.data,
     this.choice = SuccessVoteCastChoice.pending,
     this.canVote = true,
-    this.isSubmitting = false,
+    this.submittingVoteForSuccess,
     this.loadErrorMessage,
     this.submitFailure,
   });
 
   bool get isLoading => loadStatus == SuccessVoteCastLoadStatus.loading;
+
+  bool get isSubmitting => submittingVoteForSuccess != null;
 
   bool get loadFailed => loadStatus == SuccessVoteCastLoadStatus.loadFailed;
 
@@ -34,7 +36,8 @@ class SuccessVoteCastState extends Equatable {
     SuccessVoteCastUiData? data,
     SuccessVoteCastChoice? choice,
     bool? canVote,
-    bool? isSubmitting,
+    bool? submittingVoteForSuccess,
+    bool clearSubmitting = false,
     String? loadErrorMessage,
     bool clearLoadError = false,
     Failure? submitFailure,
@@ -45,7 +48,9 @@ class SuccessVoteCastState extends Equatable {
       data: data ?? this.data,
       choice: choice ?? this.choice,
       canVote: canVote ?? this.canVote,
-      isSubmitting: isSubmitting ?? this.isSubmitting,
+      submittingVoteForSuccess: clearSubmitting
+          ? null
+          : (submittingVoteForSuccess ?? this.submittingVoteForSuccess),
       loadErrorMessage: clearLoadError
           ? null
           : (loadErrorMessage ?? this.loadErrorMessage),
@@ -61,7 +66,7 @@ class SuccessVoteCastState extends Equatable {
     data,
     choice,
     canVote,
-    isSubmitting,
+    submittingVoteForSuccess,
     loadErrorMessage,
     submitFailure,
   ];

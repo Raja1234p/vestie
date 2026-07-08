@@ -17,7 +17,8 @@ import '../models/success_vote_cast_copy.dart';
 class SuccessVoteCastActions extends StatelessWidget {
   final SuccessVoteCastCopy copy;
   final SuccessVoteCastChoice choice;
-  final bool isLoading;
+  final bool isLoadingYes;
+  final bool isLoadingNo;
   final VoidCallback onVoteYes;
   final VoidCallback onVoteNo;
 
@@ -25,10 +26,13 @@ class SuccessVoteCastActions extends StatelessWidget {
     super.key,
     required this.copy,
     required this.choice,
-    this.isLoading = false,
+    this.isLoadingYes = false,
+    this.isLoadingNo = false,
     required this.onVoteYes,
     required this.onVoteNo,
   });
+
+  bool get _isBusy => isLoadingYes || isLoadingNo;
 
   @override
   Widget build(BuildContext context) {
@@ -65,18 +69,20 @@ class SuccessVoteCastActions extends StatelessWidget {
             Expanded(
               child: AppOutlineNeutralButton(
                 label: copy.voteNoLabel,
-                onPressed: isLoading ? () {} : onVoteNo,
+                isLoading: isLoadingNo,
+                onPressed: _isBusy ? () {} : onVoteNo,
                 borderRadius: AppRadius.r24,
                 borderColor: AppColors.primary,
                 labelColor: AppColors.grey1100,
+                height: AppDimens.buttonHeightLg,
               ),
             ),
             SizedBox(width: 10.w),
             Expanded(
               child: AppButton(
                 text: copy.voteYesLabel,
-                isLoading: isLoading,
-                onPressed: isLoading ? null : onVoteYes,
+                isLoading: isLoadingYes,
+                onPressed: _isBusy ? null : onVoteYes,
                 useGradient: true,
                 borderRadius: AppRadius.r24,
                 height: AppDimens.buttonHeightLg,

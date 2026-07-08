@@ -80,6 +80,35 @@ void main() {
     expect(cubit.state.canVote, isTrue);
   });
 
+  test('submitVote tracks which CTA is submitting', () async {
+    when(() => getActive('p1')).thenAnswer((_) async => Right(openVote()));
+    when(() => submit(any())).thenAnswer((_) async {
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+      return const Right(
+        CastClosureVoteResultEntity(
+          closureVoteId: 'v1',
+          callerVote: ClosureVoteValue.no,
+          thumbsUp: 2,
+          thumbsDown: 2,
+          notYetVoted: 0,
+        ),
+      );
+    });
+
+    final cubit = buildCubit();
+    addTearDown(cubit.close);
+
+    await cubit.load();
+
+    final submitFuture = cubit.submitVote(false);
+    expect(cubit.state.submittingVoteForSuccess, isFalse);
+
+    await submitFuture;
+
+    expect(cubit.state.submittingVoteForSuccess, isNull);
+    expect(cubit.state.choice, SuccessVoteCastChoice.disagreed);
+  });
+
   test('submitVote updates tallies and choice', () async {
     when(() => getActive('p1')).thenAnswer((_) async => Right(openVote()));
     when(() => submit(any())).thenAnswer(

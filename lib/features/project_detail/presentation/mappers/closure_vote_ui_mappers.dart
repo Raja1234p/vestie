@@ -5,6 +5,7 @@ import 'package:vestie/features/project_detail/domain/entities/closure_vote_enti
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_closure_extensions.dart';
+import 'package:vestie/features/project_detail/domain/entities/closure_vote_participation_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_completed_outcome_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_voting_entities.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_cast_route_args.dart';
@@ -221,7 +222,22 @@ SuccessVoteCastRouteArgs successVoteCastRouteArgsFromProject(
 SuccessVoteOutcomeVariant successVoteOutcomeVariantFromClosureVote({
   required ClosureVoteType voteType,
   required ClosureVoteOutcome outcome,
+  bool noParticipation = false,
 }) {
+  if (noParticipation) {
+    if (voteType == ClosureVoteType.finalClosureVote) {
+      return SuccessVoteOutcomeVariant.successVote;
+    }
+    return SuccessVoteOutcomeVariant.noVotesRejected;
+  }
+
+  if (outcome == ClosureVoteOutcome.noVotes) {
+    if (voteType == ClosureVoteType.finalClosureVote) {
+      return SuccessVoteOutcomeVariant.successVote;
+    }
+    return SuccessVoteOutcomeVariant.noVotesRejected;
+  }
+
   if (voteType == ClosureVoteType.stopContributionsVote) {
     if (outcome == ClosureVoteOutcome.refund) {
       return SuccessVoteOutcomeVariant.successVote;
@@ -284,6 +300,19 @@ SuccessVoteOutcomeUiData successVoteOutcomeUiDataFromProjectDetail(
   final voting = project.voting;
   final eligibleTotal = closureVoteEligibleMemberCountFromProject(project);
 
+  if (voting != null && voting.isFinalized && voting.isNoParticipation) {
+    final total = eligibleTotal > 0
+        ? eligibleTotal
+        : (voting.eligibleVoterCount ?? voting.pendingCount).clamp(1, 999);
+    return SuccessVoteOutcomeUiData(
+      isApproved: false,
+      amountUsd: project.currentAmount,
+      agreedCount: 0,
+      disagreedCount: 0,
+      totalMemberCount: total,
+    );
+  }
+
   if (voting != null && project.hasCompletedVoteTallies) {
     final tallied =
         voting.agreedCount + voting.disagreedCount + voting.pendingCount;
@@ -313,6 +342,8 @@ SuccessVoteOutcomeVariant completedOutcomeVariantFromProjectDetail(
   ProjectDetailEntity project,
 ) {
   final voteType = project.voting?.voteType;
+  final noParticipation = project.isClosureVoteNoParticipation;
+
   if (voteType != null) {
     final outcome = project.voting?.outcome ??
         (project.isClosureVoteOutcomeApproved
@@ -321,6 +352,7 @@ SuccessVoteOutcomeVariant completedOutcomeVariantFromProjectDetail(
     return successVoteOutcomeVariantFromClosureVote(
       voteType: voteType,
       outcome: outcome,
+      noParticipation: noParticipation,
     );
   }
   if (project.category.isInvestment &&
@@ -341,9 +373,13 @@ SuccessVoteOutcomeVariant completedOutcomeVariantFromProject(Project project) {
         : (project.isSuccessVoteApproved
             ? ClosureVoteOutcome.success
             : ClosureVoteOutcome.disputed);
+    final noParticipation =
+        outcome == ClosureVoteOutcome.noVotes ||
+        project.isClosureVoteNoParticipationFromList;
     return successVoteOutcomeVariantFromClosureVote(
       voteType: voteType,
       outcome: outcome,
+      noParticipation: noParticipation,
     );
   }
   if (project.category.isInvestment &&

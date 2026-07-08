@@ -6,6 +6,7 @@ import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
 import 'borrow_request_entity.dart';
 import 'closure_vote_entities.dart';
+import 'closure_vote_participation_extensions.dart';
 import 'member_entity.dart';
 import 'project_detail_voting_entities.dart';
 import 'project_announcement_entity.dart';
@@ -349,10 +350,14 @@ class ProjectDetailEntity {
 
   /// Investment — show Distribute Funds / Investment Returns after the
   /// stop-contributions vote succeeds (funded), before project completion.
+  /// Also when mark-successful / final-closure ends with no votes (same as No Dispute).
   bool get showsInvestmentDistributionActions {
     if (!category.isInvestment) return false;
     if (votingIsInProgress) return false;
     if (isInvestmentProjectCompleted) return false;
+    if (isInvestmentFinalClosureNoParticipation) {
+      return investmentContributionsAreClosed;
+    }
     return investmentContributionsAreClosed;
   }
 

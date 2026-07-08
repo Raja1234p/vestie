@@ -1610,18 +1610,37 @@ class AppStrings {
   static const String successVoteOutcomeLeaderAmountRejectedCaption =
       'Contributions being refunded';
 
+  // Success vote — deadline passed, no member votes (vacation / emergency / investment stop-contrib)
+  static const String successVoteOutcomeNoVotesTitle = 'No One Voted';
+  static const String successVoteOutcomeNoVotesSubtitle =
+      'The voting deadline passed without any members casting a vote.';
+  static const String successVoteOutcomeNoVotesLeaderAmountCaption =
+      'All contributions are being refunded';
+  static const String successVoteOutcomeNoVotesMemberAmountCaption =
+      'Your contributions are being refunded to your wallet';
+
   static const String successVoteOutcomeEmergencyLeaderAmountApprovedCaption =
       'Unused emergency funds released to your wallet';
 
-  // Investment group leader — success vote approved (Figma)
-  static const String successVoteOutcomeInvestmentLeaderApprovedTitle =
-      'Project Successful!';
-  static const String successVoteOutcomeInvestmentLeaderApprovedSubtitle =
+  // Investment — final closure approved (Figma; leader, co-leader, member)
+  static const String successVoteOutcomeInvestmentFinalApprovedTitle =
+      'Project Successfully completed!';
+  static const String successVoteOutcomeInvestmentFinalApprovedSubtitle =
       'Majority of members agreed.';
-  static const String successVoteOutcomeInvestmentLeaderAmountApprovedCaption =
-      'Your dividends have been distributed to all the members in the group.';
+  static const String successVoteOutcomeInvestmentFinalApprovedAmountCaption =
+      'Total Funds distributed to all the contributors';
 
-  // Investment group leader — distributions in progress / complete (Figma)
+  /// @deprecated Use [successVoteOutcomeInvestmentFinalApprovedTitle].
+  static const String successVoteOutcomeInvestmentLeaderApprovedTitle =
+      successVoteOutcomeInvestmentFinalApprovedTitle;
+  /// @deprecated Use [successVoteOutcomeInvestmentFinalApprovedSubtitle].
+  static const String successVoteOutcomeInvestmentLeaderApprovedSubtitle =
+      successVoteOutcomeInvestmentFinalApprovedSubtitle;
+  /// @deprecated Use [successVoteOutcomeInvestmentFinalApprovedAmountCaption].
+  static const String successVoteOutcomeInvestmentLeaderAmountApprovedCaption =
+      successVoteOutcomeInvestmentFinalApprovedAmountCaption;
+
+  // Legacy — outcome screen no longer uses distribution-phase titles (detail flow only).
   static const String successVoteOutcomeInvestmentDistributionInProgressTitle =
       'Distributions In Progress';
   static const String
@@ -1652,15 +1671,15 @@ class AppStrings {
       successVoteOutcomeInvestmentMemberStopContributionsRejectedAmountCaption =
       'No changes to your contribution schedule. Keep contributing as planned';
 
-  // Co-leader & member — investment approved (Figma; same copy)
+  // Co-leader & member — investment final closure approved (same as leader Figma)
   static const String successVoteOutcomeInvestmentCoLeaderMemberApprovedTitle =
-      'Returns Distributed!';
+      successVoteOutcomeInvestmentFinalApprovedTitle;
   static const String
       successVoteOutcomeInvestmentCoLeaderMemberApprovedSubtitle =
-      'Majority of members agreed.';
+      successVoteOutcomeInvestmentFinalApprovedSubtitle;
   static const String
       successVoteOutcomeInvestmentCoLeaderMemberAmountApprovedCaption =
-      'Your investment returns have been distributed and added to your wallet.';
+      successVoteOutcomeInvestmentFinalApprovedAmountCaption;
 
   // Co-leader & member — vacation (Figma; same copy)
   static const String successVoteOutcomeCoLeaderApprovedTitle =

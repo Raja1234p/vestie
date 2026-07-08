@@ -40,7 +40,7 @@ Profile tab, edit profile, payment methods entry, transaction history, completed
 
 ## Completed projects — View
 
-Home / profile **View** on a completed card → `openSuccessVoteOutcomeForCompletedListProject` → `GET /projects/{id}` → `SuccessVoteOutcomeScreen` (Figma layout, **Back to Home**). Direct project-detail opens with a finalized vote outcome use the same full-screen UI. See `DOCS/backend_handoff_completed_vote_outcome_api.md` §2 for full outcome matrix.
+Home / profile **View** on a completed card → `openSuccessVoteOutcomeForCompletedListProject` → `GET /projects/{id}` → `SuccessVoteOutcomeScreen` (Figma layout, **Back to Home**). Direct project-detail opens with a finalized vote outcome use the same full-screen UI. See `DOCS/outcome.md` for full outcome matrix and backend API contract.
 
 ## See also
 
