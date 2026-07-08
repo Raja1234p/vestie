@@ -279,6 +279,12 @@ refund UI       = type == investment
                 AND outcome == Refund
 
 stop-contrib    = voteType == StopContributionsVote
+passed (invest)   AND isApproved == true
+                AND outcome in (Success, InvestmentStarted)
+                AND displayStatus: Funded / lifecycleState: funded
+                → NO outcome screen; Distribute / Returns on detail
+
+stop-contrib    = voteType == StopContributionsVote
 rejected          AND isApproved == false
                 AND NOT noVotes
                 → Vote Not Passed
@@ -512,7 +518,55 @@ Mobile: **Vote Not Passed** (not Project Not Approved).
 
 Mobile: **No One Voted** (same as vacation no-votes).
 
-### 4.7 Investment — stop-contributions **refund** (Refund Me passed)
+### 4.7 Investment — stop-contributions **passed** (Start Investing)
+
+**No outcome screen** — project stays **ongoing / Funded**; leader sees **Distribute Funds**, members see **Investment Returns** on project detail.
+
+```json
+{
+  "projectStatus": "ongoing",
+  "votingStatus": "done",
+  "userRole": "leader",
+  "canStopContributions": false,
+  "project": {
+    "type": "investment",
+    "displayStatus": "Funded",
+    "potAmount": 19800.0,
+    "lifecycleState": "funded"
+  },
+  "voting": {
+    "voteType": "StopContributionsVote",
+    "outcome": "InvestmentStarted",
+    "isApproved": true,
+    "isFinalized": true,
+    "agreedCount": 5,
+    "disagreedCount": 2,
+    "pendingCount": 0,
+    "eligibleVoterCount": 7
+  }
+}
+```
+
+Acceptable alternative: `"outcome": "Success"` with `isApproved: true`. **Must** set `canStopContributions: false`, `displayStatus: Funded`, `lifecycleState: funded`. **Not** `completed` — that is for final closure (§4.9).
+
+**Completed list row** (if shown on home / active lists, not completed):
+
+```json
+{
+  "id": "…",
+  "name": "Growth Fund",
+  "type": "investment",
+  "displayStatus": "Funded",
+  "raisedAmount": 19800.0,
+  "viewerRole": "GroupLeader",
+  "memberCount": 7,
+  "lastVoteType": "StopContributionsVote",
+  "lastVoteOutcome": "InvestmentStarted",
+  "successVoteApproved": true
+}
+```
+
+### 4.8 Investment — stop-contributions **refund** (Refund Me passed)
 
 ```json
 {
@@ -539,7 +593,7 @@ Mobile: **No One Voted** (same as vacation no-votes).
 
 Refund complete: same shape; `displayStatus: "Refund complete"`. Mobile keys off `voteType` + `outcome: Refund`, not `isApproved` alone.
 
-### 4.8 Investment — final closure **approved** (votes cast)
+### 4.9 Investment — final closure **approved** (votes cast)
 
 ```json
 {
@@ -568,7 +622,7 @@ Refund complete: same shape; `displayStatus: "Refund complete"`. Mobile keys off
 
 Mobile: **Project Successfully completed!** — **same copy for leader, co-leader, member**. `distributionStatus` ignored on outcome screen.
 
-### 4.9 Investment — final closure **no votes** (mark successful, no participation)
+### 4.10 Investment — final closure **no votes** (mark successful, no participation)
 
 **No outcome screen** — opens funded project detail with Distribute Funds / Investment Returns.
 
@@ -599,7 +653,7 @@ Mobile: **Project Successfully completed!** — **same copy for leader, co-leade
 
 Acceptable alternative: `"outcome": "NoVotes"` with `isApproved: true`. **Must** keep `projectStatus: ongoing`, `displayStatus: Funded`, `lifecycleState: funded`.
 
-### 4.10 Completed list rows
+### 4.11 Completed list rows
 
 **Rejected stop-contrib:**
 
@@ -682,6 +736,8 @@ Acceptable alternative: `"outcome": "NoVotes"` with `isApproved: true`. **Must**
 | Investment final-closure no-votes marked `completed` | Stay `ongoing` + `Funded` — detail UI only |
 | `memberCount` = `maxMembers` on list | Use **eligible voter count** |
 | Omit `voting` after project completes | Persist full envelope including tallies |
+| Stop-contrib passed but still `canStopContributions: true` | Set `false` after vote passes |
+| Stop-contrib invest passed marked `completed` | Stay `ongoing` + `Funded` until final closure |
 | Outcome screen varies by `distributionStatus` | Final investment approved = one UI; distribution is detail-only |
 
 ---
@@ -698,6 +754,7 @@ Acceptable alternative: `"outcome": "NoVotes"` with `isApproved: true`. **Must**
 | No-votes investment final closure | `isApproved: true`, `Funded` ongoing, **no** outcome screen |
 | Investment final approved (with votes) | One screen all roles — no distribution phase on outcome |
 | Vacation / emergency rejected | `Project Not Approved` — never refund-phase labels |
-| Investment refund phase | Only `StopContributionsVote` + `outcome: Refund` |
+| Investment stop-contrib passed (invest) | `Funded` ongoing, `canStopContributions: false`, `outcome: InvestmentStarted` — see §4.7 |
+| Investment refund phase | Only `StopContributionsVote` + `outcome: Refund` — see §4.8 |
 
 **Mobile status (2026-07-09):** Parses `NoVotes`, zero-tally detection, no-votes copy, investment final-closure no-votes routes to detail. Falls back to `displayStatus` heuristics only when `voting` envelope is missing.
