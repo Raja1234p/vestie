@@ -367,6 +367,11 @@ class AppStrings {
   static String investmentDistributionTitle(int number) =>
       'Distribution #$number';
   static const String btnInvestmentReturns = 'Investment Returns';
+  static const String investmentReturnsNoticeTitle = 'No more contributions';
+  static const String investmentReturnsNoticeBody =
+      'The leader has stopped contributions and is now investing the pot. '
+      'You will receive your share once the leader distributes the returns '
+      'based on the agreed ROI.';
   static const String btnDistributeFunds = 'Distribute Funds';
   static const String distributeAmountPrompt =
       'How much you want to distribute?';

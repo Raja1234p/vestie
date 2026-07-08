@@ -12,6 +12,7 @@ import 'package:vestie/features/project_detail/presentation/widgets/completed_pr
 import 'package:vestie/features/project_detail/presentation/widgets/project_info_card.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_members_only_section.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_members_preview_section.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/investment_returns_notice_pill.dart';
 
 /// Investment post-contribution / completed detail — raised summary, returns CTA, members.
 class InvestmentCompletedDetailContent extends StatelessWidget {
@@ -67,6 +68,10 @@ class InvestmentCompletedDetailContent extends StatelessWidget {
               project: project,
             ),
           ),
+          if (!project.isModeratorView) ...[
+            SizedBox(height: 12.h),
+            const InvestmentReturnsNoticePill(),
+          ],
         ],
         if (memberNotice != null) ...[
           SizedBox(height: 16.h),
