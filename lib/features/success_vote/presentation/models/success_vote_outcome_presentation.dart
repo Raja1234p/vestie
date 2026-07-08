@@ -26,6 +26,7 @@ class SuccessVoteOutcomePresentation {
     ProjectCategory? category,
   }) {
     if (!data.isApproved &&
+        category == ProjectCategory.investment &&
         refundPhase.isRefund &&
         variant != SuccessVoteOutcomeVariant.stopContributionsRejected) {
       final refund = SuccessVoteOutcomeRefundCopy.forPhase(refundPhase);
@@ -53,9 +54,6 @@ class SuccessVoteOutcomePresentation {
       );
     }
 
-    final emergencyRejected =
-        !data.isApproved && category == ProjectCategory.emergency;
-
     final stopContributionsRejected =
         !data.isApproved &&
         variant == SuccessVoteOutcomeVariant.stopContributionsRejected;
@@ -65,8 +63,7 @@ class SuccessVoteOutcomePresentation {
       subtitle: copy.subtitleFor(data.isApproved),
       amountCaption: copy.amountCaptionFor(data.isApproved),
       buttonText: copy.primaryButtonFor(data.isApproved),
-      rejectedCaptionAccentRed:
-          emergencyRejected || stopContributionsRejected,
+      rejectedCaptionAccentRed: stopContributionsRejected,
     );
   }
 }

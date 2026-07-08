@@ -107,12 +107,12 @@ void main() {
       expect(entity.showsCompletedProjectVoteOutcome, isFalse);
     });
 
-    test('parses refund outcome', () {
+    test('parses stop-contributions refund outcome', () {
       final entity = ProjectDetailResponseModel.fromJson(
         _detailJson({
           'startedAtUtc': '2026-07-01T12:00:00Z',
           'deadlineAtUtc': '2026-07-03T12:00:00Z',
-          'voteType': 'SuccessVote',
+          'voteType': 'StopContributionsVote',
           'outcome': 'Refund',
           'isApproved': false,
           'isFinalized': true,
@@ -128,6 +128,34 @@ void main() {
       expect(
         refundPhaseFromProjectDetail(entity),
         isNot(SuccessVoteOutcomeRefundPhase.none),
+      );
+      expect(
+        completedOutcomeVariantFromProjectDetail(entity),
+        SuccessVoteOutcomeVariant.successVote,
+      );
+    });
+
+    test('final closure refund does not use refund lifecycle UI', () {
+      final entity = ProjectDetailResponseModel.fromJson(
+        _detailJson({
+          'startedAtUtc': '2026-07-01T12:00:00Z',
+          'deadlineAtUtc': '2026-07-03T12:00:00Z',
+          'voteType': 'FinalClosureVote',
+          'outcome': 'Refund',
+          'isApproved': false,
+          'isFinalized': true,
+          'agreedCount': 2,
+          'disagreedCount': 5,
+          'pendingCount': 0,
+          'hasVoted': true,
+          'memberVotes': [],
+        }),
+      ).toEntity();
+
+      expect(entity.showsClosureVoteRefundOutcome, isFalse);
+      expect(
+        refundPhaseFromProjectDetail(entity),
+        SuccessVoteOutcomeRefundPhase.none,
       );
     });
   });

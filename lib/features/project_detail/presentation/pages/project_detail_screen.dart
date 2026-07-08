@@ -8,11 +8,9 @@ import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../../core/di/service_locator.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_completed_outcome_extensions.dart';
-import 'package:vestie/features/project_detail/domain/entities/project_detail_member_vote_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
 import 'package:vestie/features/project_detail/presentation/mappers/closure_vote_ui_mappers.dart';
-import 'package:vestie/features/project_detail/presentation/widgets/project_detail_inline_member_vote_screen.dart';
 import 'package:vestie/features/success_vote/presentation/pages/success_vote_outcome_screen.dart';
 import '../navigation/open_project_from_card.dart';
 import '../navigation/project_detail_navigation.dart';
@@ -108,26 +106,6 @@ class _ProjectDetailBody extends StatelessWidget {
             state.project.showsCompletedProjectVoteOutcome) {
           return SuccessVoteOutcomeScreen(
             args: successVoteOutcomeRouteArgsFromProjectDetail(state.project),
-          );
-        }
-
-        if (state is ProjectDetailLoaded &&
-            state.project.showsInlineMemberVoteFlow) {
-          return ProjectDetailInlineMemberVoteScreen(
-            project: state.project,
-            onBack: () => popProjectDetailNavigation(
-              context,
-              refreshHomeOnPop: refreshHomeOnPop,
-              refreshDiscoverOnPop: refreshDiscoverOnPop,
-            ),
-            onRefresh: () async {
-              context.read<ProjectDetailBloc>().add(
-                LoadProjectDetailEvent(projectId: projectId),
-              );
-              await context.read<ProjectDetailBloc>().stream.firstWhere(
-                (s) => s is ProjectDetailLoaded || s is ProjectDetailError,
-              );
-            },
           );
         }
 

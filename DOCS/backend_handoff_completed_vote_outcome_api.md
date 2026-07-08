@@ -21,7 +21,7 @@ One shared layout renders **different copy and styling** based on:
 | Viewer role | `userRole` / `viewerRole` | Leader vs co-leader vs member copy |
 | Majority result | `voting.isApproved` / `voting.outcome` | Approved vs rejected hero + amount card color |
 | Vote variant | `voting.voteType` | Success vote vs **stop-contributions rejected** |
-| Refund phase | `voting.outcome` + `displayStatus` | Refund in progress vs refund complete |
+| Refund phase | `voting.voteType` + `voting.outcome` + `displayStatus` | **Investment stop-contributions** vote passed with **Refund Me** majority only |
 | Distribution phase | `voting.distributionStatus` | Leader distribution titles vs member Returns Distributed! |
 | Vote tallies | `voting.agreedCount` / `disagreedCount` | Vote summary rows |
 | Amount | `project.potAmount` / `raisedAmount` | Amount card (`$9,800.00`) |
@@ -49,20 +49,23 @@ Mobile picks copy using **`category` + `viewerRole` + `isApproved` + `variant` +
 
 | Result | Role | Title | Subtitle | Amount caption | CTA |
 |--------|------|-------|----------|----------------|-----|
-| Approved | Leader | Project Approved! | Majority of members agreed. | Unused money has been released to your wallet. | Back to Home |
+| Approved | Leader | Project Approved! | Majority of members agreed. | Funds released to your wallet | Back to Home |
 | Approved | Co-leader / member | Project Approved! | Majority of members agreed. | Funds released to the project leader | Back to Home |
 | Rejected (leader) | Leader | Project Not Approved | Majority of members disagreed. | Contributions being refunded | Back to Home |
 | Rejected (member) | Co-leader / member | Project Not Approved | Majority of members disagreed. | Your contributions are being refunded to your wallet. | Back to Home |
-| Refund in progress | All | Refund In Progress | Your refund is being processed. | Funds will appear in your wallet within 1–3 business days | Back to Home |
-| Refund complete | All | Refund Complete | All contributions have been returned. | Your full contribution has been added to your wallet | Back to Home |
+
+> Vacation has **no** separate Refund In Progress / Refund Complete screens — rejected copy only (amount caption mentions refund).
 
 ### 2.2 Emergency
 
 | Result | Role | Title | Subtitle | Amount caption | CTA |
 |--------|------|-------|----------|----------------|-----|
-| Approved | Co-leader / member | Project Resolved! | Majority of members agreed. | The project has been closed. Unused funds will be sent to wallet. | Back to Home |
-| Approved | Leader | Project Approved! | Majority of members agreed. | Unused money has been released to your wallet. | Back to Home |
-| Rejected | **All** | **Project Not Resolved** | Majority of members disagreed. | Emergency project continues. Review your group's goal and try again. | Back to Home |
+| Approved | Co-leader / member | Project Resolved! | Majority of members agreed. | Emergency project closed. Unused funds released to leader. | Back to Home |
+| Approved | Leader | Project Approved! | Majority of members agreed. | Unused emergency funds released to your wallet | Back to Home |
+| Rejected (leader) | Leader | Project Not Approved | Majority of members disagreed. | Contributions being refunded | Back to Home |
+| Rejected (member) | Co-leader / member | Project Not Approved | Majority of members disagreed. | Your contributions are being refunded to your wallet. | Back to Home |
+
+> Emergency rejected copy matches vacation (§2.1) — approved copy remains emergency-specific.
 
 ### 2.3 Investment
 
@@ -72,11 +75,11 @@ Mobile picks copy using **`category` + `viewerRole` + `isApproved` + `variant` +
 | Distribution processing | `FinalClosureVote` | **Leader only** | Distributions In Progress | Majority of members agreed. | Investment returns are being calculated… | Back to Home |
 | Distribution done | `FinalClosureVote` | **Leader only** | Distribution Complete | Majority of members agreed. | All investment returns have been distributed… | Back to Home |
 | Returns received | `FinalClosureVote` | Co-leader / member | Returns Distributed! | Majority of members agreed. | Your investment returns have been distributed and added to your wallet. | Back to Home |
+| **Stop contributions passed (refund)** | `StopContributionsVote` | All | Refund In Progress / Refund Complete | (refund copy) | (refund amount caption) | Back to Home |
 | **Stop contributions failed** | `StopContributionsVote` | Leader | Vote Not Passed | Majority chose to keep contributing. | Contributions continue on schedule. No investing phase yet. | Back to Home |
 | **Stop contributions failed** | `StopContributionsVote` | Member | Vote Not Passed | Majority voted to keep contributing. | No changes to your contribution schedule. Keep contributing as planned | Back to Home |
-| Success vote rejected | `SuccessVote` / `FinalClosureVote` | Leader | Project Not Approved | Majority of members disagreed. | Contributions being refunded | Back to Home |
-| Success vote rejected | `SuccessVote` / `FinalClosureVote` | Member | Project Not Approved | Majority of members disagreed. | Your contributions are being refunded to your wallet. | Back to Home |
-| Refund | Any | All | Refund In Progress / Refund Complete | (refund copy) | (refund amount caption) | Back to Home |
+| Success / final closure rejected | `SuccessVote` / `FinalClosureVote` | Leader | Project Not Approved | Majority of members disagreed. | Contributions being refunded | Back to Home |
+| Success / final closure rejected | `SuccessVote` / `FinalClosureVote` | Member | Project Not Approved | Majority of members disagreed. | Your contributions are being refunded to your wallet. | Back to Home |
 
 **Vote summary order:** rejected outcomes show **Disagreed** row first, then **Agreed**.
 
@@ -172,8 +175,9 @@ outcome:   Success | InvestmentStarted | Refund | Disputed
 isApproved      = voting.isApproved
                 OR outcome in (Success, InvestmentStarted)
 
-refund UI       = outcome == Refund
-                OR projectStatus == cancelled
+refund UI       = category == investment
+                AND voteType == StopContributionsVote
+                AND outcome == Refund
 
 stop-contrib    = voteType == StopContributionsVote
 rejected UI       AND isApproved == false
@@ -282,7 +286,7 @@ Mobile shows **Vote Not Passed** full-screen (`SuccessVoteOutcomeScreen`).
 
 > `outcome: "Disputed"` or a dedicated `Rejected` value is fine if `isApproved: false`. Mobile treats any non-success outcome as rejected.
 
-### 5.2 Vacation — success vote **rejected** with refund in progress
+### 5.2 Investment — stop-contributions vote **passed** with refund (Refund Me majority)
 
 ```json
 {
@@ -290,12 +294,12 @@ Mobile shows **Vote Not Passed** full-screen (`SuccessVoteOutcomeScreen`).
   "votingStatus": "done",
   "userRole": "member",
   "project": {
-    "type": "vacation",
+    "type": "investment",
     "displayStatus": "Refund in progress",
     "potAmount": 9800.0
   },
   "voting": {
-    "voteType": "SuccessVote",
+    "voteType": "StopContributionsVote",
     "outcome": "Refund",
     "isApproved": false,
     "isFinalized": true,

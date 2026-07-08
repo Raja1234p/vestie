@@ -4,6 +4,7 @@ import 'package:vestie/features/success_vote/presentation/models/success_vote_ou
 import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_copy.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_refund_phase.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_ui_data.dart';
+import 'package:vestie/user/features/home/domain/entities/project.dart';
 
 void main() {
   group('refundPhaseFromDisplayStatus', () {
@@ -57,6 +58,7 @@ void main() {
         data: rejectedData,
         copy: genericCopy,
         refundPhase: SuccessVoteOutcomeRefundPhase.inProgress,
+        category: ProjectCategory.investment,
       );
 
       expect(resolved.title, AppStrings.successVoteOutcomeRefundInProgressTitle);
@@ -77,6 +79,7 @@ void main() {
         data: rejectedData,
         copy: genericCopy,
         refundPhase: SuccessVoteOutcomeRefundPhase.complete,
+        category: ProjectCategory.investment,
       );
 
       expect(resolved.title, AppStrings.successVoteOutcomeRefundCompleteTitle);
@@ -89,6 +92,18 @@ void main() {
         AppStrings.successVoteOutcomeRefundCompleteAmountCaption,
       );
       expect(resolved.rejectedCaptionAccentRed, isTrue);
+    });
+
+    test('vacation ignores refund phase — uses rejected copy', () {
+      final resolved = SuccessVoteOutcomePresentation.resolve(
+        data: rejectedData,
+        copy: genericCopy,
+        refundPhase: SuccessVoteOutcomeRefundPhase.inProgress,
+        category: ProjectCategory.vacations,
+      );
+
+      expect(resolved.title, 'Project Not Approved');
+      expect(resolved.subtitle, 'Majority disagreed');
     });
   });
 }

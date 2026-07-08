@@ -1,4 +1,5 @@
 import 'package:vestie/user/features/home/domain/entities/project.dart';
+import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
 
 import 'closure_vote_entities.dart';
 import 'project_detail_entity.dart';
@@ -36,10 +37,12 @@ extension ProjectDetailEntityCompletedOutcome on ProjectDetailEntity {
     return true;
   }
 
-  /// Refund-oriented outcome (Refund / cancelled project).
+  /// Investment stop-contributions vote passed with **Refund Me** majority only.
+  /// Final closure rejection → Project Not Approved; keep-contributing rejection → Vote Not Passed.
   bool get showsClosureVoteRefundOutcome {
+    if (!category.isInvestment) return false;
+    if (voting?.voteType != ClosureVoteType.stopContributionsVote) return false;
     if (voting?.outcome == ClosureVoteOutcome.refund) return true;
-    if (projectBannerStatus == ProjectDetailBannerStatus.cancelled) return true;
     return displayStatusLabel.toLowerCase().trim().contains('refund');
   }
 

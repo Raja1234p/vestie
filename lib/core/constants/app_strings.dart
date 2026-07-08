@@ -1605,16 +1605,13 @@ class AppStrings {
       'Majority of members disagreed.';
   static const String successVoteOutcomeLeaderAmountApprovedCaption =
       'Unused money has been released to your wallet.';
+  static const String successVoteOutcomeVacationLeaderAmountApprovedCaption =
+      'Funds released to your wallet';
   static const String successVoteOutcomeLeaderAmountRejectedCaption =
       'Contributions being refunded';
 
-  // Group leader — emergency rejected (Figma)
-  static const String successVoteOutcomeEmergencyLeaderRejectedTitle =
-      'Project Not Resolved';
-  static const String successVoteOutcomeEmergencyLeaderRejectedSubtitle =
-      'Majority of members disagreed.';
-  static const String successVoteOutcomeEmergencyLeaderAmountRejectedCaption =
-      'Emergency project continues. Review your group\'s goal and try again.';
+  static const String successVoteOutcomeEmergencyLeaderAmountApprovedCaption =
+      'Unused emergency funds released to your wallet';
 
   // Investment group leader — success vote approved (Figma)
   static const String successVoteOutcomeInvestmentLeaderApprovedTitle =
@@ -1690,11 +1687,11 @@ class AppStrings {
       'Majority of members agreed.';
   static const String
       successVoteOutcomeEmergencyCoLeaderMemberAmountApprovedCaption =
-      'The project has been closed. Unused funds will be sent to wallet.';
+      'Emergency project closed. Unused funds released to leader.';
 
-  /// Emergency co-leader — success vote approved amount caption (Figma).
+  /// @deprecated Use [successVoteOutcomeEmergencyCoLeaderMemberAmountApprovedCaption].
   static const String successVoteOutcomeEmergencyCoLeaderAmountApprovedCaption =
-      'Unused emergency funds released to your wallet';
+      'Emergency project closed. Unused funds released to leader.';
 
   /// Group leader — vacation / emergency vote approved (Figma).
   static const String btnStartDistributing = 'Start Distributing';

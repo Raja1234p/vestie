@@ -32,6 +32,12 @@ class AppButton extends StatelessWidget {
   /// Label size; defaults to 18.sp.
   final double? labelFontSize;
 
+  /// Multi-line labels (e.g. side-by-side vote CTAs). When null, wraps naturally.
+  final int? maxLines;
+
+  /// Label alignment inside the button; defaults to center.
+  final TextAlign? textAlign;
+
   /// Outline button fill (e.g. white on gradient backgrounds).
   final Color? secondaryFillColor;
   final Widget? leading;
@@ -53,6 +59,8 @@ class AppButton extends StatelessWidget {
     this.secondaryLabelColor,
     this.secondaryLabelFontWeight,
     this.labelFontSize,
+    this.maxLines,
+    this.textAlign,
     this.secondaryFillColor,
     this.leading,
   });
@@ -119,22 +127,25 @@ class AppButton extends StatelessWidget {
             borderRadius: radius,
             onTap: (isLoading || !isEnabled) ? null : onPressed,
             child: Center(
-              child: isLoading
-                  ? SizedBox(
-                      width: 22.w,
-                      height: 22.h,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: isSecondary
-                            ? AppColors.primary
-                            : AppColors.surface,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8.w),
+                child: isLoading
+                    ? SizedBox(
+                        width: 22.w,
+                        height: 22.h,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: isSecondary
+                              ? AppColors.primary
+                              : AppColors.surface,
+                        ),
+                      )
+                    : _labelRow(
+                        context: context,
+                        theme: theme,
+                        isSecondary: isSecondary,
                       ),
-                    )
-                  : _labelRow(
-                      context: context,
-                      theme: theme,
-                      isSecondary: isSecondary,
-                    ),
+              ),
             ),
           ),
         ),
@@ -156,9 +167,15 @@ class AppButton extends StatelessWidget {
           ? (secondaryLabelColor ?? AppColors.primary)
           : AppColors.surface,
     );
-    final label = AppText(text, style: style);
+    final label = AppText(
+      text,
+      style: style,
+      textAlign: textAlign ?? TextAlign.center,
+      maxLines: maxLines ?? 2,
+      overflow: TextOverflow.ellipsis,
+    );
     if (leading == null) {
-      return label;
+      return SizedBox(width: double.infinity, child: label);
     }
     return Row(
       mainAxisSize: MainAxisSize.min,

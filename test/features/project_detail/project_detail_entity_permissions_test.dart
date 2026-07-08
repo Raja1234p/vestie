@@ -4,8 +4,9 @@ import 'package:vestie/features/project_detail/domain/entities/closure_vote_enti
 import 'package:vestie/features/project_detail/domain/entities/project_detail_closure_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_completed_outcome_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
-import 'package:vestie/features/project_detail/domain/entities/project_detail_member_vote_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_voting_entities.dart';
+import 'package:vestie/features/project_detail/presentation/mappers/closure_vote_ui_mappers.dart';
+import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_refund_phase.dart';
 import 'package:vestie/features/project_detail/domain/entities/viewer_membership_role.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 
@@ -623,7 +624,7 @@ void main() {
       expect(project.isClosureVoteOutcomeApproved, isTrue);
     });
 
-    test('refund outcome when display status contains refund', () {
+    test('refund outcome when stop-contributions vote refunds', () {
       final project = ProjectDetailEntity(
         id: 'p1',
         name: 'Fund',
@@ -636,52 +637,123 @@ void main() {
         members: const [],
         borrowRequests: const [],
         displayStatusLabel: 'Refund in progress',
-        projectBannerStatus: ProjectDetailBannerStatus.cancelled,
+        voting: ProjectVotingSummaryEntity(
+          startedAtUtc: DateTime.utc(2026, 6, 1),
+          deadlineAtUtc: DateTime.utc(2026, 7, 1),
+          voteType: ClosureVoteType.stopContributionsVote,
+          outcome: ClosureVoteOutcome.refund,
+          isApproved: false,
+          isFinalized: true,
+          agreedCount: 5,
+          disagreedCount: 2,
+          pendingCount: 0,
+        ),
       );
 
       expect(project.isClosureVoteOutcomeApproved, isFalse);
       expect(project.showsClosureVoteRefundOutcome, isTrue);
     });
 
-    test(
-      'member mark-successful vote uses cast flow instead of distribution layout',
-      () {
-        final project = ProjectDetailEntity(
-          id: 'p1',
-          name: 'Fund',
-          category: ProjectCategory.investment,
-          status: ProjectStatus.ongoing,
-          goalAmount: 10000,
-          currentAmount: 9800,
-          endsIn: '30d',
-          announcement: '',
-          members: const [],
-          borrowRequests: const [],
-          viewerRole: ViewerMembershipRole.member,
-          apiCanStopContributions: false,
-          projectLifecycleState: 'funded',
-          displayStatusLabel: 'Funded',
-          hasWeek11ProjectDetailEnvelope: true,
-          detailUserRole: ProjectDetailUserRole.member,
-          votingStatus: ProjectVotingStatus.pending,
-          voting: ProjectVotingSummaryEntity(
-            startedAtUtc: DateTime.utc(2026, 6, 1),
-            deadlineAtUtc: DateTime.utc(2026, 7, 1),
-            voteType: ClosureVoteType.finalClosureVote,
-            agreedCount: 1,
-            disagreedCount: 0,
-            pendingCount: 6,
-            hasVoted: false,
-            isFinalized: false,
-          ),
-        );
+    test('vacation does not use refund lifecycle UI', () {
+      final project = ProjectDetailEntity(
+        id: 'p1',
+        name: 'Trip',
+        category: ProjectCategory.vacations,
+        status: ProjectStatus.completed,
+        goalAmount: 1000,
+        currentAmount: 900,
+        endsIn: '30d',
+        announcement: '',
+        members: const [],
+        borrowRequests: const [],
+        displayStatusLabel: 'Refund in progress',
+        voting: ProjectVotingSummaryEntity(
+          startedAtUtc: DateTime.utc(2026, 6, 1),
+          deadlineAtUtc: DateTime.utc(2026, 7, 1),
+          voteType: ClosureVoteType.successVote,
+          outcome: ClosureVoteOutcome.refund,
+          isApproved: false,
+          isFinalized: true,
+          agreedCount: 2,
+          disagreedCount: 5,
+          pendingCount: 0,
+        ),
+      );
 
-        expect(project.isInvestmentMarkSuccessfulClosureVote, isTrue);
-        expect(project.showsInlineMemberVoteFlow, isTrue);
-        expect(project.showsInvestmentDistributionActions, isFalse);
-        expect(project.showsCompletedProjectVoteOutcome, isFalse);
-      },
-    );
+      expect(project.showsClosureVoteRefundOutcome, isFalse);
+      expect(
+        refundPhaseFromProjectDetail(project),
+        SuccessVoteOutcomeRefundPhase.none,
+      );
+    });
+
+    test('investment stop-contributions rejected is not refund lifecycle', () {
+      final project = ProjectDetailEntity(
+        id: 'p1',
+        name: 'Fund',
+        category: ProjectCategory.investment,
+        status: ProjectStatus.ongoing,
+        goalAmount: 1000,
+        currentAmount: 900,
+        endsIn: '30d',
+        announcement: '',
+        members: const [],
+        borrowRequests: const [],
+        displayStatusLabel: 'On Going',
+        hasWeek11ProjectDetailEnvelope: true,
+        voting: ProjectVotingSummaryEntity(
+          startedAtUtc: DateTime.utc(2026, 6, 1),
+          deadlineAtUtc: DateTime.utc(2026, 7, 1),
+          voteType: ClosureVoteType.stopContributionsVote,
+          outcome: ClosureVoteOutcome.disputed,
+          isApproved: false,
+          isFinalized: true,
+          agreedCount: 2,
+          disagreedCount: 5,
+          pendingCount: 0,
+        ),
+      );
+
+      expect(project.showsClosureVoteRefundOutcome, isFalse);
+      expect(
+        refundPhaseFromProjectDetail(project),
+        SuccessVoteOutcomeRefundPhase.none,
+      );
+    });
+
+    test('final closure rejected does not use refund lifecycle UI', () {
+      final project = ProjectDetailEntity(
+        id: 'p1',
+        name: 'Fund',
+        category: ProjectCategory.investment,
+        status: ProjectStatus.completed,
+        goalAmount: 1000,
+        currentAmount: 900,
+        endsIn: '30d',
+        announcement: '',
+        members: const [],
+        borrowRequests: const [],
+        displayStatusLabel: 'Refund in progress',
+        voting: ProjectVotingSummaryEntity(
+          startedAtUtc: DateTime.utc(2026, 6, 1),
+          deadlineAtUtc: DateTime.utc(2026, 7, 1),
+          voteType: ClosureVoteType.finalClosureVote,
+          outcome: ClosureVoteOutcome.refund,
+          isApproved: false,
+          isFinalized: true,
+          agreedCount: 2,
+          disagreedCount: 5,
+          pendingCount: 0,
+        ),
+      );
+
+      expect(project.showsClosureVoteRefundOutcome, isFalse);
+      expect(
+        refundPhaseFromProjectDetail(project),
+        SuccessVoteOutcomeRefundPhase.none,
+      );
+    });
+
   });
 }
 

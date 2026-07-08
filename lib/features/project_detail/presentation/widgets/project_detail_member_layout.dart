@@ -6,9 +6,11 @@ import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_member_vote_extensions.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation.dart';
 
+import 'project_detail_inline_member_vote_flow.dart';
 import 'project_detail_member_scroll_content.dart';
 import 'project_detail_scroll_insets.dart';
 import 'project_detail_trailing_actions.dart';
@@ -75,6 +77,21 @@ class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.project.showsInlineMemberVoteFlow) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _header(context),
+          Expanded(
+            child: ProjectDetailInlineMemberVoteFlow(
+              project: widget.project,
+              onRefresh: widget.onRefresh,
+            ),
+          ),
+        ],
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [

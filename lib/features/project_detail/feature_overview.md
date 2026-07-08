@@ -33,7 +33,7 @@ Shared project detail entity, bloc, navigation helpers, member list, funds histo
 Closure voting (Week 10): `ClosureVotingRepository` → `POST/GET …/closure-voting/*`  
 On project detail load: Week 11+ `GET /projects/{id}` supplies `projectStatus`, `votingStatus`, `userRole`, `voting` (including `memberVotes[]`), `canStopContributions`. Legacy probe `GET …/closure-voting/active` runs for leader monitor when detail has no in-progress voting payload.
 
-**Production member / co-leader vote flow:** while `votingStatus == pending` and the viewer has not voted, detail opens full-screen `ProjectDetailInlineMemberVoteScreen` (`SuccessVoteCastShell` + cast content — same layout as `/user/success-vote`, including investment mark-successful **Yes, Confirm Received**). After vote (`hasVoted` + viewer `memberVotes[].voteStatus`), detail shows post-vote Figma UI in the same shell — tallies + summary + Back to Home.
+**Production member / co-leader vote flow:** while `votingStatus == pending` and the viewer has not voted, detail shows inline cast (`ProjectDetailInlineCastVote`). After vote (`hasVoted` + viewer `memberVotes[].voteStatus`), detail shows post-vote Figma UI (`ProjectDetailInlineVoteSubmitted`) — tallies + summary + Back to Home, no per-member roster on member flow.
 
 **Investment vote phases (member copy):** phase 1 stop-contributions (`isStopContributionsClosureVote`) uses dedicated Figma strings (invest/refund). Phase 2 mark-successful on funded projects (`isInvestmentMarkSuccessfulClosureVote`) uses ROI confirmation / dispute strings (`Yes, Confirm Received` / `No, Dispute`) and Total Invested / Total Distributed labels.
 

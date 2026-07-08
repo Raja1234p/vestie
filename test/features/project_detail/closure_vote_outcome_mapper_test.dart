@@ -57,20 +57,30 @@ void main() {
   });
 
   group('successVoteOutcomeVariantFromClosureVote', () {
-    test('stop contributions failure uses dedicated variant', () {
+    test('stop contributions disputed uses Vote Not Passed variant', () {
       expect(
         successVoteOutcomeVariantFromClosureVote(
           voteType: ClosureVoteType.stopContributionsVote,
-          outcome: ClosureVoteOutcome.refund,
+          outcome: ClosureVoteOutcome.disputed,
         ),
         SuccessVoteOutcomeVariant.stopContributionsRejected,
       );
     });
 
-    test('success vote refund uses default variant', () {
+    test('stop contributions refund uses default variant for refund lifecycle', () {
       expect(
         successVoteOutcomeVariantFromClosureVote(
-          voteType: ClosureVoteType.successVote,
+          voteType: ClosureVoteType.stopContributionsVote,
+          outcome: ClosureVoteOutcome.refund,
+        ),
+        SuccessVoteOutcomeVariant.successVote,
+      );
+    });
+
+    test('final closure refund uses default variant not refund lifecycle', () {
+      expect(
+        successVoteOutcomeVariantFromClosureVote(
+          voteType: ClosureVoteType.finalClosureVote,
           outcome: ClosureVoteOutcome.refund,
         ),
         SuccessVoteOutcomeVariant.successVote,

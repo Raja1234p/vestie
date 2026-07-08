@@ -37,19 +37,65 @@ void main() {
       expect(copy.titleFor(true), AppStrings.successVoteOutcomeLeaderApprovedTitle);
       expect(
         copy.amountCaptionFor(true),
-        AppStrings.successVoteOutcomeLeaderAmountApprovedCaption,
+        AppStrings.successVoteOutcomeVacationLeaderAmountApprovedCaption,
       );
     });
 
-    test('co-leader emergency approved uses wallet caption', () {
+    test('leader emergency approved copy matches Figma', () {
+      final copy = SuccessVoteOutcomeCopy.forRole(
+        SuccessVoteOutcomeRole.groupLeader,
+        category: ProjectCategory.emergency,
+      );
+      expect(copy.titleFor(true), AppStrings.successVoteOutcomeLeaderApprovedTitle);
+      expect(
+        copy.subtitleFor(true),
+        AppStrings.successVoteOutcomeLeaderApprovedSubtitle,
+      );
+      expect(
+        copy.amountCaptionFor(true),
+        AppStrings.successVoteOutcomeEmergencyLeaderAmountApprovedCaption,
+      );
+      expect(copy.primaryButtonFor(true), AppStrings.btnBackToHome);
+    });
+
+    test('co-leader emergency approved copy matches Figma', () {
       final copy = SuccessVoteOutcomeCopy.forRole(
         SuccessVoteOutcomeRole.coLeader,
         category: ProjectCategory.emergency,
       );
       expect(
-        copy.amountCaptionFor(true),
-        AppStrings.successVoteOutcomeEmergencyCoLeaderAmountApprovedCaption,
+        copy.titleFor(true),
+        AppStrings.successVoteOutcomeEmergencyCoLeaderMemberApprovedTitle,
       );
+      expect(
+        copy.subtitleFor(true),
+        AppStrings.successVoteOutcomeEmergencyCoLeaderMemberApprovedSubtitle,
+      );
+      expect(
+        copy.amountCaptionFor(true),
+        AppStrings.successVoteOutcomeEmergencyCoLeaderMemberAmountApprovedCaption,
+      );
+      expect(copy.primaryButtonFor(true), AppStrings.btnBackToHome);
+    });
+
+    test('member emergency approved copy matches Figma', () {
+      final copy = SuccessVoteOutcomeCopy.forRole(
+        SuccessVoteOutcomeRole.member,
+        category: ProjectCategory.emergency,
+      );
+      expect(
+        copy.titleFor(true),
+        AppStrings.successVoteOutcomeEmergencyCoLeaderMemberApprovedTitle,
+      );
+      expect(
+        copy.subtitleFor(true),
+        AppStrings.successVoteOutcomeEmergencyCoLeaderMemberApprovedSubtitle,
+      );
+      expect(
+        copy.amountCaptionFor(true),
+        AppStrings.successVoteOutcomeEmergencyCoLeaderMemberAmountApprovedCaption,
+      );
+      expect(copy.primaryButtonFor(true), AppStrings.btnBackToHome);
     });
 
     test('member vacation approved copy matches Figma', () {
@@ -59,9 +105,31 @@ void main() {
       );
       expect(copy.titleFor(true), AppStrings.successVoteOutcomeCoLeaderApprovedTitle);
       expect(
+        copy.subtitleFor(true),
+        AppStrings.successVoteOutcomeCoLeaderApprovedSubtitle,
+      );
+      expect(
         copy.amountCaptionFor(true),
         AppStrings.successVoteOutcomeCoLeaderAmountApprovedCaption,
       );
+      expect(copy.primaryButtonFor(true), AppStrings.btnBackToHome);
+    });
+
+    test('co-leader vacation approved copy matches Figma', () {
+      final copy = SuccessVoteOutcomeCopy.forRole(
+        SuccessVoteOutcomeRole.coLeader,
+        category: ProjectCategory.vacations,
+      );
+      expect(copy.titleFor(true), AppStrings.successVoteOutcomeCoLeaderApprovedTitle);
+      expect(
+        copy.subtitleFor(true),
+        AppStrings.successVoteOutcomeCoLeaderApprovedSubtitle,
+      );
+      expect(
+        copy.amountCaptionFor(true),
+        AppStrings.successVoteOutcomeCoLeaderAmountApprovedCaption,
+      );
+      expect(copy.primaryButtonFor(true), AppStrings.btnBackToHome);
     });
 
     test('maps refund phase from displayStatus', () {
@@ -74,6 +142,8 @@ void main() {
           relation: ProjectRelation.joined,
           currentAmount: 9800,
           displayStatus: 'Refund complete',
+          lastVoteType: 'StopContributionsVote',
+          lastVoteOutcome: 'Refund',
         ),
       );
       expect(args.data.isApproved, isFalse);

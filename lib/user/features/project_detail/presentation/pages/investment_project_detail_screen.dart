@@ -21,8 +21,8 @@ import 'package:vestie/features/project_detail/domain/entities/project_detail_me
 import 'package:vestie/features/project_detail/presentation/widgets/investment_completed_detail_content.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_member_vff_send_actions.dart';
-import 'package:vestie/features/project_detail/presentation/widgets/project_detail_inline_member_vote_screen.dart';
 import 'package:vestie/features/success_vote/presentation/pages/success_vote_outcome_screen.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/project_detail_inline_member_vote_flow.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_members_preview_section.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_trailing_actions.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_load_error.dart';
@@ -124,15 +124,6 @@ class _InvestmentProjectDetailBodyState
     );
   }
 
-  Future<void> _refreshDetail(BuildContext context) async {
-    context.read<ProjectDetailBloc>().add(
-      LoadProjectDetailEvent(projectId: widget.projectId),
-    );
-    await context.read<ProjectDetailBloc>().stream.firstWhere(
-      (s) => s is ProjectDetailLoaded || s is ProjectDetailError,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ProjectDetailBloc, ProjectDetailState>(
@@ -155,19 +146,6 @@ class _InvestmentProjectDetailBodyState
             state.project.showsCompletedProjectVoteOutcome) {
           return SuccessVoteOutcomeScreen(
             args: successVoteOutcomeRouteArgsFromProjectDetail(state.project),
-          );
-        }
-
-        if (state is ProjectDetailLoaded &&
-            state.project.showsInlineMemberVoteFlow) {
-          return ProjectDetailInlineMemberVoteScreen(
-            project: state.project,
-            onBack: () => popProjectDetailNavigation(
-              context,
-              refreshHomeOnPop: widget.refreshHomeOnPop,
-              refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
-            ),
-            onRefresh: () => _refreshDetail(context),
           );
         }
 
@@ -265,6 +243,22 @@ class _InvestmentProjectDetailBodyState
                               ),
                         )
                       : null,
+                );
+              }
+
+              if (project.showsInlineMemberVoteFlow &&
+                  !showDistributionLayout) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    header(),
+                    Expanded(
+                      child: ProjectDetailInlineMemberVoteFlow(
+                        project: project,
+                        onRefresh: refreshDetail,
+                      ),
+                    ),
+                  ],
                 );
               }
 

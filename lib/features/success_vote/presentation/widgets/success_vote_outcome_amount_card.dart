@@ -26,10 +26,14 @@ class SuccessVoteOutcomeAmountCard extends StatelessWidget {
     required bool isApproved,
   }) =>
       BoxDecoration(
-        color: isApproved ? AppColors.green100 : AppColors.red100,
+        color: isApproved
+            ? AppColors.successVoteOutcomeApprovedAmountCardBg
+            : AppColors.successVoteOutcomeRejectedAmountCardBg,
         borderRadius: radius,
         border: Border.all(
-          color: isApproved ? AppColors.green300 : AppColors.red300,
+          color: isApproved
+              ? AppColors.successVoteOutcomeApprovedAmountCardBorder
+              : AppColors.successVoteOutcomeRejectedAmountCardBorder,
         ),
       );
 

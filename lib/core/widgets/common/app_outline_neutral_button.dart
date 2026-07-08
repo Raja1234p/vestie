@@ -67,6 +67,7 @@ class AppOutlineNeutralButton extends StatelessWidget {
           width: double.infinity,
           height: height ?? 56.h,
           alignment: Alignment.center,
+          padding: EdgeInsets.symmetric(horizontal: 8.w),
           child: isLoading
               ? SizedBox(
                   width: 22.w,
@@ -79,6 +80,9 @@ class AppOutlineNeutralButton extends StatelessWidget {
               : leading == null
               ? AppText(
                   label,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.labelLarge?.copyWith(
                     fontSize: 15.sp,
                     fontWeight: FontWeight.w600,
@@ -91,12 +95,17 @@ class AppOutlineNeutralButton extends StatelessWidget {
                   children: [
                     leading!,
                     SizedBox(width: 8.w),
-                    AppText(
-                      label,
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w600,
-                        color: textColor,
+                    Flexible(
+                      child: AppText(
+                        label,
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.labelLarge?.copyWith(
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w600,
+                          color: textColor,
+                        ),
                       ),
                     ),
                   ],

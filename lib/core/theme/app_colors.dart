@@ -57,6 +57,12 @@ class AppColors {
   static const Color red1100 = Color(0xFF550E0E);
   static const Color red1200 = Color(0xFF300707);
 
+  /// [SuccessVoteOutcomeScreen] rejected caption + amount card fill (Figma #FEF2F2).
+  static const Color successVoteOutcomeRejectedAmountCardBg = red100;
+
+  /// [SuccessVoteOutcomeScreen] rejected caption + amount card border.
+  static const Color successVoteOutcomeRejectedAmountCardBorder = red300;
+
   // ── Green ────────────────────────────────────────────────────────────────────
   static const Color green100 = Color(0xFFF0FBF7);
   static const Color green200 = Color(0xFFD8F5EA);
@@ -70,6 +76,12 @@ class AppColors {
   static const Color green1000 = Color(0xFF0A5C3C);
   static const Color green1100 = Color(0xFF063D28);
   static const Color green1200 = Color(0xFF032215);
+
+  /// [SuccessVoteOutcomeScreen] approved caption + amount card fill.
+  static const Color successVoteOutcomeApprovedAmountCardBg = green100;
+
+  /// [SuccessVoteOutcomeScreen] approved caption + amount card border.
+  static const Color successVoteOutcomeApprovedAmountCardBorder = green300;
 
   // ── Blue ─────────────────────────────────────────────────────────────────────
   static const Color blue100 = Color(0xFFEFF4FE);

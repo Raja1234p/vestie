@@ -222,9 +222,13 @@ SuccessVoteOutcomeVariant successVoteOutcomeVariantFromClosureVote({
   required ClosureVoteType voteType,
   required ClosureVoteOutcome outcome,
 }) {
-  if (voteType == ClosureVoteType.stopContributionsVote &&
-      !isClosureVoteOutcomeApproved(outcome)) {
-    return SuccessVoteOutcomeVariant.stopContributionsRejected;
+  if (voteType == ClosureVoteType.stopContributionsVote) {
+    if (outcome == ClosureVoteOutcome.refund) {
+      return SuccessVoteOutcomeVariant.successVote;
+    }
+    if (!isClosureVoteOutcomeApproved(outcome)) {
+      return SuccessVoteOutcomeVariant.stopContributionsRejected;
+    }
   }
   return SuccessVoteOutcomeVariant.successVote;
 }
@@ -353,26 +357,40 @@ SuccessVoteOutcomeVariant completedOutcomeVariantFromProject(Project project) {
 SuccessVoteOutcomeRefundPhase refundPhaseFromProjectDetail(
   ProjectDetailEntity project,
 ) {
+  if (!project.showsClosureVoteRefundOutcome) {
+    return SuccessVoteOutcomeRefundPhase.none;
+  }
   if (project.voting?.outcome == ClosureVoteOutcome.refund) {
     final phase = refundPhaseFromDisplayStatus(project.displayStatusLabel);
     return phase.isRefund ? phase : SuccessVoteOutcomeRefundPhase.inProgress;
   }
-  if (project.showsClosureVoteRefundOutcome) {
-    final phase = refundPhaseFromDisplayStatus(project.displayStatusLabel);
-    if (phase.isRefund) return phase;
-    return SuccessVoteOutcomeRefundPhase.inProgress;
-  }
-  return refundPhaseFromDisplayStatus(project.displayStatusLabel);
+  final phase = refundPhaseFromDisplayStatus(project.displayStatusLabel);
+  if (phase.isRefund) return phase;
+  return SuccessVoteOutcomeRefundPhase.inProgress;
 }
 
 SuccessVoteOutcomeRefundPhase refundPhaseFromProject(Project project) {
+  if (!project.category.isInvestment) {
+    return SuccessVoteOutcomeRefundPhase.none;
+  }
+  final voteTypeRaw = project.lastVoteType;
+  if (voteTypeRaw == null || voteTypeRaw.trim().isEmpty) {
+    return SuccessVoteOutcomeRefundPhase.none;
+  }
+  final voteType = parseClosureVoteType(voteTypeRaw);
+  if (voteType != ClosureVoteType.stopContributionsVote) {
+    return SuccessVoteOutcomeRefundPhase.none;
+  }
   final outcomeRaw = project.lastVoteOutcome;
   if (outcomeRaw != null &&
+      outcomeRaw.trim().isNotEmpty &&
       parseClosureVoteOutcome(outcomeRaw) == ClosureVoteOutcome.refund) {
     final phase = refundPhaseFromDisplayStatus(project.displayStatus);
     return phase.isRefund ? phase : SuccessVoteOutcomeRefundPhase.inProgress;
   }
-  return refundPhaseFromDisplayStatus(project.displayStatus);
+  final phase = refundPhaseFromDisplayStatus(project.displayStatus);
+  if (phase.isRefund) return phase;
+  return SuccessVoteOutcomeRefundPhase.none;
 }
 
 bool _isApprovedInvestmentFinalClosure(ProjectDetailEntity project) {

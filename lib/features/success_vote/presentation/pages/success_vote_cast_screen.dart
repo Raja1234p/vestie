@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
+import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/core/widgets/common/app_error_view.dart';
 import 'package:vestie/core/widgets/common/app_loader.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
+import 'package:vestie/core/widgets/common/post_auth_flow_sub_header.dart';
+import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/features/success_vote/presentation/cubit/success_vote_cast_cubit.dart';
 import 'package:vestie/features/success_vote/presentation/cubit/success_vote_cast_state.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_cast_route_args.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_cast_ui_data.dart';
 import 'package:vestie/features/success_vote/presentation/widgets/success_vote_cast_content.dart';
-import 'package:vestie/features/success_vote/presentation/widgets/success_vote_cast_shell.dart';
 
 /// Member / co-leader: cast a vote while a closure vote is open.
 class SuccessVoteCastScreen extends StatelessWidget {
@@ -28,7 +31,7 @@ class SuccessVoteCastScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!_usesApiLoad) {
-      return SuccessVoteCastShell(
+      return _SuccessVoteCastShell(
         title: args.projectName,
         child: SuccessVoteCastContent(
           data: SuccessVoteCastUiData.fromArgs(args),
@@ -60,7 +63,7 @@ class _SuccessVoteCastProductionBody extends StatelessWidget {
         }
       },
       builder: (context, state) {
-        return SuccessVoteCastShell(
+        return _SuccessVoteCastShell(
           title: args.projectName,
           child: _buildBody(context, state),
         );
@@ -95,6 +98,38 @@ class _SuccessVoteCastProductionBody extends StatelessWidget {
       isLoading: state.isSubmitting,
       onSubmitVote: (voteForSuccess) =>
           context.read<SuccessVoteCastCubit>().submitVote(voteForSuccess),
+    );
+  }
+}
+
+class _SuccessVoteCastShell extends StatelessWidget {
+  final String title;
+  final Widget child;
+
+  const _SuccessVoteCastShell({required this.title, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: PostAuthGradientBackground(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            PostAuthFlowSubHeader(
+              title: title,
+              onBack: () {
+                if (context.canPop()) {
+                  context.pop();
+                } else {
+                  context.go(AppRoutes.dashboard);
+                }
+              },
+            ),
+            Expanded(child: child),
+          ],
+        ),
+      ),
     );
   }
 }

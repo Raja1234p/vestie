@@ -101,7 +101,7 @@ class SuccessVoteOutcomeCopy {
     rejectedTitle: AppStrings.successVoteOutcomeLeaderRejectedTitle,
     rejectedSubtitle: AppStrings.successVoteOutcomeLeaderRejectedSubtitle,
     amountCaptionApproved:
-        AppStrings.successVoteOutcomeLeaderAmountApprovedCaption,
+        AppStrings.successVoteOutcomeVacationLeaderAmountApprovedCaption,
     amountCaptionRejected:
         AppStrings.successVoteOutcomeLeaderAmountRejectedCaption,
     primaryButtonApproved: AppStrings.btnBackToHome,
@@ -115,13 +115,12 @@ class SuccessVoteOutcomeCopy {
       SuccessVoteOutcomeCopy(
     approvedTitle: AppStrings.successVoteOutcomeLeaderApprovedTitle,
     approvedSubtitle: AppStrings.successVoteOutcomeLeaderApprovedSubtitle,
-    rejectedTitle: AppStrings.successVoteOutcomeEmergencyLeaderRejectedTitle,
-    rejectedSubtitle:
-        AppStrings.successVoteOutcomeEmergencyLeaderRejectedSubtitle,
+    rejectedTitle: AppStrings.successVoteOutcomeLeaderRejectedTitle,
+    rejectedSubtitle: AppStrings.successVoteOutcomeLeaderRejectedSubtitle,
     amountCaptionApproved:
-        AppStrings.successVoteOutcomeLeaderAmountApprovedCaption,
+        AppStrings.successVoteOutcomeEmergencyLeaderAmountApprovedCaption,
     amountCaptionRejected:
-        AppStrings.successVoteOutcomeEmergencyLeaderAmountRejectedCaption,
+        AppStrings.successVoteOutcomeLeaderAmountRejectedCaption,
     primaryButtonApproved: AppStrings.btnBackToHome,
     primaryButtonRejected: AppStrings.btnBackToHome,
     voteSummaryLabel: AppStrings.projectVoteSummaryLabel,
@@ -213,13 +212,12 @@ class SuccessVoteOutcomeCopy {
         AppStrings.successVoteOutcomeEmergencyCoLeaderMemberApprovedTitle,
     approvedSubtitle:
         AppStrings.successVoteOutcomeEmergencyCoLeaderMemberApprovedSubtitle,
-    rejectedTitle: AppStrings.successVoteOutcomeEmergencyLeaderRejectedTitle,
-    rejectedSubtitle:
-        AppStrings.successVoteOutcomeEmergencyLeaderRejectedSubtitle,
-    amountCaptionApproved:
-        AppStrings.successVoteOutcomeEmergencyCoLeaderAmountApprovedCaption,
+    rejectedTitle: AppStrings.successVoteOutcomeCoLeaderRejectedTitle,
+    rejectedSubtitle: AppStrings.successVoteOutcomeCoLeaderRejectedSubtitle,
+    amountCaptionApproved: AppStrings
+        .successVoteOutcomeEmergencyCoLeaderMemberAmountApprovedCaption,
     amountCaptionRejected:
-        AppStrings.successVoteOutcomeEmergencyLeaderAmountRejectedCaption,
+        AppStrings.successVoteOutcomeVacationCoLeaderMemberAmountRejectedCaption,
     primaryButtonApproved: AppStrings.successVoteOutcomeCoLeaderBtnApproved,
     primaryButtonRejected: AppStrings.btnBackToHome,
     voteSummaryLabel: AppStrings.projectVoteSummaryLabel,
@@ -234,13 +232,12 @@ class SuccessVoteOutcomeCopy {
         AppStrings.successVoteOutcomeEmergencyCoLeaderMemberApprovedTitle,
     approvedSubtitle:
         AppStrings.successVoteOutcomeEmergencyCoLeaderMemberApprovedSubtitle,
-    rejectedTitle: AppStrings.successVoteOutcomeEmergencyLeaderRejectedTitle,
-    rejectedSubtitle:
-        AppStrings.successVoteOutcomeEmergencyLeaderRejectedSubtitle,
+    rejectedTitle: AppStrings.successVoteOutcomeCoLeaderRejectedTitle,
+    rejectedSubtitle: AppStrings.successVoteOutcomeCoLeaderRejectedSubtitle,
     amountCaptionApproved: AppStrings
         .successVoteOutcomeEmergencyCoLeaderMemberAmountApprovedCaption,
     amountCaptionRejected:
-        AppStrings.successVoteOutcomeEmergencyLeaderAmountRejectedCaption,
+        AppStrings.successVoteOutcomeVacationCoLeaderMemberAmountRejectedCaption,
     primaryButtonApproved: AppStrings.successVoteOutcomeCoLeaderBtnApproved,
     primaryButtonRejected: AppStrings.btnBackToHome,
     voteSummaryLabel: AppStrings.projectVoteSummaryLabel,
