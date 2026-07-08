@@ -71,6 +71,42 @@ void main() {
       );
     });
 
+    test('approved stop-contributions keeps distribute layout, not outcome', () {
+      final entity = ProjectDetailResponseModel.fromJson({
+        ..._detailJson({
+          'startedAtUtc': '2026-07-01T12:00:00Z',
+          'deadlineAtUtc': '2026-07-03T12:00:00Z',
+          'voteType': 'StopContributionsVote',
+          'outcome': 'InvestmentStarted',
+          'isApproved': true,
+          'isFinalized': true,
+          'agreedCount': 5,
+          'disagreedCount': 2,
+          'pendingCount': 0,
+          'eligibleVoterCount': 7,
+          'hasVoted': false,
+          'memberVotes': [],
+        }),
+        'canStopContributions': false,
+        'project': {
+          'id': 'p1',
+          'name': 'Fund',
+          'type': 'investment',
+          'displayStatus': 'Funded',
+          'targetAmount': 15000,
+          'raisedAmount': 9800,
+          'viewerRole': 'GroupLeader',
+          'lifecycleState': 'funded',
+        },
+      }).toEntity();
+
+      expect(entity.voting?.voteType, ClosureVoteType.stopContributionsVote);
+      expect(entity.voting?.resolvedIsApproved, isTrue);
+      expect(entity.hasFinalizedClosureVoteOutcome, isTrue);
+      expect(entity.showsInvestmentDistributionActions, isTrue);
+      expect(entity.showsCompletedProjectVoteOutcome, isFalse);
+    });
+
     test('parses refund outcome', () {
       final entity = ProjectDetailResponseModel.fromJson(
         _detailJson({

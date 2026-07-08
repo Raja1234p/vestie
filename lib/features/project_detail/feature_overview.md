@@ -33,7 +33,7 @@ Shared project detail entity, bloc, navigation helpers, member list, funds histo
 Closure voting (Week 10): `ClosureVotingRepository` → `POST/GET …/closure-voting/*`  
 On project detail load: Week 11+ `GET /projects/{id}` supplies `projectStatus`, `votingStatus`, `userRole`, `voting` (including `memberVotes[]`), `canStopContributions`. Legacy probe `GET …/closure-voting/active` runs for leader monitor when detail has no in-progress voting payload.
 
-**Production member / co-leader vote flow:** while `votingStatus == pending` and the viewer has not voted, detail shows inline cast (`ProjectDetailInlineCastVote`). After vote (`hasVoted` + viewer `memberVotes[].voteStatus`), detail shows post-vote Figma UI (`ProjectDetailInlineVoteSubmitted`) — tallies + summary + Back to Home, no per-member roster on member flow.
+**Production member / co-leader vote flow:** while `votingStatus == pending` and the viewer has not voted, detail opens full-screen `ProjectDetailInlineMemberVoteScreen` (`SuccessVoteCastShell` + cast content — same layout as `/user/success-vote`, including investment mark-successful **Yes, Confirm Received**). After vote (`hasVoted` + viewer `memberVotes[].voteStatus`), detail shows post-vote Figma UI in the same shell — tallies + summary + Back to Home.
 
 **Investment vote phases (member copy):** phase 1 stop-contributions (`isStopContributionsClosureVote`) uses dedicated Figma strings (invest/refund). Phase 2 mark-successful on funded projects (`isInvestmentMarkSuccessfulClosureVote`) uses ROI confirmation / dispute strings (`Yes, Confirm Received` / `No, Dispute`) and Total Invested / Total Distributed labels.
 
@@ -41,7 +41,7 @@ On project detail load: Week 11+ `GET /projects/{id}` supplies `projectStatus`, 
 
 **Closure vote finalize:** backend cron auto-`POST …/closure-voting/finalize` after deadline — app does not call finalize; leaders monitor via View Success Votes; project moves to completed on detail refresh.
 
-**Investment Distribute / Returns:** `showsInvestmentDistributionActions` on `ProjectDetailEntity` — visible on investment detail after the stop-contributions vote succeeds (`investmentContributionsAreClosed` + vote not in progress), while the project is still ongoing/funded. When `showsCompletedProjectVoteOutcome` is true (completed project or finalized closure vote), detail routes to full-screen `SuccessVoteOutcomeScreen` instead of the gradient detail shell.
+**Investment Distribute / Returns:** `showsInvestmentDistributionActions` on `ProjectDetailEntity` — visible on investment detail after the stop-contributions vote **passes** (`investmentContributionsAreClosed` + vote not in progress), while the project is still ongoing/funded. Takes priority over `showsCompletedProjectVoteOutcome` (passed stop-contrib has a finalized vote envelope but must **not** open the full-screen outcome). **Rejected** stop-contrib on ongoing investment still uses full-screen `SuccessVoteOutcomeScreen` (Vote Not Passed). Completed projects route to full-screen outcome.
 
 ## See also
 

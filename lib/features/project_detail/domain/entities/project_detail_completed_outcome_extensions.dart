@@ -49,6 +49,9 @@ extension ProjectDetailEntityCompletedOutcome on ProjectDetailEntity {
     return summary.agreedCount + summary.disagreedCount > 0;
   }
 
+  /// Full-screen vote outcome — not shown during investment distribute/returns phase
+  /// after a **passed** stop-contributions vote (project still ongoing/funded).
   bool get showsCompletedProjectVoteOutcome =>
-      isProjectDetailCompleted || hasFinalizedClosureVoteOutcome;
+      (isProjectDetailCompleted || hasFinalizedClosureVoteOutcome) &&
+      !showsInvestmentDistributionActions;
 }

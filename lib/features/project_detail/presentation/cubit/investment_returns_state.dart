@@ -21,7 +21,9 @@ class InvestmentReturnsState extends Equatable {
     this.distributionsTotalCount = 0,
   });
 
-  bool get isLoading => loadStatus == InvestmentReturnsLoadStatus.loading;
+  bool get isLoading =>
+      loadStatus == InvestmentReturnsLoadStatus.initial ||
+      loadStatus == InvestmentReturnsLoadStatus.loading;
 
   bool get loadFailed => loadStatus == InvestmentReturnsLoadStatus.loadFailed;
 

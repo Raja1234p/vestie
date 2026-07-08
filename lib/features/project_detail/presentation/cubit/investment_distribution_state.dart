@@ -20,7 +20,9 @@ class InvestmentDistributionState extends Equatable {
     this.submitFailure,
   });
 
-  bool get isLoading => loadStatus == InvestmentDistributionLoadStatus.loading;
+  bool get isLoading =>
+      loadStatus == InvestmentDistributionLoadStatus.initial ||
+      loadStatus == InvestmentDistributionLoadStatus.loading;
 
   bool get loadFailed =>
       loadStatus == InvestmentDistributionLoadStatus.loadFailed;

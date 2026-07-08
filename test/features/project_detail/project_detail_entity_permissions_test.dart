@@ -4,6 +4,7 @@ import 'package:vestie/features/project_detail/domain/entities/closure_vote_enti
 import 'package:vestie/features/project_detail/domain/entities/project_detail_closure_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_completed_outcome_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_member_vote_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_voting_entities.dart';
 import 'package:vestie/features/project_detail/domain/entities/viewer_membership_role.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
@@ -563,15 +564,14 @@ void main() {
 
     test('shown after stop-contributions vote succeeds (funded, vote finalized)',
         () {
-      expect(
-        investmentProject(
-          apiCanStopContributions: false,
-          projectLifecycleState: 'funded',
-          votingStatus: ProjectVotingStatus.done,
-          isFinalized: true,
-        ).showsInvestmentDistributionActions,
-        isTrue,
+      final project = investmentProject(
+        apiCanStopContributions: false,
+        projectLifecycleState: 'funded',
+        votingStatus: ProjectVotingStatus.done,
+        isFinalized: true,
       );
+      expect(project.showsInvestmentDistributionActions, isTrue);
+      expect(project.showsCompletedProjectVoteOutcome, isFalse);
     });
 
     test('hidden when project is completed', () {
@@ -642,6 +642,46 @@ void main() {
       expect(project.isClosureVoteOutcomeApproved, isFalse);
       expect(project.showsClosureVoteRefundOutcome, isTrue);
     });
+
+    test(
+      'member mark-successful vote uses cast flow instead of distribution layout',
+      () {
+        final project = ProjectDetailEntity(
+          id: 'p1',
+          name: 'Fund',
+          category: ProjectCategory.investment,
+          status: ProjectStatus.ongoing,
+          goalAmount: 10000,
+          currentAmount: 9800,
+          endsIn: '30d',
+          announcement: '',
+          members: const [],
+          borrowRequests: const [],
+          viewerRole: ViewerMembershipRole.member,
+          apiCanStopContributions: false,
+          projectLifecycleState: 'funded',
+          displayStatusLabel: 'Funded',
+          hasWeek11ProjectDetailEnvelope: true,
+          detailUserRole: ProjectDetailUserRole.member,
+          votingStatus: ProjectVotingStatus.pending,
+          voting: ProjectVotingSummaryEntity(
+            startedAtUtc: DateTime.utc(2026, 6, 1),
+            deadlineAtUtc: DateTime.utc(2026, 7, 1),
+            voteType: ClosureVoteType.finalClosureVote,
+            agreedCount: 1,
+            disagreedCount: 0,
+            pendingCount: 6,
+            hasVoted: false,
+            isFinalized: false,
+          ),
+        );
+
+        expect(project.isInvestmentMarkSuccessfulClosureVote, isTrue);
+        expect(project.showsInlineMemberVoteFlow, isTrue);
+        expect(project.showsInvestmentDistributionActions, isFalse);
+        expect(project.showsCompletedProjectVoteOutcome, isFalse);
+      },
+    );
   });
 }
 

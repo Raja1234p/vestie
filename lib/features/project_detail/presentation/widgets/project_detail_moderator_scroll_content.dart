@@ -6,7 +6,6 @@ import 'package:vestie/core/widgets/common/app_back_button.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_closure_extensions.dart';
-import 'package:vestie/features/project_detail/domain/entities/project_detail_member_vote_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation.dart';
@@ -14,7 +13,6 @@ import 'package:vestie/core/di/service_locator.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_announcements_section.dart';
-import 'package:vestie/features/project_detail/presentation/widgets/project_detail_inline_member_vote_flow.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_voting_sections.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_tab_section.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_members_only_section.dart';
@@ -81,52 +79,6 @@ class _ProjectDetailModeratorScrollContentState
   @override
   Widget build(BuildContext context) {
     final project = widget.project;
-
-    if (project.showsInlineMemberVoteFlow) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          PostAuthHeader(
-            title: project.name,
-            leading: AppBackButton(
-              onPressed: () => popProjectDetailNavigation(
-                context,
-                refreshHomeOnPop: widget.refreshHomeOnPop,
-                refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
-              ),
-            ),
-            trailing: project.showsProjectDetailOverflowMenu
-                ? ProjectDetailTrailingActions(
-                    project: project,
-                    pendingJoinRequestCount: widget.pendingJoinRequestCount,
-                    onLeaderMenuSelected: (action) =>
-                        ProjectDetailNavigation.handleLeaderAction(
-                          context,
-                          project: project,
-                          action: action,
-                          refreshHomeOnPop: widget.refreshHomeOnPop,
-                          refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
-                        ),
-                    onMemberMenuSelected: (action) =>
-                        ProjectDetailNavigation.handleMemberAction(
-                          context,
-                          project: project,
-                          action: action,
-                          refreshHomeOnPop: widget.refreshHomeOnPop,
-                          refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
-                        ),
-                  )
-                : null,
-          ),
-          Expanded(
-            child: ProjectDetailInlineMemberVoteFlow(
-              project: project,
-              onRefresh: widget.onRefresh,
-            ),
-          ),
-        ],
-      );
-    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

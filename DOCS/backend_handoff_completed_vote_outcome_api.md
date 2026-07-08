@@ -35,8 +35,9 @@ One shared layout renders **different copy and styling** based on:
 | **Full-screen outcome** | Profile route `/profile/completed-projects/detail` (deep link / legacy path) | `GET /projects/{id}` (load screen) |
 | **After leader finalize** | Leader taps finalize after vote deadline | `POST …/finalize` then `GET /projects/{id}` |
 | **Stop-contributions rejected** | Investment detail while project still `ongoing` | `GET /projects/{id}` → full-screen **Vote Not Passed** |
+| **Stop-contributions passed** | Investment detail, `lifecycleState: funded`, `canStopContributions: false` | `GET /projects/{id}` → **Distribute Funds / Investment Returns** on detail (not outcome screen) |
 
-**CTA:** **Back to Home** → dashboard (all Figma variants). No gradient-header embedded outcome UI.
+**CTA:** **Back to Home** → dashboard (all Figma outcome variants). No gradient-header embedded outcome UI.
 
 ---
 

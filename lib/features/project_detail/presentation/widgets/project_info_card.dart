@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/widgets/common/project_end_and_roi_row.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
@@ -27,6 +26,10 @@ class ProjectInfoCard extends StatelessWidget {
 
   bool get _showsCompletedAmount =>
       displayAsCompleted || project.status == ProjectStatus.completed;
+
+  /// Investment funded / post stop-contributions — “Raised $…” without goal slash.
+  bool get _showsRaisedOnlyAmount =>
+      _showsCompletedAmount || project.investmentContributionsAreClosed;
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +60,7 @@ class ProjectInfoCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: _showsCompletedAmount
+                child: _showsRaisedOnlyAmount
                     ? ProjectInfoRaisedTotalRow(
                         current: project.currentAmount > 0
                             ? project.currentAmount
@@ -66,9 +69,6 @@ class ProjectInfoCard extends StatelessWidget {
                     : ProjectInfoGoalRow(
                         goal: project.goalAmount,
                         current: project.currentAmount,
-                        prefix: project.investmentContributionsAreClosed
-                            ? AppStrings.raisedPrefix
-                            : AppStrings.goalPrefix,
                       ),
               ),
               SizedBox(width: 8.w),

@@ -12,7 +12,6 @@ import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_error_view.dart';
-import 'package:vestie/core/widgets/common/app_loader.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/post_auth_flow_sub_header.dart';
@@ -23,6 +22,7 @@ import 'package:vestie/features/project_detail/presentation/cubit/investment_dis
 import 'package:vestie/features/project_detail/presentation/models/investment_distribution_ui_data.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/investment_distribution/investment_distribution_breakdown_table.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/investment_distribution/investment_distribution_screen_shimmer.dart';
 
 /// Leader distribution breakdown — summary, table, confirm (Figma).
 class InvestmentDistributionScreen extends StatelessWidget {
@@ -37,7 +37,7 @@ class InvestmentDistributionScreen extends StatelessWidget {
     if (!_usesApiLoad) {
       final data = args.data;
       if (data == null) {
-        return const Scaffold(body: Center(child: AppLoader()));
+        return const InvestmentDistributionScreenShimmer();
       }
       return _InvestmentDistributionShell(
         data: data,
@@ -75,7 +75,7 @@ class _InvestmentDistributionProductionBody extends StatelessWidget {
       },
       builder: (context, state) {
         if (state.isLoading) {
-          return const Scaffold(body: Center(child: AppLoader()));
+          return const InvestmentDistributionScreenShimmer();
         }
 
         if (state.loadFailed) {
