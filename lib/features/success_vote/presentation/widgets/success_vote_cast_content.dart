@@ -8,6 +8,7 @@ import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_outline_neutral_button.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_viewer_penalty_extensions.dart';
 
 import '../models/success_vote_cast_choice.dart';
 import '../models/success_vote_cast_copy.dart';
@@ -20,6 +21,7 @@ class SuccessVoteCastContent extends StatefulWidget {
   final SuccessVoteCastUiData data;
   final SuccessVoteCastChoice choice;
   final bool canVote;
+  final ClosureVoteCastBlockReason? cannotCastReason;
   final bool? submittingVoteForSuccess;
   final Future<bool> Function(bool voteForSuccess)? onSubmitVote;
 
@@ -30,6 +32,7 @@ class SuccessVoteCastContent extends StatefulWidget {
     required this.data,
     this.choice = SuccessVoteCastChoice.pending,
     this.canVote = true,
+    this.cannotCastReason,
     this.submittingVoteForSuccess,
     this.onSubmitVote,
     this.showPerMemberVoteRoster = false,
@@ -129,7 +132,10 @@ class _SuccessVoteCastContentState extends State<SuccessVoteCastContent> {
                     onVoteYes: () => _castVote(true),
                     onVoteNo: () => _castVote(false),
                   )
-                : _CannotVoteFooter(choice: choice),
+                : _CannotVoteFooter(
+                    choice: choice,
+                    reason: widget.cannotCastReason,
+                  ),
           ),
         ],
       ),
@@ -139,8 +145,23 @@ class _SuccessVoteCastContentState extends State<SuccessVoteCastContent> {
 
 class _CannotVoteFooter extends StatelessWidget {
   final SuccessVoteCastChoice choice;
+  final ClosureVoteCastBlockReason? reason;
 
-  const _CannotVoteFooter({required this.choice});
+  const _CannotVoteFooter({
+    required this.choice,
+    this.reason,
+  });
+
+  String _messageForReason(ClosureVoteCastBlockReason blockReason) {
+    return switch (blockReason) {
+      ClosureVoteCastBlockReason.groupLeader =>
+        AppStrings.errorClosureVoteGroupLeaderCannotVote,
+      ClosureVoteCastBlockReason.defaulted =>
+        AppStrings.errorClosureVoteDefaultedCannotVote,
+      ClosureVoteCastBlockReason.overdue =>
+        AppStrings.errorClosureVoteOverdueCannotVote,
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -154,8 +175,11 @@ class _CannotVoteFooter extends StatelessWidget {
     }
 
     final theme = Theme.of(context);
+    final message = reason != null
+        ? _messageForReason(reason!)
+        : AppStrings.errorClosureVoteGroupLeaderCannotVote;
     return AppText(
-      AppStrings.errorClosureVoteGroupLeaderCannotVote,
+      message,
       textAlign: TextAlign.center,
       style: theme.textTheme.bodyMedium?.copyWith(
         color: AppColors.grey1100,

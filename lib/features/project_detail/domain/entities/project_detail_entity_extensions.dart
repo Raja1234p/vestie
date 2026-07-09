@@ -31,6 +31,7 @@ extension ProjectDetailEntityMemberUpdates on ProjectDetailEntity {
       status: status,
       goalAmount: goalAmount,
       currentAmount: currentAmount,
+      totalContributed: totalContributed,
       contributorCount: contributorCount,
       endsIn: endsIn,
       announcement: announcement,

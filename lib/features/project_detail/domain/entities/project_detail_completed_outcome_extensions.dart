@@ -62,4 +62,24 @@ extension ProjectDetailEntityCompletedOutcome on ProjectDetailEntity {
     }
     return !showsInvestmentDistributionActions;
   }
+
+  /// Investment mark-successful / final closure vote passed (not stop-contributions).
+  bool get isApprovedInvestmentFinalClosureOutcome {
+    if (!category.isInvestment || !isClosureVoteOutcomeApproved) {
+      return false;
+    }
+    final voteType = voting?.voteType;
+    if (voteType == ClosureVoteType.stopContributionsVote) return false;
+    if (voteType == ClosureVoteType.finalClosureVote) return true;
+    if (voting?.outcome == ClosureVoteOutcome.investmentStarted) return true;
+    return investmentContributionsAreClosed;
+  }
+
+  /// Outcome screen headline — investment final success uses [totalContributed] only.
+  double get closureVoteOutcomeAmountUsd {
+    if (isApprovedInvestmentFinalClosureOutcome) {
+      return totalContributed;
+    }
+    return raisedDisplayAmount;
+  }
 }

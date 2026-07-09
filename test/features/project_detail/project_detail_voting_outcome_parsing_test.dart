@@ -135,6 +135,47 @@ void main() {
       );
     });
 
+    test('investment final closure approved outcome amount uses totalContributed',
+        () {
+      final entity = ProjectDetailResponseModel.fromJson({
+        ..._detailJson({
+          'startedAtUtc': '2026-07-01T12:00:00Z',
+          'deadlineAtUtc': '2026-07-03T12:00:00Z',
+          'voteType': 'FinalClosureVote',
+          'outcome': 'Success',
+          'isApproved': true,
+          'isFinalized': true,
+          'agreedCount': 5,
+          'disagreedCount': 2,
+          'pendingCount': 0,
+          'eligibleVoterCount': 7,
+          'hasVoted': true,
+          'memberVotes': [],
+        }),
+        'projectStatus': 'completed',
+        'project': {
+          'id': 'p1',
+          'name': 'Fund',
+          'type': 'investment',
+          'displayStatus': 'Completed',
+          'targetAmount': 15000,
+          'totalContributed': 500,
+          'raisedAmount': 0,
+          'potAmount': 0,
+          'viewerRole': 'Member',
+          'lifecycleState': 'completed',
+        },
+      }).toEntity();
+
+      expect(entity.isApprovedInvestmentFinalClosureOutcome, isTrue);
+      expect(entity.raisedDisplayAmount, 500);
+      expect(entity.closureVoteOutcomeAmountUsd, 500);
+      expect(
+        successVoteOutcomeUiDataFromProjectDetail(entity).amountUsd,
+        500,
+      );
+    });
+
     test('final closure refund does not use refund lifecycle UI', () {
       final entity = ProjectDetailResponseModel.fromJson(
         _detailJson({

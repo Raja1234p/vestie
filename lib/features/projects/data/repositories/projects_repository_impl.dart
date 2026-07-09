@@ -91,7 +91,7 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
       status: _mapStatus(statusLabel),
       relation: _mapRelation(scope: scope, viewerRole: m.viewerRole),
       goalAmount: m.targetAmount,
-      currentAmount: m.raisedAmount,
+      currentAmount: m.raisedDisplayAmount,
       description: m.description,
       endsIn: m.endsAtUtc?.toIso8601String(),
       roiPercentage: m.roiPercentage,

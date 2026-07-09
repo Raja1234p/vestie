@@ -48,7 +48,16 @@ class SuccessVoteOutcomeCopy {
     SuccessVoteOutcomeRole role, {
     ProjectCategory? category,
     SuccessVoteOutcomeVariant variant = SuccessVoteOutcomeVariant.successVote,
+    bool viewerPenaltyIneligible = false,
   }) {
+    if (viewerPenaltyIneligible &&
+        role != SuccessVoteOutcomeRole.groupLeader) {
+      if (variant == SuccessVoteOutcomeVariant.noVotesRejected) {
+        return _penaltyIneligibleNoVotesCopy(category);
+      }
+      return _penaltyIneligibleCopy(category);
+    }
+
     if (category == ProjectCategory.investment &&
         variant == SuccessVoteOutcomeVariant.stopContributionsRejected) {
       return switch (role) {
@@ -318,6 +327,87 @@ class SuccessVoteOutcomeCopy {
     amountCaptionApproved: AppStrings.successVoteOutcomeCoLeaderAmountApprovedCaption,
     amountCaptionRejected:
         AppStrings.successVoteOutcomeVacationCoLeaderMemberAmountRejectedCaption,
+    primaryButtonApproved: AppStrings.btnBackToHome,
+    primaryButtonRejected: AppStrings.btnBackToHome,
+    voteSummaryLabel: AppStrings.projectVoteSummaryLabel,
+    agreedLabel: AppStrings.projectVoteAgreedLabel,
+    disagreedLabel: AppStrings.projectVoteDisagreedLabel,
+  );
+
+  static SuccessVoteOutcomeCopy _penaltyIneligibleCopy(ProjectCategory? category) {
+    return switch (category) {
+      ProjectCategory.emergency => _penaltyEmergencyApprovedMember,
+      ProjectCategory.investment => _penaltyInvestmentApprovedMember,
+      ProjectCategory.vacations => _penaltyVacationApprovedMember,
+      _ => _penaltyVacationApprovedMember,
+    };
+  }
+
+  static SuccessVoteOutcomeCopy _penaltyIneligibleNoVotesCopy(
+    ProjectCategory? category,
+  ) {
+    final base = _penaltyIneligibleCopy(category);
+    return SuccessVoteOutcomeCopy(
+      approvedTitle: base.approvedTitle,
+      approvedSubtitle: base.approvedSubtitle,
+      rejectedTitle: AppStrings.successVoteOutcomeNoVotesTitle,
+      rejectedSubtitle: AppStrings.successVoteOutcomePenaltyNoVotesSubtitle,
+      amountCaptionApproved: base.amountCaptionApproved,
+      amountCaptionRejected:
+          AppStrings.successVoteOutcomePenaltyNoVotesAmountCaption,
+      primaryButtonApproved: base.primaryButtonApproved,
+      primaryButtonRejected: base.primaryButtonRejected,
+      voteSummaryLabel: base.voteSummaryLabel,
+      agreedLabel: base.agreedLabel,
+      disagreedLabel: base.disagreedLabel,
+    );
+  }
+
+  static const SuccessVoteOutcomeCopy _penaltyVacationApprovedMember =
+      SuccessVoteOutcomeCopy(
+    approvedTitle: AppStrings.successVoteOutcomeCoLeaderApprovedTitle,
+    approvedSubtitle: AppStrings.successVoteOutcomePenaltyApprovedSubtitle,
+    rejectedTitle: AppStrings.projectVoteNotApprovedTitle,
+    rejectedSubtitle: AppStrings.successVoteOutcomePenaltyRejectedSubtitle,
+    amountCaptionApproved:
+        AppStrings.successVoteOutcomePenaltyVacationApprovedAmountCaption,
+    amountCaptionRejected:
+        AppStrings.successVoteOutcomePenaltyRejectedAmountCaption,
+    primaryButtonApproved: AppStrings.btnBackToHome,
+    primaryButtonRejected: AppStrings.btnBackToHome,
+    voteSummaryLabel: AppStrings.projectVoteSummaryLabel,
+    agreedLabel: AppStrings.projectVoteAgreedLabel,
+    disagreedLabel: AppStrings.projectVoteDisagreedLabel,
+  );
+
+  static const SuccessVoteOutcomeCopy _penaltyEmergencyApprovedMember =
+      SuccessVoteOutcomeCopy(
+    approvedTitle:
+        AppStrings.successVoteOutcomeEmergencyCoLeaderMemberApprovedTitle,
+    approvedSubtitle: AppStrings.successVoteOutcomePenaltyApprovedSubtitle,
+    rejectedTitle: AppStrings.projectVoteNotApprovedTitle,
+    rejectedSubtitle: AppStrings.successVoteOutcomePenaltyRejectedSubtitle,
+    amountCaptionApproved:
+        AppStrings.successVoteOutcomePenaltyEmergencyApprovedAmountCaption,
+    amountCaptionRejected:
+        AppStrings.successVoteOutcomePenaltyRejectedAmountCaption,
+    primaryButtonApproved: AppStrings.btnBackToHome,
+    primaryButtonRejected: AppStrings.btnBackToHome,
+    voteSummaryLabel: AppStrings.projectVoteSummaryLabel,
+    agreedLabel: AppStrings.projectVoteAgreedLabel,
+    disagreedLabel: AppStrings.projectVoteDisagreedLabel,
+  );
+
+  static const SuccessVoteOutcomeCopy _penaltyInvestmentApprovedMember =
+      SuccessVoteOutcomeCopy(
+    approvedTitle: AppStrings.successVoteOutcomeInvestmentFinalApprovedTitle,
+    approvedSubtitle: AppStrings.successVoteOutcomePenaltyApprovedSubtitle,
+    rejectedTitle: AppStrings.projectVoteNotApprovedTitle,
+    rejectedSubtitle: AppStrings.successVoteOutcomePenaltyRejectedSubtitle,
+    amountCaptionApproved:
+        AppStrings.successVoteOutcomePenaltyInvestmentApprovedAmountCaption,
+    amountCaptionRejected:
+        AppStrings.successVoteOutcomePenaltyRejectedAmountCaption,
     primaryButtonApproved: AppStrings.btnBackToHome,
     primaryButtonRejected: AppStrings.btnBackToHome,
     voteSummaryLabel: AppStrings.projectVoteSummaryLabel,

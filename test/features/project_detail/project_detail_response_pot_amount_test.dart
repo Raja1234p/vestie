@@ -68,6 +68,77 @@ void main() {
       expect(entity.currentAmount, 10);
     });
 
+    test('parses totalContributed from project payload', () {
+      final entity = ProjectDetailResponseModel.fromJson(
+        _minimalProjectJson(
+          project: {
+            'id': 'p1',
+            'name': 'Test',
+            'description': '',
+            'type': 'investment',
+            'visibility': 'public',
+            'state': 'funded',
+            'targetAmount': 5000,
+            'totalContributed': 500,
+            'raisedAmount': 0,
+            'potAmount': 0,
+            'endsAtUtc': null,
+            'displayStatus': 'Funded',
+          },
+        ),
+      ).toEntity();
+
+      expect(entity.totalContributed, 500);
+      expect(entity.currentAmount, 0);
+      expect(entity.raisedDisplayAmount, 500);
+    });
+
+    test('vacation detail raisedDisplayAmount falls back to totalContributed', () {
+      final entity = ProjectDetailResponseModel.fromJson(
+        _minimalProjectJson(
+          project: {
+            'id': 'p1',
+            'name': 'Beach',
+            'description': '',
+            'type': 'vacation',
+            'visibility': 'public',
+            'state': 'active',
+            'targetAmount': 5000,
+            'totalContributed': 500,
+            'raisedAmount': 0,
+            'potAmount': 0,
+            'endsAtUtc': null,
+            'displayStatus': 'On Going',
+          },
+        ),
+      ).toEntity();
+
+      expect(entity.raisedDisplayAmount, 500);
+    });
+
+    test('emergency detail raisedDisplayAmount falls back to totalContributed', () {
+      final entity = ProjectDetailResponseModel.fromJson(
+        _minimalProjectJson(
+          project: {
+            'id': 'p1',
+            'name': 'Rainy day',
+            'description': '',
+            'type': 'emergency',
+            'visibility': 'public',
+            'state': 'active',
+            'targetAmount': 3000,
+            'totalContributed': 750,
+            'raisedAmount': 0,
+            'potAmount': 0,
+            'endsAtUtc': null,
+            'displayStatus': 'On Going',
+          },
+        ),
+      ).toEntity();
+
+      expect(entity.raisedDisplayAmount, 750);
+    });
+
     test('uses positive potAmount when provided', () {
       final entity = ProjectDetailResponseModel.fromJson(
         _minimalProjectJson(

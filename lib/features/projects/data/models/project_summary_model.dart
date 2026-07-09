@@ -13,6 +13,8 @@ class ProjectSummaryModel extends ProjectSummaryEntity {
     required super.state,
     required super.targetAmount,
     super.raisedAmount,
+    super.potAmount,
+    super.totalContributed,
     super.maxMembers,
     required super.endsAtUtc,
     super.launchedAtUtc,
@@ -43,6 +45,10 @@ class ProjectSummaryModel extends ProjectSummaryEntity {
       state: projectListStateLabel(json),
       targetAmount: json.safeDouble('targetAmount'),
       raisedAmount: json.safeDouble('raisedAmount'),
+      potAmount: json.containsKey('potAmount')
+          ? json.safeDouble('potAmount')
+          : null,
+      totalContributed: json.safeDouble('totalContributed'),
       maxMembers: json['maxMembers'] != null
           ? json.safeInt('maxMembers')
           : json.safeInt('memberCount'),
@@ -92,6 +98,8 @@ class ProjectSummaryModel extends ProjectSummaryEntity {
       'state': state,
       'targetAmount': targetAmount,
       'raisedAmount': raisedAmount,
+      if (potAmount != null) 'potAmount': potAmount,
+      'totalContributed': totalContributed,
       'maxMembers': maxMembers,
       if (endsAtUtc != null) 'endsAtUtc': endsAtUtc!.toIso8601String(),
       'launchedAtUtc': launchedAtUtc?.toIso8601String(),

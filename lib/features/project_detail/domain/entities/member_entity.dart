@@ -23,6 +23,9 @@ class MemberEntity {
   /// API `badge` — `Top Contributor`, `Overdue`, or `OverDueBorrow` (mutually exclusive contribution pills).
   final String badge;
 
+  /// API `isDefaulted` — leader-marked default; blocks closure voting.
+  final bool isDefaulted;
+
   const MemberEntity({
     required this.id,
     this.membershipId = '',
@@ -40,6 +43,7 @@ class MemberEntity {
     this.canSendVffRequest = false,
     this.pendingVffRequestId,
     this.badge = '',
+    this.isDefaulted = false,
   });
 
   bool get isVffConnected => vffConnectionState == VffConnectionState.connected;
@@ -114,6 +118,7 @@ class MemberEntity {
     bool? canSendVffRequest,
     String? pendingVffRequestId,
     String? badge,
+    bool? isDefaulted,
     bool clearPendingVffRequestId = false,
   }) {
     return MemberEntity(
@@ -135,6 +140,7 @@ class MemberEntity {
           ? null
           : (pendingVffRequestId ?? this.pendingVffRequestId),
       badge: badge ?? this.badge,
+      isDefaulted: isDefaulted ?? this.isDefaulted,
     );
   }
 }

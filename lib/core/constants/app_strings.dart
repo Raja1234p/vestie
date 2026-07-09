@@ -856,6 +856,10 @@ class AppStrings {
       'Enter a number between 1 and 365';
   static const String errorClosureVoteGroupLeaderCannotVote =
       'Group leaders cannot vote on closure votes.';
+  static const String errorClosureVoteDefaultedCannotVote =
+      'You were marked as defaulted on this project, so you can\'t vote.';
+  static const String errorClosureVoteOverdueCannotVote =
+      'You have an overdue borrow on this project, so you can\'t vote until it\'s repaid.';
   static const String errorClosureVoteDeadlinePassed =
       'The voting deadline has passed.';
   static const String errorClosureVoteNoOpenVote =
@@ -1623,6 +1627,24 @@ class AppStrings {
       'All contributions are being refunded';
   static const String successVoteOutcomeNoVotesMemberAmountCaption =
       'Your contributions are being refunded to your wallet';
+
+  // Success vote outcome — viewer defaulted / overdue (no wallet refund copy)
+  static const String successVoteOutcomePenaltyApprovedSubtitle =
+      'Majority of members agreed. You couldn\'t vote on this project because of a penalty on your account.';
+  static const String successVoteOutcomePenaltyRejectedSubtitle =
+      'Majority of members disagreed. You couldn\'t vote on this project because of a penalty on your account.';
+  static const String successVoteOutcomePenaltyNoVotesSubtitle =
+      'The voting deadline passed without any members casting a vote. You couldn\'t vote because of a penalty on your account.';
+  static const String successVoteOutcomePenaltyVacationApprovedAmountCaption =
+      'Funds released to the project leader. You couldn\'t vote because of a penalty on your account.';
+  static const String successVoteOutcomePenaltyEmergencyApprovedAmountCaption =
+      'Emergency project closed. Unused funds released to leader. You couldn\'t vote because of a penalty on your account.';
+  static const String successVoteOutcomePenaltyInvestmentApprovedAmountCaption =
+      'Total funds were distributed to contributors. You couldn\'t vote because of a penalty on your account.';
+  static const String successVoteOutcomePenaltyRejectedAmountCaption =
+      'Because of your penalty status, you aren\'t eligible for a contribution refund.';
+  static const String successVoteOutcomePenaltyNoVotesAmountCaption =
+      'Because of your penalty status, you aren\'t eligible for a contribution refund.';
 
   static const String successVoteOutcomeEmergencyLeaderAmountApprovedCaption =
       'Unused emergency funds released to your wallet';

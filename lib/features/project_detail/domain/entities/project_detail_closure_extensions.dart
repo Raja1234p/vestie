@@ -169,6 +169,7 @@ extension ProjectDetailEntityClosureVote on ProjectDetailEntity {
       status: status ?? this.status,
       goalAmount: goalAmount,
       currentAmount: currentAmount,
+      totalContributed: totalContributed,
       contributorCount: contributorCount,
       endsIn: endsIn,
       announcement: announcement,

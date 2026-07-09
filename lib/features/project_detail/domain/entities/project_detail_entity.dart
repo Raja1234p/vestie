@@ -25,6 +25,9 @@ class ProjectDetailEntity {
   final double goalAmount;
   final double currentAmount;
 
+  /// API `project.totalContributed` — sum of member contributions (detail raised fallback).
+  final double totalContributed;
+
   /// From `GET /projects/{id}/pot` (`contributorCount`).
   final int contributorCount;
   final String endsIn;
@@ -98,6 +101,10 @@ class ProjectDetailEntity {
   final PaginationInfo invitesPagination;
   final PaginationInfo announcementsPagination;
 
+  /// From `viewerMembership` when the viewer row is absent from `members[]`.
+  final bool viewerApiIsDefaulted;
+  final double? viewerApiOverdueAmount;
+
   const ProjectDetailEntity({
     required this.id,
     required this.name,
@@ -105,6 +112,7 @@ class ProjectDetailEntity {
     required this.status,
     required this.goalAmount,
     required this.currentAmount,
+    this.totalContributed = 0,
     this.contributorCount = 0,
     required this.endsIn,
     required this.announcement,
@@ -157,10 +165,16 @@ class ProjectDetailEntity {
       totalCount: 0,
       totalPages: 0,
     ),
+    this.viewerApiIsDefaulted = false,
+    this.viewerApiOverdueAmount,
   });
 
   double get progress =>
       goalAmount > 0 ? (currentAmount / goalAmount).clamp(0.0, 1.0) : 0.0;
+
+  /// Raised headline on detail when pot/raised is zero — falls back to [totalContributed].
+  double get raisedDisplayAmount =>
+      currentAmount > 0 ? currentAmount : totalContributed;
 
   bool get isGroupLeader => viewerRole.isGroupLeader;
 

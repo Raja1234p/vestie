@@ -6,6 +6,7 @@ import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/project_detail/domain/usecases/submit_vote_usecase.dart';
 import 'package:vestie/features/project_detail/presentation/mappers/project_detail_voting_ui_mappers.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_viewer_penalty_extensions.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_cast_choice.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_cast_ui_data.dart';
 import 'package:vestie/features/success_vote/presentation/widgets/success_vote_cast_content.dart';
@@ -54,6 +55,7 @@ class _ProjectDetailInlineCastVoteState extends State<ProjectDetailInlineCastVot
     if (_choice != SuccessVoteCastChoice.pending) {
       return false;
     }
+    if (!widget.project.viewerCanCastClosureVote) return false;
     if (!widget.project.showsInlineMemberCastVote) return false;
 
     final result = await ServiceLocator.instance.submitVoteUseCase(
@@ -90,8 +92,10 @@ class _ProjectDetailInlineCastVoteState extends State<ProjectDetailInlineCastVot
     return SuccessVoteCastContent(
       data: _data,
       choice: _choice,
-      canVote: widget.project.showsInlineMemberCastVote &&
+      canVote: widget.project.viewerCanCastClosureVote &&
+          widget.project.showsInlineMemberCastVote &&
           _choice == SuccessVoteCastChoice.pending,
+      cannotCastReason: widget.project.closureVoteCastBlockReason,
       onSubmitVote: _submitVote,
     );
   }

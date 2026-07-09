@@ -15,6 +15,11 @@ class ProjectSummaryEntity extends Equatable {
   final String state;
   final double targetAmount;
   final double raisedAmount;
+
+  /// When present on list project object (including `0`); otherwise [raisedAmount].
+  final double? potAmount;
+
+  final double totalContributed;
   final int maxMembers;
   final DateTime? endsAtUtc;
   final DateTime? launchedAtUtc;
@@ -45,6 +50,8 @@ class ProjectSummaryEntity extends Equatable {
     required this.state,
     required this.targetAmount,
     this.raisedAmount = 0,
+    this.potAmount,
+    this.totalContributed = 0,
     this.maxMembers = 0,
     this.endsAtUtc,
     this.launchedAtUtc,
@@ -74,6 +81,13 @@ class ProjectSummaryEntity extends Equatable {
 
   bool get isMember => viewerMembershipRole.isMember;
 
+  /// `potAmount` when API sends it (including `0`); otherwise [raisedAmount].
+  double get displayPotAmount => potAmount ?? raisedAmount;
+
+  /// Home/detail card amount when pot/raised is zero.
+  double get raisedDisplayAmount =>
+      displayPotAmount > 0 ? displayPotAmount : totalContributed;
+
   @override
   List<Object?> get props => [
     id,
@@ -84,6 +98,8 @@ class ProjectSummaryEntity extends Equatable {
     state,
     targetAmount,
     raisedAmount,
+    potAmount,
+    totalContributed,
     maxMembers,
     endsAtUtc,
     launchedAtUtc,

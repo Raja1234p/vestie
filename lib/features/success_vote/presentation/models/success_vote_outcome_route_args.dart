@@ -20,6 +20,9 @@ class SuccessVoteOutcomeRouteArgs {
   /// Used for category-specific copy when [project] is null.
   final ProjectCategory? projectCategory;
 
+  /// Defaulted / overdue viewer — penalty-specific outcome copy (no wallet refund).
+  final bool viewerPenaltyIneligible;
+
   const SuccessVoteOutcomeRouteArgs({
     required this.data,
     required this.viewerRole,
@@ -28,6 +31,7 @@ class SuccessVoteOutcomeRouteArgs {
     this.distributionPhase = SuccessVoteOutcomeDistributionPhase.none,
     this.project,
     this.projectCategory,
+    this.viewerPenaltyIneligible = false,
   });
 
   ProjectCategory? get resolvedCategory => projectCategory ?? project?.category;

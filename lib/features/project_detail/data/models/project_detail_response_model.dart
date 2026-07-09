@@ -139,15 +139,18 @@ class ProjectDetailResponseModel {
       members: mappedMembers,
     );
 
-    final mergedMembers = _applyViewerMembershipRole(
-      _applyViewerMembershipBadge(
-        mappedMembers,
+    final mergedMembers = _applyViewerMembershipPenalty(
+      _applyViewerMembershipRole(
+        _applyViewerMembershipBadge(
+          mappedMembers,
+          viewerMembershipId: _viewerMembership.membershipId,
+          viewerBadge: _viewerMembership.badge,
+        ),
         viewerMembershipId: _viewerMembership.membershipId,
-        viewerBadge: _viewerMembership.badge,
+        viewerUserId: _viewerMembership.userId,
+        viewerRole: viewerRole,
       ),
-      viewerMembershipId: _viewerMembership.membershipId,
-      viewerUserId: _viewerMembership.userId,
-      viewerRole: viewerRole,
+      viewerMembership: _viewerMembership,
     );
     final mappedInvites = _invites.map(_mapInvite).toList(growable: false);
     final mappedAnnouncements = _announcements
@@ -190,6 +193,7 @@ class ProjectDetailResponseModel {
       status: entityStatus,
       goalAmount: _project.targetAmount,
       currentAmount: _project.displayPotAmount,
+      totalContributed: _project.totalContributed,
       endsIn: _project.endsAtUtc,
       announcement: _project.description,
       announcements: mappedAnnouncements,
@@ -227,6 +231,8 @@ class ProjectDetailResponseModel {
       membersPagination: _toPaginationInfo(_membersPagination),
       invitesPagination: _toPaginationInfo(_invitesPagination),
       announcementsPagination: _toPaginationInfo(_announcementsPagination),
+      viewerApiIsDefaulted: _viewerMembership.isDefaulted,
+      viewerApiOverdueAmount: _viewerMembership.overdueAmount,
     );
 
     if (!hasActiveVote) return entity;
@@ -285,6 +291,7 @@ class ProjectDetailResponseModel {
       canSendVffRequest: json.canSendVffRequest,
       pendingVffRequestId: json.pendingVffRequestId,
       badge: MemberEntity.memberBadgeFromApi(json.badge),
+      isDefaulted: json.isDefaulted,
     );
   }
 
@@ -358,6 +365,28 @@ class ProjectDetailResponseModel {
           if (member.membershipId.trim() != membershipId) return member;
           if (member.badge.trim().isNotEmpty) return member;
           return member.copyWith(badge: badge);
+        })
+        .toList(growable: false);
+  }
+
+  static List<MemberEntity> _applyViewerMembershipPenalty(
+    List<MemberEntity> members, {
+    required _MembershipPayload viewerMembership,
+  }) {
+    final membershipId = viewerMembership.membershipId.trim();
+    if (membershipId.isEmpty) return members;
+
+    final viewerBadge = MemberEntity.memberBadgeFromApi(viewerMembership.badge);
+    return members
+        .map((member) {
+          if (member.membershipId.trim() != membershipId) return member;
+          return member.copyWith(
+            isDefaulted:
+                viewerMembership.isDefaulted || member.isDefaulted,
+            overdueAmount:
+                viewerMembership.overdueAmount ?? member.overdueAmount,
+            badge: member.badge.trim().isNotEmpty ? member.badge : viewerBadge,
+          );
         })
         .toList(growable: false);
   }
@@ -533,6 +562,7 @@ class _ProjectPayload {
   final String lifecycleState;
   final double targetAmount;
   final double raisedAmount;
+  final double totalContributed;
 
   /// When present on `project`, shown instead of [raisedAmount] on project detail.
   final double? potAmount;
@@ -559,6 +589,7 @@ class _ProjectPayload {
     required this.lifecycleState,
     required this.targetAmount,
     required this.raisedAmount,
+    this.totalContributed = 0,
     this.potAmount,
     required this.endsAtUtc,
     this.launchedAtUtc,
@@ -587,6 +618,8 @@ class _ProjectPayload {
       lifecycleState: lifecycle,
       targetAmount: (json['targetAmount'] as num?)?.toDouble() ?? 0.0,
       raisedAmount: (json['raisedAmount'] as num?)?.toDouble() ?? 0.0,
+      totalContributed:
+          (json['totalContributed'] as num?)?.toDouble() ?? 0.0,
       potAmount: json.containsKey('potAmount')
           ? (json['potAmount'] as num?)?.toDouble() ?? 0.0
           : null,

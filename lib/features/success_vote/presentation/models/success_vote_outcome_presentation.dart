@@ -18,11 +18,13 @@ class SuccessVoteOutcomePresentation {
         SuccessVoteOutcomeRefundPhase.none,
     SuccessVoteOutcomeVariant variant = SuccessVoteOutcomeVariant.successVote,
     ProjectCategory? category,
+    bool viewerPenaltyIneligible = false,
   }) {
     if (!data.isApproved &&
         category == ProjectCategory.investment &&
         refundPhase.isRefund &&
-        variant != SuccessVoteOutcomeVariant.stopContributionsRejected) {
+        variant != SuccessVoteOutcomeVariant.stopContributionsRejected &&
+        !viewerPenaltyIneligible) {
       final refund = SuccessVoteOutcomeRefundCopy.forPhase(refundPhase);
       return SuccessVoteOutcomeResolvedCopy(
         title: refund.title,

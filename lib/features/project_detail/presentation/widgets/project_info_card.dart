@@ -62,13 +62,11 @@ class ProjectInfoCard extends StatelessWidget {
               Expanded(
                 child: _showsRaisedOnlyAmount
                     ? ProjectInfoRaisedTotalRow(
-                        current: project.currentAmount > 0
-                            ? project.currentAmount
-                            : project.goalAmount,
+                        current: project.raisedDisplayAmount,
                       )
                     : ProjectInfoGoalRow(
                         goal: project.goalAmount,
-                        current: project.currentAmount,
+                        current: project.raisedDisplayAmount,
                       ),
               ),
               SizedBox(width: 8.w),

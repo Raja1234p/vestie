@@ -8,6 +8,7 @@ import 'package:vestie/features/project_detail/domain/entities/project_detail_cl
 import 'package:vestie/features/project_detail/domain/entities/closure_vote_participation_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_completed_outcome_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_voting_entities.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_viewer_penalty_extensions.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_cast_route_args.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_distribution_phase.dart';
 import 'package:vestie/features/success_vote/presentation/models/success_vote_outcome_refund_phase.dart';
@@ -276,7 +277,7 @@ SuccessVoteOutcomeRouteArgs successVoteOutcomeRouteArgsFromFinalize({
   return SuccessVoteOutcomeRouteArgs(
     data: successVoteOutcomeUiDataFromFinalize(
       result: result,
-      amountUsd: project.currentAmount,
+      amountUsd: project.closureVoteOutcomeAmountUsd,
       totalMemberCount: project.members.isNotEmpty
           ? project.members.length
           : null,
@@ -290,6 +291,7 @@ SuccessVoteOutcomeRouteArgs successVoteOutcomeRouteArgsFromFinalize({
     distributionPhase: distributionPhaseFromProjectDetail(project),
     project: role.isModerator ? project : null,
     projectCategory: project.category,
+    viewerPenaltyIneligible: project.viewerIsClosureVoteIneligible,
   );
 }
 
@@ -306,7 +308,7 @@ SuccessVoteOutcomeUiData successVoteOutcomeUiDataFromProjectDetail(
         : (voting.eligibleVoterCount ?? voting.pendingCount).clamp(1, 999);
     return SuccessVoteOutcomeUiData(
       isApproved: false,
-      amountUsd: project.currentAmount,
+      amountUsd: project.closureVoteOutcomeAmountUsd,
       agreedCount: 0,
       disagreedCount: 0,
       totalMemberCount: total,
@@ -319,7 +321,7 @@ SuccessVoteOutcomeUiData successVoteOutcomeUiDataFromProjectDetail(
     final total = tallied > 0 ? tallied : eligibleTotal;
     return SuccessVoteOutcomeUiData(
       isApproved: project.isClosureVoteOutcomeApproved,
-      amountUsd: project.currentAmount,
+      amountUsd: project.closureVoteOutcomeAmountUsd,
       agreedCount: voting.agreedCount,
       disagreedCount: voting.disagreedCount,
       totalMemberCount: total > 0 ? total : 1,
@@ -331,7 +333,7 @@ SuccessVoteOutcomeUiData successVoteOutcomeUiDataFromProjectDetail(
   final majority = total <= 1 ? 1 : (total / 2).floor() + 1;
   return SuccessVoteOutcomeUiData(
     isApproved: approved,
-    amountUsd: project.currentAmount,
+    amountUsd: project.closureVoteOutcomeAmountUsd,
     agreedCount: approved ? majority : total - majority,
     disagreedCount: approved ? total - majority : majority,
     totalMemberCount: total,
@@ -430,16 +432,7 @@ SuccessVoteOutcomeRefundPhase refundPhaseFromProject(Project project) {
 }
 
 bool _isApprovedInvestmentFinalClosure(ProjectDetailEntity project) {
-  if (!project.category.isInvestment || !project.isClosureVoteOutcomeApproved) {
-    return false;
-  }
-  final voteType = project.voting?.voteType;
-  if (voteType == ClosureVoteType.stopContributionsVote) return false;
-  if (voteType == ClosureVoteType.finalClosureVote) return true;
-  final outcome = project.voting?.outcome;
-  if (outcome == ClosureVoteOutcome.investmentStarted) return true;
-  return project.investmentContributionsAreClosed &&
-      project.isClosureVoteOutcomeApproved;
+  return project.isApprovedInvestmentFinalClosureOutcome;
 }
 
 bool _isApprovedInvestmentFinalClosureFromList(Project project) {
@@ -534,5 +527,6 @@ SuccessVoteOutcomeRouteArgs successVoteOutcomeRouteArgsFromProjectDetail(
     distributionPhase: distributionPhaseFromProjectDetail(project),
     project: role.isModerator ? project : null,
     projectCategory: project.category,
+    viewerPenaltyIneligible: project.viewerIsClosureVoteIneligible,
   );
 }

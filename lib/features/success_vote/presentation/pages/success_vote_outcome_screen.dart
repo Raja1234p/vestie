@@ -32,6 +32,7 @@ class SuccessVoteOutcomeScreen extends StatelessWidget {
       args.viewerRole,
       category: args.resolvedCategory,
       variant: args.variant,
+      viewerPenaltyIneligible: args.viewerPenaltyIneligible,
     );
     final resolved = SuccessVoteOutcomePresentation.resolve(
       data: data,
@@ -39,6 +40,7 @@ class SuccessVoteOutcomeScreen extends StatelessWidget {
       refundPhase: args.refundPhase,
       variant: args.variant,
       category: args.resolvedCategory,
+      viewerPenaltyIneligible: args.viewerPenaltyIneligible,
     );
 
     return AppSuccessScreen(
