@@ -83,6 +83,10 @@ class ClearMemberVffSendErrorEvent extends ProjectDetailEvent {
   const ClearMemberVffSendErrorEvent();
 }
 
+class ClearProjectDetailRefreshErrorEvent extends ProjectDetailEvent {
+  const ClearProjectDetailRefreshErrorEvent();
+}
+
 /// Fetches the next page of project announcements from `GET /projects/{id}`.
 class LoadMoreProjectAnnouncementsEvent extends ProjectDetailEvent {
   const LoadMoreProjectAnnouncementsEvent();
@@ -124,6 +128,9 @@ class ProjectDetailLoaded extends ProjectDetailState {
   /// Shown once via UI listener (toast).
   final String? vffSendErrorMessage;
 
+  /// Background pull-to-refresh failure — keeps stale detail visible.
+  final String? refreshErrorMessage;
+
   final bool announcementsLoadingMore;
 
   ProjectDetailLoaded({
@@ -132,6 +139,7 @@ class ProjectDetailLoaded extends ProjectDetailState {
     int? pendingJoinRequestCount,
     this.sendingVffUserId,
     this.vffSendErrorMessage,
+    this.refreshErrorMessage,
     this.announcementsLoadingMore = false,
   }) : viewerRole = project.viewerRole,
        pendingJoinRequestCount =
@@ -147,6 +155,8 @@ class ProjectDetailLoaded extends ProjectDetailState {
     bool clearSendingVffUserId = false,
     String? vffSendErrorMessage,
     bool clearVffSendError = false,
+    String? refreshErrorMessage,
+    bool clearRefreshError = false,
     bool? announcementsLoadingMore,
   }) {
     return ProjectDetailLoaded(
@@ -160,6 +170,9 @@ class ProjectDetailLoaded extends ProjectDetailState {
       vffSendErrorMessage: clearVffSendError
           ? null
           : (vffSendErrorMessage ?? this.vffSendErrorMessage),
+      refreshErrorMessage: clearRefreshError
+          ? null
+          : (refreshErrorMessage ?? this.refreshErrorMessage),
       announcementsLoadingMore:
           announcementsLoadingMore ?? this.announcementsLoadingMore,
     );
@@ -173,6 +186,7 @@ class ProjectDetailLoaded extends ProjectDetailState {
     pendingJoinRequestCount,
     sendingVffUserId,
     vffSendErrorMessage,
+    refreshErrorMessage,
     announcementsLoadingMore,
   ];
 }
@@ -216,6 +230,7 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
     on<ChangeTabEvent>(_onChangeTab);
     on<SendMemberVffRequestEvent>(_onSendMemberVffRequest);
     on<ClearMemberVffSendErrorEvent>(_onClearMemberVffSendError);
+    on<ClearProjectDetailRefreshErrorEvent>(_onClearProjectDetailRefreshError);
     on<LoadMoreProjectAnnouncementsEvent>(_onLoadMoreProjectAnnouncements);
     on<MergeProjectVotingSnapshotEvent>(_onMergeProjectVotingSnapshot);
   }
@@ -252,6 +267,7 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
       _ => ProjectDetailTab.borrowRequests,
     };
     final isSilentRefresh = state is ProjectDetailLoaded;
+    final previousLoaded = isSilentRefresh ? state as ProjectDetailLoaded : null;
     if (!isSilentRefresh) {
       emit(ProjectDetailLoading());
     }
@@ -262,6 +278,14 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
     try {
       await result.fold(
         (failure) async {
+          if (isSilentRefresh && previousLoaded != null) {
+            emit(
+              previousLoaded.copyWith(
+                refreshErrorMessage: _messageFor(failure),
+              ),
+            );
+            return;
+          }
           emit(ProjectDetailError(message: _messageFor(failure)));
         },
         (project) async {
@@ -431,6 +455,15 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
     final curr = state;
     if (curr is! ProjectDetailLoaded) return;
     emit(curr.copyWith(clearVffSendError: true));
+  }
+
+  void _onClearProjectDetailRefreshError(
+    ClearProjectDetailRefreshErrorEvent event,
+    Emitter<ProjectDetailState> emit,
+  ) {
+    final curr = state;
+    if (curr is! ProjectDetailLoaded) return;
+    emit(curr.copyWith(clearRefreshError: true));
   }
 
   void _onMergeProjectVotingSnapshot(

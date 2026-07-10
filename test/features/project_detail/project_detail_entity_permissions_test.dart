@@ -575,6 +575,46 @@ void main() {
       expect(project.showsCompletedProjectVoteOutcome, isFalse);
     });
 
+    test(
+      'shown when stop-contributions approved before lifecycle fields catch up',
+      () {
+        final project = ProjectDetailEntity(
+          id: 'p1',
+          name: 'Fund',
+          category: ProjectCategory.investment,
+          status: ProjectStatus.ongoing,
+          goalAmount: 10000,
+          currentAmount: 5000,
+          endsIn: '30d',
+          announcement: '',
+          members: const [],
+          borrowRequests: const [],
+          viewerRole: ViewerMembershipRole.groupLeader,
+          displayStatusLabel: 'On Going',
+          projectLifecycleState: '',
+          apiCanStopContributions: false,
+          votingStatus: ProjectVotingStatus.done,
+          hasWeek11ProjectDetailEnvelope: true,
+          detailUserRole: ProjectDetailUserRole.leader,
+          voting: ProjectVotingSummaryEntity(
+            startedAtUtc: DateTime.utc(2026, 6, 1),
+            deadlineAtUtc: DateTime.utc(2026, 6, 30),
+            agreedCount: 4,
+            disagreedCount: 1,
+            pendingCount: 0,
+            isFinalized: true,
+            voteType: ClosureVoteType.stopContributionsVote,
+            outcome: ClosureVoteOutcome.investmentStarted,
+            isApproved: true,
+          ),
+        );
+
+        expect(project.investmentFundedPhase, isTrue);
+        expect(project.showsInvestmentDistributionActions, isTrue);
+        expect(project.showsCompletedProjectVoteOutcome, isFalse);
+      },
+    );
+
     test('hidden when project is completed', () {
       expect(
         investmentProject(

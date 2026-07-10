@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:vestie/features/project_detail/domain/entities/borrow_request_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/closure_vote_entities.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_closure_extensions.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_completed_outcome_extensions.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/viewer_membership_role.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_voting_entities.dart';
@@ -166,6 +167,95 @@ void main() {
         ProjectMemberVoteStatus.agreed,
       );
     });
+
+    test(
+      'withVotingDetailSnapshot merges funded lifecycle for approved stop-contributions',
+      () {
+        final loaded = ProjectDetailEntity(
+          id: 'p1',
+          name: 'Fund',
+          category: ProjectCategory.investment,
+          status: ProjectStatus.ongoing,
+          goalAmount: 10000,
+          currentAmount: 5000,
+          endsIn: '30d',
+          announcement: '',
+          members: const [],
+          borrowRequests: const [],
+          displayStatusLabel: 'On Going',
+          projectLifecycleState: '',
+          viewerRole: ViewerMembershipRole.groupLeader,
+          detailUserRole: ProjectDetailUserRole.leader,
+          apiCanStopContributions: true,
+          votingStatus: ProjectVotingStatus.pending,
+          hasWeek11ProjectDetailEnvelope: true,
+          voting: ProjectVotingSummaryEntity(
+            startedAtUtc: DateTime.utc(2026, 6, 1),
+            deadlineAtUtc: DateTime.utc(2026, 6, 30),
+            agreedCount: 2,
+            disagreedCount: 0,
+            pendingCount: 1,
+            voteType: ClosureVoteType.stopContributionsVote,
+            memberVotes: const [
+              ProjectVotingMemberVoteEntity(
+                membershipId: 'm1',
+                userId: 'u1',
+                displayName: 'Anna',
+                status: ProjectMemberVoteStatus.agreed,
+              ),
+            ],
+          ),
+        );
+
+        final fresh = ProjectDetailEntity(
+          id: 'p1',
+          name: 'Fund',
+          category: ProjectCategory.investment,
+          status: ProjectStatus.ongoing,
+          goalAmount: 10000,
+          currentAmount: 5000,
+          endsIn: '30d',
+          announcement: '',
+          members: const [],
+          borrowRequests: const [],
+          displayStatusLabel: 'Funded',
+          projectLifecycleState: 'funded',
+          viewerRole: ViewerMembershipRole.groupLeader,
+          detailUserRole: ProjectDetailUserRole.leader,
+          apiCanStopContributions: false,
+          votingStatus: ProjectVotingStatus.done,
+          hasWeek11ProjectDetailEnvelope: true,
+          voting: ProjectVotingSummaryEntity(
+            startedAtUtc: DateTime.utc(2026, 6, 1),
+            deadlineAtUtc: DateTime.utc(2026, 6, 30),
+            agreedCount: 3,
+            disagreedCount: 0,
+            pendingCount: 0,
+            isFinalized: true,
+            voteType: ClosureVoteType.stopContributionsVote,
+            outcome: ClosureVoteOutcome.investmentStarted,
+            isApproved: true,
+            memberVotes: const [
+              ProjectVotingMemberVoteEntity(
+                membershipId: 'm1',
+                userId: 'u1',
+                displayName: 'Anna',
+                status: ProjectMemberVoteStatus.agreed,
+              ),
+            ],
+          ),
+        );
+
+        final merged = loaded.withVotingDetailSnapshot(fresh);
+
+        expect(merged.displayStatusLabel, 'Funded');
+        expect(merged.projectLifecycleState, 'funded');
+        expect(merged.apiCanStopContributions, isFalse);
+        expect(merged.voting?.isFinalized, isTrue);
+        expect(merged.showsInvestmentDistributionActions, isTrue);
+        expect(merged.showsCompletedProjectVoteOutcome, isFalse);
+      },
+    );
   });
 
   group('closure_vote_ui_mappers', () {

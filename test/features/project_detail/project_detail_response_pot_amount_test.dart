@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_completed_outcome_extensions.dart';
 import 'package:vestie/features/project_detail/data/models/project_detail_response_model.dart';
 
 void main() {
@@ -159,6 +160,70 @@ void main() {
       ).toEntity();
 
       expect(entity.currentAmount, 250);
+    });
+
+    test('detail raisedDisplayAmount falls back to project viewerRefundAmount', () {
+      final entity = ProjectDetailResponseModel.fromJson(
+        _minimalProjectJson(
+          project: {
+            'id': 'p1',
+            'name': 'Trip',
+            'description': '',
+            'type': 'vacation',
+            'visibility': 'public',
+            'state': 'cancelled',
+            'targetAmount': 5000,
+            'raisedAmount': 0,
+            'potAmount': 0,
+            'totalContributed': 0,
+            'viewerRefundAmount': 500,
+            'endsAtUtc': null,
+            'displayStatus': 'Cancelled',
+          },
+        ),
+      ).toEntity();
+
+      expect(entity.viewerRefundAmount, 500);
+      expect(entity.raisedDisplayAmount, 500);
+    });
+
+    test('detail prefers voting.viewerRefundAmount over project field', () {
+      final entity = ProjectDetailResponseModel.fromJson({
+        ..._minimalProjectJson(
+          project: {
+            'id': 'p1',
+            'name': 'Trip',
+            'description': '',
+            'type': 'vacation',
+            'visibility': 'public',
+            'state': 'cancelled',
+            'targetAmount': 5000,
+            'raisedAmount': 0,
+            'potAmount': 0,
+            'totalContributed': 0,
+            'viewerRefundAmount': 100,
+            'endsAtUtc': null,
+            'displayStatus': 'Cancelled',
+          },
+        ),
+        'votingStatus': 'done',
+        'voting': {
+          'startedAtUtc': '2026-07-01T12:00:00Z',
+          'deadlineAtUtc': '2026-07-03T12:00:00Z',
+          'agreedCount': 2,
+          'disagreedCount': 3,
+          'pendingCount': 0,
+          'isFinalized': true,
+          'voteType': 'StopContributionsVote',
+          'outcome': 'Refund',
+          'isApproved': false,
+          'viewerRefundAmount': 500,
+        },
+      }).toEntity();
+
+      expect(entity.effectiveViewerRefundAmount, 500);
+      expect(entity.raisedDisplayAmount, 500);
+      expect(entity.closureVoteOutcomeAmountUsd, 500);
     });
   });
 }

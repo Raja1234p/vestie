@@ -58,6 +58,9 @@ class ProjectVotingSummaryEntity {
   final int? eligibleVoterCount;
   final String? distributionStatus;
 
+  /// API `voting.viewerRefundAmount` — viewer refund on cancelled/refund outcomes.
+  final double viewerRefundAmount;
+
   const ProjectVotingSummaryEntity({
     required this.startedAtUtc,
     required this.deadlineAtUtc,
@@ -72,6 +75,7 @@ class ProjectVotingSummaryEntity {
     this.isApproved,
     this.eligibleVoterCount,
     this.distributionStatus,
+    this.viewerRefundAmount = 0,
   });
 
   /// Backend `voting.isApproved` or derived from [outcome].

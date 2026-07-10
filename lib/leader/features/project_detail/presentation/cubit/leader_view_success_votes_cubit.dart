@@ -5,6 +5,7 @@ import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/features/project_detail/domain/entities/closure_vote_entities.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_voting_entities.dart';
 import 'package:vestie/features/project_detail/domain/repositories/project_detail_repository.dart';
 import 'package:vestie/features/project_detail/domain/usecases/get_active_closure_vote_usecase.dart';
 import 'package:vestie/features/project_detail/presentation/mappers/closure_vote_ui_mappers.dart';
@@ -60,9 +61,16 @@ class LeaderViewSuccessVotesCubit extends Cubit<LeaderViewSuccessVotesState> {
       (project) async {
         ProjectDetailReloadCoordinator.mergeVotingSnapshot(projectId, project);
 
-        if (project.votingIsInProgress && project.voting != null) {
-          emit(_loadedFromProjectVoting(project));
-          return;
+        final voting = project.voting;
+        if (voting != null) {
+          if (project.votingIsInProgress) {
+            emit(_loadedFromProjectVoting(project));
+            return;
+          }
+          if (voting.isFinalized && _hasFinalizedVotingTallies(voting)) {
+            emit(_loadedFromProjectVoting(project));
+            return;
+          }
         }
 
         await _loadFromActiveVote(projectId, project: project);
@@ -96,6 +104,12 @@ class LeaderViewSuccessVotesCubit extends Cubit<LeaderViewSuccessVotesState> {
         emit(_loadedFromActiveVote(vote, project: project));
       },
     );
+  }
+
+  bool _hasFinalizedVotingTallies(ProjectVotingSummaryEntity voting) {
+    if (!voting.isFinalized) return false;
+    return voting.memberVotes.isNotEmpty ||
+        voting.agreedCount + voting.disagreedCount > 0;
   }
 
   LeaderViewSuccessVotesState _loadedFromProjectVoting(
