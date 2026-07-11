@@ -19,6 +19,10 @@ class ProjectMembersPreviewSection extends StatelessWidget {
   final String? sendingVffUserId;
   final String title;
 
+  /// Profile → Completed Projects → View Details only. Preview rows and View All
+  /// list are read-only (no member profile navigation).
+  final bool fromCompletedProjectsProfileDetail;
+
   const ProjectMembersPreviewSection({
     super.key,
     required this.project,
@@ -26,10 +30,17 @@ class ProjectMembersPreviewSection extends StatelessWidget {
     this.onSendVffRequest,
     this.sendingVffUserId,
     this.title = AppStrings.tabMembers,
+    this.fromCompletedProjectsProfileDetail = false,
   });
 
-  VoidCallback _openViewAll(BuildContext context) =>
-      () => ProjectDetailNavigation.openGroupMembers(context, project: project);
+  VoidCallback _openViewAll(BuildContext context) => () {
+        ProjectDetailNavigation.openGroupMembers(
+          context,
+          project: project,
+          fromCompletedProjectsProfileDetail:
+              fromCompletedProjectsProfileDetail,
+        );
+      };
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +73,7 @@ class ProjectMembersPreviewSection extends StatelessWidget {
           members: project.members,
           onViewAll: _openViewAll(context),
           showViewAllLink: false,
-          onMemberTap: onMemberTap,
+          onMemberTap: fromCompletedProjectsProfileDetail ? null : onMemberTap,
           onSendVffRequest: onSendVffRequest,
           sendingVffUserId: sendingVffUserId,
         ),

@@ -18,6 +18,7 @@ class ProjectDetailMembersOnlySection extends StatelessWidget {
     this.sendingVffUserId,
     this.title,
     this.watchBlocForVffState = false,
+    this.fromCompletedProjectsProfileDetail = false,
   });
 
   final ProjectDetailEntity project;
@@ -26,6 +27,7 @@ class ProjectDetailMembersOnlySection extends StatelessWidget {
   final String? sendingVffUserId;
   final String? title;
   final bool watchBlocForVffState;
+  final bool fromCompletedProjectsProfileDetail;
 
   String get _sectionTitle => title ?? AppStrings.tabMembers;
 
@@ -61,6 +63,7 @@ class ProjectDetailMembersOnlySection extends StatelessWidget {
       onMemberTap: canInteract ? onMemberTap : null,
       onSendVffRequest: canInteract ? onSendVffRequest : null,
       sendingVffUserId: sendingId,
+      fromCompletedProjectsProfileDetail: fromCompletedProjectsProfileDetail,
     );
   }
 }

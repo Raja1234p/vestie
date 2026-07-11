@@ -13,8 +13,17 @@ class AppToast {
 
   static const Duration _duration = Duration(seconds: 3);
 
-  static void showError(BuildContext context, String message) {
-    _show(context, message: message, backgroundColor: AppColors.error);
+  static void showError(
+    BuildContext context,
+    String message, {
+    Duration? duration,
+  }) {
+    _show(
+      context,
+      message: message,
+      backgroundColor: AppColors.error,
+      duration: duration,
+    );
   }
 
   /// Success toast — OTP verify resend, edit profile save, etc.
@@ -35,6 +44,7 @@ class AppToast {
     BuildContext context, {
     required String message,
     required Color backgroundColor,
+    Duration? duration,
   }) {
     final text = message.trim();
     if (text.isEmpty || !context.mounted) return;
@@ -45,7 +55,7 @@ class AppToast {
     fToast.showToast(
       child: _ToastBody(message: text, backgroundColor: backgroundColor),
       gravity: ToastGravity.TOP,
-      toastDuration: _duration,
+      toastDuration: duration ?? _duration,
       positionedToastBuilder: (ctx, child, gravity) {
         final top = MediaQuery.paddingOf(ctx).top + 8.h;
         return Positioned(top: top, left: 16.w, right: 16.w, child: child);

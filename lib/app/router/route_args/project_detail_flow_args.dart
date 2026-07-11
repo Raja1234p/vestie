@@ -129,10 +129,14 @@ class GroupMembersRouteArgs {
   final String projectId;
   final ProjectDetailEntity? project;
 
+  /// Profile → Completed Projects → View Details — list is read-only (no profile).
+  final bool fromCompletedProjectsProfileDetail;
+
   const GroupMembersRouteArgs({
     required this.members,
     required this.projectId,
     this.project,
+    this.fromCompletedProjectsProfileDetail = false,
   });
 }
 

@@ -73,7 +73,12 @@ class _SuccessVoteOutcomeLoadScreenState
         }
         setState(() {
           _loading = false;
-          _outcomeArgs = successVoteOutcomeRouteArgsFromProjectDetail(project);
+          _outcomeArgs = successVoteOutcomeRouteArgsFromProjectDetail(project)
+              .copyWith(
+                fromCompletedProjectsList: widget.args.fromCompletedProjectsList,
+                projectId: project.id,
+                initialProjectName: project.name,
+              );
         });
       },
     );
@@ -85,6 +90,10 @@ class _SuccessVoteOutcomeLoadScreenState
       return SuccessVoteOutcomeScreen(args: _outcomeArgs!);
     }
 
+    final fromCompletedList = widget.args.fromCompletedProjectsList;
+    // Completed list: no back during GET — outcome screen shows white back after load.
+    final showBack = !fromCompletedList || !_loading;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
@@ -95,15 +104,20 @@ class _SuccessVoteOutcomeLoadScreenState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 8.w, top: 4.h),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: AppBackButton(
-                      onPressed: () => context.pop(),
+                if (showBack)
+                  Padding(
+                    padding: fromCompletedList
+                        ? EdgeInsets.only(left: 20.w, top: 16.h)
+                        : EdgeInsets.only(left: 8.w, top: 4.h),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: AppBackButton(
+                        onPressed: () => context.pop(),
+                        color: fromCompletedList ? AppColors.surface : null,
+                        size: fromCompletedList ? 32.w : null,
+                      ),
                     ),
                   ),
-                ),
                 Expanded(
                   child: _loading
                       ? Center(

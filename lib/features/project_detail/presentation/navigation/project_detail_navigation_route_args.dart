@@ -48,11 +48,15 @@ BorrowRequestsRouteArgs _borrowRequestsArgs(
   );
 }
 
-GroupMembersRouteArgs _groupMembersArgs(ProjectDetailEntity project) {
+GroupMembersRouteArgs _groupMembersArgs(
+  ProjectDetailEntity project, {
+  bool fromCompletedProjectsProfileDetail = false,
+}) {
   return GroupMembersRouteArgs(
     members: project.members,
     projectId: project.id,
     project: project,
+    fromCompletedProjectsProfileDetail: fromCompletedProjectsProfileDetail,
   );
 }
 

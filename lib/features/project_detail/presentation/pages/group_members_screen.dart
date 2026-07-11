@@ -28,12 +28,14 @@ class GroupMembersScreen extends StatefulWidget {
   final List<MemberEntity> members;
   final String projectId;
   final ProjectDetailEntity? project;
+  final bool fromCompletedProjectsProfileDetail;
 
   const GroupMembersScreen({
     super.key,
     required this.members,
     required this.projectId,
     this.project,
+    this.fromCompletedProjectsProfileDetail = false,
   });
 
   @override
@@ -247,18 +249,13 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
           return ListLoadMoreFooter(loadingMore: _loadingMore);
         }
         final member = active[i];
+        final onMemberTap = _resolveMemberTap(project: project, member: member);
         return Padding(
           padding: EdgeInsets.only(bottom: 12.h),
           child: ProjectMemberRow(
             member: member,
             project: project,
-            onTap: project != null && project.canReviewMemberProfiles
-                ? (_) => _openMemberProfile(
-                    context,
-                    project: project,
-                    member: member,
-                  )
-                : null,
+            onTap: onMemberTap,
             onAddFriend: project != null && project.canReviewMemberProfiles
                 ? () => _sendVff(project: project, member: member)
                 : null,
@@ -267,6 +264,23 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
           ),
         );
       },
+    );
+  }
+
+  ValueChanged<MemberEntity>? _resolveMemberTap({
+    required ProjectDetailEntity? project,
+    required MemberEntity member,
+  }) {
+    if (project == null || widget.fromCompletedProjectsProfileDetail) {
+      return null;
+    }
+
+    if (!project.canReviewMemberProfiles) return null;
+
+    return (_) => _openMemberProfile(
+      context,
+      project: project,
+      member: member,
     );
   }
 }

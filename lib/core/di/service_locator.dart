@@ -27,8 +27,12 @@ import '../../features/kyc/domain/usecases/kyc_usecases.dart';
 import '../../features/notifications/data/datasources/notifications_remote_data_source.dart';
 import '../../features/notifications/domain/repositories/notifications_repository.dart';
 import '../../features/notifications/domain/usecases/notifications_usecases.dart';
+import '../../features/profile/data/datasources/account_remote_data_source.dart';
 import '../../features/profile/data/datasources/user_guidelines_remote_data_source.dart';
+import '../../features/profile/domain/repositories/account_repository.dart';
 import '../../features/profile/domain/repositories/user_guidelines_repository.dart';
+import '../../features/profile/domain/usecases/check_account_deletion_eligibility_use_case.dart';
+import '../../features/profile/domain/usecases/delete_account_use_case.dart';
 import '../../features/profile/domain/usecases/get_user_guidelines_use_case.dart';
 import '../../features/payment_methods/data/datasources/payment_methods_remote_data_source.dart';
 import '../../features/payment_methods/domain/repositories/payment_methods_repository.dart';
@@ -280,6 +284,11 @@ class ServiceLocator {
   late final UserGuidelinesRemoteDataSource userGuidelinesRemoteDataSource;
   late final UserGuidelinesRepository userGuidelinesRepository;
   late final GetUserGuidelinesUseCase getUserGuidelinesUseCase;
+  late final AccountRemoteDataSource accountRemoteDataSource;
+  late final AccountRepository accountRepository;
+  late final CheckAccountDeletionEligibilityUseCase
+  checkAccountDeletionEligibilityUseCase;
+  late final DeleteAccountUseCase deleteAccountUseCase;
 
   late final ContributionRemoteDataSource contributionRemoteDataSource;
   late final ContributionRepository contributionRepository;
@@ -350,13 +359,16 @@ class ServiceLocator {
     getWalletUseCase: getWalletUseCase,
   );
 
-  ProjectDetailBloc createProjectDetailBloc() => ProjectDetailBloc(
+  ProjectDetailBloc createProjectDetailBloc({
+    bool completedProjectsProfileReadOnly = false,
+  }) => ProjectDetailBloc(
     repository: projectDetailRepository,
     getProjectPotUseCase: getProjectPotUseCase,
     listPendingJoinRequests: listPendingJoinRequestsUseCase,
     listBorrowRequests: listBorrowRequestsUseCase,
     sendVffRequestUseCase: sendVffRequestUseCase,
     getActiveClosureVoteUseCase: getActiveClosureVoteUseCase,
+    completedProjectsProfileReadOnly: completedProjectsProfileReadOnly,
   );
 
   SuccessVoteCastCubit createSuccessVoteCastCubit(

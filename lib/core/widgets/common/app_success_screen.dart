@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../constants/app_assets.dart';
+import '../../constants/app_dimens.dart';
 import '../../theme/app_colors.dart';
 import '../text/app_text.dart';
+import 'app_back_button.dart';
 import 'app_button.dart';
-import 'failure_icon.dart';
 import 'flow_screen_footer.dart';
 
 /// A globally reusable full-page success screen.
@@ -13,8 +14,8 @@ import 'flow_screen_footer.dart';
 /// Background: white + top [AppAssets.successScreenBackground] (Home / Discover style).
 /// Bottom action uses [FlowScreenFooter] (20.w horizontal + system safe-area inset).
 ///
-/// System back (Android) and predictive / swipe-back are disabled — user must tap
-/// the footer CTA to leave.
+/// System back (Android) and predictive / swipe-back are disabled unless
+/// [showBackButton] is true — otherwise user must tap the footer CTA to leave.
 class AppSuccessScreen extends StatelessWidget {
   final String title;
   final String? subtitle;
@@ -33,8 +34,21 @@ class AppSuccessScreen extends StatelessWidget {
   /// When set, content aligns to the top with this gap below [SafeArea] before the hero image.
   final double? illustrationTopSpacing;
 
+  /// Hero image size; defaults to 174.w.
+  final double? illustrationSize;
+
+  /// Tints the hero image (e.g. white on gradient header).
+  final Color? illustrationColor;
+
   /// Title color; defaults to [AppColors.textPrimary].
   final Color? titleColor;
+
+  /// When true, shows [AppBackButton] and allows system back (e.g. completed projects outcome).
+  final bool showBackButton;
+  final VoidCallback? onBackPressed;
+  final Color? backButtonColor;
+  final EdgeInsetsGeometry? backButtonPadding;
+  final double? backButtonSize;
 
   const AppSuccessScreen({
     super.key,
@@ -49,6 +63,13 @@ class AppSuccessScreen extends StatelessWidget {
     this.onButtonPressed,
     this.illustrationAsset,
     this.illustrationTopSpacing,
+    this.illustrationSize,
+    this.illustrationColor,
+    this.showBackButton = false,
+    this.onBackPressed,
+    this.backButtonColor,
+    this.backButtonPadding,
+    this.backButtonSize,
   }) : assert(
          footer != null || (buttonText != null && onButtonPressed != null),
          'Provide footer or both buttonText and onButtonPressed.',
@@ -82,7 +103,7 @@ class AppSuccessScreen extends StatelessWidget {
         );
 
     return PopScope(
-      canPop: false,
+      canPop: showBackButton,
       child: Scaffold(
         backgroundColor: Colors.white,
         body: Stack(
@@ -105,6 +126,8 @@ class AppSuccessScreen extends StatelessWidget {
                               path:
                                   illustrationAsset ??
                                   AppAssets.successProjectCreated,
+                              size: illustrationSize,
+                              color: illustrationColor,
                             ),
                             AppText(
                               title,
@@ -139,6 +162,23 @@ class AppSuccessScreen extends StatelessWidget {
                 FlowScreenFooter(child: actionChild),
               ],
             ),
+            if (showBackButton)
+              SafeArea(
+                child: Padding(
+                  padding:
+                      backButtonPadding ??
+                      EdgeInsets.only(left: 8.w, top: 4.h),
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: AppBackButton(
+                      color: backButtonColor,
+                      size: backButtonSize,
+                      onPressed:
+                          onBackPressed ?? () => Navigator.of(context).pop(),
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -192,16 +232,43 @@ class _SuccessScrollBody extends StatelessWidget {
 }
 
 class _SuccessIllustration extends StatelessWidget {
-  const _SuccessIllustration({required this.path});
+  const _SuccessIllustration({
+    required this.path,
+    this.size,
+    this.color,
+  });
 
   final String path;
+  final double? size;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
+    final dimension = size ?? 174.w;
+    Widget image;
     if (path == AppAssets.statusFailure) {
-      return const FailureIcon();
+      image = Image.asset(
+        path,
+        width: size ?? AppDimens.failureIconWidth,
+        height: size ?? AppDimens.failureIconHeight,
+        fit: BoxFit.contain,
+      );
+    } else {
+      image = Image.asset(
+        path,
+        width: dimension,
+        height: dimension,
+        fit: BoxFit.contain,
+      );
     }
-    final s = 174.w;
-    return Image.asset(path, width: s, height: s, fit: BoxFit.contain);
+
+    if (color != null) {
+      image = ColorFiltered(
+        colorFilter: ColorFilter.mode(color!, BlendMode.srcIn),
+        child: image,
+      );
+    }
+
+    return image;
   }
 }

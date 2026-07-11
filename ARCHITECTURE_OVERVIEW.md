@@ -192,4 +192,4 @@ Pre-commit standards: [`.cursor/rules/pre_commit.mdc`](.cursor/rules/pre_commit.
 
 ## 12. Deferred structural work
 
-Large folder migration (~794 files) is **intentionally deferred**. Migrate one feature per PR when ready. See [`DOCS/refactor/refactoring_roadmap.md`](DOCS/refactor/refactoring_roadmap.md).
+Large folder migration (~794 files) is **intentionally deferred**. Migrate one feature per PR when ready. See `.cursor/rules/production_scope.mdc`.

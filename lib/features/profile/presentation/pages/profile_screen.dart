@@ -20,7 +20,7 @@ import '../../../../core/widgets/common/post_auth_header.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../../core/widgets/common/app_shimmer.dart';
 import '../cubit/profile_cubit.dart';
-import '../widgets/delete_account_confirm_dialog.dart';
+import '../navigation/delete_account_flow.dart';
 import '../widgets/profile_header_more_options_action.dart';
 import '../widgets/profile_logout_button.dart';
 import '../widgets/profile_photo_dialog.dart';
@@ -425,7 +425,11 @@ class _ProfileHeader extends StatelessWidget {
       trailing: ProfileHeaderMoreOptionsAction(
         onSelected: (action) {
           if (action != ProfileHeaderMenuAction.deleteAccount) return;
-          showDeleteAccountConfirmDialog(context, onConfirm: () {});
+          // Defer until the popup route finishes closing — avoids first tap being swallowed.
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!context.mounted) return;
+            openDeleteAccountFlow(context, context.read<ProfileCubit>());
+          });
         },
       ),
     );

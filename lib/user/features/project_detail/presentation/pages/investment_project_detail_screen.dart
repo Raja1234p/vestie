@@ -30,6 +30,7 @@ import 'package:vestie/features/project_detail/presentation/widgets/project_deta
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_voting_sections.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_wallet_actions.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_reload_scope.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/completed_projects_profile_detail_content.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_realtime_scope.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_info_card.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_scroll_insets.dart';
@@ -39,6 +40,7 @@ class InvestmentProjectDetailScreen extends StatelessWidget {
   final String? initialProjectName;
   final bool refreshHomeOnPop;
   final bool refreshDiscoverOnPop;
+  final bool skipCompletedOutcomeTakeover;
 
   const InvestmentProjectDetailScreen({
     super.key,
@@ -46,6 +48,7 @@ class InvestmentProjectDetailScreen extends StatelessWidget {
     this.initialProjectName,
     this.refreshHomeOnPop = false,
     this.refreshDiscoverOnPop = false,
+    this.skipCompletedOutcomeTakeover = false,
   });
 
   @override
@@ -63,7 +66,9 @@ class InvestmentProjectDetailScreen extends StatelessWidget {
       },
       child: BlocProvider(
         create: (_) =>
-            ServiceLocator.instance.createProjectDetailBloc()
+            ServiceLocator.instance.createProjectDetailBloc(
+              completedProjectsProfileReadOnly: skipCompletedOutcomeTakeover,
+            )
               ..add(LoadProjectDetailEvent(projectId: projectId)),
         child: ProjectDetailReloadScope(
           projectId: projectId,
@@ -74,6 +79,7 @@ class InvestmentProjectDetailScreen extends StatelessWidget {
               initialProjectName: initialProjectName,
               refreshHomeOnPop: refreshHomeOnPop,
               refreshDiscoverOnPop: refreshDiscoverOnPop,
+              skipCompletedOutcomeTakeover: skipCompletedOutcomeTakeover,
             ),
           ),
         ),
@@ -89,12 +95,14 @@ class InvestmentProjectDetailBody extends StatefulWidget {
     required this.initialProjectName,
     required this.refreshHomeOnPop,
     required this.refreshDiscoverOnPop,
+    required this.skipCompletedOutcomeTakeover,
   });
 
   final String projectId;
   final String? initialProjectName;
   final bool refreshHomeOnPop;
   final bool refreshDiscoverOnPop;
+  final bool skipCompletedOutcomeTakeover;
 
   @override
   State<InvestmentProjectDetailBody> createState() =>
@@ -157,6 +165,7 @@ class _InvestmentProjectDetailBodyState
       },
       builder: (context, state) {
         if (state is ProjectDetailLoaded &&
+            !widget.skipCompletedOutcomeTakeover &&
             state.project.showsCompletedProjectVoteOutcome) {
           return SuccessVoteOutcomeScreen(
             args: successVoteOutcomeRouteArgsFromProjectDetail(state.project),
@@ -220,7 +229,7 @@ class _InvestmentProjectDetailBodyState
                 );
               }
 
-              Widget header() {
+              Widget header({bool completedProjectsProfileDetail = false}) {
                 return PostAuthHeader(
                   title: project.name,
                   leading: AppBackButton(
@@ -230,10 +239,13 @@ class _InvestmentProjectDetailBodyState
                       refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
                     ),
                   ),
-                  trailing: project.showsProjectDetailOverflowMenu
-                      ? ProjectDetailTrailingActions(
+                  trailing: !project.showsProjectDetailOverflowMenu
+                      ? null
+                      : ProjectDetailTrailingActions(
                           project: project,
                           pendingJoinRequestCount: pendingCount,
+                          completedProjectsProfileDetail:
+                              completedProjectsProfileDetail,
                           onLeaderMenuSelected: (action) =>
                               ProjectDetailNavigation.handleLeaderAction(
                                 context,
@@ -252,8 +264,44 @@ class _InvestmentProjectDetailBodyState
                                 refreshDiscoverOnPop:
                                     widget.refreshDiscoverOnPop,
                               ),
-                        )
-                      : null,
+                        ),
+                );
+              }
+
+              if (widget.skipCompletedOutcomeTakeover) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    header(completedProjectsProfileDetail: true),
+                    Expanded(
+                      child: SafeArea(
+                        top: false,
+                        bottom: ProjectDetailScrollInsets
+                            .applyBottomSafeAreaToViewport,
+                        child: ColoredBox(
+                          color: Colors.white,
+                          child: RefreshIndicator(
+                            color: AppColors.primary,
+                            onRefresh: refreshDetail,
+                            child: CustomScrollView(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              slivers: [
+                                SliverPadding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 16.w),
+                                  sliver: SliverToBoxAdapter(
+                                    child: CompletedProjectsProfileDetailContent(
+                                      project: project,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 );
               }
 

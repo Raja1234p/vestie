@@ -20,13 +20,15 @@ void openSuccessVoteOutcomeFromProject(
 /// Home / profile completed list — load detail, then full-screen outcome UI.
 void openSuccessVoteOutcomeForCompletedListProject(
   BuildContext context,
-  Project project,
-) {
+  Project project, {
+  bool fromCompletedProjectsList = false,
+}) {
   context.push(
     AppRoutes.userVoteOutcome,
     extra: SuccessVoteOutcomeLoadRouteArgs(
       projectId: project.id,
       initialProjectName: project.name,
+      fromCompletedProjectsList: fromCompletedProjectsList,
     ),
   );
 }

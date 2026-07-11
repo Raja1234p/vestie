@@ -1,3 +1,4 @@
+import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -10,9 +11,13 @@ import '../../../auth/domain/usecases/logout_use_case.dart';
 import '../../../auth/domain/usecases/update_me_use_case.dart';
 import '../../data/profile_prefs.dart';
 import '../../domain/entities/user_profile.dart';
+import '../../domain/entities/account_deletion_eligibility_entity.dart';
+import '../../domain/usecases/check_account_deletion_eligibility_use_case.dart';
+import '../../domain/usecases/delete_account_use_case.dart';
 import '../../../../core/constants/storage_keys.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/error/failure_mapper.dart';
+import '../../../../core/error/failures.dart';
 import '../../../../core/storage/onboarding_prefs.dart';
 import '../../../../core/utils/username_input_formatter.dart';
 import 'package:vestie/features/dashboard/domain/dashboard_prefetch.dart';
@@ -73,6 +78,8 @@ class ProfileCubit extends Cubit<ProfileState> {
     UpdateMeUseCase? updateMeUseCase,
     DeleteMeProfilePictureUseCase? deleteMeProfilePictureUseCase,
     GetMeUseCase? getMeUseCase,
+    CheckAccountDeletionEligibilityUseCase? checkDeletionEligibilityUseCase,
+    DeleteAccountUseCase? deleteAccountUseCase,
   }) : _logoutUseCase = logoutUseCase ?? ServiceLocator.instance.logoutUseCase,
        _updateMeUseCase =
            updateMeUseCase ?? ServiceLocator.instance.updateMeUseCase,
@@ -80,6 +87,11 @@ class ProfileCubit extends Cubit<ProfileState> {
            deleteMeProfilePictureUseCase ??
            ServiceLocator.instance.deleteMeProfilePictureUseCase,
        _getMeUseCase = getMeUseCase ?? ServiceLocator.instance.getMeUseCase,
+       _checkDeletionEligibilityUseCase =
+           checkDeletionEligibilityUseCase ??
+           ServiceLocator.instance.checkAccountDeletionEligibilityUseCase,
+       _deleteAccountUseCase =
+           deleteAccountUseCase ?? ServiceLocator.instance.deleteAccountUseCase,
        super(
          const ProfileState(
            profile: UserProfile(
@@ -95,6 +107,8 @@ class ProfileCubit extends Cubit<ProfileState> {
   final UpdateMeUseCase _updateMeUseCase;
   final DeleteMeProfilePictureUseCase _deleteMeProfilePictureUseCase;
   final GetMeUseCase _getMeUseCase;
+  final CheckAccountDeletionEligibilityUseCase _checkDeletionEligibilityUseCase;
+  final DeleteAccountUseCase _deleteAccountUseCase;
 
   static const _profileSyncTtl = Duration(minutes: 3);
 
@@ -240,6 +254,24 @@ class ProfileCubit extends Cubit<ProfileState> {
     _lastSuccessfulSync = DateTime.now();
     _hasLoadedOnce = true;
     emit(state.copyWith(profile: profile));
+  }
+
+  Future<Either<Failure, AccountDeletionEligibilityEntity>>
+  checkDeletionEligibility() => _checkDeletionEligibilityUseCase();
+
+  Future<({bool success, String? errorMessage})> deleteAccountConfirmed() async {
+    final result = await _deleteAccountUseCase();
+    return result.fold(
+      (failure) => (
+        success: false,
+        errorMessage: FailureMapper.userMessage(failure),
+      ),
+      (_) async {
+        await _clearLocalData();
+        emit(state.copyWith(isLogoutSuccess: true));
+        return (success: true, errorMessage: null);
+      },
+    );
   }
 
   Future<void> logout() async {

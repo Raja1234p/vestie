@@ -86,6 +86,10 @@ class ApiConstants {
   static const String meProfilePicture = '/users/me/profile-picture';
   static const String riskDisclaimer = '/users/me/risk-disclaimer';
 
+  // ── Account ──────────────────────────────────────────────────────────────
+  static const String accountDeletionEligibility = '/account/deletion-eligibility';
+  static const String accountDelete = '/account/delete';
+
   // ── Content ──────────────────────────────────────────────────────────────
   static const String contentUserGuidelines = '/content/user-guidelines';
 

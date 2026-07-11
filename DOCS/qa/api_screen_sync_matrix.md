@@ -16,7 +16,8 @@ Use this when verifying **data on screen matches API** after actions (refresh, n
 | Login | `POST /auth/login` | — | Dashboard |
 | Dashboard Home | `GET /projects` (user list) — card amount: `potAmount` → `raisedAmount` → `totalContributed` → `viewerRefundAmount` | Shimmer | Tab re-activate / reload flags |
 | Discover | `GET /projects` (discover) | Shimmer | Tab re-activate |
-| Profile header | `GET /users/me` | Shimmer | Edit profile save |
+| Profile header | `GET /users/me` |
+| Delete account | Confirm dialog → `GET /account/deletion-eligibility` on confirm → `POST /account/delete` if eligible | Button loader on confirm; `AppToast` + dismiss on failure; session clear → login on success | Shimmer | Edit profile save |
 | Edit profile | `PATCH /users/me`, photo upload | — | Profile tab |
 | Risk disclaimer | `GET` + `POST /users/me/risk-disclaimer` | — | Wallet/deposit/withdraw unlock |
 

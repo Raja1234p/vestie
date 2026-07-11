@@ -4,8 +4,9 @@ Future<MemberDetailPopResult?> _openMemberProfile(
   BuildContext context, {
   required ProjectDetailEntity project,
   required MemberEntity member,
+  bool fromCompletedProjectsProfileDetail = false,
 }) async {
-  if (!project.canReviewMemberProfiles) {
+  if (!fromCompletedProjectsProfileDetail && !project.canReviewMemberProfiles) {
     AppToast.showError(context, AppStrings.errorForbidden);
     return null;
   }
@@ -26,8 +27,15 @@ Future<MemberDetailPopResult?> _openMemberProfile(
 Future<void> _openGroupMembers(
   BuildContext context, {
   required ProjectDetailEntity project,
+  bool fromCompletedProjectsProfileDetail = false,
 }) async {
-  await context.push(AppRoutes.groupMembers, extra: _groupMembersArgs(project));
+  await context.push(
+    AppRoutes.groupMembers,
+    extra: _groupMembersArgs(
+      project,
+      fromCompletedProjectsProfileDetail: fromCompletedProjectsProfileDetail,
+    ),
+  );
   if (!context.mounted) return;
   _reloadProjectDetailBloc(context, projectId: project.id);
 }

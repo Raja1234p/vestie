@@ -27,6 +27,7 @@ class ProjectDetailScreen extends StatelessWidget {
   final String? initialProjectName;
   final bool refreshHomeOnPop;
   final bool refreshDiscoverOnPop;
+  final bool skipCompletedOutcomeTakeover;
 
   const ProjectDetailScreen({
     super.key,
@@ -34,6 +35,7 @@ class ProjectDetailScreen extends StatelessWidget {
     this.initialProjectName,
     this.refreshHomeOnPop = false,
     this.refreshDiscoverOnPop = false,
+    this.skipCompletedOutcomeTakeover = false,
   });
 
   @override
@@ -51,7 +53,9 @@ class ProjectDetailScreen extends StatelessWidget {
       },
       child: BlocProvider(
         create: (_) =>
-            ServiceLocator.instance.createProjectDetailBloc()
+            ServiceLocator.instance.createProjectDetailBloc(
+              completedProjectsProfileReadOnly: skipCompletedOutcomeTakeover,
+            )
               ..add(LoadProjectDetailEvent(projectId: projectId)),
         child: ProjectDetailReloadScope(
           projectId: projectId,
@@ -62,6 +66,7 @@ class ProjectDetailScreen extends StatelessWidget {
               initialProjectName: initialProjectName,
               refreshHomeOnPop: refreshHomeOnPop,
               refreshDiscoverOnPop: refreshDiscoverOnPop,
+              skipCompletedOutcomeTakeover: skipCompletedOutcomeTakeover,
             ),
           ),
         ),
@@ -77,12 +82,14 @@ class _ProjectDetailBody extends StatelessWidget {
     required this.initialProjectName,
     required this.refreshHomeOnPop,
     required this.refreshDiscoverOnPop,
+    required this.skipCompletedOutcomeTakeover,
   });
 
   final String projectId;
   final String? initialProjectName;
   final bool refreshHomeOnPop;
   final bool refreshDiscoverOnPop;
+  final bool skipCompletedOutcomeTakeover;
 
   @override
   Widget build(BuildContext context) {
@@ -117,6 +124,7 @@ class _ProjectDetailBody extends StatelessWidget {
       },
       builder: (context, state) {
         if (state is ProjectDetailLoaded &&
+            !skipCompletedOutcomeTakeover &&
             state.project.showsCompletedProjectVoteOutcome) {
           return SuccessVoteOutcomeScreen(
             args: successVoteOutcomeRouteArgsFromProjectDetail(state.project),
@@ -173,6 +181,7 @@ class _ProjectDetailBody extends StatelessWidget {
                   pendingJoinRequestCount: pendingCount,
                   refreshHomeOnPop: refreshHomeOnPop,
                   refreshDiscoverOnPop: refreshDiscoverOnPop,
+                  completedProjectsProfileDetail: skipCompletedOutcomeTakeover,
                   onMemberTap: (member) => _openMemberProfile(
                     context,
                     project: project,
@@ -187,6 +196,7 @@ class _ProjectDetailBody extends StatelessWidget {
                 pendingJoinRequestCount: pendingCount,
                 refreshHomeOnPop: refreshHomeOnPop,
                 refreshDiscoverOnPop: refreshDiscoverOnPop,
+                completedProjectsProfileDetail: skipCompletedOutcomeTakeover,
                 onRefresh: onRefresh,
                 onMemberTap: (member) => _openMemberProfile(
                   context,

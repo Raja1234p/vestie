@@ -12,6 +12,7 @@ import 'package:vestie/features/project_detail/presentation/navigation/project_d
 
 import 'project_detail_inline_member_vote_flow.dart';
 import 'project_detail_member_scroll_content.dart';
+import 'completed_projects_profile_detail_content.dart';
 import 'project_detail_scroll_insets.dart';
 import 'project_detail_trailing_actions.dart';
 
@@ -23,6 +24,7 @@ class ProjectDetailMemberLayout extends StatefulWidget {
   final bool refreshDiscoverOnPop;
   final ValueChanged<MemberEntity> onMemberTap;
   final Future<void> Function() onRefresh;
+  final bool completedProjectsProfileDetail;
 
   const ProjectDetailMemberLayout({
     super.key,
@@ -32,6 +34,7 @@ class ProjectDetailMemberLayout extends StatefulWidget {
     this.refreshDiscoverOnPop = false,
     required this.onMemberTap,
     required this.onRefresh,
+    this.completedProjectsProfileDetail = false,
   });
 
   @override
@@ -50,10 +53,12 @@ class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
           refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
         ),
       ),
-      trailing: widget.project.showsProjectDetailOverflowMenu
-          ? ProjectDetailTrailingActions(
+      trailing: !widget.project.showsProjectDetailOverflowMenu
+          ? null
+          : ProjectDetailTrailingActions(
               project: widget.project,
               pendingJoinRequestCount: widget.pendingJoinRequestCount,
+              completedProjectsProfileDetail: widget.completedProjectsProfileDetail,
               onLeaderMenuSelected: (action) =>
                   ProjectDetailNavigation.handleLeaderAction(
                     context,
@@ -70,14 +75,14 @@ class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
                     refreshHomeOnPop: widget.refreshHomeOnPop,
                     refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
                   ),
-            )
-          : null,
+            ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.project.showsInlineMemberVoteFlow) {
+    if (!widget.completedProjectsProfileDetail &&
+        widget.project.showsInlineMemberVoteFlow) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -133,11 +138,16 @@ class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          ProjectDetailMemberScrollContent(
-                            project: widget.project,
-                            onMemberTap: widget.onMemberTap,
-                            onRefresh: widget.onRefresh,
-                          ),
+                          if (widget.completedProjectsProfileDetail)
+                            CompletedProjectsProfileDetailContent(
+                              project: widget.project,
+                            )
+                          else
+                            ProjectDetailMemberScrollContent(
+                              project: widget.project,
+                              onMemberTap: widget.onMemberTap,
+                              onRefresh: widget.onRefresh,
+                            ),
                         ],
                       ),
                     ),

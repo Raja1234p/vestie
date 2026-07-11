@@ -22,6 +22,7 @@ import 'package:vestie/features/project_detail/presentation/widgets/project_deta
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_scroll_insets.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_detail_wallet_actions.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_info_card.dart';
+import 'package:vestie/features/project_detail/presentation/widgets/completed_projects_profile_detail_content.dart';
 
 /// Leader / co-leader vacation–emergency detail scroll (Figma).
 class ProjectDetailModeratorScrollContent extends StatefulWidget {
@@ -31,6 +32,7 @@ class ProjectDetailModeratorScrollContent extends StatefulWidget {
   final bool refreshDiscoverOnPop;
   final Future<void> Function() onRefresh;
   final ValueChanged<MemberEntity> onMemberTap;
+  final bool completedProjectsProfileDetail;
 
   const ProjectDetailModeratorScrollContent({
     super.key,
@@ -40,6 +42,7 @@ class ProjectDetailModeratorScrollContent extends StatefulWidget {
     required this.refreshDiscoverOnPop,
     required this.onRefresh,
     required this.onMemberTap,
+    this.completedProjectsProfileDetail = false,
   });
 
   @override
@@ -82,7 +85,8 @@ class _ProjectDetailModeratorScrollContentState
   Widget build(BuildContext context) {
     final project = widget.project;
 
-    if (project.showsInlineMemberVoteFlow) {
+    if (!widget.completedProjectsProfileDetail &&
+        project.showsInlineMemberVoteFlow) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -140,10 +144,13 @@ class _ProjectDetailModeratorScrollContentState
               refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
             ),
           ),
-          trailing: project.showsProjectDetailOverflowMenu
-              ? ProjectDetailTrailingActions(
+          trailing: !project.showsProjectDetailOverflowMenu
+              ? null
+              : ProjectDetailTrailingActions(
                   project: project,
                   pendingJoinRequestCount: widget.pendingJoinRequestCount,
+                  completedProjectsProfileDetail:
+                      widget.completedProjectsProfileDetail,
                   onLeaderMenuSelected: (action) =>
                       ProjectDetailNavigation.handleLeaderAction(
                         context,
@@ -160,8 +167,7 @@ class _ProjectDetailModeratorScrollContentState
                         refreshHomeOnPop: widget.refreshHomeOnPop,
                         refreshDiscoverOnPop: widget.refreshDiscoverOnPop,
                       ),
-                )
-              : null,
+                ),
         ),
         Expanded(
           child: SafeArea(
@@ -178,7 +184,11 @@ class _ProjectDetailModeratorScrollContentState
                   SliverPadding(
                     padding: EdgeInsets.symmetric(horizontal: 16.w),
                     sliver: SliverToBoxAdapter(
-                      child: Column(
+                      child: widget.completedProjectsProfileDetail
+                          ? CompletedProjectsProfileDetailContent(
+                              project: project,
+                            )
+                          : Column(
                         children: [
                           ProjectDetailVotingSections(
                             project: project,

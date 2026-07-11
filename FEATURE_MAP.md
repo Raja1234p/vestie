@@ -2,7 +2,7 @@
 
 Quick index for onboarding: **where code lives**, **primary APIs**, **entry routes**.
 
-> **Start here:** [`ARCHITECTURE_OVERVIEW.md`](ARCHITECTURE_OVERVIEW.md) · **Flow traces:** [`PROJECT_FLOW_MAP.md`](PROJECT_FLOW_MAP.md) · **Per-feature:** `feature_overview.md` in each feature folder.
+**Start here:** [`APP_GUIDE.md`](APP_GUIDE.md) · **Flow traces:** [`PROJECT_FLOW_MAP.md`](PROJECT_FLOW_MAP.md) · **Per-feature:** `feature_overview.md` in each feature folder.
 
 > Paths use `AppRoutes` constants. Full route table: `lib/app/router/app_routes.dart`.
 

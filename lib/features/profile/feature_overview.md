@@ -37,10 +37,11 @@ Profile tab, edit profile, payment methods entry, transaction history, completed
 | Payment methods entry | `features/payment_methods/` |
 | Vestie User Guidelines | `GET /content/user-guidelines` |
 | My Accounts entry | `features/bank_accounts/` |
+| Delete account | Confirm dialog (Figma) → `GET /account/deletion-eligibility` on **Delete My Account** → `POST /account/delete` if eligible; else `AppToast` + dismiss dialog |
 
 ## Completed projects — View
 
-Home / profile **View** on a completed card → `openSuccessVoteOutcomeForCompletedListProject` → `GET /projects/{id}` → `SuccessVoteOutcomeScreen` (Figma layout, **Back to Home**). Direct project-detail opens with a finalized vote outcome use the same full-screen UI. See `DOCS/outcome.md` for full outcome matrix and backend API contract.
+Home / profile **View** on a completed card → `openSuccessVoteOutcomeForCompletedListProject` → `GET /projects/{id}` → `SuccessVoteOutcomeScreen` (back → completed list). **Profile** completed list sets `fromCompletedProjectsList` → CTA **View Details** `pushReplacement` to read-only project detail (`skipCompletedOutcomeTakeover`) — `GET /projects/{id}` only on detail (no `/pot`, no `/closure-voting/active`); back returns to completed list; goal card + read-only members. See `DOCS/qa/api_screen_sync_matrix.md` row **Completed project detail**.
 
 ## See also
 

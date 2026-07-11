@@ -34,6 +34,7 @@ class LeaderActionMenu extends StatelessWidget {
   final bool showCancelProject;
   final bool showEditProject;
   final bool showInviteMembers;
+  final bool fundsHistoryOnly;
   final void Function(LeaderMenuAction) onSelected;
 
   const LeaderActionMenu({
@@ -46,6 +47,7 @@ class LeaderActionMenu extends StatelessWidget {
     this.showCancelProject = true,
     this.showEditProject = true,
     this.showInviteMembers = true,
+    this.fundsHistoryOnly = false,
   });
 
   static const _primaryLabelColor = AppColors.grey900;
@@ -80,6 +82,18 @@ class LeaderActionMenu extends StatelessWidget {
   }
 
   List<PopupMenuEntry<LeaderMenuAction>> _buildEntries() {
+    if (fundsHistoryOnly) {
+      return [
+        _buildItem(
+          value: LeaderMenuAction.projectFundsHistory,
+          iconPath: AppAssets.memberFundsHistory,
+          label: AppStrings.menuProjectFundsHistory,
+          iconColor: _primaryIconColor,
+          labelColor: _primaryLabelColor,
+        ),
+      ];
+    }
+
     return audience == LeaderMenuAudience.coLeader
         ? _coLeaderEntries()
         : _primaryLeaderEntries();

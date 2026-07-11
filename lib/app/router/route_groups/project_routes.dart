@@ -73,6 +73,7 @@ List<RouteBase> buildProjectRoutes({
           initialProjectName: extra.initialProjectName,
           refreshHomeOnPop: extra.refreshHomeOnPop,
           refreshDiscoverOnPop: extra.refreshDiscoverOnPop,
+          skipCompletedOutcomeTakeover: extra.skipCompletedOutcomeTakeover,
         );
       },
     ),
@@ -86,6 +87,7 @@ List<RouteBase> buildProjectRoutes({
           initialProjectName: extra.initialProjectName,
           refreshHomeOnPop: extra.refreshHomeOnPop,
           refreshDiscoverOnPop: extra.refreshDiscoverOnPop,
+          skipCompletedOutcomeTakeover: extra.skipCompletedOutcomeTakeover,
         );
       },
     ),
@@ -213,6 +215,8 @@ List<RouteBase> buildProjectRoutes({
           members: extra.members,
           projectId: extra.projectId,
           project: extra.project,
+          fromCompletedProjectsProfileDetail:
+              extra.fromCompletedProjectsProfileDetail,
         );
       },
     ),

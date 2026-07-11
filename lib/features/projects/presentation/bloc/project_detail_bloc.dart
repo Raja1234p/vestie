@@ -206,6 +206,7 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
   final ListBorrowRequestsUseCase? _listBorrowRequests;
   final SendVffRequestUseCase? _sendVffRequestUseCase;
   final GetActiveClosureVoteUseCase? _getActiveClosureVoteUseCase;
+  final bool completedProjectsProfileReadOnly;
   final List<Completer<void>> _detailLoadWaiters = [];
   bool _detailLoadInFlight = false;
   String? _detailLoadProjectId;
@@ -218,6 +219,7 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
     ListBorrowRequestsUseCase? listBorrowRequests,
     SendVffRequestUseCase? sendVffRequestUseCase,
     GetActiveClosureVoteUseCase? getActiveClosureVoteUseCase,
+    this.completedProjectsProfileReadOnly = false,
   }) : _getProjectPotUseCase = getProjectPotUseCase,
        _listPendingJoinRequests = listPendingJoinRequests,
        _listBorrowRequests = listBorrowRequests,
@@ -273,6 +275,8 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
     }
     final result = await repository.getProjectDetail(
       projectId: event.projectId,
+      announcementsPageSize: completedProjectsProfileReadOnly ? 1 : null,
+      invitesPageSize: completedProjectsProfileReadOnly ? 1 : null,
     );
 
     try {
@@ -300,7 +304,7 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
           }
           var loadedProject = project;
           final potUseCase = _getProjectPotUseCase;
-          if (potUseCase != null) {
+          if (potUseCase != null && !completedProjectsProfileReadOnly) {
             final potResult = await potUseCase(event.projectId);
             potResult.fold((_) {}, (pot) {
               loadedProject = loadedProject.withProjectPot(pot);
@@ -308,7 +312,9 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
           }
 
           final listBorrow = _listBorrowRequests;
-          if (listBorrow != null && loadedProject.borrowingEnabled) {
+          if (listBorrow != null &&
+              !completedProjectsProfileReadOnly &&
+              loadedProject.borrowingEnabled) {
             final borrowResult = await listBorrow(
               projectId: event.projectId,
               status: 'Pending',
@@ -319,7 +325,9 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
           }
 
           final activeVoteUseCase = _getActiveClosureVoteUseCase;
-          if (activeVoteUseCase != null && !loadedProject.votingIsInProgress) {
+          if (activeVoteUseCase != null &&
+              !completedProjectsProfileReadOnly &&
+              !loadedProject.votingIsInProgress) {
             final activeResult = await activeVoteUseCase(event.projectId);
             activeResult.fold((_) {}, (vote) {
               loadedProject = loadedProject.withActiveClosureVote(vote);
@@ -374,6 +382,8 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
     RefreshProjectPotEvent event,
     Emitter<ProjectDetailState> emit,
   ) async {
+    if (completedProjectsProfileReadOnly) return;
+
     final curr = state;
     if (curr is! ProjectDetailLoaded) return;
     if (curr.project.id != event.projectId) return;

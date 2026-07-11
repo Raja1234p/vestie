@@ -627,7 +627,8 @@ We will:
 
 - `DOCS/qa/api_screen_sync_matrix.md` — Week 10–11 voting sync rows
 - `lib/features/project_detail/feature_overview.md` — feature trace
-- `DOCS/week_11_project_detail_voting_plan.md` — Week 11 implementation plan
+- [`APP_GUIDE.md`](../APP_GUIDE.md) §7 — voting flow & key files
+- [`DOCS/outcome.md`](./outcome.md) — outcome API contract
 
 ---
 

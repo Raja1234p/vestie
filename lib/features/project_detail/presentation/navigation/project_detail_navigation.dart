@@ -64,7 +64,13 @@ class ProjectDetailNavigation {
     BuildContext context, {
     required ProjectDetailEntity project,
     required MemberEntity member,
-  }) => _openMemberProfile(context, project: project, member: member);
+    bool fromCompletedProjectsProfileDetail = false,
+  }) => _openMemberProfile(
+    context,
+    project: project,
+    member: member,
+    fromCompletedProjectsProfileDetail: fromCompletedProjectsProfileDetail,
+  );
 
   /// Reloads `GET /projects/{id}` after member profile changes (remove, co-leader, etc.).
   static void refreshProjectDetailAfterMemberFlow(
@@ -126,7 +132,12 @@ class ProjectDetailNavigation {
   static Future<void> openGroupMembers(
     BuildContext context, {
     required ProjectDetailEntity project,
-  }) => _openGroupMembers(context, project: project);
+    bool fromCompletedProjectsProfileDetail = false,
+  }) => _openGroupMembers(
+    context,
+    project: project,
+    fromCompletedProjectsProfileDetail: fromCompletedProjectsProfileDetail,
+  );
 
   /// Pops vote-started success → mark/stop intro so project detail is restored.
   static void popAfterVoteStarted(

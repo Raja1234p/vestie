@@ -15,12 +15,16 @@ class ProjectDetailTrailingActions extends StatelessWidget {
   final void Function(LeaderMenuAction action) onLeaderMenuSelected;
   final void Function(MemberProjectMenuAction action) onMemberMenuSelected;
 
+  /// Profile → Completed Projects → View Details: join chip off, funds history only.
+  final bool completedProjectsProfileDetail;
+
   const ProjectDetailTrailingActions({
     super.key,
     required this.project,
     required this.pendingJoinRequestCount,
     required this.onLeaderMenuSelected,
     required this.onMemberMenuSelected,
+    this.completedProjectsProfileDetail = false,
   });
 
   @override
@@ -29,26 +33,33 @@ class ProjectDetailTrailingActions extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    final showJoinChip = project.showsJoinRequestsHeaderChip;
+    final showJoinChip = !completedProjectsProfileDetail &&
+        project.showsJoinRequestsHeaderChip;
+
+    final fundsHistoryOnly = completedProjectsProfileDetail;
 
     final Widget menu = switch (project.overflowMenuKind) {
       ProjectDetailOverflowMenuKind.member => MemberProjectActionMenu(
         onSelected: onMemberMenuSelected,
-        includeMyBorrows: project.memberProjectMenuIncludesMyBorrows,
-        showInviteMembers: project.canInviteMembers,
+        fundsHistoryOnly: fundsHistoryOnly,
+        includeMyBorrows:
+            fundsHistoryOnly ? false : project.memberProjectMenuIncludesMyBorrows,
+        showInviteMembers: fundsHistoryOnly ? false : project.canInviteMembers,
       ),
       ProjectDetailOverflowMenuKind.leader => LeaderActionMenu(
         audience: project.isGroupLeader
             ? LeaderMenuAudience.primaryLeader
             : LeaderMenuAudience.coLeader,
-        includeMyBorrows:
-            project.isVacationOrEmergency &&
-            !project.hasActiveClosureVotingWindow,
-        showMarkAsSuccessful: project.canMarkProjectSuccessful,
-        showStopContributions: project.canStopContributions,
-        showCancelProject: project.canCancelProject,
-        showEditProject: project.canEditProject,
-        showInviteMembers: project.canInviteMembers,
+        fundsHistoryOnly: fundsHistoryOnly,
+        includeMyBorrows: fundsHistoryOnly
+            ? false
+            : project.isVacationOrEmergency &&
+                !project.hasActiveClosureVotingWindow,
+        showMarkAsSuccessful: fundsHistoryOnly ? false : project.canMarkProjectSuccessful,
+        showStopContributions: fundsHistoryOnly ? false : project.canStopContributions,
+        showCancelProject: fundsHistoryOnly ? false : project.canCancelProject,
+        showEditProject: fundsHistoryOnly ? false : project.canEditProject,
+        showInviteMembers: fundsHistoryOnly ? false : project.canInviteMembers,
         onSelected: onLeaderMenuSelected,
       ),
     };

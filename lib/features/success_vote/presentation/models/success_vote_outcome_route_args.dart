@@ -23,6 +23,13 @@ class SuccessVoteOutcomeRouteArgs {
   /// Defaulted / overdue viewer — penalty-specific outcome copy (no wallet refund).
   final bool viewerPenaltyIneligible;
 
+  /// Profile → Completed Projects: primary CTA opens read-only detail (not dashboard).
+  final bool fromCompletedProjectsList;
+
+  /// Navigation when [fromCompletedProjectsList] is true.
+  final String? projectId;
+  final String? initialProjectName;
+
   const SuccessVoteOutcomeRouteArgs({
     required this.data,
     required this.viewerRole,
@@ -32,7 +39,31 @@ class SuccessVoteOutcomeRouteArgs {
     this.project,
     this.projectCategory,
     this.viewerPenaltyIneligible = false,
+    this.fromCompletedProjectsList = false,
+    this.projectId,
+    this.initialProjectName,
   });
+
+  SuccessVoteOutcomeRouteArgs copyWith({
+    bool? fromCompletedProjectsList,
+    String? projectId,
+    String? initialProjectName,
+  }) {
+    return SuccessVoteOutcomeRouteArgs(
+      data: data,
+      viewerRole: viewerRole,
+      variant: variant,
+      refundPhase: refundPhase,
+      distributionPhase: distributionPhase,
+      project: project,
+      projectCategory: projectCategory,
+      viewerPenaltyIneligible: viewerPenaltyIneligible,
+      fromCompletedProjectsList:
+          fromCompletedProjectsList ?? this.fromCompletedProjectsList,
+      projectId: projectId ?? this.projectId,
+      initialProjectName: initialProjectName ?? this.initialProjectName,
+    );
+  }
 
   ProjectCategory? get resolvedCategory => projectCategory ?? project?.category;
 }

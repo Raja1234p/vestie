@@ -23,11 +23,16 @@ class ProjectDetailRouteArgs {
   /// When true, back/leave navigates to Discover and reloads the discover list only.
   final bool refreshDiscoverOnPop;
 
+  /// Profile completed list only — set by [openCompletedProjectDetail].
+  /// When true, detail shows read-only shell instead of outcome takeover.
+  final bool skipCompletedOutcomeTakeover;
+
   const ProjectDetailRouteArgs({
     required this.projectId,
     this.initialProjectName,
     this.refreshHomeOnPop = false,
     this.refreshDiscoverOnPop = false,
+    this.skipCompletedOutcomeTakeover = false,
   });
 
   /// Prefer non-empty [initialProjectName]; otherwise null (no placeholder title).
