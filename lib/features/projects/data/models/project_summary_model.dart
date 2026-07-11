@@ -15,6 +15,7 @@ class ProjectSummaryModel extends ProjectSummaryEntity {
     super.raisedAmount,
     super.potAmount,
     super.totalContributed,
+    super.viewerRefundAmount,
     super.maxMembers,
     required super.endsAtUtc,
     super.launchedAtUtc,
@@ -49,6 +50,7 @@ class ProjectSummaryModel extends ProjectSummaryEntity {
           ? json.safeDouble('potAmount')
           : null,
       totalContributed: json.safeDouble('totalContributed'),
+      viewerRefundAmount: json.safeDouble('viewerRefundAmount'),
       maxMembers: json['maxMembers'] != null
           ? json.safeInt('maxMembers')
           : json.safeInt('memberCount'),
@@ -100,6 +102,7 @@ class ProjectSummaryModel extends ProjectSummaryEntity {
       'raisedAmount': raisedAmount,
       if (potAmount != null) 'potAmount': potAmount,
       'totalContributed': totalContributed,
+      'viewerRefundAmount': viewerRefundAmount,
       'maxMembers': maxMembers,
       if (endsAtUtc != null) 'endsAtUtc': endsAtUtc!.toIso8601String(),
       'launchedAtUtc': launchedAtUtc?.toIso8601String(),

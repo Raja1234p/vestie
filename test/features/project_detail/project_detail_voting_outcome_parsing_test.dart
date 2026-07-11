@@ -176,6 +176,27 @@ void main() {
       );
     });
 
+    test('voting payload tolerates empty utc fields after finalize', () {
+      final entity = ProjectDetailResponseModel.fromJson(
+        _detailJson({
+          'startedAtUtc': '',
+          'deadlineAtUtc': '',
+          'voteType': 'SuccessVote',
+          'outcome': 'Success',
+          'isApproved': true,
+          'isFinalized': true,
+          'agreedCount': 5,
+          'disagreedCount': 2,
+          'pendingCount': 0,
+          'hasVoted': true,
+          'memberVotes': [],
+        }),
+      ).toEntity();
+
+      expect(entity.voting, isNotNull);
+      expect(entity.voting!.agreedCount, 5);
+    });
+
     test('final closure refund does not use refund lifecycle UI', () {
       final entity = ProjectDetailResponseModel.fromJson(
         _detailJson({

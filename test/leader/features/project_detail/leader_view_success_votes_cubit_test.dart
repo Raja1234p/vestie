@@ -167,4 +167,57 @@ void main() {
     expect(cubit.state.data?.agreedCount, 2);
     verify(() => getActive('p1')).called(1);
   });
+
+  test('load keeps finalized stop-contributions tallies after voting ends',
+      () async {
+    final project = ProjectDetailEntity(
+      id: 'p1',
+      name: 'Fund',
+      category: ProjectCategory.investment,
+      status: ProjectStatus.ongoing,
+      goalAmount: 10000,
+      currentAmount: 5000,
+      endsIn: '30d',
+      announcement: '',
+      members: const [],
+      borrowRequests: const [],
+      displayStatusLabel: 'Funded',
+      projectLifecycleState: 'funded',
+      votingStatus: ProjectVotingStatus.done,
+      detailUserRole: ProjectDetailUserRole.leader,
+      hasWeek11ProjectDetailEnvelope: true,
+      voting: ProjectVotingSummaryEntity(
+        startedAtUtc: DateTime.utc(2026, 6, 1),
+        deadlineAtUtc: DateTime.utc(2026, 6, 30),
+        agreedCount: 5,
+        disagreedCount: 1,
+        pendingCount: 0,
+        isFinalized: true,
+        voteType: ClosureVoteType.stopContributionsVote,
+        outcome: ClosureVoteOutcome.investmentStarted,
+        isApproved: true,
+        memberVotes: const [
+          ProjectVotingMemberVoteEntity(
+            membershipId: 'm1',
+            userId: 'u1',
+            displayName: 'Anna',
+            status: ProjectMemberVoteStatus.agreed,
+          ),
+        ],
+      ),
+    );
+    when(
+      () => projectDetailRepository.getProjectDetail(projectId: 'p1'),
+    ).thenAnswer((_) async => Right(project));
+
+    final cubit = buildCubit();
+    addTearDown(cubit.close);
+
+    await cubit.load();
+
+    expect(cubit.state.loadStatus, LeaderViewSuccessVotesLoadStatus.loaded);
+    expect(cubit.state.data?.agreedCount, 5);
+    expect(cubit.state.data?.disagreedCount, 1);
+    verifyNever(() => getActive(any()));
+  });
 }

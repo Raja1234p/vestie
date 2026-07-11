@@ -28,6 +28,9 @@ class ProjectDetailEntity {
   /// API `project.totalContributed` — sum of member contributions (detail raised fallback).
   final double totalContributed;
 
+  /// API `project.viewerRefundAmount` — viewer refund when pot/raised/contributions are zero.
+  final double viewerRefundAmount;
+
   /// From `GET /projects/{id}/pot` (`contributorCount`).
   final int contributorCount;
   final String endsIn;
@@ -113,6 +116,7 @@ class ProjectDetailEntity {
     required this.goalAmount,
     required this.currentAmount,
     this.totalContributed = 0,
+    this.viewerRefundAmount = 0,
     this.contributorCount = 0,
     required this.endsIn,
     required this.announcement,
@@ -172,9 +176,18 @@ class ProjectDetailEntity {
   double get progress =>
       goalAmount > 0 ? (currentAmount / goalAmount).clamp(0.0, 1.0) : 0.0;
 
-  /// Raised headline on detail when pot/raised is zero — falls back to [totalContributed].
-  double get raisedDisplayAmount =>
-      currentAmount > 0 ? currentAmount : totalContributed;
+  /// Raised headline: pot/raised → contributed → voting/project refund amount.
+  double get effectiveViewerRefundAmount {
+    final fromVoting = voting?.viewerRefundAmount ?? 0;
+    if (fromVoting > 0) return fromVoting;
+    return viewerRefundAmount;
+  }
+
+  double get raisedDisplayAmount {
+    if (currentAmount > 0) return currentAmount;
+    if (totalContributed > 0) return totalContributed;
+    return effectiveViewerRefundAmount;
+  }
 
   bool get isGroupLeader => viewerRole.isGroupLeader;
 
@@ -353,7 +366,15 @@ class ProjectDetailEntity {
     if (!category.isInvestment) return false;
     final state = projectLifecycleState.toLowerCase().trim();
     if (state == 'funded') return true;
-    return displayStatusLabel.toLowerCase().contains('funded');
+    if (displayStatusLabel.toLowerCase().contains('funded')) return true;
+    final summary = voting;
+    if (summary != null &&
+        summary.isFinalized &&
+        summary.voteType == ClosureVoteType.stopContributionsVote &&
+        summary.resolvedIsApproved == true) {
+      return true;
+    }
+    return false;
   }
 
   bool get investmentContributionsAreClosed => investmentFundedPhase;

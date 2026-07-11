@@ -194,6 +194,7 @@ class ProjectDetailResponseModel {
       goalAmount: _project.targetAmount,
       currentAmount: _project.displayPotAmount,
       totalContributed: _project.totalContributed,
+      viewerRefundAmount: _project.viewerRefundAmount,
       endsIn: _project.endsAtUtc,
       announcement: _project.description,
       announcements: mappedAnnouncements,
@@ -436,6 +437,7 @@ class _VotingPayload {
   final bool? isApproved;
   final int? eligibleVoterCount;
   final String? distributionStatus;
+  final double viewerRefundAmount;
 
   const _VotingPayload({
     required this.startedAtUtc,
@@ -451,6 +453,7 @@ class _VotingPayload {
     this.isApproved,
     this.eligibleVoterCount,
     this.distributionStatus,
+    this.viewerRefundAmount = 0,
   });
 
   factory _VotingPayload.fromJson(Map<String, dynamic> json) {
@@ -476,6 +479,8 @@ class _VotingPayload {
           : null,
       eligibleVoterCount: (json['eligibleVoterCount'] as num?)?.toInt(),
       distributionStatus: _nullableString(json['distributionStatus']),
+      viewerRefundAmount:
+          (json['viewerRefundAmount'] as num?)?.toDouble() ?? 0.0,
     );
   }
 
@@ -513,9 +518,11 @@ class _VotingPayload {
   }
 
   ProjectVotingSummaryEntity toEntity() {
+    final started = _parseUtcDateTimeOrNull(startedAtUtc) ?? DateTime.now().toUtc();
+    final deadline = _parseUtcDateTimeOrNull(deadlineAtUtc) ?? started;
     return ProjectVotingSummaryEntity(
-      startedAtUtc: DateTime.parse(startedAtUtc).toUtc(),
-      deadlineAtUtc: DateTime.parse(deadlineAtUtc).toUtc(),
+      startedAtUtc: started,
+      deadlineAtUtc: deadline,
       agreedCount: agreedCount,
       disagreedCount: disagreedCount,
       pendingCount: pendingCount,
@@ -527,6 +534,7 @@ class _VotingPayload {
       isApproved: isApproved,
       eligibleVoterCount: eligibleVoterCount,
       distributionStatus: distributionStatus,
+      viewerRefundAmount: viewerRefundAmount,
     );
   }
 }
@@ -534,6 +542,12 @@ class _VotingPayload {
 String _jsonString(dynamic value) {
   if (value == null) return '';
   return value.toString();
+}
+
+DateTime? _parseUtcDateTimeOrNull(String raw) {
+  final trimmed = raw.trim();
+  if (trimmed.isEmpty) return null;
+  return DateTime.tryParse(trimmed)?.toUtc();
 }
 
 double? _jsonDoubleNullable(dynamic value) {
@@ -566,6 +580,9 @@ class _ProjectPayload {
 
   /// When present on `project`, shown instead of [raisedAmount] on project detail.
   final double? potAmount;
+
+  /// Viewer refund when pot/raised/contributions are zero (cancelled/refund).
+  final double viewerRefundAmount;
   final String endsAtUtc;
   final String? launchedAtUtc;
   final String viewerRole;
@@ -591,6 +608,7 @@ class _ProjectPayload {
     required this.raisedAmount,
     this.totalContributed = 0,
     this.potAmount,
+    this.viewerRefundAmount = 0,
     required this.endsAtUtc,
     this.launchedAtUtc,
     required this.viewerRole,
@@ -620,6 +638,8 @@ class _ProjectPayload {
       raisedAmount: (json['raisedAmount'] as num?)?.toDouble() ?? 0.0,
       totalContributed:
           (json['totalContributed'] as num?)?.toDouble() ?? 0.0,
+      viewerRefundAmount:
+          (json['viewerRefundAmount'] as num?)?.toDouble() ?? 0.0,
       potAmount: json.containsKey('potAmount')
           ? (json['potAmount'] as num?)?.toDouble() ?? 0.0
           : null,

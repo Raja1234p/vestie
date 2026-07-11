@@ -72,5 +72,21 @@ void main() {
 
       expect(model.raisedDisplayAmount, 500);
     });
+
+    test('cancelled list row falls back to viewerRefundAmount', () {
+      final model = ProjectSummaryModel.fromJson(
+        _minimalJson({
+          'type': 'vacation',
+          'targetAmount': 5000,
+          'raisedAmount': 0,
+          'potAmount': 0,
+          'totalContributed': 0,
+          'viewerRefundAmount': 500,
+          'displayStatus': 'Cancelled',
+        }),
+      );
+
+      expect(model.raisedDisplayAmount, 500);
+    });
   });
 }

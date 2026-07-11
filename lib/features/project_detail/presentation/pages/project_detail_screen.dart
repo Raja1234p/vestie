@@ -87,18 +87,32 @@ class _ProjectDetailBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ProjectDetailBloc, ProjectDetailState>(
-      listenWhen: (prev, curr) =>
-          curr is ProjectDetailLoaded &&
-          curr.vffSendErrorMessage != null &&
-          curr.vffSendErrorMessage !=
-              (prev is ProjectDetailLoaded ? prev.vffSendErrorMessage : null),
+      listenWhen: (prev, curr) {
+        if (curr is! ProjectDetailLoaded) return false;
+        if (curr.vffSendErrorMessage != null &&
+            curr.vffSendErrorMessage !=
+                (prev is ProjectDetailLoaded ? prev.vffSendErrorMessage : null)) {
+          return true;
+        }
+        return curr.refreshErrorMessage != null &&
+            curr.refreshErrorMessage !=
+                (prev is ProjectDetailLoaded ? prev.refreshErrorMessage : null);
+      },
       listener: (context, state) {
         if (state is! ProjectDetailLoaded) return;
-        final message = state.vffSendErrorMessage;
-        if (message == null || message.isEmpty) return;
-        AppToast.showError(context, message);
+        final vffMessage = state.vffSendErrorMessage;
+        if (vffMessage != null && vffMessage.isNotEmpty) {
+          AppToast.showError(context, vffMessage);
+          context.read<ProjectDetailBloc>().add(
+            const ClearMemberVffSendErrorEvent(),
+          );
+          return;
+        }
+        final refreshMessage = state.refreshErrorMessage;
+        if (refreshMessage == null || refreshMessage.isEmpty) return;
+        AppToast.showError(context, refreshMessage);
         context.read<ProjectDetailBloc>().add(
-          const ClearMemberVffSendErrorEvent(),
+          const ClearProjectDetailRefreshErrorEvent(),
         );
       },
       builder: (context, state) {
@@ -148,11 +162,8 @@ class _ProjectDetailBody extends StatelessWidget {
               final pendingCount = state.pendingJoinRequestCount;
 
               Future<void> onRefresh() async {
-                context.read<ProjectDetailBloc>().add(
-                  LoadProjectDetailEvent(projectId: projectId),
-                );
-                await context.read<ProjectDetailBloc>().stream.firstWhere(
-                  (s) => s is ProjectDetailLoaded || s is ProjectDetailError,
+                await context.read<ProjectDetailBloc>().reloadDetailAndWait(
+                  projectId,
                 );
               }
 

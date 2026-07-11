@@ -20,6 +20,9 @@ class ProjectSummaryEntity extends Equatable {
   final double? potAmount;
 
   final double totalContributed;
+
+  /// Refund due to the viewer when pot/raised/contributions are zero (cancelled/refund).
+  final double viewerRefundAmount;
   final int maxMembers;
   final DateTime? endsAtUtc;
   final DateTime? launchedAtUtc;
@@ -52,6 +55,7 @@ class ProjectSummaryEntity extends Equatable {
     this.raisedAmount = 0,
     this.potAmount,
     this.totalContributed = 0,
+    this.viewerRefundAmount = 0,
     this.maxMembers = 0,
     this.endsAtUtc,
     this.launchedAtUtc,
@@ -84,9 +88,12 @@ class ProjectSummaryEntity extends Equatable {
   /// `potAmount` when API sends it (including `0`); otherwise [raisedAmount].
   double get displayPotAmount => potAmount ?? raisedAmount;
 
-  /// Home/detail card amount when pot/raised is zero.
-  double get raisedDisplayAmount =>
-      displayPotAmount > 0 ? displayPotAmount : totalContributed;
+  /// Home/detail card amount: pot → raised → contributed → viewer refund.
+  double get raisedDisplayAmount {
+    if (displayPotAmount > 0) return displayPotAmount;
+    if (totalContributed > 0) return totalContributed;
+    return viewerRefundAmount;
+  }
 
   @override
   List<Object?> get props => [
@@ -100,6 +107,7 @@ class ProjectSummaryEntity extends Equatable {
     raisedAmount,
     potAmount,
     totalContributed,
+    viewerRefundAmount,
     maxMembers,
     endsAtUtc,
     launchedAtUtc,

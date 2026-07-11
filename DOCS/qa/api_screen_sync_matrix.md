@@ -14,7 +14,7 @@ Use this when verifying **data on screen matches API** after actions (refresh, n
 | Screen | API | Load | Refresh after |
 |--------|-----|------|----------------|
 | Login | `POST /auth/login` | — | Dashboard |
-| Dashboard Home | `GET /projects` (user list) | Shimmer | Tab re-activate / reload flags |
+| Dashboard Home | `GET /projects` (user list) — card amount: `potAmount` → `raisedAmount` → `totalContributed` → `viewerRefundAmount` | Shimmer | Tab re-activate / reload flags |
 | Discover | `GET /projects` (discover) | Shimmer | Tab re-activate |
 | Profile header | `GET /users/me` | Shimmer | Edit profile save |
 | Edit profile | `PATCH /users/me`, photo upload | — | Profile tab |
@@ -33,10 +33,10 @@ Use this when verifying **data on screen matches API** after actions (refresh, n
 | Transaction history (profile) | `GET /wallet/transactions?page=&pageSize=` | `WalletRecentActivityRowShimmer`; load fail → `AppErrorView` + retry | `PaginatedScrollListener` load-more; client-side type filters |
 | Contribute amount/confirm | `GET /wallet` (balance), preview client-side | — | — |
 | Contribute submit | `POST /projects/{id}/contributions` | — | Wallet tab; project detail reload |
-| Project detail | `GET /projects/{id}` | Shimmer | After contribute / announcement |
+| Project detail | `GET /projects/{id}` — raised headline: pot/raised → `totalContributed` → `voting.viewerRefundAmount` / `project.viewerRefundAmount` | Shimmer | After contribute / announcement |
 | Project pot UI | `GET /projects/{id}/pot` | — | **Not wired to UI** |
 | Project funds history (ledger) | `GET /projects/{projectId}/funds-history` | `ProjectFundsHistoryListShimmer`; load fail → `AppErrorView` + retry | `PaginatedScrollListener` load-more; own Cubit load, independent of parent detail |
-| Completed projects list | `GET /projects/completed?page=&pageSize=` — list key `completedProjects` | `ProjectCardShimmer` list | `PaginatedScrollListener` load-more |
+| Completed projects list | `GET /projects/completed?page=&pageSize=` — list key `completedProjects`; cancelled rows use `viewerRefundAmount` when pot/raised/contributions are zero | `ProjectCardShimmer` list | `PaginatedScrollListener` load-more |
 | Completed project detail | `GET /projects/{id}` only | `ProjectDetailLoadingBody` | Pull-to-refresh; menu limited to Project fund history |
 | Investment detail — Distribute / Returns | `GET /projects/{id}` — funded phase only (`investmentContributionsAreClosed`, not completed) | — | Pull-to-refresh after vote finalize |
 | Investment / completed detail — vote outcome | `GET /projects/{id}` — `projectStatus: completed` or `cancelled`; `displayStatus` for approved vs refund | — | Profile completed list → outcome screen → detail |
