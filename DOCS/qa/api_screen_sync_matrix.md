@@ -128,7 +128,7 @@ Use this when verifying **data on screen matches API** after actions (refresh, n
 
 | Screen | API | Load | Refresh after |
 |--------|-----|------|----------------|
-| Project detail — member cast vote (inline) | `GET /projects/{id}` → `voting`, `votingStatus` | With detail shimmer | `POST …/closure-voting/vote` → tallies from response → `reloadDetailAndWait` → post-vote inline UI |
+| Project detail — member cast vote (inline) | `GET /projects/{id}` → `voting`, `votingStatus`; investment mark-successful **Total Distributed (incl. ROI)** from `project.totalDistributedWithRoi` | With detail shimmer | `POST …/closure-voting/vote` → tallies from response → `reloadDetailAndWait` → post-vote inline UI |
 | Project detail — member post-vote (inline) | Same `voting` + `memberVotes[]` (`voteStatus`: agreed / disagreed / waiting) | With detail shimmer | Pull-to-refresh on normal scroll only; inline post-vote is read-only |
 | Project detail — leader View Success Votes | `GET /projects/{id}` → `voting` + `memberVotes[]` (Week 11) | Shimmer on monitor screen | Pull-to-refresh → same single detail call; legacy projects fall back to `GET …/closure-voting/active` |
 | Cast vote (routed fallback) | `GET …/closure-voting/active` + `POST …/vote` | Shimmer | `ProjectDetailReloadCoordinator.reload` before success state |

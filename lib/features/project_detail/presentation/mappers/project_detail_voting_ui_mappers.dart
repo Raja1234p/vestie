@@ -40,9 +40,7 @@ SuccessVoteCastUiData successVoteCastUiDataFromProjectDetail(
         ? vote.goalAmount
         : project.goalAmount,
     memberCount: eligibleMemberCount,
-    totalRaised: vote != null && vote.totalRaised > 0
-        ? vote.totalRaised
-        : project.currentAmount,
+    totalRaised: successVoteCastTotalRaisedAmount(project, vote: vote),
     deadlineLabel: deadlineLabel,
     daysRemaining: vote?.daysRemaining ??
         (deadlineUtc != null ? projectVotingDaysRemaining(deadlineUtc) : 0),

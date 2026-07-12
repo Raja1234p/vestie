@@ -35,7 +35,7 @@ On project detail load: Week 11+ `GET /projects/{id}` supplies `projectStatus`, 
 
 **Production member / co-leader vote flow:** while `votingStatus == pending` and the viewer has not voted, detail shows inline cast (`ProjectDetailInlineCastVote`). After vote (`hasVoted` + viewer `memberVotes[].voteStatus`), detail shows post-vote Figma UI (`ProjectDetailInlineVoteSubmitted`) — tallies + summary + Back to Home, no per-member roster on member flow.
 
-**Investment vote phases (member copy):** phase 1 stop-contributions (`isStopContributionsClosureVote`) uses dedicated Figma strings (invest/refund). Phase 2 mark-successful on funded projects (`isInvestmentMarkSuccessfulClosureVote`) uses ROI confirmation / dispute strings (`Yes, Confirm Received` / `No, Dispute`) and Total Invested / Total Distributed labels.
+**Investment vote phases (member copy):** phase 1 stop-contributions (`isStopContributionsClosureVote`) uses dedicated Figma strings (invest/refund). Phase 2 mark-successful on funded projects (`isInvestmentMarkSuccessfulClosureVote`) uses ROI confirmation / dispute strings (`Yes, Confirm Received` / `No, Dispute`) and Total Invested / **Total Distributed (incl. ROI)** from `project.totalDistributedWithRoi` on the cast-vote screen when voting is in progress.
 
 **Leader monitor:** View Success Votes loads **`GET /projects/{id}`** when Week 11 `voting` is present (open or **finalized** tallies after the window closes). Voting + lifecycle fields (`displayStatus`, `projectLifecycleState`) merge back into the open detail bloc via `ProjectDetailReloadCoordinator.mergeVotingSnapshot` (preserves pot/borrow). Legacy detail without `voting` falls back to `GET …/closure-voting/active`.
 

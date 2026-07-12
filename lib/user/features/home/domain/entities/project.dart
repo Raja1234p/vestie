@@ -167,6 +167,11 @@ class Project {
     return normalized.contains('closure') && normalized.contains('voting');
   }
 
+  /// API `displayStatus` e.g. "Project Not Approved" — joined member may open from Home.
+  bool get isProjectNotApprovedDisplayStatus {
+    return _normalizedDisplayStatus.contains('not approved');
+  }
+
   /// Majority success-vote result for completed projects (profile list **View**).
   bool get isSuccessVoteApproved {
     if (successVoteApproved != null) return successVoteApproved!;
@@ -186,7 +191,9 @@ class Project {
     if (status == ProjectStatus.completed) return true;
     if (status == ProjectStatus.ongoing) {
       if (relation == ProjectRelation.joined) {
-        return isDisplayOnGoing || isClosureVotingDisplayStatus;
+        return isDisplayOnGoing ||
+            isClosureVotingDisplayStatus ||
+            isProjectNotApprovedDisplayStatus;
       }
       return true;
     }

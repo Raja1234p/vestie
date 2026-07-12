@@ -187,6 +187,30 @@ void main() {
       expect(entity.raisedDisplayAmount, 500);
     });
 
+    test('parses project.totalDistributedWithRoi from detail payload', () {
+      final entity = ProjectDetailResponseModel.fromJson(
+        _minimalProjectJson(
+          project: {
+            'id': 'inv1',
+            'name': 'Fund',
+            'description': '',
+            'type': 'investment',
+            'visibility': 'public',
+            'state': 'funded',
+            'targetAmount': 10000,
+            'raisedAmount': 12000,
+            'totalContributed': 10000,
+            'viewerRefundAmount': 0,
+            'totalDistributedWithRoi': 16500,
+            'endsAtUtc': null,
+            'displayStatus': 'On Going',
+          },
+        ),
+      ).toEntity();
+
+      expect(entity.totalDistributedWithRoi, 16500);
+    });
+
     test('detail prefers voting.viewerRefundAmount over project field', () {
       final entity = ProjectDetailResponseModel.fromJson({
         ..._minimalProjectJson(

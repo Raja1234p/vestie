@@ -7,6 +7,7 @@ import 'package:vestie/features/project_detail/domain/entities/project_detail_en
 import 'package:vestie/features/project_detail/domain/entities/viewer_membership_role.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_voting_entities.dart';
 import 'package:vestie/features/project_detail/presentation/mappers/closure_vote_ui_mappers.dart';
+import 'package:vestie/features/project_detail/presentation/mappers/project_detail_voting_ui_mappers.dart';
 import 'package:vestie/leader/features/project_detail/presentation/models/leader_success_vote_progress_ui_data.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 
@@ -276,6 +277,46 @@ void main() {
       expect(args.thumbsDown, 1);
       expect(args.notYetVoted, 1);
     });
+
+    test(
+      'investment mark-successful cast vote uses totalDistributedWithRoi',
+      () {
+        final project = ProjectDetailEntity(
+          id: 'inv1',
+          name: 'Fund',
+          category: ProjectCategory.investment,
+          status: ProjectStatus.ongoing,
+          goalAmount: 10000,
+          currentAmount: 12000,
+          totalContributed: 10000,
+          totalDistributedWithRoi: 16500,
+          endsIn: '2026-12-01',
+          announcement: '',
+          members: const [],
+          borrowRequests: const [],
+          hasWeek11ProjectDetailEnvelope: true,
+          votingStatus: ProjectVotingStatus.pending,
+          voting: ProjectVotingSummaryEntity(
+            startedAtUtc: DateTime.utc(2026, 6, 1),
+            deadlineAtUtc: DateTime.utc(2026, 6, 26),
+            agreedCount: 0,
+            disagreedCount: 0,
+            pendingCount: 3,
+            voteType: ClosureVoteType.finalClosureVote,
+          ),
+        ).withSyntheticClosureVoteFromDetailVoting();
+
+        expect(successVoteCastTotalRaisedAmount(project), 16500);
+        expect(
+          successVoteCastRouteArgsFromProject(project).totalRaised,
+          16500,
+        );
+        expect(
+          successVoteCastUiDataFromProjectDetail(project).totalRaised,
+          16500,
+        );
+      },
+    );
 
     test('maps voting.memberVotes to leader member rows', () {
       final project = ProjectDetailEntity(

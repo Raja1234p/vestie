@@ -79,7 +79,10 @@ extension ProjectDetailEntityClosureVote on ProjectDetailEntity {
       thumbsDown: summary.disagreedCount,
       notYetVoted: summary.pendingCount,
       goalAmount: goalAmount,
-      totalRaised: currentAmount,
+      totalRaised: isInvestmentMarkSuccessfulClosureVote &&
+              totalDistributedWithRoi > 0
+          ? totalDistributedWithRoi
+          : currentAmount,
       memberCount: _syntheticClosureVoteMemberCount(summary),
       callerVote: _callerVoteFromSummary(summary),
       callerIsGroupLeader: isDetailLeader,
@@ -129,6 +132,7 @@ extension ProjectDetailEntityClosureVote on ProjectDetailEntity {
       displayStatusLabel: snapshot.displayStatusLabel,
       projectLifecycleState: snapshot.projectLifecycleState,
       viewerRefundAmount: snapshot.viewerRefundAmount,
+      totalDistributedWithRoi: snapshot.totalDistributedWithRoi,
       votingStatus: snapshot.votingStatus,
       detailUserRole: snapshot.detailUserRole,
       voting: snapshot.voting,
@@ -157,6 +161,7 @@ extension ProjectDetailEntityClosureVote on ProjectDetailEntity {
     String? displayStatusLabel,
     String? projectLifecycleState,
     double? viewerRefundAmount,
+    double? totalDistributedWithRoi,
     ProjectVotingStatus? votingStatus,
     ProjectDetailUserRole? detailUserRole,
     ProjectVotingSummaryEntity? voting,
@@ -191,6 +196,8 @@ extension ProjectDetailEntityClosureVote on ProjectDetailEntity {
       displayStatusLabel: displayStatusLabel ?? this.displayStatusLabel,
       projectLifecycleState: projectLifecycleState ?? this.projectLifecycleState,
       viewerRefundAmount: viewerRefundAmount ?? this.viewerRefundAmount,
+      totalDistributedWithRoi:
+          totalDistributedWithRoi ?? this.totalDistributedWithRoi,
       projectBannerStatus: projectBannerStatus ?? this.projectBannerStatus,
       votingStatus: votingStatus ?? this.votingStatus,
       detailUserRole: detailUserRole ?? this.detailUserRole,

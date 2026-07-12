@@ -195,6 +195,7 @@ class ProjectDetailResponseModel {
       currentAmount: _project.displayPotAmount,
       totalContributed: _project.totalContributed,
       viewerRefundAmount: _project.viewerRefundAmount,
+      totalDistributedWithRoi: _project.totalDistributedWithRoi,
       endsIn: _project.endsAtUtc,
       announcement: _project.description,
       announcements: mappedAnnouncements,
@@ -583,6 +584,10 @@ class _ProjectPayload {
 
   /// Viewer refund when pot/raised/contributions are zero (cancelled/refund).
   final double viewerRefundAmount;
+
+  /// Total distributed including ROI — investment mark-successful cast vote.
+  final double totalDistributedWithRoi;
+
   final String endsAtUtc;
   final String? launchedAtUtc;
   final String viewerRole;
@@ -609,6 +614,7 @@ class _ProjectPayload {
     this.totalContributed = 0,
     this.potAmount,
     this.viewerRefundAmount = 0,
+    this.totalDistributedWithRoi = 0,
     required this.endsAtUtc,
     this.launchedAtUtc,
     required this.viewerRole,
@@ -640,6 +646,8 @@ class _ProjectPayload {
           (json['totalContributed'] as num?)?.toDouble() ?? 0.0,
       viewerRefundAmount:
           (json['viewerRefundAmount'] as num?)?.toDouble() ?? 0.0,
+      totalDistributedWithRoi:
+          (json['totalDistributedWithRoi'] as num?)?.toDouble() ?? 0.0,
       potAmount: json.containsKey('potAmount')
           ? (json['potAmount'] as num?)?.toDouble() ?? 0.0
           : null,

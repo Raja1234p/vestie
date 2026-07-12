@@ -22,5 +22,11 @@ void main() {
       final project = joinedOngoing(displayStatus: 'Waiting for Approval');
       expect(project.showsHomeActionButton, isFalse);
     });
+
+    test('shows View for joined member when displayStatus is Project Not Approved', () {
+      final project = joinedOngoing(displayStatus: 'Project Not Approved');
+      expect(project.isProjectNotApprovedDisplayStatus, isTrue);
+      expect(project.showsHomeActionButton, isTrue);
+    });
   });
 }

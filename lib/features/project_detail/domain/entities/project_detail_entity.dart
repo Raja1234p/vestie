@@ -31,6 +31,9 @@ class ProjectDetailEntity {
   /// API `project.viewerRefundAmount` — viewer refund when pot/raised/contributions are zero.
   final double viewerRefundAmount;
 
+  /// API `project.totalDistributedWithRoi` — investment mark-successful cast vote.
+  final double totalDistributedWithRoi;
+
   /// From `GET /projects/{id}/pot` (`contributorCount`).
   final int contributorCount;
   final String endsIn;
@@ -117,6 +120,7 @@ class ProjectDetailEntity {
     required this.currentAmount,
     this.totalContributed = 0,
     this.viewerRefundAmount = 0,
+    this.totalDistributedWithRoi = 0,
     this.contributorCount = 0,
     required this.endsIn,
     required this.announcement,

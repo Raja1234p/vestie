@@ -25,6 +25,19 @@ String formatClosureVoteDeadlineLabel(DateTime deadlineUtc) {
   return DateFormat('MMM d, yyyy').format(deadlineUtc.toLocal());
 }
 
+/// Raised / distributed amount on the cast-vote financial summary.
+double successVoteCastTotalRaisedAmount(
+  ProjectDetailEntity project, {
+  ActiveClosureVoteEntity? vote,
+}) {
+  if (project.isInvestmentMarkSuccessfulClosureVote &&
+      project.totalDistributedWithRoi > 0) {
+    return project.totalDistributedWithRoi;
+  }
+  if (vote != null && vote.totalRaised > 0) return vote.totalRaised;
+  return project.currentAmount;
+}
+
 LeaderMemberVoteStatus leaderMemberVoteStatusFromProjectVote(
   ProjectMemberVoteStatus status,
 ) {
@@ -204,9 +217,7 @@ SuccessVoteCastRouteArgs successVoteCastRouteArgsFromProject(
     memberCount: vote != null && vote.memberCount > 0
         ? vote.memberCount
         : project.members.length,
-    totalRaised: vote != null && vote.totalRaised > 0
-        ? vote.totalRaised
-        : project.currentAmount,
+    totalRaised: successVoteCastTotalRaisedAmount(project, vote: vote),
     deadlineLabel: vote != null
         ? formatClosureVoteDeadlineLabel(vote.votingDeadlineUtc)
         : project.endsIn,
