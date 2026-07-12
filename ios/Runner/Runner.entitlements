@@ -12,5 +12,7 @@
 	<array>
 		<string>applinks:vestie-backend-byexejcphyhaapfy.centralus-01.azurewebsites.net</string>
 	</array>
+	<key>com.apple.developer.networking.topology-observation</key>
+	<true/>
 </dict>
 </plist>
