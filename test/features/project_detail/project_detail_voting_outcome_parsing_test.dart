@@ -135,7 +135,7 @@ void main() {
       );
     });
 
-    test('investment final closure approved outcome amount uses totalContributed',
+    test('investment final closure approved outcome amount uses totalDistributedWithRoi',
         () {
       final entity = ProjectDetailResponseModel.fromJson({
         ..._detailJson({
@@ -160,6 +160,7 @@ void main() {
           'displayStatus': 'Completed',
           'targetAmount': 15000,
           'totalContributed': 500,
+          'totalDistributedWithRoi': 15000,
           'raisedAmount': 0,
           'potAmount': 0,
           'viewerRole': 'Member',
@@ -172,7 +173,7 @@ void main() {
       expect(entity.closureVoteOutcomeAmountUsd, 500);
       expect(
         successVoteOutcomeUiDataFromProjectDetail(entity).amountUsd,
-        500,
+        15000,
       );
     });
 

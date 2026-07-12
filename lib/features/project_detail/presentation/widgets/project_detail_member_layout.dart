@@ -93,21 +93,9 @@ class _ProjectDetailMemberLayoutState extends State<ProjectDetailMemberLayout> {
               bottom: ProjectDetailScrollInsets.applyBottomSafeAreaToViewport,
               child: ColoredBox(
                 color: Colors.white,
-                child: RefreshIndicator(
-                  color: AppColors.primary,
+                child: ProjectDetailInlineMemberVoteFlow(
+                  project: widget.project,
                   onRefresh: widget.onRefresh,
-                  child: CustomScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    slivers: [
-                      SliverFillRemaining(
-                        hasScrollBody: false,
-                        child: ProjectDetailInlineMemberVoteFlow(
-                          project: widget.project,
-                          onRefresh: widget.onRefresh,
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
               ),
             ),

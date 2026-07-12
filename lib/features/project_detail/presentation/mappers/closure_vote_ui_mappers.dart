@@ -38,6 +38,18 @@ double successVoteCastTotalRaisedAmount(
   return project.currentAmount;
 }
 
+/// Amount on [SuccessVoteOutcomeScreen] only — investment final-closure approved
+/// uses `project.totalDistributedWithRoi`; all other outcomes unchanged.
+double successVoteOutcomeScreenAmountUsd(ProjectDetailEntity project) {
+  if (project.isApprovedInvestmentFinalClosureOutcome) {
+    if (project.totalDistributedWithRoi > 0) {
+      return project.totalDistributedWithRoi;
+    }
+    return project.totalContributed;
+  }
+  return project.closureVoteOutcomeAmountUsd;
+}
+
 LeaderMemberVoteStatus leaderMemberVoteStatusFromProjectVote(
   ProjectMemberVoteStatus status,
 ) {
@@ -288,7 +300,7 @@ SuccessVoteOutcomeRouteArgs successVoteOutcomeRouteArgsFromFinalize({
   return SuccessVoteOutcomeRouteArgs(
     data: successVoteOutcomeUiDataFromFinalize(
       result: result,
-      amountUsd: project.closureVoteOutcomeAmountUsd,
+      amountUsd: successVoteOutcomeScreenAmountUsd(project),
       totalMemberCount: project.members.isNotEmpty
           ? project.members.length
           : null,
@@ -319,7 +331,7 @@ SuccessVoteOutcomeUiData successVoteOutcomeUiDataFromProjectDetail(
         : (voting.eligibleVoterCount ?? voting.pendingCount).clamp(1, 999);
     return SuccessVoteOutcomeUiData(
       isApproved: false,
-      amountUsd: project.closureVoteOutcomeAmountUsd,
+      amountUsd: successVoteOutcomeScreenAmountUsd(project),
       agreedCount: 0,
       disagreedCount: 0,
       totalMemberCount: total,
@@ -332,7 +344,7 @@ SuccessVoteOutcomeUiData successVoteOutcomeUiDataFromProjectDetail(
     final total = tallied > 0 ? tallied : eligibleTotal;
     return SuccessVoteOutcomeUiData(
       isApproved: project.isClosureVoteOutcomeApproved,
-      amountUsd: project.closureVoteOutcomeAmountUsd,
+      amountUsd: successVoteOutcomeScreenAmountUsd(project),
       agreedCount: voting.agreedCount,
       disagreedCount: voting.disagreedCount,
       totalMemberCount: total > 0 ? total : 1,
@@ -344,7 +356,7 @@ SuccessVoteOutcomeUiData successVoteOutcomeUiDataFromProjectDetail(
   final majority = total <= 1 ? 1 : (total / 2).floor() + 1;
   return SuccessVoteOutcomeUiData(
     isApproved: approved,
-    amountUsd: project.closureVoteOutcomeAmountUsd,
+    amountUsd: successVoteOutcomeScreenAmountUsd(project),
     agreedCount: approved ? majority : total - majority,
     disagreedCount: approved ? total - majority : majority,
     totalMemberCount: total,

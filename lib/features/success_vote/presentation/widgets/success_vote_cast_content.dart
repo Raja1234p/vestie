@@ -58,10 +58,6 @@ class _SuccessVoteCastContentState extends State<SuccessVoteCastContent> {
     if (oldWidget.choice != widget.choice) {
       _choice = widget.choice;
     }
-    if (oldWidget.submittingVoteForSuccess == null &&
-        widget.submittingVoteForSuccess == null) {
-      _localSubmittingVoteForSuccess = null;
-    }
   }
 
   bool? get _activeSubmitting =>
@@ -85,8 +81,10 @@ class _SuccessVoteCastContentState extends State<SuccessVoteCastContent> {
       setState(() => _localSubmittingVoteForSuccess = voteForSuccess);
       final ok = await submit(voteForSuccess);
       if (!mounted) return;
-      setState(() => _localSubmittingVoteForSuccess = null);
-      if (!ok) return;
+      if (!ok) {
+        setState(() => _localSubmittingVoteForSuccess = null);
+      }
+      return;
     }
     if (widget.onSubmitVote == null) {
       setState(() {

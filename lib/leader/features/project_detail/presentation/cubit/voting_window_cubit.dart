@@ -93,10 +93,7 @@ class VotingWindowCubit extends Cubit<VotingWindowState> {
         );
         return false;
       },
-      (_) {
-        emit(state.copyWith(loading: false));
-        return true;
-      },
+      (_) => true,
     );
   }
 }

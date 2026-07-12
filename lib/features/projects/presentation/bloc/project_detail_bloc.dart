@@ -314,7 +314,8 @@ class ProjectDetailBloc extends Bloc<ProjectDetailEvent, ProjectDetailState> {
           final listBorrow = _listBorrowRequests;
           if (listBorrow != null &&
               !completedProjectsProfileReadOnly &&
-              loadedProject.borrowingEnabled) {
+              loadedProject.borrowingEnabled &&
+              !loadedProject.votingIsInProgress) {
             final borrowResult = await listBorrow(
               projectId: event.projectId,
               status: 'Pending',
