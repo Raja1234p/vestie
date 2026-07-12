@@ -42,8 +42,8 @@ class ProjectCard extends StatelessWidget {
   });
 
   /// My Projects: View while ongoing. Joined: View when `displayStatus` is
-  /// On Going, Funded, Closure Voting, or Project Not Approved; no CTA for
-  /// Waiting for Approval (see [Project.showsHomeActionButton]).
+  /// On Going, Funded, Closure Voting, Project Not Approved, or refund
+  /// display status; no CTA for Waiting for Approval (see [Project.showsHomeActionButton]).
   bool get _showActionButton =>
       forceShowActionButton || project.showsHomeActionButton;
 

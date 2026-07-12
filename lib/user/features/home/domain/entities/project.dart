@@ -172,6 +172,20 @@ class Project {
     return _normalizedDisplayStatus.contains('not approved');
   }
 
+  /// API `displayStatus` e.g. "Refund in progress" / "Refund complete".
+  bool get isRefundDisplayStatus {
+    final normalized = _normalizedDisplayStatus;
+    if (!normalized.contains('refund')) return false;
+    if (normalized.contains('complete') ||
+        normalized.contains('completed') ||
+        normalized.contains('returned')) {
+      return true;
+    }
+    return normalized.contains('progress') ||
+        normalized.contains('processing') ||
+        normalized.contains('pending');
+  }
+
   /// Majority success-vote result for completed projects (profile list **View**).
   bool get isSuccessVoteApproved {
     if (successVoteApproved != null) return successVoteApproved!;
@@ -193,7 +207,8 @@ class Project {
       if (relation == ProjectRelation.joined) {
         return isDisplayOnGoing ||
             isClosureVotingDisplayStatus ||
-            isProjectNotApprovedDisplayStatus;
+            isProjectNotApprovedDisplayStatus ||
+            isRefundDisplayStatus;
       }
       return true;
     }

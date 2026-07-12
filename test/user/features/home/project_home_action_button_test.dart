@@ -28,5 +28,17 @@ void main() {
       expect(project.isProjectNotApprovedDisplayStatus, isTrue);
       expect(project.showsHomeActionButton, isTrue);
     });
+
+    test('shows View for joined member when displayStatus is Refund in progress', () {
+      final project = joinedOngoing(displayStatus: 'Refund in progress');
+      expect(project.isRefundDisplayStatus, isTrue);
+      expect(project.showsHomeActionButton, isTrue);
+    });
+
+    test('shows View for joined member when displayStatus is Refund complete', () {
+      final project = joinedOngoing(displayStatus: 'Refund complete');
+      expect(project.isRefundDisplayStatus, isTrue);
+      expect(project.showsHomeActionButton, isTrue);
+    });
   });
 }
