@@ -9,6 +9,7 @@ import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/features/payment_methods/domain/payment_methods_cache.dart';
 import 'package:vestie/features/profile/domain/entities/payment_method_picker_behavior.dart';
 import 'package:vestie/core/utils/wallet_withdraw_validation.dart';
+import 'package:vestie/features/wallet/domain/wallet_withdraw_policy.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/flow_screen_footer.dart';
 import 'package:vestie/core/widgets/common/post_auth_flow_sub_header.dart';
@@ -135,6 +136,16 @@ class _TransactionConfirmationScreenState
               );
             }
             if (withdrawState.isSuccess && context.mounted) {
+              final txState = context.read<WalletTransactionCubit>().state;
+              final method = txState.withdrawDeliveryMethod ??
+                  WithdrawDeliveryMethod.standard;
+              context.read<WalletTransactionCubit>().setWithdrawYouWillReceive(
+                    WalletWithdrawPolicy.youWillReceiveAmount(
+                      principal: txState.amountParsed,
+                      method: method,
+                      preview: withdrawState.preview,
+                    ),
+                  );
               await context.read<WalletCubit>().load(forceRefresh: true);
               if (!context.mounted) return;
               context.pushReplacement(AppRoutes.transactionSuccess);

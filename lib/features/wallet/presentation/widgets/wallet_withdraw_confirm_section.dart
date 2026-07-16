@@ -45,8 +45,11 @@ class WalletWithdrawConfirmSection extends StatelessWidget {
         (isInstant
             ? AppStrings.withdrawProcessingInstantValue
             : AppStrings.walletProcessingTimeValue);
-    final net = preview?.youWillReceive ??
-        WalletWithdrawPolicy.netReceive(txState.amountParsed, method);
+    final net = WalletWithdrawPolicy.youWillReceiveAmount(
+      principal: txState.amountParsed,
+      method: method,
+      preview: preview,
+    );
 
     return SingleChildScrollView(
       padding: AppDimens.postAuthFlowScrollPadding,

@@ -1,3 +1,4 @@
+import 'entities/withdrawal_entities.dart';
 import 'withdraw_delivery_method.dart';
 
 /// Fee + ETA rules for withdrawal flows (matches product / Figma).
@@ -16,5 +17,14 @@ abstract final class WalletWithdrawPolicy {
     return double.parse(
       (principal - feeAmount(principal, method)).toStringAsFixed(2),
     );
+  }
+
+  /// Matches confirm breakdown — API preview net, else local fee rules.
+  static double youWillReceiveAmount({
+    required double principal,
+    required WithdrawDeliveryMethod method,
+    WithdrawalPreviewEntity? preview,
+  }) {
+    return preview?.youWillReceive ?? netReceive(principal, method);
   }
 }

@@ -25,7 +25,7 @@ class RegisterPasswordRequirementBar extends StatelessWidget {
             Expanded(
               child: AppText(
                 AppStrings.passwordHint,
-                maxLines: 1,
+                maxLines: 4,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   fontSize: 15.sp,

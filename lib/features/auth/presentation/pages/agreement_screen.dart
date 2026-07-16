@@ -1,4 +1,5 @@
 import 'package:dotted_border/dotted_border.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,8 +9,10 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../app/router/project_invite_navigation.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_dimens.dart';
+import '../../../../core/constants/app_links.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/external_url_launch.dart';
 import '../../../../core/widgets/common/app_button.dart';
 import '../../../../core/widgets/common/app_failure_dialog.dart';
 import '../../../../core/widgets/common/app_tick_switch.dart';
@@ -114,6 +117,9 @@ class _AgreementBody extends StatelessWidget {
                     ),
                   SizedBox(height: 20.h),
 
+                  const _AgreementLegalLinksPrompt(),
+                  SizedBox(height: 16.h),
+
                   // ── Agreement switch row ──────────────────────────────
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -156,6 +162,83 @@ class _AgreementBody extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+/// Privacy Policy / Terms links — opens the system browser.
+class _AgreementLegalLinksPrompt extends StatefulWidget {
+  const _AgreementLegalLinksPrompt();
+
+  @override
+  State<_AgreementLegalLinksPrompt> createState() =>
+      _AgreementLegalLinksPromptState();
+}
+
+class _AgreementLegalLinksPromptState extends State<_AgreementLegalLinksPrompt> {
+  late final TapGestureRecognizer _privacyRecognizer;
+  late final TapGestureRecognizer _termsRecognizer;
+
+  @override
+  void initState() {
+    super.initState();
+    _privacyRecognizer = TapGestureRecognizer()
+      ..onTap = () {
+        if (!mounted) return;
+        launchExternalUrl(context, AppLinks.privacyPolicy);
+      };
+    _termsRecognizer = TapGestureRecognizer()
+      ..onTap = () {
+        if (!mounted) return;
+        launchExternalUrl(context, AppLinks.termsAndConditions);
+      };
+  }
+
+  @override
+  void dispose() {
+    _privacyRecognizer.dispose();
+    _termsRecognizer.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final baseStyle = GoogleFonts.lato(
+      fontSize: 13.sp,
+      color: AppColors.textBody,
+      height: 1.5,
+    );
+    final linkStyle = GoogleFonts.lato(
+      fontSize: 13.sp,
+      fontWeight: FontWeight.w600,
+      color: AppColors.authBottomLink,
+      height: 1.5,
+      decoration: TextDecoration.underline,
+      decorationColor: AppColors.authBottomLink,
+    );
+
+    return Center(
+      child: Text.rich(
+        TextSpan(
+          style: baseStyle,
+          children: [
+            const TextSpan(text: AppStrings.agreementLegalPromptPrefix),
+            TextSpan(
+              text: AppStrings.agreementPrivacyPolicyLink,
+              style: linkStyle,
+              recognizer: _privacyRecognizer,
+            ),
+            const TextSpan(text: AppStrings.agreementLegalPromptAnd),
+            TextSpan(
+              text: AppStrings.agreementTermsAndConditionsLink,
+              style: linkStyle,
+              recognizer: _termsRecognizer,
+            ),
+            const TextSpan(text: AppStrings.agreementLegalPromptSuffix),
+          ],
+        ),
+        textAlign: TextAlign.center,
+      ),
     );
   }
 }

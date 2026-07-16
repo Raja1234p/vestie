@@ -20,6 +20,7 @@ Login, registration, email verification, password reset, and session bootstrap i
 | `/login` | `LoginScreen` |
 | `/register` | `RegisterScreen` |
 | `/verify` | `VerifyEmailScreen` |
+| `/agreement` | `AgreementScreen` — Privacy Policy / Terms open in the system browser |
 | `/forgot-password` | `ForgotPasswordScreen` |
 | `/reset-password` | `ResetPasswordScreen` |
 

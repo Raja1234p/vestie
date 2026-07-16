@@ -5,6 +5,7 @@ import 'package:vestie/core/utils/formatters.dart';
 import '../../../profile/domain/entities/payment_card.dart';
 import '../../domain/wallet_deposit_policy.dart';
 import '../../domain/wallet_transaction_type.dart';
+import '../../domain/wallet_withdraw_policy.dart';
 import 'package:vestie/core/utils/wallet_withdraw_validation.dart';
 import '../../domain/withdraw_delivery_method.dart';
 
@@ -16,6 +17,7 @@ class WalletTransactionState {
   final WithdrawDeliveryMethod? withdrawDeliveryMethod;
   final String? selectedBankAccountId;
   final String? selectedBankDisplayName;
+  final double? withdrawYouWillReceive;
 
   const WalletTransactionState({
     required this.transactionType,
@@ -25,6 +27,7 @@ class WalletTransactionState {
     this.withdrawDeliveryMethod,
     this.selectedBankAccountId,
     this.selectedBankDisplayName,
+    this.withdrawYouWillReceive,
   });
 
   WalletTransactionState copyWith({
@@ -35,8 +38,10 @@ class WalletTransactionState {
     WithdrawDeliveryMethod? withdrawDeliveryMethod,
     String? selectedBankAccountId,
     String? selectedBankDisplayName,
+    double? withdrawYouWillReceive,
     bool clearSelectedCard = false,
     bool clearBankAccount = false,
+    bool clearWithdrawYouWillReceive = false,
   }) {
     return WalletTransactionState(
       transactionType: transactionType ?? this.transactionType,
@@ -52,6 +57,9 @@ class WalletTransactionState {
       selectedBankDisplayName: clearBankAccount
           ? null
           : (selectedBankDisplayName ?? this.selectedBankDisplayName),
+      withdrawYouWillReceive: clearWithdrawYouWillReceive
+          ? null
+          : (withdrawYouWillReceive ?? this.withdrawYouWillReceive),
     );
   }
 
@@ -67,6 +75,15 @@ class WalletTransactionState {
   /// Net wallet credit after the 2.9% deposit fee — matches confirm breakdown.
   String get formattedDepositNetCredit => AppFormatters.formatCurrency(
     WalletDepositPolicy.netDepositCredit(amountParsed),
+  );
+
+  /// Net bank payout — matches confirm "You will receive" row.
+  String get formattedWithdrawYouWillReceive => AppFormatters.formatCurrency(
+    withdrawYouWillReceive ??
+        WalletWithdrawPolicy.netReceive(
+          amountParsed,
+          withdrawDeliveryMethod ?? WithdrawDeliveryMethod.standard,
+        ),
   );
 
   bool get canConfirmDeposit {
@@ -158,7 +175,13 @@ class WalletTransactionCubit extends Cubit<WalletTransactionState> {
       selectedBankDisplayName: displayName,
       clearSelectedCard: true,
       payFromWallet: false,
+      clearWithdrawYouWillReceive: true,
     ));
+  }
+
+  /// Set from confirm preview before navigating to withdraw success.
+  void setWithdrawYouWillReceive(double amount) {
+    emit(state.copyWith(withdrawYouWillReceive: amount));
   }
 
   void reset() {

@@ -87,7 +87,7 @@ class AppStrings {
   static const String orDivider = 'or';
 
   // Validation hints
-  static const String passwordHint = '8+ characters with letters and numbers';
+  static const String passwordHint = "Password must be at least 8 characters long and include one uppercase letter, one lowercase letter, one number, and one special character (e.g. ! @ # \$ % ^ & *)";
 
   // Forgot Password
   static const String forgotTitle = 'Forgot your password?';
@@ -119,8 +119,13 @@ class AppStrings {
   static const String agreementTitle = 'Before You Continue';
   static const String agreementSubtitle =
       'Using Vestie means you accept all of the following guidelines.';
+  static const String agreementLegalPromptPrefix = 'Please read our ';
+  static const String agreementLegalPromptAnd = ' and ';
+  static const String agreementLegalPromptSuffix = ' before continuing.';
+  static const String agreementPrivacyPolicyLink = 'Privacy Policy';
+  static const String agreementTermsAndConditionsLink = 'Terms & Conditions';
   static const String agreementCheckbox =
-      'I have read and accept these guidelines';
+      'I have read and accept these guidelines and the Privacy Policy & Terms & Conditions.';
   static const List<String> agreementItems = [
     'Users join pots and contribute entirely at their own risk',
     'Vestie does not guarantee the safety or return of any funds',
@@ -938,6 +943,8 @@ class AppStrings {
       "I've finished — check status";
   static const String stripeBrowserOnboardingLaunchFailed =
       'Could not open the browser. Please try again.';
+  static const String errorExternalLinkLaunchFailed =
+      'Could not open the link. Please try again.';
   static const String btnVerifyIdentity = 'Verify identity';
   static const String bankLinkOnboardingTitle = 'Link bank account';
   static const String bankLinkOnboardingUrlMissing =
