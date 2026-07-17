@@ -69,7 +69,12 @@ class HomeLoaded extends HomeState {
 
 class HomeError extends HomeState {
   final String message;
-  const HomeError({required this.message});
+
+  /// True when the load failed with `403` because the risk disclaimer is not
+  /// accepted server-side — UI routes to the Agreement screen instead of an error.
+  final bool needsRiskDisclaimer;
+
+  const HomeError({required this.message, this.needsRiskDisclaimer = false});
   @override
-  List<Object> get props => [message];
+  List<Object> get props => [message, needsRiskDisclaimer];
 }

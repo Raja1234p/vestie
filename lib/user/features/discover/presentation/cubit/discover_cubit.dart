@@ -22,6 +22,10 @@ class DiscoverState extends Equatable {
   final int totalCount;
   final String? errorMessage;
 
+  /// True when the load failed with `403` because the risk disclaimer is not
+  /// accepted server-side — UI routes to the Agreement screen instead of an error.
+  final bool needsRiskDisclaimer;
+
   /// Project id while join / request-to-join API is in flight (button spinner).
   final String? joiningProjectId;
   final DiscoverJoinEffect? joinEffect;
@@ -36,6 +40,7 @@ class DiscoverState extends Equatable {
     this.currentPage = 0,
     this.totalCount = 0,
     this.errorMessage,
+    this.needsRiskDisclaimer = false,
     this.joiningProjectId,
     this.joinEffect,
   });
@@ -52,6 +57,7 @@ class DiscoverState extends Equatable {
     int? currentPage,
     int? totalCount,
     String? errorMessage,
+    bool? needsRiskDisclaimer,
     String? joiningProjectId,
     DiscoverJoinEffect? joinEffect,
     bool clearErrorMessage = false,
@@ -70,6 +76,7 @@ class DiscoverState extends Equatable {
       errorMessage: clearErrorMessage
           ? null
           : (errorMessage ?? this.errorMessage),
+      needsRiskDisclaimer: needsRiskDisclaimer ?? this.needsRiskDisclaimer,
       joiningProjectId: clearJoiningProjectId
           ? null
           : (joiningProjectId ?? this.joiningProjectId),
@@ -88,6 +95,7 @@ class DiscoverState extends Equatable {
     currentPage,
     totalCount,
     errorMessage,
+    needsRiskDisclaimer,
     joiningProjectId,
     joinEffect,
   ];
@@ -148,6 +156,7 @@ class DiscoverCubit extends Cubit<DiscoverState> {
             allProjects: const [],
             filtered: const [],
             errorMessage: _userFacingFailureMessage(failure),
+            needsRiskDisclaimer: failure is ForbiddenFailure,
           ),
         );
       },

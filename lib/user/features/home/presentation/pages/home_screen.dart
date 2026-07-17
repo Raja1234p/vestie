@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/services/bank_accounts_prefetch.dart';
+import 'package:vestie/core/services/risk_disclaimer_gate.dart';
 import 'package:vestie/core/services/payment_methods_prefetch.dart';
 import 'package:vestie/core/services/home_project_list_sync.dart';
 import 'package:vestie/core/services/wallet_prefetch.dart';
@@ -124,7 +125,12 @@ class _HomeBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeBloc, HomeState>(
+    return BlocConsumer<HomeBloc, HomeState>(
+      listenWhen: (previous, current) =>
+          current is HomeError && current.needsRiskDisclaimer,
+      listener: (context, state) {
+        RiskDisclaimerGate.recoverFromForbidden(context);
+      },
       buildWhen: (previous, current) =>
           previous.runtimeType != current.runtimeType || previous != current,
       builder: (context, state) {

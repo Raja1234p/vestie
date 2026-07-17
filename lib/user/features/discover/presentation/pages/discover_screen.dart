@@ -8,6 +8,7 @@ import 'package:vestie/core/widgets/common/post_auth_scroll_viewport.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:vestie/core/services/risk_disclaimer_gate.dart';
 import 'package:vestie/core/presentation/paginated_scroll_listener.dart';
 import 'package:vestie/core/presentation/widgets/list_load_more_footer.dart';
 import 'package:vestie/core/constants/app_strings.dart';
@@ -111,216 +112,235 @@ class _DiscoverBody extends StatelessWidget {
     }
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: PostAuthGradientBackground(
-        child: DiscoverJoinEffectsListener(
-          child: BlocBuilder<DiscoverCubit, DiscoverState>(
-            buildWhen: (previous, current) =>
-                previous.loading != current.loading ||
-                previous.errorMessage != current.errorMessage ||
-                previous.allProjects != current.allProjects ||
-                previous.filtered != current.filtered ||
-                previous.selectedFilter != current.selectedFilter ||
-                previous.searchQuery != current.searchQuery ||
-                previous.joiningProjectId != current.joiningProjectId ||
-                previous.loadingMore != current.loadingMore,
-            builder: (context, state) {
-              final hasProjects = state.allProjects.isNotEmpty;
-              final filteredEmpty = state.filtered.isEmpty;
-              final loadFailed = state.errorMessage != null;
-              final emptyIdle = !state.loading && !loadFailed && !hasProjects;
+      body: DiscoverJoinEffectsListener(
+        child: BlocConsumer<DiscoverCubit, DiscoverState>(
+          listenWhen: (previous, current) =>
+              current.needsRiskDisclaimer && !previous.needsRiskDisclaimer,
+          listener: (context, state) {
+            RiskDisclaimerGate.recoverFromForbidden(context);
+          },
+          buildWhen: (previous, current) =>
+              previous.loading != current.loading ||
+              previous.errorMessage != current.errorMessage ||
+              previous.allProjects != current.allProjects ||
+              previous.filtered != current.filtered ||
+              previous.selectedFilter != current.selectedFilter ||
+              previous.searchQuery != current.searchQuery ||
+              previous.joiningProjectId != current.joiningProjectId ||
+              previous.loadingMore != current.loadingMore,
+          builder: (context, state) {
+            final hasProjects = state.allProjects.isNotEmpty;
+            final filteredEmpty = state.filtered.isEmpty;
+            final loadFailed = state.errorMessage != null;
+            final emptyIdle = !state.loading && !loadFailed && !hasProjects;
 
-              if (emptyIdle) {
-                return PostAuthScrollViewport(
-                  child: CustomScrollView(
-                    physics: const NeverScrollableScrollPhysics(),
-                    slivers: [
-                      SliverFillRemaining(
-                        hasScrollBody: false,
-                        child: HomeEmptyView.forDiscover(),
-                      ),
-                    ],
-                  ),
-                );
-              }
+            // Match Home empty — full-screen gradient under the status bar.
+            if (emptyIdle) {
+              return HomeEmptyView.forDiscover();
+            }
 
-              if (loadFailed) {
-                return PostAuthScrollViewport(
-                  child: CustomScrollView(
-                    physics: const NeverScrollableScrollPhysics(),
-                    slivers: [
-                      SliverFillRemaining(
-                        hasScrollBody: false,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 28.w),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              AppText(
-                                state.errorMessage!,
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.lato(
-                                  fontSize: 15.sp,
-                                  height: 1.45,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColors.textBody,
-                                ),
-                              ),
-                              SizedBox(height: 20.h),
-                              AppButton(
-                                text: AppStrings.btnRetry,
-                                width: 280.w,
-                                onPressed: () =>
-                                    context.read<DiscoverCubit>().retry(),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }
-
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const DiscoverHeader(),
-                  Expanded(
-                    child: ColoredBox(
-                      color: Colors.white,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          if (state.loading) ...[
-                            const DiscoverSearchBarShimmer(),
-                            SizedBox(height: 16.h),
-                            const DiscoverFilterRowShimmer(),
-                          ] else ...[
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 0),
-                              child: DiscoverSearchBar(
-                                query: state.searchQuery,
-                                onChanged: context.read<DiscoverCubit>().search,
-                              ),
-                            ),
-                            SizedBox(height: 16.h),
-                            DiscoverFilterRow(
-                              selected: state.selectedFilter,
-                              onSelect:
-                                  context.read<DiscoverCubit>().selectFilter,
-                            ),
-                          ],
-                          SizedBox(height: 16.h),
-                          Expanded(
-                            child: RefreshIndicator(
-                        color: AppColors.primary,
-                        onRefresh: () =>
-                            context.read<DiscoverCubit>().refresh(),
-                        child: CustomScrollView(
-                          controller: scrollController,
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          slivers: [
-                            if (state.loading)
-                              SliverPadding(
-                                padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 0),
-                                sliver: SliverList(
-                                  delegate: SliverChildBuilderDelegate(
-                                    (context, index) =>
-                                        const ProjectCardShimmer(),
-                                    childCount: 3,
-                                  ),
-                                ),
-                              )
-                            else if (filteredEmpty)
-                              SliverToBoxAdapter(
-                                child: Padding(
-                                  padding: EdgeInsets.fromLTRB(
-                                    28.w,
-                                    48.h,
-                                    28.w,
-                                    24.h,
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        AppStrings.discoverNoMatchingTitle,
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.lato(
-                                          fontSize: 20.sp,
-                                          fontWeight: FontWeight.w800,
-                                          color: AppColors.textPrimary,
-                                        ),
-                                      ),
-                                      SizedBox(height: 10.h),
-                                      Text(
-                                        AppStrings.discoverNoMatchingSubtitle,
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.lato(
-                                          fontSize: 14.sp,
-                                          height: 1.45,
-                                          fontWeight: FontWeight.w500,
-                                          color: AppColors.textBody,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              )
-                            else
-                              SliverPadding(
-                                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                                sliver: SliverList(
-                                  delegate: SliverChildBuilderDelegate(
-                                    (_, i) {
-                                      if (i == state.filtered.length) {
-                                        return ListLoadMoreFooter(
-                                          loadingMore: state.loadingMore,
-                                        );
-                                      }
-                                      return ProjectCard(
-                                        project: state.filtered[i],
-                                        discoverCtaStyle: true,
-                                        actionLoading:
-                                            state.joiningProjectId ==
-                                            state.filtered[i].id,
-                                        onAction: () {
-                                          final project = state.filtered[i];
-                                          final isJoinAction =
-                                              project.status ==
-                                                  ProjectStatus.ongoing &&
-                                              project.relation !=
-                                                  ProjectRelation.owned &&
-                                              !project.requestPending;
-                                          if (isJoinAction) {
-                                            context
-                                                .read<DiscoverCubit>()
-                                                .joinProject(project);
-                                            return;
-                                          }
-                                          _navigateToDetail(context, project);
-                                        },
-                                      );
-                                    },
-                                    childCount: state.filtered.length + 1,
-                                  ),
-                                ),
-                              ),
-                            SliverToBoxAdapter(child: SizedBox(height: 16.h)),
-                          ],
-                        ),
-                      ),
-                    ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
+            return PostAuthGradientBackground(
+              child: _DiscoverLoadedBody(
+                state: state,
+                loadFailed: loadFailed,
+                filteredEmpty: filteredEmpty,
+                scrollController: scrollController,
+                onNavigateToDetail: (p) => _navigateToDetail(context, p),
+              ),
+            );
+          },
         ),
       ),
+    );
+  }
+}
+
+class _DiscoverLoadedBody extends StatelessWidget {
+  final DiscoverState state;
+  final bool loadFailed;
+  final bool filteredEmpty;
+  final ScrollController scrollController;
+  final void Function(Project p) onNavigateToDetail;
+
+  const _DiscoverLoadedBody({
+    required this.state,
+    required this.loadFailed,
+    required this.filteredEmpty,
+    required this.scrollController,
+    required this.onNavigateToDetail,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (loadFailed) {
+      return PostAuthScrollViewport(
+        child: CustomScrollView(
+          physics: const NeverScrollableScrollPhysics(),
+          slivers: [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 28.w),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    AppText(
+                      state.errorMessage!,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.lato(
+                        fontSize: 15.sp,
+                        height: 1.45,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textBody,
+                      ),
+                    ),
+                    SizedBox(height: 20.h),
+                    AppButton(
+                      text: AppStrings.btnRetry,
+                      width: 280.w,
+                      onPressed: () => context.read<DiscoverCubit>().retry(),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const DiscoverHeader(),
+        Expanded(
+          child: ColoredBox(
+            color: Colors.white,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (state.loading) ...[
+                  const DiscoverSearchBarShimmer(),
+                  SizedBox(height: 16.h),
+                  const DiscoverFilterRowShimmer(),
+                ] else ...[
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 0),
+                    child: DiscoverSearchBar(
+                      query: state.searchQuery,
+                      onChanged: context.read<DiscoverCubit>().search,
+                    ),
+                  ),
+                  SizedBox(height: 16.h),
+                  DiscoverFilterRow(
+                    selected: state.selectedFilter,
+                    onSelect: context.read<DiscoverCubit>().selectFilter,
+                  ),
+                ],
+                SizedBox(height: 16.h),
+                Expanded(
+                  child: RefreshIndicator(
+                    color: AppColors.primary,
+                    onRefresh: () => context.read<DiscoverCubit>().refresh(),
+                    child: CustomScrollView(
+                      controller: scrollController,
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      slivers: [
+                        if (state.loading)
+                          SliverPadding(
+                            padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 0),
+                            sliver: SliverList(
+                              delegate: SliverChildBuilderDelegate(
+                                (context, index) => const ProjectCardShimmer(),
+                                childCount: 3,
+                              ),
+                            ),
+                          )
+                        else if (filteredEmpty)
+                          SliverToBoxAdapter(
+                            child: Padding(
+                              padding: EdgeInsets.fromLTRB(
+                                28.w,
+                                48.h,
+                                28.w,
+                                24.h,
+                              ),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    AppStrings.discoverNoMatchingTitle,
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.lato(
+                                      fontSize: 20.sp,
+                                      fontWeight: FontWeight.w800,
+                                      color: AppColors.textPrimary,
+                                    ),
+                                  ),
+                                  SizedBox(height: 10.h),
+                                  Text(
+                                    AppStrings.discoverNoMatchingSubtitle,
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.lato(
+                                      fontSize: 14.sp,
+                                      height: 1.45,
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColors.textBody,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        else
+                          SliverPadding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.w),
+                            sliver: SliverList(
+                              delegate: SliverChildBuilderDelegate(
+                                (_, i) {
+                                  if (i == state.filtered.length) {
+                                    return ListLoadMoreFooter(
+                                      loadingMore: state.loadingMore,
+                                    );
+                                  }
+                                  return ProjectCard(
+                                    project: state.filtered[i],
+                                    discoverCtaStyle: true,
+                                    actionLoading:
+                                        state.joiningProjectId ==
+                                        state.filtered[i].id,
+                                    onAction: () {
+                                      final project = state.filtered[i];
+                                      final isJoinAction =
+                                          project.status ==
+                                              ProjectStatus.ongoing &&
+                                          project.relation !=
+                                              ProjectRelation.owned &&
+                                          !project.requestPending;
+                                      if (isJoinAction) {
+                                        context
+                                            .read<DiscoverCubit>()
+                                            .joinProject(project);
+                                        return;
+                                      }
+                                      onNavigateToDetail(project);
+                                    },
+                                  );
+                                },
+                                childCount: state.filtered.length + 1,
+                              ),
+                            ),
+                          ),
+                        SliverToBoxAdapter(child: SizedBox(height: 16.h)),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

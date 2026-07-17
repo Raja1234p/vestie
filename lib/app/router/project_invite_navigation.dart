@@ -98,6 +98,16 @@ final class ProjectInviteNavigation {
     if (AppAuthSession.instance.isAuthenticated) {
       await PendingProjectInviteStore.clear();
       if (!context.mounted) return;
+
+      // Disclaimer is mandatory — never let "Maybe later" reach the dashboard
+      // while the risk disclaimer is unaccepted (gated APIs would 403).
+      if (!await isRiskDisclaimerAccepted()) {
+        if (!context.mounted) return;
+        context.go(AppRoutes.agreement);
+        return;
+      }
+
+      if (!context.mounted) return;
       context.go(AppRoutes.dashboard);
     } else if (context.canPop()) {
       context.pop();

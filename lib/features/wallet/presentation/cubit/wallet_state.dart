@@ -20,6 +20,11 @@ class WalletState extends Equatable {
 
   bool get hasLoadError => failure != null && wallet == null && !isLoading;
 
+  /// `403` on the wallet load means the risk disclaimer is not accepted
+  /// server-side — UI routes to the Agreement screen instead of an error.
+  bool get needsRiskDisclaimer =>
+      failure is ForbiddenFailure && wallet == null && !isLoading;
+
   String get walletAmountFormatted {
     final balance = wallet?.availableBalance;
     if (balance == null) return r'$—';

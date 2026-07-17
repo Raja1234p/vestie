@@ -120,6 +120,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           message: failure == null
               ? 'Failed to load projects'
               : _userFacingFailureMessage(failure),
+          needsRiskDisclaimer: failure is ForbiddenFailure,
         ),
       );
       return;

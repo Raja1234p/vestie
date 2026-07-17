@@ -97,7 +97,12 @@ class _WalletScreenState extends State<WalletScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<WalletCubit, WalletState>(
+    return BlocConsumer<WalletCubit, WalletState>(
+      listenWhen: (previous, current) =>
+          current.needsRiskDisclaimer && !previous.needsRiskDisclaimer,
+      listener: (context, state) {
+        RiskDisclaimerGate.recoverFromForbidden(context);
+      },
       builder: (context, state) {
         return PostAuthGradientBackground(
           child: Column(
