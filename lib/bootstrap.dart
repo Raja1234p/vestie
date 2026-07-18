@@ -1,8 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:image_picker_android/image_picker_android.dart';
+import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 
 import 'core/auth/app_auth_session.dart';
 import 'core/constants/api_constants.dart';
@@ -17,6 +18,8 @@ abstract final class AppBootstrap {
   AppBootstrap._();
 
   static Future<void> run() async {
+    _enableAndroidPhotoPicker();
+
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
     FcmPushService.attachBackgroundMessageHandler();
@@ -45,6 +48,15 @@ abstract final class AppBootstrap {
 
     await AppAuthSession.instance.syncFromStorage();
     _log('auth session synced — bootstrap complete');
+  }
+
+  /// Gallery picks go through the Android system photo picker, so the app does
+  /// not need READ_MEDIA_IMAGES (Play Photo and Video Permissions policy).
+  static void _enableAndroidPhotoPicker() {
+    final platform = ImagePickerPlatform.instance;
+    if (platform is ImagePickerAndroid) {
+      platform.useAndroidPhotoPicker = true;
+    }
   }
 
   static void _log(String message) {

@@ -22,6 +22,13 @@ abstract final class AppPermissionHelper {
   ) async {
     if (kIsWeb) return true;
 
+    // Android gallery uses the system photo picker — no runtime permission
+    // (READ_MEDIA_IMAGES removed per Play Photo and Video Permissions policy).
+    if (source == ImageSource.gallery &&
+        defaultTargetPlatform == TargetPlatform.android) {
+      return true;
+    }
+
     final permission = _permissionFor(source);
 
     var status = await permission.status;

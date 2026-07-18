@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/error/exceptions.dart';
+import '../../../../core/error/failures.dart';
 import '../../../../core/models/pagination_dto.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/utils/logger.dart';
@@ -57,6 +58,11 @@ class ProjectsRemoteDataSourceImpl implements ProjectsRemoteDataSource {
 
     if (e.response?.statusCode == 401) {
       throw UnauthorizedException(message, title);
+    }
+    // 403 = risk disclaimer not accepted server-side; repositories pass
+    // Failure through so presentation can route to the Agreement screen.
+    if (e.response?.statusCode == 403) {
+      throw ForbiddenFailure(message, title);
     }
     throw ServerException(message, title);
   }

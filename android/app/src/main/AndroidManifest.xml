@@ -1,10 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET" />
-    <!-- Image picker: photo library (API 33+) -->
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <!-- Photo library for API 32 and below -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
+    <!-- Gallery picks use the Android system photo picker (no media permission
+         required — Play Photo and Video Permissions policy). -->
     <!-- Camera access -->
     <uses-permission android:name="android.permission.CAMERA" />
     <!-- Push notifications (Android 13+) -->

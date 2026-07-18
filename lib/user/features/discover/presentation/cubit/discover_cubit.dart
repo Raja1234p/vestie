@@ -141,6 +141,7 @@ class DiscoverCubit extends Cubit<DiscoverState> {
         loading: showLoadingIndicator,
         loadingMore: false,
         clearErrorMessage: showLoadingIndicator,
+        needsRiskDisclaimer: false,
       ),
     );
     final result = await _listProjectsUseCase(scope: 'discover', page: 1);
