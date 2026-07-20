@@ -794,9 +794,9 @@ class AppStrings {
   static const String btnGoToMyProject = 'Go to my Project';
   static const String linkCopied = 'Link copied!';
 
-  /// Shared invite path host (production/staging on Azure until vestie.app is live).
+  /// Shared invite path host (production Azure until vestie.app is live).
   static const String shareBaseDomain =
-      'vestie-backend-byexejcphyhaapfy.centralus-01.azurewebsites.net/join';
+      'vestie-backend-prod-hsaghpaedggzhhh9.centralus-01.azurewebsites.net/join';
 
   /// Text before the invite URL in WhatsApp (URL may already include `https://`).
   static const String shareWhatsappPrefix = 'Join my project: ';
@@ -1765,7 +1765,7 @@ class AppStrings {
   static const String shareQrCode = 'Share QR Code';
   static const String copyCodeFromBelow = 'Or copy code from below';
   static const String inviteLinkSample =
-      'https://vestie-backend-byexejcphyhaapfy.centralus-01.azurewebsites.net/join/SAMPLE';
+      'https://vestie-backend-prod-hsaghpaedggzhhh9.centralus-01.azurewebsites.net/join/SAMPLE';
   static String inviteMembersTitle(String projectName) =>
       'Invite to $projectName';
   static const String inviteMembersSelectVffHint = 'Tap to select VFFs';

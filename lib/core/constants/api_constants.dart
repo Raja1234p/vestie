@@ -6,20 +6,20 @@ class ApiConstants {
 
   /// Week 4+ REST base (`/api/v1.0` per Vestie API documentation).
   static const String baseUrl =
-      'https://vestie-backend-byexejcphyhaapfy.centralus-01.azurewebsites.net/api/v1';
+      'https://vestie-backend-prod-hsaghpaedggzhhh9.centralus-01.azurewebsites.net/api/v1';
 
   /// HTTPS invite links — same host as [baseUrl], path `/join/{inviteCode}`.
   static const String inviteShareLinkBase =
-      'https://vestie-backend-byexejcphyhaapfy.centralus-01.azurewebsites.net/join';
+      'https://vestie-backend-prod-hsaghpaedggzhhh9.centralus-01.azurewebsites.net/join';
 
   static String inviteShareUrl(String inviteCode) =>
       '$inviteShareLinkBase/${inviteCode.trim()}';
 
   /// SignalR hubs live on the API host root (not under `/api/v1`).
   ///
-  /// Azure staging:
-  /// - `https://vestie-backend-byexejcphyhaapfy.centralus-01.azurewebsites.net/hubs/projects`
-  /// - `https://vestie-backend-byexejcphyhaapfy.centralus-01.azurewebsites.net/hubs/wallet`
+  /// Azure production:
+  /// - `https://vestie-backend-prod-hsaghpaedggzhhh9.centralus-01.azurewebsites.net/hubs/projects`
+  /// - `https://vestie-backend-prod-hsaghpaedggzhhh9.centralus-01.azurewebsites.net/hubs/wallet`
   static const String projectsHubPath = '/hubs/projects';
   static const String walletHubPath = '/hubs/wallet';
 

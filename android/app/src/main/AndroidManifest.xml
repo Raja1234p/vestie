@@ -67,14 +67,14 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="vestie" android:host="join" />
             </intent-filter>
-            <!-- Staging invite: https://…azurewebsites.net/join/{code} -->
+            <!-- Production Azure invite: https://…azurewebsites.net/join/{code} -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
                     android:scheme="https"
-                    android:host="vestie-backend-byexejcphyhaapfy.centralus-01.azurewebsites.net"
+                    android:host="vestie-backend-prod-hsaghpaedggzhhh9.centralus-01.azurewebsites.net"
                     android:pathPrefix="/join" />
             </intent-filter>
             <!-- Production invite: https://vestie.app/join/{code} -->

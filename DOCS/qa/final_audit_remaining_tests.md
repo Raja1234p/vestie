@@ -1,6 +1,6 @@
 # Final audit — Weeks 4, 5, 7 (remaining manual tests)
 
-**Backend (app):** `https://vestie-backend-byexejcphyhaapfy.centralus-01.azurewebsites.net/api/v1`  
+**Backend (app):** `https://vestie-backend-prod-hsaghpaedggzhhh9.centralus-01.azurewebsites.net/api/v1`  
 **Review date:** 2026-06-02
 
 ## Integration verdict (code)

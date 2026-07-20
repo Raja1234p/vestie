@@ -6,13 +6,13 @@ void main() {
     test('builds azure url from bare code', () {
       expect(
         resolveInviteShareLink('L6NM4L8BWF'),
-        'https://vestie-backend-byexejcphyhaapfy.centralus-01.azurewebsites.net/join/L6NM4L8BWF',
+        'https://vestie-backend-prod-hsaghpaedggzhhh9.centralus-01.azurewebsites.net/join/L6NM4L8BWF',
       );
     });
 
     test('passes through full https url', () {
       const url =
-          'https://vestie-backend-byexejcphyhaapfy.centralus-01.azurewebsites.net/join/ABC';
+          'https://vestie-backend-prod-hsaghpaedggzhhh9.centralus-01.azurewebsites.net/join/ABC';
       expect(resolveInviteShareLink(url), url);
     });
 

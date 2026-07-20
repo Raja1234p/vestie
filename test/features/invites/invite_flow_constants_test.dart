@@ -16,7 +16,7 @@ void main() {
       expect(
         InviteFlowConstants.isInviteDeepLink(
           Uri.parse(
-            'https://vestie-backend-byexejcphyhaapfy.centralus-01.azurewebsites.net/join/ABC',
+            'https://vestie-backend-prod-hsaghpaedggzhhh9.centralus-01.azurewebsites.net/join/ABC',
           ),
         ),
         isTrue,
