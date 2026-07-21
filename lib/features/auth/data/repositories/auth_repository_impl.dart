@@ -11,6 +11,8 @@ import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/storage/local_storage.dart';
 import '../../../../core/utils/logger.dart';
+import '../../../../core/utils/username_input_formatter.dart';
+import '../../../../core/utils/validation_utils.dart';
 import '../../domain/entities/update_me_photo.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/entities/register_result.dart';
@@ -22,6 +24,7 @@ import '../datasources/auth_remote_data_source.dart';
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource _remoteDataSource;
   final LocalStorage _prefs;
+  final LocalStorage _secureStorage;
   final DeviceInfoService _deviceInfoService;
 
   /// Last GET result this process when [accepted] is not yet persisted as `true`
@@ -31,6 +34,7 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(
     this._remoteDataSource,
     this._prefs,
+    this._secureStorage,
     this._deviceInfoService,
   );
 
@@ -576,6 +580,16 @@ class AuthRepositoryImpl implements AuthRepository {
         deviceName: device.name,
       );
 
+      // Apple only returns givenName/familyName on the first authorization.
+      // Persist them via the same PUT /users/me payload as Edit Profile.
+      // Failures here must not block Apple login.
+      await _syncAppleNameToProfileIfNeeded(
+        tokens: userModel,
+        givenName: credential.givenName,
+        familyName: credential.familyName,
+        emailHint: credential.email,
+      );
+
       return Right(userModel);
     } on SignInWithAppleAuthorizationException catch (e, stack) {
       AppLogger.error(
@@ -609,5 +623,67 @@ class AuthRepositoryImpl implements AuthRepository {
       );
       return const Left(ServerFailure(AppStrings.errorAppleSignInFailed));
     }
+  }
+
+  /// After Apple auth, fill empty profile name using Edit Profile's PUT /users/me.
+  ///
+  /// Requires tokens in secure storage so [AuthInterceptor] can authorize the call.
+  Future<void> _syncAppleNameToProfileIfNeeded({
+    required User tokens,
+    required String? givenName,
+    required String? familyName,
+    required String? emailHint,
+  }) async {
+    final appleFullName = '${givenName ?? ''} ${familyName ?? ''}'.trim();
+    if (appleFullName.isEmpty) return;
+
+    final access = tokens.accessToken?.trim() ?? '';
+    if (access.isEmpty) return;
+
+    try {
+      await _secureStorage.saveString(StorageKeys.accessToken, access);
+      final refresh = tokens.refreshToken?.trim() ?? '';
+      if (refresh.isNotEmpty) {
+        await _secureStorage.saveString(StorageKeys.refreshToken, refresh);
+      }
+
+      final me = await _remoteDataSource.getMe();
+      if (me.fullName.trim().isNotEmpty) return;
+
+      final parts = ValidationUtils.splitFullNameParts(appleFullName);
+      final userName = _appleProfileUserName(
+        existing: me.userName,
+        email: me.email.isNotEmpty ? me.email : (emailHint ?? ''),
+      );
+      if (userName.isEmpty) return;
+      if (ValidationUtils.validateProfileUsernameHandle(userName) != null) {
+        return;
+      }
+
+      await _remoteDataSource.updateMe(
+        firstName: parts.firstName,
+        lastName: parts.lastName,
+        userName: UsernameInputFormatter.normalize(userName),
+        photo: const UpdateMePhotoUnchanged(),
+      );
+    } catch (e, stack) {
+      AppLogger.error(
+        'Apple Sign-In profile name sync failed',
+        error: e,
+        stackTrace: stack,
+      );
+    }
+  }
+
+  String _appleProfileUserName({
+    required String existing,
+    required String email,
+  }) {
+    final handle = UsernameInputFormatter.normalize(existing);
+    if (handle.isNotEmpty) return handle;
+
+    final at = email.trim().indexOf('@');
+    if (at <= 0) return '';
+    return UsernameInputFormatter.normalize(email.trim().substring(0, at));
   }
 }

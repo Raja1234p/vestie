@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_button.dart';
+import '../../../../core/widgets/common/app_loading_overlay.dart';
 import '../../../../core/widgets/common/app_text_field.dart';
 import 'auth_password_visibility_icon.dart';
 import '../../../../core/utils/person_name_input_formatter.dart';
@@ -75,7 +76,9 @@ class _RegisterFormState extends State<RegisterForm> {
         final isAppleLoading = registerState is RegisterAppleLoading;
         final isSocialLoading = isGoogleLoading || isAppleLoading;
         final bottomInset = MediaQuery.paddingOf(context).bottom;
-        return CustomScrollView(
+        return AppLoadingOverlay(
+          isLoading: isAppleLoading,
+          child: CustomScrollView(
           slivers: [
             SliverPadding(
               padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -265,6 +268,7 @@ class _RegisterFormState extends State<RegisterForm> {
               ),
             ),
           ],
+        ),
         );
       },
     );

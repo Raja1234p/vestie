@@ -23,6 +23,7 @@ void registerAuthDependencies(ServiceLocator sl) {
   sl.authRepository = AuthRepositoryImpl(
     sl.authRemoteDataSource,
     sl.sharedPrefs,
+    sl.secureStorage,
     sl.deviceInfoService,
   );
 

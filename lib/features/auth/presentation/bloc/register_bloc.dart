@@ -138,6 +138,8 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     AppleRegisterRequested event,
     Emitter<RegisterState> emit,
   ) async {
+    // Keep loading through Apple sheet + /auth/apple + optional GET/PUT /users/me.
+    if (state is RegisterAppleLoading) return;
     emit(const RegisterAppleLoading());
 
     final result = await _appleLoginUseCase();

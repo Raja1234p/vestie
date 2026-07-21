@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/app_button.dart';
+import '../../../../core/widgets/common/app_loading_overlay.dart';
 import 'auth_password_visibility_icon.dart';
 import '../../../../core/widgets/common/app_text_field.dart';
 import '../../../../app/router/app_routes.dart';
@@ -59,7 +60,10 @@ class _LoginFormState extends State<LoginForm> {
         final isAppleLoading = loginState is LoginAppleLoading;
         final isSocialLoading = isGoogleLoading || isAppleLoading;
         final bottomInset = MediaQuery.paddingOf(context).bottom;
-        return CustomScrollView(
+        // Overlay covers Apple sheet follow-up (/auth/apple, GET/PUT /users/me).
+        return AppLoadingOverlay(
+          isLoading: isAppleLoading,
+          child: CustomScrollView(
           slivers: [
             SliverPadding(
               padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -228,6 +232,7 @@ class _LoginFormState extends State<LoginForm> {
               ),
             ),
           ],
+        ),
         );
       },
     );

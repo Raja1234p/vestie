@@ -28,6 +28,8 @@ Login, registration, email verification, password reset, and session bootstrap i
 
 `LoginScreen` → `LoginBloc` → `LoginUseCase` → `AuthRepository` → `POST /auth/login`
 
+Apple Sign-In (`POST /auth/apple`) then, when Apple returns `givenName`/`familyName` (first authorization only) and `GET /users/me` has an empty name, calls the same `PUT /users/me` multipart as Edit Profile (`firstName`, `lastName`, `fullName`, `userName`) so the profile is filled without changing Google or email/password flows. Profile sync failures do not fail Apple login. `LoginAppleLoading` / `RegisterAppleLoading` stay active for the full chain (Apple sheet → auth → optional me sync → disclaimer), with the Apple button spinner plus `AppLoadingOverlay` so the UI stays blocked while those APIs run.
+
 ## See also
 
 - [`PROJECT_FLOW_MAP.md`](../../../../PROJECT_FLOW_MAP.md) §1 Authentication

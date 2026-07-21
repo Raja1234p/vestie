@@ -184,6 +184,9 @@ class LoginBloc extends BaseFormBloc<LoginEvent, LoginState> {
     AppleLoginRequested event,
     Emitter<LoginState> emit,
   ) async {
+    // Keep this state through Apple sheet + /auth/apple + optional GET/PUT /users/me
+    // + risk disclaimer so the Apple button / overlay stay loading.
+    if (state is LoginAppleLoading) return;
     emit(const LoginAppleLoading());
 
     final result = await _appleLoginUseCase();
