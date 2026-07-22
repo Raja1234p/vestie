@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../app/router/app_routes.dart';
 import '../../../../app/router/project_invite_navigation.dart';
 import '../../../../core/auth/app_auth_session.dart';
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/widgets/common/app_failure_dialog.dart';
+import '../../../../core/widgets/common/app_toast.dart';
 import '../bloc/login_bloc.dart';
 import '../bloc/login_event.dart';
 import '../bloc/login_state.dart';
 import '../cubit/login_form_cubit.dart';
+import '../models/auth_route_extras.dart';
 import '../widgets/auth_background.dart';
 import '../widgets/login_form.dart';
 
@@ -27,6 +33,7 @@ class LoginScreen extends StatelessWidget {
             curr is LoginSuccess ||
             curr is LoginGoogleSuccess ||
             curr is LoginAppleSuccess ||
+            curr is LoginEmailNotVerified ||
             curr is LoginError,
         listener: (context, state) async {
           if (state is LoginSuccess) {
@@ -48,6 +55,18 @@ class LoginScreen extends StatelessWidget {
               context,
               disclaimerAccepted: disclaimerAccepted,
             );
+          } else if (state is LoginEmailNotVerified) {
+            // Same OTP → agreement path as registration ([VerifyFlow.registration]).
+            AppToast.showSuccess(
+              context,
+              AppStrings.loginEmailNotVerifiedToast,
+            );
+            await context.push(
+              AppRoutes.verify,
+              extra: VerifyScreenExtra(email: state.email),
+            );
+            if (!context.mounted) return;
+            context.read<LoginBloc>().add(const LoginReset());
           } else if (state is LoginError) {
             AppFailureDialog.show(
               context,

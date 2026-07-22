@@ -75,6 +75,17 @@ class LoginAppleSuccess extends LoginState {
   ];
 }
 
+/// Login rejected because email is unverified — navigate to OTP (same as register).
+class LoginEmailNotVerified extends LoginState {
+  final String email;
+
+  const LoginEmailNotVerified({required this.email})
+    : super(status: FormSubmissionStatus.failure);
+
+  @override
+  List<Object?> get props => [status, email];
+}
+
 class LoginError extends LoginState {
   final String message;
   final String? title;

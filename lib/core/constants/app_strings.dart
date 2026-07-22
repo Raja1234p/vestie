@@ -139,6 +139,9 @@ class AppStrings {
   static const String loadingResendOtp = 'Sending code...';
   static const String otpSentSuccessToast = 'OTP Send Successfully';
   static const String registerSuccessToast = 'Account created successfully';
+  /// Shown when login returns 400 Email not verified before opening OTP.
+  static const String loginEmailNotVerifiedToast =
+      'Please verify your email to continue.';
   static const String emptyData = 'No data available';
 
   // ── Social Auth ────────────────────────────────────────────────────────────
