@@ -562,11 +562,26 @@ class AuthRepositoryImpl implements AuthRepository {
         return const Left(ServerFailure(AppStrings.errorAppleSignInFailed));
       }
 
+      // Official scopes: email + fullName. Name/email are only in the
+      // authorization response on first Apple ID ↔ app consent — never in idToken.
       final credential = await SignInWithApple.getAppleIDCredential(
         scopes: [
           AppleIDAuthorizationScopes.email,
           AppleIDAuthorizationScopes.fullName,
         ],
+      );
+
+      AppLogger.info(
+        'Apple Sign-In credential fields: '
+        'hasGivenName=${(credential.givenName ?? '').trim().isNotEmpty}, '
+        'hasFamilyName=${(credential.familyName ?? '').trim().isNotEmpty}, '
+        'hasEmail=${(credential.email ?? '').trim().isNotEmpty}',
+      );
+
+      // Persist immediately (Apple will not send these again).
+      await _cacheApplePersonNameIfPresent(
+        givenName: credential.givenName,
+        familyName: credential.familyName,
       );
 
       final idToken = credential.identityToken;
@@ -575,18 +590,17 @@ class AuthRepositoryImpl implements AuthRepository {
       }
 
       final device = await _deviceInfoService.getIdentity();
+      // Swagger ExternalLoginRequest: idToken + deviceName + ipAddress only
+      // (additionalProperties: false) — cannot send first/last here.
       final userModel = await _remoteDataSource.loginWithApple(
         idToken: idToken,
         deviceName: device.name,
       );
 
-      // Apple only returns givenName/familyName on the first authorization.
-      // Persist them via the same PUT /users/me payload as Edit Profile.
-      // Failures here must not block Apple login.
+      // Persist name via PUT /users/me (JSON UpdateProfileRequest).
+      // Failures must not block Apple login.
       await _syncAppleNameToProfileIfNeeded(
         tokens: userModel,
-        givenName: credential.givenName,
-        familyName: credential.familyName,
         emailHint: credential.email,
       );
 
@@ -625,18 +639,17 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-  /// After Apple auth, fill empty profile name using Edit Profile's PUT /users/me.
+  /// After Apple auth, fill empty `firstName`/`lastName` via `PUT /users/me`.
   ///
-  /// Requires tokens in secure storage so [AuthInterceptor] can authorize the call.
+  /// Apple does not put the person name in the identity token. Production
+  /// `POST /auth/apple` only accepts `idToken`/`deviceName`/`ipAddress`, so the
+  /// client must write names with UpdateProfileRequest after login.
+  ///
+  /// Requires tokens in secure storage so [AuthInterceptor] can authorize.
   Future<void> _syncAppleNameToProfileIfNeeded({
     required User tokens,
-    required String? givenName,
-    required String? familyName,
     required String? emailHint,
   }) async {
-    final appleFullName = '${givenName ?? ''} ${familyName ?? ''}'.trim();
-    if (appleFullName.isEmpty) return;
-
     final access = tokens.accessToken?.trim() ?? '';
     if (access.isEmpty) return;
 
@@ -647,25 +660,79 @@ class AuthRepositoryImpl implements AuthRepository {
         await _secureStorage.saveString(StorageKeys.refreshToken, refresh);
       }
 
-      final me = await _remoteDataSource.getMe();
-      if (me.fullName.trim().isNotEmpty) return;
-
-      final parts = ValidationUtils.splitFullNameParts(appleFullName);
-      final userName = _appleProfileUserName(
-        existing: me.userName,
-        email: me.email.isNotEmpty ? me.email : (emailHint ?? ''),
-      );
-      if (userName.isEmpty) return;
-      if (ValidationUtils.validateProfileUsernameHandle(userName) != null) {
+      final resolved = await _loadCachedApplePersonName();
+      final firstName = resolved.firstName;
+      final lastName = resolved.lastName;
+      if (firstName.isEmpty && lastName.isEmpty) {
+        AppLogger.info(
+          'Apple Sign-In: no givenName/familyName from Apple or cache. '
+          'New Vestie account is not enough — Apple only sends the name on the '
+          'first Sign in with Apple consent. Revoke under Settings → Apple ID → '
+          'Sign in with Apple → Vestie, then sign in again.',
+        );
         return;
       }
 
-      await _remoteDataSource.updateMe(
-        firstName: parts.firstName,
-        lastName: parts.lastName,
-        userName: UsernameInputFormatter.normalize(userName),
-        photo: const UpdateMePhotoUnchanged(),
+      final me = await _remoteDataSource.getMe();
+      // Skip only when real person-name fields are already set (not userName).
+      if (me.firstName.trim().isNotEmpty || me.lastName.trim().isNotEmpty) {
+        AppLogger.info(
+          'Apple Sign-In: profile already has first/last name — skip PUT',
+        );
+        await _clearApplePendingName();
+        return;
+      }
+
+      var userName = _appleProfileUserName(
+        existing: me.userName,
+        email: me.email.isNotEmpty ? me.email : (emailHint ?? ''),
+        firstNameFallback: firstName,
       );
+      if (userName.isEmpty) {
+        AppLogger.info(
+          'Apple Sign-In: cannot resolve userName for profile PUT — abort',
+        );
+        return;
+      }
+      // Soften: still PUT names even if handle fails our UI validator.
+      if (ValidationUtils.validateProfileUsernameHandle(userName) != null) {
+        final fallback = _appleProfileUserName(
+          existing: '',
+          email: me.email.isNotEmpty ? me.email : (emailHint ?? ''),
+          firstNameFallback: firstName,
+        );
+        if (fallback.isNotEmpty &&
+            ValidationUtils.validateProfileUsernameHandle(fallback) == null) {
+          userName = fallback;
+        }
+      }
+
+      AppLogger.info(
+        'Apple Sign-In: PUT /users/me JSON '
+        'firstLen=${firstName.length} lastLen=${lastName.length} '
+        'userNameLen=${userName.length}',
+      );
+
+      final updated = await _remoteDataSource.updateMeProfileJson(
+        firstName: firstName,
+        lastName: lastName,
+        userName: UsernameInputFormatter.normalize(userName),
+      );
+
+      if (updated.firstName.trim().isEmpty && updated.lastName.trim().isEmpty) {
+        AppLogger.error(
+          'Apple Sign-In: PUT /users/me succeeded but first/last still empty',
+        );
+        return;
+      }
+
+      await _prefs.saveString(StorageKeys.userFirstName, updated.firstName);
+      await _prefs.saveString(StorageKeys.userLastName, updated.lastName);
+      await _prefs.saveString(StorageKeys.userName, updated.fullName);
+      await _prefs.saveString(StorageKeys.userEmail, updated.email);
+      await _prefs.saveString(StorageKeys.userUsername, updated.userName);
+      await _clearApplePendingName();
+      AppLogger.info('Apple Sign-In: profile first/last name synced');
     } catch (e, stack) {
       AppLogger.error(
         'Apple Sign-In profile name sync failed',
@@ -675,15 +742,48 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  Future<void> _cacheApplePersonNameIfPresent({
+    required String? givenName,
+    required String? familyName,
+  }) async {
+    final first = (givenName ?? '').trim();
+    final last = (familyName ?? '').trim();
+    if (first.isNotEmpty) {
+      await _prefs.saveString(StorageKeys.applePendingFirstName, first);
+    }
+    if (last.isNotEmpty) {
+      await _prefs.saveString(StorageKeys.applePendingLastName, last);
+    }
+  }
+
+  Future<({String firstName, String lastName})> _loadCachedApplePersonName() async {
+    final first =
+        (await _prefs.getString(StorageKeys.applePendingFirstName) ?? '')
+            .trim();
+    final last = (await _prefs.getString(StorageKeys.applePendingLastName) ?? '')
+        .trim();
+    return (firstName: first, lastName: last);
+  }
+
+  Future<void> _clearApplePendingName() async {
+    await _prefs.remove(StorageKeys.applePendingFirstName);
+    await _prefs.remove(StorageKeys.applePendingLastName);
+  }
+
   String _appleProfileUserName({
     required String existing,
     required String email,
+    String firstNameFallback = '',
   }) {
     final handle = UsernameInputFormatter.normalize(existing);
     if (handle.isNotEmpty) return handle;
 
     final at = email.trim().indexOf('@');
-    if (at <= 0) return '';
-    return UsernameInputFormatter.normalize(email.trim().substring(0, at));
+    if (at > 0) {
+      return UsernameInputFormatter.normalize(email.trim().substring(0, at));
+    }
+
+    final fromFirst = UsernameInputFormatter.normalize(firstNameFallback);
+    return fromFirst;
   }
 }

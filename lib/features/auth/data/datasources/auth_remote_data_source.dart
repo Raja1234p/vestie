@@ -54,6 +54,14 @@ abstract class AuthRemoteDataSource {
     UpdateMePhoto photo = const UpdateMePhotoUnchanged(),
   });
 
+  /// Name/handle only — `PUT /users/me` as `application/json` ([UpdateProfileRequest]).
+  /// Used after Apple Sign-In when no photo upload is needed.
+  Future<UserModel> updateMeProfileJson({
+    required String firstName,
+    required String lastName,
+    required String userName,
+  });
+
   /// `DELETE /users/me/profile-picture`
   Future<UserModel> deleteMeProfilePicture();
 

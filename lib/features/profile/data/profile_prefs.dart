@@ -56,6 +56,8 @@ abstract final class ProfilePrefs {
     await prefs.remove(StorageKeys.userEmail);
     await prefs.remove(StorageKeys.userUsername);
     await prefs.remove(StorageKeys.userPhotoUrl);
+    await prefs.remove(StorageKeys.applePendingFirstName);
+    await prefs.remove(StorageKeys.applePendingLastName);
   }
 
   static UserProfile fromUser(User user) {

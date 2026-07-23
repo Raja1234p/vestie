@@ -36,4 +36,9 @@ class StorageKeys {
 
   /// Invite code from a shared `vestie.app/join/{code}` link (pre-auth).
   static const String pendingProjectInviteCode = 'pending_project_invite_code';
+
+  /// Cached from Sign in with Apple on first authorization only
+  /// (`givenName` / `familyName` are not returned on later logins).
+  static const String applePendingFirstName = 'apple_pending_first_name';
+  static const String applePendingLastName = 'apple_pending_last_name';
 }

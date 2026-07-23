@@ -262,11 +262,45 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         userName: userName,
         photo: photo,
       );
-      final response = await _client.put(ApiConstants.me, data: formData);
+      // BaseOptions defaults to application/json — clear so Dio can set
+      // multipart boundary for FormData.
+      final response = await _client.put(
+        ApiConstants.me,
+        data: formData,
+        options: Options(
+          contentType: Headers.multipartFormDataContentType,
+        ),
+      );
       return UserModel.fromJson(response.data);
     } on DioException catch (e) {
       AppLogger.error(
         'API UpdateMe Error: ${e.response?.statusCode}',
+        error: e.response?.data,
+      );
+      _handleError(e, 'Failed to update user profile');
+    }
+  }
+
+  @override
+  Future<UserModel> updateMeProfileJson({
+    required String firstName,
+    required String lastName,
+    required String userName,
+  }) async {
+    try {
+      final response = await _client.put(
+        ApiConstants.me,
+        data: {
+          'firstName': firstName,
+          'lastName': lastName,
+          'fullName': '$firstName $lastName'.trim(),
+          'userName': userName,
+        },
+      );
+      return UserModel.fromJson(response.data);
+    } on DioException catch (e) {
+      AppLogger.error(
+        'API UpdateMeJson Error: ${e.response?.statusCode}',
         error: e.response?.data,
       );
       _handleError(e, 'Failed to update user profile');
