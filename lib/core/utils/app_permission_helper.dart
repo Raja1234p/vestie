@@ -8,10 +8,17 @@ import '../constants/app_strings.dart';
 import '../theme/app_colors.dart';
 import '../widgets/common/app_action_dialog.dart';
 
-/// Camera / gallery permission — on user action only (profile photo, project images).
+/// Camera **and** gallery access — on user action only (profile / project images).
 ///
-/// Notifications: [FcmPushService.initialize] via flutter_local_notifications
-/// (`requestAlertPermission: true` on iOS, `requestNotificationsPermission` on Android).
+/// Best-practice flow (official [permission_handler]):
+/// 1. **Request** first — `permission.request()` (no-op if already granted;
+///    shows system dialog when status is default/`isDenied`)
+/// 2. **Check** the returned status
+/// 3. Granted / limited → proceed to [ImagePicker]
+/// 4. Soft denied → request again (no toast); next user tap also re-requests
+/// 5. Permanently denied / restricted → Open Settings
+///
+/// Android gallery uses the system photo picker (no runtime Photos permission).
 abstract final class AppPermissionHelper {
   AppPermissionHelper._();
 
@@ -22,45 +29,78 @@ abstract final class AppPermissionHelper {
   ) async {
     if (kIsWeb) return true;
 
-    // Gallery uses the system picker — do not pre-check Photos permission.
-    // (Android photo picker; iOS PHPicker). Pre-checking Permission.photos on a
-    // fresh iOS install can misreport permanentlyDenied and show Settings
-    // before the user ever sees the system prompt.
-    if (source == ImageSource.gallery) {
+    // Android gallery: system photo picker — no Permission.photos.
+    if (source == ImageSource.gallery &&
+        defaultTargetPlatform == TargetPlatform.android) {
       return true;
     }
 
-    final permission = Permission.camera;
+    final permission = source == ImageSource.camera
+        ? Permission.camera
+        : Permission.photos;
 
-    var status = await permission.status;
-    if (status.isGranted || status.isLimited) return true;
-
-    // Always show the system permission prompt when not granted.
-    // Do **not** open the Settings dialog based on status alone — on a fresh
-    // install permission_handler can report permanentlyDenied/restricted
-    // before the user has denied anything.
-    status = await permission.request();
-    if (status.isGranted || status.isLimited) return true;
-
-    if (!context.mounted) return false;
-
-    // Settings only after the system request, and only if still blocked.
-    if (status.isPermanentlyDenied || status.isRestricted) {
-      await _showOpenSettingsDialog(context, source: source);
-    }
-    return false;
+    return _requestThenCheck(
+      context,
+      permission: permission,
+      source: source,
+    );
   }
 
-  /// Avoid full photo metadata on gallery picks (iOS full-library access).
+  /// Official image_picker: `false` for PHPicker after Photos allow/limited.
   static bool galleryPickRequestsFullMetadata(ImageSource source) {
     return false;
   }
 
-  /// Runs [action] after the current frame (e.g. once a bottom sheet has closed).
   static void runAfterModalClosed(BuildContext context, VoidCallback action) {
     SchedulerBinding.instance.addPostFrameCallback((_) {
       if (context.mounted) action();
     });
+  }
+
+  /// 1) Request → 2) Check → 3) Proceed or deny UI.
+  static Future<bool> _requestThenCheck(
+    BuildContext context, {
+    required Permission permission,
+    required ImageSource source,
+  }) async {
+    // Step 1 — request first (covers fresh install default denied).
+    // If already granted, request() does nothing and returns granted.
+    var status = await permission
+        .onDeniedCallback(() {})
+        .onGrantedCallback(() {})
+        .onPermanentlyDeniedCallback(() {})
+        .onRestrictedCallback(() {})
+        .onLimitedCallback(() {})
+        .onProvisionalCallback(() {})
+        .request();
+
+    // Soft deny → ask again (no toast). OS may show the system dialog again.
+    if (status.isDenied) {
+      status = await permission
+          .onDeniedCallback(() {})
+          .onGrantedCallback(() {})
+          .onPermanentlyDeniedCallback(() {})
+          .onRestrictedCallback(() {})
+          .onLimitedCallback(() {})
+          .onProvisionalCallback(() {})
+          .request();
+    }
+
+    // Step 2 — check result, then proceed.
+    if (status.isGranted || status.isLimited || status.isProvisional) {
+      return true;
+    }
+
+    if (!context.mounted) return false;
+
+    // Permanently blocked — Open Settings (official guidance).
+    if (status.isPermanentlyDenied || status.isRestricted) {
+      await _showOpenSettingsDialog(context, source: source);
+      return false;
+    }
+
+    // Still soft-denied after re-ask — stay silent; next tap will request again.
+    return false;
   }
 
   static Future<void> _showOpenSettingsDialog(
@@ -69,7 +109,6 @@ abstract final class AppPermissionHelper {
   }) async {
     if (!context.mounted) return;
 
-    // Wait for route transitions (bottom sheet pop) before presenting dialog.
     await Future<void>.delayed(Duration.zero);
     if (!context.mounted) return;
 

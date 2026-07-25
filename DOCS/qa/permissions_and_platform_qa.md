@@ -2,7 +2,7 @@
 
 Test on **physical devices** (simulators work but camera/push differ).
 
-**App behavior:** `AppPermissionHelper` requests access; on deny shows **Open Settings** dialog (same as profile photo flows).
+**App behavior:** Camera → `Permission.camera`; Gallery (iOS) → `Permission.photos` (limited OK). Both use official `status.isDenied` → `request()` callbacks; soft deny → toast; permanently denied → Open Settings. Android gallery → system photo picker (no runtime Photos permission). Podfile: `PERMISSION_CAMERA=1`, `PERMISSION_PHOTOS=1`.
 
 ---
 

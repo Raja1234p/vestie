@@ -881,9 +881,9 @@ class AppStrings {
   static const String permissionCameraTitle = 'Camera access needed';
   static const String permissionPhotosTitle = 'Photo library access needed';
   static const String permissionCameraDenied =
-      'Camera access was denied. You can enable it in Settings.';
+      'Camera access was denied. You can enable Camera for Vestie in device Settings, then try again.';
   static const String permissionPhotosDenied =
-      'Photo library access was denied. You can enable it in Settings.';
+      'Photo access was denied. You can enable Photos for Vestie in device Settings, then try again.';
   static const String permissionCameraSettingsBody =
       'Open Settings → Vestie → Camera and allow access to take a profile photo.';
   static const String permissionPhotosSettingsBody =
