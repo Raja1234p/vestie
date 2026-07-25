@@ -22,40 +22,38 @@ abstract final class AppPermissionHelper {
   ) async {
     if (kIsWeb) return true;
 
-    // Android gallery uses the system photo picker — no runtime permission
-    // (READ_MEDIA_IMAGES removed per Play Photo and Video Permissions policy).
-    if (source == ImageSource.gallery &&
-        defaultTargetPlatform == TargetPlatform.android) {
+    // Gallery uses the system picker — do not pre-check Photos permission.
+    // (Android photo picker; iOS PHPicker). Pre-checking Permission.photos on a
+    // fresh iOS install can misreport permanentlyDenied and show Settings
+    // before the user ever sees the system prompt.
+    if (source == ImageSource.gallery) {
       return true;
     }
 
-    final permission = _permissionFor(source);
+    final permission = Permission.camera;
 
     var status = await permission.status;
     if (status.isGranted || status.isLimited) return true;
 
-    if (status.isPermanentlyDenied || status.isRestricted) {
-      if (context.mounted) {
-        await _showOpenSettingsDialog(context, source: source);
-      }
-      return false;
-    }
-
+    // Always show the system permission prompt when not granted.
+    // Do **not** open the Settings dialog based on status alone — on a fresh
+    // install permission_handler can report permanentlyDenied/restricted
+    // before the user has denied anything.
     status = await permission.request();
     if (status.isGranted || status.isLimited) return true;
 
     if (!context.mounted) return false;
 
-    await _showOpenSettingsDialog(context, source: source);
+    // Settings only after the system request, and only if still blocked.
+    if (status.isPermanentlyDenied || status.isRestricted) {
+      await _showOpenSettingsDialog(context, source: source);
+    }
     return false;
   }
 
-  static Permission _permissionFor(ImageSource source) {
-    return source == ImageSource.camera ? Permission.camera : Permission.photos;
-  }
-
+  /// Avoid full photo metadata on gallery picks (iOS full-library access).
   static bool galleryPickRequestsFullMetadata(ImageSource source) {
-    return source == ImageSource.gallery;
+    return false;
   }
 
   /// Runs [action] after the current frame (e.g. once a bottom sheet has closed).
