@@ -55,7 +55,7 @@ class AppTransactionItem extends StatelessWidget {
               children: [
                 AppText(
                   title,
-                  maxLines: 1,
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.lato(
                     fontSize: 16.sp,
