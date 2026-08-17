@@ -7,7 +7,14 @@ import '../../constants/app_assets.dart';
 import '../../theme/app_colors.dart';
 import '../text/app_text.dart';
 
-enum AppTransactionType { deposit, contribution, borrow, withdrawal, lend }
+enum AppTransactionType {
+  deposit,
+  contribution,
+  borrow,
+  withdrawal,
+  lend,
+  upcoming,
+}
 
 /// When [list], parent [ListView.separated] supplies vertical gap (no tile margin).
 enum AppTransactionItemSpacing { standalone, list }
@@ -109,6 +116,8 @@ class _TransactionTypeIcon extends StatelessWidget {
         return AppAssets.transactionContribution;
       case AppTransactionType.lend:
         return AppAssets.transactionContribution;
+      case AppTransactionType.upcoming:
+        return AppAssets.transactionDeposit;
     }
   }
 

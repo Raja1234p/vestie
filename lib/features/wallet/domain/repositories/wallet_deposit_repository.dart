@@ -7,8 +7,13 @@ enum DepositFlowResult { completed, failed, cancelled, timeout }
 class DepositFlowOutcome {
   final DepositFlowResult result;
   final String? message;
+  final String? paymentIntentId;
 
-  const DepositFlowOutcome({required this.result, this.message});
+  const DepositFlowOutcome({
+    required this.result,
+    this.message,
+    this.paymentIntentId,
+  });
 }
 
 abstract class WalletDepositRepository {

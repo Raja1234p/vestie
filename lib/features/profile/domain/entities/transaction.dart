@@ -6,6 +6,7 @@ enum TransactionType {
   withdrawal,
   repayment,
   fee,
+  upcoming,
 }
 
 class Transaction {
@@ -38,4 +39,5 @@ class Transaction {
   bool get isContribution => type == TransactionType.contribution;
   bool get isRepayment => type == TransactionType.repayment;
   bool get isFee => type == TransactionType.fee;
+  bool get isUpcoming => type == TransactionType.upcoming;
 }

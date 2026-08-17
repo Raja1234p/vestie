@@ -21,6 +21,8 @@ abstract final class TransactionHistoryFilter {
         return list.where((t) => t.isRepayment).toList(growable: false);
       case AppStrings.filterFees:
         return list.where((t) => t.isFee).toList(growable: false);
+      case AppStrings.filterUpcoming:
+        return list.where((t) => t.isUpcoming).toList(growable: false);
       default:
         return list;
     }

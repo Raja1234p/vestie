@@ -20,6 +20,7 @@ class TxFilterBar extends StatelessWidget {
     AppStrings.filterContributions,
     AppStrings.filterRepayments,
     AppStrings.filterFees,
+    AppStrings.filterUpcoming,
   ];
 
   @override

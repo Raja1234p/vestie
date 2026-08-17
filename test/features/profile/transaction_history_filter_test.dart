@@ -20,6 +20,13 @@ void main() {
       amount: 650,
       type: TransactionType.borrow,
     ),
+    Transaction(
+      id: '3',
+      title: 'Upcoming contribution',
+      date: 'Mar 20',
+      amount: 115,
+      type: TransactionType.upcoming,
+    ),
   ];
 
   test('Deposits filter excludes borrow rows', () {
@@ -38,5 +45,14 @@ void main() {
     );
     expect(filtered, hasLength(1));
     expect(filtered.first.type, TransactionType.borrow);
+  });
+
+  test('Upcoming filter shows only upcoming rows', () {
+    final filtered = TransactionHistoryFilter.apply(
+      sample,
+      AppStrings.filterUpcoming,
+    );
+    expect(filtered, hasLength(1));
+    expect(filtered.first.type, TransactionType.upcoming);
   });
 }

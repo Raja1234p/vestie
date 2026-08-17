@@ -7,10 +7,11 @@ import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/utils/formatters.dart';
+import 'package:vestie/core/widgets/common/app_shimmer_base.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
-import 'package:vestie/features/wallet/domain/wallet_deposit_policy.dart';
 import 'package:vestie/features/wallet/domain/wallet_balance_cache.dart';
 import 'package:vestie/features/wallet/presentation/cubit/wallet_cubit.dart';
+import 'package:vestie/features/wallet/presentation/cubit/wallet_deposit_cubit.dart';
 import 'package:vestie/features/wallet/presentation/cubit/wallet_state.dart';
 import 'package:vestie/features/wallet/presentation/cubit/wallet_transaction_cubit.dart';
 import 'wallet_detail_summary_row.dart';
@@ -18,14 +19,18 @@ import 'wallet_detail_summary_row.dart';
 /// Confirm deposit — hero amount + breakdown card (Figma).
 class WalletDepositConfirmSection extends StatelessWidget {
   final WalletTransactionState state;
+  final WalletDepositState depositState;
   final String? depositErrorMessage;
   final VoidCallback? onChangePaymentMethod;
+  final VoidCallback? onRetryFee;
 
   const WalletDepositConfirmSection({
     super.key,
     required this.state,
+    required this.depositState,
     this.depositErrorMessage,
     this.onChangePaymentMethod,
+    this.onRetryFee,
   });
 
   @override
@@ -42,11 +47,15 @@ class WalletDepositConfirmSection extends StatelessWidget {
             WalletBalanceCache.value?.availableBalance ??
             0;
 
-        final fee = WalletDepositPolicy.platformFee(state.amountParsed);
-        final newBal = WalletDepositPolicy.newBalanceAfter(
-          currentBalanceUsd: currentBalance,
-          depositAmountUsd: state.amountParsed,
-        );
+        final fee = depositState.processingFee;
+        final showFeeShimmer = depositState.isFeeLoading ||
+            (fee == null && depositState.feeFailure == null);
+        final newBal = fee == null ? null : currentBalance + fee.netAmount;
+        final feeValue = fee == null
+            ? ''
+            : fee.isEstimated
+                ? '${AppFormatters.formatCurrency(fee.stripeFee)} (${AppStrings.walletDepositFeeEstimated})'
+                : AppFormatters.formatCurrency(fee.stripeFee);
 
         return SingleChildScrollView(
           padding: AppDimens.postAuthFlowScrollPadding,
@@ -140,11 +149,38 @@ class WalletDepositConfirmSection extends StatelessWidget {
                         ),
                       ),
                     ],
+                    if (depositState.feeFailure != null) ...[
+                      SizedBox(height: AppDimens.v10),
+                      AppText(
+                        AppStrings.walletDepositFeeLoadFailed,
+                        style: GoogleFonts.lato(
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.red900,
+                          height: 1.35,
+                        ),
+                      ),
+                      if (onRetryFee != null)
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: TextButton(
+                            onPressed: onRetryFee,
+                            child: AppText(
+                              AppStrings.btnRetry,
+                              style: GoogleFonts.lato(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.purple900,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
                     SizedBox(height: AppDimens.v14),
                     WalletDetailSummaryRow(
                       label: AppStrings.walletDepositFeeLabel,
-                      value:
-                          '${AppFormatters.formatCurrency(fee)} (${WalletDepositPolicy.feePercentLabel})',
+                      value: feeValue,
+                      valueChild: showFeeShimmer ? _valueShimmer() : null,
                       labelColor: AppColors.neutral700,
                       valueColor: AppColors.red900,
                       valueWeight: FontWeight.w700,
@@ -158,7 +194,10 @@ class WalletDepositConfirmSection extends StatelessWidget {
                     SizedBox(height: AppDimens.v14),
                     WalletDetailSummaryRow(
                       label: AppStrings.walletNewBalanceAfterLabel,
-                      value: AppFormatters.formatCurrency(newBal),
+                      value: newBal == null
+                          ? ''
+                          : AppFormatters.formatCurrency(newBal),
+                      valueChild: showFeeShimmer ? _valueShimmer(width: 96) : null,
                       labelColor: AppColors.neutral1200,
                       labelWeight: FontWeight.w600,
                       valueColor: AppColors.green900,
@@ -172,6 +211,12 @@ class WalletDepositConfirmSection extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  static Widget _valueShimmer({double width = 88}) {
+    return AppShimmer(
+      child: AppShimmer.box(width: width, height: 16),
     );
   }
 }

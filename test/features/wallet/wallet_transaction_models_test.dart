@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:vestie/features/profile/domain/entities/transaction.dart';
 import 'package:vestie/features/wallet/data/models/wallet_model.dart';
 import 'package:vestie/features/wallet/data/models/wallet_transactions_page_model.dart';
 import 'package:vestie/features/wallet/presentation/mappers/wallet_transaction_ui_mapper.dart';
@@ -85,6 +86,13 @@ void main() {
 
       expect(tx.amount, -115);
       expect(tx.isPositive, isFalse);
+    });
+
+    test('maps API type Upcoming', () {
+      expect(
+        WalletTransactionUiMapper.mapApiType('Upcoming'),
+        TransactionType.upcoming,
+      );
     });
   });
 }

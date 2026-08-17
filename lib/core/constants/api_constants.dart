@@ -252,6 +252,7 @@ class ApiConstants {
 
   // ── Stripe (Week 5) ──────────────────────────────────────────────────────
   static const String stripeConfig = '/stripe/config';
+  static const String stripeProcessingFee = '/stripe/processing-fee';
 
   static const String stripeConnectAccount = '/stripe/connect/account';
 

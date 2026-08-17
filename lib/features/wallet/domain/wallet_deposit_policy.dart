@@ -1,4 +1,4 @@
-/// Deposit fee and balance preview for the confirm step (Figma, client-only).
+/// Deposit fee helpers. Confirm/success screens use GET /stripe/processing-fee.
 abstract final class WalletDepositPolicy {
   static const double feePercent = 2.9;
 

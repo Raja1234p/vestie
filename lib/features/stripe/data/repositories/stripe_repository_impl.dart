@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/core/error/failures.dart';
 import 'package:vestie/features/stripe/domain/entities/stripe_config_entity.dart';
+import 'package:vestie/features/stripe/domain/entities/stripe_processing_fee_entity.dart';
 import 'package:vestie/features/stripe/domain/repositories/stripe_repository.dart';
 import 'package:vestie/features/stripe/domain/stripe_config_cache.dart';
 
@@ -24,6 +25,24 @@ class StripeRepositoryImpl implements StripeRepository {
     try {
       final model = await remoteDataSource.getConfig();
       StripeConfigCache.update(model);
+      return Right(model);
+    } on Failure catch (f) {
+      return Left(f);
+    } catch (e) {
+      return Left(FailureMapper.fromException(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, StripeProcessingFeeEntity>> getProcessingFee({
+    double? amount,
+    String? paymentIntentId,
+  }) async {
+    try {
+      final model = await remoteDataSource.getProcessingFee(
+        amount: amount,
+        paymentIntentId: paymentIntentId,
+      );
       return Right(model);
     } on Failure catch (f) {
       return Left(f);

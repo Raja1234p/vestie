@@ -110,7 +110,10 @@ class WalletDepositRepositoryImpl implements WalletDepositRepository {
       final status = await remoteDataSource.getDepositStatus(paymentIntentId);
       switch (status.status) {
         case WalletDepositStatus.completed:
-          return const DepositFlowOutcome(result: DepositFlowResult.completed);
+          return DepositFlowOutcome(
+            result: DepositFlowResult.completed,
+            paymentIntentId: paymentIntentId,
+          );
         case WalletDepositStatus.failed:
           return DepositFlowOutcome(
             result: DepositFlowResult.failed,

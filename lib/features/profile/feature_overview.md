@@ -31,7 +31,7 @@ Profile tab, edit profile, payment methods entry, transaction history, completed
 | Screen | API |
 |--------|-----|
 | Profile header | `GET /users/me` |
-| Transaction history | `GET /wallet/transactions?page=&pageSize=` → `TransactionHistoryCubit` (shimmer, filters client-side, paginated) |
+| Transaction history | `GET /wallet/transactions?page=&pageSize=` → `TransactionHistoryCubit` (shimmer, client-side filters including Upcoming for API type `Upcoming`, paginated) |
 | Completed projects list | `GET /projects/completed?page=&pageSize=` → `CompletedProjectsCubit` (paginated) |
 | Completed project detail | `GET /projects/{id}` via `SuccessVoteOutcomeLoadScreen` → `SuccessVoteOutcomeScreen` |
 | Payment methods entry | `features/payment_methods/` |

@@ -115,6 +115,8 @@ List<RouteBase> buildProfileWalletRoutes() {
             create: (_) => WalletDepositCubit(
               runWalletDepositUseCase:
                   ServiceLocator.instance.runWalletDepositUseCase,
+              getStripeProcessingFeeUseCase:
+                  ServiceLocator.instance.getStripeProcessingFeeUseCase,
             ),
           ),
           BlocProvider(

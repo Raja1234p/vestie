@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
+import 'package:vestie/core/widgets/common/app_shimmer_base.dart';
 import 'package:vestie/core/widgets/common/app_success_screen.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/features/dashboard/presentation/models/dashboard_shell_args.dart';
@@ -35,22 +36,29 @@ class TransactionSuccessScreen extends StatelessWidget {
         final amountText = isDeposit
             ? state.formattedDepositNetCredit
             : state.formattedWithdrawYouWillReceive;
+        final depositFeeReady = state.depositProcessingFee != null;
         return AppSuccessScreen(
           title: isDeposit
               ? AppStrings.depositSuccessTitle
               : AppStrings.withdrawSuccessTitle,
           titleColor: AppColors.grey1000,
           subtitleWidget: isDeposit
-              ? AppText(
-                  AppStrings.depositSuccessBody(amountText),
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.lato(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.neutral1200,
-                    height: 1.35,
-                  ),
-                )
+              ? (depositFeeReady
+                  ? AppText(
+                      AppStrings.depositSuccessBody(amountText),
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.lato(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.neutral1200,
+                        height: 1.35,
+                      ),
+                    )
+                  : Center(
+                      child: AppShimmer(
+                        child: AppShimmer.box(width: 220, height: 22),
+                      ),
+                    ))
               : _WithdrawSubtitle(
                   amountText: amountText,
                   method: state.withdrawDeliveryMethod ??

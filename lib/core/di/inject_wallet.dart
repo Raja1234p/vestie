@@ -10,6 +10,7 @@ import '../../features/payment_methods/domain/usecases/payment_methods_usecases.
 import '../../features/stripe/data/datasources/stripe_remote_data_source.dart';
 import '../../features/stripe/data/repositories/stripe_repository_impl.dart';
 import '../../features/stripe/domain/usecases/get_stripe_config_use_case.dart';
+import '../../features/stripe/domain/usecases/get_stripe_processing_fee_use_case.dart';
 import '../../features/wallet/data/datasources/wallet_deposit_remote_data_source.dart';
 import '../../features/wallet/data/datasources/wallet_remote_data_source.dart';
 import '../../features/wallet/data/datasources/wallet_withdrawal_remote_data_source.dart';
@@ -43,6 +44,8 @@ void registerWalletDependencies(ServiceLocator sl) {
     remoteDataSource: sl.stripeRemoteDataSource,
   );
   sl.getStripeConfigUseCase = GetStripeConfigUseCase(sl.stripeRepository);
+  sl.getStripeProcessingFeeUseCase =
+      GetStripeProcessingFeeUseCase(sl.stripeRepository);
   sl.stripePaymentService = StripePaymentService();
 
   sl.paymentMethodsRemoteDataSource = PaymentMethodsRemoteDataSourceImpl(

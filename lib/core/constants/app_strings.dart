@@ -651,6 +651,7 @@ class AppStrings {
   static const String filterContributions = 'Contributions';
   static const String filterRepayments = 'Repayments';
   static const String filterFees = 'Fees';
+  static const String filterUpcoming = 'Upcoming';
 
   // ── Create Project Wizard ─────────────────────────────────────────────────
   // Amount screen
@@ -994,6 +995,9 @@ class AppStrings {
   static const String walletMethodLabel = 'Method';
   static const String walletToLabel = 'To';
   static const String walletDepositFeeLabel = 'Deposit Fee';
+  static const String walletDepositFeeEstimated = 'Estimated';
+  static const String walletDepositFeeLoadFailed =
+      'Could not load the deposit fee. Please try again.';
   static const String walletWithdrawalFeeLabel = 'Withdrawal Fee';
   static const String walletProcessingTimeLabel = 'Processing Time';
   static const String walletProcessingTimeValue = '1-3 business days';

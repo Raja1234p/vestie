@@ -44,6 +44,9 @@ abstract final class WalletTransactionUiMapper {
         return TransactionType.fee;
       case 'borrow':
         return TransactionType.borrow;
+      case 'upcoming':
+      case 'upcmoing':
+        return TransactionType.upcoming;
       default:
         return TransactionType.deposit;
     }

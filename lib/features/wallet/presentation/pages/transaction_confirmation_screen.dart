@@ -54,6 +54,10 @@ class _TransactionConfirmationScreenState
               method: method,
               bankAccountId: tx.selectedBankAccountId,
             );
+      } else if (tx.transactionType == WalletTransactionType.deposit) {
+        context.read<WalletDepositCubit>().loadProcessingFee(
+              amount: tx.amountParsed,
+            );
       }
     });
   }
@@ -111,8 +115,14 @@ class _TransactionConfirmationScreenState
           listenWhen: (p, c) =>
               p.failure != c.failure ||
               p.isSuccess != c.isSuccess ||
-              p.message != c.message,
+              p.message != c.message ||
+              p.processingFee != c.processingFee,
           listener: (context, depositState) async {
+            if (depositState.processingFee != null) {
+              context.read<WalletTransactionCubit>().setDepositProcessingFee(
+                    depositState.processingFee,
+                  );
+            }
             if (depositState.failure != null) {
               AppToast.showError(
                 context,
@@ -120,6 +130,9 @@ class _TransactionConfirmationScreenState
               );
             }
             if (depositState.isSuccess && context.mounted) {
+              context.read<WalletTransactionCubit>().setDepositProcessingFee(
+                    depositState.processingFee,
+                  );
               await context.read<WalletCubit>().load(forceRefresh: true);
               if (!context.mounted) return;
               context.pushReplacement(AppRoutes.transactionSuccess);
@@ -169,7 +182,7 @@ class _TransactionConfirmationScreenState
               ? context.watch<WalletWithdrawCubit>().state
               : null;
           final canConfirm = isDeposit
-              ? state.canConfirmDeposit
+              ? (state.canConfirmDeposit && (depositState?.canSubmit ?? false))
               : (withdrawState?.preview != null &&
                     !(withdrawState?.isPreviewLoading ?? true) &&
                     state.canConfirmWithdraw);
@@ -191,9 +204,13 @@ class _TransactionConfirmationScreenState
                     child: isDeposit
                         ? WalletDepositConfirmSection(
                             state: state,
-                            depositErrorMessage: depositState?.failure != null
-                                ? _depositErrorHint(depositState!)
+                            depositState: depositState!,
+                            depositErrorMessage: depositState.failure != null
+                                ? _depositErrorHint(depositState)
                                 : state.depositValidationMessage,
+                            onRetryFee: () => context
+                                .read<WalletDepositCubit>()
+                                .loadProcessingFee(amount: state.amountParsed),
                             onChangePaymentMethod:
                                 _canChangeDepositCard(state)
                                     ? () =>

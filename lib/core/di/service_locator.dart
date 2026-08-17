@@ -89,6 +89,7 @@ import '../../features/projects/presentation/bloc/project_detail_bloc.dart';
 import '../../features/stripe/data/datasources/stripe_remote_data_source.dart';
 import '../../features/stripe/domain/repositories/stripe_repository.dart';
 import '../../features/stripe/domain/usecases/get_stripe_config_use_case.dart';
+import '../../features/stripe/domain/usecases/get_stripe_processing_fee_use_case.dart';
 import '../../features/wallet/data/datasources/wallet_deposit_remote_data_source.dart';
 import '../../features/wallet/data/datasources/wallet_remote_data_source.dart';
 import '../../features/wallet/data/datasources/wallet_withdrawal_remote_data_source.dart';
@@ -239,6 +240,7 @@ class ServiceLocator {
   late final StripeRemoteDataSource stripeRemoteDataSource;
   late final StripeRepository stripeRepository;
   late final GetStripeConfigUseCase getStripeConfigUseCase;
+  late final GetStripeProcessingFeeUseCase getStripeProcessingFeeUseCase;
   late final StripePaymentService stripePaymentService;
 
   late final PaymentMethodsRemoteDataSource paymentMethodsRemoteDataSource;
