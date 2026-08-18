@@ -1029,7 +1029,7 @@ class AppStrings {
   static const String walletWithdrawingLabel = 'Withdrawing';
   static const String walletMethodLabel = 'Method';
   static const String walletToLabel = 'To';
-  static const String walletDepositFeeLabel = 'Deposit Fee';
+  static const String walletDepositFeeLabel = 'Stripe Deposit Fee';
   static const String walletDepositFeeEstimated = 'Estimated';
   static const String walletDepositFeeLoadFailed =
       'Could not load the deposit fee. Please try again.';
