@@ -96,6 +96,7 @@ WalletScreen → WithdrawScreen
 HomeScreen / DiscoverScreen
   HomeBloc / DiscoverCubit → GET /projects?scope=mine|discover
   Cards show Total Members (list memberCount; owner-only API 0 → 1)
+  Empty first Home: ShowcaseView on tabs + VFF (existing groups skip)
   User taps Join
     → JoinProjectUseCase → POST /projects/join { projectId }
     ├─ public + active → openProjectDetailAfterJoinSuccess
@@ -265,12 +266,18 @@ FCM token sync (FcmPushService) + in-app list
 NotificationsScreen → NotificationsCubit → GET notifications
 Header bell from Home/Discover → /notifications
 
-Push tap (background / terminated) →
-  FcmPushService._onNotificationTapped → PushNotificationPayload.fromData
+Push tap (foreground local / background / terminated) →
+  FcmPushService._onNotificationTapped (or local-notification tap payload)
+    → PushNotificationPayload.fromData
     → PushNotificationRouter.handleTap
-        → (queued until GoRouter attached on cold start)
-        → auth check → GET /projects/{id} (resolve category)
-        → openProjectDetailById → /project/detail | /project/investment-detail
+        → (queued until splash leaves `/` and session is authenticated)
+        → VffRequestReceived: push /user/vff Requests on top of Home
+        → auth check
+        → ProjectCreated: GET /projects/{id} → openProjectDetailById
+        → VffRequestReceived: /user/vff Requests tab
+        → JoinRequest: GET /projects/{id} → /project/join-requests (all categories)
+        → WithdrawalFailed / deposit: Wallet tab
+        → unknown: Home tab
 ```
 
 **Code:** `lib/features/notifications/`, `lib/core/services/fcm_push_service.dart`, `lib/core/services/notifications/push_notification_router.dart`

@@ -73,14 +73,15 @@ pattern as `ProjectInviteDeepLinkService`.
 FcmPushService._onNotificationTapped(RemoteMessage)
   → PushNotificationPayload.fromData(message.data)
   → PushNotificationRouter.handleTap(payload)
-      → router attached?  no → queue as _pendingTap, replay on attach()
-                           yes → _route(payload)
-      → switch (payload.type) { ... }
+      → queue as _pendingTap
+      → flush when: router attached AND session authenticated AND
+        location is not splash/login/agreement
+      → switch (payload.tapTarget) { ... }
 ```
 
-- **`attach(router)`** — called once from `MainApp`'s post-frame callback (`lib/app/main_app.dart`), mirroring `ProjectInviteDeepLinkService.start`. Replays a queued cold-start tap once the router/navigator exist.
-- **`handleTap(payload)`** — called from every tap path: `FirebaseMessaging.onMessageOpenedApp` (background tap) and `getInitialMessage()` (terminated-launch tap).
-- **Auth guard** — dashboard/project routes bail out if `AppAuthSession.instance.isAuthenticated` is false (never deep-link into a screen behind auth).
+- **`attach(router)`** — called once from `MainApp`'s post-frame callback (`lib/app/main_app.dart`), mirroring `ProjectInviteDeepLinkService.start`. Listens to the router so a terminated-launch tap is **not** applied on splash. Splash always `go`s to Home after its delay; applying VFF/join-requests during splash opened the right screen then sent the user back to Home.
+- **`handleTap(payload)`** — called from every tap path: `FirebaseMessaging.onMessageOpenedApp` (background tap), `getInitialMessage()` (terminated-launch tap), and local-notification taps while the app is in the foreground.
+- **Auth guard** — dashboard/project routes bail out if `AppAuthSession.instance.isAuthenticated` is false (never deep-link into a screen behind auth). Pending tap is kept until login + splash finish, then flushed.
 - **Category resolution** — the notify payload only carries `projectId`, not project category, and category decides the route (`/project/detail` vs `/project/investment-detail`). The router fetches `GET /projects/{id}` via `ServiceLocator.instance.projectDetailRepository.getProjectDetail` first, then calls `openProjectDetailById` with the resolved `category.isInvestment`. If the fetch fails, navigation is silently skipped (stale/deleted project) rather than erroring.
 
 ## 4. Adding a new notification type
@@ -96,6 +97,8 @@ FcmPushService._onNotificationTapped(RemoteMessage)
 | `type` | Payload fields | Route |
 |---|---|---|
 | `ProjectCreated` | `projectId`, `projectName` | `/project/detail` or `/project/investment-detail` (resolved via `GET /projects/{id}`) |
+| `VffRequestReceived` | `requestId`, `senderUserId`, `projectId` (under `metadata`) | `/user/vff` Requests tab |
+| `JoinRequest` | `projectId`, `projectName`, `requesterUserId`, `membershipId` (under `metadata`) | `/project/join-requests` for vacation, emergency, and investment (same screen; `GET /projects/{id}` confirms the viewer is a leader/co-leader) |
 | `WithdrawalFailed` | `withdrawalId`, `amount`, `currency`, `status`, `failureReason` (under `metadata`) | Dashboard Wallet tab |
 | `Deposit*` / copy with **withdrawal** or **deposit** in `type`, `title`, or `body` | varies | Dashboard Wallet tab (same as `WithdrawalFailed` — resolved by `PushNotificationType.walletTypeIfTextMatches`) |
 | _(anything else)_ | — | Dashboard Home tab (`initialTabIndex: 0`) — safe fallback, no crash |

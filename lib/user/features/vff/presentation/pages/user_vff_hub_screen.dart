@@ -13,8 +13,13 @@ final class UserVffHubScreen extends StatelessWidget {
   static const bool previewDemoCards = false;
 
   final UserVffHubUiModel? previewHub;
+  final int initialTabIndex;
 
-  const UserVffHubScreen({super.key, this.previewHub});
+  const UserVffHubScreen({
+    super.key,
+    this.previewHub,
+    this.initialTabIndex = 0,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +38,9 @@ final class UserVffHubScreen extends StatelessWidget {
           cubit.seedFromDemo(previewHub ?? UserVffHubUiModel.demoFilled());
         } else {
           cubit.load();
+        }
+        if (initialTabIndex != 0) {
+          cubit.selectTab(initialTabIndex);
         }
         return cubit;
       },

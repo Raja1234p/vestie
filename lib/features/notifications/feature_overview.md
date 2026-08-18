@@ -24,10 +24,17 @@ In-app notification inbox and FCM token registration for push delivery.
 
 ## Push notification tap routing
 
-Tapping a push (background tap or terminated-launch) routes through
+Tapping a push (foreground local banner, background tap, or terminated-launch) routes through
 `PushNotificationRouter` (`lib/core/services/notifications/`), not through
 this screen — see [`DOCS/push_notification_routing.md`](../../../../DOCS/push_notification_routing.md)
 for the full payload shape, auth guard, and how to add a new `type`.
+
+Foreground banners are shown by `FcmPushService` via `flutter_local_notifications`
+(OS does not present FCM while the app is open). Tap payload is attached so
+`VffRequestReceived` opens `/user/vff` (Requests) and `JoinRequest` opens
+`/project/join-requests` for every project category. Terminated-launch taps
+wait until splash has opened Home, then push that screen on top (Back returns
+to Home).
 
 ## See also
 

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/services/risk_disclaimer_gate.dart';
+import 'package:vestie/core/showcase/app_showcase.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
@@ -94,7 +95,12 @@ class _WalletMoneyActions extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (showContribute)
-          AppButton(
+          AppShowcase.wrapIf(
+            enabled: project.isModeratorView,
+            key: AppShowcaseKeys.leaderContribute,
+            title: AppStrings.showcaseLeaderContributeTitle,
+            description: AppStrings.showcaseLeaderContributeBody,
+            child: AppButton(
             text: AppStrings.btnContribute,
             onPressed: () async {
               final accepted = await RiskDisclaimerGate.ensureAccepted(context);
@@ -110,6 +116,7 @@ class _WalletMoneyActions extends StatelessWidget {
                 submitResult: result,
               );
             },
+          ),
           ),
         if (showContribute && showBorrow) SizedBox(height: 13.h),
         if (showBorrow) _BorrowButton(project: project, walletArgs: walletArgs),

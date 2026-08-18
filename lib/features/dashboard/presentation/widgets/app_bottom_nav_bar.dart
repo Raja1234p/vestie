@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/showcase/app_showcase.dart';
 import '../../../../core/theme/app_colors.dart';
 
 class _NavItem {
@@ -89,79 +91,89 @@ class AppBottomNavBar extends StatelessWidget {
             children: List.generate(_items.length, (i) {
               final active = i == currentIndex;
               return Expanded(
-                child: GestureDetector(
-                  onTap: () => onTap(i),
-                  behavior: HitTestBehavior.opaque,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 12.h),
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 250),
-                        curve: Curves.easeInOut,
-                        width: 44.w,
-                        height: 44.w,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: active
-                              ? AppColors.purple800
-                              : AppColors.neutral200,
-                          boxShadow: active
-                              ? const [
-                                  BoxShadow(
-                                    color: AppColors.purple300,
-                                    blurRadius: 7.6,
-                                    spreadRadius: 0,
-                                    offset: Offset(0, 4),
-                                  ),
-                                  // Approximate Figma inner shadow with a tighter
-                                  // secondary shadow using negative spread.
-                                  BoxShadow(
-                                    color: Color(0xFF8563D0),
-                                    blurRadius: 4,
-                                    spreadRadius: -1,
-                                    offset: Offset(0, 4),
-                                  ),
-                                ]
-                              : null,
-                          border: active
-                              ? Border.all(color: AppColors.primary, width: 1)
-                              : Border.all(
-                                  color: AppColors.cardBorder,
-                                  width: 1,
-                                ),
-                        ),
-                        child: Center(
-                          child: SvgPicture.asset(
-                            active && _items[i].activeAsset != null
-                                ? _items[i].activeAsset!
-                                : _items[i].asset,
-                            width: 22.w,
-                            height: 22.w,
-                            colorFilter: active && _items[i].activeAsset != null
-                                ? null
-                                : ColorFilter.mode(
-                                    active ? Colors.white : AppColors.grey800,
-                                    BlendMode.srcIn,
+                child: AppShowcase.highlight(
+                  key: _navShowcaseKey(i),
+                  title: _navShowcaseTitle(i),
+                  description: _navShowcaseBody(i),
+                  tooltipPosition: TooltipPosition.top,
+                  child: GestureDetector(
+                    onTap: () => onTap(i),
+                    behavior: HitTestBehavior.opaque,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 12.h),
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 250),
+                          curve: Curves.easeInOut,
+                          width: 44.w,
+                          height: 44.w,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: active
+                                ? AppColors.purple800
+                                : AppColors.neutral200,
+                            boxShadow: active
+                                ? const [
+                                    BoxShadow(
+                                      color: AppColors.purple300,
+                                      blurRadius: 7.6,
+                                      spreadRadius: 0,
+                                      offset: Offset(0, 4),
+                                    ),
+                                    BoxShadow(
+                                      color: Color(0xFF8563D0),
+                                      blurRadius: 4,
+                                      spreadRadius: -1,
+                                      offset: Offset(0, 4),
+                                    ),
+                                  ]
+                                : null,
+                            border: active
+                                ? Border.all(
+                                    color: AppColors.primary,
+                                    width: 1,
+                                  )
+                                : Border.all(
+                                    color: AppColors.cardBorder,
+                                    width: 1,
                                   ),
                           ),
+                          child: Center(
+                            child: SvgPicture.asset(
+                              active && _items[i].activeAsset != null
+                                  ? _items[i].activeAsset!
+                                  : _items[i].asset,
+                              width: 22.w,
+                              height: 22.w,
+                              colorFilter:
+                                  active && _items[i].activeAsset != null
+                                  ? null
+                                  : ColorFilter.mode(
+                                      active
+                                          ? Colors.white
+                                          : AppColors.grey800,
+                                      BlendMode.srcIn,
+                                    ),
+                            ),
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 4.h),
-                      Text(
-                        _items[i].label,
-                        style: GoogleFonts.lato(
-                          fontSize: 14.sp,
-                          fontWeight: active
-                              ? FontWeight.w600
-                              : FontWeight.w400,
-                          color: active
-                              ? AppColors.grey1100
-                              : AppColors.navInactive,
+                        SizedBox(height: 4.h),
+                        Text(
+                          _items[i].label,
+                          style: GoogleFonts.lato(
+                            fontSize: 14.sp,
+                            fontWeight: active
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                            color: active
+                                ? AppColors.grey1100
+                                : AppColors.navInactive,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 10.h),
-                    ],
+                        SizedBox(height: 10.h),
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -171,4 +183,28 @@ class AppBottomNavBar extends StatelessWidget {
       ),
     );
   }
+
+  static GlobalKey _navShowcaseKey(int i) => switch (i) {
+        0 => AppShowcaseKeys.navHome,
+        1 => AppShowcaseKeys.navDiscover,
+        2 => AppShowcaseKeys.navCreate,
+        3 => AppShowcaseKeys.navWallet,
+        _ => AppShowcaseKeys.navProfile,
+      };
+
+  static String _navShowcaseTitle(int i) => switch (i) {
+        0 => AppStrings.showcaseDashboardHomeTitle,
+        1 => AppStrings.showcaseDashboardDiscoverTitle,
+        2 => AppStrings.showcaseDashboardCreateTitle,
+        3 => AppStrings.showcaseDashboardWalletTitle,
+        _ => AppStrings.showcaseDashboardProfileTitle,
+      };
+
+  static String _navShowcaseBody(int i) => switch (i) {
+        0 => AppStrings.showcaseDashboardHomeBody,
+        1 => AppStrings.showcaseDashboardDiscoverBody,
+        2 => AppStrings.showcaseDashboardCreateBody,
+        3 => AppStrings.showcaseDashboardWalletBody,
+        _ => AppStrings.showcaseDashboardProfileBody,
+      };
 }

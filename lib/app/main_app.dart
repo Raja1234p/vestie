@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../core/constants/app_strings.dart';
+import '../core/showcase/app_showcase.dart';
 import '../core/theme/app_theme.dart';
 import 'package:vestie/leader/features/create_project/presentation/cubit/create_project_cubit.dart';
 import 'package:vestie/leader/features/create_project/presentation/cubit/create_project_update_cubit.dart';
@@ -33,6 +34,7 @@ class _MainAppState extends State<MainApp> {
   @override
   void initState() {
     super.initState();
+    AppShowcase.register();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (kDebugMode) {
         debugPrint('MainApp: first frame — starting deep link listener');
@@ -40,6 +42,12 @@ class _MainAppState extends State<MainApp> {
       ProjectInviteDeepLinkService.instance.start(AppRouter.router);
       PushNotificationRouter.attach(AppRouter.router);
     });
+  }
+
+  @override
+  void dispose() {
+    AppShowcase.unregister();
+    super.dispose();
   }
 
   @override

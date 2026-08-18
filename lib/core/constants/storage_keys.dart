@@ -34,6 +34,11 @@ class StorageKeys {
   static const String notificationPermissionPromptDismissed =
       'notification_permission_prompt_dismissed';
 
+  /// One-time ShowcaseView tours (dashboard, leader detail, VFF hub).
+  static const String showcaseDashboardDone = 'showcase_dashboard_done';
+  static const String showcaseLeaderDetailDone = 'showcase_leader_detail_done';
+  static const String showcaseVffHubDone = 'showcase_vff_hub_done';
+
   /// Invite code from a shared `vestie.app/join/{code}` link (pre-auth).
   static const String pendingProjectInviteCode = 'pending_project_invite_code';
 

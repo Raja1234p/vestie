@@ -8,6 +8,7 @@ import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/utils/formatters.dart';
 import 'package:vestie/core/widgets/common/notification_favourite_header_actions.dart';
+import 'package:vestie/core/showcase/app_showcase.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 
@@ -61,7 +62,9 @@ class HomeHeader extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const NotificationFavouriteHeaderActions(),
+                  NotificationFavouriteHeaderActions(
+                    vffShowcaseKey: AppShowcaseKeys.headerVff,
+                  ),
                 ],
               ),
             ),

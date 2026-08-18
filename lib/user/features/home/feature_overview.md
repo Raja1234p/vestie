@@ -27,6 +27,8 @@ List `memberCount` (also `membersCount` / numeric `members`) is shown as **Total
 
 Owner-only groups: list APIs often send `0`; the card still shows **1** (the creator). Raw `Project.memberCount` is unchanged so vote-outcome copy is not affected.
 
+First dashboard visit shows a one-time **ShowcaseView** overlay on the tab bar + VFF icon (Skip / Next) **only when Home has no groups**. Accounts that already have projects skip every tour so existing taps and flows are unchanged.
+
 ## See also
 
 - [`PROJECT_FLOW_MAP.md`](../../../../../PROJECT_FLOW_MAP.md) §3 Project flow

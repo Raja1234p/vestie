@@ -3,17 +3,46 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:showcaseview/showcaseview.dart';
 import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_assets.dart';
+import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/showcase/app_showcase.dart';
 
 /// Notification bell + favourite (VFF hub) for Home / Discover headers.
 /// Both assets render at 32×32 inside equal square hit targets, vertically aligned.
 class NotificationFavouriteHeaderActions extends StatelessWidget {
-  const NotificationFavouriteHeaderActions({super.key});
+  /// Home-only ShowcaseView target. Discover must omit this so the key is unique.
+  final GlobalKey? vffShowcaseKey;
+
+  const NotificationFavouriteHeaderActions({
+    super.key,
+    this.vffShowcaseKey,
+  });
 
   @override
   Widget build(BuildContext context) {
     const extent = 32.0;
+    Widget vffButton = _SquareIconTap(
+      extent: extent,
+      onTap: () => context.push(AppRoutes.userVffMain),
+      child: SvgPicture.asset(
+        AppAssets.headerVffHub,
+        width: extent,
+        height: extent,
+        fit: BoxFit.contain,
+      ),
+    );
+    final showcaseKey = vffShowcaseKey;
+    if (showcaseKey != null) {
+      vffButton = AppShowcase.highlight(
+        key: showcaseKey,
+        title: AppStrings.showcaseDashboardVffTitle,
+        description: AppStrings.showcaseDashboardVffBody,
+        tooltipPosition: TooltipPosition.bottom,
+        child: vffButton,
+      );
+    }
     return Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -29,16 +58,7 @@ class NotificationFavouriteHeaderActions extends StatelessWidget {
           ),
         ),
         SizedBox(width: 8.w),
-        _SquareIconTap(
-          extent: extent,
-          onTap: () => context.push(AppRoutes.userVffMain),
-          child: SvgPicture.asset(
-            AppAssets.headerVffHub,
-            width: extent,
-            height: extent,
-            fit: BoxFit.contain,
-          ),
-        ),
+        vffButton,
       ],
     );
   }

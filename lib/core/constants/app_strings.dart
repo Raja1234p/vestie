@@ -180,6 +180,38 @@ class AppStrings {
   static const String onboardingGetStarted = 'Get Started';
   static const String onboardingSkip = 'Skip';
 
+  // ── ShowcaseView (one-time product tours) ────────────────────────────────
+  static const String showcaseDashboardHomeTitle = 'Your groups';
+  static const String showcaseDashboardHomeBody =
+      'Groups you start or join show up here. Open one anytime to add money or see members.';
+  static const String showcaseDashboardDiscoverTitle = 'Find groups';
+  static const String showcaseDashboardDiscoverBody =
+      'Browse public groups and tap Join. Private groups send a request to the leader first.';
+  static const String showcaseDashboardCreateTitle = 'Start a group';
+  static const String showcaseDashboardCreateBody =
+      'Create a vacation, emergency, or investment group. You become the leader and set the rules.';
+  static const String showcaseDashboardWalletTitle = 'Your money';
+  static const String showcaseDashboardWalletBody =
+      'Add money here first. Then you can contribute to any group, and withdraw when you need it back.';
+  static const String showcaseDashboardProfileTitle = 'You';
+  static const String showcaseDashboardProfileBody =
+      'Your photo, completed groups, cards, and settings live here.';
+  static const String showcaseDashboardVffTitle = 'Friends & family';
+  static const String showcaseDashboardVffBody =
+      'Connect with people you trust. Invite them into groups, and accept their friend requests here.';
+  static const String showcaseLeaderJoinTitle = 'Accept people in';
+  static const String showcaseLeaderJoinBody =
+      'When someone asks to join a private group, review them here. Accept the people you know.';
+  static const String showcaseLeaderContributeTitle = 'Add money to the pot';
+  static const String showcaseLeaderContributeBody =
+      'You and your members put money in from the wallet. This is how the group grows.';
+  static const String showcaseLeaderMenuTitle = 'End the group';
+  static const String showcaseLeaderMenuBody =
+      'Open this menu to invite people. When the goal is done, choose Mark successful so everyone can vote. If you need to stop early, choose Cancel.';
+  static const String showcaseVffHubTitle = 'Your circle & requests';
+  static const String showcaseVffHubBody =
+      'My VFFs is your trusted circle — invite them into groups. Switch to Requests to accept friend requests from people you know.';
+
   // ── Bottom Navigation ────────────────────────────────────────────────────
   static const String navHome = 'Home';
   static const String navSearch = 'Search';

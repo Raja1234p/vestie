@@ -6,6 +6,7 @@ import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/widgets/common/app_button.dart';
 import 'package:vestie/core/widgets/common/notification_favourite_header_actions.dart';
+import 'package:vestie/core/showcase/app_showcase.dart';
 
 /// Full-screen empty state (Home or Discover): gradient background, optional CTA.
 ///
@@ -20,6 +21,7 @@ class HomeEmptyView extends StatelessWidget {
     this.onCreateProject,
     this.showNotificationFavouriteRow = true,
     this.applyTopSafeArea = true,
+    this.vffShowcaseKey,
   }) : assert(
          !showCreateProjectButton || onCreateProject != null,
          'onCreateProject is required when showCreateProjectButton is true',
@@ -38,6 +40,7 @@ class HomeEmptyView extends StatelessWidget {
       onCreateProject: onCreateProject,
       showNotificationFavouriteRow: true,
       applyTopSafeArea: true,
+      vffShowcaseKey: AppShowcaseKeys.headerVff,
     );
   }
 
@@ -64,6 +67,9 @@ class HomeEmptyView extends StatelessWidget {
   /// Top [SafeArea] inset (use true when this view is the top of the screen).
   final bool applyTopSafeArea;
 
+  /// Home-only VFF tour target. Discover empty state leaves this null.
+  final GlobalKey? vffShowcaseKey;
+
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
@@ -80,9 +86,11 @@ class HomeEmptyView extends StatelessWidget {
             if (showNotificationFavouriteRow)
               Padding(
                 padding: EdgeInsets.only(top: 8.h, right: 20.w),
-                child: const Align(
+                child: Align(
                   alignment: Alignment.centerRight,
-                  child: NotificationFavouriteHeaderActions(),
+                  child: NotificationFavouriteHeaderActions(
+                    vffShowcaseKey: vffShowcaseKey,
+                  ),
                 ),
               ),
             const Spacer(),

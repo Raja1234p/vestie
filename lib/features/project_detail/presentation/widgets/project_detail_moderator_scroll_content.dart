@@ -11,6 +11,7 @@ import 'package:vestie/features/project_detail/domain/entities/project_detail_me
 import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation.dart';
 import 'package:vestie/core/di/service_locator.dart';
+import 'package:vestie/core/showcase/app_showcase.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/features/project_detail/presentation/widgets/project_announcements_section.dart';
@@ -53,6 +54,18 @@ class ProjectDetailModeratorScrollContent extends StatefulWidget {
 class _ProjectDetailModeratorScrollContentState
     extends State<ProjectDetailModeratorScrollContent> {
   bool _deletingAnnouncement = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      AppShowcase.maybeStartLeaderDetail(
+        isModerator: widget.project.isModeratorView,
+        completedProfileDetail: widget.completedProjectsProfileDetail,
+      );
+    });
+  }
 
   Future<bool> _deleteAnnouncement(String announcementId) async {
     if (_deletingAnnouncement) return false;

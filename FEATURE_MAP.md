@@ -26,7 +26,7 @@ Quick index for onboarding: **where code lives**, **primary APIs**, **entry rout
 
 | Tab | Code | API | Route |
 |-----|------|-----|-------|
-| Home | `user/features/home/` | `GET /projects?scope=mine` — cards: pot/raised + **Total Members** (owner-only `0` → **1**) | `/dashboard` tab 0 |
+| Home | `user/features/home/` | `GET /projects?scope=mine` — cards: pot/raised + **Total Members** (owner-only `0` → **1**). Empty first Home: ShowcaseView tabs + VFF (existing groups skip) | `/dashboard` tab 0 |
 | Discover | `user/features/discover/` | `GET /projects?scope=discover` — same **Total Members** as Home | tab 1 |
 | Create (+) | `leader/features/create_project/` | `POST /projects`, launch | wizard routes |
 | Wallet | `wallet/` | `GET /wallet` | tab 3 |
@@ -85,7 +85,7 @@ Quick index for onboarding: **where code lives**, **primary APIs**, **entry rout
 
 | Feature | Location | APIs | Routes |
 |---------|----------|------|--------|
-| Hub | `user/features/vff/` | `/users/me/vffs`, inbox | `/user/vff` |
+| Hub | `user/features/vff/` | `/users/me/vffs`, inbox. First visit after dashboard tour: ShowcaseView on My VFFs / Requests | `/user/vff` |
 | Profile | `user/features/vff/` | profile endpoints | `/user/vff/profile` |
 | Invites sent | `user/features/vff/` | invite APIs | `/user/vff/invite-success` |
 
@@ -97,7 +97,7 @@ Quick index for onboarding: **where code lives**, **primary APIs**, **entry rout
 |---------|----------|------|
 | In-app list | `features/notifications/` | list, mark read |
 | FCM | `core/services/fcm_push_service.dart` | register device token, foreground/background display |
-| Tap routing | `core/services/notifications/push_notification_router.dart` | see [`DOCS/push_notification_routing.md`](DOCS/push_notification_routing.md) |
+| Tap routing | `core/services/notifications/push_notification_router.dart` | `VffRequestReceived` → `/user/vff` Requests; `JoinRequest` → `/project/join-requests` (all categories). See [`DOCS/push_notification_routing.md`](DOCS/push_notification_routing.md) |
 
 ---
 

@@ -27,6 +27,8 @@ Leader-only moderation: join requests, borrow approvals, voting monitors, cancel
 
 Leader menu → `ProjectDetailNavigation.handleLeaderAction` → typed `AppRoutes.*` push
 
+FCM `JoinRequest` tap opens `/project/join-requests` for vacation, emergency, and investment (same screen).
+
 ## See also
 
 - [`PROJECT_FLOW_MAP.md`](../../../../../PROJECT_FLOW_MAP.md) §4 Leader flow

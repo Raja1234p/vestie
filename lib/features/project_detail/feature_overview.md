@@ -30,6 +30,8 @@ Shared project detail entity, bloc, navigation helpers, member list, funds histo
 
 Info card shows **Total Members** for vacation, emergency, and investment (ongoing, funded, and completed) from `membersPagination.totalCount` (else active `members[]`). Owner-only groups still show **1** (the creator). **View All Members (N)** uses the same count. Full-screen **Group Members (N)** (`/project/group-members`) uses the same floor.
 
+First time a **leader / co-leader** opens project detail after the dashboard tour, a one-time ShowcaseView highlights join requests, Contribute, and the ⋯ menu (Mark successful / Cancel). Returning accounts that already have groups skip it. Member Contribute/menu widgets are not wrapped; taps and APIs are unchanged.
+
 **Funds history ledger** (`/project/funds-history`): `ProjectFundsHistoryScreen` → `ProjectFundsHistoryCubit` → `GetProjectFundsHistoryUseCase` → `GET /projects/{projectId}/funds-history` (own paginated call, independent of the parent detail load). Route args (`ProjectFundsHistoryRouteArgs`) carry only `projectId` / `isInvestment` / `useBreakdownSectionTitle` — the screen's Cubit fetches `currentPotBalance`, `totalContribution`, `activeBorrows`, and paginated `entries` itself (see `architecture.mdc` §5 — route args are navigation metadata, not mock screen data). `ProjectFundsHistoryListShimmer` on initial load; `PaginatedScrollListener` + `ListLoadMoreFooter` for load-more; `AppErrorView` on initial load failure, `AppToast` on load-more failure.
 
 Closure voting (Week 10): `ClosureVotingRepository` → `POST/GET …/closure-voting/*`  

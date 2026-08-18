@@ -9,7 +9,9 @@ import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
 import 'package:vestie/core/widgets/common/post_auth_header.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/core/di/service_locator.dart';
+import 'package:vestie/core/showcase/app_showcase.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
+import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/projects/presentation/bloc/project_detail_bloc.dart';
 import 'package:vestie/features/project_detail/presentation/mappers/closure_vote_ui_mappers.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/open_project_from_card.dart';
@@ -111,6 +113,19 @@ class InvestmentProjectDetailBody extends StatefulWidget {
 
 class _InvestmentProjectDetailBodyState
     extends State<InvestmentProjectDetailBody> {
+  bool _leaderTourScheduled = false;
+
+  void _maybeStartLeaderTour(ProjectDetailEntity project) {
+    if (_leaderTourScheduled) return;
+    _leaderTourScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      AppShowcase.maybeStartLeaderDetail(
+        isModerator: project.isModeratorView,
+        completedProfileDetail: widget.skipCompletedOutcomeTakeover,
+      );
+    });
+  }
   Future<bool> _deleteAnnouncement(String announcementId) async {
     final result = await ServiceLocator.instance
         .deleteProjectAnnouncementUseCase(
@@ -205,6 +220,7 @@ class _InvestmentProjectDetailBodyState
 
             if (state is ProjectDetailLoaded) {
               final project = state.project;
+              _maybeStartLeaderTour(project);
               final pendingCount = state.pendingJoinRequestCount;
               final showDistributionLayout =
                   project.showsInvestmentDistributionActions;

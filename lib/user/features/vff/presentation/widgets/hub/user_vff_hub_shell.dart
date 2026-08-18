@@ -4,8 +4,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:showcaseview/showcaseview.dart';
 import 'package:vestie/core/constants/app_dimens.dart';
 import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/showcase/app_showcase.dart';
 import 'package:vestie/core/widgets/common/app_toast.dart';
 import 'package:vestie/core/widgets/text/app_text.dart';
 import 'package:vestie/core/theme/app_colors.dart';
@@ -21,8 +23,22 @@ import 'user_vff_hub_my_vffs_tab.dart';
 import 'user_vff_hub_requests_tab.dart';
 
 /// Gradient header + single white sheet (tabs + tab body — Figma).
-final class UserVffHubShell extends StatelessWidget {
+final class UserVffHubShell extends StatefulWidget {
   const UserVffHubShell({super.key});
+
+  @override
+  State<UserVffHubShell> createState() => _UserVffHubShellState();
+}
+
+class _UserVffHubShellState extends State<UserVffHubShell> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      AppShowcase.maybeStartVffHub();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +78,12 @@ final class UserVffHubShell extends StatelessWidget {
                             tabIndex: s.tabIndex,
                             inboxBusy: s.isInboxActionBusy,
                           ),
-                          builder: (context, data) => IgnorePointer(
+                          builder: (context, data) => AppShowcase.highlight(
+                            key: AppShowcaseKeys.vffHubTabs,
+                            title: AppStrings.showcaseVffHubTitle,
+                            description: AppStrings.showcaseVffHubBody,
+                            tooltipPosition: TooltipPosition.bottom,
+                            child: IgnorePointer(
                             ignoring: data.inboxBusy,
                             child: AppToggleTabBar(
                               outerHeight:
@@ -90,6 +111,7 @@ final class UserVffHubShell extends StatelessWidget {
                                         .selectTab(i),
                             ),
                           ),
+                          ),
                         ),
                   ),
                   SizedBox(height: 24.h),
@@ -113,8 +135,9 @@ final class UserVffHubShell extends StatelessWidget {
                                     final message =
                                         hubState.errorMessage ??
                                         hubState.requestsErrorMessage;
-                                    if (message == null || message.isEmpty)
+                                    if (message == null || message.isEmpty) {
                                       return;
+                                    }
                                     AppToast.showError(context, message);
                                   },
                                   builder: (context, hubState) {

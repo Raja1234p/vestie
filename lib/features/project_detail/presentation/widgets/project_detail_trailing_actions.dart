@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:vestie/core/widgets/common/leader_action_menu.dart';
 import 'package:vestie/core/widgets/common/member_project_action_menu.dart';
+import 'package:vestie/core/constants/app_strings.dart';
+import 'package:vestie/core/showcase/app_showcase.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/project_detail/presentation/navigation/project_detail_navigation.dart';
 import 'project_detail_join_requests_chip.dart';
@@ -68,17 +70,28 @@ class ProjectDetailTrailingActions extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (showJoinChip) ...[
-          ProjectDetailJoinRequestsChip(
-            count: pendingJoinRequestCount,
-            onTap: () => ProjectDetailNavigation.handleLeaderAction(
-              context,
-              project: project,
-              action: LeaderMenuAction.joinRequests,
+          AppShowcase.highlight(
+            key: AppShowcaseKeys.leaderJoinRequests,
+            title: AppStrings.showcaseLeaderJoinTitle,
+            description: AppStrings.showcaseLeaderJoinBody,
+            child: ProjectDetailJoinRequestsChip(
+              count: pendingJoinRequestCount,
+              onTap: () => ProjectDetailNavigation.handleLeaderAction(
+                context,
+                project: project,
+                action: LeaderMenuAction.joinRequests,
+              ),
             ),
           ),
           SizedBox(width: 8.w),
         ],
-        menu,
+        AppShowcase.wrapIf(
+          enabled: project.isModeratorView && !completedProjectsProfileDetail,
+          key: AppShowcaseKeys.leaderMenu,
+          title: AppStrings.showcaseLeaderMenuTitle,
+          description: AppStrings.showcaseLeaderMenuBody,
+          child: menu,
+        ),
       ],
     );
   }

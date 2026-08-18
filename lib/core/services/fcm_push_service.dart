@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer' as developer;
 import 'dart:io' show Platform;
 import 'dart:ui' show Color;
@@ -114,7 +115,11 @@ class FcmPushService {
       // Terminated-state launch via notification tap (official docs: handle
       // both this and onMessageOpenedApp for full interaction coverage).
       final initialMessage = await messaging.getInitialMessage();
-      if (initialMessage != null) _onNotificationTapped(initialMessage);
+      if (initialMessage != null) {
+        _onNotificationTapped(initialMessage);
+      } else {
+        await _replayLocalNotificationLaunch();
+      }
 
       if (!_tokenRefreshAttached) {
         _tokenRefreshAttached = true;
@@ -148,6 +153,33 @@ class FcmPushService {
     PushNotificationRouter.handleTap(
       PushNotificationPayload.fromData(message.data),
     );
+  }
+
+  static void _onLocalNotificationResponse(NotificationResponse response) {
+    final raw = response.payload;
+    if (raw == null || raw.isEmpty) return;
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is! Map) return;
+      PushNotificationRouter.handleTap(
+        PushNotificationPayload.fromData(Map<String, dynamic>.from(decoded)),
+      );
+    } catch (e) {
+      _fcmLog('local tap payload parse failed: $e', level: 1000);
+    }
+  }
+
+  static Future<void> _replayLocalNotificationLaunch() async {
+    try {
+      final launch =
+          await _localNotifications.getNotificationAppLaunchDetails();
+      final response = launch?.notificationResponse;
+      if (launch?.didNotificationLaunchApp == true && response != null) {
+        _onLocalNotificationResponse(response);
+      }
+    } catch (e) {
+      _fcmLog('local launch replay failed: $e', level: 1000);
+    }
   }
 
   /// Registers the current FCM token with `POST /notifications/device-token`.
@@ -226,6 +258,7 @@ Future<void> _ensureLocalNotificationsReady() async {
         requestSoundPermission: false,
       ),
     ),
+    onDidReceiveNotificationResponse: FcmPushService._onLocalNotificationResponse,
   );
 
   await _localNotifications
@@ -238,36 +271,53 @@ Future<void> _ensureLocalNotificationsReady() async {
 /// Shows a heads-up local notification for messages the OS does not present
 /// itself: every foreground message, plus data-only background messages.
 Future<void> _showLocalNotification(RemoteMessage message) async {
-  final notification = message.notification;
-  final title = notification?.title ?? message.data['title']?.toString() ?? '';
-  final body =
-      notification?.body ??
-      message.data['body']?.toString() ??
-      message.data['message']?.toString() ??
-      '';
-  if (title.isEmpty && body.isEmpty) return;
+  try {
+    await _ensureLocalNotificationsReady();
+    final notification = message.notification;
+    final title = notification?.title ?? message.data['title']?.toString() ?? '';
+    final body =
+        notification?.body ??
+        message.data['body']?.toString() ??
+        message.data['message']?.toString() ??
+        '';
+    if (title.isEmpty && body.isEmpty) return;
 
-  await _localNotifications.show(
-    message.messageId?.hashCode ?? message.hashCode,
-    title.isEmpty ? _androidChannelName : title,
-    body,
-    NotificationDetails(
-      android: AndroidNotificationDetails(
-        _androidChannel.id,
-        _androidChannel.name,
-        channelDescription: _androidChannel.description,
-        importance: Importance.high,
-        priority: Priority.high,
-        icon: '@drawable/ic_notification',
-        color: const Color(0xFF4C24A0),
+    final data = Map<String, dynamic>.from(message.data);
+    if (title.isNotEmpty) data.putIfAbsent('title', () => title);
+    if (body.isNotEmpty) data.putIfAbsent('body', () => body);
+
+    await _localNotifications.show(
+      _localNotificationId(message),
+      title.isEmpty ? _androidChannelName : title,
+      body,
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          _androidChannel.id,
+          _androidChannel.name,
+          channelDescription: _androidChannel.description,
+          importance: Importance.high,
+          priority: Priority.high,
+          icon: '@drawable/ic_notification',
+          color: const Color(0xFF4C24A0),
+        ),
+        iOS: const DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        ),
       ),
-      iOS: const DarwinNotificationDetails(
-        presentAlert: true,
-        presentBadge: true,
-        presentSound: true,
-      ),
-    ),
-  );
+      payload: jsonEncode(data),
+    );
+  } catch (e, stack) {
+    _fcmLog('local notification display failed: $e', level: 1000);
+    if (kDebugMode) debugPrintStack(stackTrace: stack);
+  }
+}
+
+int _localNotificationId(RemoteMessage message) {
+  final raw = message.messageId?.hashCode ?? message.hashCode;
+  final id = raw & 0x7fffffff;
+  return id == 0 ? 1 : id;
 }
 
 void _fcmLog(String message, {int level = 800}) {

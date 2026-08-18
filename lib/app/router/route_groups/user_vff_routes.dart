@@ -19,9 +19,16 @@ List<RouteBase> buildUserVffRoutes({
       path: AppRoutes.userVffMain,
       builder: (context, state) {
         UserVffHubUiModel hub = UserVffHubUiModel.empty;
+        var initialTabIndex = UserVffHubRouteArgs.myVffsTabIndex;
         final extra = state.extra;
-        if (extra is UserVffHubRouteArgs) hub = extra.hub;
-        return UserVffHubScreen(previewHub: hub);
+        if (extra is UserVffHubRouteArgs) {
+          hub = extra.hub ?? UserVffHubUiModel.empty;
+          initialTabIndex = extra.initialTabIndex;
+        }
+        return UserVffHubScreen(
+          previewHub: hub,
+          initialTabIndex: initialTabIndex,
+        );
       },
     ),
     GoRoute(

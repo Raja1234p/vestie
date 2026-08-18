@@ -10,14 +10,25 @@ library;
 import 'package:vestie/user/features/vff/presentation/models/user_vff_hub_ui_model.dart';
 import 'package:vestie/user/features/vff/presentation/models/user_vff_profile_ui_model.dart';
 
-/// Optional override for mocked hub lists (omit `extra` → demo snapshot).
+/// Optional override for mocked hub lists (omit `extra` → live API).
+/// Push taps use [requestsTab] so the incoming VFF request is visible.
 class UserVffHubRouteArgs {
-  final UserVffHubUiModel hub;
+  static const int myVffsTabIndex = 0;
+  static const int requestsTabIndex = 1;
 
-  const UserVffHubRouteArgs({required this.hub});
+  final UserVffHubUiModel? hub;
+  final int initialTabIndex;
+
+  const UserVffHubRouteArgs({
+    this.hub,
+    this.initialTabIndex = myVffsTabIndex,
+  });
 
   factory UserVffHubRouteArgs.defaults() =>
       UserVffHubRouteArgs(hub: UserVffHubUiModel.demoFilled());
+
+  factory UserVffHubRouteArgs.requestsTab() =>
+      const UserVffHubRouteArgs(initialTabIndex: requestsTabIndex);
 }
 
 /// Popped from [UserVffProfileScreen] after a successful VFF mutation.
