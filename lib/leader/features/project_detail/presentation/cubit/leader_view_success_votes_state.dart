@@ -8,11 +8,15 @@ class LeaderViewSuccessVotesState extends Equatable {
   final LeaderViewSuccessVotesLoadStatus loadStatus;
   final LeaderSuccessVoteProgressUiData? data;
   final String? loadErrorMessage;
+  final bool cancelling;
+  final String? actionErrorMessage;
 
   const LeaderViewSuccessVotesState({
     this.loadStatus = LeaderViewSuccessVotesLoadStatus.initial,
     this.data,
     this.loadErrorMessage,
+    this.cancelling = false,
+    this.actionErrorMessage,
   });
 
   bool get isLoading => loadStatus == LeaderViewSuccessVotesLoadStatus.loading;
@@ -24,7 +28,10 @@ class LeaderViewSuccessVotesState extends Equatable {
     LeaderViewSuccessVotesLoadStatus? loadStatus,
     LeaderSuccessVoteProgressUiData? data,
     String? loadErrorMessage,
+    bool? cancelling,
+    String? actionErrorMessage,
     bool clearLoadError = false,
+    bool clearActionError = false,
   }) {
     return LeaderViewSuccessVotesState(
       loadStatus: loadStatus ?? this.loadStatus,
@@ -32,9 +39,19 @@ class LeaderViewSuccessVotesState extends Equatable {
       loadErrorMessage: clearLoadError
           ? null
           : (loadErrorMessage ?? this.loadErrorMessage),
+      cancelling: cancelling ?? this.cancelling,
+      actionErrorMessage: clearActionError
+          ? null
+          : (actionErrorMessage ?? this.actionErrorMessage),
     );
   }
 
   @override
-  List<Object?> get props => [loadStatus, data, loadErrorMessage];
+  List<Object?> get props => [
+    loadStatus,
+    data,
+    loadErrorMessage,
+    cancelling,
+    actionErrorMessage,
+  ];
 }

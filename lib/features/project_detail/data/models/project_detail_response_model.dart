@@ -438,6 +438,7 @@ class _VotingPayload {
   final ClosureVoteOutcome? outcome;
   final bool? isApproved;
   final int? eligibleVoterCount;
+  final bool? canContinueContributions;
   final String? distributionStatus;
   final double viewerRefundAmount;
 
@@ -454,6 +455,7 @@ class _VotingPayload {
     this.outcome,
     this.isApproved,
     this.eligibleVoterCount,
+    this.canContinueContributions,
     this.distributionStatus,
     this.viewerRefundAmount = 0,
   });
@@ -480,6 +482,9 @@ class _VotingPayload {
           ? json['isApproved'] as bool
           : null,
       eligibleVoterCount: (json['eligibleVoterCount'] as num?)?.toInt(),
+      canContinueContributions: json['canContinueContributions'] is bool
+          ? json['canContinueContributions'] as bool
+          : null,
       distributionStatus: _nullableString(json['distributionStatus']),
       viewerRefundAmount:
           (json['viewerRefundAmount'] as num?)?.toDouble() ?? 0.0,
@@ -535,6 +540,7 @@ class _VotingPayload {
       outcome: outcome,
       isApproved: isApproved,
       eligibleVoterCount: eligibleVoterCount,
+      canContinueContributions: canContinueContributions,
       distributionStatus: distributionStatus,
       viewerRefundAmount: viewerRefundAmount,
     );

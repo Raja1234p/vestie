@@ -121,6 +121,9 @@ void registerProjectDependencies(ServiceLocator sl) {
   sl.getActiveClosureVoteUseCase = GetActiveClosureVoteUseCase(
     sl.closureVotingRepository,
   );
+  sl.cancelClosureVotingUseCase = CancelClosureVotingUseCase(
+    sl.closureVotingRepository,
+  );
   sl.castClosureVoteUseCase = CastClosureVoteUseCase(
     sl.submitVoteUseCase,
   );

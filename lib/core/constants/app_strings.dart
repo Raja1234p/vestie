@@ -1588,6 +1588,18 @@ class AppStrings {
   static const String btnViewContributionSuccessVote =
       'View Contribution Success Vote';
   static const String btnCastVote = 'Cast Vote';
+  static const String btnContinueContribution = 'Continue contribution';
+  static const String btnCancelVote = 'Cancel vote';
+  static const String continueContributionConfirmTitle =
+      'Continue contribution?';
+  static const String continueContributionConfirmBody =
+      'This cancels the current vote and returns the group to contributing.';
+  static const String errorContinueContributionThreshold =
+      'Continue contribution is no longer available because at least 50% of joined members have voted.';
+  static const String errorContinueContributionWindowClosed =
+      'Continue contribution is no longer available because the voting window has closed.';
+  static const String errorContinueContributionAlreadyFinalized =
+      'Continue contribution is no longer available because the vote has already been finalized.';
 
   // ── Week 11+ project detail voting card ───────────────────────────────
   static const String projectBannerOngoing = 'Ongoing';

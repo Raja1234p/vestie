@@ -1,3 +1,4 @@
+import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/features/project_detail/domain/entities/member_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 
@@ -24,6 +25,11 @@ class LeaderSuccessVoteProgressUiData {
   /// Investment phase 1 — stop-contributions vote (Figma majority banner copy).
   final bool isStopContributionsVote;
 
+  /// Group leader only — Continue contribution on the monitor screen.
+  final bool showContinueContributions;
+
+  final String continueContributionLabel;
+
   const LeaderSuccessVoteProgressUiData({
     required this.agreedCount,
     required this.disagreedCount,
@@ -33,6 +39,8 @@ class LeaderSuccessVoteProgressUiData {
     required this.remaining,
     required this.members,
     this.isStopContributionsVote = false,
+    this.showContinueContributions = false,
+    this.continueContributionLabel = AppStrings.btnContinueContribution,
   });
 
   /// Figma-style preview until vote-status API is wired.

@@ -180,6 +180,8 @@ LeaderSuccessVoteProgressUiData leaderSuccessVoteProgressFromProjectVoting({
     remaining: clampedRemaining,
     members: _leaderMemberVoteRowsForProject(project),
     isStopContributionsVote: _isStopContributionsMonitorVote(project: project),
+    showContinueContributions: project.showsContinueContributionsAction,
+    continueContributionLabel: project.continueContributionsButtonLabel,
   );
 }
 
@@ -211,6 +213,11 @@ LeaderSuccessVoteProgressUiData leaderSuccessVoteProgressFromActiveVote({
       project: project,
       vote: vote,
     ),
+    showContinueContributions:
+        project?.showsContinueContributionsAction ?? false,
+    continueContributionLabel:
+        project?.continueContributionsButtonLabel ??
+        AppStrings.btnContinueContribution,
   );
 }
 

@@ -21,6 +21,17 @@ class OpenClosureVotingUseCase {
   }
 }
 
+class CancelClosureVotingUseCase {
+  final ClosureVotingRepository repository;
+  CancelClosureVotingUseCase(this.repository);
+
+  Future<Either<Failure, CancelClosureVoteResultEntity>> call({
+    required String projectId,
+  }) {
+    return repository.cancelClosureVote(projectId: projectId);
+  }
+}
+
 class OpenStopContributionsVotingUseCase {
   final ClosureVotingRepository repository;
   OpenStopContributionsVotingUseCase(this.repository);

@@ -56,6 +56,7 @@ class ProjectVotingSummaryEntity {
   final ClosureVoteOutcome? outcome;
   final bool? isApproved;
   final int? eligibleVoterCount;
+  final bool? canContinueContributions;
   final String? distributionStatus;
 
   /// API `voting.viewerRefundAmount` — viewer refund on cancelled/refund outcomes.
@@ -74,6 +75,7 @@ class ProjectVotingSummaryEntity {
     this.outcome,
     this.isApproved,
     this.eligibleVoterCount,
+    this.canContinueContributions,
     this.distributionStatus,
     this.viewerRefundAmount = 0,
   });

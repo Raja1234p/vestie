@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/error/failure_mapper.dart';
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/closure_vote_entities.dart';
@@ -60,14 +61,35 @@ class ClosureVotingRepositoryImpl implements ClosureVotingRepository {
     }
   }
 
-  Future<Either<Failure, T>> _execute<T>(Future<T> Function() action) async {
+  @override
+  Future<Either<Failure, CancelClosureVoteResultEntity>> cancelClosureVote({
+    required String projectId,
+  }) {
+    return _execute(
+      () async {
+        final model = await remoteDataSource.cancel(projectId: projectId);
+        final entity = model.toEntity();
+        if (!entity.cancelled) {
+          throw const ServerFailure(AppStrings.errorGeneric);
+        }
+        return entity;
+      },
+      mapFailure: ClosureVotingFailureMapper.mapCancel,
+    );
+  }
+
+  Future<Either<Failure, T>> _execute<T>(
+    Future<T> Function() action, {
+    Failure Function(Failure failure)? mapFailure,
+  }) async {
+    final mapper = mapFailure ?? ClosureVotingFailureMapper.map;
     try {
       final result = await action();
       return Right(result);
     } on Failure catch (f) {
-      return Left(ClosureVotingFailureMapper.map(f));
+      return Left(mapper(f));
     } catch (e) {
-      return Left(ClosureVotingFailureMapper.map(FailureMapper.fromException(e)));
+      return Left(mapper(FailureMapper.fromException(e)));
     }
   }
 }

@@ -11,7 +11,6 @@ class ApiConstants {
   /// HTTPS invite links — same host as [baseUrl], path `/join/{inviteCode}`.
   static const String inviteShareLinkBase =
       'https://vestie-backend-prod-hsaghpaedggzhhh9.centralus-01.azurewebsites.net/join';
-
   static String inviteShareUrl(String inviteCode) =>
       '$inviteShareLinkBase/${inviteCode.trim()}';
 
@@ -200,6 +199,10 @@ class ApiConstants {
 
   static String projectClosureVotingActive(String projectId) =>
       '$projects/$projectId/closure-voting/active';
+
+  /// Group leader cancels an open vote (Continue contribution).
+  static String projectClosureVotingCancel(String projectId) =>
+      '$projects/$projectId/closure-voting/cancel';
 
   /// Legacy — not in Week 10 spec; kept for existing use cases.
   static String projectClosureVotingExtend(String projectId) =>

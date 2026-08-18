@@ -1,3 +1,4 @@
+import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/features/projects/domain/entities/project_image_entity.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
@@ -5,6 +6,7 @@ import 'package:vestie/user/features/home/domain/entities/project_category_exten
 import 'member_entity.dart';
 
 import 'closure_vote_entities.dart';
+import 'continue_contributions_policy.dart';
 import 'leader_voting_flow_kind.dart';
 import 'project_detail_entity.dart';
 import 'project_detail_member_vote_extensions.dart';
@@ -49,6 +51,42 @@ extension ProjectDetailEntityClosureVote on ProjectDetailEntity {
       hasActiveSuccessVote &&
       !isStopContributionsClosureVote &&
       (votingIsInProgress || activeClosureVote?.isOpen == true);
+
+  /// Continue contribution / cancel open vote — **GroupLeader only**, never
+  /// members or co-leaders. Hidden at 50% of [totalJoinedMember] votes cast.
+  bool get showsContinueContributionsAction {
+    if (!isGroupLeader) return false;
+    final summary = voting;
+    if (votingStatus == ProjectVotingStatus.pending &&
+        summary != null &&
+        !summary.isFinalized) {
+      return groupLeaderCanContinueContributions(
+        isGroupLeader: true,
+        voteWindowOpen: true,
+        totalJoinedMember: totalJoinedMember,
+        votesCast: summary.agreedCount + summary.disagreedCount,
+        apiCanContinueContributions: summary.canContinueContributions,
+      );
+    }
+    final vote = activeClosureVote;
+    if (vote != null && vote.isOpen && summary == null) {
+      return groupLeaderCanContinueContributions(
+        isGroupLeader: true,
+        voteWindowOpen: true,
+        totalJoinedMember: totalJoinedMember,
+        votesCast: vote.thumbsUp + vote.thumbsDown,
+        apiCanContinueContributions: null,
+      );
+    }
+    return false;
+  }
+
+  String get continueContributionsButtonLabel {
+    if (isInvestmentMarkSuccessfulClosureVote) {
+      return AppStrings.btnCancelVote;
+    }
+    return AppStrings.btnContinueContribution;
+  }
 
   ProjectDetailEntity withActiveClosureVote(ActiveClosureVoteEntity? vote) {
     return _copy(

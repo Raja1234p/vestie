@@ -339,6 +339,7 @@ class ServiceLocator {
   late final VotingRepository votingRepository;
   late final SubmitVoteUseCase submitVoteUseCase;
   late final GetActiveClosureVoteUseCase getActiveClosureVoteUseCase;
+  late final CancelClosureVotingUseCase cancelClosureVotingUseCase;
   late final ModerateMemberUseCase moderateMemberUseCase;
 
   late final ModerationBloc moderationBloc;
@@ -387,6 +388,7 @@ class ServiceLocator {
     args: args,
     projectDetailRepository: projectDetailRepository,
     getActiveClosureVoteUseCase: getActiveClosureVoteUseCase,
+    cancelClosureVotingUseCase: cancelClosureVotingUseCase,
   );
 
   InvestmentReturnsCubit createInvestmentReturnsCubit(

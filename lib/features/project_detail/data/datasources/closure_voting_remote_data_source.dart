@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/error/failure_mapper.dart';
+import '../../../../core/network/api_response_body.dart';
 import '../../../../core/network/base_api_client.dart';
 import '../../domain/entities/closure_vote_entities.dart';
 import '../models/closure_voting_response_model.dart';
@@ -21,6 +22,8 @@ abstract class ClosureVotingRemoteDataSource {
 
   /// Returns `null` when no open vote (`404`).
   Future<ActiveClosureVoteResponseModel?> getActive(String projectId);
+
+  Future<CancelClosureVoteResponseModel> cancel({required String projectId});
 }
 
 class ClosureVotingRemoteDataSourceImpl implements ClosureVotingRemoteDataSource {
@@ -84,5 +87,18 @@ class ClosureVotingRemoteDataSourceImpl implements ClosureVotingRemoteDataSource
       if (e.response?.statusCode == 404) return null;
       throw FailureMapper.fromDioException(e);
     }
+  }
+
+  @override
+  Future<CancelClosureVoteResponseModel> cancel({
+    required String projectId,
+  }) async {
+    final data = await apiClient.post<dynamic>(
+      ApiConstants.projectClosureVotingCancel(projectId),
+      data: const <String, dynamic>{},
+    );
+    return CancelClosureVoteResponseModel.fromJson(
+      unwrapApiResponseBody(parseClosureVotingResponseMap(data)),
+    );
   }
 }

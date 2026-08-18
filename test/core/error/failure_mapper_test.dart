@@ -55,5 +55,34 @@ void main() {
 
       expect(failure, isA<NetworkFailure>());
     });
+
+    test('409 with code/message body keeps server message', () {
+      final failure = FailureMapper.fromDioException(
+        DioException(
+          requestOptions: RequestOptions(
+            path: '/projects/p1/closure-voting/cancel',
+          ),
+          response: Response(
+            requestOptions: RequestOptions(
+              path: '/projects/p1/closure-voting/cancel',
+            ),
+            statusCode: 409,
+            data: {
+              'code': 'VoteParticipationThresholdReached',
+              'message':
+                  'Continue contribution is no longer available because at least 50% of joined members have voted.',
+            },
+          ),
+          type: DioExceptionType.badResponse,
+        ),
+      );
+
+      expect(failure, isA<ServerFailure>());
+      expect(failure.title, 'VoteParticipationThresholdReached');
+      expect(
+        FailureMapper.userMessage(failure),
+        'Continue contribution is no longer available because at least 50% of joined members have voted.',
+      );
+    });
   });
 }

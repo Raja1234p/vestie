@@ -100,6 +100,36 @@ void main() {
     });
   });
 
+  group('CancelClosureVoteResponseModel', () {
+    test('parses deployed cancel 200 payload', () {
+      const json = {
+        'cancelled': true,
+        'projectId': '25f7fe65-5fd8-4b00-991c-2c45f16001d5',
+        'votingStatus': 'not_started',
+      };
+
+      final entity = CancelClosureVoteResponseModel.fromJson(json).toEntity();
+
+      expect(entity.cancelled, isTrue);
+      expect(entity.projectId, '25f7fe65-5fd8-4b00-991c-2c45f16001d5');
+      expect(entity.votingStatusRaw, 'not_started');
+      expect(entity.restoredToNotStarted, isTrue);
+    });
+
+    test('treats cancelled false as not restored', () {
+      const json = {
+        'cancelled': false,
+        'projectId': 'p1',
+        'votingStatus': 'pending',
+      };
+
+      final entity = CancelClosureVoteResponseModel.fromJson(json).toEntity();
+
+      expect(entity.cancelled, isFalse);
+      expect(entity.restoredToNotStarted, isFalse);
+    });
+  });
+
   group('closureVoteTypeToApiValue', () {
     test('maps entity vote types to API strings', () {
       expect(

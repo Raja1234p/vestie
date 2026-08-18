@@ -3,7 +3,7 @@
 **Audience:** Vestie backend team  
 **From:** Mobile (Flutter)  
 **Date:** 2026-08-18  
-**Status:** Proposed — needed before mobile ships the Group Leader “Continue contribution” button
+**Status:** Deployed — `POST /api/v1/projects/{projectId}/closure-voting/cancel` matches this contract.
 
 This is an **additive** contract. Existing open / vote / finalize behavior must stay the same.
 
@@ -269,4 +269,4 @@ Flutter will:
 2. Confirm → `POST cancel` → reload detail → return to contribute flow.
 3. Hide the button at 50% / non-leader / closed window.
 
-No mobile release of this button until the cancel endpoint and GET flag are live.
+No further backend work is required for this contract unless the 50% GET flag or restore side effects drift.

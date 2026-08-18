@@ -27,6 +27,8 @@ Leader-only moderation: join requests, borrow approvals, voting monitors, cancel
 
 Leader menu → `ProjectDetailNavigation.handleLeaderAction` → typed `AppRoutes.*` push
 
+While a closure vote is **open**, Group Leader monitor (`/leader/view-success-votes`) shows **Continue contribution** (footer `AppButton` + confirm dialog) only for **GroupLeader**, and only while `votesCast * 2 < totalJoinedMember`. Members and co-leaders never see it. Confirm → `POST …/closure-voting/cancel` (`{}`) → `reloadDetailAndWait` (`GET /projects/{id}` is source of truth). Hidden at 50% participation. 409 codes toast and refresh the monitor from the same GET.
+
 FCM `JoinRequest` tap opens `/project/join-requests` for vacation, emergency, and investment (same screen).
 
 ## See also

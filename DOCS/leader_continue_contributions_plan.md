@@ -1,6 +1,6 @@
 # Leader Continue Contribution / Cancel Vote — audit + app plan
 
-**Status:** Plan only — not implemented in the app yet.  
+**Status:** Deployed — `POST /api/v1/projects/{projectId}/closure-voting/cancel` is live. Mobile wires Continue contribution to this contract.  
 **Related backend spec (share this with backend):** [`backend_handoff_cancel_closure_vote.md`](backend_handoff_cancel_closure_vote.md)
 
 ---

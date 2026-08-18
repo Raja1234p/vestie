@@ -26,9 +26,15 @@ class ApiErrorResponseModel {
 
     return ApiErrorResponseModel(
       status: json['status'] as int? ?? 400,
-      title: json['title'] as String? ?? 'Error',
-      detail: json['detail'] as String?,
+      title: json['title'] as String? ?? json['code'] as String? ?? 'Error',
+      detail: _nullableString(json['detail']) ?? _nullableString(json['message']),
       errors: parsedErrors,
     );
   }
+}
+
+String? _nullableString(dynamic value) {
+  if (value == null) return null;
+  final s = value.toString().trim();
+  return s.isEmpty ? null : s;
 }

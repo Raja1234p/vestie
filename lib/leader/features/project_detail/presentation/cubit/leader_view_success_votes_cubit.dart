@@ -3,10 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vestie/app/router/route_args/project_detail_flow_args.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
+import 'package:vestie/core/error/failures.dart';
 import 'package:vestie/features/project_detail/domain/entities/closure_vote_entities.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_entity.dart';
 import 'package:vestie/features/project_detail/domain/entities/project_detail_voting_entities.dart';
 import 'package:vestie/features/project_detail/domain/repositories/project_detail_repository.dart';
+import 'package:vestie/features/project_detail/domain/usecases/closure_voting_usecases.dart';
 import 'package:vestie/features/project_detail/domain/usecases/get_active_closure_vote_usecase.dart';
 import 'package:vestie/features/project_detail/presentation/mappers/closure_vote_ui_mappers.dart';
 import 'package:vestie/features/project_detail/presentation/project_detail_reload_coordinator.dart';
@@ -17,13 +19,16 @@ class LeaderViewSuccessVotesCubit extends Cubit<LeaderViewSuccessVotesState> {
   final LeaderViewSuccessVotesRouteArgs args;
   final ProjectDetailRepository _projectDetailRepository;
   final GetActiveClosureVoteUseCase _getActiveClosureVoteUseCase;
+  final CancelClosureVotingUseCase _cancelClosureVotingUseCase;
 
   LeaderViewSuccessVotesCubit({
     required this.args,
     required ProjectDetailRepository projectDetailRepository,
     required GetActiveClosureVoteUseCase getActiveClosureVoteUseCase,
+    required CancelClosureVotingUseCase cancelClosureVotingUseCase,
   }) : _projectDetailRepository = projectDetailRepository,
        _getActiveClosureVoteUseCase = getActiveClosureVoteUseCase,
+       _cancelClosureVotingUseCase = cancelClosureVotingUseCase,
        super(const LeaderViewSuccessVotesState());
 
   Future<void> load() async {
@@ -104,6 +109,47 @@ class LeaderViewSuccessVotesCubit extends Cubit<LeaderViewSuccessVotesState> {
         emit(_loadedFromActiveVote(vote, project: project));
       },
     );
+  }
+
+  /// Cancels the open vote so contribute/borrow return. Group leader only.
+  Future<bool> continueContributions() async {
+    if (state.cancelling) return false;
+    if (state.data?.showContinueContributions != true) return false;
+    final projectId = args.projectId?.trim();
+    if (projectId == null || projectId.isEmpty) return false;
+
+    emit(state.copyWith(cancelling: true, clearActionError: true));
+
+    final result = await _cancelClosureVotingUseCase(projectId: projectId);
+    final error = result.fold<String?>(
+      (failure) => FailureMapper.userMessage(failure),
+      (_) => null,
+    );
+    if (error != null) {
+      emit(
+        state.copyWith(
+          cancelling: false,
+          actionErrorMessage: error,
+        ),
+      );
+      final shouldRefreshFromDetail = result.fold(
+        (failure) =>
+            failure is! ForbiddenFailure &&
+            failure is! NetworkFailure &&
+            failure is! TimeoutFailure &&
+            failure is! UnauthorizedFailure,
+        (_) => false,
+      );
+      if (shouldRefreshFromDetail) {
+        await load();
+      }
+      return false;
+    }
+
+    await ProjectDetailReloadCoordinator.reload(projectId);
+    if (isClosed) return false;
+    emit(state.copyWith(cancelling: false));
+    return true;
   }
 
   bool _hasFinalizedVotingTallies(ProjectVotingSummaryEntity voting) {

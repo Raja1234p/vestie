@@ -10,6 +10,14 @@ abstract final class ClosureVoteApiValues {
   static const voteTypeFinalClosure = 'FinalClosureVote';
 
   static const statusOpen = 'Open';
+  static const votingStatusNotStarted = 'not_started';
+
+  static const cancelCodeForbidden = 'Forbidden';
+  static const cancelCodeNoOpenVote = 'NoOpenVote';
+  static const cancelCodeParticipationThreshold =
+      'VoteParticipationThresholdReached';
+  static const cancelCodeWindowClosed = 'VoteWindowClosed';
+  static const cancelCodeAlreadyFinalized = 'VoteAlreadyFinalized';
 
   static const outcomeSuccess = 'Success';
   static const outcomeInvestmentStarted = 'InvestmentStarted';
@@ -166,6 +174,34 @@ class CastClosureVoteResponseModel {
       thumbsUp: thumbsUp,
       thumbsDown: thumbsDown,
       notYetVoted: notYetVoted,
+    );
+  }
+}
+
+class CancelClosureVoteResponseModel {
+  final bool cancelled;
+  final String projectId;
+  final String votingStatusRaw;
+
+  const CancelClosureVoteResponseModel({
+    this.cancelled = true,
+    this.projectId = '',
+    this.votingStatusRaw = '',
+  });
+
+  factory CancelClosureVoteResponseModel.fromJson(Map<String, dynamic> json) {
+    return CancelClosureVoteResponseModel(
+      cancelled: json['cancelled'] == null ? true : json['cancelled'] == true,
+      projectId: _string(json['projectId']),
+      votingStatusRaw: _string(json['votingStatus']),
+    );
+  }
+
+  CancelClosureVoteResultEntity toEntity() {
+    return CancelClosureVoteResultEntity(
+      cancelled: cancelled,
+      projectId: projectId,
+      votingStatusRaw: votingStatusRaw,
     );
   }
 }

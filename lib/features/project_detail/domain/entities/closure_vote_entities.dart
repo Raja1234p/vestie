@@ -41,6 +41,7 @@ abstract final class ClosureVoteApiValues {
   static const outcomeRefund = 'Refund';
   static const outcomeDisputed = 'Disputed';
   static const outcomeNoVotes = 'NoVotes';
+  static const votingStatusNotStarted = 'not_started';
 }
 
 /// Majority passed — maps Week 10 `outcome` from detail or finalize payloads.
@@ -166,6 +167,25 @@ class CastClosureVoteResultEntity {
     required this.thumbsDown,
     required this.notYetVoted,
   });
+}
+
+/// Response from `POST …/closure-voting/cancel`.
+class CancelClosureVoteResultEntity {
+  final bool cancelled;
+  final String projectId;
+  final String votingStatusRaw;
+
+  const CancelClosureVoteResultEntity({
+    this.cancelled = true,
+    this.projectId = '',
+    this.votingStatusRaw = '',
+  });
+
+  bool get restoredToNotStarted {
+    final status = votingStatusRaw.trim().toLowerCase();
+    return cancelled &&
+        (status.isEmpty || status == ClosureVoteApiValues.votingStatusNotStarted);
+  }
 }
 
 /// Response from `POST …/closure-voting/finalize`.
