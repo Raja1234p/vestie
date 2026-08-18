@@ -2,7 +2,8 @@
 
 **Goal:** A new developer can understand how Vestie is built in ~30 minutes.  
 **Audience:** Flutter engineers joining the project.  
-**Last aligned with code:** June 2026 (`maintainability-wave` branch)
+**Last aligned with code:** August 2026 (`final-changes` branch)  
+**New chat resume:** [`DOCS/HANDOFF.md`](DOCS/HANDOFF.md)
 
 ---
 

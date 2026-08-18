@@ -1,0 +1,22 @@
+---
+description: MANDATORY — read DOCS/HANDOFF.md before every task so new chats resume the same E2E context.
+alwaysApply: true
+---
+
+# Vestie — E2E handoff (mandatory)
+
+New chats have **no memory**. **Before any work**, read:
+
+1. **`DOCS/HANDOFF.md`** — current branch snapshot, shipped work, next steps, feature/file map, local-only files
+2. All other `.cursor/rules/*.mdc` (start with `agent_workflow.mdc`)
+3. **`architecture.mdc`** — follow completely for every code change
+
+Do **not** start implementing from chat history or guess. If HANDOFF and code disagree, **code + architecture.mdc win**; then update HANDOFF in the same task.
+
+## Always
+
+- Production-hardening: stability over refactors (`production_scope.mdc`)
+- Layers: Screen → Cubit → UseCase → Repository → DataSource — widgets never call Dio / `ApiConstants`
+- `AppStrings` / `AppRoutes` / `AppColors` / `ApiConstants`; parse API enums in models
+- Do **not** commit local test `baseUrl` or Stripe `pk_test_` in `api_constants.dart` / `stripe_constants.dart`
+- After API/flow changes: update `feature_overview.md` + `DOCS/qa/api_screen_sync_matrix.md` + **this handoff snapshot** if resume state changed

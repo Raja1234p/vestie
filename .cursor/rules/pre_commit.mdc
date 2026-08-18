@@ -5,7 +5,7 @@ alwaysApply: true
 
 # Vestie — engineering rules (pre-commit / AI)
 
-> **Before every task:** read all `.cursor/rules/*.mdc` files (start with `agent_workflow.mdc`) and follow them completely.
+> **Before every task:** read `DOCS/HANDOFF.md`, then all `.cursor/rules/*.mdc` files (start with `agent_workflow.mdc`) and follow them completely. Follow `architecture.mdc` for every code change.
 
 Principal Flutter engineer mindset: **scalable, testable, team-ready**. Prefer matching **Figma** for UI work.
 

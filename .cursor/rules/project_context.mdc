@@ -5,7 +5,11 @@ alwaysApply: true
 
 # Vestie — project context (always in scope)
 
-> New chats have **no memory** of prior conversations. This file + linked docs are the source of truth.
+> New chats have **no memory** of prior conversations. **`DOCS/HANDOFF.md` + this file + linked docs** are the source of truth.
+
+## Before any work
+
+**Read `DOCS/HANDOFF.md` first**, then all `.cursor/rules/*.mdc`. Follow **`architecture.mdc`** for every code change.
 
 ## What Vestie is
 
@@ -46,11 +50,12 @@ Public join → instant active membership. Private → pending until leader appr
 
 **Read** (in order):
 
-1. `.cursor/rules/architecture.mdc` — layers, constants, no magic literals, doc sync
-2. `DOCS/project_scope.md` — full product & technical scope
-3. `ARCHITECTURE_OVERVIEW.md` — layout & layers
-4. `PROJECT_FLOW_MAP.md` or `FEATURE_MAP.md` — locate code & traces
-5. `feature_overview.md` in the feature folder you touch
+1. `DOCS/HANDOFF.md` — E2E resume
+2. `.cursor/rules/architecture.mdc` — layers, constants, no magic literals, doc sync
+3. `DOCS/project_scope.md` — full product & technical scope
+4. `ARCHITECTURE_OVERVIEW.md` — layout & layers
+5. `PROJECT_FLOW_MAP.md` or `FEATURE_MAP.md` — locate code & traces
+6. `feature_overview.md` in the feature folder you touch
 
 ## Tech stack (fixed)
 

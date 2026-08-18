@@ -1,8 +1,9 @@
 # Vestie — App Guide (roles, flows & code map)
 
 **Audience:** Engineers, QA, and product reviewing how Vestie works end-to-end.  
-**Last updated:** July 2026  
-**Rule:** All navigation uses `AppRoutes` + typed `GoRouter` extras — never raw path strings in widgets.
+**Last updated:** August 2026  
+**Rule:** All navigation uses `AppRoutes` + typed `GoRouter` extras — never raw path strings in widgets.  
+**Resume a new chat:** [`DOCS/HANDOFF.md`](DOCS/HANDOFF.md) (mandatory) + `.cursor/rules/architecture.mdc`.
 
 ---
 

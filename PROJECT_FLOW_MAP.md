@@ -2,6 +2,8 @@
 
 Step-by-step traces for the eight primary user journeys. Use with [`ARCHITECTURE_OVERVIEW.md`](ARCHITECTURE_OVERVIEW.md) and [`FEATURE_MAP.md`](FEATURE_MAP.md).
 
+**New chat resume:** [`DOCS/HANDOFF.md`](DOCS/HANDOFF.md) (mandatory) · follow [`.cursor/rules/architecture.mdc`](.cursor/rules/architecture.mdc).
+
 **Convention:** `UI → Cubit/Bloc → UseCase → Repository → API`
 
 ---

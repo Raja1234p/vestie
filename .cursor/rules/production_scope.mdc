@@ -5,7 +5,7 @@ alwaysApply: true
 
 # Vestie — production scope (active vs deferred)
 
-> **Before every task:** read all `.cursor/rules/*.mdc` files (start with `agent_workflow.mdc`) and follow them completely.
+> **Before every task:** read `DOCS/HANDOFF.md`, then all `.cursor/rules/*.mdc` files (start with `agent_workflow.mdc`) and follow them completely. Follow `architecture.mdc` for every code change.
 
 **Mode:** production-hardening, not architecture-rewrite.
 
@@ -53,6 +53,7 @@ Do not proceed on failing tests or analyze **errors**. Info lints on unchanged f
 
 | Need | Read |
 |------|------|
+| **Resume / E2E handoff** | **`DOCS/HANDOFF.md`** (mandatory each chat) |
 | 30-min architecture | `ARCHITECTURE_OVERVIEW.md` |
 | Flow traces | `PROJECT_FLOW_MAP.md` |
 | Deep routes/joins | `DOCS/architecture_flows.md` |

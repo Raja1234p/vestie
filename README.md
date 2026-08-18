@@ -19,7 +19,8 @@ flutter run
 
 | Document | Purpose |
 |----------|---------|
-| **[`APP_GUIDE.md`](APP_GUIDE.md)** | **Primary guide** — roles, voting flow, money flows, completed projects, key files |
+| **[`DOCS/HANDOFF.md`](DOCS/HANDOFF.md)** | **Mandatory E2E resume** — current branch, shipped work, features, flows, files |
+| **[`APP_GUIDE.md`](APP_GUIDE.md)** | Roles, voting flow, money flows, completed projects, key files |
 | [`ARCHITECTURE_OVERVIEW.md`](ARCHITECTURE_OVERVIEW.md) | 30-minute architecture onboarding |
 | [`FEATURE_MAP.md`](FEATURE_MAP.md) | Feature → folder → API index |
 | [`PROJECT_FLOW_MAP.md`](PROJECT_FLOW_MAP.md) | Step-by-step flow traces (auth, wallet, project, leader, member, VFF, KYC) |
@@ -30,7 +31,7 @@ flutter run
 | [`DOCS/api_integration_plan.md`](DOCS/api_integration_plan.md) | API integration (Weeks 4, 5, 7, 8, 10–11) |
 | [`DOCS/qa/README.md`](DOCS/qa/README.md) | QA runbooks before release |
 | `feature_overview.md` | Per-feature notes inside each `lib/**/features/` folder |
-| `.cursor/rules/*.mdc` | Engineering rules for AI and team |
+| `.cursor/rules/*.mdc` | Engineering rules for AI and team (`handoff.mdc` requires reading HANDOFF first) |
 
 ---
 

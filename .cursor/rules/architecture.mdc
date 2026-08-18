@@ -5,8 +5,9 @@ alwaysApply: true
 
 # Vestie — architecture & patterns
 
-> **Before every task:** read with `agent_workflow.mdc` and `pre_commit.mdc`.  
+> **Before every task:** read `DOCS/HANDOFF.md`, then `agent_workflow.mdc` and `pre_commit.mdc`.  
 > **Reference implementation:** `lib/user/features/borrow/` (Week 8) + `lib/user/features/contribute/`.
+> **Follow this file completely** for every code change.
 
 Principal goal: **scalable, testable, team-ready** — widgets stay thin; business logic and I/O stay in domain/data.
 

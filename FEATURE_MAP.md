@@ -2,7 +2,7 @@
 
 Quick index for onboarding: **where code lives**, **primary APIs**, **entry routes**.
 
-**Start here:** [`APP_GUIDE.md`](APP_GUIDE.md) · **Flow traces:** [`PROJECT_FLOW_MAP.md`](PROJECT_FLOW_MAP.md) · **Per-feature:** `feature_overview.md` in each feature folder.
+**Start here:** [`DOCS/HANDOFF.md`](DOCS/HANDOFF.md) (E2E resume) · [`APP_GUIDE.md`](APP_GUIDE.md) · **Flow traces:** [`PROJECT_FLOW_MAP.md`](PROJECT_FLOW_MAP.md) · **Per-feature:** `feature_overview.md` in each feature folder.
 
 > Paths use `AppRoutes` constants. Full route table: `lib/app/router/app_routes.dart`.
 
@@ -75,7 +75,7 @@ Quick index for onboarding: **where code lives**, **primary APIs**, **entry rout
 | Create wizard | `leader/features/create_project/` | create + launch |
 | Join requests | `leader/features/project_detail/` | pending join, approve/reject |
 | Borrow approvals | `leader/features/project_detail/` | approve/reject borrow |
-| Voting | `features/project_detail/` (voting bloc) | vote APIs |
+| Voting / Continue contribution | `features/project_detail/` + `leader/features/project_detail/` | `POST …/closure-voting/open\|vote\|cancel`; monitor `GET /projects/{id}`. Cancel is Group Leader only — `DOCS/HANDOFF.md` |
 | Announcements | `features/project_announcements/` | create/delete |
 | Distribute funds | `leader/features/project_detail/` | investment distribution |
 
