@@ -219,6 +219,7 @@ class ProjectDetailResponseModel {
       apiCanStopContributions: _canStopContributions,
       borrowingEnabled: _project.borrowingEnabled && _rules.borrowingAllowed,
       pendingJoinRequestCount: _project.pendingRequestCount,
+      totalJoinedMember: _project.totalJoinedMember,
       projectInviteCode: _project.projectInviteCode,
       roiPercentage: _rules.roiPercentage ?? _project.roi,
       joinApprovalRequired: _rules.joinApprovalRequired,
@@ -597,6 +598,7 @@ class _ProjectPayload {
   final double? suggestedContributionAmount;
   final String createdUtc;
   final int pendingRequestCount;
+  final int totalJoinedMember;
   final double? roi;
   final bool hasCoLeader;
   final String? coverImageUrl;
@@ -624,6 +626,7 @@ class _ProjectPayload {
     this.suggestedContributionAmount,
     required this.createdUtc,
     required this.pendingRequestCount,
+    this.totalJoinedMember = 0,
     this.roi,
     this.hasCoLeader = false,
     this.coverImageUrl,
@@ -662,6 +665,7 @@ class _ProjectPayload {
       ),
       createdUtc: _jsonString(json['createdUtc']),
       pendingRequestCount: (json['pendingRequestCount'] as num?)?.toInt() ?? 0,
+      totalJoinedMember: parseProjectListTotalJoinedMember(json),
       roi: parseApiRoiPercent(json),
       hasCoLeader: json['hasCoLeader'] == true,
       coverImageUrl: json.safeStringNullable('coverImageUrl'),

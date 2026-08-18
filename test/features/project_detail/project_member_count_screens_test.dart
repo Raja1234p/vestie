@@ -12,13 +12,14 @@ import 'package:vestie/features/success_vote/presentation/models/success_vote_ou
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 
 /// Screen audit: Home, Discover, completed list, vacation/emergency/investment
-/// detail (ongoing + completed), View All, Group Members — same roster floor.
+/// detail — Total Members comes only from `totalJoinedMember`.
 void main() {
   Project listProject({
     required ProjectCategory category,
     required ProjectStatus status,
     required ProjectRelation relation,
     int memberCount = 0,
+    int totalJoinedMember = 0,
   }) {
     return Project(
       id: 'p1',
@@ -27,6 +28,7 @@ void main() {
       status: status,
       relation: relation,
       memberCount: memberCount,
+      totalJoinedMember: totalJoinedMember,
     );
   }
 
@@ -50,6 +52,7 @@ void main() {
     ProjectStatus status = ProjectStatus.ongoing,
     List<MemberEntity> members = const [],
     PaginationInfo? membersPagination,
+    int totalJoinedMember = 0,
   }) {
     return ProjectDetailEntity(
       id: 'p1',
@@ -62,6 +65,7 @@ void main() {
       announcement: '',
       members: members,
       borrowRequests: const [],
+      totalJoinedMember: totalJoinedMember,
       membersPagination: membersPagination ??
           const PaginationInfo(
             page: 1,
@@ -84,7 +88,7 @@ void main() {
       ProjectRelation.joined,
     ];
 
-    test('owner-only API 0 shows 1 on every list card surface', () {
+    test('null/0 totalJoinedMember hides Total Members on every list card', () {
       for (final category in categories) {
         for (final status in statuses) {
           for (final relation in relations) {
@@ -94,28 +98,29 @@ void main() {
               relation: relation,
             );
             expect(project.memberCount, 0, reason: '$category $status $relation');
-            expect(project.cardMemberCount, 1, reason: '$category $status $relation');
+            expect(project.cardMemberCount, 0, reason: '$category $status $relation');
           }
         }
       }
     });
 
-    test('keeps a real roster count from the list API', () {
+    test('keeps a real roster count from totalJoinedMember', () {
       for (final category in categories) {
         final project = listProject(
           category: category,
           status: ProjectStatus.ongoing,
           relation: ProjectRelation.owned,
-          memberCount: 5,
+          memberCount: 7,
+          totalJoinedMember: 5,
         );
         expect(project.cardMemberCount, 5);
-        expect(project.memberCount, 5);
+        expect(project.memberCount, 7);
       }
     });
   });
 
   group('detail — ProjectInfoCard / View All / Group Members', () {
-    test('owner-only empty roster floors to 1 on all categories and statuses', () {
+    test('missing or 0 totalJoinedMember hides Total Members on all categories', () {
       for (final category in [
         ProjectCategory.vacations,
         ProjectCategory.emergency,
@@ -128,14 +133,14 @@ void main() {
           final project = detail(category: category, status: status);
           expect(
             project.displayMemberCount,
-            1,
+            0,
             reason: '$category $status',
           );
         }
       }
     });
 
-    test('uses membersPagination.totalCount when present', () {
+    test('ignores membersPagination.totalCount', () {
       final project = detail(
         membersPagination: const PaginationInfo(
           page: 1,
@@ -144,10 +149,10 @@ void main() {
           totalPages: 1,
         ),
       );
-      expect(project.displayMemberCount, 5);
+      expect(project.displayMemberCount, 0);
     });
 
-    test('counts active members when pagination total is 0', () {
+    test('ignores members[] when totalJoinedMember is missing', () {
       final project = detail(
         members: [
           member(id: '1', name: 'Ada'),
@@ -155,58 +160,16 @@ void main() {
           member(id: '3', name: 'Cara'),
         ],
       );
-      expect(project.displayMemberCount, 3);
+      expect(project.displayMemberCount, 0);
     });
 
-    test('excludes pending join rows from the active count', () {
+    test('uses totalJoinedMember only', () {
       final project = detail(
+        totalJoinedMember: 4,
         members: [
           member(id: '1', name: 'Ada'),
           member(id: '2', name: 'Ben', status: 'Pending'),
-          member(id: '3', name: 'Cara', status: 'JoinPending'),
         ],
-      );
-      expect(project.displayMemberCount, 1);
-    });
-
-    test('pending-only roster still floors to the creator (1)', () {
-      final project = detail(
-        members: [member(id: '1', name: 'Wait', status: 'Pending')],
-      );
-      expect(project.displayMemberCount, 1);
-    });
-
-    test('View All Members copy matches displayMemberCount', () {
-      expect(AppStrings.viewAllMembersWithCount(1), 'View All Members (1)');
-      expect(AppStrings.viewAllMembersWithCount(5), 'View All Members (5)');
-      expect(AppStrings.viewAllMembersWithCount(0), AppStrings.viewAllMembers);
-    });
-
-    test('info card Total Members is always shown (floor never 0)', () {
-      expect(detail().displayMemberCount, greaterThan(0));
-      expect(
-        detail(
-          category: ProjectCategory.investment,
-          status: ProjectStatus.completed,
-        ).displayMemberCount,
-        greaterThan(0),
-      );
-    });
-
-    test('Group Members header uses the same floor as detail', () {
-      final ownerOnly = detail();
-      expect(
-        GroupMembersScreen.headerMemberCount(project: ownerOnly),
-        1,
-      );
-      expect(
-        AppStrings.groupMembersTitleWithCount(
-          GroupMembersScreen.headerMemberCount(project: ownerOnly),
-        ),
-        'Group Members (1)',
-      );
-
-      final paged = detail(
         membersPagination: const PaginationInfo(
           page: 1,
           pageSize: 20,
@@ -214,42 +177,57 @@ void main() {
           totalPages: 1,
         ),
       );
+      expect(project.displayMemberCount, 4);
+    });
+
+    test('View All Members copy omits 0 and shows a real count', () {
+      expect(AppStrings.viewAllMembersWithCount(0), AppStrings.viewAllMembers);
+      expect(AppStrings.viewAllMembersWithCount(1), 'View All Members (1)');
+      expect(AppStrings.viewAllMembersWithCount(5), 'View All Members (5)');
+    });
+
+    test('info card Total Members is hidden when count is 0', () {
+      expect(detail().displayMemberCount, 0);
       expect(
-        GroupMembersScreen.headerMemberCount(project: paged),
-        8,
+        detail(
+          category: ProjectCategory.investment,
+          status: ProjectStatus.completed,
+        ).displayMemberCount,
+        0,
       );
+    });
+
+    test('Group Members header uses totalJoinedMember only', () {
+      final missing = detail();
+      expect(GroupMembersScreen.headerMemberCount(project: missing), 0);
+      expect(
+        AppStrings.groupMembersTitleWithCount(
+          GroupMembersScreen.headerMemberCount(project: missing),
+        ),
+        AppStrings.groupMembersTitle,
+      );
+
+      final joined = detail(totalJoinedMember: 8);
+      expect(GroupMembersScreen.headerMemberCount(project: joined), 8);
       expect(
         AppStrings.groupMembersTitleWithCount(8),
         'Group Members (8)',
       );
     });
 
-    test('Group Members header floors to 1 when route has no project yet', () {
-      expect(
-        GroupMembersScreen.headerMemberCount(
-          membersTotalCount: 0,
-          activeMemberCount: 0,
-        ),
-        1,
-      );
-      expect(
-        GroupMembersScreen.headerMemberCount(
-          membersTotalCount: 4,
-          activeMemberCount: 2,
-        ),
-        4,
-      );
+    test('Group Members header has no count when route has no project yet', () {
+      expect(GroupMembersScreen.headerMemberCount(), 0);
     });
   });
 
-  group('vote outcome stays on raw memberCount (not card floor)', () {
+  group('vote outcome stays on raw memberCount (not card roster)', () {
     test('API 0 still uses the vote-summary fallback of 7', () {
       final project = listProject(
         category: ProjectCategory.vacations,
         status: ProjectStatus.ongoing,
         relation: ProjectRelation.owned,
       );
-      expect(project.cardMemberCount, 1);
+      expect(project.cardMemberCount, 0);
       final data = SuccessVoteOutcomeUiData.fromProject(
         project,
         isApproved: true,
@@ -290,7 +268,7 @@ void main() {
       await tester.pump();
     }
 
-    testWidgets('Total Members row shows owner-only 1', (tester) async {
+    testWidgets('Total Members row shows a positive count', (tester) async {
       await pumpBody(
         tester,
         const ProjectTotalMembersRow(count: 1),
@@ -314,7 +292,9 @@ void main() {
       );
     });
 
-    testWidgets('Members tab View All uses owner-only 1', (tester) async {
+    testWidgets('Members tab View All omits count when totalJoinedMember is 0', (
+      tester,
+    ) async {
       await pumpBody(
         tester,
         MembersTab(
@@ -323,21 +303,15 @@ void main() {
           onViewAll: () {},
         ),
       );
-      expect(find.text('View All Members (1)'), findsOneWidget);
+      expect(find.text('View All Members'), findsOneWidget);
+      expect(find.text('View All Members (1)'), findsNothing);
     });
 
-    testWidgets('Members tab View All uses pagination total', (tester) async {
+    testWidgets('Members tab View All uses totalJoinedMember', (tester) async {
       await pumpBody(
         tester,
         MembersTab(
-          project: detail(
-            membersPagination: const PaginationInfo(
-              page: 1,
-              pageSize: 20,
-              totalCount: 5,
-              totalPages: 1,
-            ),
-          ),
+          project: detail(totalJoinedMember: 5),
           members: const [],
           onViewAll: () {},
         ),

@@ -250,4 +250,78 @@ void main() {
       expect(entity.closureVoteOutcomeAmountUsd, 500);
     });
   });
+
+  group('ProjectDetailResponseModel totalJoinedMember', () {
+    Map<String, dynamic> _minimalProjectJson({
+      required Map<String, dynamic> project,
+    }) {
+      return {
+        'project': project,
+        'rules': {},
+        'viewerMembership': {
+          'membershipId': 'vm1',
+          'userId': 'viewer',
+          'userName': 'viewer',
+          'firstName': 'View',
+          'lastName': 'Er',
+          'role': 'member',
+          'status': 'active',
+          'badge': '',
+        },
+        'members': [],
+        'membersPagination': {
+          'page': 1,
+          'pageSize': 50,
+          'totalCount': 9,
+          'totalPages': 1,
+        },
+        'invites': [],
+        'announcements': [],
+      };
+    }
+
+    test('parses totalJoinedMember from project payload', () {
+      final entity = ProjectDetailResponseModel.fromJson(
+        _minimalProjectJson(
+          project: {
+            'id': 'p1',
+            'name': 'Test',
+            'description': '',
+            'type': 'vacation',
+            'visibility': 'private',
+            'state': 'active',
+            'targetAmount': 500,
+            'memberCount': null,
+            'totalJoinedMember': 3,
+            'displayStatus': 'On Going',
+          },
+        ),
+      ).toEntity();
+
+      expect(entity.totalJoinedMember, 3);
+      expect(entity.displayMemberCount, 3);
+    });
+
+    test('null totalJoinedMember stays 0 even when members[] and pagination exist', () {
+      final entity = ProjectDetailResponseModel.fromJson(
+        _minimalProjectJson(
+          project: {
+            'id': 'p1',
+            'name': 'Test',
+            'description': '',
+            'type': 'vacation',
+            'visibility': 'private',
+            'state': 'active',
+            'targetAmount': 500,
+            'memberCount': null,
+            'totalJoinedMember': null,
+            'displayStatus': 'On Going',
+          },
+        ),
+      ).toEntity();
+
+      expect(entity.totalJoinedMember, 0);
+      expect(entity.displayMemberCount, 0);
+    });
+  });
 }

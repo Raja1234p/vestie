@@ -54,8 +54,12 @@ class Project {
   final ViewerMembershipRole viewerRole;
 
   /// `memberCount` / `maxMembers` from list payloads — vote summary denominator.
-  /// List APIs often send `0` for owner-only groups (creator is still a member).
+  /// List APIs often send `0`/`null` when no vote has run.
   final int memberCount;
+
+  /// `totalJoinedMember` from list payloads — roster size for **Total Members**.
+  /// Independent of [memberCount] (voting). Missing/`0` hides the row.
+  final int totalJoinedMember;
 
   final List<ProjectImageEntity> images;
 
@@ -82,6 +86,7 @@ class Project {
     this.coverImageUrl,
     this.viewerRole = ViewerMembershipRole.member,
     this.memberCount = 0,
+    this.totalJoinedMember = 0,
     this.images = const [],
   });
 
@@ -90,6 +95,7 @@ class Project {
     String? coverImageUrl,
     ViewerMembershipRole? viewerRole,
     int? memberCount,
+    int? totalJoinedMember,
     bool? successVoteApproved,
     String? lastVoteType,
     String? lastVoteOutcome,
@@ -118,15 +124,16 @@ class Project {
       coverImageUrl: coverImageUrl ?? this.coverImageUrl,
       viewerRole: viewerRole ?? this.viewerRole,
       memberCount: memberCount ?? this.memberCount,
+      totalJoinedMember: totalJoinedMember ?? this.totalJoinedMember,
       images: images,
     );
   }
 
-  /// Roster size for **Total Members** on Home/Discover cards.
+  /// Roster size for **Total Members** on Home/Discover/completed cards.
   ///
-  /// Does not change [memberCount] used by vote-outcome copy. When the list
-  /// API sends `0` (owner-only group), the creator still counts as **1**.
-  int get cardMemberCount => memberCount > 0 ? memberCount : 1;
+  /// Uses [totalJoinedMember] from the list API — not [memberCount] (voting).
+  /// Missing or `0` hides the row (no creator floor).
+  int get cardMemberCount => totalJoinedMember;
 
   List<String> get galleryImageUrls => ProjectGalleryImageUrls.resolve(
     coverImageUrl: coverImageUrl,

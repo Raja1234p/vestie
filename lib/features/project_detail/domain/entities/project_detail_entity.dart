@@ -80,6 +80,10 @@ class ProjectDetailEntity {
 
   /// From API `project.pendingRequestCount` (join requests awaiting approval).
   final int pendingJoinRequestCount;
+
+  /// From API `project.totalJoinedMember` — roster size for **Total Members**.
+  /// Independent of voting `memberCount`. Missing/`0` hides the row.
+  final int totalJoinedMember;
   final String projectInviteCode;
   final double? roiPercentage;
   final bool joinApprovalRequired;
@@ -143,6 +147,7 @@ class ProjectDetailEntity {
     this.apiCanStopContributions,
     this.borrowingEnabled = false,
     this.pendingJoinRequestCount = 0,
+    this.totalJoinedMember = 0,
     this.projectInviteCode = '',
     this.roiPercentage,
     this.joinApprovalRequired = false,
@@ -193,16 +198,9 @@ class ProjectDetailEntity {
     return effectiveViewerRefundAmount;
   }
 
-  /// Roster size for "Total Members" / View All — pagination total, else active rows.
-  /// Owner-only groups still count the creator as 1 when the list is empty.
-  int get displayMemberCount {
-    final paged = membersPagination.totalCount;
-    if (paged > 0) return paged;
-    final active = members
-        .where((m) => !m.status.toLowerCase().contains('pending'))
-        .length;
-    return active > 0 ? active : 1;
-  }
+  /// Roster size for "Total Members" / View All — `project.totalJoinedMember` only.
+  /// Missing or 0 hides the Total Members label (no pagination / members[] / floor).
+  int get displayMemberCount => totalJoinedMember;
 
   bool get isGroupLeader => viewerRole.isGroupLeader;
 

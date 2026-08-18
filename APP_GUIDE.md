@@ -122,7 +122,7 @@ Login / Register → Verify → Agreement (if needed) → /dashboard
 
 | Tab | Index | Screen | Primary API | Folder |
 |-----|-------|--------|-------------|--------|
-| Home | 0 | `HomeScreen` | `GET /projects?scope=mine` — **Total Members** (owner-only `0` → `1`) | `lib/user/features/home/` |
+| Home | 0 | `HomeScreen` | `GET /projects?scope=mine` — **Total Members** from `totalJoinedMember` (missing/`0` → hidden) | `lib/user/features/home/` |
 | Discover | 1 | `DiscoverScreen` | `GET /projects?scope=discover` | `lib/user/features/discover/` |
 | **+** | 2 | Leader create sheet | `POST /projects` + launch | `lib/leader/features/create_project/` |
 | Wallet | 3 | `WalletScreen` | `GET /wallet` | `lib/features/wallet/` |

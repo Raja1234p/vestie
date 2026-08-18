@@ -247,11 +247,8 @@ String membershipStatusApiValueToString(dynamic raw) {
   return raw.toString().trim();
 }
 
-/// Headcount for home/discover cards from `GET /projects` list rows.
-///
-/// Mine/discover payloads use several keys (`memberCount`, `membersCount`,
-/// numeric `members`, or a `members[]` / pagination object). Missing or 0
-/// is treated as **1** on list cards (owner-only group = the creator).
+/// Eligible-voter count from `GET /projects` list rows (`memberCount` etc.).
+/// Used for vote-outcome copy — not Home **Total Members**.
 int parseProjectListMemberCount(Map<String, dynamic> json) {
   int fromMap(Map<String, dynamic> map) {
     const keys = [
@@ -293,6 +290,38 @@ int parseProjectListMemberCount(Map<String, dynamic> json) {
         final paged = page.safeInt('totalCount');
         if (paged > 0) return paged;
       }
+    }
+    return 0;
+  }
+
+  var count = fromMap(json);
+  if (count > 0) return count;
+
+  for (final key in const ['project', 'stats', 'summary']) {
+    final nested = json[key];
+    if (nested is! Map) continue;
+    count = fromMap(Map<String, dynamic>.from(nested));
+    if (count > 0) return count;
+  }
+  return 0;
+}
+
+/// Roster size for Home/Discover/completed/detail **Total Members**.
+///
+/// Contract: `totalJoinedMember` (not `memberCount`, which is eligible
+/// voters). Missing or 0 is stored as 0; UI hides the Total Members row.
+int parseProjectListTotalJoinedMember(Map<String, dynamic> json) {
+  int fromMap(Map<String, dynamic> map) {
+    const keys = [
+      'totalJoinedMember',
+      'totalJoinedMembers',
+      'TotalJoinedMember',
+      'TotalJoinedMembers',
+    ];
+    for (final key in keys) {
+      if (map[key] == null) continue;
+      final n = map.safeInt(key);
+      if (n > 0) return n;
     }
     return 0;
   }

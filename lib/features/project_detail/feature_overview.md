@@ -28,7 +28,7 @@ Shared project detail entity, bloc, navigation helpers, member list, funds histo
 
 `ProjectDetailScreen` → `ProjectDetailBloc` → `GetProjectDetailUseCase` → `GET /projects/{id}`
 
-Info card shows **Total Members** for vacation, emergency, and investment (ongoing, funded, and completed) from `membersPagination.totalCount` (else active `members[]`). Owner-only groups still show **1** (the creator). **View All Members (N)** uses the same count. Full-screen **Group Members (N)** (`/project/group-members`) uses the same floor.
+Info card shows **Total Members** for vacation, emergency, and investment (ongoing, funded, and completed) from `project.totalJoinedMember` only. Missing or `0` hides the row (no pagination / `members[]` / creator floor). **View All Members (N)** and full-screen **Group Members (N)** (`/project/group-members`) use the same field; the `(N)` is omitted when the count is 0.
 
 First time a **leader / co-leader** opens project detail after the dashboard tour, a one-time ShowcaseView highlights join requests, Contribute, and the ⋯ menu (Mark successful / Cancel). Returning accounts that already have groups skip it. Member Contribute/menu widgets are not wrapped; taps and APIs are unchanged.
 

@@ -56,6 +56,7 @@ extension ProjectDetailEntityMemberUpdates on ProjectDetailEntity {
       apiCanStopContributions: apiCanStopContributions,
       borrowingEnabled: borrowingEnabled,
       pendingJoinRequestCount: pendingJoinRequestCount,
+      totalJoinedMember: totalJoinedMember,
       projectInviteCode: projectInviteCode,
       roiPercentage: roiPercentage,
       joinApprovalRequired: joinApprovalRequired,

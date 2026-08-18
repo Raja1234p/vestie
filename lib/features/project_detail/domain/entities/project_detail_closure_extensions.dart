@@ -208,6 +208,7 @@ extension ProjectDetailEntityClosureVote on ProjectDetailEntity {
           apiCanStopContributions ?? this.apiCanStopContributions,
       borrowingEnabled: borrowingEnabled,
       pendingJoinRequestCount: pendingJoinRequestCount,
+      totalJoinedMember: totalJoinedMember,
       projectInviteCode: projectInviteCode,
       roiPercentage: roiPercentage,
       joinApprovalRequired: joinApprovalRequired,

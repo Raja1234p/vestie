@@ -42,6 +42,7 @@ class ProjectSummaryEntity extends Equatable {
   final String? lastVoteType;
   final String? lastVoteOutcome;
   final int eligibleMemberCount;
+  final int totalJoinedMember;
   final String? distributionStatus;
 
   const ProjectSummaryEntity({
@@ -73,6 +74,7 @@ class ProjectSummaryEntity extends Equatable {
     this.lastVoteType,
     this.lastVoteOutcome,
     this.eligibleMemberCount = 0,
+    this.totalJoinedMember = 0,
     this.distributionStatus,
   });
 
@@ -125,6 +127,7 @@ class ProjectSummaryEntity extends Equatable {
     lastVoteType,
     lastVoteOutcome,
     eligibleMemberCount,
+    totalJoinedMember,
     distributionStatus,
   ];
 }

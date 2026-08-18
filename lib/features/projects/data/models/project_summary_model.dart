@@ -33,11 +33,13 @@ class ProjectSummaryModel extends ProjectSummaryEntity {
     super.lastVoteType,
     super.lastVoteOutcome,
     super.eligibleMemberCount,
+    super.totalJoinedMember,
     super.distributionStatus,
   });
 
   factory ProjectSummaryModel.fromJson(Map<String, dynamic> json) {
     final listMemberCount = parseProjectListMemberCount(json);
+    final totalJoinedMember = parseProjectListTotalJoinedMember(json);
     return ProjectSummaryModel(
       id: json.safeString('id'),
       name: json.safeString('name'),
@@ -58,6 +60,7 @@ class ProjectSummaryModel extends ProjectSummaryEntity {
               ? listMemberCount
               : json.safeInt('memberCount')),
       eligibleMemberCount: listMemberCount,
+      totalJoinedMember: totalJoinedMember,
       endsAtUtc: json.safeDateTimeUtc('endsAtUtc') ??
           json.safeDateTimeUtc('completedAtUtc'),
       launchedAtUtc: json.safeDateTimeUtc('launchedAtUtc'),

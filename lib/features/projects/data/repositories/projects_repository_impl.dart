@@ -104,6 +104,7 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
       memberCount: m.eligibleMemberCount > 0
           ? m.eligibleMemberCount
           : m.maxMembers,
+      totalJoinedMember: m.totalJoinedMember,
       successVoteApproved: m.successVoteApproved,
       lastVoteType: m.lastVoteType,
       lastVoteOutcome: m.lastVoteOutcome,

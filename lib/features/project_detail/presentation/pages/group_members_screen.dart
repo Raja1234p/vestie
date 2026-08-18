@@ -38,15 +38,9 @@ class GroupMembersScreen extends StatefulWidget {
     this.fromCompletedProjectsProfileDetail = false,
   });
 
-  /// Header roster size — same floor as [ProjectDetailEntity.displayMemberCount].
-  static int headerMemberCount({
-    ProjectDetailEntity? project,
-    int membersTotalCount = 0,
-    int activeMemberCount = 0,
-  }) {
-    if (project != null) return project.displayMemberCount;
-    if (membersTotalCount > 0) return membersTotalCount;
-    return activeMemberCount > 0 ? activeMemberCount : 1;
+  /// Header roster size — [ProjectDetailEntity.totalJoinedMember] only.
+  static int headerMemberCount({ProjectDetailEntity? project}) {
+    return project?.displayMemberCount ?? 0;
   }
 
   @override
@@ -233,11 +227,7 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
           children: [
             PostAuthHeader(
               title: AppStrings.groupMembersTitleWithCount(
-                GroupMembersScreen.headerMemberCount(
-                  project: _project,
-                  membersTotalCount: _membersTotalCount,
-                  activeMemberCount: active.length,
-                ),
+                GroupMembersScreen.headerMemberCount(project: p),
               ),
               leading: AppBackButton(onPressed: () => context.pop()),
             ),

@@ -23,9 +23,9 @@
 
 `HomeScreen` → `ProjectListBloc` → `GET /projects?scope=mine`
 
-List `memberCount` (also `membersCount` / numeric `members`) is shown as **Total Members** on home/discover/completed cards for vacation, emergency, and investment.
+List `totalJoinedMember` is **Total Members** on home/discover/completed cards (vacation, emergency, investment). List `memberCount` is eligible voters for vote-outcome copy only.
 
-Owner-only groups: list APIs often send `0`; the card still shows **1** (the creator). Raw `Project.memberCount` is unchanged so vote-outcome copy is not affected.
+Missing or `0` `totalJoinedMember`: the card hides **Total Members** (no string, no `0`).
 
 First dashboard visit shows a one-time **ShowcaseView** overlay on the tab bar + VFF icon (Skip / Next) **only when Home has no groups**. Accounts that already have projects skip every tour so existing taps and flows are unchanged.
 

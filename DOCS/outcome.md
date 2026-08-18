@@ -315,7 +315,8 @@ final approved    AND voteType == FinalClosureVote
 | `type` | string | `vacation`, `emergency`, `investment` |
 | `displayStatus` | string | Chip label — see §3.3 |
 | `raisedAmount` / `potAmount` | number | Amount card |
-| **`memberCount`** | int | **Eligible voters** in last finalized vote — **not** `maxMembers` |
+| **`memberCount`** | int | **Eligible voters** in last finalized vote — **not** roster size |
+| **`totalJoinedMember`** | int | **Joined roster** for Home/Discover/completed/detail **Total Members** (missing/`0` → row hidden) |
 | **`lastVoteType`** | string | Same as `voting.voteType` |
 | **`lastVoteOutcome`** | string | Same as `voting.outcome` — include **`NoVotes`** |
 | **`successVoteApproved`** | bool | `true` if last finalized vote passed |

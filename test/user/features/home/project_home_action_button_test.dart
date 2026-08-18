@@ -43,7 +43,7 @@ void main() {
   });
 
   group('Project.cardMemberCount', () {
-    test('owner-only list payload of 0 still shows 1 (creator)', () {
+    test('null or 0 totalJoinedMember stays 0 so UI can hide the row', () {
       const project = Project(
         id: 'p1',
         name: 'My group',
@@ -51,21 +51,24 @@ void main() {
         status: ProjectStatus.ongoing,
         relation: ProjectRelation.owned,
         memberCount: 0,
+        totalJoinedMember: 0,
       );
       expect(project.memberCount, 0);
-      expect(project.cardMemberCount, 1);
+      expect(project.cardMemberCount, 0);
     });
 
-    test('does not change a real roster count from the list API', () {
+    test('uses totalJoinedMember, not voting memberCount', () {
       const project = Project(
         id: 'p1',
         name: 'Trip',
         category: ProjectCategory.emergency,
         status: ProjectStatus.ongoing,
         relation: ProjectRelation.owned,
-        memberCount: 5,
+        memberCount: 7,
+        totalJoinedMember: 5,
       );
       expect(project.cardMemberCount, 5);
+      expect(project.memberCount, 7);
     });
   });
 }
