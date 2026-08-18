@@ -193,6 +193,17 @@ class ProjectDetailEntity {
     return effectiveViewerRefundAmount;
   }
 
+  /// Roster size for "Total Members" / View All — pagination total, else active rows.
+  /// Owner-only groups still count the creator as 1 when the list is empty.
+  int get displayMemberCount {
+    final paged = membersPagination.totalCount;
+    if (paged > 0) return paged;
+    final active = members
+        .where((m) => !m.status.toLowerCase().contains('pending'))
+        .length;
+    return active > 0 ? active : 1;
+  }
+
   bool get isGroupLeader => viewerRole.isGroupLeader;
 
   bool get isCoLeader => viewerRole.isCoLeader;

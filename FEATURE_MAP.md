@@ -26,8 +26,8 @@ Quick index for onboarding: **where code lives**, **primary APIs**, **entry rout
 
 | Tab | Code | API | Route |
 |-----|------|-----|-------|
-| Home | `user/features/home/` | `GET /projects?scope=mine` | `/dashboard` tab 0 |
-| Discover | `user/features/discover/` | `GET /projects?scope=discover` | tab 1 |
+| Home | `user/features/home/` | `GET /projects?scope=mine` — cards: pot/raised + **Total Members** (owner-only `0` → **1**) | `/dashboard` tab 0 |
+| Discover | `user/features/discover/` | `GET /projects?scope=discover` — same **Total Members** as Home | tab 1 |
 | Create (+) | `leader/features/create_project/` | `POST /projects`, launch | wizard routes |
 | Wallet | `wallet/` | `GET /wallet` | tab 3 |
 | Profile | `features/profile/` | `GET /users/me` | tab 4 |

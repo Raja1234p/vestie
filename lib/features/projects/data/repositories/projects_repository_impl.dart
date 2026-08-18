@@ -101,7 +101,9 @@ class ProjectsRepositoryImpl implements ProjectsRepository {
       coverImageUrl: m.coverImageUrl,
       images: m.images,
       viewerRole: m.viewerMembershipRole,
-      memberCount: m.eligibleMemberCount > 0 ? m.eligibleMemberCount : m.maxMembers,
+      memberCount: m.eligibleMemberCount > 0
+          ? m.eligibleMemberCount
+          : m.maxMembers,
       successVoteApproved: m.successVoteApproved,
       lastVoteType: m.lastVoteType,
       lastVoteOutcome: m.lastVoteOutcome,

@@ -23,6 +23,10 @@
 
 `HomeScreen` → `ProjectListBloc` → `GET /projects?scope=mine`
 
+List `memberCount` (also `membersCount` / numeric `members`) is shown as **Total Members** on home/discover/completed cards for vacation, emergency, and investment.
+
+Owner-only groups: list APIs often send `0`; the card still shows **1** (the creator). Raw `Project.memberCount` is unchanged so vote-outcome copy is not affected.
+
 ## See also
 
 - [`PROJECT_FLOW_MAP.md`](../../../../../PROJECT_FLOW_MAP.md) §3 Project flow

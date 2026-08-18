@@ -226,6 +226,9 @@ class AppStrings {
   static const String labelInvested = 'Invested';
   static const String labelTotal = 'Total';
   static const String labelEndsIn = 'Ends in';
+  static const String labelTotalMembers = 'Total Members';
+  static String viewAllMembersWithCount(int count) =>
+      count > 0 ? '$viewAllMembers ($count)' : viewAllMembers;
   static const String labelRoiColon = 'ROI:';
   static const String projectEndEnded = 'Ended';
   static const String projectEndToday = 'Ends today';
@@ -1177,6 +1180,8 @@ class AppStrings {
   static const String viewAllRequests = 'View All Requests';
   static const String viewAllMembers = 'View All Members';
   static const String groupMembersTitle = 'Group Members';
+  static String groupMembersTitleWithCount(int count) =>
+      count > 0 ? '$groupMembersTitle ($count)' : groupMembersTitle;
   static const String borrowRequestsEmpty = 'No Borrow Request';
   static const String borrowRequestsEmptySubtitle =
       'Great, you don\'t have any borrow requests.';

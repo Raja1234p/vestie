@@ -61,7 +61,9 @@ class ProjectMembersPreviewSection extends StatelessWidget {
               ),
             ),
             ProjectDetailViewAllLink(
-              label: AppStrings.viewAllMembers,
+              label: AppStrings.viewAllMembersWithCount(
+                project.displayMemberCount,
+              ),
               onTap: _openViewAll(context),
               inline: true,
             ),

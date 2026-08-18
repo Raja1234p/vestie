@@ -41,4 +41,31 @@ void main() {
       expect(project.showsHomeActionButton, isTrue);
     });
   });
+
+  group('Project.cardMemberCount', () {
+    test('owner-only list payload of 0 still shows 1 (creator)', () {
+      const project = Project(
+        id: 'p1',
+        name: 'My group',
+        category: ProjectCategory.vacations,
+        status: ProjectStatus.ongoing,
+        relation: ProjectRelation.owned,
+        memberCount: 0,
+      );
+      expect(project.memberCount, 0);
+      expect(project.cardMemberCount, 1);
+    });
+
+    test('does not change a real roster count from the list API', () {
+      const project = Project(
+        id: 'p1',
+        name: 'Trip',
+        category: ProjectCategory.emergency,
+        status: ProjectStatus.ongoing,
+        relation: ProjectRelation.owned,
+        memberCount: 5,
+      );
+      expect(project.cardMemberCount, 5);
+    });
+  });
 }

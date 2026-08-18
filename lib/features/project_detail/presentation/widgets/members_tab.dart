@@ -45,7 +45,7 @@ class MembersTab extends StatelessWidget {
       children: [
         if (showViewAllLink)
           ProjectDetailViewAllLink(
-            label: AppStrings.viewAllMembers,
+            label: AppStrings.viewAllMembersWithCount(project.displayMemberCount),
             onTap: onViewAll,
           ),
         if (active.isEmpty)

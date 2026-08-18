@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/project_end_and_roi_row.dart';
+import '../../../../core/widgets/common/project_total_members_row.dart';
 import 'package:vestie/user/features/home/domain/entities/project.dart';
 import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
 import 'package:vestie/core/widgets/common/project_cover_image.dart';
@@ -93,10 +94,16 @@ class ProjectInfoCard extends StatelessWidget {
               showRoi: project.category.isInvestment,
               compact: true,
             ),
-            if (project.contributorCount > 0) ...[
-              SizedBox(height: 8.h),
-              ProjectInfoContributorRow(count: project.contributorCount),
-            ],
+          ],
+          if (project.displayMemberCount > 0) ...[
+            SizedBox(height: 8.h),
+            ProjectTotalMembersRow(
+              count: project.displayMemberCount,
+              compact: true,
+            ),
+          ] else if (!_showsCompletedAmount && project.contributorCount > 0) ...[
+            SizedBox(height: 8.h),
+            ProjectInfoContributorRow(count: project.contributorCount),
           ],
         ],
       ),

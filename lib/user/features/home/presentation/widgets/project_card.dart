@@ -9,6 +9,7 @@ import 'package:vestie/core/utils/project_end_relative_label.dart';
 import 'package:vestie/core/utils/roi_display_format.dart';
 import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/core/widgets/common/project_end_and_roi_row.dart';
+import 'package:vestie/core/widgets/common/project_total_members_row.dart';
 import 'package:vestie/core/widgets/common/project_cover_image.dart';
 import 'package:vestie/core/widgets/common/project_images_viewer.dart';
 import 'package:vestie/user/features/home/domain/entities/project_category_extensions.dart';
@@ -154,6 +155,8 @@ class ProjectCard extends StatelessWidget {
                     showRoi: project.category.isInvestment,
                   ),
               ],
+              SizedBox(height: 6.h),
+              ProjectTotalMembersRow(count: project.cardMemberCount),
             ] else ...[
               // Completed — project name + raised/invested amount (+ ROI)
               AppText(
@@ -166,6 +169,8 @@ class ProjectCard extends StatelessWidget {
               ),
               SizedBox(height: 6.h),
               _CompletedAmountRow(project: project),
+              SizedBox(height: 6.h),
+              ProjectTotalMembersRow(count: project.cardMemberCount),
             ],
 
             if (_showActionButton) ...[

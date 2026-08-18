@@ -158,7 +158,7 @@ Five-tab shell (`IndexedStack`):
 
 | Tab | Screen | Purpose |
 |-----|--------|---------|
-| **Home** | My projects + joined projects | Lists from `GET /projects?scope=mine` |
+| **Home** | My projects + joined projects | Lists from `GET /projects?scope=mine`. Cards show **Total Members**; owner-only groups (API `0`) still show **1** (the creator). |
 | **Discover** | Search & filter | `GET /projects?scope=discover`, join from catalog |
 | **+ (Add)** | Create project entry | Opens leader wizard (not a tab page) |
 | **Wallet** | Balance, deposit, withdraw | `/wallet`, Stripe, KYC, bank |

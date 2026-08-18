@@ -94,7 +94,8 @@ WalletScreen → WithdrawScreen
 
 ```text
 HomeScreen / DiscoverScreen
-  ProjectListBloc → GET /projects?scope=mine|discover
+  HomeBloc / DiscoverCubit → GET /projects?scope=mine|discover
+  Cards show Total Members (list memberCount; owner-only API 0 → 1)
   User taps Join
     → JoinProjectUseCase → POST /projects/join { projectId }
     ├─ public + active → openProjectDetailAfterJoinSuccess
@@ -118,6 +119,7 @@ Deep links: `ProjectInviteDeepLinkService` (`https://…/join/{code}`, `vestie:/
 openProjectFromCard / openProjectDetailById
   → /project/detail OR /project/investment-detail
   ProjectDetailBloc → GET /projects/{id}
+  Info card + View All + Group Members: Total Members N (owner-only empty roster → 1)
   ProjectDetailNavigation — push contribute, borrow, members, funds history
 ```
 

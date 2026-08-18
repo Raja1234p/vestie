@@ -14,8 +14,8 @@ Use this when verifying **data on screen matches API** after actions (refresh, n
 | Screen | API | Load | Refresh after |
 |--------|-----|------|----------------|
 | Login | `POST /auth/login` | — | Dashboard |
-| Dashboard Home | `GET /projects` (user list) — card amount: `potAmount` → `raisedAmount` → `totalContributed` → `viewerRefundAmount` | Shimmer | Tab re-activate / reload flags |
-| Discover | `GET /projects` (discover) | Shimmer | Tab re-activate |
+| Dashboard Home | `GET /projects` (user list) — card amount: `potAmount` → `raisedAmount` → `totalContributed` → `viewerRefundAmount`. **Total Members** from list `memberCount` / aliases; owner-only groups with API `0` still show **1** (creator). | Shimmer | Tab re-activate / reload flags |
+| Discover | `GET /projects` (discover) — same **Total Members** rule as Home cards | Shimmer | Tab re-activate |
 | Profile header | `GET /users/me` |
 | Delete account | Confirm dialog → `GET /account/deletion-eligibility` on confirm → `POST /account/delete` if eligible | Button loader on confirm; `AppToast` + dismiss on failure; session clear → login on success | Shimmer | Edit profile save |
 | Edit profile | `PATCH /users/me`, photo upload | — | Profile tab |
@@ -34,10 +34,10 @@ Use this when verifying **data on screen matches API** after actions (refresh, n
 | Transaction history (profile) | `GET /wallet/transactions?page=&pageSize=` | `WalletRecentActivityRowShimmer`; load fail → `AppErrorView` + retry | `PaginatedScrollListener` load-more; client-side type filters |
 | Contribute amount/confirm | `GET /wallet` (balance), preview client-side | — | — |
 | Contribute submit | `POST /projects/{id}/contributions` | — | Wallet tab; project detail reload |
-| Project detail | `GET /projects/{id}` — raised headline: pot/raised → `totalContributed` → `voting.viewerRefundAmount` / `project.viewerRefundAmount` | Shimmer | After contribute / announcement |
+| Project detail | `GET /projects/{id}` — raised headline: pot/raised → `totalContributed` → `voting.viewerRefundAmount` / `project.viewerRefundAmount`. **Total Members** / **View All Members (N)** / **Group Members (N)** from `membersPagination.totalCount` or active `members[]` (minimum **1** for owner-only). | Shimmer | After contribute / announcement |
 | Project pot UI | `GET /projects/{id}/pot` | — | **Not wired to UI** |
 | Project funds history (ledger) | `GET /projects/{projectId}/funds-history` | `ProjectFundsHistoryListShimmer`; load fail → `AppErrorView` + retry | `PaginatedScrollListener` load-more; own Cubit load, independent of parent detail |
-| Completed projects list | `GET /projects/completed?page=&pageSize=` — list key `completedProjects`; cancelled rows use `viewerRefundAmount` when pot/raised/contributions are zero | `ProjectCardShimmer` list | `PaginatedScrollListener` load-more |
+| Completed projects list | `GET /projects/completed?page=&pageSize=` — list key `completedProjects`; cancelled rows use `viewerRefundAmount` when pot/raised/contributions are zero. **Total Members** same as Home cards (API `0` → **1**). | `ProjectCardShimmer` list | `PaginatedScrollListener` load-more |
 | Completed project detail | `GET /projects/{id}` only | `ProjectDetailLoadingBody` | Pull-to-refresh; menu limited to Project fund history |
 | Investment detail — Distribute / Returns | `GET /projects/{id}` — funded phase only (`investmentContributionsAreClosed`, not completed) | — | Pull-to-refresh after vote finalize |
 | Investment / completed detail — vote outcome | `GET /projects/{id}` — `projectStatus: completed` or `cancelled`; `displayStatus` for approved vs refund | — | Profile completed list → outcome screen → detail |

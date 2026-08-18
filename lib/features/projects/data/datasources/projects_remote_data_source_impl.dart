@@ -5,6 +5,7 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/pagination_dto.dart';
+import '../../../../core/network/api_response_body.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/utils/logger.dart';
 import '../models/create_project_multipart_builder.dart';
@@ -91,8 +92,11 @@ class ProjectsRemoteDataSourceImpl implements ProjectsRemoteDataSource {
     String listKey = 'projects',
   }) {
     if (data is Map) {
-      return PaginatedListParser.parseKeyedList(
+      final map = unwrapApiResponseBody(
         data.map((k, v) => MapEntry(k.toString(), v)),
+      );
+      return PaginatedListParser.parseKeyedList(
+        map,
         listKey,
         (m) => ProjectSummaryModel.fromJson(m),
       );

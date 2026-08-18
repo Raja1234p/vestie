@@ -54,6 +54,7 @@ class Project {
   final ViewerMembershipRole viewerRole;
 
   /// `memberCount` / `maxMembers` from list payloads — vote summary denominator.
+  /// List APIs often send `0` for owner-only groups (creator is still a member).
   final int memberCount;
 
   final List<ProjectImageEntity> images;
@@ -120,6 +121,12 @@ class Project {
       images: images,
     );
   }
+
+  /// Roster size for **Total Members** on Home/Discover cards.
+  ///
+  /// Does not change [memberCount] used by vote-outcome copy. When the list
+  /// API sends `0` (owner-only group), the creator still counts as **1**.
+  int get cardMemberCount => memberCount > 0 ? memberCount : 1;
 
   List<String> get galleryImageUrls => ProjectGalleryImageUrls.resolve(
     coverImageUrl: coverImageUrl,

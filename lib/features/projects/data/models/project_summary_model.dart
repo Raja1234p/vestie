@@ -37,6 +37,7 @@ class ProjectSummaryModel extends ProjectSummaryEntity {
   });
 
   factory ProjectSummaryModel.fromJson(Map<String, dynamic> json) {
+    final listMemberCount = parseProjectListMemberCount(json);
     return ProjectSummaryModel(
       id: json.safeString('id'),
       name: json.safeString('name'),
@@ -53,8 +54,10 @@ class ProjectSummaryModel extends ProjectSummaryEntity {
       viewerRefundAmount: json.safeDouble('viewerRefundAmount'),
       maxMembers: json['maxMembers'] != null
           ? json.safeInt('maxMembers')
-          : json.safeInt('memberCount'),
-      eligibleMemberCount: json.safeInt('memberCount'),
+          : (listMemberCount > 0
+              ? listMemberCount
+              : json.safeInt('memberCount')),
+      eligibleMemberCount: listMemberCount,
       endsAtUtc: json.safeDateTimeUtc('endsAtUtc') ??
           json.safeDateTimeUtc('completedAtUtc'),
       launchedAtUtc: json.safeDateTimeUtc('launchedAtUtc'),
