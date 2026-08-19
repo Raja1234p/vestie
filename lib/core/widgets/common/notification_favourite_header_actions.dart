@@ -57,8 +57,8 @@ class NotificationFavouriteHeaderActions extends StatelessWidget {
                   right: -2.w,
                   child: Container(
                     key: const Key('vff_pending_dot'),
-                    width: 9.w,
-                    height: 9.w,
+                    width: 12.w,
+                    height: 12.w,
                     decoration: BoxDecoration(
                       color: AppColors.purple900,
                       shape: BoxShape.circle,
@@ -120,7 +120,7 @@ class NotificationFavouriteHeaderActions extends StatelessWidget {
             );
           },
         ),
-        SizedBox(width: 8.w),
+        SizedBox(width: 12.w),
         vffButton,
       ],
     );
