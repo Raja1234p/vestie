@@ -12,6 +12,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../../firebase_options.dart';
 import '../constants/storage_keys.dart';
 import '../di/service_locator.dart';
+import 'notifications/notification_unread_refresh.dart';
 import 'notifications/push_notification_payload.dart';
 import 'notifications/push_notification_router.dart';
 
@@ -143,6 +144,7 @@ class FcmPushService {
     _lastForegroundMessageId = id;
 
     unawaited(_showLocalNotification(message));
+    unawaited(NotificationUnreadRefresh.requestRefresh());
   }
 
   /// Fires when the user taps a notification (background tap or terminated
@@ -150,6 +152,7 @@ class FcmPushService {
   /// [PushNotificationPayload.type] — see that class for the wire shape.
   static void _onNotificationTapped(RemoteMessage message) {
     _logPayload('tapped', message);
+    unawaited(NotificationUnreadRefresh.requestRefresh());
     PushNotificationRouter.handleTap(
       PushNotificationPayload.fromData(message.data),
     );
@@ -158,6 +161,7 @@ class FcmPushService {
   static void _onLocalNotificationResponse(NotificationResponse response) {
     final raw = response.payload;
     if (raw == null || raw.isEmpty) return;
+    unawaited(NotificationUnreadRefresh.requestRefresh());
     try {
       final decoded = jsonDecode(raw);
       if (decoded is! Map) return;

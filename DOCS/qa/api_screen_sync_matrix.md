@@ -74,7 +74,8 @@ Use this when verifying **data on screen matches API** after actions (refresh, n
 | Withdraw preview | `POST /wallet/withdrawals/preview` | — | — |
 | Withdraw submit | `POST /wallet/withdrawals` + poll | — | Wallet |
 | Announcements (detail) | `announcements[]` on `GET /projects/{id}` (incl. `attachments[]`) | With detail | Create: multipart POST → detail reload; card shows **View Image** when attachments present → `ProjectImagesViewer` |
-| Notifications | `GET /notifications` | `NotificationListShimmer` | Tap → `POST …/mark-read` |
+| Notifications | `GET /notifications` | `NotificationListShimmer` | Tap → `POST …/mark-read`; syncs `NotificationUnreadCubit` |
+| Notifications unread (bell) | `GET /notifications?page=1&pageSize=1` → `unreadCount` | Silent (no shimmer on bell) | Dashboard open, app resume, FCM foreground, pop from inbox |
 | FCM | `POST/DELETE …/device-token` | — | Login / logout |
 
 ---

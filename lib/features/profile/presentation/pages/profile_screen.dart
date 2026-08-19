@@ -19,6 +19,7 @@ import '../../../../core/widgets/common/app_text.dart';
 import '../../../../core/widgets/common/post_auth_header.dart';
 import '../../../../core/widgets/common/post_auth_gradient_background.dart';
 import '../../../../core/widgets/common/app_shimmer.dart';
+import '../../../notifications/presentation/cubit/notification_unread_cubit.dart';
 import '../cubit/profile_cubit.dart';
 import '../navigation/delete_account_flow.dart';
 import '../widgets/profile_header_more_options_action.dart';
@@ -75,6 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             curr.isLogoutSuccess && !prev.isLogoutSuccess,
         listener: (context, state) {
           if (state.isLogoutSuccess) {
+            context.read<NotificationUnreadCubit>().reset();
             context.go(AppRoutes.login);
           }
         },

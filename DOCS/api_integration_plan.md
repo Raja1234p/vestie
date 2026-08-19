@@ -512,7 +512,7 @@ Merge into existing `ProjectDetailBloc` refresh after create/delete.
 | List inbox | `GET /notifications?page=&pageSize=` | `notifications_screen.dart` — replace mock |
 | Mark read | `POST /notifications/mark-read` `{ notificationIds: [] }` | On tap / “mark all” |
 
-**FCM:** Wire `firebase_messaging` (if not already) to pass token to register endpoint; handle foreground → refresh unread count on `GET /notifications` or local badge.
+**FCM:** Wire `firebase_messaging` (if not already) to pass token to register endpoint; handle foreground → refresh unread count on `GET /notifications` via `NotificationUnreadRefresh` (implemented on `NotificationUnreadCubit`).
 
 #### Firebase config files (W7-6 prerequisite)
 

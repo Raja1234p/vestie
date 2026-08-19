@@ -34,6 +34,7 @@ Then use the doc map in §8. **Do not skip architecture.** Presentation never ca
 | **Total Members** | `6bcce36` — list + detail use `totalJoinedMember` only. `0`/null **hides** the row. `memberCount` is **voting only**. |
 | **Continue contribution** | `2a424c3` — Group Leader monitor footer. `POST …/closure-voting/cancel` with `{}`. Then `GET /projects/{id}` is source of truth. |
 | **Stripe Deposit Fee** label | `691c426` — `AppStrings.walletDepositFeeLabel` |
+| **Notification unread bell badge** | Home + Discover bell count pill (`1`…`99+`) via `NotificationUnreadCubit` + `GET /notifications` probe (`pageSize: 1`). Refresh: dashboard open, app resume, FCM foreground/tap, inbox sync, pop from notifications; reset on logout. |
 | Product tours / FCM join-request routing | `68947be` |
 
 ### Continue contribution (live contract)

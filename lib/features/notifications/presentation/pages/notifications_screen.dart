@@ -15,6 +15,8 @@ import '../../../profile/presentation/widgets/profile_sub_header.dart';
 import '../../domain/entities/notification_list_entry.dart';
 import '../cubit/notifications_cubit.dart';
 import '../cubit/notifications_state.dart';
+import '../cubit/notification_unread_cubit.dart';
+import '../widgets/notification_unread_badge.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -51,36 +53,43 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<NotificationsCubit, NotificationsState>(
-      buildWhen: (previous, current) =>
-          previous.loading != current.loading ||
-          previous.loadingMore != current.loadingMore ||
-          previous.items != current.items ||
-          previous.unreadCount != current.unreadCount ||
-          previous.error != current.error ||
-          previous.silentRefreshing != current.silentRefreshing ||
-          previous.hasMore != current.hasMore,
-      builder: (context, state) {
-        return Scaffold(
-          backgroundColor: Colors.transparent,
-          body: PostAuthGradientBackground(
-            child: AppLoadingOverlay(
-              isLoading: state.silentRefreshing,
-              child: Column(
-                children: [
-                  ProfileSubHeader(
-                    title: AppStrings.notificationsTitle,
-                    trailing: state.unreadCount > 0
-                        ? _UnreadBadge(count: state.unreadCount)
-                        : null,
-                  ),
-                  Expanded(child: _buildBody(context, state)),
-                ],
+    return BlocListener<NotificationsCubit, NotificationsState>(
+      listenWhen: (previous, current) =>
+          previous.unreadCount != current.unreadCount,
+      listener: (context, state) {
+        context.read<NotificationUnreadCubit>().setCount(state.unreadCount);
+      },
+      child: BlocBuilder<NotificationsCubit, NotificationsState>(
+        buildWhen: (previous, current) =>
+            previous.loading != current.loading ||
+            previous.loadingMore != current.loadingMore ||
+            previous.items != current.items ||
+            previous.unreadCount != current.unreadCount ||
+            previous.error != current.error ||
+            previous.silentRefreshing != current.silentRefreshing ||
+            previous.hasMore != current.hasMore,
+        builder: (context, state) {
+          return Scaffold(
+            backgroundColor: Colors.transparent,
+            body: PostAuthGradientBackground(
+              child: AppLoadingOverlay(
+                isLoading: state.silentRefreshing,
+                child: Column(
+                  children: [
+                    ProfileSubHeader(
+                      title: AppStrings.notificationsTitle,
+                      trailing: state.unreadCount > 0
+                          ? NotificationUnreadBadge(count: state.unreadCount)
+                          : null,
+                    ),
+                    Expanded(child: _buildBody(context, state)),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -106,32 +115,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         loadingMore: state.loadingMore,
         hasMore: state.hasMore,
         interactionsEnabled: !state.silentRefreshing,
-      ),
-    );
-  }
-}
-
-class _UnreadBadge extends StatelessWidget {
-  const _UnreadBadge({required this.count});
-
-  final int count;
-
-  @override
-  Widget build(BuildContext context) {
-    final label = count > 99 ? '99+' : '$count';
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-      decoration: BoxDecoration(
-        color: AppColors.purple900,
-        borderRadius: BorderRadius.circular(100.r),
-      ),
-      child: Text(
-        label,
-        style: GoogleFonts.lato(
-          fontSize: 12.sp,
-          fontWeight: FontWeight.w700,
-          color: Colors.white,
-        ),
       ),
     );
   }

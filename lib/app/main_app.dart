@@ -9,6 +9,7 @@ import '../core/theme/app_theme.dart';
 import 'package:vestie/leader/features/create_project/presentation/cubit/create_project_cubit.dart';
 import 'package:vestie/leader/features/create_project/presentation/cubit/create_project_update_cubit.dart';
 import '../core/di/service_locator.dart';
+import '../features/notifications/presentation/cubit/notification_unread_cubit.dart';
 import '../features/wallet/presentation/cubit/wallet_cubit.dart';
 import '../features/wallet/presentation/cubit/wallet_transaction_cubit.dart';
 import '../core/services/project_invite_deep_link_service.dart';
@@ -72,6 +73,12 @@ class _MainAppState extends State<MainApp> {
             BlocProvider<WalletCubit>(
               create: (_) => WalletCubit(
                 getWalletUseCase: ServiceLocator.instance.getWalletUseCase,
+              ),
+            ),
+            BlocProvider<NotificationUnreadCubit>(
+              create: (_) => NotificationUnreadCubit(
+                listNotificationsUseCase:
+                    ServiceLocator.instance.listNotificationsUseCase,
               ),
             ),
           ],

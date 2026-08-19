@@ -1,14 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/showcase/app_showcase.dart';
 import 'package:vestie/core/widgets/common/app_toggle_tab_bar.dart';
 import 'package:vestie/core/widgets/common/notification_favourite_header_actions.dart';
+import 'package:vestie/features/notifications/domain/usecases/notifications_usecases.dart';
+import 'package:vestie/features/notifications/presentation/cubit/notification_unread_cubit.dart';
+
+class _MockListNotificationsUseCase extends Mock
+    implements ListNotificationsUseCase {}
+
+Widget _wrapNotificationHeader(Widget child) {
+  final listNotifications = _MockListNotificationsUseCase();
+  return BlocProvider<NotificationUnreadCubit>(
+    create: (_) => NotificationUnreadCubit(
+      listNotificationsUseCase: listNotifications,
+    ),
+    child: child,
+  );
+}
 
 Future<void> _pumpPhoneApp(
   WidgetTester tester, {
@@ -133,12 +150,14 @@ void main() {
 
       await _pumpPhoneApp(
         tester,
-        home: () => const Scaffold(
-          body: Row(
-            children: [
-              NotificationFavouriteHeaderActions(vffShowcaseKey: null),
-              _HomeVffActions(),
-            ],
+        home: () => Scaffold(
+          body: _wrapNotificationHeader(
+            const Row(
+              children: [
+                NotificationFavouriteHeaderActions(vffShowcaseKey: null),
+                _HomeVffActions(),
+              ],
+            ),
           ),
         ),
       );
@@ -154,8 +173,10 @@ void main() {
         routes: [
           GoRoute(
             path: '/',
-            builder: (_, _) => const Scaffold(
-              body: NotificationFavouriteHeaderActions(vffShowcaseKey: null),
+            builder: (_, _) => Scaffold(
+              body: _wrapNotificationHeader(
+                const NotificationFavouriteHeaderActions(vffShowcaseKey: null),
+              ),
             ),
           ),
           GoRoute(
@@ -192,7 +213,9 @@ void main() {
         routes: [
           GoRoute(
             path: '/',
-            builder: (_, _) => const Scaffold(body: _HomeVffActions()),
+            builder: (_, _) => Scaffold(
+              body: _wrapNotificationHeader(const _HomeVffActions()),
+            ),
           ),
           GoRoute(
             path: AppRoutes.userVffMain,

@@ -29,6 +29,16 @@ Tapping a push (foreground local banner, background tap, or terminated-launch) r
 this screen — see [`DOCS/push_notification_routing.md`](../../../../DOCS/push_notification_routing.md)
 for the full payload shape, auth guard, and how to add a new `type`.
 
+## Unread badge (Home / Discover bell)
+
+- **Cubit:** `NotificationUnreadCubit` (app-level in `MainApp`, like `WalletCubit`).
+- **Source of truth:** `unreadCount` from `GET /notifications` (probe with `pageSize: 1`).
+- **UI:** `NotificationUnreadBadge` count pill (`1` … `99+`) on the bell in
+  `NotificationFavouriteHeaderActions` (Home + Discover).
+- **Refresh:** dashboard open, app resume, FCM foreground (`NotificationUnreadRefresh`),
+  inbox load/mark-read sync, pop back from `/notifications`.
+- **Logout:** `NotificationUnreadCubit.reset()` on profile logout success.
+
 Foreground banners are shown by `FcmPushService` via `flutter_local_notifications`
 (OS does not present FCM while the app is open). Tap payload is attached so
 `VffRequestReceived` opens `/user/vff` (Requests) and `JoinRequest` opens
