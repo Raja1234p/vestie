@@ -11,6 +11,7 @@ import 'package:vestie/leader/features/create_project/presentation/cubit/create_
 import '../core/di/service_locator.dart';
 import '../features/notifications/presentation/cubit/notification_unread_cubit.dart';
 import '../features/wallet/presentation/cubit/wallet_cubit.dart';
+import '../user/features/vff/presentation/cubit/vff_pending_cubit.dart';
 import '../features/wallet/presentation/cubit/wallet_transaction_cubit.dart';
 import '../core/services/project_invite_deep_link_service.dart';
 import '../core/services/notifications/push_notification_router.dart';
@@ -79,6 +80,12 @@ class _MainAppState extends State<MainApp> {
               create: (_) => NotificationUnreadCubit(
                 listNotificationsUseCase:
                     ServiceLocator.instance.listNotificationsUseCase,
+              ),
+            ),
+            BlocProvider<VffPendingCubit>(
+              create: (_) => VffPendingCubit(
+                getVffReceivedInboxUseCase:
+                    ServiceLocator.instance.getVffReceivedInboxUseCase,
               ),
             ),
           ],

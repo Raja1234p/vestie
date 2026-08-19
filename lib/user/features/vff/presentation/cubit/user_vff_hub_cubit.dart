@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/error/failures.dart';
 import 'package:vestie/core/error/failure_mapper.dart';
+import 'package:vestie/core/services/notifications/vff_pending_refresh.dart';
 
 import '../../domain/usecases/vff_usecases.dart';
 import '../mappers/user_vff_hub_mapper.dart';
@@ -158,6 +159,18 @@ final class UserVffHubCubit extends Cubit<UserVffHubState>
     );
   }
 
+  /// Notifies the app-level [VffPendingCubit] via bridge whenever inbox changes.
+  void _syncPendingDot({
+    required List<UserVffIncomingRequestUi> incoming,
+    required List<UserVffGroupInviteUi> invites,
+  }) {
+    if (incoming.isNotEmpty || invites.isNotEmpty) {
+      VffPendingRefresh.notifyPending();
+    } else {
+      VffPendingRefresh.notifyClear();
+    }
+  }
+
   Future<void> _fetchReceivedInbox({required bool silent}) async {
     if (!silent) {
       emit(
@@ -171,6 +184,7 @@ final class UserVffHubCubit extends Cubit<UserVffHubState>
     if (silent) {
       final inbox = await syncReceivedInbox();
       if (isClosed || inbox == null) return;
+      _syncPendingDot(incoming: inbox.incoming, invites: inbox.invites);
       emit(
         state.copyWith(
           incomingVffRequests: inbox.incoming,
@@ -199,6 +213,10 @@ final class UserVffHubCubit extends Cubit<UserVffHubState>
             .toList(growable: false);
       },
     );
+
+    if (requestsErrorMessage == null) {
+      _syncPendingDot(incoming: incoming, invites: invites);
+    }
 
     emit(
       state.copyWith(
@@ -230,16 +248,22 @@ final class UserVffHubCubit extends Cubit<UserVffHubState>
           requestsErrorMessage: FailureMapper.userMessage(failure),
         ),
       ),
-      (inbox) => emit(
-        state.copyWith(
-          incomingVffRequests: inbox.incoming,
-          groupInvitations: inbox.invites,
-          myVffConnections: connections ?? state.myVffConnections,
-          requestsLoadStatus: UserVffHubRequestsLoadStatus.loaded,
-          loadStatus: UserVffHubLoadStatus.loaded,
-          clearRequestsError: true,
-        ),
-      ),
+      (inbox) {
+        _syncPendingDot(
+          incoming: inbox.incoming,
+          invites: inbox.invites,
+        );
+        emit(
+          state.copyWith(
+            incomingVffRequests: inbox.incoming,
+            groupInvitations: inbox.invites,
+            myVffConnections: connections ?? state.myVffConnections,
+            requestsLoadStatus: UserVffHubRequestsLoadStatus.loaded,
+            loadStatus: UserVffHubLoadStatus.loaded,
+            clearRequestsError: true,
+          ),
+        );
+      },
     );
   }
 

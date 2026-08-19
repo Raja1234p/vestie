@@ -13,16 +13,29 @@ import 'package:vestie/core/widgets/common/app_toggle_tab_bar.dart';
 import 'package:vestie/core/widgets/common/notification_favourite_header_actions.dart';
 import 'package:vestie/features/notifications/domain/usecases/notifications_usecases.dart';
 import 'package:vestie/features/notifications/presentation/cubit/notification_unread_cubit.dart';
+import 'package:vestie/user/features/vff/domain/usecases/vff_usecases.dart';
+import 'package:vestie/user/features/vff/presentation/cubit/vff_pending_cubit.dart';
 
 class _MockListNotificationsUseCase extends Mock
     implements ListNotificationsUseCase {}
 
+class _MockGetVffReceivedInboxUseCase extends Mock
+    implements GetVffReceivedInboxUseCase {}
+
 Widget _wrapNotificationHeader(Widget child) {
-  final listNotifications = _MockListNotificationsUseCase();
-  return BlocProvider<NotificationUnreadCubit>(
-    create: (_) => NotificationUnreadCubit(
-      listNotificationsUseCase: listNotifications,
-    ),
+  return MultiBlocProvider(
+    providers: [
+      BlocProvider<NotificationUnreadCubit>(
+        create: (_) => NotificationUnreadCubit(
+          listNotificationsUseCase: _MockListNotificationsUseCase(),
+        ),
+      ),
+      BlocProvider<VffPendingCubit>(
+        create: (_) => VffPendingCubit(
+          getVffReceivedInboxUseCase: _MockGetVffReceivedInboxUseCase(),
+        ),
+      ),
+    ],
     child: child,
   );
 }

@@ -15,6 +15,7 @@ import '../di/service_locator.dart';
 import 'notifications/notification_unread_refresh.dart';
 import 'notifications/push_notification_payload.dart';
 import 'notifications/push_notification_router.dart';
+import 'notifications/vff_pending_refresh.dart';
 
 /// FCM push notifications — [official pattern](https://firebase.google.com/docs/cloud-messaging/flutter/receive):
 ///
@@ -145,6 +146,10 @@ class FcmPushService {
 
     unawaited(_showLocalNotification(message));
     unawaited(NotificationUnreadRefresh.requestRefresh());
+    final payload = PushNotificationPayload.fromData(message.data);
+    if (payload.type == PushNotificationType.vffRequestReceived) {
+      VffPendingRefresh.notifyPending();
+    }
   }
 
   /// Fires when the user taps a notification (background tap or terminated

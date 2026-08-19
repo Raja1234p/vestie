@@ -7,9 +7,14 @@ import 'package:vestie/core/widgets/common/notification_favourite_header_actions
 import 'package:vestie/features/notifications/domain/usecases/notifications_usecases.dart';
 import 'package:vestie/features/notifications/presentation/cubit/notification_unread_cubit.dart';
 import 'package:vestie/features/notifications/presentation/widgets/notification_unread_badge.dart';
+import 'package:vestie/user/features/vff/domain/usecases/vff_usecases.dart';
+import 'package:vestie/user/features/vff/presentation/cubit/vff_pending_cubit.dart';
 
 class _MockListNotificationsUseCase extends Mock
     implements ListNotificationsUseCase {}
+
+class _MockGetVffReceivedInboxUseCase extends Mock
+    implements GetVffReceivedInboxUseCase {}
 
 Future<void> _pumpHeader(
   WidgetTester tester, {
@@ -20,12 +25,20 @@ Future<void> _pumpHeader(
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
 
+  final vffCubit = VffPendingCubit(
+    getVffReceivedInboxUseCase: _MockGetVffReceivedInboxUseCase(),
+  );
+  addTearDown(vffCubit.close);
+
   await tester.pumpWidget(
     ScreenUtilInit(
       designSize: const Size(390, 844),
       builder: (_, _) => MaterialApp(
-        home: BlocProvider<NotificationUnreadCubit>.value(
-          value: cubit,
+        home: MultiBlocProvider(
+          providers: [
+            BlocProvider<NotificationUnreadCubit>.value(value: cubit),
+            BlocProvider<VffPendingCubit>.value(value: vffCubit),
+          ],
           child: const Scaffold(
             body: NotificationFavouriteHeaderActions(vffShowcaseKey: null),
           ),

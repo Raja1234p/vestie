@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/features/notifications/presentation/cubit/notification_unread_cubit.dart';
 import 'package:vestie/features/wallet/presentation/cubit/wallet_cubit.dart';
+import 'package:vestie/user/features/vff/presentation/cubit/vff_pending_cubit.dart';
 import 'package:vestie/core/theme/app_text_styles.dart';
 import 'package:vestie/core/widgets/common/app_text.dart';
 import 'package:vestie/core/widgets/common/post_auth_gradient_background.dart';
@@ -74,6 +75,7 @@ class _DashboardScreenState extends State<DashboardScreen>
       await FcmPushService.syncDeviceToken();
       if (mounted) {
         unawaited(context.read<NotificationUnreadCubit>().refresh());
+        unawaited(context.read<VffPendingCubit>().refresh());
       }
       unawaited(_connectRealtimeHubsWhenReady());
     });
@@ -89,6 +91,7 @@ class _DashboardScreenState extends State<DashboardScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state != AppLifecycleState.resumed || !mounted) return;
     unawaited(context.read<NotificationUnreadCubit>().refresh());
+    unawaited(context.read<VffPendingCubit>().refresh());
   }
 
   /// SignalR negotiate can lag on cold start — run after REST prefetch begins.

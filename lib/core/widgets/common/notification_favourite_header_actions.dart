@@ -9,9 +9,12 @@ import 'package:vestie/app/router/app_routes.dart';
 import 'package:vestie/core/constants/app_assets.dart';
 import 'package:vestie/core/constants/app_strings.dart';
 import 'package:vestie/core/showcase/app_showcase.dart';
+import 'package:vestie/core/theme/app_colors.dart';
 import 'package:vestie/features/notifications/presentation/cubit/notification_unread_cubit.dart';
 import 'package:vestie/features/notifications/presentation/cubit/notification_unread_state.dart';
 import 'package:vestie/features/notifications/presentation/widgets/notification_unread_badge.dart';
+import 'package:vestie/user/features/vff/presentation/cubit/vff_pending_cubit.dart';
+import 'package:vestie/user/features/vff/presentation/cubit/vff_pending_state.dart';
 
 /// Notification bell + favourite (VFF hub) for Home / Discover headers.
 /// Both assets render at 32×32 inside equal square hit targets, vertically aligned.
@@ -27,15 +30,46 @@ class NotificationFavouriteHeaderActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const extent = 32.0;
-    Widget vffButton = _SquareIconTap(
-      extent: extent,
-      onTap: () => context.push(AppRoutes.userVffMain),
-      child: SvgPicture.asset(
-        AppAssets.headerVffHub,
-        width: extent,
-        height: extent,
-        fit: BoxFit.contain,
-      ),
+    Widget vffButton = BlocBuilder<VffPendingCubit, VffPendingState>(
+      buildWhen: (previous, current) =>
+          previous.hasPending != current.hasPending,
+      builder: (context, vffState) {
+        return _SquareIconTap(
+          extent: extent,
+          onTap: () async {
+            await context.push(AppRoutes.userVffMain);
+            if (!context.mounted) return;
+            await context.read<VffPendingCubit>().refresh();
+          },
+          child: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.center,
+            children: [
+              SvgPicture.asset(
+                AppAssets.headerVffHub,
+                width: extent,
+                height: extent,
+                fit: BoxFit.contain,
+              ),
+              if (vffState.hasPending)
+                Positioned(
+                  top: -2.h,
+                  right: -2.w,
+                  child: Container(
+                    key: const Key('vff_pending_dot'),
+                    width: 9.w,
+                    height: 9.w,
+                    decoration: BoxDecoration(
+                      color: AppColors.purple900,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 1.5),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
     );
     final showcaseKey = vffShowcaseKey;
     if (showcaseKey != null) {

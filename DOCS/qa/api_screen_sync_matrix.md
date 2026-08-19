@@ -76,6 +76,7 @@ Use this when verifying **data on screen matches API** after actions (refresh, n
 | Announcements (detail) | `announcements[]` on `GET /projects/{id}` (incl. `attachments[]`) | With detail | Create: multipart POST → detail reload; card shows **View Image** when attachments present → `ProjectImagesViewer` |
 | Notifications | `GET /notifications` | `NotificationListShimmer` | Tap → `POST …/mark-read`; syncs `NotificationUnreadCubit` |
 | Notifications unread (bell) | `GET /notifications?page=1&pageSize=1` → `unreadCount` | Silent (no shimmer on bell) | Dashboard open, app resume, FCM foreground, pop from inbox |
+| VFF pending dot (VFF icon) | `GET /vff/received-inbox?page=1&pageSize=1` → `hasPending` | Silent (dot only) | Dashboard open, app resume, FCM `VffRequestReceived`, hub inbox load/mutate, pop from VFF hub |
 | FCM | `POST/DELETE …/device-token` | — | Login / logout |
 
 ---

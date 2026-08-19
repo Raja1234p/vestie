@@ -46,6 +46,15 @@ Foreground banners are shown by `FcmPushService` via `flutter_local_notification
 wait until splash has opened Home, then push that screen on top (Back returns
 to Home).
 
+## VFF pending dot (Home / Discover)
+
+- **Cubit:** `VffPendingCubit` (app-level in `MainApp`).
+- **Source of truth:** `GET /vff/received-inbox` — dot is shown when `vffRequests.isNotEmpty || projectInvites.isNotEmpty`.
+- **UI:** 9×9 purple dot (key `vff_pending_dot`) on VFF icon in `NotificationFavouriteHeaderActions`.
+- **Refresh:** dashboard open, app resume, FCM `VffRequestReceived` (immediate via `VffPendingRefresh.notifyPending`), hub inbox load/mutate sync, pop back from VFF hub.
+- **Clear:** hub accepts/declines all requests (`VffPendingRefresh.notifyClear`), API probe returns empty.
+- **Logout:** `VffPendingCubit.reset()`.
+
 ## See also
 
 - [`FEATURE_MAP.md`](../../../../FEATURE_MAP.md)
