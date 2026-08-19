@@ -1,7 +1,7 @@
 # Vestie — E2E handoff (new chat resume)
 
 **Audience:** Next Cursor chat / engineer with **no memory** of prior sessions.  
-**Last updated:** 2026-08-19  
+**Last updated:** 2026-08-19 (VFF dot badge + UI polish)  
 **Branch:** `final-changes`  
 **Mode:** production-hardening (stability over refactors)
 
@@ -35,6 +35,7 @@ Then use the doc map in §8. **Do not skip architecture.** Presentation never ca
 | **Continue contribution** | `2a424c3` — Group Leader monitor footer. `POST …/closure-voting/cancel` with `{}`. Then `GET /projects/{id}` is source of truth. |
 | **Stripe Deposit Fee** label | `691c426` — `AppStrings.walletDepositFeeLabel` |
 | **Notification unread bell badge** | `321ee8a` — Home + Discover bell count pill (`1`…`99+`) via `NotificationUnreadCubit` + `GET /notifications` probe (`pageSize: 1`). Refresh: dashboard open, app resume, FCM foreground/tap, inbox sync, pop from notifications; reset on logout. |
+| **VFF pending dot badge** | `01a708b` + `3a2ff5b` — 12×12 purple dot on VFF (heart) icon. `VffPendingCubit` (app-level) + `VffPendingRefresh` bridge. Dot shows when `GET /vff/received-inbox` returns non-empty requests or project invites. Refresh: dashboard open, app resume, FCM `VffRequestReceived`, hub inbox load/mutate; clear on accept/decline all + logout. Bell–heart gap 12w. |
 | Product tours / FCM join-request routing | `68947be` |
 
 ### Continue contribution (live contract)
@@ -52,6 +53,7 @@ Then use the doc map in §8. **Do not skip architecture.** Presentation never ca
 - Device QA of Continue contribution against deployed cancel API.
 - Real cancel URL is already `ApiConstants.projectClosureVotingCancel` — do **not** change unless backend moves it.
 - No other voting-flow changes unless explicitly requested.
+- VFF dot badge: if backend adds a dedicated unread-count endpoint, swap `GET /vff/received-inbox` probe for it in `VffPendingCubit.refresh()`.
 
 ### Never commit (local machine only)
 
@@ -200,7 +202,27 @@ Open/cast still: `VotingWindowCubit` → `open`; members → `POST …/vote`. Do
 
 ---
 
-## 8. Docs map
+## 8. Key files — VFF pending dot badge
+
+| Layer | Path |
+|-------|------|
+| Bridge | `lib/core/services/notifications/vff_pending_refresh.dart` |
+| State | `lib/user/features/vff/presentation/cubit/vff_pending_state.dart` |
+| Cubit | `lib/user/features/vff/presentation/cubit/vff_pending_cubit.dart` |
+| DI / app-level | `lib/app/main_app.dart` → `BlocProvider<VffPendingCubit>` |
+| UI dot | `lib/core/widgets/common/notification_favourite_header_actions.dart` (key `vff_pending_dot`) |
+| Hub sync | `lib/user/features/vff/presentation/cubit/user_vff_hub_cubit.dart` → `_syncPendingDot` |
+| FCM | `lib/core/services/fcm_push_service.dart` → `VffRequestReceived` → `VffPendingRefresh.notifyPending()` |
+| Dashboard refresh | `lib/features/dashboard/presentation/pages/dashboard_screen.dart` |
+| Logout reset | `lib/features/profile/presentation/pages/profile_screen.dart` |
+| Tests | `test/user/features/vff/cubit/vff_pending_cubit_test.dart`, `test/core/widgets/vff_pending_dot_badge_test.dart` |
+| Feature overview | `lib/features/notifications/feature_overview.md` — VFF pending dot section |
+| Sync matrix | `DOCS/qa/api_screen_sync_matrix.md` — VFF pending dot row |
+
+---
+
+## 9. Docs map
+
 
 | Need | Doc |
 |------|-----|
@@ -222,7 +244,7 @@ When behavior/API/sync changes, update `feature_overview.md` + `api_screen_sync_
 
 ---
 
-## 9. Validation
+## 10. Validation
 
 ```bash
 flutter analyze
@@ -236,6 +258,6 @@ Entry: `lib/main.dart`. Do not import `device_preview` from `main_app.dart`.
 
 ---
 
-## 10. Suggested first message for a new chat
+## 11. Suggested first message for a new chat
 
 > Read `DOCS/HANDOFF.md` and all `.cursor/rules/*.mdc`. Follow architecture. Resume Vestie on `final-changes`. Continue contribution and Total Members are shipped. Do not change open/cast voting. Do not commit local `api_constants` / `stripe_constants` test hosts/keys. Next: [describe the task].
