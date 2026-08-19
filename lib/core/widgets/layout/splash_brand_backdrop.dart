@@ -28,15 +28,15 @@ class SplashBrandBackdrop extends StatelessWidget {
             fit: BoxFit.cover,
             alignment: Alignment.center,
           ),
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: SvgPicture.asset(
-                AppAssets.splashLogo,
-                width: width,
-              ),
-            ),
-          ),
+          // Center(
+          //   child: Padding(
+          //     padding: const EdgeInsets.only(bottom: 16),
+          //     child: SvgPicture.asset(
+          //       AppAssets.splashLogo,
+          //       width: width,
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
