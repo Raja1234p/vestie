@@ -6,7 +6,7 @@ abstract final class StripeConstants {
   /// Live publishable key (pair with backend live `STRIPE_SECRET_KEY` for same account).
   /// Prefer `GET /stripe/config` when the API returns a key; this is the fallback.
   static const String publishableKey =
-      'pk_test_51TUaHSRzjwjo2AwntuvnVKuG0DRaIr0qwghxNsWuTAFHzYDBigiyx2SCo0pYWAf84Jw9jkhkC5TJEMGwYh1zo1Ez00iXdKe7iJ';
+      'pk_live_51TUaHB2McZ6USmvdrvz1RBh86b5YfZSAjgOKMXuEMIs4P5KCzlD8phQhXrcMnncLBKkmWBdVCL02TDKwHyidgSbd007kjHEXip';
   // live
 
 //pk_live_51TUaHB2McZ6USmvdrvz1RBh86b5YfZSAjgOKMXuEMIs4P5KCzlD8phQhXrcMnncLBKkmWBdVCL02TDKwHyidgSbd007kjHEXip

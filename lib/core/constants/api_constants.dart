@@ -5,20 +5,20 @@ class ApiConstants {
   ApiConstants._();
 
   /// Week 4+ REST base (`/api/v1.0` per Vestie API documentation).
-  // static const String baseUrl =
-  //     'https://vestie-backend-prod-hsaghpaedggzhhh9.centralus-01.azurewebsites.net/api/v1';
-  //
-  // /// HTTPS invite links — same host as [baseUrl], path `/join/{inviteCode}`.
-  // static const String inviteShareLinkBase =
-  //     'https://vestie-backend-prod-hsaghpaedggzhhh9.centralus-01.azurewebsites.net/join';
-
-  // test
   static const String baseUrl =
-      'https://vestie-backend-byexejcphyhaapfy.centralus-01.azurewebsites.net/api/v1';
+      'https://vestie-backend-prod-hsaghpaedggzhhh9.centralus-01.azurewebsites.net/api/v1';
 
   /// HTTPS invite links — same host as [baseUrl], path `/join/{inviteCode}`.
   static const String inviteShareLinkBase =
-      'https://vestie-backend-byexejcphyhaapfy.centralus-01.azurewebsites.net/join';
+      'https://vestie-backend-prod-hsaghpaedggzhhh9.centralus-01.azurewebsites.net/join';
+
+  // // test
+  // static const String baseUrl =
+  //     'https://vestie-backend-byexejcphyhaapfy.centralus-01.azurewebsites.net/api/v1';
+  //
+  // /// HTTPS invite links — same host as [baseUrl], path `/join/{inviteCode}`.
+  // static const String inviteShareLinkBase =
+  //     'https://vestie-backend-byexejcphyhaapfy.centralus-01.azurewebsites.net/join';
   static String inviteShareUrl(String inviteCode) =>
       '$inviteShareLinkBase/${inviteCode.trim()}';
 
