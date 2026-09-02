@@ -22,15 +22,7 @@ class Validators {
       validateAmount(value, min: min, max: max);
   static String? name(String? value) => validateRequired(value, 'Name');
 
-  static String? validateEmail(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return emailRequiredMsg;
-    }
-    if (!RegExp(emailRegex).hasMatch(value)) {
-      return emailInvalidMsg;
-    }
-    return null;
-  }
+  static String? validateEmail(String? value) => ValidationUtils.validateEmail(value);
 
   static String? validatePassword(String? value) =>
       ValidationUtils.validatePassword(value);

@@ -13,7 +13,7 @@ class ValidationUtils {
   ValidationUtils._();
 
   static final RegExp _emailRegExp = RegExp(
-    r'^[\w.+\-]+@[\w\-]+\.[a-zA-Z]{2,}$',
+    r'^[\w.+\-]+@([\w\-]+\.)+[a-zA-Z]{2,}$',
   );
 
   static final RegExp _passwordLowercase = RegExp(r'[a-z]');
