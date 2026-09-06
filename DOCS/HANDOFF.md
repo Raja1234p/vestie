@@ -36,6 +36,7 @@ Then use the doc map in §8. **Do not skip architecture.** Presentation never ca
 | **Stripe Deposit Fee** label | `691c426` — `AppStrings.walletDepositFeeLabel` |
 | **Notification unread bell badge** | `321ee8a` — Home + Discover bell count pill (`1`…`99+`) via `NotificationUnreadCubit` + `GET /notifications` probe (`pageSize: 1`). Refresh: dashboard open, app resume, FCM foreground/tap, inbox sync, pop from notifications; reset on logout. |
 | **VFF pending dot badge** | `01a708b` + `3a2ff5b` — 12×12 purple dot on VFF (heart) icon. `VffPendingCubit` (app-level) + `VffPendingRefresh` bridge. Dot shows when `GET /vff/received-inbox` returns non-empty requests or project invites. Refresh: dashboard open, app resume, FCM `VffRequestReceived`, hub inbox load/mutate; clear on accept/decline all + logout. Bell–heart gap 12w. |
+| **Stripe Android autofill reboot workaround** | `MainActivity.kt` — disable autofill **only** on activities whose class name contains `stripe` (flutter-stripe#2367). Does **not** disable autofill on Flutter login/profile screens. |
 | Product tours / FCM join-request routing | `68947be` |
 
 ### Continue contribution (live contract)
